@@ -1,0 +1,5 @@
+package com.studiofluffy.tonica
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity()

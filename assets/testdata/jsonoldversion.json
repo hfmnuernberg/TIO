@@ -1,0 +1,82 @@
+{
+    "notes": [
+        {
+            "title": "11.01.2024 - 11:16:28",
+            "thumbnailPath": "/data/user/0/com.studiofluffy.tonica/app_flutter/11.01.2024 - 11:16:28-Image 1(1).jpg",
+            "sessionCounter": { "image": 1, "media_player": 1, "metronome": 1, "piano": 1, "text": 1, "tuner": 1 },
+            "_blocks": [
+                {
+                    "kind": "metronome",
+                    "title": "Metronome 1",
+                    "timeLastModified": "2024-01-11T11:16:39.768194",
+                    "id": "4a1fae2a-6dae-4553-92d6-e4153cadb928",
+                    "islandSessionID": null,
+                    "volume": 0.5,
+                    "bpm": 80,
+                    "randomMute": 0,
+                    "accSound": "Click",
+                    "unaccSound": "Click",
+                    "_barsJson": [
+                        { "id": 0, "numBeats": 4, "beatLen": 1.0, "isBreak": false },
+                        { "id": 0, "numBeats": 7, "beatLen": 1.0, "isBreak": false },
+                        { "id": 0, "numBeats": 4, "beatLen": 1.0, "isBreak": true },
+                        { "id": 0, "numBeats": 2, "beatLen": 1.0, "isBreak": false },
+                        { "id": 0, "numBeats": 1, "beatLen": 1.0, "isBreak": false },
+                        { "id": 1, "numBeats": 3, "beatLen": 0.5, "isBreak": true }
+                    ]
+                }
+            ],
+            "timeLastModified": "2024-01-11T11:16:30.084782"
+        }
+    ],
+    "unsavedMetronomeSession": {
+        "kind": "metronome",
+        "title": "Metronome",
+        "timeLastModified": "2024-01-10T10:21:55.965649",
+        "id": "1c0d3876-33e0-45f9-9290-a57c969a6a7e",
+        "islandSessionID": null,
+        "volume": 0.5,
+        "bpm": 80,
+        "randomMute": 0,
+        "accSound": "Click",
+        "unaccSound": "Click",
+        "_barsJson": [{ "id": 0, "numBeats": 4, "beatLen": 1.0, "isBreak": false }]
+    },
+    "unsavedTunerSession": {
+        "kind": "tuner",
+        "title": "Tuner",
+        "timeLastModified": "2024-01-10T10:21:55.967877",
+        "id": "fd9da9a1-8c27-4a66-9a37-b9b3fdb71fdb",
+        "islandSessionID": null,
+        "chamberNoteHz": 440.0
+    },
+    "unsavedMediaPlayerSession": {
+        "kind": "media_player",
+        "title": "Media Player",
+        "timeLastModified": "2024-01-10T10:21:55.968043",
+        "id": "5ef842b5-69e2-4c6b-9bb4-c12206492f92",
+        "islandSessionID": null,
+        "fileCounter": 0,
+        "volume": 0.5,
+        "pitchSemitones": 0.0,
+        "speedFactor": 1.0,
+        "rangeStart": 0.0,
+        "rangeEnd": 1.0,
+        "looping": false,
+        "audioFilePath": "",
+        "markerPositions": []
+    },
+    "unsavedPianoSession": {
+        "kind": "piano",
+        "title": "Piano",
+        "timeLastModified": "2024-01-10T10:21:55.968299",
+        "id": "54e912a2-817f-4911-b270-ba9de774cf1e",
+        "islandSessionID": null,
+        "volume": 0.5,
+        "octave": 3,
+        "soundFontIndex": 0
+    },
+    "visitedSessionsCounter": 11,
+    "neverShowSurveyAgain": false,
+    "idxCheckShowSurvey": 1
+}

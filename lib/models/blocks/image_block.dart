@@ -1,0 +1,152 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:tiomusic/models/project_block.dart';
+import 'package:tiomusic/models/file_io.dart';
+import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/util_functions.dart';
+
+part 'image_block.g.dart';
+
+@JsonSerializable()
+class ImageBlock extends ProjectBlock {
+  // this check is only used for quick tools at the moment
+  @override
+  List<Object> get props => [];
+
+  @override
+  @JsonKey(defaultValue: ImageParams.kind, includeFromJson: false, includeToJson: true)
+  String get kind => ImageParams.kind;
+
+  late String _title;
+  @override
+  @JsonKey(defaultValue: ImageParams.displayName)
+  String get title => _title;
+  @override
+  set title(String newTitle) {
+    _title = newTitle;
+    notifyListeners();
+  }
+
+  late DateTime _timeLastModified;
+  @override
+  @JsonKey(defaultValue: getCurrentDateTime)
+  DateTime get timeLastModified => _timeLastModified;
+  @override
+  set timeLastModified(DateTime newTime) {
+    _timeLastModified = newTime;
+  }
+
+  late String _relativePath;
+  @JsonKey(defaultValue: ImageParams.defaultPath)
+  String get relativePath => _relativePath;
+  set relativePath(String newPath) {
+    _relativePath = newPath;
+    notifyListeners();
+  }
+
+  late String _id;
+  @override
+  @JsonKey(defaultValue: "")
+  String get id => _id;
+  @override
+  set id(String newID) {
+    _id = newID;
+    notifyListeners();
+  }
+
+  late String? _islandToolID;
+  @override
+  @JsonKey(defaultValue: null)
+  String? get islandToolID => _islandToolID;
+  @override
+  set islandToolID(String? newToolID) {
+    _islandToolID = newToolID;
+    notifyListeners();
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  ImageProvider? _image;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  ImageProvider? get image => _image;
+
+  void setImage(String newRelativePath) async {
+    var absolutePath = await FileIO.getAbsoluteFilePath(newRelativePath);
+    if (await File(absolutePath).exists()) {
+      _image = FileImage(File(absolutePath));
+      _relativePath = newRelativePath;
+    } else {
+      debugPrint("Image could not be set in image block, because no file exists at path: $newRelativePath");
+    }
+    notifyListeners();
+  }
+
+  @override
+  List<String> getSettingsFormatted() {
+    return [FileIO.getFileName(_relativePath)];
+  }
+
+  ImageBlock(String title, String id, String? islandToolID, String relativePath, DateTime timeLastModified) {
+    _timeLastModified = timeLastModified;
+    _title = title;
+    _relativePath = relativePath;
+    setImage(_relativePath);
+    _islandToolID = islandToolID;
+    _id = setIdOrNewId(id);
+    notifyListeners();
+  }
+
+  ImageBlock.withDefaults() {
+    _timeLastModified = DateTime.now();
+    _title = ImageParams.displayName;
+    _islandToolID = null;
+    _id = createNewId();
+    _relativePath = ImageParams.defaultPath;
+    setImage(_relativePath);
+  }
+
+  ImageBlock.withTitle(String newTitle) {
+    _timeLastModified = DateTime.now();
+    _title = newTitle;
+    _islandToolID = null;
+    _id = createNewId();
+    _relativePath = ImageParams.defaultPath;
+    setImage(_relativePath);
+  }
+
+  factory ImageBlock.fromJson(Map<String, dynamic> json) => _$ImageBlockFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$ImageBlockToJson(this);
+
+  @override
+  Icon get icon => blockTypeInfos[BlockType.image]!.icon;
+
+  Future pickImage(BuildContext context, ProjectLibrary projectLibrary) async {
+    try {
+      final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+      if (pickedImage == null) return;
+
+      if (context.mounted) {
+        final newRelativePath = await FileIO.saveFileToAppStorage(
+            context,
+            pickedImage,
+            FileIO.getFileNameWithoutExtension(pickedImage.path),
+            _relativePath == "" ? null : _relativePath,
+            projectLibrary);
+
+        if (newRelativePath == null) return;
+
+        setImage(newRelativePath);
+
+        notifyListeners();
+      }
+    } on PlatformException catch (e) {
+      debugPrint("Failed to pick image: $e");
+    }
+  }
+}

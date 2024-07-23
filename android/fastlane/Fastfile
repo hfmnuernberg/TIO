@@ -1,0 +1,82 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+
+  # these two lanes are for manual building ----------------------
+  desc "Get the version code and name from flutter"
+  lane :get_flutter_version do
+    version_from_flutter = flutter_version()
+
+    android_set_version_name(version_name: version_from_flutter['version_name'])
+
+    android_set_version_code(version_code: version_from_flutter['version_code'])
+  end
+
+  desc "Build Android App Bundle"
+  lane :build do
+    gradle(task: "clean")
+
+    get_flutter_version()
+
+    gradle(task: "bundle")
+  end
+  # ------------------------------------------------------------
+
+  # these two lanes are for automatic building and uploading to google ----------------------
+
+  # NOTE: automatic upload to google currently not working, need to add a new publish worker with json key to google play console
+  # not solving this for now, because manual upload is working fine
+  
+  desc "Increment version code based on google play console"
+  lane :increment_version_code do
+    version_code = google_play_track_version_codes(
+      package_name: "com.studiofluffy.tonica",
+      track: "beta",
+      json_key: "./play_store_secret.json",
+    )
+
+    version_code_play_store = version_code[0].to_i
+    update_version_code = version_code_play_store + 1
+
+    version_from_flutter = flutter_version()
+
+    android_set_version_name(version_name: version_from_flutter['version_name'])
+
+    android_set_version_code(version_code: update_version_code)
+  end
+
+  desc "Deploy a new version to Google Play"
+  lane :deploy do
+    gradle(task: "clean")
+
+    increment_version_code()
+    
+    gradle(task: "bundle")
+
+    upload_to_play_store(
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      track: "internal",
+      release_status: 'draft',
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+  # --------------------------------------------------------------------------------------
+end
