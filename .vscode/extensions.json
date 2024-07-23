@@ -1,0 +1,13 @@
+{
+	"recommendations": [
+        // Flutter
+        "Dart-Code.dart-code",
+        "Dart-Code.flutter",
+        // Rust
+        "rust-lang.rust-analyzer",
+        "vadimcn.vscode-lldb",
+        "tamasfe.even-better-toml",
+        // Github Actions
+        "github.vscode-github-actions",
+	]
+}

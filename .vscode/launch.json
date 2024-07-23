@@ -1,0 +1,23 @@
+{
+    "name": "Run Test Debugger",
+    "type": "cppvsdbg",
+    "request": "launch",
+    "program": "${workspaceFolder}/target/debug/buggin-70708b3916187eeb.exe",
+    "args": [],
+    "stopAtEntry": false,
+    "cwd": "${workspaceFolder}",
+    "environment": [],
+    "externalConsole": true,
+    "preLaunchTask": "cargo test build",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Cargo test",
+            "cargo": {
+                "args": ["test", "--no-run", "--lib"]
+            },
+            "args": []
+        }
+    ]
+}
