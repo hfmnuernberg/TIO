@@ -1,15 +1,14 @@
 [![image](https://github.com/user-attachments/assets/6b77eb21-df3c-4b65-923f-85df667dd619)](https://www.hfm-nuernberg.de/forschung-innovation/relevel/tio-music)
 
-
 <a href="https://www.hfm-nuernberg.de/">
-    <img align="right" src="https://github.com/user-attachments/assets/88d51e0f-4a03-40b7-8350-7b39c1581594" alt="HfMN"  height="40px" />
+    <img align="right" src="https://github.com/user-attachments/assets/e132d231-fb98-4210-9041-23bfc35cf519" alt="HfMN"  height="45px" />
 </a>
 
 <br/>
 <br/>
 
 <a href="https://studiofluffy.de/">
-    <img align="right" src="https://github.com/user-attachments/assets/7af2cc77-a3e5-4713-803d-c59cb218c602" alt="HfMN"  height="52px" />
+    <img align="right" src="https://github.com/user-attachments/assets/a63c2f9a-6dc5-4b3a-b849-a95a47ffca27" alt="HfMN"  height="55px" />
 </a>
 
 <br/>
@@ -23,8 +22,8 @@ For more information on this project check out [the homepage (german)](https://w
 
 <br/>
 
-[<img src="https://github.com/user-attachments/assets/199e575f-cab1-419e-a414-a5316175f7c6" alt="play store" height="58px"/>](https://play.google.com/store/apps/details?id=com.studiofluffy.tonica)
-[<img src="https://github.com/user-attachments/assets/e89574f4-32bb-451e-bacd-61f6ba1fbee1" alt="app store" height="58px"/>](https://apps.apple.com/us/app/tio-music/id6477820301?ign-itscg=30200&ign-itsct=apps_box_link)
+[<img src="https://github.com/user-attachments/assets/d36e9c5a-84cf-4e23-a5b0-a30f45bf6a06" alt="play store" height="58px"/>](https://play.google.com/store/apps/details?id=com.studiofluffy.tonica)
+[<img src="https://github.com/user-attachments/assets/5be14e4f-078e-4ea4-b560-56b3be98d72f" alt="app store" height="58px"/>](https://apps.apple.com/us/app/tio-music/id6477820301?ign-itscg=30200&ign-itsct=apps_box_link)
 
 <br/>
 
