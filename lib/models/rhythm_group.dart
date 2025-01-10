@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/models/note_handler.dart';
-import 'package:tiomusic/rust_api/generated/bridge_definitions.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/constants.dart';
 
 part 'rhythm_group.g.dart';

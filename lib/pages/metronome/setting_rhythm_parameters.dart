@@ -13,11 +13,14 @@ import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm_segment.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/pages/metronome/rhythm_generator_setting_list_item.dart';
 import 'package:provider/provider.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+
 import 'package:tiomusic/models/file_io.dart';
 import 'package:circular_widgets/circular_widgets.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -123,7 +126,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
       }
       if (!_isPlaying) return;
 
-      var event = await rustApi.metronomePollBeatEventHappened();
+      var event = await metronomePollBeatEventHappened();
       if (event != null) {
         _onBeatHappened(event);
         setState(() {});
@@ -197,7 +200,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
           }
 
           var bars = getRhythmAsMetroBar([RhythmGroup("", _beats, _polyBeats, _noteKey)]);
-          rustApi.metronomeSetRhythm(bars: bars, bars2: []);
+          metronomeSetRhythm(bars: bars, bars2: []);
         }
       }
     });
@@ -215,7 +218,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
           }
 
           var bars = getRhythmAsMetroBar([RhythmGroup("", _beats, _polyBeats, _noteKey)]);
-          rustApi.metronomeSetRhythm(bars: bars, bars2: []);
+          metronomeSetRhythm(bars: bars, bars2: []);
         }
       }
     });
@@ -226,7 +229,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     setState(() {
       _noteKey = chosenNoteKey;
       var bars = getRhythmAsMetroBar([RhythmGroup("", _beats, _polyBeats, _noteKey)]);
-      rustApi.metronomeSetRhythm(bars: bars, bars2: []);
+      metronomeSetRhythm(bars: bars, bars2: []);
     });
   }
 
@@ -397,7 +400,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     }
 
     var bars = getRhythmAsMetroBar([RhythmGroup("", _beats, _polyBeats, _noteKey)]);
-    rustApi.metronomeSetRhythm(bars: bars, bars2: []);
+    metronomeSetRhythm(bars: bars, bars2: []);
   }
 
   void _onCancel() {
@@ -443,7 +446,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                       }
 
                       var bars = getRhythmAsMetroBar([RhythmGroup("", _beats, _polyBeats, _noteKey)]);
-                      rustApi.metronomeSetRhythm(bars: bars, bars2: []);
+                      metronomeSetRhythm(bars: bars, bars2: []);
                     });
                   },
                 );
@@ -494,7 +497,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   Future<void> _startBeat() async {
     // set beat in rust
     var bars = getRhythmAsMetroBar([RhythmGroup("", _beats, _polyBeats, _noteKey)]);
-    rustApi.metronomeSetRhythm(bars: bars, bars2: []);
+    metronomeSetRhythm(bars: bars, bars2: []);
 
     await MetronomeFunctions.stop();
     final success = await MetronomeFunctions.start();
@@ -506,7 +509,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   }
 
   Future<void> _stopBeat() async {
-    await rustApi.metronomeStop();
+    await metronomeStop();
     _isPlaying = false;
   }
 

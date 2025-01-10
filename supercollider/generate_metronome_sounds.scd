@@ -2,7 +2,7 @@
 ~sr = 44100;
 s.options.sampleRate_(~sr);
 s.boot()
-~outPath = "."
+~outPath = "/Users/fluffy/projects/TIO/supercollider/"
 )
 
 // BOP

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
+
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
@@ -8,7 +9,7 @@ abstract class TunerFunctions {
   static Future<bool> start() async {
     if (await Permission.microphone.request().isGranted) {
       await configureAudioSession(AudioSessionType.record);
-      var success = await rustApi.tunerStart();
+      var success = await tunerStart();
       if (success) {
         await WakelockPlus.enable();
       }
@@ -21,17 +22,17 @@ abstract class TunerFunctions {
 
   static Future<bool> stop() async {
     await WakelockPlus.disable();
-    return await rustApi.tunerStop();
+    return await tunerStop();
   }
 
-  static Future<bool> generatorStart() async {
+  static Future<bool> startGenerator() async {
     await configureAudioSession(AudioSessionType.playback);
-    return await rustApi.generatorStart();
+    return await generatorStart();
   }
 
-  static Future<bool> generatorStop() async {
-    await rustApi.generatorNoteOff();
+  static Future<bool> stopGenerator() async {
+    await generatorNoteOff();
     await Future.delayed(const Duration(milliseconds: 70));
-    return await rustApi.generatorStop();
+    return await generatorStop();
   }
 }

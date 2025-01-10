@@ -7,13 +7,11 @@ import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/blocks/text_block.dart';
 import 'package:tiomusic/models/note_handler.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+
 import 'package:tiomusic/models/project_block.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:uuid/uuid.dart';
-
-// TODO: note: on ios: tio app plays in backgroud, but stops when starting other apps sound
-// same other way around: spotify stops if you start sound in tio
 
 //---------------------------------------------
 // GENERAL TIO MUSIC APP
@@ -271,6 +269,7 @@ class TunerParams {
   static const String svgIconPath = "assets/icons/Tuner.svg";
 
   static const double defaultConcertPitch = 440.0;
+  static const int freqPollMillis = 35;
 }
 
 //---------------------------------------------

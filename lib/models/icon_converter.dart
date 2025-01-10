@@ -14,4 +14,3 @@ class IconSerialiser implements JsonConverter<Icon, int> {
 
 // see this for codePoints:
 // https://api.flutter.dev/flutter/material/Icons-class.html#constants
-

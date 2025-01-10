@@ -7,7 +7,8 @@ import 'package:stats/stats.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
+
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -66,19 +67,23 @@ class _TunerIslandViewState extends State<TunerIslandView> {
 
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
 
-    _timerPollFreq = Timer.periodic(const Duration(milliseconds: 35), (Timer t) async {
+    _timerPollFreq = Timer.periodic(const Duration(milliseconds: TunerParams.freqPollMillis), (Timer t) async {
       if (!mounted) {
         t.cancel();
         return;
       }
       if (!_isRunning) return;
-      _onNewFrequency(await rustApi.tunerGetFrequency());
+      _onNewFrequency(await tunerGetFrequency());
     });
 
-    startTuner();
-    _processingButtonClick = true;
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      if (mounted) setState(() => _processingButtonClick = false);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // start with delay to make sure previous tuner is stopped before new one is started (on copy/save)
+      _processingButtonClick = true;
+      await Future.delayed(const Duration(milliseconds: 400));
+      startTuner();
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        if (mounted) setState(() => _processingButtonClick = false);
+      });
     });
   }
 

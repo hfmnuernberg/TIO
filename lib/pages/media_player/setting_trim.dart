@@ -8,7 +8,7 @@ import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -122,7 +122,7 @@ class _SetTrimState extends State<SetTrim> {
     _mediaPlayerBlock.rangeEnd = _rangeValues.end;
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
-    await rustApi.mediaPlayerSetTrim(startFactor: _mediaPlayerBlock.rangeStart, endFactor: _mediaPlayerBlock.rangeEnd);
+    await mediaPlayerSetTrim(startFactor: _mediaPlayerBlock.rangeStart, endFactor: _mediaPlayerBlock.rangeEnd);
 
     if (mounted) Navigator.pop(context);
   }
@@ -134,15 +134,14 @@ class _SetTrimState extends State<SetTrim> {
     });
   }
 
-  // TODO: error when changing values or trying to leave this setting page, while file is still loading
   void _onCancel() async {
-    await rustApi.mediaPlayerSetTrim(startFactor: _mediaPlayerBlock.rangeStart, endFactor: _mediaPlayerBlock.rangeEnd);
+    await mediaPlayerSetTrim(startFactor: _mediaPlayerBlock.rangeStart, endFactor: _mediaPlayerBlock.rangeEnd);
     if (mounted) Navigator.pop(context);
   }
 
   void _onUserChangesTrim() async {
     if (_rangeValues.start < _rangeValues.end) {
-      await rustApi.mediaPlayerSetTrim(startFactor: _rangeValues.start, endFactor: _rangeValues.end);
+      await mediaPlayerSetTrim(startFactor: _rangeValues.start, endFactor: _rangeValues.end);
     }
   }
 }

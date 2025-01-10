@@ -7,7 +7,7 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -45,7 +45,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   void initState() {
     super.initState();
 
-    rustApi.mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
+    mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
 
     _waveformVisualizer =
         WaveformVisualizer(0.0, widget.mediaPlayerBlock.rangeStart, widget.mediaPlayerBlock.rangeEnd, _rmsValues, 0);
@@ -97,7 +97,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
         return;
       }
       if (!_isPlaying) return;
-      rustApi.mediaPlayerGetState().then(
+      mediaPlayerGetState().then(
         (mediaPlayerState) {
           if (mediaPlayerState == null) {
             debugPrint("State is null");
@@ -159,9 +159,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   Future<void> _stopPlaying() async {
     await playInterruptionListener?.cancel();
     await MediaPlayerFunctions.stopPlaying();
-    if (mounted) {
-      setState(() => _isPlaying = false);
-    }
+    if (mounted) setState(() => _isPlaying = false);
   }
 
   Future<void> _startPlaying() async {
@@ -169,6 +167,6 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       if (event.type == AudioInterruptionType.unknown) _stopPlaying();
     });
     var success = await MediaPlayerFunctions.startPlaying(widget.mediaPlayerBlock.looping);
-    setState(() => _isPlaying = success);
+    if (mounted) setState(() => _isPlaying = success);
   }
 }

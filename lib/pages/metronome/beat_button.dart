@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 enum BeatButtonType {

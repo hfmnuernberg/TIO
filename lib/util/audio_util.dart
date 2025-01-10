@@ -22,17 +22,19 @@ Future<void> configureAudioSession(AudioSessionType type) async {
     case AudioSessionType.playback:
       await session.configure(AudioSessionConfiguration(
         avAudioSessionCategory: AVAudioSessionCategory.playback,
-        avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.defaultToSpeaker &
-            AVAudioSessionCategoryOptions.allowBluetooth &
-            AVAudioSessionCategoryOptions.allowAirPlay,
+        avAudioSessionCategoryOptions:
+            AVAudioSessionCategoryOptions.defaultToSpeaker &
+                AVAudioSessionCategoryOptions.allowBluetooth &
+                AVAudioSessionCategoryOptions.allowAirPlay,
       ));
       break;
     case AudioSessionType.record:
       await session.configure(AudioSessionConfiguration(
         avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
-        avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.defaultToSpeaker &
-            AVAudioSessionCategoryOptions.allowBluetooth &
-            AVAudioSessionCategoryOptions.allowAirPlay,
+        avAudioSessionCategoryOptions:
+            AVAudioSessionCategoryOptions.defaultToSpeaker &
+                AVAudioSessionCategoryOptions.allowBluetooth &
+                AVAudioSessionCategoryOptions.allowAirPlay,
       ));
       break;
   }

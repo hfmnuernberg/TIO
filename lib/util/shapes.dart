@@ -21,7 +21,8 @@ class LeftButtonShape extends OutlinedBorder {
       ..moveTo(rect.right, rect.top)
       ..moveTo(rect.right, rect.bottom)
       ..lineTo(rect.right - rect.width / 2.0, rect.bottom)
-      ..arcToPoint(Offset(rect.right - rect.width / 2.0, rect.top), radius: Radius.circular(rect.width / 4.0))
+      ..arcToPoint(Offset(rect.right - rect.width / 2.0, rect.top),
+          radius: Radius.circular(rect.width / 4.0))
       ..lineTo(rect.right, rect.top)
       ..close();
   }
@@ -58,7 +59,8 @@ class RightButtonShape extends OutlinedBorder {
     return Path()
       ..moveTo(rect.left, rect.top)
       ..lineTo(rect.left + rect.width / 2.0, rect.top)
-      ..arcToPoint(Offset(rect.left + rect.width / 2.0, rect.bottom), radius: Radius.circular(rect.width / 4.0))
+      ..arcToPoint(Offset(rect.left + rect.width / 2.0, rect.bottom),
+          radius: Radius.circular(rect.width / 4.0))
       ..lineTo(rect.left, rect.bottom)
       ..lineTo(rect.left, rect.top)
       ..close();

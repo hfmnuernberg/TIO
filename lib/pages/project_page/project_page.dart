@@ -19,9 +19,14 @@ class ProjectPage extends StatefulWidget {
   final bool goStraightToTool;
   final bool withoutRealProject;
   final ProjectBlock? toolToOpenDirectly;
+  final bool pianoAlreadyOn;
 
   const ProjectPage(
-      {super.key, required this.goStraightToTool, this.toolToOpenDirectly, required this.withoutRealProject});
+      {super.key,
+      required this.goStraightToTool,
+      this.toolToOpenDirectly,
+      required this.withoutRealProject,
+      this.pianoAlreadyOn = false});
 
   @override
   State<ProjectPage> createState() => _ProjectPageState();
@@ -58,7 +63,8 @@ class _ProjectPageState extends State<ProjectPage> {
 
     if (widget.goStraightToTool) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        goToTool(context, _project, widget.toolToOpenDirectly!).then((_) => setState(() {}));
+        goToTool(context, _project, widget.toolToOpenDirectly!, pianoAleadyOn: widget.pianoAlreadyOn)
+            .then((_) => setState(() {}));
       });
     } else {
       SystemChrome.setPreferredOrientations([
@@ -195,7 +201,7 @@ class _ProjectPageState extends State<ProjectPage> {
         fit: StackFit.expand,
         children: [
           FittedBox(
-            fit: BoxFit.fitWidth,
+            fit: BoxFit.cover,
             child: Image.asset(
               "assets/images/tiomusic-bg.png",
             ),
@@ -206,7 +212,6 @@ class _ProjectPageState extends State<ProjectPage> {
               scrollDirection: Axis.vertical,
               itemCount: _project.blocks.length + 1,
               itemBuilder: (BuildContext context, int index) {
-                _project.sortBlocks();
                 if (index >= _project.blocks.length) {
                   return const SizedBox(height: 120);
                 } else {
@@ -288,7 +293,7 @@ class _ProjectPageState extends State<ProjectPage> {
         fit: StackFit.expand,
         children: [
           FittedBox(
-            fit: BoxFit.fitWidth,
+            fit: BoxFit.cover,
             child: Image.asset(
               "assets/images/tiomusic-bg.png",
             ),

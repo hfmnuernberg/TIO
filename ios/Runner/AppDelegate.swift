@@ -1,6 +1,5 @@
-import UIKit
 import Flutter
-import AVFAudio
+import UIKit
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -8,14 +7,7 @@ import AVFAudio
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    print("dummy_value=\(dummy_method_to_enforce_bundling())");
-      
-    #if os(iOS)
-    _ = AVAudioSession.sharedInstance();
-    #endif
-    
-    GeneratedPluginRegistrant.register(with: self);
-
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions);
+    GeneratedPluginRegistrant.register(with: self)
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

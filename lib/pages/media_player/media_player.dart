@@ -21,7 +21,7 @@ import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -99,7 +99,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       DeviceOrientation.portraitDown,
     ]);
 
-    rustApi.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume);
+    mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
@@ -231,7 +231,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   Future<void> _queryAndUpdateStateFromRust() async {
-    var mediaPlayerStateRust = await rustApi.mediaPlayerGetState();
+    var mediaPlayerStateRust = await mediaPlayerGetState();
     if (!mounted || mediaPlayerStateRust == null) return;
     setState(() {
       _isPlaying = mediaPlayerStateRust.playing;
@@ -335,7 +335,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                       _mediaPlayerBlock.looping = !_mediaPlayerBlock.looping;
                       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
                     });
-                    rustApi.mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
+                    mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
                   },
                   icon: _mediaPlayerBlock.looping
                       ? const Icon(Icons.all_inclusive, color: ColorTheme.tertiary)
@@ -388,13 +388,14 @@ class _MediaPlayerState extends State<MediaPlayer> {
             initialValue: _mediaPlayerBlock.volume,
             onConfirm: (vol) {
               _mediaPlayerBlock.volume = vol;
-              rustApi.mediaPlayerSetVolume(volume: vol);
+              mediaPlayerSetVolume(volume: vol);
             },
-            onUserChangedVolume: (vol) => rustApi.mediaPlayerSetVolume(volume: vol),
-            onCancel: () => rustApi.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume),
+            onUserChangedVolume: (vol) => mediaPlayerSetVolume(volume: vol),
+            onCancel: () => mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume),
           ),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
+          inactive: _isLoading,
         ),
         SettingsTile(
           title: "Trim",
@@ -406,6 +407,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           ),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => _queryAndUpdateStateFromRust(),
+          inactive: _isLoading,
         ),
         SettingsTile(
           title: "Speed",
@@ -414,6 +416,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           settingPage: const SetSpeed(),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
+          inactive: _isLoading,
         ),
         SettingsTile(
           title: "Pitch",
@@ -423,6 +426,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           settingPage: const SetPitch(),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
+          inactive: _isLoading,
         ),
         SettingsTile(
           title: "Markers",
@@ -435,6 +439,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           ),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
+          inactive: _isLoading,
         ),
       ],
     );
@@ -516,7 +521,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         top: 4,
         child: IconButton(
           onPressed: () async {
-            await rustApi.mediaPlayerSetPlaybackPosFactor(posFactor: pos);
+            await mediaPlayerSetPlaybackPosFactor(posFactor: pos);
             await _queryAndUpdateStateFromRust();
           },
           icon: const Icon(
@@ -536,12 +541,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
   void _onWaveTap(TapDownDetails details) async {
     double relativeTapPosition = details.localPosition.dx / _waveFormWidth;
 
-    await rustApi.mediaPlayerSetPlaybackPosFactor(posFactor: relativeTapPosition);
+    await mediaPlayerSetPlaybackPosFactor(posFactor: relativeTapPosition);
     await _queryAndUpdateStateFromRust();
   }
 
   void _setFileDuration() async {
-    var state = await rustApi.mediaPlayerGetState();
+    var state = await mediaPlayerGetState();
     if (state != null) {
       var millisecondsDuration = state.totalLengthSeconds * 1000;
       _fileDuration = Duration(milliseconds: millisecondsDuration.toInt());
@@ -549,7 +554,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   void _jump10Seconds(bool forward) async {
-    final state = await rustApi.mediaPlayerGetState();
+    final state = await mediaPlayerGetState();
     if (state == null) {
       debugPrint("Cannot jump 10 seconds - State is null");
       return;
@@ -563,7 +568,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     } else {
       newPos = state.playbackPositionFactor - secondFactor10;
     }
-    await rustApi.mediaPlayerSetPlaybackPosFactor(posFactor: newPos);
+    await mediaPlayerSetPlaybackPosFactor(posFactor: newPos);
     await _queryAndUpdateStateFromRust();
   }
 
@@ -644,20 +649,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   Future<void> _stopPlaying() async {
-    if (!_isPlaying) {
-      var success = await MediaPlayerFunctions.startPlaying(_mediaPlayerBlock.looping);
-      setState(() => _isPlaying = success);
-    } else {
-      MediaPlayerFunctions.stopPlaying().then((success) {
-        if (!success) {
-          debugPrint("Error stopping playback");
-        }
-        if (success && mounted) {
-          setState(() => _isPlaying = false);
-        }
-      });
-    }
-
     bool success = await MediaPlayerFunctions.stopPlaying();
     if (!success) debugPrint("Error stopping playback");
     if (mounted) setState(() => _isPlaying = false);
@@ -706,9 +697,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     var success = await MediaPlayerFunctions.stopRecording();
     if (mounted) {
-      setState(() {
-        _isRecording = false;
-      });
+      setState(() => _isRecording = false);
     }
     if (success && mounted) {
       _resetRecordingTimer();
@@ -727,9 +716,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         if (mounted) {
           FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
           // open the recording because we stopped it by pressing the recording stop button
-          setState(() {
-            _isLoading = true;
-          });
+          setState(() => _isLoading = true);
 
           var fileExtension = _mediaPlayerBlock.getFileExtension();
           if (mounted && fileExtension != null && !TIOMusicParams.audioFormats.contains(fileExtension)) {
@@ -748,13 +735,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
             _setFileDuration();
             _addShareOptionToMenu();
             _mediaPlayerBlock.markerPositions.clear();
-            if (mounted) {
-              FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-            }
+            if (mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
           }
-          setState(() {
-            _isLoading = false;
-          });
+          setState(() => _isLoading = false);
         }
       } else {
         debugPrint("Error saving recording to file");
@@ -808,7 +791,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   void _stopRecordingTimer() {
-    setState(() => _recordingTimer!.cancel());
+    setState(() => _recordingTimer?.cancel());
   }
 
   void _resetRecordingTimer() {

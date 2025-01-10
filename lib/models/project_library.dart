@@ -110,7 +110,8 @@ class ProjectLibrary extends ChangeNotifier {
     showBeatToggleTip = true;
   }
 
-  factory ProjectLibrary.fromJson(Map<String, dynamic> json) => _$ProjectLibraryFromJson(json);
+  factory ProjectLibrary.fromJson(Map<String, dynamic> json) =>
+      _$ProjectLibraryFromJson(json);
 
   Map<String, dynamic> toJson() => _$ProjectLibraryToJson(this);
 
@@ -145,13 +146,14 @@ class ProjectLibrary extends ChangeNotifier {
   }
 
   void addProject(Project newProject) {
-    _projects.add(newProject);
+    _projects.insert(0, newProject);
     notifyListeners();
   }
 
   void removeProject(Project project) {
     for (ProjectBlock block in project.blocks) {
-      updateFileReferenceForFileOfBlock(block, IncreaseOrDecrease.decrease, this);
+      updateFileReferenceForFileOfBlock(
+          block, IncreaseOrDecrease.decrease, this);
     }
     _projects.remove(project);
     notifyListeners();
@@ -160,16 +162,11 @@ class ProjectLibrary extends ChangeNotifier {
   void clearProjects() {
     for (Project project in _projects) {
       for (ProjectBlock block in project.blocks) {
-        updateFileReferenceForFileOfBlock(block, IncreaseOrDecrease.decrease, this);
+        updateFileReferenceForFileOfBlock(
+            block, IncreaseOrDecrease.decrease, this);
       }
     }
     _projects.clear();
     notifyListeners();
-  }
-
-  // sort projects by time last changed
-  void sortProjects() {
-    // newest to the front of the list
-    _projects.sort((a, b) => b.timeLastModified.compareTo(a.timeLastModified));
   }
 }

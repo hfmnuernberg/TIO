@@ -14,8 +14,12 @@ class CardListTile extends StatelessWidget {
 
   final dynamic leadingPicture;
   final Function onTapFunction;
+  final bool disableTap;
 
   final Color? highlightColor;
+
+  final Color textColor;
+  final Color leadingIconColor;
 
   const CardListTile({
     super.key,
@@ -27,6 +31,9 @@ class CardListTile extends StatelessWidget {
     required this.leadingPicture,
     required this.onTapFunction,
     this.highlightColor,
+    this.disableTap = false,
+    this.textColor = ColorTheme.surfaceTint,
+    this.leadingIconColor = ColorTheme.surfaceTint,
   });
 
   @override
@@ -40,13 +47,14 @@ class CardListTile extends StatelessWidget {
       elevation: 0.0,
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: ListTile(
+        enabled: !disableTap,
         title: Text(
           title,
-          style: const TextStyle(color: ColorTheme.surfaceTint, fontWeight: FontWeight.w500),
+          style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
         ),
         subtitle: Text(
           subtitle ?? "",
-          style: const TextStyle(color: ColorTheme.surfaceTint),
+          style: TextStyle(color: textColor),
         ),
         leading: _showPicture(leadingPicture),
         titleAlignment: ListTileTitleAlignment.titleHeight,
@@ -81,7 +89,7 @@ class CardListTile extends StatelessWidget {
         backgroundColor: ColorTheme.surface,
         child: SvgPicture.asset(
           picture,
-          colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
+          colorFilter: ColorFilter.mode(leadingIconColor, BlendMode.srcIn),
         ),
       );
     } else {

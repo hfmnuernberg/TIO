@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -156,7 +158,7 @@ class _ImageToolState extends State<ImageTool> {
     final firstCamera = cameras.first;
 
     if (mounted) {
-      final image = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      XFile? image = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
         return TakePictureScreen(camera: firstCamera);
       }));
 
@@ -169,7 +171,7 @@ class _ImageToolState extends State<ImageTool> {
 
         final newRelativePath = await FileIO.saveFileToAppStorage(
           context,
-          image,
+          File(image.path),
           newFileName,
           _imageBlock.relativePath == "" ? null : _imageBlock.relativePath,
           projectLib,

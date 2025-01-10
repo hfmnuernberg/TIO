@@ -8,7 +8,8 @@ import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm_segment.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -39,13 +40,13 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
   void initState() {
     super.initState();
 
-    rustApi.metronomeSetVolume(volume: widget.metronomeBlock.volume);
-    rustApi.metronomeSetRhythm(
+    metronomeSetVolume(volume: widget.metronomeBlock.volume);
+    metronomeSetRhythm(
         bars: getRhythmAsMetroBar(widget.metronomeBlock.rhythmGroups),
         bars2: getRhythmAsMetroBar(widget.metronomeBlock.rhythmGroups2));
-    rustApi.metronomeSetBpm(bpm: widget.metronomeBlock.bpm.toDouble());
-    rustApi.metronomeSetBeatMuteChance(muteChance: widget.metronomeBlock.randomMute.toDouble() / 100.0);
-    rustApi.metronomeSetMuted(muted: false);
+    metronomeSetBpm(bpm: widget.metronomeBlock.bpm.toDouble());
+    metronomeSetBeatMuteChance(muteChance: widget.metronomeBlock.randomMute.toDouble() / 100.0);
+    metronomeSetMuted(muted: false);
 
     MetronomeUtils.loadSounds(widget.metronomeBlock);
 
@@ -58,7 +59,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
       }
       if (!_isStarted) return;
 
-      rustApi.metronomePollBeatEventHappened().then((BeatHappenedEvent? event) {
+      metronomePollBeatEventHappened().then((BeatHappenedEvent? event) {
         if (event != null) _onBeatHappened(event);
       });
       if (!mounted) return;

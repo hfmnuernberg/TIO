@@ -29,7 +29,7 @@ For more information on this project check out [the homepage (german)](https://w
 
 # How does it work?
 
-**TIO** is an cross platform app written in Flutter. Under the hood, it is powered by a rust library handling the signal processing tasks for real time pitch shifting, pitch detection, time stretching and more.
+**TIO** is a cross platform app written in Flutter. Under the hood, it is powered by a rust library handling the signal processing tasks for real time pitch shifting, pitch detection, time stretching and more.
 If you are interested in giving feedback or contributing to **TIO**, please leave an issue or open a PR, or head over to [the survey (german)](https://cloud9.evasys.de/hfmn/online.php?p=Q2TYV).
 
 # Installation
@@ -40,25 +40,24 @@ If you are interested in giving feedback or contributing to **TIO**, please leav
 -   Call `flutter --version`. Your output should look like:
 
 ```
-Flutter 3.7.3 • channel stable • https://github.com/flutter/flutter.git
-Framework • revision 9944297138 (5 weeks ago) • 2023-02-08 15:46:04 -0800
-Engine • revision 248290d6d5
-Tools • Dart 2.19.2 • DevTools 2.20.1
+Flutter 3.22.1 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision a14f74ff3a (4 months ago) • 2024-05-22 11:08:21 -0500
+Engine • revision 55eae6864b
+Tools • Dart 3.4.1 • DevTools 2.34.3
 ```
 
 -   Call `flutter doctor` and resolve all errors. Your output should look like:
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
-[√] Flutter (Channel stable, 3.7.3, on Microsoft Windows [Version 10.0.22621.1265], locale de-DE)
-[√] Windows Version (Installed version of Windows is version 10 or higher)
-[√] Android toolchain - develop for Android devices (Android SDK version 33.0.1)
-[√] Chrome - develop for the web
-[√] Visual Studio - develop for Windows (Visual Studio Community 2022 17.3.5)
-[√] Android Studio (version 2022.1)
-[√] VS Code (version 1.76.0)
-[√] Connected device (4 available)
-[√] HTTP Host Availability
+[✓] Flutter (Channel stable, 3.22.1, on macOS 14.4.1 23E224 darwin-arm64, locale de-DE)
+[✓] Android toolchain - develop for Android devices (Android SDK version 34.0.0)
+[✓] Xcode - develop for iOS and macOS (Xcode 15.4)
+[✓] Chrome - develop for the web
+[✓] Android Studio (version 2024.1)
+[✓] VS Code (version 1.93.1)
+[✓] Connected device (5 available)
+[✓] Network resources
 
 • No issues found!
 ```
@@ -101,7 +100,7 @@ Press `Ctrl + X` → `Y` → `Enter`
 -   Call `cargo -V`. Your output should look like:
 
 ```
-cargo 1.68.0 (115f34552 2023-02-26)
+cargo 1.81.0 (2dbb1af80 2024-08-20)
 ```
 
 -   Add rust targets for cross compilation:
@@ -118,15 +117,15 @@ rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-and
 cargo install flutter_rust_bridge_codegen cargo-ndk
 ```
 
--   `cd` into `native` and try building the Rust library (optional).
+-   `cd` into `rust` and try building the Rust library (optional).
 
 ```
-cd native
+cd rust
 cargo build
 cd ..
 ```
 
-----
+---
 
 # Development
 
@@ -134,16 +133,16 @@ cd ..
 
 ```
 rustup upgrade
-cargo install flutter_rust_bridge_codegen --version 1.82.4
+cargo install flutter_rust_bridge_codegen --version 2.4.0
 ```
 
-in `/native` (update der packages)
+in `/rust` (update der packages)
 
 ```
 cargo update
 ```
 
-Rust Bridge is responsible for generating the code that handles the FFI. All rust functions inside `api.rs` are exposted to Flutter this way. Any change in `api.rs` requires a rebuild with the `flutter_rust_bridge_codegen` to be exposed to Flutter. This can most easily be done via the scripts `generate-bridge.bat`/`generate-bridge.sh`.
+Rust Bridge is responsible for generating the code that handles the FFI. All public rust functions inside `rust/src/api` are exposted to Flutter this way. If you have a public function, that should not be exposed, add `#[flutter_rust_bridge::frb(ignore)]` above the function. Any change of the rust functions in this folder requires a rebuild with the `flutter_rust_bridge_codegen` to be exposed to Flutter. This can most easily be done via:
 
 ```
 python3 ./generate.py rust
@@ -176,7 +175,7 @@ The generation can be done with `generate.py` or a **continuous runner**:
 flutter pub run build_runner watch --delete-conflicting-outputs
 ```
 
-----
+---
 
 # Build for iOS
 
@@ -187,3 +186,11 @@ flutter pub run build_runner watch --delete-conflicting-outputs
         -   log into the necessary account for codesigning (check the certificates)
 -   restart your mac - **don't skip, this is important**
 -   run `flutter build ipa`
+
+# Build for Android
+
+-   make sure you installed all rust targets like described above
+-   generate or get your personal upload key ready (see https://developer.android.com/studio/publish/app-signing#generate-key)
+    -   doing this you should get a `key.jks` file and a `key.properties` file. (If you choose other names for those files, adjust the names in `android/app/build.gradle`)
+    -   put those two files in your android folder (Don't check them into source control!!!)
+-   run `flutter build appbundle`

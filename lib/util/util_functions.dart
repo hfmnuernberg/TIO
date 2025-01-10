@@ -21,7 +21,7 @@ import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/text/text.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
-import 'package:tiomusic/rust_api/generated/bridge_definitions.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -359,7 +359,7 @@ Future<void> showNoCameraFoundDialog(BuildContext context) {
 // ---------------------------------------------------------------
 // navigate to a new tool page and provide the correct providers
 
-Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock block) {
+Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock block, {bool pianoAleadyOn = false}) {
   return Navigator.of(context).push(MaterialPageRoute(builder: (context) {
     return MultiProvider(
       providers: [
@@ -377,7 +377,7 @@ Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock blo
           return const ImageTool(isQuickTool: false);
         } else if (block is PianoBlock) {
           WidgetsFlutterBinding.ensureInitialized();
-          return const Piano(isQuickTool: false);
+          return Piano(isQuickTool: false, withoutInitAndStart: pianoAleadyOn);
         } else if (block is TextBlock) {
           return const TextTool(isQuickTool: false);
         } else {
@@ -423,7 +423,8 @@ String getDurationFormatedWithMilliseconds(Duration dur) {
 // ---------------------------------------------------------------
 // save tool in existing project
 
-void saveToolInProject(BuildContext context, int index, ProjectBlock tool, bool isQuickTool, String newTitle) {
+void saveToolInProject(BuildContext context, int index, ProjectBlock tool, bool isQuickTool, String newTitle,
+    {bool pianoAlreadyOn = false}) {
   ProjectLibrary projectLibrary = context.read<ProjectLibrary>();
   ProjectBlock newBlock = projectLibrary.projects[index].copyTool(tool, newTitle);
 
@@ -444,7 +445,8 @@ void saveToolInProject(BuildContext context, int index, ProjectBlock tool, bool 
     final returnData = {
       "action": ReturnAction.goToNewTool,
       "project": projectLibrary.projects[index],
-      "block": newBlock
+      "block": newBlock,
+      "pianoAlreadyOn": pianoAlreadyOn
     };
     Navigator.of(context).pop(returnData);
   }
@@ -454,7 +456,8 @@ void saveToolInProject(BuildContext context, int index, ProjectBlock tool, bool 
 // save tool in a new project
 
 void saveToolInNewProject(
-    BuildContext context, ProjectBlock tool, bool isQuickTool, String projectTitle, String toolTitle) {
+    BuildContext context, ProjectBlock tool, bool isQuickTool, String projectTitle, String toolTitle,
+    {bool pianoAlreadyOn = false}) {
   ProjectLibrary projectLibrary = context.read<ProjectLibrary>();
   Project newProject = Project.defaultPicture(projectTitle);
   projectLibrary.addProject(newProject);
@@ -474,7 +477,12 @@ void saveToolInNewProject(
       Navigator.of(context).pop();
     }
     // pop back to home page
-    final returnData = {"action": ReturnAction.goToNewTool, "project": newProject, "block": newBlock};
+    final returnData = {
+      "action": ReturnAction.goToNewTool,
+      "project": newProject,
+      "block": newBlock,
+      "pianoAlreadyOn": pianoAlreadyOn
+    };
     Navigator.of(context).pop(returnData);
   }
 }

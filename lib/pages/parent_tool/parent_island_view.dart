@@ -44,7 +44,8 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     super.initState();
 
     // if project is null (if we are in a quick tool), there is no possible tool to open
-    _possibleToolForIslandExists = checkIslandPossible(widget.project, widget.toolBlock);
+    _possibleToolForIslandExists =
+        checkIslandPossible(widget.project, widget.toolBlock);
 
     if (_possibleToolForIslandExists) {
       if (widget.toolBlock.islandToolID == null) {
@@ -54,7 +55,8 @@ class _ParentIslandViewState extends State<ParentIslandView> {
         // if there is a tool as island saved
         try {
           // search for the tool using the hashCode and the hashCode saved in the current tool
-          final foundTools = widget.project!.blocks.where((block) => block.id == widget.toolBlock.islandToolID);
+          final foundTools = widget.project!.blocks
+              .where((block) => block.id == widget.toolBlock.islandToolID);
 
           // there should always only one to be found, because the id should be individual for each block
           if (foundTools.length > 1) {
@@ -98,7 +100,8 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   Widget _islandView() {
     return Card(
       color: ColorTheme.surface,
-      margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
+      margin: const EdgeInsets.fromLTRB(
+          TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
       elevation: 0.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
@@ -126,7 +129,8 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   Widget _addButtonView() {
     return Card(
       color: ColorTheme.surface,
-      margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
+      margin: const EdgeInsets.fromLTRB(
+          TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
       elevation: 0.0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
@@ -146,7 +150,9 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     return Padding(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
       child: Align(
-        alignment: widget.toolBlock.kind == "piano" ? Alignment.centerRight : Alignment.center,
+        alignment: widget.toolBlock.kind == "piano"
+            ? Alignment.centerRight
+            : Alignment.center,
         child: const Text(
           "Use bookmark to save a tool",
           style: TextStyle(
@@ -168,7 +174,8 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     } else if (_loadedTool is MetronomeBlock) {
       return MetronomeIslandView(metronomeBlock: _loadedTool as MetronomeBlock);
     } else if (_loadedTool is MediaPlayerBlock) {
-      return MediaPlayerIslandView(mediaPlayerBlock: _loadedTool as MediaPlayerBlock);
+      return MediaPlayerIslandView(
+          mediaPlayerBlock: _loadedTool as MediaPlayerBlock);
     } else if (_loadedTool is EmptyBlock) {
       return EmptyIsland(callOnInit: _setChoosenIsland);
     } else {
@@ -188,7 +195,8 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     ], [
       Expanded(
         child: Padding(
-          padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
+          padding:
+              const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
           child: ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
@@ -201,7 +209,8 @@ class _ParentIslandViewState extends State<ParentIslandView> {
               } else {
                 // don't show tools of the same type that you are currently in and
                 // don't show the tool that is currently open
-                if (widget.project!.blocks[index].kind == widget.toolBlock.kind) {
+                if (widget.project!.blocks[index].kind ==
+                    widget.toolBlock.kind) {
                   return const SizedBox();
                   // only allow Tuner, Metronome and Media Player to be used as islands for now
                 } else if (widget.project!.blocks[index].kind == "tuner" ||
@@ -209,9 +218,13 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                     widget.project!.blocks[index].kind == "media_player") {
                   return CardListTile(
                     title: widget.project!.blocks[index].title,
-                    subtitle: formatSettingValues(widget.project!.blocks[index].getSettingsFormatted()),
-                    trailingIcon: IconButton(onPressed: () => _onToolTap(index), icon: const SizedBox()),
-                    leadingPicture: circleToolIcon(widget.project!.blocks[index].icon),
+                    subtitle: formatSettingValues(
+                        widget.project!.blocks[index].getSettingsFormatted()),
+                    trailingIcon: IconButton(
+                        onPressed: () => _onToolTap(index),
+                        icon: const SizedBox()),
+                    leadingPicture:
+                        circleToolIcon(widget.project!.blocks[index].icon),
                     onTapFunction: () => _onToolTap(index),
                   );
                 } else {
@@ -242,7 +255,8 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   void _setChoosenIsland() {
     if (_indexOfChoosenIsland != null) {
       _loadedTool = widget.project!.blocks[_indexOfChoosenIsland!];
-      widget.toolBlock.islandToolID = widget.project!.blocks[_indexOfChoosenIsland!].id;
+      widget.toolBlock.islandToolID =
+          widget.project!.blocks[_indexOfChoosenIsland!].id;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
       setState(() {});

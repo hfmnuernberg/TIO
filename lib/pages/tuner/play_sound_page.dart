@@ -6,7 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
+
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
@@ -28,6 +29,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   late NumberInputInt _octaveInput;
 
   final ActiveReferenceSoundButton _buttonListener = ActiveReferenceSoundButton();
+  bool _running = false;
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
 
@@ -45,14 +47,12 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
       descriptionText: "Octave",
     );
 
-    TunerFunctions.stop().then((_) => TunerFunctions.generatorStart()).then((value) async => {
-          audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
-            if (event.type == AudioInterruptionType.unknown) TunerFunctions.generatorStop();
-          })
-        });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await TunerFunctions.stop();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
       _octaveInput.displayText.addListener(_onOctaveChanged);
+
+      _buttonListener.addListener(_onButtonsChanged);
     });
   }
 
@@ -62,16 +62,44 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
     });
   }
 
+  void _onButtonsChanged() async {
+    if (_buttonListener.buttonOn) {
+      // start generator if not running
+      if (!_running) {
+        await TunerFunctions.startGenerator();
+        _running = true;
+
+        audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
+          if (event.type == AudioInterruptionType.unknown) {
+            TunerFunctions.stopGenerator();
+            setState(() {
+              _running = false;
+              _buttonListener.turnOff();
+            });
+          }
+        });
+      }
+
+      // play sound
+      if (_running) {
+        generatorNoteOn(newFreq: _buttonListener.freq);
+      }
+    } else {
+      // stop sound
+      generatorNoteOff();
+    }
+  }
+
   @override
   void deactivate() {
     super.deactivate();
     audioInterruptionListener?.cancel();
-    rustApi.generatorNoteOff().then((value) => TunerFunctions.generatorStop());
+    TunerFunctions.stopGenerator();
   }
 
   @override
   Widget build(BuildContext context) {
-    double offset = _octave * 12;
+    int offset = _octave * 12;
     return DismissKeyboard(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -118,11 +146,16 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
 // class for the individual sound buttons
 class SoundButton extends StatefulWidget {
-  final double midiNumber;
+  final int midiNumber;
   final int idx;
   final ActiveReferenceSoundButton buttonListener;
 
-  const SoundButton({super.key, required this.midiNumber, required this.idx, required this.buttonListener});
+  const SoundButton({
+    super.key,
+    required this.midiNumber,
+    required this.idx,
+    required this.buttonListener,
+  });
 
   @override
   State<SoundButton> createState() => _SoundButtonState();
@@ -139,6 +172,11 @@ class _SoundButtonState extends State<SoundButton> {
 
   @override
   Widget build(BuildContext context) {
+    // update the frequency on rebuild, in case the octave has changed
+    if (widget.buttonListener.buttonOn) {
+      generatorNoteOn(newFreq: midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
+    }
+
     return ListenableBuilder(
       listenable: widget.buttonListener,
       builder: (BuildContext context, Widget? child) {
@@ -147,20 +185,15 @@ class _SoundButtonState extends State<SoundButton> {
             setState(() {
               // if any button is on, turn it off
               if (widget.buttonListener.buttonOn) {
-                rustApi.generatorNoteOff();
-                widget.buttonListener.setOnOff(false);
+                widget.buttonListener.turnOff();
 
                 // if clicked on the same button, do nothing
                 // if clicked on a different button, turn it on
                 if (widget.buttonListener.buttonIdx != widget.idx) {
-                  widget.buttonListener.setOnOff(true);
-                  widget.buttonListener.setIndex(widget.idx);
-                  rustApi.generatorNoteOn(newFreq: midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
+                  widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
                 }
               } else {
-                widget.buttonListener.setIndex(widget.idx);
-                widget.buttonListener.setOnOff(true);
-                rustApi.generatorNoteOn(newFreq: midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
+                widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
               }
             });
           },
@@ -196,14 +229,17 @@ class _SoundButtonState extends State<SoundButton> {
 class ActiveReferenceSoundButton with ChangeNotifier {
   int buttonIdx = 0;
   bool buttonOn = false;
+  double freq = 0.0;
 
-  void setIndex(int idx) {
-    buttonIdx = idx;
+  void turnOff() {
+    buttonOn = false;
     notifyListeners();
   }
 
-  void setOnOff(bool on) {
-    buttonOn = on;
+  void turnOn(int idx, double frequency) {
+    buttonOn = true;
+    buttonIdx = idx;
+    freq = frequency;
     notifyListeners();
   }
 }

@@ -6,7 +6,8 @@ import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
+
 import 'package:tiomusic/widgets/number_input_int.dart';
 import 'package:tiomusic/util/constants.dart';
 
@@ -50,7 +51,7 @@ class _SetRandomMuteState extends State<SetRandomMute> {
     if (_randomMuteProbInput.displayText.value.text != '') {
       int newRandomMute = int.parse(_randomMuteProbInput.displayText.value.text);
       _metronomeBlock.randomMute = newRandomMute;
-      rustApi.metronomeSetBeatMuteChance(muteChance: newRandomMute / 100.0).then((success) => null);
+      metronomeSetBeatMuteChance(muteChance: newRandomMute / 100.0).then((success) => null);
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     }
 
@@ -63,14 +64,14 @@ class _SetRandomMuteState extends State<SetRandomMute> {
   }
 
   void _onCancel() {
-    rustApi.metronomeSetBeatMuteChance(muteChance: _metronomeBlock.randomMute / 100.0).then((success) => null);
+    metronomeSetBeatMuteChance(muteChance: _metronomeBlock.randomMute / 100.0).then((success) => null);
     Navigator.pop(context);
   }
 
   void _onUserChangedRandomMute() async {
     if (_randomMuteProbInput.displayText.value.text != '') {
       double newValue = double.parse(_randomMuteProbInput.displayText.value.text);
-      rustApi.metronomeSetBeatMuteChance(muteChance: newValue / 100.0).then((success) => null);
+      metronomeSetBeatMuteChance(muteChance: newValue / 100.0).then((success) => null);
     }
   }
 

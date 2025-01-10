@@ -41,17 +41,17 @@ class _SmallNumInputState extends State<SmallNumInput> {
   bool _isPlusButtonActive = true;
   bool _isMinusButtonActive = true;
   late TextEditingController _valueController;
-  late Timer _decreaseTimer;
-  late Timer _increaseTimer;
+  Timer? _decreaseTimer;
+  Timer? _increaseTimer;
 
   // Initialize variables
   @override
   void initState() {
     super.initState();
-    widget.displayText.value = widget.displayText.value.copyWith(text: widget.defaultValue.toString());
-    _valueController = TextEditingController(text: widget.defaultValue.toString());
-    _decreaseTimer = Timer(Duration(milliseconds: widget.countingIntervalMs), () {});
-    _increaseTimer = Timer(Duration(milliseconds: widget.countingIntervalMs), () {});
+    widget.displayText.value =
+        widget.displayText.value.copyWith(text: widget.defaultValue.toString());
+    _valueController =
+        TextEditingController(text: widget.defaultValue.toString());
 
     widget.displayText.addListener(_onExternalChange);
   }
@@ -59,8 +59,8 @@ class _SmallNumInputState extends State<SmallNumInput> {
   // Dispose variables
   @override
   void dispose() {
-    _decreaseTimer.cancel();
-    _increaseTimer.cancel();
+    _decreaseTimer?.cancel();
+    _increaseTimer?.cancel();
     super.dispose();
   }
 
@@ -72,8 +72,9 @@ class _SmallNumInputState extends State<SmallNumInput> {
   // Decrease the currently displayed value
   void _decreaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value
-          .copyWith(text: (int.parse(_valueController.value.text) - widget.countingValue).toString());
+      _valueController.value = _valueController.value.copyWith(
+          text: (int.parse(_valueController.value.text) - widget.countingValue)
+              .toString());
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -82,8 +83,9 @@ class _SmallNumInputState extends State<SmallNumInput> {
   // Increase the currently displayed value
   void _increaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value
-          .copyWith(text: (int.parse(_valueController.value.text) + widget.countingValue).toString());
+      _valueController.value = _valueController.value.copyWith(
+          text: (int.parse(_valueController.value.text) + widget.countingValue)
+              .toString());
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -91,26 +93,28 @@ class _SmallNumInputState extends State<SmallNumInput> {
 
   // Looped decrease
   void _startDecreaseTimer() {
-    _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
+    _decreaseTimer = Timer.periodic(
+        Duration(milliseconds: widget.countingIntervalMs), (timer) {
       _decreaseValue();
     });
   }
 
   // Looped increase
   void _startIncreaseTimer() {
-    _increaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
+    _increaseTimer = Timer.periodic(
+        Duration(milliseconds: widget.countingIntervalMs), (timer) {
       _increaseValue();
     });
   }
 
   // Stop looped decrease
   void _endDecreaseTimer() {
-    _decreaseTimer.cancel();
+    _decreaseTimer?.cancel();
   }
 
   // Stop looped increase
   void _endIncreaseTimer() {
-    _increaseTimer.cancel();
+    _increaseTimer?.cancel();
   }
 
   // Check if plus and minus buttons should be active or inactive
@@ -173,8 +177,9 @@ class _SmallNumInputState extends State<SmallNumInput> {
               onLongPress: _startDecreaseTimer,
               onLongPressUp: _endDecreaseTimer,
               child: TIOFlatButton(
-                onPressed:
-                    (_valueController.value.text == '') ? () {} : (_isMinusButtonActive ? _decreaseValue : () {}),
+                onPressed: (_valueController.value.text == '')
+                    ? () {}
+                    : (_isMinusButtonActive ? _decreaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,
                   shape: const LeftButtonShape(),
@@ -193,7 +198,9 @@ class _SmallNumInputState extends State<SmallNumInput> {
               onLongPress: _startIncreaseTimer,
               onLongPressUp: _endIncreaseTimer,
               child: TIOFlatButton(
-                onPressed: (_valueController.value.text == '') ? () {} : (_isPlusButtonActive ? _increaseValue : () {}),
+                onPressed: (_valueController.value.text == '')
+                    ? () {}
+                    : (_isPlusButtonActive ? _increaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,
                   shape: const RightButtonShape(),
@@ -208,7 +215,8 @@ class _SmallNumInputState extends State<SmallNumInput> {
           ],
         ),
         // description
-        Text(widget.descriptionText, style: const TextStyle(color: ColorTheme.primary)),
+        Text(widget.descriptionText,
+            style: const TextStyle(color: ColorTheme.primary)),
       ],
     );
   }

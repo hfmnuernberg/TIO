@@ -2,23 +2,25 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/models/file_references.dart';
-import 'package:tiomusic/models/json_converter.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/projects_list/projects_list.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
 
 import 'package:tiomusic/models/file_io.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/src/rust/api/simple.dart';
+import 'package:tiomusic/src/rust/frb_generated.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/color_schemes.g.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
-void main() {
+Future<void> main() async {
+  await RustLib.init();
+  await initRustDefaultsManually();
   // first running loading screen app to load the data from json
   runApp(
     SplashApp(
@@ -73,18 +75,18 @@ class _TIOMusicHomePageState extends State<TIOMusicHomePage> {
       startAudioSession()
           .then((_) async => await configureAudioSession(AudioSessionType.playback))
           .then((_) async => await Future.delayed(const Duration(milliseconds: 500)))
-          .then((_) => rustApi.init());
+          .then((_) => initAudio());
     } else {
-      rustApi.init();
+      initAudio();
     }
 
-    if (kDebugMode) {
-      Timer.periodic(const Duration(milliseconds: 25), (Timer t) {
-        rustApi.pollDebugLogMessage().then((message) {
-          if (message != null && message.isNotEmpty) debugPrint(message);
-        });
-      });
-    }
+    // if (kDebugMode) {
+    //   Timer.periodic(const Duration(milliseconds: 3), (Timer t) {
+    //     pollDebugLogMessage().then((message) {
+    //       if (message != null && message.isNotEmpty) debugPrint(message);
+    //     });
+    //   });
+    // }
   }
 
   @override
@@ -141,19 +143,7 @@ class _SplashAppState extends State<SplashApp> {
       FileIO.deleteLocalJsonFile();
     } else {
       try {
-        // _________________________________________________________________
-        // If you want to test custom ProjectLibrary data, you can use this code to import your own json file
-        // This way you can test how old fields are converted to new fields for example
-        // String customJsonString = "";
-        // if (mounted) {
-        //   customJsonString = await DefaultAssetBundle.of(context).loadString("assets/testdata/jsonoldversion.json");
-        // }
-        // _________________________________________________________________
-
         Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-        CustomJsonConverter.renameKeys(jsonMap);
-        CustomJsonConverter.checkIfJsonMapContainsOldRhythmVersion(jsonMap);
-
         projectLibrary = ProjectLibrary.fromJson(jsonMap);
       } catch (e) {
         _hasError = true;

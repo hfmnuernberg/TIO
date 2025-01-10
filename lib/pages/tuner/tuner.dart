@@ -15,8 +15,9 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/pages/tuner/play_sound_page.dart';
 import 'package:tiomusic/pages/tuner/setting_concert_pitch.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+
 import 'package:tiomusic/pages/tuner/pitch_visualizer.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -41,6 +42,7 @@ class _TunerState extends State<Tuner> {
 
   bool _isRunning = false;
   bool _gettingPitchInput = false;
+  bool _isInStartUp = true;
 
   final _freqText = TextEditingController();
   final _midiText = TextEditingController();
@@ -104,30 +106,40 @@ class _TunerState extends State<Tuner> {
       DeviceOrientation.portraitDown,
     ]);
 
-    startTuner();
-    _processingButtonClick = true;
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      if (mounted) setState(() => _processingButtonClick = false);
-    });
-
-    _timerPollFreq = Timer.periodic(const Duration(milliseconds: 25), (Timer t) async {
-      if (!mounted) {
-        t.cancel();
-        return;
-      }
-      if (!_isRunning) return;
-      _onNewFrequency(await rustApi.tunerGetFrequency());
-    });
-
-    if (context.read<ProjectLibrary>().showTunerTutorial &&
-        !context.read<ProjectLibrary>().showToolTutorial &&
-        !context.read<ProjectLibrary>().showQuickToolTutorial &&
-        !context.read<ProjectLibrary>().showIslandTutorial) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _createWalkthrough();
-        _walkthrough.show(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // start with delay to make sure previous tuner is stopped before new one is started (on copy/save)
+      _processingButtonClick = true;
+      await Future.delayed(const Duration(milliseconds: 400));
+      startTuner();
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        if (mounted) {
+          setState(() {
+            _processingButtonClick = false;
+            // after tuner is started, we can set the flag and rebuilt the setting tiles
+            _isInStartUp = false;
+          });
+        }
       });
-    }
+
+      _timerPollFreq = Timer.periodic(const Duration(milliseconds: TunerParams.freqPollMillis), (Timer t) async {
+        if (!mounted) {
+          t.cancel();
+          return;
+        }
+        if (!_isRunning) return;
+        _onNewFrequency(await tunerGetFrequency());
+      });
+
+      if (mounted) {
+        if (context.read<ProjectLibrary>().showTunerTutorial &&
+            !context.read<ProjectLibrary>().showToolTutorial &&
+            !context.read<ProjectLibrary>().showQuickToolTutorial &&
+            !context.read<ProjectLibrary>().showIslandTutorial) {
+          _createWalkthrough();
+          _walkthrough.show(context);
+        }
+      }
+    });
   }
 
   void _createWalkthrough() {
@@ -259,6 +271,7 @@ class _TunerState extends State<Tuner> {
           settingPage: const SetConcertPitch(),
           block: _tunerBlock,
           callOnReturn: (value) => setState(() {}),
+          inactive: _isInStartUp,
         ),
         SettingsTile(
           title: "Play Reference",
@@ -270,6 +283,7 @@ class _TunerState extends State<Tuner> {
           callBeforeOpen: () async {
             await stopTuner();
           },
+          inactive: _isInStartUp,
         ),
       ],
     );
