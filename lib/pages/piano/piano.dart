@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/util/walkthrough_util.dart';
@@ -20,7 +21,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -29,8 +30,9 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class Piano extends StatefulWidget {
   final bool isQuickTool;
+  final bool withoutInitAndStart;
 
-  const Piano({super.key, required this.isQuickTool});
+  const Piano({super.key, required this.isQuickTool, this.withoutInitAndStart = false});
 
   @override
   State<Piano> createState() => _PianoState();
@@ -58,6 +60,8 @@ class _PianoState extends State<Piano> {
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
   bool _isPlaying = false;
 
+  bool _dontStopOnLeave = false;
+
   @override
   void initState() {
     super.initState();
@@ -80,7 +84,11 @@ class _PianoState extends State<Piano> {
 
     FileIO.saveProjectLibraryToJson(projectLibrary);
 
-    _pianoStart();
+    if (widget.withoutInitAndStart) {
+      _isPlaying = true;
+    } else {
+      _pianoStart();
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (context.read<ProjectLibrary>().showPianoTutorial) {
@@ -95,16 +103,19 @@ class _PianoState extends State<Piano> {
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _pianoStop();
     });
+
     bool initSuccess = await _initPiano(PianoParams.soundFontPaths[_pianoBlock.soundFontIndex]);
     await configureAudioSession(AudioSessionType.playback);
     if (!initSuccess) return;
-    bool success = await rustApi.pianoStart();
+    bool success = await pianoStart();
     _isPlaying = success;
   }
 
   Future<void> _pianoStop() async {
     await audioInterruptionListener?.cancel();
-    if (_isPlaying) await rustApi.pianoStop();
+    if (_isPlaying) {
+      await pianoStop();
+    }
     _isPlaying = false;
   }
 
@@ -141,7 +152,10 @@ class _PianoState extends State<Piano> {
 
   @override
   void deactivate() {
-    _pianoStop();
+    // don't stop if we save or copy the piano
+    if (!_dontStopOnLeave) {
+      _pianoStop();
+    }
     super.deactivate();
   }
 
@@ -159,7 +173,7 @@ class _PianoState extends State<Piano> {
     final file = File(tempSoundFontPath);
     await file.create(recursive: true);
     await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-    return await rustApi.pianoSetup(soundFontPath: tempSoundFontPath);
+    return await pianoSetup(soundFontPath: tempSoundFontPath);
   }
 
   @override
@@ -318,10 +332,10 @@ class _PianoState extends State<Piano> {
                                     initialValue: _pianoBlock.volume,
                                     onConfirm: (vol) {
                                       _pianoBlock.volume = vol;
-                                      rustApi.pianoSetVolume(volume: vol);
+                                      pianoSetVolume(volume: vol);
                                     },
-                                    onUserChangedVolume: (vol) => rustApi.pianoSetVolume(volume: vol),
-                                    onCancel: () => rustApi.pianoSetVolume(volume: _pianoBlock.volume),
+                                    onUserChangedVolume: (vol) => pianoSetVolume(volume: vol),
+                                    onCancel: () => pianoSetVolume(volume: _pianoBlock.volume),
                                   ),
                                   callbackOnReturn: (value) => setState(() {}),
                                   context,
@@ -451,10 +465,10 @@ class _PianoState extends State<Piano> {
                 hoverColor: Colors.transparent,
                 onTapDown: (_) async {
                   if (!_isPlaying) _pianoStart();
-                  await rustApi.pianoNoteOn(note: midi);
+                  await pianoNoteOn(note: midi);
                 },
-                onTapUp: (_) async => await rustApi.pianoNoteOff(note: midi),
-                onTapCancel: () async => await rustApi.pianoNoteOff(note: midi),
+                onTapUp: (_) async => await pianoNoteOff(note: midi),
+                onTapCancel: () async => await pianoNoteOff(note: midi),
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: _showLabelOnC(midi),
@@ -479,10 +493,10 @@ class _PianoState extends State<Piano> {
             highlightColor: ColorTheme.secondaryContainer,
             onTapDown: (_) async {
               if (!_isPlaying) _pianoStart();
-              await rustApi.pianoNoteOn(note: midi);
+              await pianoNoteOn(note: midi);
             },
-            onTapUp: (_) async => await rustApi.pianoNoteOff(note: midi),
-            onTapCancel: () async => await rustApi.pianoNoteOff(note: midi),
+            onTapUp: (_) async => await pianoNoteOff(note: midi),
+            onTapCancel: () async => await pianoNoteOff(note: midi),
             child: Align(
               alignment: Alignment.bottomCenter,
               child: _showLabelOnC(midi),
@@ -772,7 +786,8 @@ class _PianoState extends State<Piano> {
       await Future.delayed(const Duration(seconds: 2));
       // saving the tool in a project
       if (mounted) {
-        saveToolInProject(context, index, _pianoBlock, widget.isQuickTool, _newToolTitle.text);
+        _dontStopOnLeave = true;
+        saveToolInProject(context, index, _pianoBlock, widget.isQuickTool, _newToolTitle.text, pianoAlreadyOn: true);
       }
     }
   }
@@ -782,7 +797,9 @@ class _PianoState extends State<Piano> {
     _entry = null;
 
     if (submitted) {
-      saveToolInNewProject(context, _pianoBlock, widget.isQuickTool, _newProjectTitle.text, _newToolTitle.text);
+      _dontStopOnLeave = true;
+      saveToolInNewProject(context, _pianoBlock, widget.isQuickTool, _newProjectTitle.text, _newToolTitle.text,
+          pianoAlreadyOn: true);
     }
   }
 }

@@ -1,6 +1,8 @@
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/pages/metronome/setting_metronome_sound.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
+
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 
@@ -24,14 +26,14 @@ abstract class MetronomeUtils {
     String tempPathPolyUnacc2 =
         await copyAssetToTemp("${MetronomeParams.metronomeSoundsPath}/${block.polyUnaccSound2.toLowerCase()}.wav");
 
-    rustApi.metronomeLoadFile(beatType: BeatSound.Accented, wavFilePath: tempPathAcc);
-    rustApi.metronomeLoadFile(beatType: BeatSound.Unaccented, wavFilePath: tempPathUnacc);
-    rustApi.metronomeLoadFile(beatType: BeatSound.PolyAccented, wavFilePath: tempPathPolyAcc);
-    rustApi.metronomeLoadFile(beatType: BeatSound.PolyUnaccented, wavFilePath: tempPathPolyUnacc);
-    rustApi.metronomeLoadFile(beatType: BeatSound.Accented2, wavFilePath: tempPathAcc2);
-    rustApi.metronomeLoadFile(beatType: BeatSound.Unaccented2, wavFilePath: tempPathUnacc2);
-    rustApi.metronomeLoadFile(beatType: BeatSound.PolyAccented2, wavFilePath: tempPathPolyAcc2);
-    rustApi.metronomeLoadFile(beatType: BeatSound.PolyUnaccented2, wavFilePath: tempPathPolyUnacc2);
+    metronomeLoadFile(beatType: BeatSound.Accented, wavFilePath: tempPathAcc);
+    metronomeLoadFile(beatType: BeatSound.Unaccented, wavFilePath: tempPathUnacc);
+    metronomeLoadFile(beatType: BeatSound.PolyAccented, wavFilePath: tempPathPolyAcc);
+    metronomeLoadFile(beatType: BeatSound.PolyUnaccented, wavFilePath: tempPathPolyUnacc);
+    metronomeLoadFile(beatType: BeatSound.Accented2, wavFilePath: tempPathAcc2);
+    metronomeLoadFile(beatType: BeatSound.Unaccented2, wavFilePath: tempPathUnacc2);
+    metronomeLoadFile(beatType: BeatSound.PolyAccented2, wavFilePath: tempPathPolyAcc2);
+    metronomeLoadFile(beatType: BeatSound.PolyUnaccented2, wavFilePath: tempPathPolyUnacc2);
   }
 
   static void loadMetro2SoundsIntoMetro1(MetronomeBlock block) async {
@@ -44,10 +46,10 @@ abstract class MetronomeUtils {
     String tempPathPolyUnacc2 =
         await copyAssetToTemp("${MetronomeParams.metronomeSoundsPath}/${block.polyUnaccSound2.toLowerCase()}.wav");
 
-    rustApi.metronomeLoadFile(beatType: BeatSound.Accented, wavFilePath: tempPathAcc2);
-    rustApi.metronomeLoadFile(beatType: BeatSound.Unaccented, wavFilePath: tempPathUnacc2);
-    rustApi.metronomeLoadFile(beatType: BeatSound.PolyAccented, wavFilePath: tempPathPolyAcc2);
-    rustApi.metronomeLoadFile(beatType: BeatSound.PolyUnaccented, wavFilePath: tempPathPolyUnacc2);
+    metronomeLoadFile(beatType: BeatSound.Accented, wavFilePath: tempPathAcc2);
+    metronomeLoadFile(beatType: BeatSound.Unaccented, wavFilePath: tempPathUnacc2);
+    metronomeLoadFile(beatType: BeatSound.PolyAccented, wavFilePath: tempPathPolyAcc2);
+    metronomeLoadFile(beatType: BeatSound.PolyUnaccented, wavFilePath: tempPathPolyUnacc2);
   }
 
   // load a specific sound
@@ -94,6 +96,6 @@ abstract class MetronomeUtils {
     }
 
     String wavFilePath = await copyAssetToTemp("${MetronomeParams.metronomeSoundsPath}/$file.wav");
-    rustApi.metronomeLoadFile(beatType: beatType, wavFilePath: wavFilePath);
+    metronomeLoadFile(beatType: beatType, wavFilePath: wavFilePath);
   }
 }

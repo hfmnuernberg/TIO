@@ -49,8 +49,8 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   bool _isPlusButtonActive = true;
   bool _isMinusButtonActive = true;
   late TextEditingController _valueController;
-  late Timer _decreaseTimer;
-  late Timer _increaseTimer;
+  Timer? _decreaseTimer;
+  Timer? _increaseTimer;
   late int _maxDigitsLeft;
   late int _maxDigitsRight;
   late int _sliderDivisions;
@@ -61,14 +61,15 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   @override
   void initState() {
     super.initState();
-    widget.displayText.value = widget.displayText.value.copyWith(text: widget.defaultValue.toString());
-    _valueController = TextEditingController(text: widget.defaultValue.toString());
-    _decreaseTimer = Timer(Duration(milliseconds: widget.countingIntervalMs), () {});
-    _increaseTimer = Timer(Duration(milliseconds: widget.countingIntervalMs), () {});
+    widget.displayText.value =
+        widget.displayText.value.copyWith(text: widget.defaultValue.toString());
+    _valueController =
+        TextEditingController(text: widget.defaultValue.toString());
 
     _calcMaxDigits();
 
-    _sliderDivisions = (widget.maxValue - widget.minValue) ~/ widget.countingValue;
+    _sliderDivisions =
+        (widget.maxValue - widget.minValue) ~/ widget.countingValue;
     _sliderValue = widget.defaultValue;
 
     widget.displayText.addListener(_onExternalChange);
@@ -77,8 +78,8 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   // Dispose variables
   @override
   void dispose() {
-    _decreaseTimer.cancel();
-    _increaseTimer.cancel();
+    _decreaseTimer?.cancel();
+    _increaseTimer?.cancel();
     super.dispose();
   }
 
@@ -93,21 +94,27 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
     String maxValueString = widget.maxValue.toString();
     String minValueString = widget.minValue.toString();
 
-    int maxDigitsLeftMin =
-        (minValueString.contains('.') ? minValueString.split('.')[0].length : minValueString.length) -
-            (minValueString.contains('-') ? 1 : 0);
-    int maxDigitsLeftMax =
-        (maxValueString.contains('.') ? maxValueString.split('.')[0].length : maxValueString.length) -
-            (maxValueString.contains('-') ? 1 : 0);
+    int maxDigitsLeftMin = (minValueString.contains('.')
+            ? minValueString.split('.')[0].length
+            : minValueString.length) -
+        (minValueString.contains('-') ? 1 : 0);
+    int maxDigitsLeftMax = (maxValueString.contains('.')
+            ? maxValueString.split('.')[0].length
+            : maxValueString.length) -
+        (maxValueString.contains('-') ? 1 : 0);
     _maxDigitsLeft = [maxDigitsLeftMin, maxDigitsLeftMax].reduce(max);
-    _maxDigitsRight = countingValueString.contains('.') ? countingValueString.split('.')[1].length : 0;
+    _maxDigitsRight = countingValueString.contains('.')
+        ? countingValueString.split('.')[1].length
+        : 0;
   }
 
   // Decrease the currently displayed value
   void _decreaseValue() {
     if (_valueController.value.text != '') {
       _valueController.value = _valueController.value.copyWith(
-          text: (double.parse(_valueController.value.text) - widget.countingValue).toStringAsFixed(_maxDigitsRight));
+          text:
+              (double.parse(_valueController.value.text) - widget.countingValue)
+                  .toStringAsFixed(_maxDigitsRight));
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -117,7 +124,9 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   void _increaseValue() {
     if (_valueController.value.text != '') {
       _valueController.value = _valueController.value.copyWith(
-          text: (double.parse(_valueController.value.text) + widget.countingValue).toStringAsFixed(_maxDigitsRight));
+          text:
+              (double.parse(_valueController.value.text) + widget.countingValue)
+                  .toStringAsFixed(_maxDigitsRight));
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -125,26 +134,28 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
 
   // Looped decrease
   void _startDecreaseTimer() {
-    _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
+    _decreaseTimer = Timer.periodic(
+        Duration(milliseconds: widget.countingIntervalMs), (timer) {
       _decreaseValue();
     });
   }
 
   // Looped increase
   void _startIncreaseTimer() {
-    _increaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
+    _increaseTimer = Timer.periodic(
+        Duration(milliseconds: widget.countingIntervalMs), (timer) {
       _increaseValue();
     });
   }
 
   // Stop looped decrease
   void _endDecreaseTimer() {
-    _decreaseTimer.cancel();
+    _decreaseTimer?.cancel();
   }
 
   // Stop looped increase
   void _endIncreaseTimer() {
-    _increaseTimer.cancel();
+    _increaseTimer?.cancel();
   }
 
   // Check if plus and minus buttons should be active or inactive
@@ -206,12 +217,14 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
               onLongPress: _startDecreaseTimer,
               onLongPressUp: _endDecreaseTimer,
               child: TIOFlatButton(
-                onPressed:
-                    (_valueController.value.text == '') ? () {} : (_isMinusButtonActive ? _decreaseValue : () {}),
+                onPressed: (_valueController.value.text == '')
+                    ? () {}
+                    : (_isMinusButtonActive ? _decreaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,
                   shape: const LeftButtonShape(),
-                  fixedSize: Size(widget.buttonRadius * 2, widget.buttonRadius * 2),
+                  fixedSize:
+                      Size(widget.buttonRadius * 2, widget.buttonRadius * 2),
                 ),
                 icon: Icon(
                   Icons.remove,
@@ -226,7 +239,8 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
               child: Focus(
                 child: TextFormField(
                   controller: _valueController,
-                  keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers, decimal: true),
+                  keyboardType: TextInputType.numberWithOptions(
+                      signed: widget.allowNegativeNumbers, decimal: true),
                   inputFormatters: <TextInputFormatter>[
                     // Allow only positive and negative doubles
                     FilteringTextInputFormatter.allow(RegExp(r'^-?(\d{0,' +
@@ -241,11 +255,14 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
                     DeleteLeadingZeros(),
                   ],
                   decoration: const InputDecoration(
-                    enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: ColorTheme.primary)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: ColorTheme.primary)),
                     counterText: '',
                   ),
-                  style: TextStyle(fontSize: widget.textFontSize, color: ColorTheme.primary),
+                  style: TextStyle(
+                      fontSize: widget.textFontSize, color: ColorTheme.primary),
                   textAlign: TextAlign.center,
                   onChanged: (value) {
                     _manageButtonActivity(value);
@@ -273,11 +290,14 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
               onLongPress: _startIncreaseTimer,
               onLongPressUp: _endIncreaseTimer,
               child: TIOFlatButton(
-                onPressed: (_valueController.value.text == '') ? () {} : (_isPlusButtonActive ? _increaseValue : () {}),
+                onPressed: (_valueController.value.text == '')
+                    ? () {}
+                    : (_isPlusButtonActive ? _increaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,
                   shape: const RightButtonShape(),
-                  fixedSize: Size(widget.buttonRadius * 2, widget.buttonRadius * 2),
+                  fixedSize:
+                      Size(widget.buttonRadius * 2, widget.buttonRadius * 2),
                 ),
                 icon: Icon(
                   Icons.add,
@@ -287,7 +307,8 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
             ),
           ],
         ),
-        Text(widget.descriptionText, style: const TextStyle(color: ColorTheme.primary)),
+        Text(widget.descriptionText,
+            style: const TextStyle(color: ColorTheme.primary)),
         // slider
         Padding(
           padding: const EdgeInsets.only(top: 40),
@@ -302,7 +323,8 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
               setState(() {
                 _sliderValue = double.parse(newValue.toStringAsFixed(1));
                 _manageButtonActivity(_sliderValue.toString());
-                _valueController.value = _valueController.value.copyWith(text: _sliderValue.toString());
+                _valueController.value = _valueController.value
+                    .copyWith(text: _sliderValue.toString());
                 _validateInput(_valueController.text);
               });
             },

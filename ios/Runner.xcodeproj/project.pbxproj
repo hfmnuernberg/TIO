@@ -13,7 +13,6 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		D63E2F422B83B1A80015196B /* libnative_static.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A3671AD529957A8000604FF0 /* libnative_static.a */; };
 		D6BC425C29B0B0D700ACF78F /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2E08ED3C30B79DF06321E9 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -30,13 +29,6 @@
 			containerPortal = A3671ACD29957A7F00604FF0 /* native.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = CA60F0FEBE702969E816930C;
-			remoteInfo = "native-staticlib";
-		};
-		A3671AD629957A8A00604FF0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A3671ACD29957A7F00604FF0 /* native.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = CA60F0FEBE701C83950DBC35;
 			remoteInfo = "native-staticlib";
 		};
 /* End PBXContainerItemProxy section */
@@ -68,7 +60,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D63E2F422B83B1A80015196B /* libnative_static.a in Frameworks */,
 				D6BC425C29B0B0D700ACF78F /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -164,11 +155,11 @@
 				97C146EC1CF9000F007C117D /* Resources */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				89D6C228B6094C9DB50A42A9 /* [CP] Copy Pods Resources */,
+				63292DC87E700B4DAEE9B171 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				A3671AD729957A8A00604FF0 /* PBXTargetDependency */,
 			);
 			name = Runner;
 			productName = Runner;
@@ -284,6 +275,23 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
 		};
+		63292DC87E700B4DAEE9B171 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		89D6C228B6094C9DB50A42A9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -329,14 +337,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		A3671AD729957A8A00604FF0 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "native-staticlib";
-			targetProxy = A3671AD629957A8A00604FF0 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		97C146FA1CF9000F007C117D /* Main.storyboard */ = {

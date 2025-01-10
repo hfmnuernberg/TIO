@@ -17,7 +17,10 @@ class EditMarkersPage extends StatefulWidget {
   final Float32List rmsValues;
 
   const EditMarkersPage(
-      {super.key, required this.mediaPlayerBlock, required this.fileDuration, required this.rmsValues});
+      {super.key,
+      required this.mediaPlayerBlock,
+      required this.fileDuration,
+      required this.rmsValues});
 
   @override
   State<EditMarkersPage> createState() => _EditMarkersPageState();
@@ -46,14 +49,17 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     _positionDuration = widget.fileDuration * _sliderValue;
 
-    _waveformVisualizer = WaveformVisualizer.singleView(0.0, widget.rmsValues, 0, true);
+    _waveformVisualizer =
+        WaveformVisualizer.singleView(0.0, widget.rmsValues, 0, true);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
+      _waveFormWidth =
+          MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
       _numOfBins = (_waveFormWidth / MediaPlayerParams.binWidth).floor();
 
       setState(() {
-        _waveformVisualizer = WaveformVisualizer.singleView(0.0, widget.rmsValues, _numOfBins, true);
+        _waveformVisualizer = WaveformVisualizer.singleView(
+            0.0, widget.rmsValues, _numOfBins, true);
       });
     });
   }
@@ -77,12 +83,15 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                   Stack(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
+                    padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset,
+                        0, TIOMusicParams.edgeInset, 0),
                     child:
                         // waveform with gesture detector to jump to position on wave tap
                         GestureDetector(
                       onTapDown: _onWaveTap,
-                      child: CustomPaint(painter: _waveformVisualizer, size: Size(_waveFormWidth, _waveFormHeight)),
+                      child: CustomPaint(
+                          painter: _waveformVisualizer,
+                          size: Size(_waveFormWidth, _waveFormHeight)),
                     ),
                   ),
 
@@ -97,12 +106,14 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               value: _sliderValue,
               inactiveColor: ColorTheme.primary80,
               max: 1.0,
-              divisions: 1000, // how many individual values, only showing labels when division is not null
+              divisions:
+                  1000, // how many individual values, only showing labels when division is not null
               label: getDurationFormatedWithMilliseconds(_positionDuration),
               onChanged: (newValue) {
                 setState(() {
                   _sliderValue = newValue;
-                  _waveformVisualizer = WaveformVisualizer.singleView(newValue, widget.rmsValues, _numOfBins, true);
+                  _waveformVisualizer = WaveformVisualizer.singleView(
+                      newValue, widget.rmsValues, _numOfBins, true);
                   _positionDuration = widget.fileDuration * _sliderValue;
 
                   if (_selectedMarkerPosition != null) {
@@ -123,7 +134,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               height: TIOMusicParams.edgeInset,
             ),
             _listButtons(Icons.add, "Add Marker", _addNewMarker),
-            _listButtons(Icons.delete_outlined, "Remove Selected Marker", _removeSelectedMarker),
+            _listButtons(Icons.delete_outlined, "Remove Selected Marker",
+                _removeSelectedMarker),
           ],
         ),
       ),
@@ -132,8 +144,11 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   Widget _listButtons(IconData icon, String title, Function onTapFunction) {
     return Padding(
-      padding:
-          const EdgeInsets.only(left: TIOMusicParams.edgeInset, right: TIOMusicParams.edgeInset, top: 4, bottom: 4),
+      padding: const EdgeInsets.only(
+          left: TIOMusicParams.edgeInset,
+          right: TIOMusicParams.edgeInset,
+          top: 4,
+          bottom: 4),
       child: ListTile(
         leading: Icon(icon),
         title: Text(title),
@@ -160,20 +175,24 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       }
 
       var marker = Positioned(
-        left: TIOMusicParams.edgeInset + ((pos * _waveFormWidth) - (MediaPlayerParams.markerIconSize / 1.4)),
+        left: TIOMusicParams.edgeInset +
+            ((pos * _waveFormWidth) - (MediaPlayerParams.markerIconSize / 1.4)),
         top: (_waveFormHeight / 2) - MediaPlayerParams.markerIconSize - 20,
         child: IconButton(
           onPressed: () {
             if (!selected) {
               setState(() {
                 _sliderValue = pos;
-                _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, _numOfBins, true);
+                _waveformVisualizer = WaveformVisualizer.singleView(
+                    _sliderValue, widget.rmsValues, _numOfBins, true);
                 _selectedMarkerPosition = pos;
               });
             }
           },
           icon: Icon(
-            selected ? Icons.arrow_drop_down_circle_outlined : Icons.arrow_drop_down,
+            selected
+                ? Icons.arrow_drop_down_circle_outlined
+                : Icons.arrow_drop_down,
             color: selected ? ColorTheme.tertiary60 : ColorTheme.primary,
             size: MediaPlayerParams.markerIconSize,
           ),
@@ -203,11 +222,13 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   // and select marker if there is one at this position
   void _onWaveTap(TapDownDetails details) async {
     double relativeTapPosition = details.localPosition.dx / _waveFormWidth;
-    double relativeMarkerClickArea = MediaPlayerParams.binWidth / _waveFormWidth;
+    double relativeMarkerClickArea =
+        MediaPlayerParams.binWidth / _waveFormWidth;
 
     setState(() {
       _sliderValue = relativeTapPosition;
-      _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, _numOfBins, true);
+      _waveformVisualizer = WaveformVisualizer.singleView(
+          _sliderValue, widget.rmsValues, _numOfBins, true);
     });
 
     double? foundMarkerPosition;

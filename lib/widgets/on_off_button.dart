@@ -31,7 +31,8 @@ class _OnOffButtonState extends State<OnOffButton> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(TIOMusicParams.paddingOnOffButtons, 0, TIOMusicParams.paddingOnOffButtons, 0),
+      padding: const EdgeInsets.fromLTRB(TIOMusicParams.paddingOnOffButtons, 0,
+          TIOMusicParams.paddingOnOffButtons, 0),
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Visibility(
@@ -68,7 +69,8 @@ class _OnOffButtonState extends State<OnOffButton> {
         widget.iconOn,
         height: widget.buttonSize,
         width: widget.buttonSize,
-        colorFilter: const ColorFilter.mode(ColorTheme.tertiary, BlendMode.srcIn),
+        colorFilter:
+            const ColorFilter.mode(ColorTheme.tertiary, BlendMode.srcIn),
       );
     } else {
       return const Icon(Icons.abc);
@@ -86,7 +88,8 @@ class _OnOffButtonState extends State<OnOffButton> {
         widget.iconOff,
         height: widget.buttonSize,
         width: widget.buttonSize,
-        colorFilter: const ColorFilter.mode(ColorTheme.tertiary, BlendMode.srcIn),
+        colorFilter:
+            const ColorFilter.mode(ColorTheme.tertiary, BlendMode.srcIn),
       );
     } else {
       return const Icon(Icons.abc);
@@ -102,7 +105,8 @@ class PlaceholderButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(TIOMusicParams.paddingOnOffButtons, 0, TIOMusicParams.paddingOnOffButtons, 0),
+      padding: const EdgeInsets.fromLTRB(TIOMusicParams.paddingOnOffButtons, 0,
+          TIOMusicParams.paddingOnOffButtons, 0),
       child: CircleAvatar(
         backgroundColor: Colors.transparent,
         radius: buttonSize,

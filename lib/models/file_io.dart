@@ -8,7 +8,7 @@ import 'package:tiomusic/models/file_references.dart';
 import 'dart:convert';
 
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:wav/wav.dart';
 
@@ -68,7 +68,7 @@ abstract class FileIO {
 
   // returns the relative path of the new file
   // returns null if we don't accept the file format
-  static Future<String?> saveFileToAppStorage(BuildContext context, dynamic fileToSave, String newFileName,
+  static Future<String?> saveFileToAppStorage(BuildContext context, File fileToSave, String newFileName,
       String? relativePathOfPreviousFile, ProjectLibrary projectLibrary,
       {List<String>? acceptedFormats, bool asString = false}) async {
     // check if file exists / can be accessed
@@ -141,7 +141,7 @@ abstract class FileIO {
     }
 
     List<Float64List> listOfChannels = [samples];
-    var wavFile = Wav(listOfChannels, await rustApi.getSampleRate(), WavFormat.float32);
+    var wavFile = Wav(listOfChannels, await getSampleRate(), WavFormat.float32);
     var relativePath = "$_mediaFolder/$nameAndExtension";
 
     await wavFile.writeFile(await getAbsoluteFilePath(relativePath));

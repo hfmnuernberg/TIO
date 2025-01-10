@@ -5,7 +5,7 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/number_input_double.dart';
 
@@ -61,7 +61,7 @@ class _SetSpeedState extends State<SetSpeed> {
 
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
-      rustApi.mediaPlayerSetSpeedFactor(speedFactor: newSpeedFactor).then((success) => {
+      mediaPlayerSetSpeedFactor(speedFactor: newSpeedFactor).then((success) => {
             if (!success) {throw ("Setting speed factor in rust failed using this value: $newSpeedFactor")}
           });
     }
@@ -75,7 +75,7 @@ class _SetSpeedState extends State<SetSpeed> {
   }
 
   void _onCancel() {
-    rustApi.mediaPlayerSetSpeedFactor(speedFactor: _mediaPlayerBlock.speedFactor).then((success) => {
+    mediaPlayerSetSpeedFactor(speedFactor: _mediaPlayerBlock.speedFactor).then((success) => {
           if (!success)
             {throw ("Setting speed factor in rust failed using this value: ${_mediaPlayerBlock.speedFactor}")}
         });
@@ -87,7 +87,7 @@ class _SetSpeedState extends State<SetSpeed> {
     if (_speedInput.displayText.value.text != '') {
       double newValue = double.parse(_speedInput.displayText.value.text);
 
-      rustApi.mediaPlayerSetSpeedFactor(speedFactor: newValue).then((success) => {
+      mediaPlayerSetSpeedFactor(speedFactor: newValue).then((success) => {
             if (!success) {throw ("Setting speed factor in rust failed using this value: $newValue")}
           });
     }

@@ -23,7 +23,8 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
   void initState() {
     super.initState();
 
-    _tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
+    _tunerBlock =
+        Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
 
     _concertPitchInput = NumberInputDouble(
       maxValue: 600.0,
@@ -49,7 +50,8 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
 
   void _onConfirm() async {
     if (_concertPitchInput.displayText.value.text != '') {
-      double newConcertPitch = double.parse(_concertPitchInput.displayText.value.text);
+      double newConcertPitch =
+          double.parse(_concertPitchInput.displayText.value.text);
       _tunerBlock.chamberNoteHz = newConcertPitch;
 
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
@@ -59,7 +61,7 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
   }
 
   void _reset() {
-    _concertPitchInput.displayText.value =
-        _concertPitchInput.displayText.value.copyWith(text: TunerParams.defaultConcertPitch.toString());
+    _concertPitchInput.displayText.value = _concertPitchInput.displayText.value
+        .copyWith(text: TunerParams.defaultConcertPitch.toString());
   }
 }

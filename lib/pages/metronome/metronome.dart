@@ -17,7 +17,9 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome.dart';
+
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -91,12 +93,12 @@ class _MetronomeState extends State<Metronome> {
       DeviceOrientation.portraitDown,
     ]);
 
-    rustApi.metronomeSetVolume(volume: _metronomeBlock.volume);
-    rustApi.metronomeSetRhythm(
+    metronomeSetVolume(volume: _metronomeBlock.volume);
+    metronomeSetRhythm(
         bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
         bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2));
-    rustApi.metronomeSetBpm(bpm: _metronomeBlock.bpm.toDouble());
-    rustApi.metronomeSetBeatMuteChance(muteChance: _metronomeBlock.randomMute.toDouble() / 100.0);
+    metronomeSetBpm(bpm: _metronomeBlock.bpm.toDouble());
+    metronomeSetBeatMuteChance(muteChance: _metronomeBlock.randomMute.toDouble() / 100.0);
 
     _muteMetronome(!_sound);
     MetronomeUtils.loadSounds(_metronomeBlock);
@@ -114,7 +116,7 @@ class _MetronomeState extends State<Metronome> {
       }
       if (!_isStarted) return;
 
-      var event = await rustApi.metronomePollBeatEventHappened();
+      var event = await metronomePollBeatEventHappened();
       if (event != null) {
         _onBeatHappened(event);
         if (!mounted) return;
@@ -214,7 +216,7 @@ class _MetronomeState extends State<Metronome> {
               isSecond ? _rhythmSegmentList2.add(newRhythmSegment) : _rhythmSegmentList.add(newRhythmSegment);
             }
 
-            rustApi.metronomeSetRhythm(
+            metronomeSetRhythm(
                 bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
                 bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2));
           });
@@ -253,7 +255,7 @@ class _MetronomeState extends State<Metronome> {
 
         isSecond ? _rhythmSegmentList2[idx] = newRhythmSegment : _rhythmSegmentList[idx] = newRhythmSegment;
 
-        rustApi.metronomeSetRhythm(
+        metronomeSetRhythm(
             bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
             bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2));
         setState(() {});
@@ -267,7 +269,7 @@ class _MetronomeState extends State<Metronome> {
 
       _clearAndRebuildRhythmSegments(isSecond);
 
-      rustApi.metronomeSetRhythm(
+      metronomeSetRhythm(
           bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
           bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2));
       if (mounted) {
@@ -285,7 +287,7 @@ class _MetronomeState extends State<Metronome> {
 
     _clearAndRebuildRhythmSegments(isSecond);
 
-    rustApi.metronomeSetRhythm(
+    metronomeSetRhythm(
         bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
         bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2));
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
@@ -314,7 +316,7 @@ class _MetronomeState extends State<Metronome> {
       editFunction: () => _editRhythmSegment(0, false),
     ));
 
-    rustApi.metronomeSetRhythm(
+    metronomeSetRhythm(
         bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
         bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2));
     if (mounted) {
@@ -386,14 +388,14 @@ class _MetronomeState extends State<Metronome> {
 
   Future<void> _stopMetronome() async {
     await audioInterruptionListener?.cancel();
-    bool success = await rustApi.metronomeStop();
+    bool success = await metronomeStop();
     if (!success) debugPrint('failed to stop metronome');
     _isStarted = false;
   }
 
   // Turn off metronome sound
   void _muteMetronome(bool isMute) {
-    rustApi.metronomeSetMuted(muted: isMute);
+    metronomeSetMuted(muted: isMute);
   }
 
   // React to beat signal
@@ -652,10 +654,10 @@ class _MetronomeState extends State<Metronome> {
             initialValue: _metronomeBlock.volume,
             onConfirm: (vol) {
               _metronomeBlock.volume = vol;
-              rustApi.metronomeSetVolume(volume: vol);
+              metronomeSetVolume(volume: vol);
             },
-            onUserChangedVolume: (vol) => rustApi.metronomeSetVolume(volume: vol),
-            onCancel: () => rustApi.metronomeSetVolume(volume: _metronomeBlock.volume),
+            onUserChangedVolume: (vol) => metronomeSetVolume(volume: vol),
+            onCancel: () => metronomeSetVolume(volume: _metronomeBlock.volume),
           ),
           block: _metronomeBlock,
           callOnReturn: (value) => setState(() {}),

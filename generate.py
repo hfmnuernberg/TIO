@@ -12,9 +12,7 @@ parser.add_argument("type", choices=["all", "rust", "splash", "icon", "json"])
 
 
 def generate_rust():
-    call_os(
-        "flutter_rust_bridge_codegen --rust-input native/src/api.rs --dart-output ./lib/rust_api/generated/bridge_generated.dart --dart-decl-output ./lib/rust_api/generated/bridge_definitions.dart"
-    )
+    call_os("flutter_rust_bridge_codegen generate --no-dart-enums-style")
 
 
 def generate_splash():

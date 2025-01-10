@@ -13,11 +13,14 @@ class WaveformVisualizer extends CustomPainter {
   double? _rangeEndPos;
   bool _singleView = false;
 
-  WaveformVisualizer(this._playbackPosition, this._rangeStartPos, this._rangeEndPos, this._rmsValues, this._numOfBins);
+  WaveformVisualizer(this._playbackPosition, this._rangeStartPos,
+      this._rangeEndPos, this._rmsValues, this._numOfBins);
 
-  WaveformVisualizer.singleView(this._playbackPosition, this._rmsValues, this._numOfBins, this._singleView);
+  WaveformVisualizer.singleView(this._playbackPosition, this._rmsValues,
+      this._numOfBins, this._singleView);
 
-  WaveformVisualizer.setTrim(this._rangeStartPos, this._rangeEndPos, this._rmsValues, this._numOfBins);
+  WaveformVisualizer.setTrim(
+      this._rangeStartPos, this._rangeEndPos, this._rmsValues, this._numOfBins);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -45,7 +48,8 @@ class WaveformVisualizer extends CustomPainter {
         var brush = blueBrush;
         // if calling with singleView constructor
         if (_singleView) {
-          if (i >= playbackPositionMapped - 1.0 && i <= playbackPositionMapped) {
+          if (i >= playbackPositionMapped - 1.0 &&
+              i <= playbackPositionMapped) {
             brush = redBrush;
           }
           // else calling with standard constructor
@@ -71,7 +75,9 @@ class WaveformVisualizer extends CustomPainter {
       double endPositionMapped = _rangeEndPos! * _numOfBins;
 
       for (int i = 0; i < _rmsValues.length; i++) {
-        var brush = i >= startPositionMapped && i <= endPositionMapped ? redBrush : blueBrush;
+        var brush = i >= startPositionMapped && i <= endPositionMapped
+            ? redBrush
+            : blueBrush;
 
         _drawWaveLine(canvas, size, stepSize, midAxisHeight, i, brush);
         stepSize = stepSize + MediaPlayerParams.binWidth;
@@ -79,12 +85,17 @@ class WaveformVisualizer extends CustomPainter {
     }
   }
 
-  void _drawWaveLine(Canvas canvas, Size size, double stepSize, var midAxisHeight, int i, Paint brush) {
-    canvas.drawLine(Offset(stepSize, midAxisHeight),
-        Offset(stepSize, midAxisHeight - (_rmsValues[i] * (size.height / 2.2))), brush);
+  void _drawWaveLine(Canvas canvas, Size size, double stepSize,
+      var midAxisHeight, int i, Paint brush) {
+    canvas.drawLine(
+        Offset(stepSize, midAxisHeight),
+        Offset(stepSize, midAxisHeight - (_rmsValues[i] * (size.height / 2.2))),
+        brush);
 
-    canvas.drawLine(Offset(stepSize, midAxisHeight),
-        Offset(stepSize, midAxisHeight + (_rmsValues[i] * (size.height / 2.2))), brush);
+    canvas.drawLine(
+        Offset(stepSize, midAxisHeight),
+        Offset(stepSize, midAxisHeight + (_rmsValues[i] * (size.height / 2.2))),
+        brush);
   }
 
   @override

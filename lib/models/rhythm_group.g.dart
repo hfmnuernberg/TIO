@@ -16,7 +16,7 @@ RhythmGroup _$RhythmGroupFromJson(Map<String, dynamic> json) => RhythmGroup(
               ?.map((e) => $enumDecode(_$BeatTypePolyEnumMap, e))
               .toList() ??
           [],
-      json['noteKey'] as String? ?? 'e4_1',
+      json['noteKey'] as String? ?? 'e4',
     );
 
 Map<String, dynamic> _$RhythmGroupToJson(RhythmGroup instance) =>

@@ -7,7 +7,8 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
+
 import 'package:tiomusic/widgets/number_input_int.dart';
 import 'package:tiomusic/pages/metronome/tap_to_tempo.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -50,7 +51,7 @@ class _SetBPMState extends State<SetBPM> {
     if (_bpmInput.displayText.value.text != '') {
       int newBpm = int.parse(_bpmInput.displayText.value.text);
       if (newBpm >= MetronomeParams.minBPM && newBpm <= MetronomeParams.maxBPM) {
-        rustApi.metronomeSetBpm(bpm: newBpm.toDouble());
+        metronomeSetBpm(bpm: newBpm.toDouble());
       }
       _metronomeBlock.bpm = newBpm;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
@@ -64,7 +65,7 @@ class _SetBPMState extends State<SetBPM> {
   }
 
   void _onCancel() {
-    rustApi.metronomeSetBpm(bpm: _metronomeBlock.bpm.toDouble());
+    metronomeSetBpm(bpm: _metronomeBlock.bpm.toDouble());
     Navigator.pop(context);
   }
 
@@ -72,7 +73,7 @@ class _SetBPMState extends State<SetBPM> {
     if (_bpmInput.displayText.value.text != '') {
       int newBpm = int.parse(_bpmInput.displayText.value.text);
       if (newBpm >= MetronomeParams.minBPM && newBpm <= MetronomeParams.maxBPM) {
-        rustApi.metronomeSetBpm(bpm: newBpm.toDouble());
+        metronomeSetBpm(bpm: newBpm.toDouble());
       }
     }
   }

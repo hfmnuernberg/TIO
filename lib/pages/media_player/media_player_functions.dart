@@ -10,7 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/rust_api/ffi.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -19,21 +19,21 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 abstract class MediaPlayerFunctions {
   static void setSpeedAndPitchInRust(double speedFactor, double pitchSemitones) {
-    rustApi.mediaPlayerSetSpeedFactor(speedFactor: speedFactor).then((success) => {
+    mediaPlayerSetSpeedFactor(speedFactor: speedFactor).then((success) => {
           if (!success) {throw ("Setting speed factor in rust failed using this value: $speedFactor")}
         });
-    rustApi.mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones).then((success) => {
+    mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones).then((success) => {
           if (!success) {throw ("Setting pitch semitones in rust failed using this value: $pitchSemitones")}
         });
   }
 
   static Future<Float32List?> _setAudioFileAndTrimInRust(
       String absoluteFilePath, double startFactor, double endFactor, int numberOfBins) async {
-    var success = await rustApi.mediaPlayerLoadWav(wavFilePath: absoluteFilePath);
+    var success = await mediaPlayerLoadWav(wavFilePath: absoluteFilePath);
     if (success) {
-      rustApi.mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor);
+      mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor);
 
-      var tempRmsList = await rustApi.mediaPlayerGetRms(nBins: numberOfBins);
+      var tempRmsList = await mediaPlayerGetRms(nBins: numberOfBins);
       return _normalizeRms(tempRmsList);
     }
     return null;
@@ -51,9 +51,9 @@ abstract class MediaPlayerFunctions {
 
   static Future<bool> startPlaying(bool looping) async {
     await stopRecording();
-    await rustApi.mediaPlayerSetLoop(looping: looping);
+    await mediaPlayerSetLoop(looping: looping);
     await configureAudioSession(AudioSessionType.playback);
-    var success = await rustApi.mediaPlayerStart();
+    var success = await mediaPlayerStart();
     if (success) {
       await WakelockPlus.enable();
     }
@@ -62,7 +62,7 @@ abstract class MediaPlayerFunctions {
 
   static Future<bool> stopPlaying() async {
     await WakelockPlus.disable();
-    return await rustApi.mediaPlayerStop();
+    return await mediaPlayerStop();
   }
 
   static Future<bool> startRecording(bool isPlaying) async {
@@ -77,7 +77,7 @@ abstract class MediaPlayerFunctions {
     }
 
     await configureAudioSession(AudioSessionType.record);
-    var success = await rustApi.mediaPlayerStartRecording();
+    var success = await mediaPlayerStartRecording();
     if (success) {
       await WakelockPlus.enable();
     }
@@ -86,12 +86,12 @@ abstract class MediaPlayerFunctions {
 
   static Future<bool> stopRecording() async {
     await WakelockPlus.disable();
-    return await rustApi.mediaPlayerStopRecording();
+    return await mediaPlayerStopRecording();
   }
 
   static Future<String?> writeRecordingToFile(
       String newFileName, String? relativePathOfPreviousFile, ProjectLibrary projectLibrary) async {
-    final samples = await rustApi.mediaPlayerGetRecordingSamples();
+    final samples = await mediaPlayerGetRecordingSamples();
     return await FileIO.writeSamplesToWaveFile(samples, newFileName, relativePathOfPreviousFile, projectLibrary);
   }
 

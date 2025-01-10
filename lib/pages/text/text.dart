@@ -58,10 +58,13 @@ class _TextToolState extends State<TextTool> {
     return ParentTool(
       barTitle: _textBlock.title,
       isQuickTool: widget.isQuickTool,
-      project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
+      project: widget.isQuickTool
+          ? null
+          : Provider.of<Project>(context, listen: false),
       toolBlock: _textBlock,
       centerModule: SizedBox(
-        height: MediaQuery.of(context).size.height - ParentToolParams.appBarHeight * 3,
+        height: MediaQuery.of(context).size.height -
+            ParentToolParams.appBarHeight * 3,
         width: MediaQuery.of(context).size.width,
         child: Padding(
           padding: const EdgeInsets.all(TIOMusicParams.edgeInset),

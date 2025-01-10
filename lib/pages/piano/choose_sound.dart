@@ -19,9 +19,12 @@ class _ChooseSoundState extends State<ChooseSound> {
   late PianoBlock _pianoBlock;
 
   final List<Widget> _sounds = <Widget>[
-    Text(PianoParams.soundFontNames[0], style: const TextStyle(color: ColorTheme.primary)),
-    Text(PianoParams.soundFontNames[1], style: const TextStyle(color: ColorTheme.primary)),
-    Text(PianoParams.soundFontNames[2], style: const TextStyle(color: ColorTheme.primary)),
+    Text(PianoParams.soundFontNames[0],
+        style: const TextStyle(color: ColorTheme.primary)),
+    Text(PianoParams.soundFontNames[1],
+        style: const TextStyle(color: ColorTheme.primary)),
+    Text(PianoParams.soundFontNames[2],
+        style: const TextStyle(color: ColorTheme.primary)),
   ];
 
   final List<bool> _selectedSounds = List<bool>.filled(3, false);
@@ -30,7 +33,8 @@ class _ChooseSoundState extends State<ChooseSound> {
   void initState() {
     super.initState();
 
-    _pianoBlock = Provider.of<ProjectBlock>(context, listen: false) as PianoBlock;
+    _pianoBlock =
+        Provider.of<ProjectBlock>(context, listen: false) as PianoBlock;
 
     for (var i = 0; i < _selectedSounds.length; i++) {
       if (i == _pianoBlock.soundFontIndex) {
@@ -65,7 +69,8 @@ class _ChooseSoundState extends State<ChooseSound> {
   }
 
   void _onConfirm() {
-    _pianoBlock.soundFontIndex = _selectedSounds.indexWhere((element) => element);
+    _pianoBlock.soundFontIndex =
+        _selectedSounds.indexWhere((element) => element);
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     Navigator.pop(context);
   }

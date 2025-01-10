@@ -12,6 +12,7 @@ class SettingsTile extends StatelessWidget {
   final ProjectBlock block;
   final Function? callOnReturn;
   final Function? callBeforeOpen;
+  final bool inactive;
 
   const SettingsTile({
     super.key,
@@ -22,6 +23,7 @@ class SettingsTile extends StatelessWidget {
     required this.block,
     this.callOnReturn,
     this.callBeforeOpen,
+    this.inactive = false,
   });
 
   @override
@@ -29,21 +31,26 @@ class SettingsTile extends StatelessWidget {
     return CardListTile(
       title: title,
       subtitle: subtitle,
+      textColor: inactive ? ColorTheme.secondary : ColorTheme.primary,
+      leadingIconColor: inactive ? ColorTheme.secondary : ColorTheme.primary,
       trailingIcon: IconButton(
-        onPressed: () {
-          if (callBeforeOpen != null) {
-            callBeforeOpen!();
-          }
-          openSettingPage(settingPage, context, block, callbackOnReturn: callOnReturn ?? (value) {});
-        },
+        onPressed: inactive
+            ? null
+            : () {
+                if (callBeforeOpen != null) {
+                  callBeforeOpen!();
+                }
+                openSettingPage(settingPage, context, block, callbackOnReturn: callOnReturn ?? (value) {});
+              },
         icon: const Icon(Icons.arrow_forward),
         color: ColorTheme.primaryFixedDim,
+        disabledColor: ColorTheme.secondary,
       ),
       leadingPicture: leadingIcon is String
           ? leadingIcon
           : Icon(
               leadingIcon,
-              color: ColorTheme.surfaceTint,
+              color: inactive ? ColorTheme.secondary : ColorTheme.primary,
             ),
       onTapFunction: () {
         if (callBeforeOpen != null) {
@@ -51,6 +58,7 @@ class SettingsTile extends StatelessWidget {
         }
         openSettingPage(settingPage, context, block, callbackOnReturn: callOnReturn ?? (value) {});
       },
+      disableTap: inactive,
     );
   }
 }

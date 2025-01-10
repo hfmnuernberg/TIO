@@ -20,7 +20,10 @@ class PianoBlock extends ProjectBlock {
       ];
 
   @override
-  @JsonKey(defaultValue: PianoParams.kind, includeFromJson: false, includeToJson: true)
+  @JsonKey(
+      defaultValue: PianoParams.kind,
+      includeFromJson: false,
+      includeToJson: true)
   String get kind => PianoParams.kind;
 
   late String _title;
@@ -95,8 +98,8 @@ class PianoBlock extends ProjectBlock {
     ];
   }
 
-  PianoBlock(String title, String id, String? islandToolID, double volume, int keyboardPosition, int soundFontIndex,
-      DateTime timeLastModified) {
+  PianoBlock(String title, String id, String? islandToolID, double volume,
+      int keyboardPosition, int soundFontIndex, DateTime timeLastModified) {
     _timeLastModified = timeLastModified;
     _title = title;
     _volume = volume;
@@ -142,8 +145,10 @@ class PianoBlock extends ProjectBlock {
     if (midiToName(_keyboardPosition).length > 1) {
       _keyboardPosition++;
     }
-    if (_keyboardPosition > PianoParams.highestMidiNote - PianoParams.numberOfWhiteKeys - 7) {
-      _keyboardPosition = PianoParams.highestMidiNote - PianoParams.numberOfWhiteKeys - 7;
+    if (_keyboardPosition >
+        PianoParams.highestMidiNote - PianoParams.numberOfWhiteKeys - 7) {
+      _keyboardPosition =
+          PianoParams.highestMidiNote - PianoParams.numberOfWhiteKeys - 7;
     }
     notifyListeners();
   }
@@ -158,8 +163,10 @@ class PianoBlock extends ProjectBlock {
 
   void octaveUp() {
     _keyboardPosition += 12;
-    if (_keyboardPosition > PianoParams.highestMidiNote - PianoParams.numberOfWhiteKeys - 7) {
-      _keyboardPosition = PianoParams.highestMidiNote - PianoParams.numberOfWhiteKeys - 7;
+    if (_keyboardPosition >
+        PianoParams.highestMidiNote - PianoParams.numberOfWhiteKeys - 7) {
+      _keyboardPosition =
+          PianoParams.highestMidiNote - PianoParams.numberOfWhiteKeys - 7;
     }
     notifyListeners();
   }
@@ -167,7 +174,8 @@ class PianoBlock extends ProjectBlock {
   @override
   Icon get icon => blockTypeInfos[BlockType.piano]!.icon;
 
-  factory PianoBlock.fromJson(Map<String, dynamic> json) => _$PianoBlockFromJson(json);
+  factory PianoBlock.fromJson(Map<String, dynamic> json) =>
+      _$PianoBlockFromJson(json);
 
   @override
   Map<String, dynamic> toJson() => _$PianoBlockToJson(this);

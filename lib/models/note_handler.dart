@@ -10,8 +10,12 @@ abstract class NoteHandler {
   // reads the files in assets/notes and creates a map with the note values
   static Future createNoteBeatLengthMap() async {
     final assetManifest = await AssetManifest.loadFromAssetBundle(rootBundle);
-    var noteFiles = assetManifest.listAssets().where((string) => string.startsWith("assets/notes")).toList();
-    noteFiles = noteFiles.map((path) => path.replaceAll("assets/notes/", "")).toList();
+    var noteFiles = assetManifest
+        .listAssets()
+        .where((string) => string.startsWith("assets/notes"))
+        .toList();
+    noteFiles =
+        noteFiles.map((path) => path.replaceAll("assets/notes/", "")).toList();
 
     for (var fileName in noteFiles) {
       debugPrint(fileName);
@@ -21,7 +25,8 @@ abstract class NoteHandler {
       key = key.substring(0, key.length - (key.split("_").last.length + 1));
 
       var svg = SvgPicture.asset("assets/notes/$fileName",
-          colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn));
+          colorFilter:
+              const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn));
 
       _noteValues[key] = SvgNote(svg: svg, beatLength: beatLength);
     }

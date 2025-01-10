@@ -4,7 +4,7 @@ double freqToMidi(double freq, double condertPitchFreq) {
   return 12.0 * (log(freq / (condertPitchFreq / 2.0)) / log(2.0)) + 57.0;
 }
 
-double midiToFreq(double midi, {double concertPitch = 440.0}) {
+double midiToFreq(int midi, {double concertPitch = 440.0}) {
   return concertPitch * pow(2.0, (midi - 69.0) / 12.0);
 }
 

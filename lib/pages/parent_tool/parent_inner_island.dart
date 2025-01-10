@@ -61,7 +61,8 @@ class _ParentInnerIslandState extends State<ParentInnerIsland> {
           ),
           SizedBox(
             width: widget.textSpaceWidth,
-            child: Text(widget.parameterText, style: const TextStyle(color: ColorTheme.primary)),
+            child: Text(widget.parameterText,
+                style: const TextStyle(color: ColorTheme.primary)),
           ),
         ],
       ),

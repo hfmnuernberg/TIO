@@ -22,19 +22,18 @@ class _Tap2TempoState extends State<Tap2Tempo> {
   var _time2 = DateTime.now();
   var _bpmList = <int>[];
   bool _firstTap = true;
-  late int _t2tColorLerpValue;
-  late Timer _t2tTimer;
+  int _t2tColorLerpValue = MetronomeParams.t2tCooldownMs;
+  late Timer? _t2tTimer;
 
   @override
   void initState() {
     super.initState();
-    _t2tColorLerpValue = MetronomeParams.t2tCooldownMs;
-    _t2tTimer = Timer(const Duration(milliseconds: 0), () {});
+    _t2tTimer = Timer(Duration.zero, () {});
   }
 
   @override
   void dispose() {
-    _t2tTimer.cancel();
+    _t2tTimer?.cancel();
     super.dispose();
   }
 
@@ -58,7 +57,7 @@ class _Tap2TempoState extends State<Tap2Tempo> {
 
   // Update screen to lerp background color of the Tap2Tempo button
   void _tap2tempoColorLerpTimer() {
-    _t2tTimer.cancel();
+    _t2tTimer?.cancel();
     _t2tColorLerpValue = 0;
     _t2tTimer = Timer.periodic(const Duration(milliseconds: MetronomeParams.t2tLerpFrameLengthMs), (timer) {
       _t2tColorLerpValue = MetronomeParams.t2tLerpFrameLengthMs * timer.tick;

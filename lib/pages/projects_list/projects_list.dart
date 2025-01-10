@@ -201,7 +201,7 @@ class _ProjectsListState extends State<ProjectsList> {
 
     if (returnValue is Map) {
       if (returnValue["action"] == ReturnAction.goToNewTool) {
-        _goToToolOverProjectPage(returnValue["project"], returnValue["block"]);
+        _goToToolOverProjectPage(returnValue["project"], returnValue["block"], returnValue["pianoAlreadyOn"]);
       }
     } else {
       // on every return to the home page
@@ -242,7 +242,7 @@ class _ProjectsListState extends State<ProjectsList> {
         ),
       );
 
-  void _goToToolOverProjectPage(Project project, ProjectBlock tool) {
+  void _goToToolOverProjectPage(Project project, ProjectBlock tool, bool pianoAlreadyOn) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return ChangeNotifierProvider<Project>.value(
         value: project,
@@ -251,6 +251,7 @@ class _ProjectsListState extends State<ProjectsList> {
             goStraightToTool: true,
             toolToOpenDirectly: tool,
             withoutRealProject: false,
+            pianoAlreadyOn: pianoAlreadyOn,
           );
         },
       );
@@ -372,8 +373,8 @@ class _ProjectsListState extends State<ProjectsList> {
               );
             },
             style: const MenuStyle(
-              backgroundColor: MaterialStatePropertyAll(ColorTheme.surface),
-              elevation: MaterialStatePropertyAll(0.0),
+              backgroundColor: WidgetStatePropertyAll(ColorTheme.surface),
+              elevation: WidgetStatePropertyAll(0.0),
             ),
             menuChildren: _menuItems,
           ),
@@ -385,7 +386,7 @@ class _ProjectsListState extends State<ProjectsList> {
         children: [
           // background image
           FittedBox(
-            fit: BoxFit.fitWidth,
+            fit: BoxFit.cover,
             child: Image.asset(
               "assets/images/tiomusic-bg.png",
             ),
@@ -415,7 +416,6 @@ class _ProjectsListState extends State<ProjectsList> {
                               scrollDirection: Axis.vertical,
                               itemCount: projectLibrary.projects.length,
                               itemBuilder: (BuildContext context, int idx) {
-                                projectLibrary.sortProjects();
                                 return CardListTile(
                                   title: projectLibrary.projects[idx].title,
                                   subtitle: getDateAndTimeFormatted(projectLibrary.projects[idx].timeLastModified),
