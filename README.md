@@ -34,7 +34,20 @@ If you are interested in giving feedback or contributing to **TIO**, please leav
 
 # Installation
 
-### Flutter
+## Flutter
+
+### FVM
+
+Install the flutter version manager to easily switch between flutter versions in different projects.
+If installed all flutter commands have to be prefixed with `fvm` (e.g. `fvm flutter doctor`).
+
+
+1. Install [FVM](https://fvm.app/docs/getting_started/installation/)
+   - From now on `fvm flutter doctor` will suggest what to do next to get started, but the following steps outline what to do next.
+   - List all available flutter versions: `fvm list`
+   - Install a specific flutter version: `fvm install 3.22.1` (if installed use version with `fvm use 3.22.1`)
+
+### Without FVM
 
 -   [Get Flutter.](https://docs.flutter.dev/get-started/install)
 -   Call `flutter --version`. Your output should look like:
@@ -46,7 +59,7 @@ Engine • revision 55eae6864b
 Tools • Dart 3.4.1 • DevTools 2.34.3
 ```
 
--   Call `flutter doctor` and resolve all errors. Your output should look like:
+-   Call `fvm flutter doctor` and resolve all errors. Your output should look like:
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
@@ -67,7 +80,7 @@ Doctor summary (to see all details, run flutter doctor -v):
 ### Install Flutter dependencies
 
 ```
-flutter pub get
+fvm flutter pub get
 ```
 
 ### Android Studio
@@ -172,7 +185,7 @@ We are using the package [json_serializable](https://pub.dev/packages/json_seria
 The generation can be done with `generate.py` or a **continuous runner**:
 
 ```
-flutter pub run build_runner watch --delete-conflicting-outputs
+fvm flutter pub run build_runner watch --delete-conflicting-outputs
 ```
 
 ---
@@ -185,7 +198,7 @@ flutter pub run build_runner watch --delete-conflicting-outputs
         -   go to accounts
         -   log into the necessary account for codesigning (check the certificates)
 -   restart your mac - **don't skip, this is important**
--   run `flutter build ipa`
+-   run `fvm flutter build ipa`
 
 # Build for Android
 
@@ -193,4 +206,4 @@ flutter pub run build_runner watch --delete-conflicting-outputs
 -   generate or get your personal upload key ready (see https://developer.android.com/studio/publish/app-signing#generate-key)
     -   doing this you should get a `key.jks` file and a `key.properties` file. (If you choose other names for those files, adjust the names in `android/app/build.gradle`)
     -   put those two files in your android folder (Don't check them into source control!!!)
--   run `flutter build appbundle`
+-   run `fvm flutter build appbundle`
