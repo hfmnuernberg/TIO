@@ -121,15 +121,14 @@ cargo 1.81.0 (2dbb1af80 2024-08-20)
 ```
 rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android aarch64-apple-ios x86_64-apple-ios
 ```
+_Note:_ If no version of rustup could be choosen, use `rustup default stable` to download the latest stable release of Rust and set it as your default toolchain.
 
--   Install rust binaries:
-    -   [`flutter_rust_bridge_codegen`](https://crates.io/crates/flutter_rust_bridge_codegen/1.69.0):
-    -   [`cargo-ndk`](https://crates.io/crates/cargo-ndk/3.0.0):
 
-```
-cargo install flutter_rust_bridge_codegen cargo-ndk
-```
+-   Install rust binaries using `cargo install flutter_rust_bridge_codegen cargo-ndk`
+    -   [flutter_rust_bridge_codegen](https://crates.io/crates/flutter_rust_bridge_codegen/1.69.0)
+    -   [cargo-ndk](https://crates.io/crates/cargo-ndk/3.0.0)
 
+    
 -   `cd` into `rust` and try building the Rust library (optional).
 
 ```
