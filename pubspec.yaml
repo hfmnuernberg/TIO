@@ -51,15 +51,16 @@ dependencies:
     wav: ^1.2.0
     audioplayers: ^5.2.0
     share_plus: ^7.2.1
-    url_launcher: ^6.1.14
+    url_launcher: 6.3.1
+    url_launcher_ios: 6.3.2
     circular_widgets: ^3.0.0
-    audio_session: ^0.1.19
+    audio_session: 0.1.23
     tutorial_coach_mark: ^1.2.11
     wakelock_plus: ^1.2.5
     equatable: ^2.0.5
     rust_lib_tiomusic:
         path: rust_builder
-    flutter_rust_bridge: 2.4.0
+    flutter_rust_bridge: 2.7.0
 
 dev_dependencies:
     flutter_test:

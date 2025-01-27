@@ -10,7 +10,7 @@ crate-type = ["cdylib", "staticlib"]
 anyhow = "1.0.89"
 cpal = "0.15.3"
 enum-map = "2.7.3"
-flutter_rust_bridge = "=2.4.0"
+flutter_rust_bridge = "=2.7.0"
 indexed-ring-buffer = "0.1.3"
 lazy_static = "1.5.0"
 lerp = "0.5.0"

@@ -17,16 +17,16 @@ def generate_rust():
 
 def generate_splash():
     call_os(
-        "flutter pub run flutter_native_splash:create --path=flutter_native_splash.yaml"
+        "fvm flutter pub run flutter_native_splash:create --path=flutter_native_splash.yaml"
     )
 
 
 def generate_icon():
-    call_os("flutter pub run flutter_launcher_icons -f flutter_launcher_icons.yaml")
+    call_os("fvm flutter pub run flutter_launcher_icons -f flutter_launcher_icons.yaml")
 
 
 def generate_json():
-    call_os("dart run build_runner build -d")
+    call_os("fvm dart run build_runner build -d")
 
 
 def call_os(command):

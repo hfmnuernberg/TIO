@@ -1,28 +1,31 @@
 {
+  "editor.formatOnSave": true,
+  "dart.lineLength": 120,
+  "prettier.bracketSameLine": true,
+  "prettier.printWidth": 120,
+  "prettier.tabWidth": 4,
+  "[rust]": {
+    "editor.defaultFormatter": "rust-lang.rust-analyzer"
+  },
+  "rust-analyzer.assist.emitMustUse": false,
+  "rust-analyzer.rustfmt.rangeFormatting.enable": false,
+  "editor.formatOnPaste": false,
+  "editor.formatOnSaveMode": "file",
+  "editor.formatOnType": false,
+  "diffEditor.ignoreTrimWhitespace": true,
+  "[dart]": {
     "editor.formatOnSave": true,
-    "dart.lineLength": 120,
-    "prettier.bracketSameLine": true,
-    "prettier.printWidth": 120,
-    "prettier.tabWidth": 4,
-    "[rust]": {
-        "editor.defaultFormatter": "rust-lang.rust-analyzer"
-    },
-    "rust-analyzer.assist.emitMustUse": false,
-    "rust-analyzer.rustfmt.rangeFormatting.enable": false,
-    "editor.formatOnPaste": false,
-    "editor.formatOnSaveMode": "file",
-    "editor.formatOnType": false,
-    "diffEditor.ignoreTrimWhitespace": true,
-    "[dart]": {
-        "editor.formatOnSave": true,
-        "editor.formatOnType": true,
-        "editor.rulers": [120],
-        "editor.selectionHighlight": false,
-        "editor.suggest.snippetsPreventQuickSuggestions": false,
-        "editor.suggestSelection": "first",
-        "editor.tabCompletion": "onlySnippets",
-        "editor.wordBasedSuggestions": "off"
-    },
-    "rust-analyzer.rustfmt.overrideCommand": null,
-    "rust-analyzer.showUnlinkedFileNotification": false
+    "editor.formatOnType": true,
+    "editor.rulers": [
+      120
+    ],
+    "editor.selectionHighlight": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off"
+  },
+  "rust-analyzer.rustfmt.overrideCommand": null,
+  "rust-analyzer.showUnlinkedFileNotification": false,
+  "dart.flutterSdkPath": ".fvm/versions/3.22.0"
 }
