@@ -32,31 +32,31 @@ dependencies:
     flutter:
         sdk: flutter
 
-    ffi: ^2.1.0
-    meta: ^1.10.0
-    permission_handler: ^11.3.0
-    stats: ^2.0.0
-    path_provider: ^2.0.13
+    ffi: 2.1.2
+    meta: 1.15.0
+    permission_handler: 11.3.0
+    stats: 2.0.0
+    path_provider: 2.0.14
     collection: any
-    provider: ^6.0.5
-    json_annotation: ^4.8.0
-    camera: ^0.10.4
-    path: ^1.8.3
-    image_picker: ^1.0.4
-    tonic: ^0.2.4
-    flutter_svg: ^2.0.5
-    intl: ^0.18.1
-    uuid: ^4.1.0
-    file_picker: ^6.1.1
-    wav: ^1.2.0
-    audioplayers: ^5.2.0
-    share_plus: ^7.2.1
-    url_launcher: ^6.1.14
-    circular_widgets: ^3.0.0
-    audio_session: ^0.1.19
-    tutorial_coach_mark: ^1.2.11
-    wakelock_plus: ^1.2.5
-    equatable: ^2.0.5
+    provider: 6.0.5
+    json_annotation: 4.8.0
+    camera: 0.10.4
+    path: 1.9.0
+    image_picker: 1.0.4
+    tonic: 0.2.4
+    flutter_svg: 2.0.5
+    intl: 0.18.1
+    uuid: 4.1.0
+    file_picker: 6.1.1
+    wav: 1.2.0
+    audioplayers: 5.2.0
+    share_plus: 7.2.1
+    url_launcher: 6.1.14
+    circular_widgets: 3.0.0
+    audio_session: 0.1.19
+    tutorial_coach_mark: 1.2.11
+    wakelock_plus: 1.2.5
+    equatable: 2.0.5
     rust_lib_tiomusic:
         path: rust_builder
     flutter_rust_bridge: 2.4.0
@@ -70,13 +70,13 @@ dev_dependencies:
     # activated in the `analysis_options.yaml` file located at the root of your
     # package. See that file for information about deactivating specific lint
     # rules and activating additional ones.
-    flutter_lints: ^3.0.1
-    ffigen: ^9.0.1
-    flutter_native_splash: ^2.2.19
-    flutter_launcher_icons: ^0.13.1
-    build_runner: ^2.3.3
-    json_serializable: ^6.6.1
-    dependency_validator: ^3.2.3
+    flutter_lints: 3.0.1
+    ffigen: 9.0.1
+    flutter_native_splash: 2.2.19
+    flutter_launcher_icons: 0.13.1
+    build_runner: 2.3.3
+    json_serializable: 6.6.1
+    dependency_validator: 3.2.3
     integration_test:
         sdk: flutter
 
