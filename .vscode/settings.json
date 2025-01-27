@@ -27,5 +27,5 @@
   },
   "rust-analyzer.rustfmt.overrideCommand": null,
   "rust-analyzer.showUnlinkedFileNotification": false,
-  "dart.flutterSdkPath": ".fvm/versions/3.22.0"
+  "dart.flutterSdkPath": ".fvm/versions/3.27.3"
 }
