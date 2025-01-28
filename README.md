@@ -109,7 +109,7 @@ Press `Ctrl + X` → `Y` → `Enter`
 
 ### Rust
 
--   [Get Rust.](https://www.rust-lang.org/tools/install)
+-   [Get Rust.](https://www.rust-lang.org/tools/install) (Note: As of 28/01/2025 installing Rust using brew does not work!)
 -   Call `cargo -V`. Your output should look like:
 
 ```
@@ -119,7 +119,14 @@ cargo 1.81.0 (2dbb1af80 2024-08-20)
 -   Add rust targets for cross compilation:
 
 ```
-rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android aarch64-apple-ios x86_64-apple-ios
+rustup target add \
+  aarch64-apple-ios \
+  aarch64-apple-ios-sim \
+  aarch64-linux-android \
+  armv7-linux-androideabi \
+  i686-linux-android \
+  x86_64-apple-ios \
+  x86_64-linux-android
 ```
 _Note:_ If no version of rustup could be choosen, use `rustup default stable` to download the latest stable release of Rust and set it as your default toolchain.
 
