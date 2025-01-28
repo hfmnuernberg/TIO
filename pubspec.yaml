@@ -61,7 +61,7 @@ dependencies:
     rust_lib_tiomusic:
         path: rust_builder
     flutter_rust_bridge: 2.7.1
-    archive: ^4.0.2
+    archive: 4.0.2
 
 dev_dependencies:
     flutter_test:
