@@ -69,7 +69,7 @@ unlinked_spec.ds
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
 **/android/key.properties
-**/android/app/src/main/jniLibs
+**/android/app/src/main/jniLibs/**/librust_lib_tiomusic.so
 # *.jks
 
 # iOS/XCode related
