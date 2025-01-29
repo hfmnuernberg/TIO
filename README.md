@@ -36,7 +36,7 @@ If you are interested in giving feedback or contributing to **TIO**, please leav
 
 ## Flutter
 
-### FVM
+### Install FVM
 
 Install the flutter version manager to easily switch between flutter versions in different projects.
 If installed all flutter commands have to be prefixed with `fvm` (e.g. `fvm flutter doctor`).
@@ -47,10 +47,7 @@ If installed all flutter commands have to be prefixed with `fvm` (e.g. `fvm flut
    - List all available flutter versions: `fvm list`
    - Install a specific flutter version: `fvm install 3.22.1` (if installed use version with `fvm use 3.22.1`)
 
-### Without FVM
-
--   [Get Flutter.](https://docs.flutter.dev/get-started/install)
--   Call `flutter --version`. Your output should look like:
+- Call `flutter --version`. Your output should look like:
 
 ```
 Flutter 3.22.1 • channel stable • https://github.com/flutter/flutter.git
@@ -59,7 +56,7 @@ Engine • revision 55eae6864b
 Tools • Dart 3.4.1 • DevTools 2.34.3
 ```
 
--   Call `fvm flutter doctor` and resolve all errors. Your output should look like:
+- Call `fvm flutter doctor` and resolve all errors. Your output should look like:
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
@@ -73,6 +70,16 @@ Doctor summary (to see all details, run flutter doctor -v):
 [✓] Network resources
 
 • No issues found!
+```
+
+- Installing iOS pods:
+
+```shell
+fvm flutter precache --ios
+cd ios
+pod update Sentry
+pod install --repo-update
+cd ..
 ```
 
 -   If the installation of cocoapods doesn't work, use the approach of [this website.](https://www.rubyonmac.dev/error-error-installing-cocoapods-error-failed-to-build-gem-native-extension)
@@ -89,23 +96,29 @@ fvm flutter pub get
 
 ### Android NDK
 
+- If you are using Android Studio you can download and manage the SDK versions there
+  - go to the IDE settings and search for `Android SDK`
+  - go to the SDK tools tab and activate or deactivate the NDK that is references in the gradle files
+  - besides the NDK also activate the `CMake` SDK tool
+
+## Alternative:
 -   Download the [Android NDK](https://developer.android.com/ndk/downloads/).
--   Set environment variable `ANDROID_NDK` to the ndk installation folder.
+-   In your e.g. `.zshrc` file set the environment variable `ANDROID_NDK_HOME` to the ndk installation folder.
     -   **If this doesn't work (running flutter app fails because of NDK error), try to install the Android NDK via Android Studio.**
 
-### On MacOS:
-
 ```
-nano ~/.zshrc
+vim ~/.zshrc
 ```
 
 Add the line to the bottom:
 
 ```
-export ANDROID_NDK=/path/to/the/android/ndk
+export ANDROID_NDK_HOME=/path/to/the/android/ndk
 ```
 
 Press `Ctrl + X` → `Y` → `Enter`
+
+The path should look like e.g. `export ANDROID_NDK_HOME=/Users/<your username>/Library/Android/sdk/ndk/28.0.12916984`
 
 ### Rust
 
@@ -128,13 +141,10 @@ rustup target add \
   x86_64-apple-ios \
   x86_64-linux-android
 ```
-_Note:_ If no version of rustup could be choosen, use `rustup default stable` to download the latest stable release of Rust and set it as your default toolchain.
-
 
 -   Install rust binaries using `cargo install flutter_rust_bridge_codegen cargo-ndk`
     -   [flutter_rust_bridge_codegen](https://crates.io/crates/flutter_rust_bridge_codegen/1.69.0)
     -   [cargo-ndk](https://crates.io/crates/cargo-ndk/3.0.0)
-
     
 -   `cd` into `rust` and try building the Rust library (optional).
 
