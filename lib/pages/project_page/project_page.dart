@@ -149,35 +149,28 @@ class _ProjectPageState extends State<ProjectPage> {
   @override
   Widget build(BuildContext context) {
     if (_showBlocks) {
-      return _buildProjectPage();
+      return _buildProjectPage(context);
     } else {
       return _buildChooseToolPage();
     }
   }
 
-  Widget _buildProjectPage() {
+  Widget _buildProjectPage(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: TextField(
-          key: _keyChangeTitle,
-          controller: _titleController,
-          decoration: null,
-          style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
-          onTap: () {
-            // select all text
-            _titleController.selection = TextSelection(baseOffset: 0, extentOffset: _titleController.text.length);
+        title: GestureDetector(
+          onTap: () async {
+            final newTitle = await editTitle(context, _project.title);
+            if (newTitle == null || newTitle.isEmpty) return;
+            _project.title = newTitle;
+            if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+            setState(() {});
           },
-          onSubmitted: (newText) {
-            // save the new title
-            _project.title = newText;
-            FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-          },
-          onTapOutside: (event) {
-            // close keyboard and don't save
-            FocusScope.of(context).unfocus();
-            _titleController.text = _project.title;
-          },
+          child: Text(
+            _project.title,
+            style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+          ),
         ),
         backgroundColor: ColorTheme.surfaceBright,
         foregroundColor: ColorTheme.primary,
@@ -186,7 +179,7 @@ class _ProjectPageState extends State<ProjectPage> {
               onPressed: () async {
                 bool? deleteBlock = await _deleteBlock(deleteAll: true);
                 if (deleteBlock != null && deleteBlock) {
-                  if (mounted) {
+                  if (context.mounted) {
                     _project.clearBlocks(context.read<ProjectLibrary>());
                     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
                     setState(() {});
