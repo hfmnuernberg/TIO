@@ -209,7 +209,7 @@ class _ParentToolState extends State<ParentTool> {
     super.dispose();
   }
 
-  PreferredSizeWidget _appBar() {
+  PreferredSizeWidget _appBar(BuildContext context) {
     List<Widget> appBarActions = [
       // Icon Button for saving the tool
       IconButton(
@@ -261,7 +261,7 @@ class _ParentToolState extends State<ParentTool> {
           if (save) {
             _openBottomSheetAndSaveTool();
           } else {
-            if (mounted) Navigator.of(context).pop();
+            if (context.mounted) Navigator.of(context).pop();
           }
         } else {
           Navigator.of(context).pop();
@@ -271,28 +271,18 @@ class _ParentToolState extends State<ParentTool> {
 
     return AppBar(
       leading: backButton,
-      title: TextField(
-        key: _keyChangeTitle,
-        controller: _toolTitle,
-        enabled: widget.isQuickTool ? false : true,
-        decoration: null,
-        style: const TextStyle(
-            color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
-        onTap: () {
-          // select all text
-          _toolTitle.selection = TextSelection(
-              baseOffset: 0, extentOffset: _toolTitle.text.length);
+      title: GestureDetector(
+        onTap: () async {
+          final newTitle = await editTitle(context, widget.toolBlock.title);
+          if (newTitle == null || newTitle.isEmpty) return;
+            widget.toolBlock.title = newTitle;
+          if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+          setState(() {});
         },
-        onSubmitted: (newText) {
-          // save the new title
-          widget.toolBlock.title = newText;
-          FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-        },
-        onTapOutside: (event) {
-          // close keyboard and don't save
-          FocusScope.of(context).unfocus();
-          _toolTitle.text = widget.toolBlock.title;
-        },
+        child: Text(
+          widget.toolBlock.title,
+          style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+        ),
       ),
       backgroundColor: ColorTheme.surfaceBright,
       foregroundColor: ColorTheme.primary,
@@ -438,7 +428,7 @@ class _ParentToolState extends State<ParentTool> {
       resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(ParentToolParams.appBarHeight),
-        child: _appBar(),
+        child: _appBar(context),
       ),
       backgroundColor: ColorTheme.primary92,
       body: widget.deactivateScroll
