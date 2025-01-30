@@ -34,10 +34,20 @@ If you are interested in giving feedback or contributing to **TIO**, please leav
 
 # Installation
 
-### Flutter
+## Flutter
 
--   [Get Flutter.](https://docs.flutter.dev/get-started/install)
--   Call `flutter --version`. Your output should look like:
+### Install FVM
+
+Install the flutter version manager to easily switch between flutter versions in different projects.
+If installed all flutter commands have to be prefixed with `fvm` (e.g. `fvm flutter doctor`).
+
+
+1. Install [FVM](https://fvm.app/docs/getting_started/installation/)
+   - From now on `fvm flutter doctor` will suggest what to do next to get started, but the following steps outline what to do next.
+   - List all available flutter versions: `fvm list`
+   - Install a specific flutter version: `fvm install 3.22.1` (if installed use version with `fvm use 3.22.1`)
+
+- Call `flutter --version`. Your output should look like:
 
 ```
 Flutter 3.22.1 • channel stable • https://github.com/flutter/flutter.git
@@ -46,7 +56,7 @@ Engine • revision 55eae6864b
 Tools • Dart 3.4.1 • DevTools 2.34.3
 ```
 
--   Call `flutter doctor` and resolve all errors. Your output should look like:
+- Call `fvm flutter doctor` and resolve all errors. Your output should look like:
 
 ```
 Doctor summary (to see all details, run flutter doctor -v):
@@ -62,12 +72,22 @@ Doctor summary (to see all details, run flutter doctor -v):
 • No issues found!
 ```
 
+- Installing iOS pods:
+
+```shell
+fvm flutter precache --ios
+cd ios
+pod update Sentry
+pod install --repo-update
+cd ..
+```
+
 -   If the installation of cocoapods doesn't work, use the approach of [this website.](https://www.rubyonmac.dev/error-error-installing-cocoapods-error-failed-to-build-gem-native-extension)
 
 ### Install Flutter dependencies
 
 ```
-flutter pub get
+fvm flutter pub get
 ```
 
 ### Android Studio
@@ -76,27 +96,33 @@ flutter pub get
 
 ### Android NDK
 
+- If you are using Android Studio you can download and manage the SDK versions there
+  - go to the IDE settings and search for `Android SDK`
+  - go to the SDK tools tab and activate or deactivate the NDK that is references in the gradle files
+  - besides the NDK also activate the `CMake` SDK tool
+
+## Alternative:
 -   Download the [Android NDK](https://developer.android.com/ndk/downloads/).
--   Set environment variable `ANDROID_NDK` to the ndk installation folder.
+-   In your e.g. `.zshrc` file set the environment variable `ANDROID_NDK_HOME` to the ndk installation folder.
     -   **If this doesn't work (running flutter app fails because of NDK error), try to install the Android NDK via Android Studio.**
 
-### On MacOS:
-
 ```
-nano ~/.zshrc
+vim ~/.zshrc
 ```
 
 Add the line to the bottom:
 
 ```
-export ANDROID_NDK=/path/to/the/android/ndk
+export ANDROID_NDK_HOME=/path/to/the/android/ndk
 ```
 
 Press `Ctrl + X` → `Y` → `Enter`
 
+The path should look like e.g. `export ANDROID_NDK_HOME=/Users/<your username>/Library/Android/sdk/ndk/28.0.12916984`
+
 ### Rust
 
--   [Get Rust.](https://www.rust-lang.org/tools/install)
+-   [Get Rust.](https://www.rust-lang.org/tools/install) (Note: As of 28/01/2025 installing Rust using brew does not work!)
 -   Call `cargo -V`. Your output should look like:
 
 ```
@@ -106,17 +132,20 @@ cargo 1.81.0 (2dbb1af80 2024-08-20)
 -   Add rust targets for cross compilation:
 
 ```
-rustup target add aarch64-linux-android armv7-linux-androideabi x86_64-linux-android i686-linux-android aarch64-apple-ios x86_64-apple-ios
+rustup target add \
+  aarch64-apple-ios \
+  aarch64-apple-ios-sim \
+  aarch64-linux-android \
+  armv7-linux-androideabi \
+  i686-linux-android \
+  x86_64-apple-ios \
+  x86_64-linux-android
 ```
 
--   Install rust binaries:
-    -   [`flutter_rust_bridge_codegen`](https://crates.io/crates/flutter_rust_bridge_codegen/1.69.0):
-    -   [`cargo-ndk`](https://crates.io/crates/cargo-ndk/3.0.0):
-
-```
-cargo install flutter_rust_bridge_codegen cargo-ndk
-```
-
+-   Install rust binaries using `cargo install flutter_rust_bridge_codegen cargo-ndk`
+    -   [flutter_rust_bridge_codegen](https://crates.io/crates/flutter_rust_bridge_codegen/1.69.0)
+    -   [cargo-ndk](https://crates.io/crates/cargo-ndk/3.0.0)
+    
 -   `cd` into `rust` and try building the Rust library (optional).
 
 ```
@@ -172,7 +201,7 @@ We are using the package [json_serializable](https://pub.dev/packages/json_seria
 The generation can be done with `generate.py` or a **continuous runner**:
 
 ```
-flutter pub run build_runner watch --delete-conflicting-outputs
+fvm flutter pub run build_runner watch --delete-conflicting-outputs
 ```
 
 ---
@@ -185,7 +214,7 @@ flutter pub run build_runner watch --delete-conflicting-outputs
         -   go to accounts
         -   log into the necessary account for codesigning (check the certificates)
 -   restart your mac - **don't skip, this is important**
--   run `flutter build ipa`
+-   run `fvm flutter build ipa`
 
 # Build for Android
 
@@ -193,4 +222,4 @@ flutter pub run build_runner watch --delete-conflicting-outputs
 -   generate or get your personal upload key ready (see https://developer.android.com/studio/publish/app-signing#generate-key)
     -   doing this you should get a `key.jks` file and a `key.properties` file. (If you choose other names for those files, adjust the names in `android/app/build.gradle`)
     -   put those two files in your android folder (Don't check them into source control!!!)
--   run `flutter build appbundle`
+-   run `fvm flutter build appbundle`

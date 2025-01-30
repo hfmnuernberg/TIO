@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '14.0'
+platform :ios, '18.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -82,7 +82,7 @@ post_install do |installer|
         # 'PERMISSION_MEDIA_LIBRARY=1',
 
         ## dart: PermissionGroup.sensors
-        # 'PERMISSION_SENSORS=1',   
+        # 'PERMISSION_SENSORS=1',
 
         ## dart: PermissionGroup.bluetooth
         # 'PERMISSION_BLUETOOTH=1',
@@ -94,7 +94,7 @@ post_install do |installer|
         # 'PERMISSION_CRITICAL_ALERTS=1'
       ]
 
-    end 
+    end
     # End of the permission_handler configuration
   end
 end
