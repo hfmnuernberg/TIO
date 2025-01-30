@@ -181,11 +181,11 @@ class _PianoState extends State<Piano> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: ColorTheme.primary92,
-      body: _showSavingPage ? _buildSavingPage() : _buildPianoMainPage(),
+      body: _showSavingPage ? _buildSavingPage() : _buildPianoMainPage(context),
     );
   }
 
-  Widget _buildPianoMainPage() {
+  Widget _buildPianoMainPage(BuildContext context) {
     final islandWidth = MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width / 1.9);
 
     return SafeArea(
@@ -211,7 +211,7 @@ class _PianoState extends State<Piano> {
                         });
                       } else {
                         SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-                        if (mounted) Navigator.of(context).pop();
+                        if (context.mounted) Navigator.of(context).pop();
                       }
                     } else {
                       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -225,26 +225,18 @@ class _PianoState extends State<Piano> {
 
               // title
               Expanded(
-                child: TextField(
-                  controller: _titleController,
-                  enabled: widget.isQuickTool ? false : true,
-                  decoration: null,
-                  style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
-                  onTap: () {
-                    // select all text
-                    _titleController.selection =
-                        TextSelection(baseOffset: 0, extentOffset: _titleController.text.length);
+                child: GestureDetector(
+                  onTap: () async {
+                    final newTitle = await editTitle(context, _pianoBlock.title);
+                    if (newTitle == null || newTitle.isEmpty) return;
+                    _pianoBlock.title = newTitle;
+                    if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+                    setState(() {});
                   },
-                  onSubmitted: (newText) {
-                    // save the new title
-                    _pianoBlock.title = newText;
-                    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-                  },
-                  onTapOutside: (event) {
-                    // close keyboard and don't save
-                    FocusScope.of(context).unfocus();
-                    _titleController.text = _pianoBlock.title;
-                  },
+                  child: Text(
+                    _pianoBlock.title,
+                    style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+                  ),
                 ),
               ),
 
