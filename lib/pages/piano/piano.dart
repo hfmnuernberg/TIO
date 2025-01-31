@@ -1,18 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
-import 'package:tiomusic/util/audio_util.dart';
-import 'package:tiomusic/util/util_midi.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
-import 'package:tiomusic/widgets/confirm_setting_button.dart';
-import 'package:tiomusic/widgets/custom_border_shape.dart';
-import 'package:tonic/tonic.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
@@ -21,11 +13,18 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
-
+import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
+import 'package:tiomusic/util/util_midi.dart';
+import 'package:tiomusic/util/walkthrough_util.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
+import 'package:tiomusic/widgets/confirm_setting_button.dart';
+import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
+import 'package:tonic/tonic.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class Piano extends StatefulWidget {
@@ -227,7 +226,11 @@ class _PianoState extends State<Piano> {
               Expanded(
                 child: GestureDetector(
                   onTap: () async {
-                    final newTitle = await editTitle(context, _pianoBlock.title);
+                    final newTitle = await showEditTextDialog(
+                      context: context,
+                      label: PianoParams.displayName,
+                      value: _pianoBlock.title,
+                    );
                     if (newTitle == null || newTitle.isEmpty) return;
                     _pianoBlock.title = newTitle;
                     if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());

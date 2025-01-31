@@ -276,7 +276,7 @@ class _ParentToolState extends State<ParentTool> {
         onTap: () async {
           final newTitle = await showEditTextDialog(
             context: context,
-            label: widget.barTitle,
+            label: "Tool title:",
             value: widget.toolBlock.title,
           );
           if (newTitle == null || newTitle.isEmpty) return;
@@ -386,7 +386,11 @@ class _ParentToolState extends State<ParentTool> {
 
   void _onSaveInProjectTap(
       StateSetter setTileState, int index, ProjectBlock toolBlock) async {
-    final newTitle = await editTitle(context, "${toolBlock.title} - copy");
+    final newTitle = await showEditTextDialog(
+      context: context,
+      label: "Tool title:",
+      value: "${toolBlock.title} - copy",
+    );
     if (newTitle == null || newTitle.isEmpty) {
       if (mounted) {
         // close the bottom up sheet

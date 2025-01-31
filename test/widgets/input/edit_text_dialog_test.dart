@@ -48,9 +48,7 @@ void main() {
     });
 
     testWidgets('shows edit text dialog when open dialog is pressed', (WidgetTester tester) async {
-      await tester.renderWidget(
-        TestWrapper(),
-      );
+      await tester.renderWidget(TestWrapper());
       expect(find.text('Old title'), findsNothing);
 
       await tester.tap(find.bySemanticsLabel('Open Dialog'));
@@ -59,9 +57,7 @@ void main() {
     });
 
     testWidgets('hides edit text dialog when cancel is pressed', (WidgetTester tester) async {
-      await tester.renderWidget(
-        TestWrapper(),
-      );
+      await tester.renderWidget(TestWrapper());
 
       await tester.tap(find.bySemanticsLabel('Open Dialog'));
       await tester.pump();
@@ -74,9 +70,7 @@ void main() {
     });
 
     testWidgets('hides edit text dialog when submit is pressed', (WidgetTester tester) async {
-      await tester.renderWidget(
-        TestWrapper(),
-      );
+      await tester.renderWidget(TestWrapper());
 
       await tester.tap(find.bySemanticsLabel('Open Dialog'));
       await tester.pump();

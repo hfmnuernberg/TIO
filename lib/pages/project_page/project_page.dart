@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -13,6 +13,7 @@ import 'package:tiomusic/widgets/big_icon_button.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProjectPage extends StatefulWidget {
@@ -161,7 +162,11 @@ class _ProjectPageState extends State<ProjectPage> {
       appBar: AppBar(
         title: GestureDetector(
           onTap: () async {
-            final newTitle = await editTitle(context, _project.title);
+            final newTitle = await showEditTextDialog(
+              context: context,
+              label: 'Project title:',
+              value: _project.title,
+            );
             if (newTitle == null || newTitle.isEmpty) return;
             _project.title = newTitle;
             if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());

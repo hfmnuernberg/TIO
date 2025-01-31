@@ -1,20 +1,20 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/material.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
+import 'package:tiomusic/models/file_io.dart';
+import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/project.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/info_pages/about_page.dart';
 import 'package:tiomusic/pages/info_pages/feedback_page.dart';
 import 'package:tiomusic/pages/media_player/media_player.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
-import 'package:tiomusic/pages/project_page/project_page.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
+import 'package:tiomusic/pages/project_page/project_page.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -23,6 +23,7 @@ import 'package:tiomusic/util/walkthrough_util.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -350,7 +351,11 @@ class _ProjectsListState extends State<ProjectsList> {
         leading: IconButton(
           key: _keyAddProjectButton,
           onPressed: () async {
-            final newTitle = await editTitle(context, getDateAndTimeNow());
+            final newTitle = await showEditTextDialog(
+              context: context,
+              label: 'New project:',
+              value: getDateAndTimeNow(),
+            );
             if (newTitle == null || newTitle.isEmpty) return;
 
             final newProject = Project.defaultPicture(newTitle);
