@@ -51,14 +51,19 @@ class EditTextDialog extends StatelessWidget {
         onSubmitted: (_) => handleSubmit(),
       ),
       actions: [
-        TextButton(
-          onPressed: onCancel,
-          child: const Text('Cancel'),
-        ),
-        TIOFlatButton(
-          onPressed: () => handleSubmit(),
-          text: 'Submit',
-          boldText: true,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            TextButton(
+              onPressed: onCancel,
+              child: const Text('Cancel'),
+            ),
+            TIOFlatButton(
+              onPressed: () => handleSubmit(),
+              text: 'Submit',
+              boldText: true,
+            )
+          ],
         )
       ],
     );
