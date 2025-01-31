@@ -38,17 +38,21 @@ class EditTextDialog extends StatelessWidget {
     void handleSubmit() => onSave(controller.text);
 
     return AlertDialog(
-      content: TextField(
-        autofocus: true,
-        decoration: InputDecoration(
-          hintText: "",
-          border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-          label: Text(label, style: TextStyle(color: ColorTheme.surfaceTint)),
+      content: Transform.translate(
+        offset: const Offset(0, 10),
+        child: TextField(
+          autofocus: true,
+          maxLength: 100,
+          decoration: InputDecoration(
+            hintText: "",
+            border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+            label: Text(label, style: TextStyle(color: ColorTheme.surfaceTint)),
+          ),
+          style: const TextStyle(color: ColorTheme.primary),
+          controller: controller,
+          onSubmitted: (_) => handleSubmit(),
         ),
-        style: const TextStyle(color: ColorTheme.primary),
-        controller: controller,
-        onSubmitted: (_) => handleSubmit(),
       ),
       actions: [
         Row(
