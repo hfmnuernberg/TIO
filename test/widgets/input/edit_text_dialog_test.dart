@@ -1,23 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tiomusic/widgets/confirm_setting_button.dart';
+import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
+
+extension WidgetTesterPumpExtension on WidgetTester {
+  Future<void> renderWidget(Widget widget) => pumpWidget(MaterialApp(home: Scaffold(body: widget)));
+}
 
 void main() {
-  setUpAll(() async {
+  setUpAll(() {
     WidgetsFlutterBinding.ensureInitialized();
   });
 
   group('edit text dialog', () {
-    testWidgets('todo', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(home: Scaffold(body: Text("todo"))));
+    testWidgets('calls submit with edited text when save is pressed', (WidgetTester tester) async {
+      String? editedText;
+      await tester.renderWidget(
+          EditTextDialog(label: "Label", value: "Old title", onSave: (text) => editedText = text, onCancel: () {}),
+      );
 
-      expect(find.bySemanticsLabel("todo"), findsOneWidget);
+      await tester.enterText(find.bySemanticsLabel('Label'), "New title");
+      await tester.tap(find.bySemanticsLabel('Submit'));
+
+      expect("New title", editedText);
     });
 
-    testWidgets('todo2', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(home: ConfirmButton(onTap: () {})));
+    testWidgets('calls cancel when cancel is pressed', (WidgetTester tester) async {
+      var wasOnCancelCalled = false;
+      await tester.renderWidget(
+        EditTextDialog(label: "Label", value: "Old title", onSave: (_) {}, onCancel: () => wasOnCancelCalled = true),
+      );
 
-      expect(find.byType(ConfirmButton), findsOneWidget);
+      await tester.tap(find.bySemanticsLabel('Cancel'));
+
+      expect(true, wasOnCancelCalled);
     });
   });
 }
