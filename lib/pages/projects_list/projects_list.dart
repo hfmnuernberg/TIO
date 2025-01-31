@@ -353,7 +353,7 @@ class _ProjectsListState extends State<ProjectsList> {
           onPressed: () async {
             final newTitle = await showEditTextDialog(
               context: context,
-              label: 'New project:',
+              label: TIOMusicParams.newProjectTitle,
               value: getDateAndTimeNow(),
             );
             if (newTitle == null || newTitle.isEmpty) return;

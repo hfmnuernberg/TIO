@@ -276,7 +276,7 @@ class _ParentToolState extends State<ParentTool> {
         onTap: () async {
           final newTitle = await showEditTextDialog(
             context: context,
-            label: "Tool title:",
+            label: TIOMusicParams.newToolTitle,
             value: widget.toolBlock.title,
           );
           if (newTitle == null || newTitle.isEmpty) return;
@@ -388,7 +388,7 @@ class _ParentToolState extends State<ParentTool> {
       StateSetter setTileState, int index, ProjectBlock toolBlock) async {
     final newTitle = await showEditTextDialog(
       context: context,
-      label: "Tool title:",
+      label: TIOMusicParams.toolTitle,
       value: "${toolBlock.title} - copy",
     );
     if (newTitle == null || newTitle.isEmpty) {
