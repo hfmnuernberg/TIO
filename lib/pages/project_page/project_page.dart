@@ -329,7 +329,11 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   void _onNewToolTilePressed(BlockTypeInfo info) async {
-    final newTitle = await editTitle(context, "${info.name} ${_project.toolCounter[info.kind]! + 1}");
+    final newTitle = await showEditTextDialog(
+      context: context,
+      label: 'Tool title:',
+      value: "${info.name} ${_project.toolCounter[info.kind]! + 1}",
+    );
     if (newTitle == null || newTitle.isEmpty) return;
 
     _project.increaseCounter(info.kind);
