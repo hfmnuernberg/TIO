@@ -6,6 +6,18 @@ extension WidgetTesterPumpExtension on WidgetTester {
   Future<void> renderWidget(Widget widget) => pumpWidget(MaterialApp(home: Scaffold(body: widget)));
 }
 
+class TestWrapper extends StatelessWidget {
+  const TestWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+        onPressed: () => showEditTextDialog(context: context, label: 'Label', value: 'Old title'),
+        child: Text('Open Dialog'),
+    );
+  }
+}
+
 void main() {
   setUpAll(() {
     WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +45,47 @@ void main() {
       await tester.tap(find.bySemanticsLabel('Cancel'));
 
       expect(true, wasOnCancelCalled);
+    });
+
+    testWidgets('shows edit text dialog when open dialog is pressed', (WidgetTester tester) async {
+      await tester.renderWidget(
+        TestWrapper(),
+      );
+      expect(find.text('Old title'), findsNothing);
+
+      await tester.tap(find.bySemanticsLabel('Open Dialog'));
+      await tester.pump();
+      expect(find.text('Old title'), findsOneWidget);
+    });
+
+    testWidgets('hides edit text dialog when cancel is pressed', (WidgetTester tester) async {
+      await tester.renderWidget(
+        TestWrapper(),
+      );
+
+      await tester.tap(find.bySemanticsLabel('Open Dialog'));
+      await tester.pump();
+
+      expect(find.text('Old title'), findsOneWidget);
+
+      await tester.tap(find.text('Cancel'));
+      await tester.pump();
+      expect(find.text('Old title'), findsNothing);
+    });
+
+    testWidgets('hides edit text dialog when submit is pressed', (WidgetTester tester) async {
+      await tester.renderWidget(
+        TestWrapper(),
+      );
+
+      await tester.tap(find.bySemanticsLabel('Open Dialog'));
+      await tester.pump();
+
+      expect(find.text('Old title'), findsOneWidget);
+
+      await tester.tap(find.text('Submit'));
+      await tester.pump();
+      expect(find.text('Old title'), findsNothing);
     });
   });
 }

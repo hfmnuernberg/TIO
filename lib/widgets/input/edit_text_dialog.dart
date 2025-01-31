@@ -2,6 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
+Future<String?> showEditTextDialog({
+  required BuildContext context,
+  required String label,
+  required String value,
+}) => showDialog<String>(
+  context: context,
+  builder: (context) => EditTextDialog(
+    label: label,
+    value: value,
+    onSave: (value) => Navigator.of(context).pop(value),
+    onCancel: () => Navigator.of(context).pop(),
+  ),
+);
+
 class EditTextDialog extends StatelessWidget {
   final String label;
   final String value;

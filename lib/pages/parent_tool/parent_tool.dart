@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -12,6 +12,7 @@ import 'package:tiomusic/util/walkthrough_util.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ParentTool extends StatefulWidget {
@@ -273,9 +274,13 @@ class _ParentToolState extends State<ParentTool> {
       leading: backButton,
       title: GestureDetector(
         onTap: () async {
-          final newTitle = await editTitle(context, widget.toolBlock.title);
+          final newTitle = await showEditTextDialog(
+            context: context,
+            label: widget.barTitle,
+            value: widget.toolBlock.title,
+          );
           if (newTitle == null || newTitle.isEmpty) return;
-            widget.toolBlock.title = newTitle;
+          widget.toolBlock.title = newTitle;
           if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
           setState(() {});
         },
