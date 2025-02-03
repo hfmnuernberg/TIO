@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 
-final int maxLength = 100;
-
 extension WidgetTesterPumpExtension on WidgetTester {
   Future<void> renderWidget(Widget widget) => pumpWidget(MaterialApp(home: Scaffold(body: widget)));
 }
@@ -50,6 +48,18 @@ void main() {
       expect(wasOnCancelCalled, true);
     });
 
+    testWidgets('does not save new title when new title is empty', (WidgetTester tester) async {
+      var wasOnSaveCalled = false;
+      await tester.renderWidget(
+        EditTextDialog(label: "Label", value: "Old title", onSave: (_) => wasOnSaveCalled = true, onCancel: () {}),
+      );
+
+      await tester.enterText(find.text('Old title'), '');
+      await tester.tap(find.bySemanticsLabel('Submit'));
+
+      expect(wasOnSaveCalled, false);
+    });
+
     testWidgets('does not save new title when title has not changed', (WidgetTester tester) async {
       var wasOnSaveCalled = false;
       await tester.renderWidget(
@@ -61,16 +71,21 @@ void main() {
       expect(wasOnSaveCalled, false);
     });
 
-    testWidgets('does not save new title when new title is empty', (WidgetTester tester) async {
-      var wasOnSaveCalled = false;
+    testWidgets('submits title when title has not changed but is new', (WidgetTester tester) async {
+      String editedText = 'Never called';
       await tester.renderWidget(
-        EditTextDialog(label: "Label", value: "Old title", onSave: (_) => wasOnSaveCalled = true, onCancel: () {}),
+        EditTextDialog(
+            label: "Label",
+            value: "Old title",
+            isNew: true,
+            onSave: (text) => editedText = text,
+            onCancel: () {}
+        ),
       );
 
-      await tester.enterText(find.text('Old title'), '');
       await tester.tap(find.bySemanticsLabel('Submit'));
 
-      expect(wasOnSaveCalled, false);
+      expect(editedText, "Old title");
     });
 
     testWidgets('shows edit text dialog when open dialog is pressed', (WidgetTester tester) async {
@@ -103,11 +118,11 @@ void main() {
 
       expect(find.text('Old title'), findsOneWidget);
 
-      await tester.enterText(find.text('Old title'), 'a'.padLeft(maxLength + 1, 'a'));
+      await tester.enterText(find.text('Old title'), 'a'.padLeft(100 +  1, 'a'));
       await tester.pump();
 
       final textField = tester.widget<TextField>(find.byType(TextField));
-      expect(textField.controller?.text.length, 100);
+      expect(textField.controller?.text, 'a'.padLeft(100, 'a'));
     });
   });
 }

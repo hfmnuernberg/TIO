@@ -355,6 +355,7 @@ class _ProjectsListState extends State<ProjectsList> {
               context: context,
               label: TIOMusicParams.newProjectTitle,
               value: getDateAndTimeNow(),
+              isNew: true,
             );
             if (newTitle == null || newTitle.isEmpty) return;
 

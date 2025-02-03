@@ -333,6 +333,7 @@ class _ProjectPageState extends State<ProjectPage> {
       context: context,
       label: TIOMusicParams.toolTitle,
       value: "${info.name} ${_project.toolCounter[info.kind]! + 1}",
+      isNew: true,
     );
     if (newTitle == null || newTitle.isEmpty) return;
 

@@ -6,11 +6,13 @@ Future<String?> showEditTextDialog({
   required BuildContext context,
   required String label,
   required String value,
+  bool isNew = false,
 }) => showDialog<String>(
   context: context,
   builder: (context) => EditTextDialog(
     label: label,
     value: value,
+    isNew: isNew,
     onSave: (value) => Navigator.of(context).pop(value),
     onCancel: () => Navigator.of(context).pop(),
   ),
@@ -19,6 +21,7 @@ Future<String?> showEditTextDialog({
 class EditTextDialog extends StatelessWidget {
   final String label;
   final String value;
+  final bool isNew;
   final Function(String value) onSave;
   final Function() onCancel;
 
@@ -26,6 +29,7 @@ class EditTextDialog extends StatelessWidget {
     super.key,
     required this.label,
     required this.value,
+    this.isNew = false,
     required this.onSave,
     required this.onCancel,
   });
@@ -67,8 +71,10 @@ class EditTextDialog extends StatelessWidget {
               builder: (context, value, child) {
                 final isValid = controller.text.isNotEmpty;
                 final isDirty = controller.text != this.value;
+                final textIsDirty = isNew || isDirty;
+
                 return TIOFlatButton(
-                  onPressed: isValid && isDirty ? handleSubmit : null,
+                  onPressed: isValid && textIsDirty ? handleSubmit : null,
                   text: 'Submit',
                   boldText: true,
                 );

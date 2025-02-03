@@ -390,6 +390,7 @@ class _ParentToolState extends State<ParentTool> {
       context: context,
       label: TIOMusicParams.toolTitle,
       value: "${toolBlock.title} - copy",
+      isNew: true,
     );
     if (newTitle == null || newTitle.isEmpty) {
       if (mounted) {
