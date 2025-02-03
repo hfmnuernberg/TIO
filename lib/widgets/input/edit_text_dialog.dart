@@ -65,8 +65,10 @@ class EditTextDialog extends StatelessWidget {
             ValueListenableBuilder<TextEditingValue>(
               valueListenable: controller,
               builder: (context, value, child) {
+                final isValid = controller.text.isNotEmpty;
+                final isDirty = controller.text != this.value;
                 return TIOFlatButton(
-                  onPressed: controller.text.isNotEmpty && controller.text != this.value ? () => handleSubmit() : null,
+                  onPressed: isValid && isDirty ? handleSubmit : null,
                   text: 'Submit',
                   boldText: true,
                 );

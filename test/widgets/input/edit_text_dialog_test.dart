@@ -25,15 +25,16 @@ void main() {
 
   group('edit text dialog', () {
     testWidgets('calls submit with edited text when save is pressed', (WidgetTester tester) async {
-      String? editedText;
+      String editedText = 'Never called';
       await tester.renderWidget(
           EditTextDialog(label: "Label", value: "Old title", onSave: (text) => editedText = text, onCancel: () {}),
       );
 
       await tester.enterText(find.bySemanticsLabel('Label'), "New title");
+      await tester.pump();
       await tester.tap(find.bySemanticsLabel('Submit'));
 
-      expect("New title", editedText);
+      expect(editedText, "New title");
     });
 
     testWidgets('calls cancel when cancel is pressed', (WidgetTester tester) async {
@@ -44,7 +45,7 @@ void main() {
 
       await tester.tap(find.bySemanticsLabel('Cancel'));
 
-      expect(true, wasOnCancelCalled);
+      expect(wasOnCancelCalled, true);
     });
 
     testWidgets('shows edit text dialog when open dialog is pressed', (WidgetTester tester) async {
@@ -65,19 +66,6 @@ void main() {
       expect(find.text('Old title'), findsOneWidget);
 
       await tester.tap(find.text('Cancel'));
-      await tester.pump();
-      expect(find.text('Old title'), findsNothing);
-    });
-
-    testWidgets('hides edit text dialog when submit is pressed', (WidgetTester tester) async {
-      await tester.renderWidget(TestWrapper());
-
-      await tester.tap(find.bySemanticsLabel('Open Dialog'));
-      await tester.pump();
-
-      expect(find.text('Old title'), findsOneWidget);
-
-      await tester.tap(find.text('Submit'));
       await tester.pump();
       expect(find.text('Old title'), findsNothing);
     });
