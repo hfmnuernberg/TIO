@@ -156,6 +156,37 @@ cd ..
 
 ---
 
+# App Script
+
+The app script gives an overview of all available commands and helps to run them more conveniently.
+It's like having commands like known from `npm` or `yarn` but for the Flutter app.
+
+### Installing
+
+1. Add the following function to your shell profile (e.g., to `~/.zshrc`):
+
+```
+app () { ~/path/to/this/repo/scripts/app.sh "$@"; }
+```
+
+_Note: If you are using `oh-my-zsh` you can add the function to `~/.oh-my-zsh/custom/aliases.zsh`._
+
+2. Install additional dependencies on your machine:
+
+- to use `app test:watch` you need to install `watchexec:` (e.g., `brew install watchexec`)
+
+### How to use
+
+Run the script like: `app <command> [args]`
+
+To get an overview about all available script commands, simply run:
+
+```
+app
+```
+
+---
+
 # Development
 
 ### Updating Rust Bridge
