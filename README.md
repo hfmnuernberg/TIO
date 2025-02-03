@@ -173,7 +173,7 @@ _Note: If you are using `oh-my-zsh` you can add the function to `~/.oh-my-zsh/cu
 
 2. Install additional dependencies on your machine:
 
-- to use `app test:watch` you need to install `watchexec:` (e.g., `brew install watchexec`)
+- to use `app test:watch` you need to install `watchexec` (e.g., [install with brew](https://formulae.brew.sh/formula/watchexec))
 
 ### How to use
 
