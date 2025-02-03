@@ -357,7 +357,7 @@ class _ProjectsListState extends State<ProjectsList> {
               value: getDateAndTimeNow(),
               isNew: true,
             );
-            if (newTitle == null || newTitle.isEmpty) return;
+            if (newTitle == null) return;
 
             final newProject = Project.defaultPicture(newTitle);
             if (context.mounted) {

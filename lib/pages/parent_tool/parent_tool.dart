@@ -279,7 +279,7 @@ class _ParentToolState extends State<ParentTool> {
             label: TIOMusicParams.newToolTitle,
             value: widget.toolBlock.title,
           );
-          if (newTitle == null || newTitle.isEmpty) return;
+          if (newTitle == null) return;
           widget.toolBlock.title = newTitle;
           if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
           setState(() {});
@@ -392,7 +392,7 @@ class _ParentToolState extends State<ParentTool> {
       value: "${toolBlock.title} - copy",
       isNew: true,
     );
-    if (newTitle == null || newTitle.isEmpty) {
+    if (newTitle == null) {
       if (mounted) {
         // close the bottom up sheet
         Navigator.of(context).pop();

@@ -231,7 +231,7 @@ class _PianoState extends State<Piano> {
                       label: PianoParams.displayName,
                       value: _pianoBlock.title,
                     );
-                    if (newTitle == null || newTitle.isEmpty) return;
+                    if (newTitle == null) return;
                     _pianoBlock.title = newTitle;
                     if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
                     setState(() {});

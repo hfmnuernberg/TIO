@@ -167,7 +167,7 @@ class _ProjectPageState extends State<ProjectPage> {
               label: TIOMusicParams.projectTitle,
               value: _project.title,
             );
-            if (newTitle == null || newTitle.isEmpty) return;
+            if (newTitle == null) return;
             _project.title = newTitle;
             if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
             setState(() {});
@@ -335,7 +335,7 @@ class _ProjectPageState extends State<ProjectPage> {
       value: "${info.name} ${_project.toolCounter[info.kind]! + 1}",
       isNew: true,
     );
-    if (newTitle == null || newTitle.isEmpty) return;
+    if (newTitle == null) return;
 
     _project.increaseCounter(info.kind);
     if (mounted) {
