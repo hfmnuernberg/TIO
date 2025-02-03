@@ -164,7 +164,7 @@ class _ProjectPageState extends State<ProjectPage> {
           onTap: () async {
             final newTitle = await showEditTextDialog(
               context: context,
-              label: TIOMusicParams.projectTitle,
+              label: 'Project title:',
               value: _project.title,
             );
             if (newTitle == null) return;
@@ -331,7 +331,7 @@ class _ProjectPageState extends State<ProjectPage> {
   void _onNewToolTilePressed(BlockTypeInfo info) async {
     final newTitle = await showEditTextDialog(
       context: context,
-      label: TIOMusicParams.toolTitle,
+      label: 'Tool title:',
       value: "${info.name} ${_project.toolCounter[info.kind]! + 1}",
       isNew: true,
     );

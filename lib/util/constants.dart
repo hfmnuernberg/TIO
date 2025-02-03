@@ -63,11 +63,6 @@ class TIOMusicParams {
     ".flac",
     ".m4a",
   ];
-
-  static const String newProjectTitle = "New project:";
-  static const String projectTitle = "Project title:";
-  static const String newToolTitle = "New tool:";
-  static const String toolTitle = "Tool title:";
 }
 
 //---------------------------------------------
