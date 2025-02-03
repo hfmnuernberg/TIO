@@ -1,29 +1,28 @@
-# This file configures the analyzer, which statically analyzes Dart code to
-# check for errors, warnings, and lints.
-#
-# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
-# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
-# invoked from the command line by running `flutter analyze`.
+# https://dart.dev/tools/linter-rules
 
-# The following line activates a set of recommended lints for Flutter apps,
-# packages, and plugins designed to encourage good coding practices.
-include: package:flutter_lints/flutter.yaml
+include: package:very_good_analysis/analysis_options.yaml
 
 linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at
-  # https://dart-lang.github.io/linter/lints/index.html.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
+  # TODO: enable the following rules
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    # fix once the automatic fix with 'dart fix' is working
+    always_put_required_named_parameters_first: false
+    avoid_dynamic_calls: false
+    avoid_positional_boolean_parameters: false
+    avoid_setters_without_getters: false
+    constant_identifier_names: false
+    library_private_types_in_public_api: false
+    lines_longer_than_80_chars: false # we prefer 120 chars
+    no_default_cases: false
+    one_member_abstracts: false
+    prefer_function_declarations_over_variables: false
+    public_member_api_docs: false
+    type_annotate_public_apis: false
 
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+analyzer:
+  # TODO: enable the following rules
+  language:
+    strict-casts: false
+    strict-inference: false
+    strict-raw-types: false
+  exclude: [build/**, lib/src/rust/**.frb_generated.dart, lib/**.g.dart, rust/**, rust_builder/**]
