@@ -90,7 +90,7 @@ class TIOTextButton extends StatelessWidget {
 class TIOFlatButton extends StatelessWidget {
   final String? text;
   final Icon? icon;
-  final Function() onPressed;
+  final Function()? onPressed;
   final bool boldText;
   final ButtonStyle? customStyle;
 

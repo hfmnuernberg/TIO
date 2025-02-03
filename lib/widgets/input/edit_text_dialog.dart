@@ -62,11 +62,16 @@ class EditTextDialog extends StatelessWidget {
               onPressed: onCancel,
               child: const Text('Cancel'),
             ),
-            TIOFlatButton(
-              onPressed: () => handleSubmit(),
-              text: 'Submit',
-              boldText: true,
-            )
+            ValueListenableBuilder<TextEditingValue>(
+              valueListenable: controller,
+              builder: (context, value, child) {
+                return TIOFlatButton(
+                  onPressed: controller.text.isNotEmpty && controller.text != this.value ? () => handleSubmit() : null,
+                  text: 'Submit',
+                  boldText: true,
+                );
+              },
+            ),
           ],
         )
       ],
