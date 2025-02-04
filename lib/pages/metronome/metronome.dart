@@ -33,6 +33,7 @@ import 'package:tiomusic/util/walkthrough_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:volume_controller/volume_controller.dart';
 
 class Metronome extends StatefulWidget {
   final bool isQuickTool;
@@ -51,6 +52,7 @@ class _MetronomeState extends State<Metronome> {
   bool _sound = true;
   bool _blink = MetronomeParams.defaultVisualMetronome;
   bool _blinkIsBeat = false;
+  double? _volume;
   final List<RhythmSegment> _rhythmSegmentList = List.empty(growable: true);
   final List<RhythmSegment> _rhythmSegmentList2 = List.empty(growable: true);
 
@@ -76,6 +78,8 @@ class _MetronomeState extends State<Metronome> {
   @override
   void initState() {
     super.initState();
+
+    _initializeVolume();
 
     _menuItems.add(
       MenuItemButton(
@@ -132,6 +136,13 @@ class _MetronomeState extends State<Metronome> {
         _createWalkthrough();
         _walkthrough.show(context);
       }
+    });
+  }
+
+  Future<void> _initializeVolume() async {
+    double currentVolume = await VolumeController.instance.getVolume();
+    setState(() {
+      _volume = currentVolume;
     });
   }
 
@@ -398,6 +409,14 @@ class _MetronomeState extends State<Metronome> {
     metronomeSetMuted(muted: isMute);
   }
 
+  Icon? getInfoIcon() {
+    if (_volume == null) return null;
+    if (_volume! == 0.0) return const Icon(Icons.warning_amber);
+    if (_volume! <= 0.25) return const Icon(Icons.info_outline);
+    if (_volume! >= 0.75) return const Icon(Icons.lightbulb_outline);
+    return null;
+  }
+
   // React to beat signal
   void _onBeatHappened(BeatHappenedEvent event) {
     if (!event.isRandomMute) {
@@ -650,6 +669,7 @@ class _MetronomeState extends State<Metronome> {
           title: "Volume",
           subtitle: _metronomeBlock.volume.toString(),
           leadingIcon: Icons.volume_up,
+          infoIcon: getInfoIcon(),
           settingPage: SetVolume(
             initialValue: _metronomeBlock.volume,
             onConfirm: (vol) {

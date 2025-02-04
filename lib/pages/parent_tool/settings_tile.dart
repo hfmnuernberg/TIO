@@ -4,6 +4,19 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 
+Text getSnackbarTextContent(Icon icon) {
+  if (icon.icon == Icons.warning_amber) {
+    return Text(
+        'The device volume is set to silent. Please make sure to adjust the device volume in addition to the metronome volume.');
+  }
+  if (icon.icon == Icons.info_outline) {
+    return Text(
+        'The device volume is set very low. Please make sure to adjust the device volume in addition to the metronome volume.');
+  }
+  return Text(
+      'The device volume is set very high. Please be careful! If you want to increase the volume even further, we recommend using an external speaker.');
+}
+
 class SettingsTile extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -13,6 +26,7 @@ class SettingsTile extends StatelessWidget {
   final Function? callOnReturn;
   final Function? callBeforeOpen;
   final bool inactive;
+  final Icon? infoIcon;
 
   const SettingsTile({
     super.key,
@@ -24,6 +38,7 @@ class SettingsTile extends StatelessWidget {
     this.callOnReturn,
     this.callBeforeOpen,
     this.inactive = false,
+    this.infoIcon,
   });
 
   @override
@@ -46,6 +61,20 @@ class SettingsTile extends StatelessWidget {
         color: ColorTheme.primaryFixedDim,
         disabledColor: ColorTheme.secondary,
       ),
+      menuIconOne: infoIcon == null
+          ? null
+          : IconButton(
+              onPressed: () async {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: getSnackbarTextContent(infoIcon!),
+                    duration: Duration(seconds: 5),
+                  ),
+                );
+              },
+              icon: infoIcon!,
+              color: ColorTheme.surfaceTint,
+            ),
       leadingPicture: leadingIcon is String
           ? leadingIcon
           : Icon(
