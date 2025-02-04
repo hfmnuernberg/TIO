@@ -75,12 +75,7 @@ void main() {
       String editedText = 'Never called';
       await tester.renderWidget(
         EditTextDialog(
-            label: "Label",
-            value: "Old title",
-            isNew: true,
-            onSave: (text) => editedText = text,
-            onCancel: () {}
-        ),
+            label: "Label", value: "Old title", isNew: true, onSave: (text) => editedText = text, onCancel: () {}),
       );
 
       await tester.tap(find.bySemanticsLabel('Submit'));
@@ -118,7 +113,7 @@ void main() {
 
       expect(find.text('Old title'), findsOneWidget);
 
-      await tester.enterText(find.text('Old title'), 'a'.padLeft(100 +  1, 'a'));
+      await tester.enterText(find.text('Old title'), 'a'.padLeft(100 + 1, 'a'));
       await tester.pump();
 
       final textField = tester.widget<TextField>(find.byType(TextField));

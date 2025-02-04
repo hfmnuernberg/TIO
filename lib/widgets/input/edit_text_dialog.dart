@@ -7,16 +7,17 @@ Future<String?> showEditTextDialog({
   required String label,
   required String value,
   bool isNew = false,
-}) => showDialog<String>(
-  context: context,
-  builder: (context) => EditTextDialog(
-    label: label,
-    value: value,
-    isNew: isNew,
-    onSave: (value) => Navigator.of(context).pop(value),
-    onCancel: () => Navigator.of(context).pop(),
-  ),
-);
+}) =>
+    showDialog<String>(
+      context: context,
+      builder: (context) => EditTextDialog(
+        label: label,
+        value: value,
+        isNew: isNew,
+        onSave: (value) => Navigator.of(context).pop(value),
+        onCancel: () => Navigator.of(context).pop(),
+      ),
+    );
 
 class EditTextDialog extends StatelessWidget {
   final String label;
