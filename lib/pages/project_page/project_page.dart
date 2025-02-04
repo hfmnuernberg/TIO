@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -13,6 +13,7 @@ import 'package:tiomusic/widgets/big_icon_button.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProjectPage extends StatefulWidget {
@@ -149,35 +150,32 @@ class _ProjectPageState extends State<ProjectPage> {
   @override
   Widget build(BuildContext context) {
     if (_showBlocks) {
-      return _buildProjectPage();
+      return _buildProjectPage(context);
     } else {
       return _buildChooseToolPage();
     }
   }
 
-  Widget _buildProjectPage() {
+  Widget _buildProjectPage(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: TextField(
-          key: _keyChangeTitle,
-          controller: _titleController,
-          decoration: null,
-          style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
-          onTap: () {
-            // select all text
-            _titleController.selection = TextSelection(baseOffset: 0, extentOffset: _titleController.text.length);
+        title: GestureDetector(
+          onTap: () async {
+            final newTitle = await showEditTextDialog(
+              context: context,
+              label: 'Project title:',
+              value: _project.title,
+            );
+            if (newTitle == null) return;
+            _project.title = newTitle;
+            if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+            setState(() {});
           },
-          onSubmitted: (newText) {
-            // save the new title
-            _project.title = newText;
-            FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-          },
-          onTapOutside: (event) {
-            // close keyboard and don't save
-            FocusScope.of(context).unfocus();
-            _titleController.text = _project.title;
-          },
+          child: Text(
+            _project.title,
+            style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+          ),
         ),
         backgroundColor: ColorTheme.surfaceBright,
         foregroundColor: ColorTheme.primary,
@@ -186,7 +184,7 @@ class _ProjectPageState extends State<ProjectPage> {
               onPressed: () async {
                 bool? deleteBlock = await _deleteBlock(deleteAll: true);
                 if (deleteBlock != null && deleteBlock) {
-                  if (mounted) {
+                  if (context.mounted) {
                     _project.clearBlocks(context.read<ProjectLibrary>());
                     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
                     setState(() {});
@@ -331,8 +329,13 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   void _onNewToolTilePressed(BlockTypeInfo info) async {
-    final newTitle = await editTitle(context, "${info.name} ${_project.toolCounter[info.kind]! + 1}");
-    if (newTitle == null || newTitle.isEmpty) return;
+    final newTitle = await showEditTextDialog(
+      context: context,
+      label: 'Tool title:',
+      value: "${info.name} ${_project.toolCounter[info.kind]! + 1}",
+      isNew: true,
+    );
+    if (newTitle == null) return;
 
     _project.increaseCounter(info.kind);
     if (mounted) {
