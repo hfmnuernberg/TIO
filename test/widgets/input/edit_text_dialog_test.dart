@@ -30,11 +30,11 @@ void main() {
         EditTextDialog(label: "Label", value: "Old title", onSave: (text) => editedText = text, onCancel: () {}),
       );
 
-      await tester.enterText(find.bySemanticsLabel('Label'), "New title");
+      await tester.enterText(find.bySemanticsLabel('Label'), "Edited title");
       await tester.pump();
       await tester.tap(find.bySemanticsLabel('Submit'));
 
-      expect(editedText, "New title");
+      expect(editedText, "Edited title");
     });
 
     testWidgets('calls cancel when cancel is pressed', (WidgetTester tester) async {
@@ -48,7 +48,7 @@ void main() {
       expect(wasOnCancelCalled, true);
     });
 
-    testWidgets('does not save new title when new title is empty', (WidgetTester tester) async {
+    testWidgets('does not save title when title is empty', (WidgetTester tester) async {
       var wasOnSaveCalled = false;
       await tester.renderWidget(
         EditTextDialog(label: "Label", value: "Old title", onSave: (_) => wasOnSaveCalled = true, onCancel: () {}),
@@ -60,7 +60,7 @@ void main() {
       expect(wasOnSaveCalled, false);
     });
 
-    testWidgets('does not save new title when title has not changed', (WidgetTester tester) async {
+    testWidgets('does not save title when title has not changed', (WidgetTester tester) async {
       var wasOnSaveCalled = false;
       await tester.renderWidget(
         EditTextDialog(label: "Label", value: "Old title", onSave: (_) => wasOnSaveCalled = true, onCancel: () {}),
@@ -71,7 +71,7 @@ void main() {
       expect(wasOnSaveCalled, false);
     });
 
-    testWidgets('submits title when title has not changed but is new', (WidgetTester tester) async {
+    testWidgets('submits title when title has not changed but is marked as new', (WidgetTester tester) async {
       String editedText = 'Never called';
       await tester.renderWidget(
         EditTextDialog(
@@ -110,7 +110,7 @@ void main() {
       expect(find.text('Old title'), findsNothing);
     });
 
-    testWidgets('does not allow entering new title longer than max value', (WidgetTester tester) async {
+    testWidgets('does not allow entering title longer than max value', (WidgetTester tester) async {
       await tester.renderWidget(TestWrapper());
 
       await tester.tap(find.bySemanticsLabel('Open Dialog'));

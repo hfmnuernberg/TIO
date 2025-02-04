@@ -71,10 +71,10 @@ class EditTextDialog extends StatelessWidget {
               builder: (context, value, child) {
                 final isValid = controller.text.isNotEmpty;
                 final isDirty = controller.text != this.value;
-                final textIsDirty = isNew || isDirty;
+                final isSubmitEnabled = isValid && (isNew || isDirty);
 
                 return TIOFlatButton(
-                  onPressed: isValid && textIsDirty ? handleSubmit : null,
+                  onPressed: isSubmitEnabled ? handleSubmit : null,
                   text: 'Submit',
                   boldText: true,
                 );
