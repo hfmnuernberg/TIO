@@ -47,8 +47,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
           ),
           backgroundColor: ColorTheme.primary92,
           body: widget.mustBeScrollable
-              ? SingleChildScrollView(
-                  child: isPortrait ? _buildPortrait() : _buildLandscape())
+              ? SingleChildScrollView(child: isPortrait ? _buildPortrait() : _buildLandscape())
               : isPortrait
                   ? _buildPortrait()
                   : _buildLandscape(),
@@ -98,8 +97,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
           Positioned(
             right: padding + TIOMusicParams.sizeBigButtons * 2.5,
             bottom: padding + TIOMusicParams.sizeBigButtons / 2.5,
-            child: CancelButton(
-                onTap: widget.cancel ?? () => Navigator.pop(context)),
+            child: CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
           ),
           Positioned(
             right: padding + TIOMusicParams.sizeBigButtons * 4.7,
@@ -121,8 +119,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CancelButton(
-                      onTap: widget.cancel ?? () => Navigator.pop(context)),
+                  CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
                   ConfirmButton(onTap: widget.confirm),
                 ],
               ),

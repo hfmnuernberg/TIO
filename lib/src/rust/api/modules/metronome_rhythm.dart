@@ -52,8 +52,7 @@ class MetroBar {
   });
 
   @override
-  int get hashCode =>
-      id.hashCode ^ beats.hashCode ^ polyBeats.hashCode ^ beatLen.hashCode;
+  int get hashCode => id.hashCode ^ beats.hashCode ^ polyBeats.hashCode ^ beatLen.hashCode;
 
   @override
   bool operator ==(Object other) =>

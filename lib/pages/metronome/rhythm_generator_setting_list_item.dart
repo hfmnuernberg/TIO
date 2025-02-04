@@ -18,12 +18,10 @@ class RhythmGeneratorSettingListItem extends StatefulWidget {
   });
 
   @override
-  State<RhythmGeneratorSettingListItem> createState() =>
-      _RhythmGeneratorSettingListItemState();
+  State<RhythmGeneratorSettingListItem> createState() => _RhythmGeneratorSettingListItemState();
 }
 
-class _RhythmGeneratorSettingListItemState
-    extends State<RhythmGeneratorSettingListItem> {
+class _RhythmGeneratorSettingListItemState extends State<RhythmGeneratorSettingListItem> {
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -34,16 +32,12 @@ class _RhythmGeneratorSettingListItemState
             style: widget.hasBorder ? BorderStyle.solid : BorderStyle.none,
             color: ColorTheme.primary,
           ),
-          borderRadius:
-              BorderRadius.circular(MetronomeParams.rhythmSegmentSize / 2),
+          borderRadius: BorderRadius.circular(MetronomeParams.rhythmSegmentSize / 2),
         ),
         child: InkWell(
-          borderRadius:
-              BorderRadius.circular(MetronomeParams.rhythmSegmentSize),
+          borderRadius: BorderRadius.circular(MetronomeParams.rhythmSegmentSize),
           onTap: widget.onTap,
-          child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: NoteHandler.getNoteSvg(widget.noteKey)),
+          child: Padding(padding: const EdgeInsets.all(10.0), child: NoteHandler.getNoteSvg(widget.noteKey)),
         ),
       ),
     );

@@ -23,8 +23,7 @@ abstract class FileReferences {
   }
 
   // decreases file reference counter and deletes file if reference counter is 0
-  static void decreaseFileReference(
-      String relativePath, ProjectLibrary projectLibrary) {
+  static void decreaseFileReference(String relativePath, ProjectLibrary projectLibrary) {
     if (_fileReferences.containsKey(relativePath)) {
       _fileReferences[relativePath] = _fileReferences[relativePath]! - 1;
       if (_fileReferences[relativePath]! < 1) {
@@ -52,8 +51,7 @@ abstract class FileReferences {
     for (var file in files) {
       var relativeFilePath = await FileIO.getRelativeFilePath(file.path);
       for (var block in _getMediaFileBlocks(projectLibrary)) {
-        if ((block is MediaPlayerBlock &&
-                block.relativePath == relativeFilePath) ||
+        if ((block is MediaPlayerBlock && block.relativePath == relativeFilePath) ||
             (block is ImageBlock && block.relativePath == relativeFilePath)) {
           increaseFileReference(relativeFilePath);
         }

@@ -86,8 +86,7 @@ class _ParentToolState extends State<ParentTool> {
       if (widget.isQuickTool) {
         if (context.read<ProjectLibrary>().showQuickToolTutorial) {
           _createWalkthroughQuickTool();
-          Future.delayed(
-              Duration.zero, () => _walkthroughQuickTool.show(context));
+          Future.delayed(Duration.zero, () => _walkthroughQuickTool.show(context));
         } else if (context.read<ProjectLibrary>().showIslandTutorial &&
             checkIslandPossible(widget.project, widget.toolBlock)) {
           _createWalkthroughIsland();
@@ -218,17 +217,14 @@ class _ParentToolState extends State<ParentTool> {
         onPressed: () {
           _openBottomSheetAndSaveTool();
         },
-        icon: Icon(widget.isQuickTool
-            ? Icons.bookmark_outline
-            : Icons.bookmark_add_outlined),
+        icon: Icon(widget.isQuickTool ? Icons.bookmark_outline : Icons.bookmark_add_outlined),
       ),
     ];
 
     if (widget.menuItems != null && widget.menuItems!.isNotEmpty) {
       appBarActions.add(
         MenuAnchor(
-          builder:
-              (BuildContext context, MenuController controller, Widget? child) {
+          builder: (BuildContext context, MenuController controller, Widget? child) {
             return IconButton(
               onPressed: () {
                 controller.isOpen ? controller.close() : controller.open();
@@ -252,8 +248,7 @@ class _ParentToolState extends State<ParentTool> {
         }
 
         // if quick tool and values have been changed: ask for saving
-        if (widget.isQuickTool &&
-            !blockValuesSameAsDefaultBlock(widget.toolBlock)) {
+        if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(widget.toolBlock)) {
           final save = await askForSavingQuickTool(context);
 
           // if user taps outside the dialog, we dont want to exit the quick tool and we dont want to save
@@ -324,8 +319,7 @@ class _ParentToolState extends State<ParentTool> {
       ),
       Expanded(
         child: Padding(
-          padding:
-              const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
+          padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
           child: ListView.builder(
             scrollDirection: Axis.vertical,
             shrinkWrap: true,
@@ -335,21 +329,18 @@ class _ParentToolState extends State<ParentTool> {
                 builder: (BuildContext context, StateSetter setTileState) {
                   return CardListTile(
                     title: projectLibrary.projects[index].title,
-                    subtitle: getDateAndTimeFormatted(
-                        projectLibrary.projects[index].timeLastModified),
+                    subtitle: getDateAndTimeFormatted(projectLibrary.projects[index].timeLastModified),
                     highlightColor: _highlightColorOnSave,
                     trailingIcon: IconButton(
                       onPressed: () {
-                        _onSaveInProjectTap(
-                            setTileState, index, widget.toolBlock);
+                        _onSaveInProjectTap(setTileState, index, widget.toolBlock);
                       },
                       icon: _bookmarkIcon,
                       color: ColorTheme.surfaceTint,
                     ),
                     leadingPicture: projectLibrary.projects[index].thumbnail,
                     onTapFunction: () {
-                      _onSaveInProjectTap(
-                          setTileState, index, widget.toolBlock);
+                      _onSaveInProjectTap(setTileState, index, widget.toolBlock);
                     },
                   );
                 },
@@ -361,8 +352,7 @@ class _ParentToolState extends State<ParentTool> {
       TIOFlatButton(
         // creating a new project to save the tool in it
         onPressed: () async {
-          final newTitles = await editTwoTitles(
-              context, getDateAndTimeNow(), "${widget.toolBlock.title} - copy");
+          final newTitles = await editTwoTitles(context, getDateAndTimeNow(), "${widget.toolBlock.title} - copy");
           if (newTitles == null || newTitles.isEmpty) {
             if (mounted) {
               // close the bottom up sheet
@@ -374,8 +364,7 @@ class _ParentToolState extends State<ParentTool> {
             // close the bottom up sheet
             Navigator.of(context).pop();
 
-            saveToolInNewProject(context, widget.toolBlock, widget.isQuickTool,
-                newTitles[0], newTitles[1]);
+            saveToolInNewProject(context, widget.toolBlock, widget.isQuickTool, newTitles[0], newTitles[1]);
           }
         },
         text: "Save in a new project",
@@ -384,8 +373,7 @@ class _ParentToolState extends State<ParentTool> {
     ]);
   }
 
-  void _onSaveInProjectTap(
-      StateSetter setTileState, int index, ProjectBlock toolBlock) async {
+  void _onSaveInProjectTap(StateSetter setTileState, int index, ProjectBlock toolBlock) async {
     final newTitle = await showEditTextDialog(
       context: context,
       label: 'Tool title:',
@@ -414,8 +402,7 @@ class _ParentToolState extends State<ParentTool> {
 
     // saving the tool in a project
     if (mounted) {
-      saveToolInProject(
-          context, index, toolBlock, widget.isQuickTool, newTitle);
+      saveToolInProject(context, index, toolBlock, widget.isQuickTool, newTitle);
     }
   }
 
@@ -441,9 +428,7 @@ class _ParentToolState extends State<ParentTool> {
         child: _appBar(context),
       ),
       backgroundColor: ColorTheme.primary92,
-      body: widget.deactivateScroll
-          ? _body()
-          : SingleChildScrollView(child: _body()),
+      body: widget.deactivateScroll ? _body() : SingleChildScrollView(child: _body()),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: widget.floatingActionButton,
     );
@@ -471,8 +456,7 @@ class _ParentToolState extends State<ParentTool> {
         // center module
         hasSettingTiles
             ? SizedBox(
-                height: widget.heightForCenterModule ??
-                    MediaQuery.of(context).size.height / 2.5,
+                height: widget.heightForCenterModule ?? MediaQuery.of(context).size.height / 2.5,
                 child: widget.centerModule,
               )
             : widget.centerModule,

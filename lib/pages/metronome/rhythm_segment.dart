@@ -36,19 +36,13 @@ class _RhythmSegmentState extends State<RhythmSegment> {
     // this variable needs to be set here and not in initState, because otherwise the box size of the group would not change with changing the number of beats
     double? spaceForEachPoly;
     double? spaceForEachMainBeat;
-    double totalGroupWidth = (TIOMusicParams.beatButtonSizeMainPage +
-        TIOMusicParams.beatButtonPadding * 2);
-    if (rhythmGroups[widget.barIdx].polyBeats.length >
-        rhythmGroups[widget.barIdx].beats.length) {
-      totalGroupWidth =
-          totalGroupWidth * rhythmGroups[widget.barIdx].polyBeats.length;
-      spaceForEachMainBeat =
-          totalGroupWidth / rhythmGroups[widget.barIdx].beats.length;
+    double totalGroupWidth = (TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2);
+    if (rhythmGroups[widget.barIdx].polyBeats.length > rhythmGroups[widget.barIdx].beats.length) {
+      totalGroupWidth = totalGroupWidth * rhythmGroups[widget.barIdx].polyBeats.length;
+      spaceForEachMainBeat = totalGroupWidth / rhythmGroups[widget.barIdx].beats.length;
     } else {
-      totalGroupWidth =
-          totalGroupWidth * rhythmGroups[widget.barIdx].beats.length;
-      spaceForEachPoly =
-          totalGroupWidth / rhythmGroups[widget.barIdx].polyBeats.length;
+      totalGroupWidth = totalGroupWidth * rhythmGroups[widget.barIdx].beats.length;
+      spaceForEachPoly = totalGroupWidth / rhythmGroups[widget.barIdx].polyBeats.length;
     }
 
     return Container(
@@ -67,8 +61,7 @@ class _RhythmSegmentState extends State<RhythmSegment> {
               width: totalGroupWidth,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: _beatButtons(rhythmGroups[widget.barIdx].beats.length,
-                    spaceForEachMainBeat, rhythmGroups),
+                children: _beatButtons(rhythmGroups[widget.barIdx].beats.length, spaceForEachMainBeat, rhythmGroups),
               ),
             ),
             SizedBox(
@@ -76,15 +69,12 @@ class _RhythmSegmentState extends State<RhythmSegment> {
               width: totalGroupWidth,
               child: rhythmGroups[widget.barIdx].polyBeats.isEmpty
                   ? const SizedBox(
-                      height: TIOMusicParams.beatButtonSizeMainPage +
-                          TIOMusicParams.beatButtonPadding * 2,
+                      height: TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2,
                     )
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: _beatButtons(
-                          rhythmGroups[widget.barIdx].polyBeats.length,
-                          spaceForEachPoly,
-                          rhythmGroups,
+                          rhythmGroups[widget.barIdx].polyBeats.length, spaceForEachPoly, rhythmGroups,
                           isPoly: true),
                     ),
             ),
@@ -94,9 +84,7 @@ class _RhythmSegmentState extends State<RhythmSegment> {
     );
   }
 
-  List<Widget> _beatButtons(
-      int number, double? spaceForEachBeat, var rhythmGroups,
-      {bool isPoly = false}) {
+  List<Widget> _beatButtons(int number, double? spaceForEachBeat, var rhythmGroups, {bool isPoly = false}) {
     List<Widget> buttons = [];
 
     for (int i = 0; i < number; i++) {
@@ -134,8 +122,7 @@ class _RhythmSegmentState extends State<RhythmSegment> {
           return BeatButton(
             color: ColorTheme.surfaceTint,
             beatTypes: isPoly
-                ? getBeatButtonsFromBeatsPoly(
-                    rhythmGroups[widget.barIdx].polyBeats)
+                ? getBeatButtonsFromBeatsPoly(rhythmGroups[widget.barIdx].polyBeats)
                 : getBeatButtonsFromBeats(rhythmGroups[widget.barIdx].beats),
             beatTypeIndex: i,
             buttonSize: TIOMusicParams.beatButtonSizeMainPage,
@@ -162,15 +149,11 @@ class _RhythmSegmentState extends State<RhythmSegment> {
         beat = button;
       }
 
-      buttons.add(Padding(
-          padding: const EdgeInsets.all(TIOMusicParams.beatButtonPadding),
-          child: beat));
+      buttons.add(Padding(padding: const EdgeInsets.all(TIOMusicParams.beatButtonPadding), child: beat));
 
       if (spaceForEachBeat != null) {
         buttons.add(SizedBox(
-          width: spaceForEachBeat -
-              TIOMusicParams.beatButtonSizeMainPage -
-              TIOMusicParams.beatButtonPadding * 2,
+          width: spaceForEachBeat - TIOMusicParams.beatButtonSizeMainPage - TIOMusicParams.beatButtonPadding * 2,
         ));
       }
     }
@@ -203,8 +186,7 @@ class ActiveBeatsModel with ChangeNotifier {
   int mainBeat2 = 0;
   int polyBeat2 = 0;
 
-  void setBeatOnOff(
-      bool on, int barIdx, int beatIdx, bool isPoly, bool isSecondary) {
+  void setBeatOnOff(bool on, int barIdx, int beatIdx, bool isPoly, bool isSecondary) {
     if (isSecondary) {
       if (isPoly) {
         polyBeatOn2 = on;
