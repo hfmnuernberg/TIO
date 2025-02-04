@@ -6,20 +6,15 @@ part of 'metronome_block.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-MetronomeBlock _$MetronomeBlockFromJson(Map<String, dynamic> json) =>
-    MetronomeBlock(
+MetronomeBlock _$MetronomeBlockFromJson(Map<String, dynamic> json) => MetronomeBlock(
       json['title'] as String? ?? 'Metronome',
       json['id'] as String? ?? '',
       json['islandToolID'] as String?,
       (json['bpm'] as num?)?.toInt() ?? 80,
       (json['randomMute'] as num?)?.toInt() ?? 0,
-      (json['rhythmGroups'] as List<dynamic>?)
-              ?.map((e) => RhythmGroup.fromJson(e as Map<String, dynamic>))
-              .toList() ??
+      (json['rhythmGroups'] as List<dynamic>?)?.map((e) => RhythmGroup.fromJson(e as Map<String, dynamic>)).toList() ??
           [],
-      (json['rhythmGroups2'] as List<dynamic>?)
-              ?.map((e) => RhythmGroup.fromJson(e as Map<String, dynamic>))
-              .toList() ??
+      (json['rhythmGroups2'] as List<dynamic>?)?.map((e) => RhythmGroup.fromJson(e as Map<String, dynamic>)).toList() ??
           [],
       json['accSound'] as String? ?? 'click',
       json['unaccSound'] as String? ?? 'click',
@@ -29,14 +24,11 @@ MetronomeBlock _$MetronomeBlockFromJson(Map<String, dynamic> json) =>
       json['unaccSound2'] as String? ?? 'clock',
       json['polyAccSound2'] as String? ?? 'cowbell',
       json['polyUnaccSound2'] as String? ?? 'cowbell',
-      json['timeLastModified'] == null
-          ? getCurrentDateTime()
-          : DateTime.parse(json['timeLastModified'] as String),
+      json['timeLastModified'] == null ? getCurrentDateTime() : DateTime.parse(json['timeLastModified'] as String),
       (json['volume'] as num?)?.toDouble() ?? 0.5,
     );
 
-Map<String, dynamic> _$MetronomeBlockToJson(MetronomeBlock instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$MetronomeBlockToJson(MetronomeBlock instance) => <String, dynamic>{
       'kind': instance.kind,
       'title': instance.title,
       'timeLastModified': instance.timeLastModified.toIso8601String(),

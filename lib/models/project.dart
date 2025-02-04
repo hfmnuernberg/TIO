@@ -75,8 +75,7 @@ class Project extends ChangeNotifier {
 
   @JsonKey(includeFromJson: true, includeToJson: true, defaultValue: [])
   late List<ProjectBlock> _blocks;
-  UnmodifiableListView<ProjectBlock> get blocks =>
-      UnmodifiableListView(_blocks);
+  UnmodifiableListView<ProjectBlock> get blocks => UnmodifiableListView(_blocks);
 
   late DateTime timeLastModified;
 
@@ -109,14 +108,12 @@ class Project extends ChangeNotifier {
     setThumbnail(_thumbnailPath);
   }
 
-  factory Project.fromJson(Map<String, dynamic> json) =>
-      _$ProjectFromJson(json);
+  factory Project.fromJson(Map<String, dynamic> json) => _$ProjectFromJson(json);
 
   Map<String, dynamic> toJson() => _$ProjectToJson(this);
 
   void removeBlock(ProjectBlock block, ProjectLibrary projectLibrary) {
-    updateFileReferenceForFileOfBlock(
-        block, IncreaseOrDecrease.decrease, projectLibrary);
+    updateFileReferenceForFileOfBlock(block, IncreaseOrDecrease.decrease, projectLibrary);
     _blocks.remove(block);
     notifyListeners();
   }
@@ -128,8 +125,7 @@ class Project extends ChangeNotifier {
 
   void clearBlocks(ProjectLibrary projectLibrary) {
     for (ProjectBlock block in _blocks) {
-      updateFileReferenceForFileOfBlock(
-          block, IncreaseOrDecrease.decrease, projectLibrary);
+      updateFileReferenceForFileOfBlock(block, IncreaseOrDecrease.decrease, projectLibrary);
     }
     _blocks.clear();
     notifyListeners();

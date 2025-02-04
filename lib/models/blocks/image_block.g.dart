@@ -11,13 +11,10 @@ ImageBlock _$ImageBlockFromJson(Map<String, dynamic> json) => ImageBlock(
       json['id'] as String? ?? '',
       json['islandToolID'] as String?,
       json['relativePath'] as String? ?? '',
-      json['timeLastModified'] == null
-          ? getCurrentDateTime()
-          : DateTime.parse(json['timeLastModified'] as String),
+      json['timeLastModified'] == null ? getCurrentDateTime() : DateTime.parse(json['timeLastModified'] as String),
     );
 
-Map<String, dynamic> _$ImageBlockToJson(ImageBlock instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ImageBlockToJson(ImageBlock instance) => <String, dynamic>{
       'kind': instance.kind,
       'title': instance.title,
       'timeLastModified': instance.timeLastModified.toIso8601String(),

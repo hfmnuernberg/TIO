@@ -29,10 +29,7 @@ class MetronomeBlock extends ProjectBlock {
       ];
 
   @override
-  @JsonKey(
-      defaultValue: MetronomeParams.kind,
-      includeFromJson: false,
-      includeToJson: true)
+  @JsonKey(defaultValue: MetronomeParams.kind, includeFromJson: false, includeToJson: true)
   String get kind => MetronomeParams.kind;
 
   late String _title;
@@ -203,8 +200,8 @@ class MetronomeBlock extends ProjectBlock {
     bpm = MetronomeParams.defaultBPM.toInt();
     randomMute = MetronomeParams.defaultRandomMute;
     _rhythmGroups = [
-      RhythmGroup(MetronomeParams.defaultId, MetronomeParams.defaultBeats,
-          MetronomeParams.defaultPolyBeats, MetronomeParams.defaultNoteKey)
+      RhythmGroup(MetronomeParams.defaultId, MetronomeParams.defaultBeats, MetronomeParams.defaultPolyBeats,
+          MetronomeParams.defaultNoteKey)
     ];
     _rhythmGroups2 = [];
     accSound = MetronomeParams.defaultAccSound;
@@ -226,8 +223,8 @@ class MetronomeBlock extends ProjectBlock {
     bpm = MetronomeParams.defaultBPM.toInt();
     randomMute = MetronomeParams.defaultRandomMute;
     _rhythmGroups = [
-      RhythmGroup(MetronomeParams.defaultId, MetronomeParams.defaultBeats,
-          MetronomeParams.defaultPolyBeats, MetronomeParams.defaultNoteKey)
+      RhythmGroup(MetronomeParams.defaultId, MetronomeParams.defaultBeats, MetronomeParams.defaultPolyBeats,
+          MetronomeParams.defaultNoteKey)
     ];
     _rhythmGroups2 = [];
     accSound = MetronomeParams.defaultAccSound;
@@ -269,8 +266,7 @@ class MetronomeBlock extends ProjectBlock {
   @override
   get icon => blockTypeInfos[BlockType.metronome]!.icon;
 
-  factory MetronomeBlock.fromJson(Map<String, dynamic> json) =>
-      _$MetronomeBlockFromJson(json);
+  factory MetronomeBlock.fromJson(Map<String, dynamic> json) => _$MetronomeBlockFromJson(json);
 
   @override
   Map<String, dynamic> toJson() => _$MetronomeBlockToJson(this);
