@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -12,6 +12,7 @@ import 'package:tiomusic/util/walkthrough_util.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ParentTool extends StatefulWidget {
@@ -209,7 +210,7 @@ class _ParentToolState extends State<ParentTool> {
     super.dispose();
   }
 
-  PreferredSizeWidget _appBar() {
+  PreferredSizeWidget _appBar(BuildContext context) {
     List<Widget> appBarActions = [
       // Icon Button for saving the tool
       IconButton(
@@ -261,7 +262,7 @@ class _ParentToolState extends State<ParentTool> {
           if (save) {
             _openBottomSheetAndSaveTool();
           } else {
-            if (mounted) Navigator.of(context).pop();
+            if (context.mounted) Navigator.of(context).pop();
           }
         } else {
           Navigator.of(context).pop();
@@ -271,28 +272,22 @@ class _ParentToolState extends State<ParentTool> {
 
     return AppBar(
       leading: backButton,
-      title: TextField(
-        key: _keyChangeTitle,
-        controller: _toolTitle,
-        enabled: widget.isQuickTool ? false : true,
-        decoration: null,
-        style: const TextStyle(
-            color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
-        onTap: () {
-          // select all text
-          _toolTitle.selection = TextSelection(
-              baseOffset: 0, extentOffset: _toolTitle.text.length);
+      title: GestureDetector(
+        onTap: () async {
+          final newTitle = await showEditTextDialog(
+            context: context,
+            label: 'New tool:',
+            value: widget.toolBlock.title,
+          );
+          if (newTitle == null) return;
+          widget.toolBlock.title = newTitle;
+          if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+          setState(() {});
         },
-        onSubmitted: (newText) {
-          // save the new title
-          widget.toolBlock.title = newText;
-          FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-        },
-        onTapOutside: (event) {
-          // close keyboard and don't save
-          FocusScope.of(context).unfocus();
-          _toolTitle.text = widget.toolBlock.title;
-        },
+        child: Text(
+          widget.toolBlock.title,
+          style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+        ),
       ),
       backgroundColor: ColorTheme.surfaceBright,
       foregroundColor: ColorTheme.primary,
@@ -391,8 +386,13 @@ class _ParentToolState extends State<ParentTool> {
 
   void _onSaveInProjectTap(
       StateSetter setTileState, int index, ProjectBlock toolBlock) async {
-    final newTitle = await editTitle(context, "${toolBlock.title} - copy");
-    if (newTitle == null || newTitle.isEmpty) {
+    final newTitle = await showEditTextDialog(
+      context: context,
+      label: 'Tool title:',
+      value: "${toolBlock.title} - copy",
+      isNew: true,
+    );
+    if (newTitle == null) {
       if (mounted) {
         // close the bottom up sheet
         Navigator.of(context).pop();
@@ -438,7 +438,7 @@ class _ParentToolState extends State<ParentTool> {
       resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(ParentToolParams.appBarHeight),
-        child: _appBar(),
+        child: _appBar(context),
       ),
       backgroundColor: ColorTheme.primary92,
       body: widget.deactivateScroll
