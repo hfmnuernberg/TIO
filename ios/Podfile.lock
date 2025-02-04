@@ -63,6 +63,8 @@ PODS:
   - SwiftyGif (5.4.4)
   - url_launcher_ios (0.0.1):
     - Flutter
+  - volume_controller (0.0.1):
+    - Flutter
   - wakelock_plus (0.0.1):
     - Flutter
 
@@ -81,6 +83,7 @@ DEPENDENCIES:
   - rust_lib_tiomusic (from `.symlinks/plugins/rust_lib_tiomusic/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
+  - volume_controller (from `.symlinks/plugins/volume_controller/ios`)
   - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
 
 SPEC REPOS:
@@ -119,6 +122,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/share_plus/ios"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
+  volume_controller:
+    :path: ".symlinks/plugins/volume_controller/ios"
   wakelock_plus:
     :path: ".symlinks/plugins/wakelock_plus/ios"
 
@@ -141,6 +146,7 @@ SPEC CHECKSUMS:
   share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
+  volume_controller: 2e3de73d6e7e81a0067310d17fb70f2f86d71ac7
   wakelock_plus: 373cfe59b235a6dd5837d0fb88791d2f13a90d56
 
 PODFILE CHECKSUM: 8d66e0eafddbe2954cd2768ccb160b72bf63ba9b
