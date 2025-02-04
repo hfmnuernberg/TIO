@@ -8,8 +8,7 @@ class MessageBorder extends ShapeBorder {
   final bool usePadding;
   final PointingDirection? pointingDirection;
   final double _padding = 16;
-  final double
-      pointerOffset; // for the offset to use, set pointerPosition to center
+  final double pointerOffset; // for the offset to use, set pointerPosition to center
   final PointerPosition pointerPosition;
 
   const MessageBorder({
@@ -20,8 +19,7 @@ class MessageBorder extends ShapeBorder {
   });
 
   @override
-  EdgeInsetsGeometry get dimensions =>
-      EdgeInsets.only(bottom: usePadding ? _padding : 0);
+  EdgeInsetsGeometry get dimensions => EdgeInsets.only(bottom: usePadding ? _padding : 0);
 
   @override
   Path getInnerPath(Rect rect, {TextDirection? textDirection}) {
@@ -30,8 +28,7 @@ class MessageBorder extends ShapeBorder {
 
   @override
   Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
-    rect =
-        Rect.fromPoints(rect.topLeft, rect.bottomRight - Offset(0, _padding));
+    rect = Rect.fromPoints(rect.topLeft, rect.bottomRight - Offset(0, _padding));
 
     switch (pointingDirection) {
       case PointingDirection.up:

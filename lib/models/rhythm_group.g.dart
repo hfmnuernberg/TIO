@@ -8,23 +8,15 @@ part of 'rhythm_group.dart';
 
 RhythmGroup _$RhythmGroupFromJson(Map<String, dynamic> json) => RhythmGroup(
       json['keyID'] as String? ?? '',
-      (json['beats'] as List<dynamic>?)
-              ?.map((e) => $enumDecode(_$BeatTypeEnumMap, e))
-              .toList() ??
-          [],
-      (json['polyBeats'] as List<dynamic>?)
-              ?.map((e) => $enumDecode(_$BeatTypePolyEnumMap, e))
-              .toList() ??
-          [],
+      (json['beats'] as List<dynamic>?)?.map((e) => $enumDecode(_$BeatTypeEnumMap, e)).toList() ?? [],
+      (json['polyBeats'] as List<dynamic>?)?.map((e) => $enumDecode(_$BeatTypePolyEnumMap, e)).toList() ?? [],
       json['noteKey'] as String? ?? 'e4',
     );
 
-Map<String, dynamic> _$RhythmGroupToJson(RhythmGroup instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$RhythmGroupToJson(RhythmGroup instance) => <String, dynamic>{
       'keyID': instance.keyID,
       'beats': instance.beats.map((e) => _$BeatTypeEnumMap[e]!).toList(),
-      'polyBeats':
-          instance.polyBeats.map((e) => _$BeatTypePolyEnumMap[e]!).toList(),
+      'polyBeats': instance.polyBeats.map((e) => _$BeatTypePolyEnumMap[e]!).toList(),
       'noteKey': instance.noteKey,
     };
 

@@ -6,10 +6,7 @@ class AddImageDialog extends StatefulWidget {
   final Function pickImageFunction;
   final Function takePhotoFunction;
 
-  const AddImageDialog(
-      {super.key,
-      required this.pickImageFunction,
-      required this.takePhotoFunction});
+  const AddImageDialog({super.key, required this.pickImageFunction, required this.takePhotoFunction});
 
   @override
   State<AddImageDialog> createState() => _AddImageDialogState();
@@ -21,13 +18,11 @@ class _AddImageDialogState extends State<AddImageDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("No image in this tool",
-          style: TextStyle(color: ColorTheme.primary)),
+      title: const Text("No image in this tool", style: TextStyle(color: ColorTheme.primary)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-              "Pick an image from your device or take a photo using the camera",
+          const Text("Pick an image from your device or take a photo using the camera",
               style: TextStyle(color: ColorTheme.primary)),
           const SizedBox(height: 10),
           TIOFlatButton(
@@ -49,8 +44,7 @@ class _AddImageDialogState extends State<AddImageDialog> {
                 useImageAsProjectThumbnail = value!;
               });
             },
-            title: const Text("Use image as project thumbnail",
-                style: TextStyle(color: ColorTheme.primary)),
+            title: const Text("Use image as project thumbnail", style: TextStyle(color: ColorTheme.primary)),
           ),
         ],
       ),

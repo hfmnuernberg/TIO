@@ -71,8 +71,8 @@ class _SetVolumeState extends State<SetVolume> {
   }
 
   void _reset() {
-    _volumeInput.displayText.value = _volumeInput.displayText.value
-        .copyWith(text: TIOMusicParams.defaultVolume.toString());
+    _volumeInput.displayText.value =
+        _volumeInput.displayText.value.copyWith(text: TIOMusicParams.defaultVolume.toString());
   }
 
   void _onCancel() {
