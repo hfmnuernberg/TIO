@@ -84,9 +84,6 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
       case SoundType.polyUnaccented:
         filepath =
             "$filepath${MetronomeParams.metronomeSounds[_selectedPolyUnaccSound.indexOf(true)].toLowerCase()}.wav";
-        break;
-      default:
-        throw Exception("Invalid sound type");
     }
 
     // not sure if the volume parameter has effect here
