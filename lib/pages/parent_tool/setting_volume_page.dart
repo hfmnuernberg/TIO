@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/file_io.dart';
+import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/pages/parent_tool/settings_tile_volume_snackbar.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/number_input_double.dart';
+import 'package:volume_controller/volume_controller.dart';
 
 class SetVolume extends StatefulWidget {
   final Function(double) onConfirm;
@@ -27,10 +30,13 @@ class SetVolume extends StatefulWidget {
 
 class _SetVolumeState extends State<SetVolume> {
   late NumberInputDouble _volumeInput;
+  VolumeLevel? _volumeLevel;
 
   @override
   void initState() {
     super.initState();
+
+    _initVolumeListener();
 
     _volumeInput = NumberInputDouble(
       maxValue: 1.0,
@@ -48,11 +54,30 @@ class _SetVolumeState extends State<SetVolume> {
     });
   }
 
+  void handleVolumeChange(double newVolume) {
+    setState(() {
+      if (newVolume == 0.0) {
+        _volumeLevel = VolumeLevel.muted;
+      } else if (newVolume <= 0.50) {
+        _volumeLevel = VolumeLevel.low;
+      } else if (newVolume <= 1.0) {
+        _volumeLevel = VolumeLevel.normal;
+      } else {
+        _volumeLevel = null;
+      }
+    });
+  }
+
+  Future<void> _initVolumeListener() async {
+    VolumeController.instance.addListener(handleVolumeChange);
+  }
+
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
       title: "Set Volume",
       numberInput: _volumeInput,
+      customWidget: getSnackbarTextContent(_volumeLevel),
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,

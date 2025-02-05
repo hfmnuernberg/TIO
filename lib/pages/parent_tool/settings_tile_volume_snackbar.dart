@@ -9,7 +9,7 @@ Icon? getVolumeInfoIcon(deviceVolumeLevel) {
   return null;
 }
 
-Text _getSnackbarTextContent(deviceVolumeLevel) {
+Text getSnackbarTextContent(deviceVolumeLevel) {
   if (deviceVolumeLevel == VolumeLevel.muted) {
     return Text(
         'The device volume is muted. Please make sure to adjust the device volume in addition to the metronome volume.');
@@ -23,11 +23,11 @@ Text _getSnackbarTextContent(deviceVolumeLevel) {
 
 showSnackbar({
   required BuildContext context,
-  required VolumeLevel? deviceVolumeLevel,
+  VolumeLevel? deviceVolumeLevel,
 }) =>
     () => ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: _getSnackbarTextContent(deviceVolumeLevel),
+        content: getSnackbarTextContent(deviceVolumeLevel),
         duration: const Duration(seconds: 5),
         backgroundColor: ColorTheme.surfaceTint,
         behavior: SnackBarBehavior.floating,
