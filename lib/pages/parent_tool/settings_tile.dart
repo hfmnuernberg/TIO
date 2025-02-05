@@ -1,22 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
+import 'package:tiomusic/pages/parent_tool/settings_tile_volume_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
-
-Text getSnackbarTextContent(VolumeLevel? deviceVolumeLevel) {
-  if (deviceVolumeLevel == VolumeLevel.muted) {
-    return Text(
-        'The device volume is set to silent. Please make sure to adjust the device volume in addition to the metronome volume.');
-  }
-  if (deviceVolumeLevel == VolumeLevel.low) {
-    return Text(
-        'The device volume is set very low. Please make sure to adjust the device volume in addition to the metronome volume.');
-  }
-  return Text(
-      'The device volume is set very high. Please be careful! If you want to increase the volume even further, we recommend using an external speaker.');
-}
 
 class SettingsTile extends StatelessWidget {
   final String title;
@@ -42,16 +30,10 @@ class SettingsTile extends StatelessWidget {
     this.deviceVolumeLevel,
   });
 
-  Icon? getInfoIcon() {
-    if (deviceVolumeLevel == VolumeLevel.muted) return const Icon(Icons.warning_amber, color: ColorTheme.tertiaryContainer);
-    if (deviceVolumeLevel == VolumeLevel.low) return const Icon(Icons.warning_amber, color: ColorTheme.primary);
-    if (deviceVolumeLevel == VolumeLevel.normal) return const Icon(Icons.info_outline);
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final infoIcon = getInfoIcon();
+    final infoIcon = getVolumeInfoIcon(deviceVolumeLevel);
+
     return CardListTile(
       title: title,
       subtitle: subtitle,
@@ -73,14 +55,7 @@ class SettingsTile extends StatelessWidget {
       menuIconOne: infoIcon == null
           ? null
           : IconButton(
-              onPressed: () async {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: getSnackbarTextContent(deviceVolumeLevel),
-                    duration: Duration(seconds: 5),
-                  ),
-                );
-              },
+              onPressed: showSnackbar(context: context, deviceVolumeLevel: deviceVolumeLevel),
               icon: infoIcon,
               color: ColorTheme.surfaceTint,
             ),
