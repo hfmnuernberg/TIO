@@ -555,9 +555,7 @@ void updateFileReferenceForFileOfBlock(
       case IncreaseOrDecrease.decrease:
         FileReferences.decreaseFileReference(block.relativePath, projectLibrary);
         break;
-      default:
-        throw Exception("ERROR: The increaseOrDecrease value is not valid.");
-    }
+      }
   } else if (block is ImageBlock && block.relativePath != "") {
     switch (increaseOrDecrease) {
       case IncreaseOrDecrease.increase:
@@ -566,9 +564,7 @@ void updateFileReferenceForFileOfBlock(
       case IncreaseOrDecrease.decrease:
         FileReferences.decreaseFileReference(block.relativePath, projectLibrary);
         break;
-      default:
-        throw Exception("ERROR: The increaseOrDecrease value is not valid.");
-    }
+      }
   }
 }
 
