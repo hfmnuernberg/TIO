@@ -696,6 +696,11 @@ class _MetronomeState extends State<Metronome> {
             },
             onUserChangedVolume: (vol) => metronomeSetVolume(volume: vol),
             onCancel: () => metronomeSetVolume(volume: _metronomeBlock.volume),
+            onChangeDeviceVolume: (newDeviceVolumeLevel) {
+              setState(() {
+                _volumeLevel = newDeviceVolumeLevel;
+              });
+            },
           ),
           block: _metronomeBlock,
           callOnReturn: (value) => setState(() {}),

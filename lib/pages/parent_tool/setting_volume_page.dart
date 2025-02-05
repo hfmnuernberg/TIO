@@ -13,6 +13,7 @@ class SetVolume extends StatefulWidget {
   final Function(double) onConfirm;
   final Function(double) onUserChangedVolume;
   final Function() onCancel;
+  final Function(VolumeLevel?)? onChangeDeviceVolume;
 
   final double initialValue;
 
@@ -22,6 +23,7 @@ class SetVolume extends StatefulWidget {
     required this.onConfirm,
     required this.onUserChangedVolume,
     required this.onCancel,
+    this.onChangeDeviceVolume,
   });
 
   @override
@@ -64,6 +66,9 @@ class _SetVolumeState extends State<SetVolume> {
         _volumeLevel = VolumeLevel.normal;
       } else {
         _volumeLevel = null;
+      }
+      if (widget.onChangeDeviceVolume != null) {
+        widget.onChangeDeviceVolume!(_volumeLevel);
       }
     });
   }
