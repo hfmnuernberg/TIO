@@ -99,7 +99,7 @@ class CustomTargetFocus {
               CustomTargetContentPosition(left: 0, right: 0, top: 0, bottom: 0), // this covers the whole screen
           padding: EdgeInsets.zero,
           child: ColoredBox(
-            color: Walkthrough.backgroundColor.withOpacity(Walkthrough.backgroundOpacity),
+            color: Walkthrough.backgroundColor.withValues(alpha: Walkthrough.backgroundOpacity),
           )));
     }
     contents.add(TargetContent(
