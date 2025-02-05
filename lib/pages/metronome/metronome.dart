@@ -85,7 +85,7 @@ class _MetronomeState extends State<Metronome> {
   void initState() {
     super.initState();
 
-    _initializeVolume();
+    _initVolumeListener();
 
     _menuItems.add(
       MenuItemButton(
@@ -145,19 +145,22 @@ class _MetronomeState extends State<Metronome> {
     });
   }
 
-  Future<void> _initializeVolume() async {
-    double currentVolume = await VolumeController.instance.getVolume();
+  void handleVolumeChange(double newVolume) {
     setState(() {
-      if (currentVolume == 0.0) {
+      if (newVolume == 0.0) {
         _volumeLevel = VolumeLevel.muted;
-      } else if (currentVolume <= 0.50) {
+      } else if (newVolume <= 0.50) {
         _volumeLevel = VolumeLevel.low;
-      } else if (currentVolume <= 1.0) {
+      } else if (newVolume <= 1.0) {
         _volumeLevel = VolumeLevel.normal;
       } else {
         _volumeLevel = null;
       }
     });
+  }
+
+  Future<void> _initVolumeListener() async {
+    VolumeController.instance.addListener(handleVolumeChange);
   }
 
   void _createWalkthrough() {
@@ -207,6 +210,12 @@ class _MetronomeState extends State<Metronome> {
     _stopMetronome();
     _beatDetection.cancel();
     super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    VolumeController.instance.removeListener();
+    super.dispose();
   }
 
   void _addRhythmSegment(bool isSecond) async {
