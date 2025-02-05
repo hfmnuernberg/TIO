@@ -2,6 +2,7 @@ import 'package:tiomusic/models/project_block.dart';
 
 // This empty block is needed to avoid a weird bug when opening the same block type as the previous one in an island
 
+// ignore: must_be_immutable
 class EmptyBlock extends ProjectBlock {
   @override
   List<Object> get props => [];

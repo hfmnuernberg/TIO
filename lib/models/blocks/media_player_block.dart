@@ -14,6 +14,7 @@ import 'package:tiomusic/util/util_functions.dart';
 part 'media_player_block.g.dart';
 
 @JsonSerializable()
+// ignore: must_be_immutable
 class MediaPlayerBlock extends ProjectBlock {
   // add here all the fields that should be compared when checking if two class instances have the same values
   // for now this check is only used to compare quick tools to the default settings, so some properties are left out here
