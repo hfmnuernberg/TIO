@@ -73,6 +73,12 @@ class _SetVolumeState extends State<SetVolume> {
   }
 
   @override
+  void dispose() {
+    VolumeController.instance.removeListener();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
       title: "Set Volume",
