@@ -5,35 +5,36 @@ import 'dart:ui';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tiomusic/models/file_io.dart';
+import 'package:provider/provider.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
+import 'package:tiomusic/models/file_io.dart';
+import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm_segment.dart';
-import 'package:tiomusic/models/project.dart';
-import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
-import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
-import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
-import 'package:tiomusic/src/rust/api/modules/metronome.dart';
-
-import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
-import 'package:provider/provider.dart';
 import 'package:tiomusic/pages/metronome/setting_bpm.dart';
 import 'package:tiomusic/pages/metronome/setting_metronome_sound.dart';
 import 'package:tiomusic/pages/metronome/setting_random_mute.dart';
 import 'package:tiomusic/pages/metronome/setting_rhythm_parameters.dart';
+import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
+import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
+import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
+import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
+import 'package:tiomusic/pages/parent_tool/settings_tile_volume_snackbar.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome.dart';
+import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/walkthrough_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:volume_controller/volume_controller.dart';
+
 
 enum VolumeLevel {
   muted,
@@ -408,9 +409,12 @@ class _MetronomeState extends State<Metronome> {
   }
 
   Future<void> _startMetronome() async {
+    if(_volumeLevel == VolumeLevel.muted) showSnackbar(context: context, deviceVolumeLevel: _volumeLevel)();
+
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _stopMetronome();
     });
+
     await MetronomeFunctions.stop();
     final success = await MetronomeFunctions.start();
     if (!success) {

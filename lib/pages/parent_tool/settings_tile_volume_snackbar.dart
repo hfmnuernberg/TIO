@@ -12,7 +12,7 @@ Icon? getVolumeInfoIcon(deviceVolumeLevel) {
 Text _getSnackbarTextContent(deviceVolumeLevel) {
   if (deviceVolumeLevel == VolumeLevel.muted) {
     return Text(
-        'The device volume is set to silent. Please make sure to adjust the device volume in addition to the metronome volume.');
+        'The device volume is muted. Please make sure to adjust the device volume in addition to the metronome volume.');
   }
   if (deviceVolumeLevel == VolumeLevel.low) {
     return Text(
