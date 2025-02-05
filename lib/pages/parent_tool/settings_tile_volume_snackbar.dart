@@ -25,11 +25,9 @@ showSnackbar({
   required BuildContext context,
   VolumeLevel? deviceVolumeLevel,
 }) =>
-    () => ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: getSnackbarTextContent(deviceVolumeLevel),
-        duration: const Duration(seconds: 5),
-        backgroundColor: ColorTheme.surfaceTint,
-        behavior: SnackBarBehavior.floating,
-      ));
-
+    () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: getSnackbarTextContent(deviceVolumeLevel),
+          duration: const Duration(seconds: 5),
+          backgroundColor: ColorTheme.surfaceTint,
+          behavior: SnackBarBehavior.floating,
+        ));

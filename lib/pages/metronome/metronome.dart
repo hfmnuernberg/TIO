@@ -35,7 +35,6 @@ import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:volume_controller/volume_controller.dart';
 
-
 enum VolumeLevel {
   muted,
   low,
@@ -409,7 +408,7 @@ class _MetronomeState extends State<Metronome> {
   }
 
   Future<void> _startMetronome() async {
-    if(_volumeLevel == VolumeLevel.muted) showSnackbar(context: context, deviceVolumeLevel: _volumeLevel)();
+    if (_volumeLevel == VolumeLevel.muted) showSnackbar(context: context, deviceVolumeLevel: _volumeLevel)();
 
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _stopMetronome();
