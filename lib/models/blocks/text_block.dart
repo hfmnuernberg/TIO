@@ -13,10 +13,7 @@ class TextBlock extends ProjectBlock {
   List<Object> get props => [];
 
   @override
-  @JsonKey(
-      defaultValue: TextParams.kind,
-      includeFromJson: false,
-      includeToJson: true)
+  @JsonKey(defaultValue: TextParams.kind, includeFromJson: false, includeToJson: true)
   String get kind => TextParams.kind;
 
   late String _title;
@@ -75,8 +72,7 @@ class TextBlock extends ProjectBlock {
     }
   }
 
-  TextBlock(String title, String id, String? islandToolID, String content,
-      DateTime timeLastModified) {
+  TextBlock(String title, String id, String? islandToolID, String content, DateTime timeLastModified) {
     _timeLastModified = timeLastModified;
     _content = content;
     _title = title;
@@ -103,8 +99,7 @@ class TextBlock extends ProjectBlock {
   @override
   get icon => blockTypeInfos[BlockType.text]!.icon;
 
-  factory TextBlock.fromJson(Map<String, dynamic> json) =>
-      _$TextBlockFromJson(json);
+  factory TextBlock.fromJson(Map<String, dynamic> json) => _$TextBlockFromJson(json);
 
   @override
   Map<String, dynamic> toJson() => _$TextBlockToJson(this);

@@ -56,13 +56,10 @@ class _NumberInputIntState extends State<NumberInputInt> {
   @override
   void initState() {
     super.initState();
-    widget.displayText.value =
-        widget.displayText.value.copyWith(text: widget.defaultValue.toString());
-    _valueController =
-        TextEditingController(text: widget.defaultValue.toString());
+    widget.displayText.value = widget.displayText.value.copyWith(text: widget.defaultValue.toString());
+    _valueController = TextEditingController(text: widget.defaultValue.toString());
 
-    _sliderDivisions =
-        (widget.maxValue - widget.minValue) ~/ widget.countingValue;
+    _sliderDivisions = (widget.maxValue - widget.minValue) ~/ widget.countingValue;
     _sliderValue = widget.defaultValue.toDouble();
 
     widget.displayText.addListener(_onExternalChange);
@@ -84,9 +81,8 @@ class _NumberInputIntState extends State<NumberInputInt> {
   // Decrease the currently displayed value
   void _decreaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value.copyWith(
-          text: (int.parse(_valueController.value.text) - widget.countingValue)
-              .toString());
+      _valueController.value = _valueController.value
+          .copyWith(text: (int.parse(_valueController.value.text) - widget.countingValue).toString());
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -95,9 +91,8 @@ class _NumberInputIntState extends State<NumberInputInt> {
   // Increase the currently displayed value
   void _increaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value.copyWith(
-          text: (int.parse(_valueController.value.text) + widget.countingValue)
-              .toString());
+      _valueController.value = _valueController.value
+          .copyWith(text: (int.parse(_valueController.value.text) + widget.countingValue).toString());
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -105,16 +100,14 @@ class _NumberInputIntState extends State<NumberInputInt> {
 
   // Looped decrease
   void _startDecreaseTimer() {
-    _decreaseTimer = Timer.periodic(
-        Duration(milliseconds: widget.countingIntervalMs), (timer) {
+    _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
       _decreaseValue();
     });
   }
 
   // Looped increase
   void _startIncreaseTimer() {
-    _increaseTimer = Timer.periodic(
-        Duration(milliseconds: widget.countingIntervalMs), (timer) {
+    _increaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
       _increaseValue();
     });
   }
@@ -181,14 +174,12 @@ class _NumberInputIntState extends State<NumberInputInt> {
               onLongPress: _startDecreaseTimer,
               onLongPressUp: _endDecreaseTimer,
               child: TIOFlatButton(
-                onPressed: (_valueController.value.text == '')
-                    ? () {}
-                    : (_isMinusButtonActive ? _decreaseValue : () {}),
+                onPressed:
+                    (_valueController.value.text == '') ? () {} : (_isMinusButtonActive ? _decreaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,
                   shape: const LeftButtonShape(),
-                  fixedSize:
-                      Size(widget.buttonRadius * 2, widget.buttonRadius * 2),
+                  fixedSize: Size(widget.buttonRadius * 2, widget.buttonRadius * 2),
                 ),
                 icon: Icon(
                   Icons.remove,
@@ -210,21 +201,17 @@ class _NumberInputIntState extends State<NumberInputInt> {
                     // Delete leading zeros
                     FilteringTextInputFormatter.deny(RegExp(r'^0+(?=.)')),
                     // Delete zero after sign
-                    FilteringTextInputFormatter.deny(RegExp(r'^-0+'),
-                        replacementString: '-'),
+                    FilteringTextInputFormatter.deny(RegExp(r'^-0+'), replacementString: '-'),
                   ],
                   maxLength: _valueController.value.text.contains('-')
                       ? widget.minValue.toString().length
                       : widget.maxValue.toString().length,
                   decoration: const InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: ColorTheme.primary)),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: ColorTheme.primary)),
+                    enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
                     counterText: '',
                   ),
-                  style: TextStyle(
-                      fontSize: widget.textFontSize, color: ColorTheme.primary),
+                  style: TextStyle(fontSize: widget.textFontSize, color: ColorTheme.primary),
                   textAlign: TextAlign.center,
                   onChanged: (value) {
                     _manageButtonActivity(value);
@@ -252,14 +239,11 @@ class _NumberInputIntState extends State<NumberInputInt> {
               onLongPress: _startIncreaseTimer,
               onLongPressUp: _endIncreaseTimer,
               child: TIOFlatButton(
-                onPressed: (_valueController.value.text == '')
-                    ? () {}
-                    : (_isPlusButtonActive ? _increaseValue : () {}),
+                onPressed: (_valueController.value.text == '') ? () {} : (_isPlusButtonActive ? _increaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,
                   shape: const RightButtonShape(),
-                  fixedSize:
-                      Size(widget.buttonRadius * 2, widget.buttonRadius * 2),
+                  fixedSize: Size(widget.buttonRadius * 2, widget.buttonRadius * 2),
                 ),
                 icon: Icon(
                   Icons.add,
@@ -269,8 +253,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
             ),
           ],
         ),
-        Text(widget.descriptionText,
-            style: const TextStyle(color: ColorTheme.primary)),
+        Text(widget.descriptionText, style: const TextStyle(color: ColorTheme.primary)),
         // slider
         Padding(
           padding: const EdgeInsets.only(top: 40),
@@ -286,8 +269,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
               var intValue = _sliderValue.toInt();
               _manageButtonActivity(intValue.toString());
               setState(() {
-                _valueController.value =
-                    _valueController.value.copyWith(text: intValue.toString());
+                _valueController.value = _valueController.value.copyWith(text: intValue.toString());
                 _validateInput(_valueController.text);
               });
             },

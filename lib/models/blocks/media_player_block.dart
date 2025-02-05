@@ -30,10 +30,7 @@ class MediaPlayerBlock extends ProjectBlock {
       ];
 
   @override
-  @JsonKey(
-      defaultValue: MediaPlayerParams.kind,
-      includeFromJson: false,
-      includeToJson: true)
+  @JsonKey(defaultValue: MediaPlayerParams.kind, includeFromJson: false, includeToJson: true)
   String get kind => MediaPlayerParams.kind;
 
   late String _title;
@@ -143,15 +140,14 @@ class MediaPlayerBlock extends ProjectBlock {
       settings.add(FileIO.getFileName(_relativePath));
     }
     if (_pitchSemitones.abs() >= 0.01) {
-      settings.add(
-          "${_pitchSemitones > 0 ? "↑" : "↓"} ${_pitchSemitones.abs()} semitone${pluralSDouble(_pitchSemitones)}");
+      settings
+          .add("${_pitchSemitones > 0 ? "↑" : "↓"} ${_pitchSemitones.abs()} semitone${pluralSDouble(_pitchSemitones)}");
     }
     if (_speedFactor != 1) {
       settings.add("${_speedFactor}x speed");
     }
     if ((_rangeStart).abs() >= 0.001 || (_rangeEnd - 1.0).abs() >= 0.001) {
-      settings.add(
-          "Trim ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%");
+      settings.add("Trim ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%");
     }
     if (_looping) {
       settings.add("Looping");
@@ -220,15 +216,13 @@ class MediaPlayerBlock extends ProjectBlock {
   @override
   Icon get icon => blockTypeInfos[BlockType.mediaPlayer]!.icon;
 
-  factory MediaPlayerBlock.fromJson(Map<String, dynamic> json) =>
-      _$MediaPlayerBlockFromJson(json);
+  factory MediaPlayerBlock.fromJson(Map<String, dynamic> json) => _$MediaPlayerBlockFromJson(json);
 
   @override
   Map<String, dynamic> toJson() => _$MediaPlayerBlockToJson(this);
 
   // opens the pick file dialog and sets the path to the new audio file
-  Future<bool> pickAudio(
-      BuildContext context, ProjectLibrary projectLibrary) async {
+  Future<bool> pickAudio(BuildContext context, ProjectLibrary projectLibrary) async {
     try {
       final result = await FilePicker.platform.pickFiles(type: FileType.audio);
       // FileType.audio: this opens the music app on ios and the file system on android

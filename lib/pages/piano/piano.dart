@@ -1,18 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
-import 'package:tiomusic/util/audio_util.dart';
-import 'package:tiomusic/util/util_midi.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
-import 'package:tiomusic/widgets/confirm_setting_button.dart';
-import 'package:tiomusic/widgets/custom_border_shape.dart';
-import 'package:tonic/tonic.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
@@ -21,11 +13,18 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
-
+import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
+import 'package:tiomusic/util/util_midi.dart';
+import 'package:tiomusic/util/walkthrough_util.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
+import 'package:tiomusic/widgets/confirm_setting_button.dart';
+import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
+import 'package:tonic/tonic.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class Piano extends StatefulWidget {
@@ -181,11 +180,11 @@ class _PianoState extends State<Piano> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: ColorTheme.primary92,
-      body: _showSavingPage ? _buildSavingPage() : _buildPianoMainPage(),
+      body: _showSavingPage ? _buildSavingPage() : _buildPianoMainPage(context),
     );
   }
 
-  Widget _buildPianoMainPage() {
+  Widget _buildPianoMainPage(BuildContext context) {
     final islandWidth = MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width / 1.9);
 
     return SafeArea(
@@ -211,7 +210,7 @@ class _PianoState extends State<Piano> {
                         });
                       } else {
                         SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-                        if (mounted) Navigator.of(context).pop();
+                        if (context.mounted) Navigator.of(context).pop();
                       }
                     } else {
                       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -225,26 +224,22 @@ class _PianoState extends State<Piano> {
 
               // title
               Expanded(
-                child: TextField(
-                  controller: _titleController,
-                  enabled: widget.isQuickTool ? false : true,
-                  decoration: null,
-                  style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
-                  onTap: () {
-                    // select all text
-                    _titleController.selection =
-                        TextSelection(baseOffset: 0, extentOffset: _titleController.text.length);
+                child: GestureDetector(
+                  onTap: () async {
+                    final newTitle = await showEditTextDialog(
+                      context: context,
+                      label: PianoParams.displayName,
+                      value: _pianoBlock.title,
+                    );
+                    if (newTitle == null) return;
+                    _pianoBlock.title = newTitle;
+                    if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+                    setState(() {});
                   },
-                  onSubmitted: (newText) {
-                    // save the new title
-                    _pianoBlock.title = newText;
-                    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-                  },
-                  onTapOutside: (event) {
-                    // close keyboard and don't save
-                    FocusScope.of(context).unfocus();
-                    _titleController.text = _pianoBlock.title;
-                  },
+                  child: Text(
+                    _pianoBlock.title,
+                    style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+                  ),
                 ),
               ),
 
