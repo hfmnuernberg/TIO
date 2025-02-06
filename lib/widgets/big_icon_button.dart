@@ -6,7 +6,7 @@ class BigIconButton extends StatelessWidget {
   final Function? onPressed;
   final IconData icon;
 
-  const BigIconButton({required this.icon, super.key, this.onPressed});
+  const BigIconButton({super.key, this.onPressed, required this.icon});
 
   @override
   Widget build(BuildContext context) {

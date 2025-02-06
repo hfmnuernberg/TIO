@@ -5,7 +5,8 @@ import 'package:tiomusic/util/color_constants.dart';
 // A screen that allows users to take a picture using a given camera.
 class TakePictureScreen extends StatefulWidget {
   const TakePictureScreen({
-    required this.camera, super.key,
+    super.key,
+    required this.camera,
   });
 
   final CameraDescription camera;

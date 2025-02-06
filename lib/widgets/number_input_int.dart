@@ -23,7 +23,12 @@ class NumberInputInt extends StatefulWidget {
   final double textFontSize;
 
   const NumberInputInt({
-    required this.maxValue, required this.minValue, required this.defaultValue, required this.countingValue, required this.displayText, super.key,
+    super.key,
+    required this.maxValue,
+    required this.minValue,
+    required this.defaultValue,
+    required this.countingValue,
+    required this.displayText,
     this.countingIntervalMs = 100,
     this.descriptionText = '',
     this.buttonRadius = 25,

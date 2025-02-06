@@ -57,7 +57,11 @@ class BeatButton extends StatefulWidget {
   final Function()? onTap;
 
   const BeatButton({
-    required this.color, required this.beatTypes, required this.beatTypeIndex, required this.buttonSize, super.key,
+    super.key,
+    required this.color,
+    required this.beatTypes,
+    required this.beatTypeIndex,
+    required this.buttonSize,
     this.beatHighlighted = false,
     this.onTap,
   });

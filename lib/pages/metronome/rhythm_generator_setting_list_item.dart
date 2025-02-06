@@ -11,7 +11,9 @@ class RhythmGeneratorSettingListItem extends StatefulWidget {
   final bool hasBorder;
 
   const RhythmGeneratorSettingListItem({
-    required this.noteKey, required this.onTap, super.key,
+    super.key,
+    required this.noteKey,
+    required this.onTap,
     this.hasBorder = false,
   });
 

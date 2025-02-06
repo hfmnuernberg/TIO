@@ -17,7 +17,7 @@ class EditMarkersPage extends StatefulWidget {
   final Float32List rmsValues;
 
   const EditMarkersPage(
-      {required this.mediaPlayerBlock, required this.fileDuration, required this.rmsValues, super.key});
+      {super.key, required this.mediaPlayerBlock, required this.fileDuration, required this.rmsValues});
 
   @override
   State<EditMarkersPage> createState() => _EditMarkersPageState();

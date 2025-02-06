@@ -23,8 +23,10 @@ class ProjectPage extends StatefulWidget {
   final bool pianoAlreadyOn;
 
   const ProjectPage(
-      {required this.goStraightToTool, required this.withoutRealProject, super.key,
+      {super.key,
+      required this.goStraightToTool,
       this.toolToOpenDirectly,
+      required this.withoutRealProject,
       this.pianoAlreadyOn = false});
 
   @override

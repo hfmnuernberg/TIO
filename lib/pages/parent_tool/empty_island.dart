@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class EmptyIsland extends StatefulWidget {
   final Function callOnInit;
 
-  const EmptyIsland({required this.callOnInit, super.key});
+  const EmptyIsland({super.key, required this.callOnInit});
 
   @override
   State<EmptyIsland> createState() => _EmptyIslandState();

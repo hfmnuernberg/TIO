@@ -21,7 +21,8 @@ class SetMetronomeSound extends StatefulWidget {
   final bool running;
   final bool forSecondMetronome;
   const SetMetronomeSound({
-    required this.running, super.key,
+    super.key,
+    required this.running,
     this.forSecondMetronome = false,
   });
 

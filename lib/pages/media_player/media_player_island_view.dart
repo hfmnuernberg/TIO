@@ -16,7 +16,8 @@ class MediaPlayerIslandView extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;
 
   const MediaPlayerIslandView({
-    required this.mediaPlayerBlock, super.key,
+    super.key,
+    required this.mediaPlayerBlock,
   });
 
   @override

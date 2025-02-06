@@ -41,8 +41,15 @@ class SetRhythmParameters extends StatefulWidget {
   final MetronomeBlock metronomeBlock;
 
   const SetRhythmParameters({
-    required this.currentNoteKey, required this.currentBeats, required this.currentPolyBeats, required this.isAddingNewBar, required this.rhythmGroups, required this.isSecondMetronome, required this.metronomeBlock, super.key,
+    super.key,
     this.barIndex,
+    required this.currentNoteKey,
+    required this.currentBeats,
+    required this.currentPolyBeats,
+    required this.isAddingNewBar,
+    required this.rhythmGroups,
+    required this.isSecondMetronome,
+    required this.metronomeBlock,
   });
 
   @override

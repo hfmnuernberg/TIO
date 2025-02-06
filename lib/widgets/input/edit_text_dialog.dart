@@ -27,8 +27,12 @@ class EditTextDialog extends StatelessWidget {
   final Function() onCancel;
 
   const EditTextDialog({
-    required this.label, required this.value, required this.onSave, required this.onCancel, super.key,
+    super.key,
+    required this.label,
+    required this.value,
     this.isNew = false,
+    required this.onSave,
+    required this.onCancel,
   });
 
   @override

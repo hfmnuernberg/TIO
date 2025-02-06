@@ -21,7 +21,7 @@ import 'package:tiomusic/widgets/confirm_setting_button.dart';
 class ImageTool extends StatefulWidget {
   final bool isQuickTool;
 
-  const ImageTool({required this.isQuickTool, super.key});
+  const ImageTool({super.key, required this.isQuickTool});
 
   @override
   State<ImageTool> createState() => _ImageToolState();

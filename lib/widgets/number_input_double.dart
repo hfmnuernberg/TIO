@@ -25,7 +25,12 @@ class NumberInputDouble extends StatefulWidget {
   final bool allowNegativeNumbers;
 
   const NumberInputDouble({
-    required this.maxValue, required this.minValue, required this.defaultValue, required this.countingValue, required this.displayText, super.key,
+    super.key,
+    required this.maxValue,
+    required this.minValue,
+    required this.defaultValue,
+    required this.countingValue,
+    required this.displayText,
     this.countingIntervalMs = 100,
     this.descriptionText = '',
     this.buttonRadius = 25,

@@ -15,7 +15,12 @@ class SettingsTile extends StatelessWidget {
   final bool inactive;
 
   const SettingsTile({
-    required this.title, required this.subtitle, required this.leadingIcon, required this.settingPage, required this.block, super.key,
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.leadingIcon,
+    required this.settingPage,
+    required this.block,
     this.callOnReturn,
     this.callBeforeOpen,
     this.inactive = false,

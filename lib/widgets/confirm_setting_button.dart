@@ -5,7 +5,7 @@ import 'package:tiomusic/util/constants.dart';
 class ConfirmButton extends StatelessWidget {
   final Function() onTap;
 
-  const ConfirmButton({required this.onTap, super.key});
+  const ConfirmButton({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class ConfirmButton extends StatelessWidget {
 class CancelButton extends StatelessWidget {
   final Function() onTap;
 
-  const CancelButton({required this.onTap, super.key});
+  const CancelButton({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,9 @@ class TIOTextButton extends StatelessWidget {
   final Function() onTap;
 
   const TIOTextButton({
-    required this.text, required this.onTap, super.key,
+    super.key,
+    required this.text,
+    required this.onTap,
     this.backgroundColor,
     this.icon,
   });
@@ -92,9 +94,10 @@ class TIOFlatButton extends StatelessWidget {
   final ButtonStyle? customStyle;
 
   const TIOFlatButton({
-    required this.onPressed, super.key,
+    super.key,
     this.text,
     this.icon,
+    required this.onPressed,
     this.boldText = false,
     this.customStyle,
   });

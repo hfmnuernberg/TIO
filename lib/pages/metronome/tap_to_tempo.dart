@@ -11,7 +11,7 @@ class Tap2Tempo extends StatefulWidget {
   final TextEditingController bpmHandle;
   final bool enabled;
 
-  const Tap2Tempo({required this.bpmHandle, super.key, this.enabled = true});
+  const Tap2Tempo({super.key, required this.bpmHandle, this.enabled = true});
 
   @override
   State<Tap2Tempo> createState() => _Tap2TempoState();
