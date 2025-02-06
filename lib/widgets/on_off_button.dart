@@ -14,11 +14,7 @@ class OnOffButton extends StatefulWidget {
   final bool isDisabled;
 
   const OnOffButton({
-    super.key,
-    required this.isActive,
-    required this.onTap,
-    required this.iconOff,
-    required this.iconOn,
+    required this.isActive, required this.onTap, required this.iconOff, required this.iconOn, super.key,
     this.buttonSize = 70,
     this.isDisabled = false,
   });
@@ -97,7 +93,7 @@ class _OnOffButtonState extends State<OnOffButton> {
 class PlaceholderButton extends StatelessWidget {
   final double buttonSize;
 
-  const PlaceholderButton({super.key, required this.buttonSize});
+  const PlaceholderButton({required this.buttonSize, super.key});
 
   @override
   Widget build(BuildContext context) {

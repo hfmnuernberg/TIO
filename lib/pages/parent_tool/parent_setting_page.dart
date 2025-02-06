@@ -15,11 +15,8 @@ class ParentSettingPage extends StatefulWidget {
   final Function()? cancel;
 
   const ParentSettingPage({
-    super.key,
-    required this.title,
+    required this.title, required this.confirm, required this.reset, super.key,
     this.numberInput,
-    required this.confirm,
-    required this.reset,
     this.cancel,
     this.customWidget,
     this.mustBeScrollable = false,

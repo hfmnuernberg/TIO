@@ -151,10 +151,7 @@ class SoundButton extends StatefulWidget {
   final ActiveReferenceSoundButton buttonListener;
 
   const SoundButton({
-    super.key,
-    required this.midiNumber,
-    required this.idx,
-    required this.buttonListener,
+    required this.midiNumber, required this.idx, required this.buttonListener, super.key,
   });
 
   @override

@@ -34,7 +34,7 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 class MediaPlayer extends StatefulWidget {
   final bool isQuickTool;
 
-  const MediaPlayer({super.key, required this.isQuickTool});
+  const MediaPlayer({required this.isQuickTool, super.key});
 
   @override
   State<MediaPlayer> createState() => _MediaPlayerState();

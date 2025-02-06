@@ -6,7 +6,7 @@ class AddImageDialog extends StatefulWidget {
   final Function pickImageFunction;
   final Function takePhotoFunction;
 
-  const AddImageDialog({super.key, required this.pickImageFunction, required this.takePhotoFunction});
+  const AddImageDialog({required this.pickImageFunction, required this.takePhotoFunction, super.key});
 
   @override
   State<AddImageDialog> createState() => _AddImageDialogState();

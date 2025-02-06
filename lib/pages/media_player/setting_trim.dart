@@ -17,7 +17,7 @@ class SetTrim extends StatefulWidget {
   final Float32List rmsValues;
   final Duration fileDuration;
 
-  const SetTrim({super.key, required this.rmsValues, required this.fileDuration});
+  const SetTrim({required this.rmsValues, required this.fileDuration, super.key});
 
   @override
   State<SetTrim> createState() => _SetTrimState();

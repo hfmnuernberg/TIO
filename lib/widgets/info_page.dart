@@ -6,9 +6,7 @@ class InfoPage extends StatelessWidget {
   final List<Widget> textSections;
 
   const InfoPage({
-    super.key,
-    required this.appBarTitle,
-    required this.textSections,
+    required this.appBarTitle, required this.textSections, super.key,
   });
 
   @override
@@ -40,7 +38,7 @@ class TextSection extends StatelessWidget {
   final String content;
   final SectionType? sectionType;
 
-  const TextSection({super.key, required this.content, this.sectionType});
+  const TextSection({required this.content, super.key, this.sectionType});
 
   @override
   Widget build(BuildContext context) {

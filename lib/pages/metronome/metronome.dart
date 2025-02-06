@@ -38,8 +38,7 @@ class Metronome extends StatefulWidget {
   final bool isQuickTool;
 
   const Metronome({
-    super.key,
-    required this.isQuickTool,
+    required this.isQuickTool, super.key,
   });
 
   @override
