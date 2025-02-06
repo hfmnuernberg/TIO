@@ -38,7 +38,7 @@ void runMainApp(ProjectLibrary projectLibrary, ThemeData? theme) {
 }
 
 class TIOMusicApp extends StatelessWidget {
-  const TIOMusicApp({super.key, required this.projectLibrary, this.ourTheme});
+  const TIOMusicApp({required this.projectLibrary, super.key, this.ourTheme});
 
   final ProjectLibrary projectLibrary;
   final ThemeData? ourTheme;
@@ -58,7 +58,7 @@ class TIOMusicApp extends StatelessWidget {
 }
 
 class TIOMusicHomePage extends StatefulWidget {
-  const TIOMusicHomePage({super.key, required this.title});
+  const TIOMusicHomePage({required this.title, super.key});
 
   final String title;
 
@@ -103,8 +103,7 @@ class SplashApp extends StatefulWidget {
   final Function(ProjectLibrary, ThemeData?) returnProjectLibraryAndTheme;
 
   const SplashApp({
-    super.key,
-    required this.returnProjectLibraryAndTheme,
+    required this.returnProjectLibraryAndTheme, super.key,
   });
 
   @override

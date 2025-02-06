@@ -22,14 +22,10 @@ class CardListTile extends StatelessWidget {
   final Color leadingIconColor;
 
   const CardListTile({
-    super.key,
-    required this.title,
+    required this.title, required this.trailingIcon, required this.leadingPicture, required this.onTapFunction, super.key,
     this.subtitle,
-    required this.trailingIcon,
     this.menuIconOne,
     this.menuIconTwo,
-    required this.leadingPicture,
-    required this.onTapFunction,
     this.highlightColor,
     this.disableTap = false,
     this.textColor = ColorTheme.surfaceTint,

@@ -32,13 +32,8 @@ class ParentTool extends StatefulWidget {
   final bool deactivateScroll;
 
   const ParentTool({
-    super.key,
-    required this.barTitle,
-    required this.isQuickTool,
-    required this.toolBlock,
+    required this.barTitle, required this.isQuickTool, required this.toolBlock, required this.centerModule, required this.settingTiles, super.key,
     this.island,
-    required this.centerModule,
-    required this.settingTiles,
     this.menuItems,
     this.functionBeforeNavigatingBack,
     this.floatingActionButton,

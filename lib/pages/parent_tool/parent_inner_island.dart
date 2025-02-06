@@ -11,11 +11,7 @@ class ParentInnerIsland extends StatefulWidget {
   final bool mainButtonIsDisabled;
 
   const ParentInnerIsland({
-    super.key,
-    required this.onMainIconPressed,
-    required this.mainIcon,
-    required this.parameterText,
-    required this.textSpaceWidth,
+    required this.onMainIconPressed, required this.mainIcon, required this.parameterText, required this.textSpaceWidth, super.key,
     this.centerView,
     this.customPaintKey,
     this.mainButtonIsDisabled = false,

@@ -31,7 +31,7 @@ class Piano extends StatefulWidget {
   final bool isQuickTool;
   final bool withoutInitAndStart;
 
-  const Piano({super.key, required this.isQuickTool, this.withoutInitAndStart = false});
+  const Piano({required this.isQuickTool, super.key, this.withoutInitAndStart = false});
 
   @override
   State<Piano> createState() => _PianoState();

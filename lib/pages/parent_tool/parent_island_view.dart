@@ -22,9 +22,7 @@ class ParentIslandView extends StatefulWidget {
   final ProjectBlock toolBlock;
 
   const ParentIslandView({
-    super.key,
-    required this.project,
-    required this.toolBlock,
+    required this.project, required this.toolBlock, super.key,
   });
 
   @override

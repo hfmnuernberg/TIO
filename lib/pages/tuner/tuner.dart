@@ -31,7 +31,7 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 class Tuner extends StatefulWidget {
   final bool isQuickTool;
 
-  const Tuner({super.key, required this.isQuickTool});
+  const Tuner({required this.isQuickTool, super.key});
 
   @override
   State<Tuner> createState() => _TunerState();

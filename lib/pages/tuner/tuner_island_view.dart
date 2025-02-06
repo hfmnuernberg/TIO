@@ -18,8 +18,7 @@ class TunerIslandView extends StatefulWidget {
   final TunerBlock tunerBlock;
 
   const TunerIslandView({
-    super.key,
-    required this.tunerBlock,
+    required this.tunerBlock, super.key,
   });
 
   @override

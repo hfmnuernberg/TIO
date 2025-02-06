@@ -14,7 +14,7 @@ import 'package:tiomusic/util/util_functions.dart';
 class TextTool extends StatefulWidget {
   final bool isQuickTool;
 
-  const TextTool({super.key, required this.isQuickTool});
+  const TextTool({required this.isQuickTool, super.key});
 
   @override
   State<TextTool> createState() => _TextToolState();

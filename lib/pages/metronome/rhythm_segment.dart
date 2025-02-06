@@ -7,12 +7,7 @@ import 'package:tiomusic/util/constants.dart';
 
 class RhythmSegment extends StatefulWidget {
   const RhythmSegment({
-    super.key,
-    required this.activeBeatsNotifier,
-    required this.barIdx,
-    required this.editFunction,
-    required this.metronomeBlock,
-    required this.isSecondary,
+    required this.activeBeatsNotifier, required this.barIdx, required this.editFunction, required this.metronomeBlock, required this.isSecondary, super.key,
   });
 
   final ActiveBeatsModel activeBeatsNotifier;

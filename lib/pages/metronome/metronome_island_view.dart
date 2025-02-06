@@ -18,8 +18,7 @@ class MetronomeIslandView extends StatefulWidget {
   final MetronomeBlock metronomeBlock;
 
   const MetronomeIslandView({
-    super.key,
-    required this.metronomeBlock,
+    required this.metronomeBlock, super.key,
   });
 
   @override
