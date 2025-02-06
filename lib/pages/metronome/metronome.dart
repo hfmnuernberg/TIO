@@ -6,6 +6,7 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/main.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
@@ -23,7 +24,7 @@ import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
-import 'package:tiomusic/pages/parent_tool/settings_tile_volume_snackbar.dart';
+import 'package:tiomusic/pages/parent_tool/volume.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -53,12 +54,12 @@ class Metronome extends StatefulWidget {
   State<Metronome> createState() => _MetronomeState();
 }
 
-class _MetronomeState extends State<Metronome> {
+class _MetronomeState extends State<Metronome> with RouteAware {
   bool _isStarted = false;
   bool _sound = true;
   bool _blink = MetronomeParams.defaultVisualMetronome;
   bool _blinkIsBeat = false;
-  VolumeLevel? _volumeLevel;
+  VolumeLevel _deviceVolumeLevel = VolumeLevel.normal;
   final List<RhythmSegment> _rhythmSegmentList = List.empty(growable: true);
   final List<RhythmSegment> _rhythmSegmentList2 = List.empty(growable: true);
 
@@ -85,7 +86,7 @@ class _MetronomeState extends State<Metronome> {
   void initState() {
     super.initState();
 
-    _initVolumeListener();
+    VolumeController.instance.addListener(handleVolumeChange);
 
     _menuItems.add(
       MenuItemButton(
@@ -146,21 +147,7 @@ class _MetronomeState extends State<Metronome> {
   }
 
   void handleVolumeChange(double newVolume) {
-    setState(() {
-      if (newVolume == 0.0) {
-        _volumeLevel = VolumeLevel.muted;
-      } else if (newVolume <= 0.50) {
-        _volumeLevel = VolumeLevel.low;
-      } else if (newVolume <= 1.0) {
-        _volumeLevel = VolumeLevel.normal;
-      } else {
-        _volumeLevel = null;
-      }
-    });
-  }
-
-  Future<void> _initVolumeListener() async {
-    VolumeController.instance.addListener(handleVolumeChange);
+    setState(() { _deviceVolumeLevel = getVolumeLevel(newVolume); });
   }
 
   void _createWalkthrough() {
@@ -213,9 +200,25 @@ class _MetronomeState extends State<Metronome> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ModalRoute? route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
+  }
+
+  @override
   void dispose() {
     VolumeController.instance.removeListener();
+    routeObserver.unsubscribe(this);
     super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    VolumeController.instance.addListener(handleVolumeChange);
   }
 
   void _addRhythmSegment(bool isSecond) async {
@@ -408,7 +411,7 @@ class _MetronomeState extends State<Metronome> {
   }
 
   Future<void> _startMetronome() async {
-    if (_volumeLevel == VolumeLevel.muted) showSnackbar(context: context, deviceVolumeLevel: _volumeLevel)();
+    if (_deviceVolumeLevel == VolumeLevel.muted) showSnackbar(context: context, volumeLevel: _deviceVolumeLevel)();
 
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _stopMetronome();
@@ -687,7 +690,6 @@ class _MetronomeState extends State<Metronome> {
           title: "Volume",
           subtitle: _metronomeBlock.volume.toString(),
           leadingIcon: Icons.volume_up,
-          deviceVolumeLevel: _volumeLevel,
           settingPage: SetVolume(
             initialValue: _metronomeBlock.volume,
             onConfirm: (vol) {
@@ -696,14 +698,11 @@ class _MetronomeState extends State<Metronome> {
             },
             onUserChangedVolume: (vol) => metronomeSetVolume(volume: vol),
             onCancel: () => metronomeSetVolume(volume: _metronomeBlock.volume),
-            onChangeDeviceVolume: (newDeviceVolumeLevel) {
-              setState(() {
-                _volumeLevel = newDeviceVolumeLevel;
-              });
-            },
           ),
           block: _metronomeBlock,
           callOnReturn: (value) => setState(() {}),
+          icon: getVolumeInfoIcon(_deviceVolumeLevel),
+          onIconPressed: showSnackbar(context: context, volumeLevel: _deviceVolumeLevel),
         ),
         // BPM
         SettingsTile(

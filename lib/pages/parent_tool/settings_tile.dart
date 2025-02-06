@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/pages/metronome/metronome.dart';
-import 'package:tiomusic/pages/parent_tool/settings_tile_volume_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
@@ -15,7 +13,8 @@ class SettingsTile extends StatelessWidget {
   final Function? callOnReturn;
   final Function? callBeforeOpen;
   final bool inactive;
-  final VolumeLevel? deviceVolumeLevel;
+  final Icon icon;
+  final VoidCallback? onIconPressed;
 
   const SettingsTile({
     super.key,
@@ -27,13 +26,12 @@ class SettingsTile extends StatelessWidget {
     this.callOnReturn,
     this.callBeforeOpen,
     this.inactive = false,
-    this.deviceVolumeLevel,
+    this.icon = const Icon(Icons.info),
+    this.onIconPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    final infoIcon = getVolumeInfoIcon(deviceVolumeLevel);
-
     return CardListTile(
       title: title,
       subtitle: subtitle,
@@ -52,13 +50,11 @@ class SettingsTile extends StatelessWidget {
         color: ColorTheme.primaryFixedDim,
         disabledColor: ColorTheme.secondary,
       ),
-      menuIconOne: infoIcon == null
-          ? null
-          : IconButton(
-              onPressed: showSnackbar(context: context, deviceVolumeLevel: deviceVolumeLevel),
-              icon: infoIcon,
-              color: ColorTheme.surfaceTint,
-            ),
+      menuIconOne: onIconPressed == null ? null : IconButton(
+        onPressed: onIconPressed,
+        icon: icon,
+        color: ColorTheme.surfaceTint,
+      ),
       leadingPicture: leadingIcon is String
           ? leadingIcon
           : Icon(
