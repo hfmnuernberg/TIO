@@ -1,7 +1,5 @@
 # https://dart.dev/tools/linter-rules
 
-#include: package:very_good_analysis/analysis_options.yaml
-
 linter:
   # TODO: enable the following rules
   rules:
