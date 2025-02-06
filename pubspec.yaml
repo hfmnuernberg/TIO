@@ -66,9 +66,9 @@ dev_dependencies:
     flutter_native_splash: 2.4.4
     flutter_test:
         sdk: flutter
-    json_serializable: 6.9.3
     integration_test:
         sdk: flutter
+    json_serializable: 6.9.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
