@@ -3,7 +3,7 @@
 linter:
   # TODO: enable the following rules
   rules:
-    # fix once the automatic fix with 'dart fix' is working
+    # fix once the automatic fix with 'fvm dart fix --apply' is working
     always_put_required_named_parameters_first: false
     avoid_dynamic_calls: false
     avoid_positional_boolean_parameters: false
