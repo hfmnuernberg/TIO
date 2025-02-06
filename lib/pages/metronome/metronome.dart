@@ -147,7 +147,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   void handleVolumeChange(double newVolume) {
-    setState(() { _deviceVolumeLevel = getVolumeLevel(newVolume); });
+    setState(() {
+      _deviceVolumeLevel = getVolumeLevel(newVolume);
+    });
   }
 
   void _createWalkthrough() {
@@ -411,8 +413,12 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   Future<void> _startMetronome() async {
-    if (_deviceVolumeLevel == VolumeLevel.muted && _sound) showSnackbar(context: context, volumeLevel: _deviceVolumeLevel)();
-    if (_deviceVolumeLevel == VolumeLevel.low && _sound) showSnackbar(context: context, volumeLevel: _deviceVolumeLevel)();
+    if (_deviceVolumeLevel == VolumeLevel.muted && _sound) {
+      showSnackbar(context: context, volumeLevel: _deviceVolumeLevel)();
+    }
+    if (_deviceVolumeLevel == VolumeLevel.low && _sound) {
+      showSnackbar(context: context, volumeLevel: _deviceVolumeLevel)();
+    }
 
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _stopMetronome();

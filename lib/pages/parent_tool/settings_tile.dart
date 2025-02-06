@@ -50,11 +50,13 @@ class SettingsTile extends StatelessWidget {
         color: ColorTheme.primaryFixedDim,
         disabledColor: ColorTheme.secondary,
       ),
-      menuIconOne: onIconPressed == null ? null : IconButton(
-        onPressed: onIconPressed,
-        icon: icon,
-        color: ColorTheme.surfaceTint,
-      ),
+      menuIconOne: onIconPressed == null
+          ? null
+          : IconButton(
+              onPressed: onIconPressed,
+              icon: icon,
+              color: ColorTheme.surfaceTint,
+            ),
       leadingPicture: leadingIcon is String
           ? leadingIcon
           : Icon(

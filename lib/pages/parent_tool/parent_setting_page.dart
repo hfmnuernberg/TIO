@@ -135,6 +135,6 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
                 ),
               ),
             ],
-    );
+          );
   }
 }
