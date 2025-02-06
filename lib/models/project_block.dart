@@ -14,7 +14,6 @@ import 'package:uuid/uuid.dart';
 // This is the parent class of all blocks
 
 @JsonSerializable(createFactory: false)
-// ignore: must_be_immutable
 abstract class ProjectBlock extends ChangeNotifier with EquatableMixin {
   String get kind;
 
