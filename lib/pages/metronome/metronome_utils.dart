@@ -68,6 +68,7 @@ abstract class MetronomeUtils {
           break;
         case SoundType.polyUnaccented:
           beatType = BeatSound.PolyUnaccented2;
+          break;
       }
     } else {
       switch (soundType) {
@@ -82,6 +83,7 @@ abstract class MetronomeUtils {
           break;
         case SoundType.polyUnaccented:
           beatType = BeatSound.PolyUnaccented;
+          break;
       }
     }
 
