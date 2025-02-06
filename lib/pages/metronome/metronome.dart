@@ -412,6 +412,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   Future<void> _startMetronome() async {
     if (_deviceVolumeLevel == VolumeLevel.muted) showSnackbar(context: context, volumeLevel: _deviceVolumeLevel)();
+    if (_deviceVolumeLevel == VolumeLevel.low) showSnackbar(context: context, volumeLevel: _deviceVolumeLevel)();
 
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _stopMetronome();
