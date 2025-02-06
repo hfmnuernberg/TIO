@@ -10,6 +10,7 @@ Future<String?> showEditTextDialog({
 }) =>
     showDialog<String>(
       context: context,
+      barrierDismissible: false,
       builder: (context) => EditTextDialog(
         label: label,
         value: value,
