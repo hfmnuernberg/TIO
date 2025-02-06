@@ -36,12 +36,6 @@ import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:volume_controller/volume_controller.dart';
 
-enum VolumeLevel {
-  muted,
-  low,
-  normal,
-}
-
 class Metronome extends StatefulWidget {
   final bool isQuickTool;
 
@@ -413,10 +407,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   Future<void> _startMetronome() async {
-    if (_deviceVolumeLevel == VolumeLevel.muted && _sound) {
-      showSnackbar(context: context, volumeLevel: _deviceVolumeLevel)();
-    }
-    if (_deviceVolumeLevel == VolumeLevel.low && _sound) {
+    if (_sound && [VolumeLevel.muted, VolumeLevel.low].contains(_deviceVolumeLevel)) {
       showSnackbar(context: context, volumeLevel: _deviceVolumeLevel)();
     }
 

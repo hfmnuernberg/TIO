@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/util/color_constants.dart';
+
+enum VolumeLevel {
+  muted,
+  low,
+  normal,
+}
 
 VolumeLevel getVolumeLevel(double volume) {
   if (volume <= 0.0) return VolumeLevel.muted;
