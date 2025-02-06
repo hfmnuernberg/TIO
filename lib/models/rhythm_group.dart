@@ -7,7 +7,6 @@ import 'package:tiomusic/util/constants.dart';
 part 'rhythm_group.g.dart';
 
 @JsonSerializable()
-// ignore: must_be_immutable
 class RhythmGroup extends Equatable {
   @override
   List<Object> get props => [beats, polyBeats, beatLen];
