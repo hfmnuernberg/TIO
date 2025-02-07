@@ -8,6 +8,7 @@ class ParentSettingPage extends StatefulWidget {
   final String title;
   final Widget? numberInput;
   final Widget? customWidget;
+  final Widget? infoWidget;
   final bool mustBeScrollable;
 
   final Function() confirm;
@@ -22,6 +23,7 @@ class ParentSettingPage extends StatefulWidget {
     required this.reset,
     this.cancel,
     this.customWidget,
+    this.infoWidget,
     this.mustBeScrollable = false,
   });
 
@@ -112,18 +114,27 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
   Widget? _bottomSheet() {
     return MediaQuery.of(context).orientation == Orientation.landscape
         ? null
-        : Container(
-            color: ColorTheme.primary80,
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
-                  ConfirmButton(onTap: widget.confirm),
-                ],
+        : Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                color: ColorTheme.secondary,
+                child: widget.infoWidget ?? const SizedBox(),
               ),
-            ),
+              Container(
+                color: ColorTheme.primary80,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
+                      ConfirmButton(onTap: widget.confirm),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           );
   }
 }

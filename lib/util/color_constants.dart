@@ -18,6 +18,7 @@ class ColorTheme {
   static const Color onError = Color(0xFFFFFFFF);
   static const Color errorContainer = Color(0xFFFFDAD6);
   static const Color onErrorContainer = Color(0xFF410002);
+  static const Color warning = Color(0xFFFFC107);
   static const Color outline = Color(0xFF71787E);
   static const Color background = Color(0xFFFCFCFF);
   static const Color onBackground = Color(0xFF191C1E);
