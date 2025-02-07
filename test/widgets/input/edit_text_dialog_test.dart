@@ -6,14 +6,42 @@ extension WidgetTesterPumpExtension on WidgetTester {
   Future<void> renderWidget(Widget widget) => pumpWidget(MaterialApp(home: Scaffold(body: widget)));
 }
 
-class TestWrapper extends StatelessWidget {
+class TestWrapper extends StatefulWidget {
   const TestWrapper({super.key});
 
   @override
+  State<TestWrapper> createState() => _TestWrapperState();
+}
+
+class _TestWrapperState extends State<TestWrapper> {
+  String? text;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<void> handleDialog() async {
+    final newText = await showEditTextDialog(
+      context: context,
+      label: 'Label',
+      value: 'Old title',
+    );
+    setState(() {
+      text = newText;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () => showEditTextDialog(context: context, label: 'Label', value: 'Old title'),
-      child: Text('Open Dialog'),
+    return Column(
+      children: [
+        text == null ? Text('not updated') : Text(text!),
+        TextButton(
+          onPressed: handleDialog,
+          child: Text('Open Dialog'),
+        ),
+      ],
     );
   }
 }
@@ -25,16 +53,19 @@ void main() {
 
   group('edit text dialog', () {
     testWidgets('calls submit with edited text when save is pressed', (WidgetTester tester) async {
-      String editedText = 'Never called';
-      await tester.renderWidget(
-        EditTextDialog(label: "Label", value: "Old title", onSave: (text) => editedText = text, onCancel: () {}),
-      );
+      await tester.renderWidget(TestWrapper());
+      expect(find.text('Old title'), findsNothing);
 
-      await tester.enterText(find.bySemanticsLabel('Label'), "Edited title");
-      await tester.pump();
+      await tester.tap(find.bySemanticsLabel('Open Dialog'));
+      await tester.pumpAndSettle();
+      expect(find.text('Old title'), findsOneWidget);
+
+      await tester.enterText(find.bySemanticsLabel('Label'), 'Edited title');
+      await tester.pumpAndSettle();
       await tester.tap(find.bySemanticsLabel('Submit'));
 
-      expect(editedText, "Edited title");
+      expect(find.text('Edited title'), findsOneWidget);
+      expect(find.text('Old title'), findsNothing);
     });
 
     testWidgets('calls cancel when cancel is pressed', (WidgetTester tester) async {
@@ -50,8 +81,11 @@ void main() {
 
     testWidgets('does not save title when title is empty', (WidgetTester tester) async {
       var wasOnSaveCalled = false;
+      String oldValue = 'Old title';
+      TextEditingController controller = TextEditingController(text: oldValue);
+
       await tester.renderWidget(
-        EditTextDialog(label: "Label", value: "Old title", onSave: (_) => wasOnSaveCalled = true, onCancel: () {}),
+        EditTextDialog(label: 'Label', value: oldValue, controller: controller, onSave: (_) => wasOnSaveCalled = true, onCancel: () {}),
       );
 
       await tester.enterText(find.text('Old title'), '');
@@ -62,8 +96,11 @@ void main() {
 
     testWidgets('does not save title when title has not changed', (WidgetTester tester) async {
       var wasOnSaveCalled = false;
+      String oldValue = 'Old title';
+      TextEditingController controller = TextEditingController(text: oldValue);
+
       await tester.renderWidget(
-        EditTextDialog(label: "Label", value: "Old title", onSave: (_) => wasOnSaveCalled = true, onCancel: () {}),
+        EditTextDialog(label: 'Label', value: oldValue, controller: controller, onSave: (_) => wasOnSaveCalled = true, onCancel: () {}),
       );
 
       await tester.tap(find.bySemanticsLabel('Submit'));
@@ -73,14 +110,17 @@ void main() {
 
     testWidgets('submits title when title has not changed but is marked as new', (WidgetTester tester) async {
       String editedText = 'Never called';
+      String oldValue = 'Old title';
+      TextEditingController controller = TextEditingController(text: oldValue);
+
       await tester.renderWidget(
         EditTextDialog(
-            label: "Label", value: "Old title", isNew: true, onSave: (text) => editedText = text, onCancel: () {}),
+            label: 'Label', value: oldValue, isNew: true, controller: controller, onSave: (text) => editedText = text, onCancel: () {}),
       );
 
       await tester.tap(find.bySemanticsLabel('Submit'));
 
-      expect(editedText, "Old title");
+      expect(editedText, 'Old title');
     });
 
     testWidgets('shows edit text dialog when open dialog is pressed', (WidgetTester tester) async {
