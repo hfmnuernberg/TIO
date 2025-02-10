@@ -7,22 +7,40 @@ Future<String?> showEditTextDialog({
   required String label,
   required String value,
   bool isNew = false,
-}) =>
-    showDialog<String>(
-      context: context,
-      builder: (context) => EditTextDialog(
-        label: label,
-        value: value,
-        isNew: isNew,
-        onSave: (value) => Navigator.of(context).pop(value),
-        onCancel: () => Navigator.of(context).pop(),
-      ),
-    );
+}) {
+  final TextEditingController controller = TextEditingController(text: value);
+  controller.selection = TextSelection(baseOffset: 0, extentOffset: value.length);
+
+  return showDialog<String>(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) {
+      return ValueListenableBuilder<TextEditingValue>(
+        valueListenable: controller,
+        builder: (context, textValue, _) {
+          return PopScope(
+            canPop: textValue.text == value,
+            child: EditTextDialog(
+              label: label,
+              value: value,
+              isNew: isNew,
+              controller: controller,
+              onSave: (newValue) => Navigator.of(context).pop(newValue),
+              onCancel: () => Navigator.of(context).pop(),
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
 
 class EditTextDialog extends StatelessWidget {
   final String label;
   final String value;
   final bool isNew;
+  final TextEditingController controller;
   final Function(String value) onSave;
   final Function() onCancel;
 
@@ -31,15 +49,13 @@ class EditTextDialog extends StatelessWidget {
     required this.label,
     required this.value,
     this.isNew = false,
+    required this.controller,
     required this.onSave,
     required this.onCancel,
   });
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController(text: value);
-    controller.selection = TextSelection(baseOffset: 0, extentOffset: value.length);
-
     void handleSubmit() => onSave(controller.text);
 
     return AlertDialog(
@@ -69,9 +85,9 @@ class EditTextDialog extends StatelessWidget {
             ),
             ValueListenableBuilder<TextEditingValue>(
               valueListenable: controller,
-              builder: (context, value, child) {
-                final isValid = controller.text.isNotEmpty;
-                final isDirty = controller.text != this.value;
+              builder: (context, textValue, _) {
+                final isValid = textValue.text.isNotEmpty;
+                final isDirty = textValue.text != value;
                 final isSubmitEnabled = isValid && (isNew || isDirty);
 
                 return TIOFlatButton(
@@ -87,3 +103,4 @@ class EditTextDialog extends StatelessWidget {
     );
   }
 }
+
