@@ -69,8 +69,6 @@ abstract class MetronomeUtils {
         case SoundType.polyUnaccented:
           beatType = BeatSound.PolyUnaccented2;
           break;
-        default:
-          throw Exception("Invalid sound type");
       }
     } else {
       switch (soundType) {
@@ -86,8 +84,6 @@ abstract class MetronomeUtils {
         case SoundType.polyUnaccented:
           beatType = BeatSound.PolyUnaccented;
           break;
-        default:
-          throw Exception("Invalid sound type");
       }
     }
 

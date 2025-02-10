@@ -5,34 +5,36 @@ import 'dart:ui';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:tiomusic/models/file_io.dart';
+import 'package:provider/provider.dart';
+import 'package:tiomusic/main.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
+import 'package:tiomusic/models/file_io.dart';
+import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm_segment.dart';
-import 'package:tiomusic/models/project.dart';
-import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
-import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
-import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
-import 'package:tiomusic/src/rust/api/modules/metronome.dart';
-
-import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
-import 'package:provider/provider.dart';
 import 'package:tiomusic/pages/metronome/setting_bpm.dart';
 import 'package:tiomusic/pages/metronome/setting_metronome_sound.dart';
 import 'package:tiomusic/pages/metronome/setting_random_mute.dart';
 import 'package:tiomusic/pages/metronome/setting_rhythm_parameters.dart';
+import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
+import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
+import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
+import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
+import 'package:tiomusic/pages/parent_tool/volume.dart';
+import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome.dart';
+import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/walkthrough_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:volume_controller/volume_controller.dart';
 
 class Metronome extends StatefulWidget {
   final bool isQuickTool;
@@ -46,11 +48,12 @@ class Metronome extends StatefulWidget {
   State<Metronome> createState() => _MetronomeState();
 }
 
-class _MetronomeState extends State<Metronome> {
+class _MetronomeState extends State<Metronome> with RouteAware {
   bool _isStarted = false;
   bool _sound = true;
   bool _blink = MetronomeParams.defaultVisualMetronome;
   bool _blinkIsBeat = false;
+  VolumeLevel _deviceVolumeLevel = VolumeLevel.normal;
   final List<RhythmSegment> _rhythmSegmentList = List.empty(growable: true);
   final List<RhythmSegment> _rhythmSegmentList2 = List.empty(growable: true);
 
@@ -76,6 +79,8 @@ class _MetronomeState extends State<Metronome> {
   @override
   void initState() {
     super.initState();
+
+    VolumeController.instance.addListener(handleVolumeChange);
 
     _menuItems.add(
       MenuItemButton(
@@ -135,6 +140,12 @@ class _MetronomeState extends State<Metronome> {
     });
   }
 
+  void handleVolumeChange(double newVolume) {
+    setState(() {
+      _deviceVolumeLevel = getVolumeLevel(newVolume);
+    });
+  }
+
   void _createWalkthrough() {
     // add the targets here
     var targets = <CustomTargetFocus>[
@@ -182,6 +193,28 @@ class _MetronomeState extends State<Metronome> {
     _stopMetronome();
     _beatDetection.cancel();
     super.deactivate();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ModalRoute? route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void dispose() {
+    VolumeController.instance.removeListener();
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
+    VolumeController.instance.addListener(handleVolumeChange);
   }
 
   void _addRhythmSegment(bool isSecond) async {
@@ -374,9 +407,14 @@ class _MetronomeState extends State<Metronome> {
   }
 
   Future<void> _startMetronome() async {
+    if (_sound && [VolumeLevel.muted, VolumeLevel.low].contains(_deviceVolumeLevel)) {
+      showSnackbar(context: context, volumeLevel: _deviceVolumeLevel)();
+    }
+
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _stopMetronome();
     });
+
     await MetronomeFunctions.stop();
     final success = await MetronomeFunctions.start();
     if (!success) {
@@ -661,6 +699,8 @@ class _MetronomeState extends State<Metronome> {
           ),
           block: _metronomeBlock,
           callOnReturn: (value) => setState(() {}),
+          icon: getVolumeInfoIcon(_deviceVolumeLevel),
+          onIconPressed: showSnackbar(context: context, volumeLevel: _deviceVolumeLevel),
         ),
         // BPM
         SettingsTile(

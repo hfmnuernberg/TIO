@@ -104,51 +104,6 @@ Future<dynamic> openSettingPage(Widget settingPage, BuildContext context, Projec
 }
 
 // ---------------------------------------------------------------
-// show a dialog for editing the title of a tool or project
-
-Future<String?> editTitle(BuildContext context, String currentTitle) {
-  TextEditingController controller = TextEditingController(text: currentTitle);
-  controller.selection = TextSelection(
-    baseOffset: 0,
-    extentOffset: currentTitle.length,
-  );
-  return showDialog<String>(
-    context: context,
-    builder: (context) => AlertDialog(
-      content: TextField(
-        autofocus: true,
-        decoration: const InputDecoration(
-          hintText: "",
-          border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-          label: Text("New title:", style: TextStyle(color: ColorTheme.surfaceTint)),
-        ),
-        style: const TextStyle(color: ColorTheme.primary),
-        controller: controller,
-        onSubmitted: (_) => _submitTitle(context, controller),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        TIOFlatButton(
-          onPressed: () => _submitTitle(context, controller),
-          text: 'Submit',
-          boldText: true,
-        )
-      ],
-    ),
-  );
-}
-
-void _submitTitle(BuildContext context, TextEditingController controller) {
-  Navigator.of(context).pop(controller.text);
-
-  controller.clear();
-}
-
-// ---------------------------------------------------------------
 // show a dialog for editing the title of tool and project
 
 Future<List<String>?> editTwoTitles(BuildContext context, String currentProjectTitle, String currentToolTitle) {
@@ -600,8 +555,6 @@ void updateFileReferenceForFileOfBlock(
       case IncreaseOrDecrease.decrease:
         FileReferences.decreaseFileReference(block.relativePath, projectLibrary);
         break;
-      default:
-        throw Exception("ERROR: The increaseOrDecrease value is not valid.");
     }
   } else if (block is ImageBlock && block.relativePath != "") {
     switch (increaseOrDecrease) {
@@ -611,8 +564,6 @@ void updateFileReferenceForFileOfBlock(
       case IncreaseOrDecrease.decrease:
         FileReferences.decreaseFileReference(block.relativePath, projectLibrary);
         break;
-      default:
-        throw Exception("ERROR: The increaseOrDecrease value is not valid.");
     }
   }
 }

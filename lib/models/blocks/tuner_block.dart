@@ -16,10 +16,7 @@ class TunerBlock extends ProjectBlock {
       ];
 
   @override
-  @JsonKey(
-      defaultValue: TunerParams.kind,
-      includeFromJson: false,
-      includeToJson: true)
+  @JsonKey(defaultValue: TunerParams.kind, includeFromJson: false, includeToJson: true)
   String get kind => TunerParams.kind;
 
   late String _title;
@@ -74,8 +71,7 @@ class TunerBlock extends ProjectBlock {
     return ["${formatDoubleToString(_chamberNoteHz)} Hz"];
   }
 
-  TunerBlock(String title, String id, String? islandToolID,
-      double chamberNoteHz, DateTime timeLastModified) {
+  TunerBlock(String title, String id, String? islandToolID, double chamberNoteHz, DateTime timeLastModified) {
     _timeLastModified = timeLastModified;
     _chamberNoteHz = chamberNoteHz;
     _title = title;
@@ -102,8 +98,7 @@ class TunerBlock extends ProjectBlock {
   @override
   get icon => blockTypeInfos[BlockType.tuner]!.icon;
 
-  factory TunerBlock.fromJson(Map<String, dynamic> json) =>
-      _$TunerBlockFromJson(json);
+  factory TunerBlock.fromJson(Map<String, dynamic> json) => _$TunerBlockFromJson(json);
 
   @override
   Map<String, dynamic> toJson() => _$TunerBlockToJson(this);

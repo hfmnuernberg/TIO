@@ -18,6 +18,8 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/color_schemes.g.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 Future<void> main() async {
   await RustLib.init();
   await initRustDefaultsManually();
@@ -48,6 +50,7 @@ class TIOMusicApp extends StatelessWidget {
     return ChangeNotifierProvider<ProjectLibrary>.value(
       value: projectLibrary,
       child: MaterialApp(
+        navigatorObservers: [routeObserver],
         debugShowCheckedModeBanner: false,
         title: 'TIO Music',
         theme: ourTheme ?? ThemeData(useMaterial3: true, colorScheme: lightColorScheme),

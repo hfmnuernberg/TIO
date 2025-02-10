@@ -1296,6 +1296,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "14.3.0"
+  volume_controller:
+    dependency: "direct main"
+    description:
+      name: volume_controller
+      sha256: "297237e6f756fa838b55e79c1ce050cb48328168b94f19d839b1edd0a1eb9eca"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.0"
   wakelock_plus:
     dependency: "direct main"
     description:

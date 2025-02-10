@@ -6,12 +6,8 @@ part of 'project_library.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ProjectLibrary _$ProjectLibraryFromJson(Map<String, dynamic> json) =>
-    ProjectLibrary(
-      (json['projects'] as List<dynamic>?)
-              ?.map((e) => Project.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
+ProjectLibrary _$ProjectLibraryFromJson(Map<String, dynamic> json) => ProjectLibrary(
+      (json['projects'] as List<dynamic>?)?.map((e) => Project.fromJson(e as Map<String, dynamic>)).toList() ?? [],
       (json['visitedToolsCounter'] as num?)?.toInt() ?? 0,
       (json['idxCheckShowSurvey'] as num?)?.toInt() ?? 0,
       json['neverShowSurveyAgain'] as bool? ?? false,
@@ -29,8 +25,7 @@ ProjectLibrary _$ProjectLibraryFromJson(Map<String, dynamic> json) =>
       json['showBeatToggleTip'] as bool? ?? true,
     );
 
-Map<String, dynamic> _$ProjectLibraryToJson(ProjectLibrary instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$ProjectLibraryToJson(ProjectLibrary instance) => <String, dynamic>{
       'projects': instance.projects.map((e) => e.toJson()).toList(),
       'visitedToolsCounter': instance.visitedToolsCounter,
       'neverShowSurveyAgain': instance.neverShowSurveyAgain,
