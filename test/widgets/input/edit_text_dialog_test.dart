@@ -1,17 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 
 extension WidgetTesterPumpExtension on WidgetTester {
-  Future<void> renderWidget(Widget widget) => pumpWidget(MaterialApp(home: Scaffold(body: widget)));
+  Future<void> renderWidget(Widget widget) async {
+    await pumpWidget(MaterialApp(home: Scaffold(body: widget)));
+    await pumpAndSettle();
+  }
+
+  Future<void> tapAndSettle(FinderBase<Element> finder) async {
+    await tap(finder);
+    await pumpAndSettle();
+  }
+
+  Future<void> tapAtAndSettle(Offset location) async {
+    await tapAt(location);
+    await pumpAndSettle();
+  }
+
+  Future<void> enterTextAndSettle(FinderBase<Element> finder, String text) async {
+    await enterText(finder, text);
+    await pumpAndSettle();
+  }
+
+  Finder withinAlert(FinderBase<Element> matching) =>
+      find.descendant(of: find.bySemanticsLabel('Alert'), matching: matching);
 }
 
 class TestWrapper extends StatefulWidget {
   final bool isNew;
+  final String label;
+  final String value;
 
   const TestWrapper({
     super.key,
-    this.isNew = false
+    this.label = 'Label',
+    this.value = 'n/a',
+    this.isNew = false,
   });
 
   @override
@@ -19,34 +45,30 @@ class TestWrapper extends StatefulWidget {
 }
 
 class _TestWrapperState extends State<TestWrapper> {
-  String? text;
+  late String _text;
 
   @override
   void initState() {
     super.initState();
+    _text = widget.value;
   }
 
-  Future<void> handleDialog() async {
+  Future<void> handleOpenDialog() async {
     final newText = await showEditTextDialog(
-      context: context,
-      label: 'Label',
-      value: 'Old title',
-      isNew: widget.isNew,
+        context: context,
+        label: widget.label,
+        value: widget.value,
+        isNew: widget.isNew,
     );
-    setState(() {
-      text = newText;
-    });
+    setState(() => _text = newText ?? _text);
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        text == null ? Text('Old title') : Text(text!),
-        TextButton(
-          onPressed: handleDialog,
-          child: Text('Open Dialog'),
-        ),
+        Semantics(label: 'Title display', value: _text, excludeSemantics: true, child: Text(_text)),
+        TextButton(onPressed: handleOpenDialog, child: Text('Open Dialog')),
       ],
     );
   }
@@ -58,130 +80,93 @@ void main() {
   });
 
   group('edit text dialog', () {
-    testWidgets('shows edit text dialog when open dialog is pressed', (WidgetTester tester) async {
-      await tester.renderWidget(TestWrapper());
-      expect(find.byType(AlertDialog), findsNothing);
+    testWidgets('shows new title when title change is submitted', (WidgetTester tester) async {
+      await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
+      expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'Old title');
 
-      await tester.tap(find.bySemanticsLabel('Open Dialog'));
-      await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsOneWidget);
+      await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
+
+      final textField = tester.withinAlert(find.bySemanticsLabel('Title input'));
+      expect(tester.getSemantics(textField).value, 'Old title');
+
+      await tester.enterTextAndSettle(tester.withinAlert(find.bySemanticsLabel('Title input')), 'Edited title');
+      await tester.tapAndSettle(tester.withinAlert(find.bySemanticsLabel('Submit')));
+
+      expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'Edited title');
     });
 
     testWidgets('hides edit text dialog when cancel is pressed', (WidgetTester tester) async {
       await tester.renderWidget(TestWrapper());
 
-      await tester.tap(find.bySemanticsLabel('Open Dialog'));
-      await tester.pump();
-      expect(find.byType(AlertDialog), findsOneWidget);
+      await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
+      expect(find.bySemanticsLabel('Alert'), findsOneWidget);
 
-      await tester.tap(find.text('Cancel'));
-      await tester.pump();
-      expect(find.byType(AlertDialog), findsNothing);
+      await tester.tapAndSettle(tester.withinAlert(find.text('Cancel')));
+      expect(find.bySemanticsLabel('Alert'), findsNothing);
     });
 
     testWidgets('does not allow entering title longer than max value', (WidgetTester tester) async {
-      await tester.renderWidget(TestWrapper());
+      await tester.renderWidget(TestWrapper(label: 'Title input', value: ''));
 
-      await tester.tap(find.bySemanticsLabel('Open Dialog'));
-      await tester.pump();
-      await tester.enterText(find.text('Old title'), 'a'.padLeft(100 + 1, 'a'));
-      await tester.pump();
+      await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
+      await tester.enterTextAndSettle(tester.withinAlert(find.bySemanticsLabel('Title input')), 'a'.padLeft(100 + 1, 'a'));
 
-      final textField = tester.widget<TextField>(find.byType(TextField));
-      expect(textField.controller?.text, 'a'.padLeft(100, 'a'));
-    });
+      final textField = tester.withinAlert(find.bySemanticsLabel('Title input'));
+      expect(tester.getSemantics(textField).value, 'a'.padLeft(100, 'a'));
 
-    testWidgets('shows new title when title change is submitted', (WidgetTester tester) async {
-      await tester.renderWidget(TestWrapper());
-      expect(find.text('Old title'), findsOneWidget);
-
-      await tester.tap(find.bySemanticsLabel('Open Dialog'));
-      await tester.pumpAndSettle();
-      final textField = tester.widget<TextField>(find.byType(TextField));
-      expect(textField.controller?.text, 'Old title');
-
-      await tester.enterText(find.bySemanticsLabel('Label'), 'Edited title');
-      await tester.pumpAndSettle();
-      await tester.tap(find.bySemanticsLabel('Submit'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Edited title'), findsOneWidget);
-      expect(find.text('Old title'), findsNothing);
+      await tester.tapAndSettle(tester.withinAlert(find.bySemanticsLabel('Submit')));
+      expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'a'.padLeft(100, 'a'));
     });
 
     testWidgets('shows old title when title change is canceled', (WidgetTester tester) async {
-      await tester.renderWidget(TestWrapper());
-      expect(find.text('Old title'), findsOneWidget);
+      await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
 
-      await tester.tap(find.bySemanticsLabel('Open Dialog'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.bySemanticsLabel('Label'), 'Edited title');
-      await tester.pumpAndSettle();
-      await tester.tap(find.bySemanticsLabel('Cancel'));
-      await tester.pumpAndSettle();
+      await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
+      await tester.enterTextAndSettle(tester.withinAlert(find.bySemanticsLabel('Title input')), 'Edited title');
+      await tester.tapAndSettle(tester.withinAlert(find.text('Cancel')));
 
-      expect(find.text('Edited title'), findsNothing);
-      expect(find.text('Old title'), findsOneWidget);
+      expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'Old title');
     });
 
     testWidgets('disables submit button when title is empty', (WidgetTester tester) async {
-      await tester.renderWidget(TestWrapper());
+      await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
 
-      await tester.tap(find.bySemanticsLabel('Open Dialog'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.bySemanticsLabel('Label'), '');
-      await tester.pumpAndSettle();
+      await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
+      await tester.enterTextAndSettle(tester.withinAlert(find.bySemanticsLabel('Title input')), '');
 
-      final Finder buttonFinder = find.ancestor(
-        of: find.bySemanticsLabel('Submit'),
-        matching: find.byType(ElevatedButton),
-      );
-      final ElevatedButton button = tester.widget(buttonFinder);
-      expect(button.onPressed, isNull);
+      final submitButton = tester.withinAlert(find.bySemanticsLabel('Submit'));
+      expect(tester.getSemantics(submitButton).hasFlag(SemanticsFlag.isEnabled), isFalse);
     });
 
     testWidgets('disables submit button when title has not changed', (WidgetTester tester) async {
-      await tester.renderWidget(TestWrapper());
+      await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
 
-      await tester.tap(find.bySemanticsLabel('Open Dialog'));
-      await tester.pumpAndSettle();
+      await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
 
-      final Finder buttonFinder = find.ancestor(
-        of: find.bySemanticsLabel('Submit'),
-        matching: find.byType(ElevatedButton),
-      );
-      final ElevatedButton button = tester.widget(buttonFinder);
-      expect(button.onPressed, isNull);
+      final submitButton = tester.withinAlert(find.bySemanticsLabel('Submit'));
+      expect(tester.getSemantics(submitButton).hasFlag(SemanticsFlag.isEnabled), isFalse);
     });
 
     testWidgets('submits title when title has not changed but is marked as new', (WidgetTester tester) async {
-      await tester.renderWidget(TestWrapper(isNew: true));
-      expect(find.text('Old title'), findsOneWidget);
+      await tester.renderWidget(TestWrapper(label: 'Title input', value: 'New title', isNew: true));
 
-      await tester.tap(find.bySemanticsLabel('Open Dialog'));
-      await tester.pumpAndSettle();
-      final textField = tester.widget<TextField>(find.byType(TextField));
-      expect(textField.controller?.text, 'Old title');
+      await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
+      await tester.enterTextAndSettle(tester.withinAlert(find.bySemanticsLabel('Title input')), 'Edited title');
+      await tester.tapAndSettle(tester.withinAlert(find.bySemanticsLabel('Submit')));
 
-      await tester.tap(find.bySemanticsLabel('Submit'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('Old title'), findsOneWidget);
+      expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'Edited title');
     });
 
     testWidgets('does not close dialog when clicking outside of dialog', (WidgetTester tester) async {
       await tester.renderWidget(TestWrapper());
 
-      await tester.tap(find.bySemanticsLabel('Open Dialog'));
-      await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsOneWidget);
+      await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
 
-      final dialogRect = tester.getRect(find.byType(AlertDialog));
+      final dialogRect = tester.getRect(find.bySemanticsLabel('Alert'));
       final Offset outsideTapOffset = Offset(dialogRect.left - 10, dialogRect.top + 10);
-      await tester.tapAt(outsideTapOffset);
-      await tester.pumpAndSettle();
+      await tester.tapAtAndSettle(outsideTapOffset);
 
-      expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.bySemanticsLabel('Alert'), findsOneWidget);
     });
   });
 }

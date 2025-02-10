@@ -17,9 +17,9 @@ Future<String?> showEditTextDialog({
     builder: (context) {
       return ValueListenableBuilder<TextEditingValue>(
         valueListenable: controller,
-        builder: (context, textValue, child) {
+        builder: (context, textValue, _) {
           return PopScope(
-            canPop: controller.text == value,
+            canPop: textValue.text == value,
             child: EditTextDialog(
               label: label,
               value: value,
@@ -85,9 +85,9 @@ class EditTextDialog extends StatelessWidget {
             ),
             ValueListenableBuilder<TextEditingValue>(
               valueListenable: controller,
-              builder: (context, textValue, child) {
-                final isValid = controller.text.isNotEmpty;
-                final isDirty = controller.text != value;
+              builder: (context, textValue, _) {
+                final isValid = textValue.text.isNotEmpty;
+                final isDirty = textValue.text != value;
                 final isSubmitEnabled = isValid && (isNew || isDirty);
 
                 return TIOFlatButton(
