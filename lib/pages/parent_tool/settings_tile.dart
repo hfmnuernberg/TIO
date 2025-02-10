@@ -13,6 +13,8 @@ class SettingsTile extends StatelessWidget {
   final Function? callOnReturn;
   final Function? callBeforeOpen;
   final bool inactive;
+  final Icon icon;
+  final VoidCallback? onIconPressed;
 
   const SettingsTile({
     super.key,
@@ -24,6 +26,8 @@ class SettingsTile extends StatelessWidget {
     this.callOnReturn,
     this.callBeforeOpen,
     this.inactive = false,
+    this.icon = const Icon(Icons.info),
+    this.onIconPressed,
   });
 
   @override
@@ -46,6 +50,13 @@ class SettingsTile extends StatelessWidget {
         color: ColorTheme.primaryFixedDim,
         disabledColor: ColorTheme.secondary,
       ),
+      menuIconOne: onIconPressed == null
+          ? null
+          : IconButton(
+              onPressed: onIconPressed,
+              icon: icon,
+              color: ColorTheme.surfaceTint,
+            ),
       leadingPicture: leadingIcon is String
           ? leadingIcon
           : Icon(
