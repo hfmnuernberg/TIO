@@ -15,7 +15,7 @@ import 'package:tiomusic/pages/media_player/edit_markers_page.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/pages/media_player/setting_bpm.dart';
 import 'package:tiomusic/pages/media_player/setting_pitch.dart';
-import 'package:tiomusic/pages/media_player/setting_speed.dart';
+import 'package:tiomusic/pages/media_player/setting_speed_and_bpm.dart';
 import 'package:tiomusic/pages/media_player/setting_trim.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
@@ -422,7 +422,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           title: "Speed/BPM",
           subtitle: "${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x/${_mediaPlayerBlock.bpm}",
           leadingIcon: Icons.speed,
-          settingPage: const SetSpeed(),
+          settingPage: const SetSpeedAndBPM(),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
           inactive: _isLoading,

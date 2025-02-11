@@ -16,14 +16,14 @@ final defaultBPM = 80;
 final minBPM = 10;
 final maxBPM = 500;
 
-class SetSpeed extends StatefulWidget {
-  const SetSpeed({super.key});
+class SetSpeedAndBPM extends StatefulWidget {
+  const SetSpeedAndBPM({super.key});
 
   @override
-  State<SetSpeed> createState() => _SetSpeedState();
+  State<SetSpeedAndBPM> createState() => _SetSpeedAndBPMState();
 }
 
-class _SetSpeedState extends State<SetSpeed> {
+class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
   late NumberInputInt _bpmInput;
   late NumberInputDouble _speedInput;
   late MediaPlayerBlock _mediaPlayerBlock;
