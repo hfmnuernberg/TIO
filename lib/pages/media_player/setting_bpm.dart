@@ -37,7 +37,7 @@ class _SetBPMState extends State<SetBPM> {
       defaultValue: _mediaPlayerBlock.bpm,
       countingValue: 1,
       displayText: TextEditingController(),
-      descriptionText: 'BPM',
+      descriptionText: 'Basic Beat',
       buttonRadius: 20,
       textFieldWidth: 100,
       textFontSize: 32,
@@ -65,7 +65,7 @@ class _SetBPMState extends State<SetBPM> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set BPM",
+      title: "Set Basic Beat",
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,

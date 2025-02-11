@@ -12,7 +12,16 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/number_input_double.dart';
 import 'package:tiomusic/widgets/number_input_int.dart';
 
-final defaultBPM = 80;
+const MIN_SPEED_FACTOR = 0.1;
+const MAX_SPEED_FACTOR = 10.0;
+const COUNTING_VALUE = 0.1;
+
+double getSpeedForBpm(bpm, baseBpm) => (bpm / baseBpm)
+    .clamp(MIN_SPEED_FACTOR, MAX_SPEED_FACTOR);
+
+int getBpmForSpeed(speedFactor, baseBpm) => (speedFactor * baseBpm)
+    .clamp(MIN_SPEED_FACTOR * baseBpm, MAX_SPEED_FACTOR * baseBpm)
+    .toInt();
 
 class SetSpeedAndBPM extends StatefulWidget {
   const SetSpeedAndBPM({super.key});
@@ -25,7 +34,6 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
   late NumberInputInt _bpmInput;
   late NumberInputDouble _speedInput;
   late MediaPlayerBlock _mediaPlayerBlock;
-  bool _isConnected = false;
   bool _isUpdating = false;
 
   late final TextEditingController bpmController;
@@ -37,17 +45,16 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
 
-    bpmController = TextEditingController(text: _mediaPlayerBlock.bpm.toString());
+    bpmController = TextEditingController(text: getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm).toString());
     speedController = TextEditingController(text: _mediaPlayerBlock.speedFactor.toString());
 
     bpmController.addListener(() {
-      if (_isConnected == false) return;
       if (_isUpdating) return;
       _isUpdating = true;
 
       double? bpmValue = double.tryParse(bpmController.text);
       if (bpmValue != null) {
-        double newSpeed = _calcBPMValue(bpmValue);
+        double newSpeed = getSpeedForBpm(bpmValue, _mediaPlayerBlock.bpm);
         speedController.text = newSpeed.toStringAsFixed(1);
       }
 
@@ -55,13 +62,12 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
     });
 
     speedController.addListener(() {
-      if (_isConnected == false) return;
       if (_isUpdating) return;
       _isUpdating = true;
 
       double? speedValue = double.tryParse(speedController.text);
       if (speedValue != null) {
-        int newBpm = _calcSpeedValue(speedValue);
+        int newBpm = getBpmForSpeed(speedValue, _mediaPlayerBlock.bpm);
         bpmController.text = newBpm.toString();
       }
 
@@ -69,31 +75,29 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
     });
 
     _bpmInput = NumberInputInt(
-      maxValue: 500,
-      minValue: 10,
+      maxValue: getBpmForSpeed(MAX_SPEED_FACTOR, _mediaPlayerBlock.bpm),
+      minValue: getBpmForSpeed(MIN_SPEED_FACTOR, _mediaPlayerBlock.bpm),
       defaultValue: _mediaPlayerBlock.bpm,
-      countingValue: 1,
+      countingValue: getBpmForSpeed(COUNTING_VALUE, _mediaPlayerBlock.bpm),
       displayText: bpmController,
       descriptionText: 'BPM',
-      buttonRadius: 20,
-      textFieldWidth: 100,
-      textFontSize: 32,
-    );
-
-    _speedInput = NumberInputDouble(
-      maxValue: 10.0,
-      minValue: 0.1,
-      defaultValue: _mediaPlayerBlock.speedFactor,
-      countingValue: 0.1,
-      countingIntervalMs: 200,
-      displayText: speedController,
-      descriptionText: "Speed Factor",
       textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
     );
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _speedInput.displayText.addListener(_onUserChangedSpeed);
-    // });
+    _speedInput = NumberInputDouble(
+      maxValue: MAX_SPEED_FACTOR,
+      minValue: MIN_SPEED_FACTOR,
+      defaultValue: _mediaPlayerBlock.speedFactor,
+      countingValue: COUNTING_VALUE,
+      countingIntervalMs: 200,
+      displayText: speedController,
+      descriptionText: "Factor",
+      textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _speedInput.displayText.addListener(_onUserChangedSpeed);
+    });
   }
 
   @override
@@ -106,7 +110,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Speed/BPM",
+      title: "Set Speed",
       confirm: _onConfirm,
       reset: _reset,
       numberInput: Column(
@@ -114,23 +118,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
           _bpmInput,
           Tap2Tempo(bpmHandle: _bpmInput.displayText),
           SizedBox(height: TIOMusicParams.edgeInset * 2),
-          InkWell(
-            child: Row(
-              children: [
-                Expanded(child: Divider(color: ColorTheme.primary80, thickness: 2)),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Icon(_isConnected ? Icons.link : Icons.link_off, size: 24, color: ColorTheme.primary),
-                ),
-                Expanded(child: Divider(color: ColorTheme.primary80, thickness: 2)),
-              ],
-            ),
-            onTap: () {
-              setState(() {
-                _isConnected = !_isConnected;
-              });
-            },
-          ),
+          Divider(color: ColorTheme.primary80, thickness: 2, indent: 20, endIndent: 20,),
           SizedBox(height: TIOMusicParams.edgeInset * 3),
           _speedInput,
         ],
@@ -155,7 +143,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
     Navigator.pop(context);
   }
   void _reset() {
-    _bpmInput.displayText.value = _bpmInput.displayText.value.copyWith(text: defaultBPM.toString());
+    _bpmInput.displayText.value = _bpmInput.displayText.value.copyWith(text: getBpmForSpeed(MediaPlayerParams.defaultSpeedFactor, _mediaPlayerBlock.bpm).toString());
     _speedInput.displayText.value =
         _speedInput.displayText.value.copyWith(text: MediaPlayerParams.defaultSpeedFactor.toString());
   }
@@ -168,9 +156,6 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
 
     Navigator.pop(context);
   }
-
-  double _calcBPMValue(bpmValue) => (bpmValue / 10).clamp(0.1, 10.0);
-  int _calcSpeedValue(speedValue) => (speedValue * 10).clamp(10, 500).toInt();
 
   void _onUserChangedSpeed() async {
     if (_speedInput.displayText.value.text != '') {
