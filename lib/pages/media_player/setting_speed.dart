@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
+import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/file_io.dart';
+import 'package:tiomusic/pages/metronome/tap_to_tempo.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/number_input_double.dart';
+import 'package:tiomusic/widgets/number_input_int.dart';
+
+final defaultBPM = 80;
+final minBPM = 10;
+final maxBPM = 500;
 
 class SetSpeed extends StatefulWidget {
   const SetSpeed({super.key});
@@ -17,6 +24,7 @@ class SetSpeed extends StatefulWidget {
 }
 
 class _SetSpeedState extends State<SetSpeed> {
+  late NumberInputInt _bpmInput;
   late NumberInputDouble _speedInput;
   late MediaPlayerBlock _mediaPlayerBlock;
 
@@ -25,6 +33,18 @@ class _SetSpeedState extends State<SetSpeed> {
     super.initState();
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
+
+    _bpmInput = NumberInputInt(
+      maxValue: maxBPM,
+      minValue: minBPM,
+      defaultValue: _mediaPlayerBlock.bpm,
+      countingValue: 1,
+      displayText: TextEditingController(),
+      descriptionText: 'BPM',
+      buttonRadius: 20,
+      textFieldWidth: 100,
+      textFontSize: 32,
+    );
 
     _speedInput = NumberInputDouble(
       maxValue: 10.0,
@@ -45,10 +65,28 @@ class _SetSpeedState extends State<SetSpeed> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Speed",
+      title: "Set Speed/BPM",
       confirm: _onConfirm,
       reset: _reset,
-      numberInput: _speedInput,
+      numberInput: Column(
+        children: [
+          _bpmInput,
+          Tap2Tempo(bpmHandle: _bpmInput.displayText),
+          SizedBox(height: TIOMusicParams.edgeInset * 2),
+          Row(
+            children: [
+              Expanded(child: Divider(color: ColorTheme.primary80, thickness: 2)),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Icon(Icons.link, size: 24, color: ColorTheme.primary),
+              ),
+              Expanded(child: Divider(color: ColorTheme.primary80, thickness: 2)),
+            ],
+          ),
+          SizedBox(height: TIOMusicParams.edgeInset * 3),
+          _speedInput,
+        ],
+      ),
       cancel: _onCancel,
     );
   }
