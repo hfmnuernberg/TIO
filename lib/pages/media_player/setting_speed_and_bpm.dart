@@ -27,6 +27,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
   late NumberInputInt _bpmInput;
   late NumberInputDouble _speedInput;
   late MediaPlayerBlock _mediaPlayerBlock;
+  bool _isConnected = false;
 
   @override
   void initState() {
@@ -73,15 +74,22 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
           _bpmInput,
           Tap2Tempo(bpmHandle: _bpmInput.displayText),
           SizedBox(height: TIOMusicParams.edgeInset * 2),
-          Row(
-            children: [
-              Expanded(child: Divider(color: ColorTheme.primary80, thickness: 2)),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Icon(Icons.link, size: 24, color: ColorTheme.primary),
-              ),
-              Expanded(child: Divider(color: ColorTheme.primary80, thickness: 2)),
-            ],
+          InkWell(
+            child: Row(
+              children: [
+                Expanded(child: Divider(color: ColorTheme.primary80, thickness: 2)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Icon(_isConnected ? Icons.link : Icons.link_off, size: 24, color: ColorTheme.primary),
+                ),
+                Expanded(child: Divider(color: ColorTheme.primary80, thickness: 2)),
+              ],
+            ),
+            onTap: () {
+              setState(() {
+                _isConnected = !_isConnected;
+              });
+            },
           ),
           SizedBox(height: TIOMusicParams.edgeInset * 3),
           _speedInput,
