@@ -419,8 +419,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
           callOnReturn: (value) => setState(() {}),
         ),
         SettingsTile(
-          title: "Speed",
-          subtitle: "${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x",
+          title: "Speed/BPM",
+          subtitle: "${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x/${_mediaPlayerBlock.bpm}",
           leadingIcon: Icons.speed,
           settingPage: const SetSpeed(),
           block: _mediaPlayerBlock,
