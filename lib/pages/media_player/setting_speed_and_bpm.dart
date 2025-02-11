@@ -41,6 +41,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
     speedController = TextEditingController(text: _mediaPlayerBlock.speedFactor.toString());
 
     bpmController.addListener(() {
+      if (_isConnected == false) return;
       if (_isUpdating) return;
       _isUpdating = true;
 
@@ -54,6 +55,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
     });
 
     speedController.addListener(() {
+      if (_isConnected == false) return;
       if (_isUpdating) return;
       _isUpdating = true;
 
