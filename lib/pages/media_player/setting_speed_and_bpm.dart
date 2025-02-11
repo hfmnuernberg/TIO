@@ -13,8 +13,6 @@ import 'package:tiomusic/widgets/number_input_double.dart';
 import 'package:tiomusic/widgets/number_input_int.dart';
 
 final defaultBPM = 80;
-final minBPM = 10;
-final maxBPM = 500;
 
 class SetSpeedAndBPM extends StatefulWidget {
   const SetSpeedAndBPM({super.key});
@@ -28,6 +26,10 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
   late NumberInputDouble _speedInput;
   late MediaPlayerBlock _mediaPlayerBlock;
   bool _isConnected = false;
+  bool _isUpdating = false;
+
+  late final TextEditingController bpmController;
+  late final TextEditingController speedController;
 
   @override
   void initState() {
@@ -35,12 +37,41 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
 
+    bpmController = TextEditingController(text: _mediaPlayerBlock.bpm.toString());
+    speedController = TextEditingController(text: _mediaPlayerBlock.speedFactor.toString());
+
+    bpmController.addListener(() {
+      if (_isUpdating) return;
+      _isUpdating = true;
+
+      double? bpmValue = double.tryParse(bpmController.text);
+      if (bpmValue != null) {
+        double newSpeed = _calcBPMValue(bpmValue);
+        speedController.text = newSpeed.toStringAsFixed(1);
+      }
+
+      _isUpdating = false;
+    });
+
+    speedController.addListener(() {
+      if (_isUpdating) return;
+      _isUpdating = true;
+
+      double? speedValue = double.tryParse(speedController.text);
+      if (speedValue != null) {
+        int newBpm = _calcSpeedValue(speedValue);
+        bpmController.text = newBpm.toString();
+      }
+
+      _isUpdating = false;
+    });
+
     _bpmInput = NumberInputInt(
-      maxValue: maxBPM,
-      minValue: minBPM,
+      maxValue: 500,
+      minValue: 10,
       defaultValue: _mediaPlayerBlock.bpm,
       countingValue: 1,
-      displayText: TextEditingController(),
+      displayText: bpmController,
       descriptionText: 'BPM',
       buttonRadius: 20,
       textFieldWidth: 100,
@@ -53,14 +84,21 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
       defaultValue: _mediaPlayerBlock.speedFactor,
       countingValue: 0.1,
       countingIntervalMs: 200,
-      displayText: TextEditingController(),
+      displayText: speedController,
       descriptionText: "Speed Factor",
       textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
     );
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _speedInput.displayText.addListener(_onUserChangedSpeed);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _speedInput.displayText.addListener(_onUserChangedSpeed);
+    // });
+  }
+
+  @override
+  void dispose() {
+    bpmController.dispose();
+    speedController.dispose();
+    super.dispose();
   }
 
   @override
@@ -114,7 +152,6 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
 
     Navigator.pop(context);
   }
-
   void _reset() {
     _bpmInput.displayText.value = _bpmInput.displayText.value.copyWith(text: defaultBPM.toString());
     _speedInput.displayText.value =
@@ -129,6 +166,9 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
 
     Navigator.pop(context);
   }
+
+  double _calcBPMValue(bpmValue) => (bpmValue / 10).clamp(0.1, 10.0);
+  int _calcSpeedValue(speedValue) => (speedValue * 10).clamp(10, 500).toInt();
 
   void _onUserChangedSpeed() async {
     if (_speedInput.displayText.value.text != '') {
