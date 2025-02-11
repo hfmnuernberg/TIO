@@ -108,6 +108,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
   }
 
   void _reset() {
+    _bpmInput.displayText.value = _bpmInput.displayText.value.copyWith(text: defaultBPM.toString());
     _speedInput.displayText.value =
         _speedInput.displayText.value.copyWith(text: MediaPlayerParams.defaultSpeedFactor.toString());
   }
