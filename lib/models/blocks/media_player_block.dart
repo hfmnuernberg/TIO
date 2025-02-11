@@ -19,6 +19,7 @@ class MediaPlayerBlock extends ProjectBlock {
   // for now this check is only used to compare quick tools to the default settings, so some properties are left out here
   @override
   List<Object> get props => [
+        bpm,
         _volume,
         _pitchSemitones,
         _speedFactor,
@@ -79,6 +80,9 @@ class MediaPlayerBlock extends ProjectBlock {
     _volume = newValue;
     notifyListeners();
   }
+
+  @JsonKey(defaultValue: 80)
+  late int bpm;
 
   late double _pitchSemitones;
   @JsonKey(defaultValue: MediaPlayerParams.defaultPitchSemitones)
@@ -152,6 +156,7 @@ class MediaPlayerBlock extends ProjectBlock {
     if (_looping) {
       settings.add("Looping");
     }
+    settings.add("$bpm bpm");
     return settings;
   }
 
@@ -159,6 +164,7 @@ class MediaPlayerBlock extends ProjectBlock {
     String title,
     String id,
     String? islandToolID,
+    this.bpm,
     double volume,
     double pitchSemitones,
     double speedFactor,
@@ -188,6 +194,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _title = MediaPlayerParams.displayName;
     _islandToolID = null;
     _id = createNewId();
+    bpm = 80;
     _volume = TIOMusicParams.defaultVolume;
     _pitchSemitones = MediaPlayerParams.defaultPitchSemitones;
     _speedFactor = MediaPlayerParams.defaultSpeedFactor;
@@ -203,6 +210,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _title = newTitle;
     _islandToolID = null;
     _id = createNewId();
+    bpm = 80;
     _volume = TIOMusicParams.defaultVolume;
     _pitchSemitones = MediaPlayerParams.defaultPitchSemitones;
     _speedFactor = MediaPlayerParams.defaultSpeedFactor;

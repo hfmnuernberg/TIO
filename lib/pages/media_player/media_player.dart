@@ -10,17 +10,18 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
+import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/edit_markers_page.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
-import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
-import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/pages/media_player/setting_bpm.dart';
 import 'package:tiomusic/pages/media_player/setting_pitch.dart';
-import 'package:tiomusic/pages/media_player/setting_trim.dart';
 import 'package:tiomusic/pages/media_player/setting_speed.dart';
+import 'package:tiomusic/pages/media_player/setting_trim.dart';
+import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
+import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
-import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -408,6 +409,14 @@ class _MediaPlayerState extends State<MediaPlayer> {
           block: _mediaPlayerBlock,
           callOnReturn: (value) => _queryAndUpdateStateFromRust(),
           inactive: _isLoading,
+        ),
+        SettingsTile(
+          title: "BPM",
+          subtitle: "${_mediaPlayerBlock.bpm}",
+          leadingIcon: Icons.speed,
+          settingPage: const SetBPM(),
+          block: _mediaPlayerBlock,
+          callOnReturn: (value) => setState(() {}),
         ),
         SettingsTile(
           title: "Speed",
