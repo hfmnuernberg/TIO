@@ -55,10 +55,10 @@ class _TestWrapperState extends State<TestWrapper> {
 
   Future<void> handleOpenDialog() async {
     final newText = await showEditTextDialog(
-        context: context,
-        label: widget.label,
-        value: widget.value,
-        isNew: widget.isNew,
+      context: context,
+      label: widget.label,
+      value: widget.value,
+      isNew: widget.isNew,
     );
     setState(() => _text = newText ?? _text);
   }
@@ -109,7 +109,8 @@ void main() {
       await tester.renderWidget(TestWrapper(label: 'Title input', value: ''));
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
-      await tester.enterTextAndSettle(tester.withinAlert(find.bySemanticsLabel('Title input')), 'a'.padLeft(100 + 1, 'a'));
+      await tester.enterTextAndSettle(
+          tester.withinAlert(find.bySemanticsLabel('Title input')), 'a'.padLeft(100 + 1, 'a'));
 
       final textField = tester.withinAlert(find.bySemanticsLabel('Title input'));
       expect(tester.getSemantics(textField).value, 'a'.padLeft(100, 'a'));
