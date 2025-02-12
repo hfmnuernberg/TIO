@@ -1,4 +1,4 @@
-import 'input/customSlider.dart';
+import 'input/custom_slider_int.dart';
 import 'input/number_input.dart';
 import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';

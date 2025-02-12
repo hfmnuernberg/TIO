@@ -42,7 +42,6 @@ class _CustomSliderState extends State<CustomSlider> {
     _validateInput(int.parse(widget.controller.value.text));
   }
 
-  // Check if submitted input is valid
   void _validateInput(int input) {
     if (input != '' && input != '-') {
       // Check for min/max values
