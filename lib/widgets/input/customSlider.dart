@@ -22,9 +22,7 @@ class CustomSlider extends StatefulWidget {
 }
 
 class _CustomSliderState extends State<CustomSlider> {
-  late TextEditingController _valueController;
   late int _sliderDivisions;
-
   late int _sliderValue;
 
   // Initialize variables
@@ -32,10 +30,16 @@ class _CustomSliderState extends State<CustomSlider> {
   void initState() {
     super.initState();
     widget.controller.value = widget.controller.value.copyWith(text: widget.defaultValue.toString());
-    _valueController = TextEditingController(text: widget.defaultValue.toString());
 
     _sliderDivisions = (widget.max - widget.min) ~/ widget.step;
     _sliderValue = widget.defaultValue;
+
+    widget.controller.addListener(_onExternalChange);
+  }
+
+  // Handle external changes of the displayed text
+  void _onExternalChange() {
+    _validateInput(int.parse(widget.controller.value.text));
   }
 
   // Check if submitted input is valid
@@ -53,7 +57,6 @@ class _CustomSliderState extends State<CustomSlider> {
       // Set default value when input is no number
       input = widget.defaultValue;
     }
-    _valueController.value = _valueController.value.copyWith(text: input.toString());
     widget.controller.value = widget.controller.value.copyWith(text: input.toString());
     _sliderValue = input;
     setState(() {});
@@ -68,12 +71,12 @@ class _CustomSliderState extends State<CustomSlider> {
       min: widget.min.toDouble(),
       max: widget.max.toDouble(),
       divisions: _sliderDivisions,
-      label: _valueController.text,
+      label: widget.controller.text,
       onChanged: (newValue) {
         _sliderValue = int.parse(newValue.toStringAsFixed(0));
         setState(() {
-          _valueController.value = _valueController.value.copyWith(text: _sliderValue.toString());
-          _validateInput(int.parse(_valueController.text));
+          widget.controller.value = widget.controller.value.copyWith(text: _sliderValue.toString());
+          _validateInput(int.parse(widget.controller.text));
         });
       },
     );

@@ -32,11 +32,11 @@ class _SetBPMState extends State<SetBPM> {
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
 
     _bpmInput = NumberInputInt(
-      maxValue: maxBPM,
-      minValue: minBPM,
+      max: maxBPM,
+      min: minBPM,
       defaultValue: _mediaPlayerBlock.bpm,
-      countingValue: 1,
-      displayText: TextEditingController(),
+      step: 1,
+      controller: TextEditingController(),
       descriptionText: 'Basic Beat',
       buttonRadius: 20,
       textFieldWidth: 100,
@@ -45,8 +45,8 @@ class _SetBPMState extends State<SetBPM> {
   }
 
   void _onConfirm() async {
-    if (_bpmInput.displayText.value.text != '') {
-      int newBpm = int.parse(_bpmInput.displayText.value.text);
+    if (_bpmInput.controller.value.text != '') {
+      int newBpm = int.parse(_bpmInput.controller.value.text);
       _mediaPlayerBlock.bpm = newBpm;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     }
@@ -55,7 +55,7 @@ class _SetBPMState extends State<SetBPM> {
   }
 
   void _reset() {
-    _bpmInput.displayText.value = _bpmInput.displayText.value.copyWith(text: defaultBPM.toString());
+    _bpmInput.controller.value = _bpmInput.controller.value.copyWith(text: defaultBPM.toString());
   }
 
   void _onCancel() {
@@ -70,7 +70,7 @@ class _SetBPMState extends State<SetBPM> {
       reset: _reset,
       cancel: _onCancel,
       numberInput: _bpmInput,
-      customWidget: Tap2Tempo(bpmHandle: _bpmInput.displayText),
+      customWidget: Tap2Tempo(bpmHandle: _bpmInput.controller),
     );
   }
 }

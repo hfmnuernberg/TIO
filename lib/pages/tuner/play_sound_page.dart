@@ -38,11 +38,11 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
     super.initState();
 
     _octaveInput = NumberInputInt(
-      maxValue: 7,
-      minValue: 1,
+      max: 7,
+      min: 1,
       defaultValue: _octave,
-      countingValue: 1,
-      displayText: TextEditingController(),
+      step: 1,
+      controller: TextEditingController(),
       textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
       descriptionText: "Octave",
     );
@@ -50,7 +50,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await TunerFunctions.stop();
 
-      _octaveInput.displayText.addListener(_onOctaveChanged);
+      _octaveInput.controller.addListener(_onOctaveChanged);
 
       _buttonListener.addListener(_onButtonsChanged);
     });
@@ -58,7 +58,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
   void _onOctaveChanged() {
     setState(() {
-      _octave = int.parse(_octaveInput.displayText.text);
+      _octave = int.parse(_octaveInput.controller.text);
     });
   }
 

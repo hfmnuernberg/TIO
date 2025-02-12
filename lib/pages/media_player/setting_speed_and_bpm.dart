@@ -75,11 +75,11 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
     });
 
     _bpmInput = NumberInputInt(
-      maxValue: getBpmForSpeed(MAX_SPEED_FACTOR, _mediaPlayerBlock.bpm),
-      minValue: getBpmForSpeed(MIN_SPEED_FACTOR, _mediaPlayerBlock.bpm),
+      max: getBpmForSpeed(MAX_SPEED_FACTOR, _mediaPlayerBlock.bpm),
+      min: getBpmForSpeed(MIN_SPEED_FACTOR, _mediaPlayerBlock.bpm),
       defaultValue: _mediaPlayerBlock.bpm,
-      countingValue: getBpmForSpeed(COUNTING_VALUE, _mediaPlayerBlock.bpm),
-      displayText: bpmController,
+      step: getBpmForSpeed(COUNTING_VALUE, _mediaPlayerBlock.bpm),
+      controller: bpmController,
       descriptionText: 'BPM',
       textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
     );
@@ -116,7 +116,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
       numberInput: Column(
         children: [
           _bpmInput,
-          Tap2Tempo(bpmHandle: _bpmInput.displayText),
+          Tap2Tempo(bpmHandle: _bpmInput.controller),
           SizedBox(height: TIOMusicParams.edgeInset * 2),
           Divider(color: ColorTheme.primary80, thickness: 2, indent: 20, endIndent: 20,),
           SizedBox(height: TIOMusicParams.edgeInset * 3),
@@ -143,7 +143,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
     Navigator.pop(context);
   }
   void _reset() {
-    _bpmInput.displayText.value = _bpmInput.displayText.value.copyWith(text: getBpmForSpeed(MediaPlayerParams.defaultSpeedFactor, _mediaPlayerBlock.bpm).toString());
+    _bpmInput.controller.value = _bpmInput.controller.value.copyWith(text: getBpmForSpeed(MediaPlayerParams.defaultSpeedFactor, _mediaPlayerBlock.bpm).toString());
     _speedInput.displayText.value =
         _speedInput.displayText.value.copyWith(text: MediaPlayerParams.defaultSpeedFactor.toString());
   }
