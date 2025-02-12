@@ -1,7 +1,6 @@
 import 'input/custom_slider_int.dart';
 import 'input/number_input.dart';
 import 'package:flutter/material.dart';
-import 'package:tiomusic/util/color_constants.dart';
 
 class NumberInputInt extends StatefulWidget {
   final int max;
@@ -65,7 +64,6 @@ class _NumberInputIntState extends State<NumberInputInt> {
           textFieldWidth: widget.textFieldWidth,
           textFontSize: widget.textFontSize,
         ),
-        Text(widget.descriptionText, style: const TextStyle(color: ColorTheme.primary)),
         Padding(
           padding: const EdgeInsets.only(top: 40),
           child: CustomSlider(
