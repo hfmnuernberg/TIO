@@ -6,7 +6,7 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/pages/parent_tool/volume.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/number_input_double.dart';
+import 'package:tiomusic/widgets/number_input_double_with_slider.dart';
 import 'package:volume_controller/volume_controller.dart';
 
 class SetVolume extends StatefulWidget {

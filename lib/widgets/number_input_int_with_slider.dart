@@ -1,23 +1,22 @@
+import 'input/custom_slider_int.dart';
+import 'input/number_input_int.dart';
 import 'package:flutter/material.dart';
-import 'package:tiomusic/widgets/input/custom_slider_double.dart';
-import 'package:tiomusic/widgets/input/number_input_for_double.dart';
 
-class NumberInputDouble extends StatefulWidget {
-  final double max;
-  final double min;
-  final double defaultValue;
-  final double step;
+class NumberInputInt extends StatefulWidget {
+  final int max;
+  final int min;
+  final int defaultValue;
+  final int step;
   final TextEditingController controller;
   final int countingIntervalMs;
   final String descriptionText;
   final double buttonRadius;
   final double buttonGap;
+  final double relIconSize;
   final double textFieldWidth;
   final double textFontSize;
-  final double relIconSize;
-  final bool allowNegativeNumbers;
 
-  const NumberInputDouble({
+  const NumberInputInt({
     super.key,
     required this.max,
     required this.min,
@@ -28,17 +27,16 @@ class NumberInputDouble extends StatefulWidget {
     this.descriptionText = '',
     this.buttonRadius = 25,
     this.buttonGap = 10,
+    this.relIconSize = 0.4,
     this.textFieldWidth = 100,
     this.textFontSize = 40,
-    this.relIconSize = 0.4,
-    this.allowNegativeNumbers = false,
   });
 
   @override
-  State<NumberInputDouble> createState() => _NumberInputDoubleState();
+  State<NumberInputInt> createState() => _NumberInputIntState();
 }
 
-class _NumberInputDoubleState extends State<NumberInputDouble> {
+class _NumberInputIntState extends State<NumberInputInt> {
   // Initialize variables
   @override
   void initState() {
@@ -52,26 +50,25 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        NumberInputForDouble(
+        NumberInput(
+          defaultValue: widget.defaultValue,
           max: widget.max,
           min: widget.min,
-          defaultValue: widget.defaultValue,
           step: widget.step,
           controller: widget.controller,
-          countingIntervalMs: widget.countingIntervalMs,
+          countingStepsInMilliseconds: widget.countingIntervalMs,
           descriptionText: widget.descriptionText,
           buttonRadius: widget.buttonRadius,
           buttonGap: widget.buttonGap,
+          relIconSize: widget.relIconSize,
           textFieldWidth: widget.textFieldWidth,
           textFontSize: widget.textFontSize,
-          relIconSize: widget.relIconSize,
-          allowNegativeNumbers: widget.allowNegativeNumbers,
         ),
         Padding(
           padding: const EdgeInsets.only(top: 40),
-          child: CustomSliderDouble(
-            min: widget.min,
+          child: CustomSlider(
             max: widget.max,
+            min: widget.min,
             defaultValue: widget.defaultValue,
             step: widget.step,
             controller: widget.controller,

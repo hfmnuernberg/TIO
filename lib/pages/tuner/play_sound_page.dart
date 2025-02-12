@@ -11,7 +11,7 @@ import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
-import 'package:tiomusic/widgets/number_input_int.dart';
+import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
 
 const double buttonWidth = 40;

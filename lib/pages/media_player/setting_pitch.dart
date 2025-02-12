@@ -7,7 +7,7 @@ import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/number_input_double.dart';
+import 'package:tiomusic/widgets/number_input_double_with_slider.dart';
 
 class SetPitch extends StatefulWidget {
   const SetPitch({super.key});
