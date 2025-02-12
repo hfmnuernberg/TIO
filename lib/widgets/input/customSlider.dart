@@ -73,8 +73,8 @@ class _CustomSliderState extends State<CustomSlider> {
       divisions: _sliderDivisions,
       label: widget.controller.text,
       onChanged: (newValue) {
-        _sliderValue = int.parse(newValue.toStringAsFixed(0));
         setState(() {
+          _sliderValue = int.parse(newValue.toStringAsFixed(0));
           widget.controller.value = widget.controller.value.copyWith(text: _sliderValue.toString());
           _validateInput(int.parse(widget.controller.text));
         });

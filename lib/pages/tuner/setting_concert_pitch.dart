@@ -26,12 +26,12 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
     _tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
 
     _concertPitchInput = NumberInputDouble(
-      maxValue: 600.0,
-      minValue: 200.0,
+      max: 600.0,
+      min: 200.0,
       defaultValue: _tunerBlock.chamberNoteHz,
-      countingValue: 1.0,
+      step: 1.0,
       countingIntervalMs: 200,
-      displayText: TextEditingController(),
+      controller: TextEditingController(),
       descriptionText: "Concert Pitch in Hz",
       textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
     );
@@ -48,8 +48,8 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
   }
 
   void _onConfirm() async {
-    if (_concertPitchInput.displayText.value.text != '') {
-      double newConcertPitch = double.parse(_concertPitchInput.displayText.value.text);
+    if (_concertPitchInput.controller.value.text != '') {
+      double newConcertPitch = double.parse(_concertPitchInput.controller.value.text);
       _tunerBlock.chamberNoteHz = newConcertPitch;
 
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
@@ -59,7 +59,7 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
   }
 
   void _reset() {
-    _concertPitchInput.displayText.value =
-        _concertPitchInput.displayText.value.copyWith(text: TunerParams.defaultConcertPitch.toString());
+    _concertPitchInput.controller.value =
+        _concertPitchInput.controller.value.copyWith(text: TunerParams.defaultConcertPitch.toString());
   }
 }

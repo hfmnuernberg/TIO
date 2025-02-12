@@ -27,19 +27,19 @@ class _SetPitchState extends State<SetPitch> {
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
 
     _pitchInput = NumberInputDouble(
-      maxValue: 24.0,
-      minValue: -24.0,
+      max: 24.0,
+      min: -24.0,
       defaultValue: _mediaPlayerBlock.pitchSemitones,
-      countingValue: 0.1,
+      step: 0.1,
       countingIntervalMs: 200,
-      displayText: TextEditingController(),
+      controller: TextEditingController(),
       descriptionText: "Semitones",
       textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
       allowNegativeNumbers: true,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _pitchInput.displayText.addListener(_onUserChangedPitch);
+      _pitchInput.controller.addListener(_onUserChangedPitch);
     });
   }
 
@@ -55,8 +55,8 @@ class _SetPitchState extends State<SetPitch> {
   }
 
   void _onConfirm() async {
-    if (_pitchInput.displayText.value.text != '') {
-      double newPitchValue = double.parse(_pitchInput.displayText.value.text);
+    if (_pitchInput.controller.value.text != '') {
+      double newPitchValue = double.parse(_pitchInput.controller.value.text);
 
       _mediaPlayerBlock.pitchSemitones = newPitchValue;
 
@@ -71,8 +71,8 @@ class _SetPitchState extends State<SetPitch> {
   }
 
   void _reset() {
-    _pitchInput.displayText.value =
-        _pitchInput.displayText.value.copyWith(text: MediaPlayerParams.defaultPitchSemitones.toString());
+    _pitchInput.controller.value =
+        _pitchInput.controller.value.copyWith(text: MediaPlayerParams.defaultPitchSemitones.toString());
   }
 
   void _onCancel() {
@@ -85,8 +85,8 @@ class _SetPitchState extends State<SetPitch> {
   }
 
   void _onUserChangedPitch() async {
-    if (_pitchInput.displayText.value.text != '') {
-      double newPitchValue = double.parse(_pitchInput.displayText.value.text);
+    if (_pitchInput.controller.value.text != '') {
+      double newPitchValue = double.parse(_pitchInput.controller.value.text);
 
       mediaPlayerSetPitchSemitones(pitchSemitones: newPitchValue).then((success) => {
             if (!success) {throw ("Setting pitch semitones in rust failed using this value: $newPitchValue")}

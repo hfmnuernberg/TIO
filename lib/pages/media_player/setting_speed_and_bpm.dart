@@ -85,18 +85,18 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
     );
 
     _speedInput = NumberInputDouble(
-      maxValue: MAX_SPEED_FACTOR,
-      minValue: MIN_SPEED_FACTOR,
+      max: MAX_SPEED_FACTOR,
+      min: MIN_SPEED_FACTOR,
       defaultValue: _mediaPlayerBlock.speedFactor,
-      countingValue: COUNTING_VALUE,
+      step: COUNTING_VALUE,
       countingIntervalMs: 200,
-      displayText: speedController,
+      controller: speedController,
       descriptionText: "Factor",
       textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _speedInput.displayText.addListener(_onUserChangedSpeed);
+      _speedInput.controller.addListener(_onUserChangedSpeed);
     });
   }
 
@@ -128,8 +128,8 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
   }
 
   void _onConfirm() async {
-    if (_speedInput.displayText.value.text != '') {
-      double newSpeedFactor = double.parse(_speedInput.displayText.value.text);
+    if (_speedInput.controller.value.text != '') {
+      double newSpeedFactor = double.parse(_speedInput.controller.value.text);
 
       _mediaPlayerBlock.speedFactor = newSpeedFactor;
 
@@ -144,8 +144,8 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
   }
   void _reset() {
     _bpmInput.controller.value = _bpmInput.controller.value.copyWith(text: getBpmForSpeed(MediaPlayerParams.defaultSpeedFactor, _mediaPlayerBlock.bpm).toString());
-    _speedInput.displayText.value =
-        _speedInput.displayText.value.copyWith(text: MediaPlayerParams.defaultSpeedFactor.toString());
+    _speedInput.controller.value =
+        _speedInput.controller.value.copyWith(text: MediaPlayerParams.defaultSpeedFactor.toString());
   }
 
   void _onCancel() {
@@ -158,8 +158,8 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
   }
 
   void _onUserChangedSpeed() async {
-    if (_speedInput.displayText.value.text != '') {
-      double newValue = double.parse(_speedInput.displayText.value.text);
+    if (_speedInput.controller.value.text != '') {
+      double newValue = double.parse(_speedInput.controller.value.text);
 
       mediaPlayerSetSpeedFactor(speedFactor: newValue).then((success) => {
             if (!success) {throw ("Setting speed factor in rust failed using this value: $newValue")}

@@ -1,21 +1,21 @@
 // Number Input of type double consisting of +/- buttons and a manual input
 
+import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'dart:async';
-import 'dart:math';
-
 import 'package:tiomusic/util/shapes.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
+import 'package:tiomusic/widgets/input/custom_slider_double.dart';
 
 class NumberInputDouble extends StatefulWidget {
-  final double maxValue;
-  final double minValue;
+  final double max;
+  final double min;
   final double defaultValue;
-  final double countingValue;
+  final double step;
+  final TextEditingController controller;
   final int countingIntervalMs;
-  final TextEditingController displayText;
   final String descriptionText;
   final double buttonRadius;
   final double buttonGap;
@@ -26,11 +26,11 @@ class NumberInputDouble extends StatefulWidget {
 
   const NumberInputDouble({
     super.key,
-    required this.maxValue,
-    required this.minValue,
+    required this.max,
+    required this.min,
     required this.defaultValue,
-    required this.countingValue,
-    required this.displayText,
+    required this.step,
+    required this.controller,
     this.countingIntervalMs = 100,
     this.descriptionText = '',
     this.buttonRadius = 25,
@@ -53,23 +53,17 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   Timer? _increaseTimer;
   late int _maxDigitsLeft;
   late int _maxDigitsRight;
-  late int _sliderDivisions;
-
-  late double _sliderValue;
 
   // Initialize variables
   @override
   void initState() {
     super.initState();
-    widget.displayText.value = widget.displayText.value.copyWith(text: widget.defaultValue.toString());
+    widget.controller.value = widget.controller.value.copyWith(text: widget.defaultValue.toString());
     _valueController = TextEditingController(text: widget.defaultValue.toString());
 
     _calcMaxDigits();
 
-    _sliderDivisions = (widget.maxValue - widget.minValue) ~/ widget.countingValue;
-    _sliderValue = widget.defaultValue;
-
-    widget.displayText.addListener(_onExternalChange);
+    widget.controller.addListener(_onExternalChange);
   }
 
   // Dispose variables
@@ -82,14 +76,14 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
 
   // Handle external changes of the displayed text
   void _onExternalChange() {
-    _validateInput(widget.displayText.value.text);
+    _validateInput(widget.controller.value.text);
   }
 
   // Calculate the maximum number of digits on the display according to maximum and minimum value
   void _calcMaxDigits() {
-    String countingValueString = widget.countingValue.toString();
-    String maxValueString = widget.maxValue.toString();
-    String minValueString = widget.minValue.toString();
+    String countingValueString = widget.step.toString();
+    String maxValueString = widget.max.toString();
+    String minValueString = widget.min.toString();
 
     int maxDigitsLeftMin =
         (minValueString.contains('.') ? minValueString.split('.')[0].length : minValueString.length) -
@@ -105,7 +99,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   void _decreaseValue() {
     if (_valueController.value.text != '') {
       _valueController.value = _valueController.value.copyWith(
-          text: (double.parse(_valueController.value.text) - widget.countingValue).toStringAsFixed(_maxDigitsRight));
+          text: (double.parse(_valueController.value.text) - widget.step).toStringAsFixed(_maxDigitsRight));
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -115,7 +109,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   void _increaseValue() {
     if (_valueController.value.text != '') {
       _valueController.value = _valueController.value.copyWith(
-          text: (double.parse(_valueController.value.text) + widget.countingValue).toStringAsFixed(_maxDigitsRight));
+          text: (double.parse(_valueController.value.text) + widget.step).toStringAsFixed(_maxDigitsRight));
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -148,12 +142,12 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   // Check if plus and minus buttons should be active or inactive
   void _manageButtonActivity(String input) {
     if (input != '' && input != '-' && input != '.' && input != '-.') {
-      if (double.parse(input) <= widget.minValue) {
+      if (double.parse(input) <= widget.min) {
         _isMinusButtonActive = false;
       } else {
         _isMinusButtonActive = true;
       }
-      if (double.parse(input) >= widget.maxValue) {
+      if (double.parse(input) >= widget.max) {
         _isPlusButtonActive = false;
       } else {
         _isPlusButtonActive = true;
@@ -173,11 +167,11 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
         }
       }
       // Check for min/max values
-      if (double.parse(input) < widget.minValue) {
-        input = widget.minValue.toString();
+      if (double.parse(input) < widget.min) {
+        input = widget.min.toString();
       } else {
-        if (double.parse(input) > widget.maxValue) {
-          input = widget.maxValue.toString();
+        if (double.parse(input) > widget.max) {
+          input = widget.max.toString();
         }
       }
     } else {
@@ -185,8 +179,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
       input = widget.defaultValue.toString();
     }
     _valueController.value = _valueController.value.copyWith(text: input);
-    widget.displayText.value = widget.displayText.value.copyWith(text: input);
-    _sliderValue = double.parse(input);
+    widget.controller.value = widget.controller.value.copyWith(text: input);
     setState(() {});
   }
 
@@ -286,24 +279,14 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
           ],
         ),
         Text(widget.descriptionText, style: const TextStyle(color: ColorTheme.primary)),
-        // slider
         Padding(
           padding: const EdgeInsets.only(top: 40),
-          child: Slider(
-            value: _sliderValue,
-            inactiveColor: ColorTheme.primary80,
-            min: widget.minValue,
-            max: widget.maxValue,
-            divisions: _sliderDivisions,
-            label: _valueController.text,
-            onChanged: (newValue) {
-              setState(() {
-                _sliderValue = double.parse(newValue.toStringAsFixed(1));
-                _manageButtonActivity(_sliderValue.toString());
-                _valueController.value = _valueController.value.copyWith(text: _sliderValue.toString());
-                _validateInput(_valueController.text);
-              });
-            },
+          child: CustomSliderDouble(
+            min: widget.min,
+            max: widget.max,
+            defaultValue: widget.defaultValue,
+            step: widget.step,
+            controller: widget.controller,
           ),
         ),
       ],
