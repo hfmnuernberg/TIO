@@ -30,14 +30,14 @@ class NumberInputDouble extends StatefulWidget {
     required this.defaultValue,
     required this.step,
     required this.controller,
-    required this.stepIntervalInMs,
-    required this.descriptionText,
-    required this.buttonRadius,
-    required this.buttonGap,
-    required this.textFieldWidth ,
-    required this.textFontSize,
-    required this.relIconSize ,
-    required this.allowNegativeNumbers,
+    this.stepIntervalInMs = 100,
+    this.descriptionText = '',
+    this.buttonRadius = 25,
+    this.buttonGap = 10,
+    this.textFieldWidth = 100,
+    this.textFontSize = 40,
+    this.relIconSize = 0.4,
+    this.allowNegativeNumbers = false,
   });
 
   @override

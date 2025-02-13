@@ -28,13 +28,13 @@ class NumberInputInt extends StatefulWidget {
     required this.defaultValue,
     required this.step,
     required this.controller,
-    required this.stepIntervalInMs,
-    required this.descriptionText,
-    required this.buttonRadius,
-    required this.buttonGap,
-    required this.relIconSize ,
-    required this.textFieldWidth ,
-    required this.textFontSize,
+    this.stepIntervalInMs = 100,
+    this.descriptionText = '',
+    this.buttonRadius = 25,
+    this.buttonGap = 10,
+    this.relIconSize = 0.4,
+    this.textFieldWidth = 100,
+    this.textFontSize = 40,
   });
 
   @override
