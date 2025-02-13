@@ -165,6 +165,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
               onLongPress: _startDecreaseTimer,
               onLongPressUp: _endDecreaseTimer,
               child: TIOFlatButton(
+                semanticLabel: 'Minus button',
                 onPressed:
                     (_valueController.value.text == '') ? () {} : (_isMinusButtonActive ? _decreaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
@@ -183,33 +184,36 @@ class _NumberInputIntState extends State<NumberInputInt> {
             SizedBox(
               width: widget.textFieldWidth,
               child: Focus(
-                child: TextFormField(
-                  controller: _valueController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    // Allow only positive and negative integers
-                    FilteringTextInputFormatter.allow(RegExp(r'^-?(\d*)')),
-                    // Delete leading zeros
-                    FilteringTextInputFormatter.deny(RegExp(r'^0+(?=.)')),
-                    // Delete zero after sign
-                    FilteringTextInputFormatter.deny(RegExp(r'^-0+'), replacementString: '-'),
-                  ],
-                  maxLength: _valueController.value.text.contains('-')
-                      ? widget.min.toString().length
-                      : widget.max.toString().length,
-                  decoration: const InputDecoration(
-                    enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                    counterText: '',
+                child: Semantics(
+                  label: '${widget.descriptionText} input',
+                  child: TextFormField(
+                    controller: _valueController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      // Allow only positive and negative integers
+                      FilteringTextInputFormatter.allow(RegExp(r'^-?(\d*)')),
+                      // Delete leading zeros
+                      FilteringTextInputFormatter.deny(RegExp(r'^0+(?=.)')),
+                      // Delete zero after sign
+                      FilteringTextInputFormatter.deny(RegExp(r'^-0+'), replacementString: '-'),
+                    ],
+                    maxLength: _valueController.value.text.contains('-')
+                        ? widget.min.toString().length
+                        : widget.max.toString().length,
+                    decoration: InputDecoration(
+                      enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                      focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                      counterText: '',
+                    ),
+                    style: TextStyle(fontSize: widget.textFontSize, color: ColorTheme.primary),
+                    textAlign: TextAlign.center,
+                    onChanged: (value) {
+                      _manageButtonActivity(value);
+                    },
+                    onFieldSubmitted: (value) {
+                      _validateInput(value);
+                    },
                   ),
-                  style: TextStyle(fontSize: widget.textFontSize, color: ColorTheme.primary),
-                  textAlign: TextAlign.center,
-                  onChanged: (value) {
-                    _manageButtonActivity(value);
-                  },
-                  onFieldSubmitted: (value) {
-                    _validateInput(value);
-                  },
                 ),
                 onFocusChange: (hasFocus) {
                   if (hasFocus) {
@@ -230,7 +234,9 @@ class _NumberInputIntState extends State<NumberInputInt> {
               onLongPress: _startIncreaseTimer,
               onLongPressUp: _endIncreaseTimer,
               child: TIOFlatButton(
-                onPressed: (_valueController.value.text == '') ? () {} : (_isPlusButtonActive ? _increaseValue : () {}),
+                semanticLabel: 'Plus button',
+                onPressed:
+                    (_valueController.value.text == '') ? () {} : (_isPlusButtonActive ? _increaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,
                   shape: const RightButtonShape(),

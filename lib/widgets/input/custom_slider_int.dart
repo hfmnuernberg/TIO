@@ -7,6 +7,7 @@ class CustomSliderInt extends StatefulWidget {
   final int defaultValue;
   final int step;
   final TextEditingController controller;
+  final String? semanticLabel;
 
   const CustomSliderInt({
     super.key,
@@ -15,6 +16,7 @@ class CustomSliderInt extends StatefulWidget {
     required this.defaultValue,
     required this.step,
     required this.controller,
+    this.semanticLabel,
   });
 
   @override
@@ -64,20 +66,23 @@ class _CustomSliderIntState extends State<CustomSliderInt> {
   // Main build
   @override
   Widget build(BuildContext context) {
-    return Slider(
-      value: _sliderValue.toDouble(),
-      inactiveColor: ColorTheme.primary80,
-      min: widget.min.toDouble(),
-      max: widget.max.toDouble(),
-      divisions: _sliderDivisions,
-      label: widget.controller.text,
-      onChanged: (newValue) {
-        setState(() {
-          _sliderValue = int.parse(newValue.toStringAsFixed(0));
-          widget.controller.value = widget.controller.value.copyWith(text: _sliderValue.toString());
-          _validateInput(int.parse(widget.controller.text));
-        });
-      },
+    return Semantics(
+      label: widget.semanticLabel,
+      child: Slider(
+        value: _sliderValue.toDouble(),
+        inactiveColor: ColorTheme.primary80,
+        min: widget.min.toDouble(),
+        max: widget.max.toDouble(),
+        divisions: _sliderDivisions,
+        label: widget.controller.text,
+        onChanged: (newValue) {
+          setState(() {
+            _sliderValue = int.parse(newValue.toStringAsFixed(0));
+            widget.controller.value = widget.controller.value.copyWith(text: _sliderValue.toString());
+            _validateInput(int.parse(widget.controller.text));
+          });
+        },
+      ),
     );
   }
 }

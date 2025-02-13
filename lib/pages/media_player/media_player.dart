@@ -413,7 +413,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
         SettingsTile(
           title: "Basic Beat",
           subtitle: "${_mediaPlayerBlock.bpm} bpm",
-          // leadingIcon: Icons.monitor_heart_outlined,
           leadingIcon: Icons.touch_app_outlined,
           settingPage: const SetBPM(),
           block: _mediaPlayerBlock,
@@ -423,7 +422,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
           title: "Speed",
           subtitle:
               "${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} bpm",
-          // leadingIcon: Icons.one_x_mobiledata,
           leadingIcon: Icons.speed,
           settingPage: const SetSpeedAndBPM(),
           block: _mediaPlayerBlock,

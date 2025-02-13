@@ -67,6 +67,7 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
         Padding(
           padding: const EdgeInsets.only(top: 40),
           child: CustomSliderInt(
+            semanticLabel: '${widget.descriptionText} slider',
             max: widget.max,
             min: widget.min,
             defaultValue: widget.defaultValue,
