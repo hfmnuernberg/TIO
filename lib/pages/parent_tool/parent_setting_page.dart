@@ -66,6 +66,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (widget.displayResetAtTop) ...[
+          const SizedBox(height: 20.0),
           TIOTextButton(text: "Reset", onTap: widget.reset),
           const SizedBox(height: 20.0),
         ],
