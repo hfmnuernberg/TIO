@@ -50,7 +50,7 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        NumberInput(
+        NumberInputInt(
           defaultValue: widget.defaultValue,
           max: widget.max,
           min: widget.min,

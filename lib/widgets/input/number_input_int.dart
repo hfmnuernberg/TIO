@@ -7,7 +7,7 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/shapes.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
-class NumberInput extends StatefulWidget {
+class NumberInputInt extends StatefulWidget {
   final int max;
   final int min;
   final int defaultValue;
@@ -21,7 +21,7 @@ class NumberInput extends StatefulWidget {
   final double textFieldWidth;
   final double textFontSize;
 
-  const NumberInput({
+  const NumberInputInt({
     super.key,
     required this.max,
     required this.min,
@@ -38,10 +38,10 @@ class NumberInput extends StatefulWidget {
   });
 
   @override
-  State<NumberInput> createState() => _NumberInputState();
+  State<NumberInputInt> createState() => _NumberInputIntState();
 }
 
-class _NumberInputState extends State<NumberInput> {
+class _NumberInputIntState extends State<NumberInputInt> {
   bool _isPlusButtonActive = true;
   bool _isMinusButtonActive = true;
   late TextEditingController _valueController;
