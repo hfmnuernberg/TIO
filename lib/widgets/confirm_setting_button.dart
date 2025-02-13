@@ -67,8 +67,8 @@ class TIOTextButton extends StatelessWidget {
     var style = ElevatedButton.styleFrom(
       elevation: elevation,
       backgroundColor: backgroundColor ?? ColorTheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(MetronomeParams.t2tCornerRadius)),
-      padding: const EdgeInsets.all(MetronomeParams.t2tButtonPadding),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      padding: const EdgeInsets.all(20),
     );
 
     return icon == null
