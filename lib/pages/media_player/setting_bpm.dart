@@ -23,7 +23,7 @@ class SetBPM extends StatefulWidget {
 
 class _SetBPMState extends State<SetBPM> {
   late MediaPlayerBlock _mediaPlayerBlock;
-  late NumberInputInt _bpmInput;
+  late NumberInputIntWithSlider _bpmInput;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _SetBPMState extends State<SetBPM> {
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
 
-    _bpmInput = NumberInputInt(
+    _bpmInput = NumberInputIntWithSlider(
       max: maxBPM,
       min: minBPM,
       defaultValue: _mediaPlayerBlock.bpm,

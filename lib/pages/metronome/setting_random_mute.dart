@@ -22,7 +22,7 @@ class SetRandomMute extends StatefulWidget {
 
 class _SetRandomMuteState extends State<SetRandomMute> {
   late MetronomeBlock _metronomeBlock;
-  late NumberInputInt _randomMuteProbInput;
+  late NumberInputIntWithSlider _randomMuteProbInput;
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _SetRandomMuteState extends State<SetRandomMute> {
 
     _metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
 
-    _randomMuteProbInput = NumberInputInt(
+    _randomMuteProbInput = NumberInputIntWithSlider(
       max: 100,
       min: 0,
       defaultValue: _metronomeBlock.randomMute,

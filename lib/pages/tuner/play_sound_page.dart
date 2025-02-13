@@ -26,7 +26,7 @@ class PlaySoundPage extends StatefulWidget {
 
 class _PlaySoundPageState extends State<PlaySoundPage> {
   int _octave = 4;
-  late NumberInputInt _octaveInput;
+  late NumberInputIntWithSlider _octaveInput;
 
   final ActiveReferenceSoundButton _buttonListener = ActiveReferenceSoundButton();
   bool _running = false;
@@ -37,7 +37,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   void initState() {
     super.initState();
 
-    _octaveInput = NumberInputInt(
+    _octaveInput = NumberInputIntWithSlider(
       max: 7,
       min: 1,
       defaultValue: _octave,

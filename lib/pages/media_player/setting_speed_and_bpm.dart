@@ -31,7 +31,7 @@ class SetSpeedAndBPM extends StatefulWidget {
 }
 
 class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
-  late NumberInputInt _bpmInput;
+  late NumberInputIntWithSlider _bpmInput;
   late NumberInputDouble _speedInput;
   late MediaPlayerBlock _mediaPlayerBlock;
   bool _isUpdating = false;
@@ -74,7 +74,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
       _isUpdating = false;
     });
 
-    _bpmInput = NumberInputInt(
+    _bpmInput = NumberInputIntWithSlider(
       max: getBpmForSpeed(MAX_SPEED_FACTOR, _mediaPlayerBlock.bpm),
       min: getBpmForSpeed(MIN_SPEED_FACTOR, _mediaPlayerBlock.bpm),
       defaultValue: _mediaPlayerBlock.bpm,

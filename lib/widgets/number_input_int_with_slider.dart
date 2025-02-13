@@ -2,13 +2,13 @@ import 'input/custom_slider_int.dart';
 import 'input/number_input_int.dart';
 import 'package:flutter/material.dart';
 
-class NumberInputInt extends StatefulWidget {
+class NumberInputIntWithSlider extends StatefulWidget {
   final int max;
   final int min;
   final int defaultValue;
   final int step;
   final TextEditingController controller;
-  final int countingIntervalMs;
+  final int countingIntervalInMs;
   final String descriptionText;
   final double buttonRadius;
   final double buttonGap;
@@ -16,14 +16,14 @@ class NumberInputInt extends StatefulWidget {
   final double textFieldWidth;
   final double textFontSize;
 
-  const NumberInputInt({
+  const NumberInputIntWithSlider({
     super.key,
     required this.max,
     required this.min,
     required this.defaultValue,
     required this.step,
     required this.controller,
-    this.countingIntervalMs = 100,
+    this.countingIntervalInMs = 100,
     this.descriptionText = '',
     this.buttonRadius = 25,
     this.buttonGap = 10,
@@ -33,10 +33,10 @@ class NumberInputInt extends StatefulWidget {
   });
 
   @override
-  State<NumberInputInt> createState() => _NumberInputIntState();
+  State<NumberInputIntWithSlider> createState() => _NumberInputIntWithSliderState();
 }
 
-class _NumberInputIntState extends State<NumberInputInt> {
+class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
   // Initialize variables
   @override
   void initState() {
@@ -56,7 +56,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
           min: widget.min,
           step: widget.step,
           controller: widget.controller,
-          countingStepsInMilliseconds: widget.countingIntervalMs,
+          countingStepsInMilliseconds: widget.countingIntervalInMs,
           descriptionText: widget.descriptionText,
           buttonRadius: widget.buttonRadius,
           buttonGap: widget.buttonGap,

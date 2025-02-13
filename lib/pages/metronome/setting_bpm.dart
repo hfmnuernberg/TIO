@@ -21,7 +21,7 @@ class SetBPM extends StatefulWidget {
 
 class _SetBPMState extends State<SetBPM> {
   late MetronomeBlock _metronomeBlock;
-  late NumberInputInt _bpmInput;
+  late NumberInputIntWithSlider _bpmInput;
 
   @override
   void initState() {
@@ -29,7 +29,7 @@ class _SetBPMState extends State<SetBPM> {
 
     _metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
 
-    _bpmInput = NumberInputInt(
+    _bpmInput = NumberInputIntWithSlider(
       max: MetronomeParams.maxBPM,
       min: MetronomeParams.minBPM,
       defaultValue: _metronomeBlock.bpm,
