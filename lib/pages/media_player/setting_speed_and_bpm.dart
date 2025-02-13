@@ -83,6 +83,8 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
       controller: bpmController,
       descriptionText: 'BPM',
       textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
+      buttonRadius: 20,
+      textFontSize: 32,
     );
 
     _speedInput = NumberInputDouble(
@@ -94,6 +96,8 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
       controller: speedController,
       descriptionText: "Factor",
       textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
+      buttonRadius: 20,
+      textFontSize: 32,
     );
 
     _customSliderDouble = CustomSliderDouble(
@@ -122,15 +126,17 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
       title: "Set Speed",
       confirm: _onConfirm,
       reset: _reset,
+      displayResetAtTop: true,
       numberInput: Column(
         children: [
-          Tap2Tempo(bpmHandle: _bpmInput.controller),
-          SizedBox(height: TIOMusicParams.edgeInset * 2),
-          _bpmInput,
+          SizedBox(height: TIOMusicParams.edgeInset),
+          _speedInput,
           SizedBox(height: TIOMusicParams.edgeInset * 2),
           _customSliderDouble,
           SizedBox(height: TIOMusicParams.edgeInset * 2),
-          _speedInput,
+          _bpmInput,
+          SizedBox(height: TIOMusicParams.edgeInset * 2),
+          Tap2Tempo(bpmHandle: _bpmInput.controller),
         ],
       ),
       cancel: _onCancel,
