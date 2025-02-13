@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
-class CustomSlider extends StatefulWidget {
+class CustomSliderInt extends StatefulWidget {
   final int max;
   final int min;
   final int defaultValue;
   final int step;
   final TextEditingController controller;
 
-  const CustomSlider({
+  const CustomSliderInt({
     super.key,
     required this.max,
     required this.min,
@@ -18,10 +18,10 @@ class CustomSlider extends StatefulWidget {
   });
 
   @override
-  State<CustomSlider> createState() => _CustomSliderState();
+  State<CustomSliderInt> createState() => _CustomSliderIntState();
 }
 
-class _CustomSliderState extends State<CustomSlider> {
+class _CustomSliderIntState extends State<CustomSliderInt> {
   late int _sliderDivisions;
   late int _sliderValue;
 
