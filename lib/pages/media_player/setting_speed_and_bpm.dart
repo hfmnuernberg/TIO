@@ -6,10 +6,10 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
-import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/number_input_double_with_slider.dart';
-import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
+import 'package:tiomusic/widgets/input/custom_slider_double.dart';
+import 'package:tiomusic/widgets/input/number_input_double.dart';
+import 'package:tiomusic/widgets/input/number_input_int.dart';
 import 'package:tiomusic/widgets/tap_to_tempo.dart';
 
 const MIN_SPEED_FACTOR = 0.1;
@@ -31,8 +31,9 @@ class SetSpeedAndBPM extends StatefulWidget {
 }
 
 class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
-  late NumberInputIntWithSlider _bpmInput;
-  late NumberInputDoubleWithSlider _speedInput;
+  late NumberInputInt _bpmInput;
+  late NumberInputDouble _speedInput;
+  late CustomSliderDouble _customSliderDouble;
   late MediaPlayerBlock _mediaPlayerBlock;
   bool _isUpdating = false;
 
@@ -74,7 +75,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
       _isUpdating = false;
     });
 
-    _bpmInput = NumberInputIntWithSlider(
+    _bpmInput = NumberInputInt(
       max: getBpmForSpeed(MAX_SPEED_FACTOR, _mediaPlayerBlock.bpm),
       min: getBpmForSpeed(MIN_SPEED_FACTOR, _mediaPlayerBlock.bpm),
       defaultValue: _mediaPlayerBlock.bpm,
@@ -84,7 +85,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
       textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
     );
 
-    _speedInput = NumberInputDoubleWithSlider(
+    _speedInput = NumberInputDouble(
       max: MAX_SPEED_FACTOR,
       min: MIN_SPEED_FACTOR,
       defaultValue: _mediaPlayerBlock.speedFactor,
@@ -93,6 +94,14 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
       controller: speedController,
       descriptionText: "Factor",
       textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
+    );
+
+    _customSliderDouble = CustomSliderDouble(
+      min: MIN_SPEED_FACTOR,
+      max: MAX_SPEED_FACTOR,
+      defaultValue: _mediaPlayerBlock.speedFactor,
+      step: COUNTING_VALUE,
+      controller: speedController,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -115,11 +124,12 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
       reset: _reset,
       numberInput: Column(
         children: [
-          _bpmInput,
           Tap2Tempo(bpmHandle: _bpmInput.controller),
           SizedBox(height: TIOMusicParams.edgeInset * 2),
-          Divider(color: ColorTheme.primary80, thickness: 2, indent: 20, endIndent: 20,),
-          SizedBox(height: TIOMusicParams.edgeInset * 3),
+          _bpmInput,
+          SizedBox(height: TIOMusicParams.edgeInset * 2),
+          _customSliderDouble,
+          SizedBox(height: TIOMusicParams.edgeInset * 2),
           _speedInput,
         ],
       ),

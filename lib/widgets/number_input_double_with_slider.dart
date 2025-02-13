@@ -3,8 +3,8 @@ import 'package:tiomusic/widgets/input/custom_slider_double.dart';
 import 'package:tiomusic/widgets/input/number_input_double.dart';
 
 class NumberInputDoubleWithSlider extends StatefulWidget {
-  final double max;
   final double min;
+  final double max;
   final double defaultValue;
   final double step;
   final TextEditingController controller;
@@ -19,8 +19,8 @@ class NumberInputDoubleWithSlider extends StatefulWidget {
 
   const NumberInputDoubleWithSlider({
     super.key,
-    required this.max,
     required this.min,
+    required this.max,
     required this.defaultValue,
     required this.step,
     required this.controller,

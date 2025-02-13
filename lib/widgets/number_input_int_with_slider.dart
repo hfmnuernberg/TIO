@@ -3,8 +3,8 @@ import 'input/number_input_int.dart';
 import 'package:flutter/material.dart';
 
 class NumberInputIntWithSlider extends StatefulWidget {
-  final int max;
   final int min;
+  final int max;
   final int defaultValue;
   final int step;
   final TextEditingController controller;
@@ -18,8 +18,8 @@ class NumberInputIntWithSlider extends StatefulWidget {
 
   const NumberInputIntWithSlider({
     super.key,
-    required this.max,
     required this.min,
+    required this.max,
     required this.defaultValue,
     required this.step,
     required this.controller,

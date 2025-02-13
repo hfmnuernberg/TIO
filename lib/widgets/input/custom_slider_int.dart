@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class CustomSliderInt extends StatefulWidget {
-  final int max;
   final int min;
+  final int max;
   final int defaultValue;
   final int step;
   final TextEditingController controller;
 
   const CustomSliderInt({
     super.key,
-    required this.max,
     required this.min,
+    required this.max,
     required this.defaultValue,
     required this.step,
     required this.controller,

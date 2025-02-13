@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class CustomSliderDouble extends StatefulWidget {
-  final double max;
   final double min;
+  final double max;
   final double defaultValue;
   final double step;
   final TextEditingController controller;
 
   const CustomSliderDouble({
     super.key,
-    required this.max,
     required this.min,
+    required this.max,
     required this.defaultValue,
     required this.step,
     required this.controller,
