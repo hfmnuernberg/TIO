@@ -8,7 +8,7 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/shapes.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
-class NumberInputForDouble extends StatefulWidget {
+class NumberInputDouble extends StatefulWidget {
   final double max;
   final double min;
   final double defaultValue;
@@ -23,7 +23,7 @@ class NumberInputForDouble extends StatefulWidget {
   final double relIconSize;
   final bool allowNegativeNumbers;
 
-  const NumberInputForDouble({
+  const NumberInputDouble({
     super.key,
     required this.max,
     required this.min,
@@ -41,10 +41,10 @@ class NumberInputForDouble extends StatefulWidget {
   });
 
   @override
-  State<NumberInputForDouble> createState() => _NumberInputForDoubleState();
+  State<NumberInputDouble> createState() => _NumberInputDoubleState();
 }
 
-class _NumberInputForDoubleState extends State<NumberInputForDouble> {
+class _NumberInputDoubleState extends State<NumberInputDouble> {
   bool _isPlusButtonActive = true;
   bool _isMinusButtonActive = true;
   late TextEditingController _valueController;

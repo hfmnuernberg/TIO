@@ -52,7 +52,7 @@ class _NumberInputDoubleWithSliderState extends State<NumberInputDoubleWithSlide
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        NumberInputForDouble(
+        NumberInputDouble(
           max: widget.max,
           min: widget.min,
           defaultValue: widget.defaultValue,
