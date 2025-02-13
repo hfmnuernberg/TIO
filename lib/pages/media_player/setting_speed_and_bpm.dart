@@ -124,9 +124,10 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
   Widget build(BuildContext context) {
     return ParentSettingPage(
       title: "Set Speed",
+      displayResetAtTop: true,
+      mustBeScrollable: true,
       confirm: _onConfirm,
       reset: _reset,
-      displayResetAtTop: true,
       numberInput: Column(
         children: [
           SizedBox(height: TIOMusicParams.edgeInset),
