@@ -16,7 +16,7 @@ class SetConcertPitch extends StatefulWidget {
 }
 
 class _SetConcertPitchState extends State<SetConcertPitch> {
-  late NumberInputDouble _concertPitchInput;
+  late NumberInputDoubleWithSlider _concertPitchInput;
   late TunerBlock _tunerBlock;
 
   @override
@@ -25,7 +25,7 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
 
     _tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
 
-    _concertPitchInput = NumberInputDouble(
+    _concertPitchInput = NumberInputDoubleWithSlider(
       max: 600.0,
       min: 200.0,
       defaultValue: _tunerBlock.chamberNoteHz,

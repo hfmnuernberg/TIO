@@ -32,7 +32,7 @@ class SetSpeedAndBPM extends StatefulWidget {
 
 class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
   late NumberInputIntWithSlider _bpmInput;
-  late NumberInputDouble _speedInput;
+  late NumberInputDoubleWithSlider _speedInput;
   late MediaPlayerBlock _mediaPlayerBlock;
   bool _isUpdating = false;
 
@@ -84,7 +84,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
       textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
     );
 
-    _speedInput = NumberInputDouble(
+    _speedInput = NumberInputDoubleWithSlider(
       max: MAX_SPEED_FACTOR,
       min: MIN_SPEED_FACTOR,
       defaultValue: _mediaPlayerBlock.speedFactor,

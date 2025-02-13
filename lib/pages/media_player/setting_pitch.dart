@@ -18,7 +18,7 @@ class SetPitch extends StatefulWidget {
 
 class _SetPitchState extends State<SetPitch> {
   late MediaPlayerBlock _mediaPlayerBlock;
-  late NumberInputDouble _pitchInput;
+  late NumberInputDoubleWithSlider _pitchInput;
 
   @override
   void initState() {
@@ -26,7 +26,7 @@ class _SetPitchState extends State<SetPitch> {
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
 
-    _pitchInput = NumberInputDouble(
+    _pitchInput = NumberInputDoubleWithSlider(
       max: 24.0,
       min: -24.0,
       defaultValue: _mediaPlayerBlock.pitchSemitones,

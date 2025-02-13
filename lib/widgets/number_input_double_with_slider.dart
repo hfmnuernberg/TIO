@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/widgets/input/custom_slider_double.dart';
 import 'package:tiomusic/widgets/input/number_input_double.dart';
 
-class NumberInputDouble extends StatefulWidget {
+class NumberInputDoubleWithSlider extends StatefulWidget {
   final double max;
   final double min;
   final double defaultValue;
@@ -17,7 +17,7 @@ class NumberInputDouble extends StatefulWidget {
   final double relIconSize;
   final bool allowNegativeNumbers;
 
-  const NumberInputDouble({
+  const NumberInputDoubleWithSlider({
     super.key,
     required this.max,
     required this.min,
@@ -35,10 +35,10 @@ class NumberInputDouble extends StatefulWidget {
   });
 
   @override
-  State<NumberInputDouble> createState() => _NumberInputDoubleState();
+  State<NumberInputDoubleWithSlider> createState() => _NumberInputDoubleWithSliderState();
 }
 
-class _NumberInputDoubleState extends State<NumberInputDouble> {
+class _NumberInputDoubleWithSliderState extends State<NumberInputDoubleWithSlider> {
   // Initialize variables
   @override
   void initState() {

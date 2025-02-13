@@ -29,7 +29,7 @@ class SetVolume extends StatefulWidget {
 }
 
 class _SetVolumeState extends State<SetVolume> {
-  late NumberInputDouble _volumeInput;
+  late NumberInputDoubleWithSlider _volumeInput;
   VolumeLevel _deviceVolumeLevel = VolumeLevel.normal;
 
   @override
@@ -38,7 +38,7 @@ class _SetVolumeState extends State<SetVolume> {
 
     VolumeController.instance.addListener(handleVolumeChange);
 
-    _volumeInput = NumberInputDouble(
+    _volumeInput = NumberInputDoubleWithSlider(
       max: 1.0,
       min: 0.0,
       defaultValue: widget.initialValue,
