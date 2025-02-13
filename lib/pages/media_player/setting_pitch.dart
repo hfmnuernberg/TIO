@@ -31,7 +31,7 @@ class _SetPitchState extends State<SetPitch> {
       min: -24.0,
       defaultValue: _mediaPlayerBlock.pitchSemitones,
       step: 0.1,
-      countingIntervalMs: 200,
+      stepIntervalInMs: 200,
       controller: TextEditingController(),
       descriptionText: "Semitones",
       textFieldWidth: TIOMusicParams.textFieldWidth4Digits,

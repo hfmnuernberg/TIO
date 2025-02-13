@@ -8,7 +8,7 @@ class NumberInputIntWithSlider extends StatefulWidget {
   final int defaultValue;
   final int step;
   final TextEditingController controller;
-  final int countingIntervalInMs;
+  final int stepIntervalInMs;
   final String descriptionText;
   final double buttonRadius;
   final double buttonGap;
@@ -23,7 +23,7 @@ class NumberInputIntWithSlider extends StatefulWidget {
     required this.defaultValue,
     required this.step,
     required this.controller,
-    this.countingIntervalInMs = 100,
+    this.stepIntervalInMs = 100,
     this.descriptionText = '',
     this.buttonRadius = 25,
     this.buttonGap = 10,
@@ -56,7 +56,7 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
           min: widget.min,
           step: widget.step,
           controller: widget.controller,
-          countingStepsInMilliseconds: widget.countingIntervalInMs,
+          stepIntervalInMs: widget.stepIntervalInMs,
           descriptionText: widget.descriptionText,
           buttonRadius: widget.buttonRadius,
           buttonGap: widget.buttonGap,

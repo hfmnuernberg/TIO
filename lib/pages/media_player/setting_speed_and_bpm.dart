@@ -89,7 +89,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
       min: MIN_SPEED_FACTOR,
       defaultValue: _mediaPlayerBlock.speedFactor,
       step: COUNTING_VALUE,
-      countingIntervalMs: 200,
+      stepIntervalInMs: 200,
       controller: speedController,
       descriptionText: "Factor",
       textFieldWidth: TIOMusicParams.textFieldWidth3Digits,

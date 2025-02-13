@@ -14,7 +14,7 @@ class NumberInputDouble extends StatefulWidget {
   final double defaultValue;
   final double step;
   final TextEditingController controller;
-  final int countingIntervalMs;
+  final int stepIntervalInMs;
   final String descriptionText;
   final double buttonRadius;
   final double buttonGap;
@@ -30,7 +30,7 @@ class NumberInputDouble extends StatefulWidget {
     required this.defaultValue,
     required this.step,
     required this.controller,
-    required this.countingIntervalMs,
+    required this.stepIntervalInMs,
     required this.descriptionText,
     required this.buttonRadius,
     required this.buttonGap,
@@ -116,14 +116,14 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
 
   // Looped decrease
   void _startDecreaseTimer() {
-    _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
+    _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.stepIntervalInMs), (timer) {
       _decreaseValue();
     });
   }
 
   // Looped increase
   void _startIncreaseTimer() {
-    _increaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
+    _increaseTimer = Timer.periodic(Duration(milliseconds: widget.stepIntervalInMs), (timer) {
       _increaseValue();
     });
   }

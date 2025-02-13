@@ -30,7 +30,7 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
       min: 200.0,
       defaultValue: _tunerBlock.chamberNoteHz,
       step: 1.0,
-      countingIntervalMs: 200,
+      stepIntervalInMs: 200,
       controller: TextEditingController(),
       descriptionText: "Concert Pitch in Hz",
       textFieldWidth: TIOMusicParams.textFieldWidth4Digits,

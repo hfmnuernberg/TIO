@@ -13,7 +13,7 @@ class NumberInputInt extends StatefulWidget {
   final int defaultValue;
   final int step;
   final TextEditingController controller;
-  final int countingStepsInMilliseconds;
+  final int stepIntervalInMs;
   final String descriptionText;
   final double buttonRadius;
   final double buttonGap;
@@ -28,7 +28,7 @@ class NumberInputInt extends StatefulWidget {
     required this.defaultValue,
     required this.step,
     required this.controller,
-    required this.countingStepsInMilliseconds,
+    required this.stepIntervalInMs,
     required this.descriptionText,
     required this.buttonRadius,
     required this.buttonGap,
@@ -93,14 +93,14 @@ class _NumberInputIntState extends State<NumberInputInt> {
 
   // Looped decrease
   void _startDecreaseTimer() {
-    _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.countingStepsInMilliseconds), (timer) {
+    _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.stepIntervalInMs), (timer) {
       _decreaseValue();
     });
   }
 
   // Looped increase
   void _startIncreaseTimer() {
-    _increaseTimer = Timer.periodic(Duration(milliseconds: widget.countingStepsInMilliseconds), (timer) {
+    _increaseTimer = Timer.periodic(Duration(milliseconds: widget.stepIntervalInMs), (timer) {
       _increaseValue();
     });
   }

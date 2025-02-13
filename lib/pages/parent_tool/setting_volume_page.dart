@@ -43,7 +43,7 @@ class _SetVolumeState extends State<SetVolume> {
       min: 0.0,
       defaultValue: widget.initialValue,
       step: 0.1,
-      countingIntervalMs: 200,
+      stepIntervalInMs: 200,
       controller: TextEditingController(),
       textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
       descriptionText: "Volume",
