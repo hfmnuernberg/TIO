@@ -421,7 +421,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
         ),
         SettingsTile(
           title: "Speed",
-          subtitle: "${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} bpm",
+          subtitle:
+              "${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} bpm",
           // leadingIcon: Icons.one_x_mobiledata,
           leadingIcon: Icons.speed,
           settingPage: const SetSpeedAndBPM(),

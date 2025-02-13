@@ -16,12 +16,10 @@ const MIN_SPEED_FACTOR = 0.1;
 const MAX_SPEED_FACTOR = 10.0;
 const COUNTING_VALUE = 0.1;
 
-double getSpeedForBpm(bpm, baseBpm) => (bpm / baseBpm)
-    .clamp(MIN_SPEED_FACTOR, MAX_SPEED_FACTOR);
+double getSpeedForBpm(bpm, baseBpm) => (bpm / baseBpm).clamp(MIN_SPEED_FACTOR, MAX_SPEED_FACTOR);
 
-int getBpmForSpeed(speedFactor, baseBpm) => (speedFactor * baseBpm)
-    .clamp(MIN_SPEED_FACTOR * baseBpm, MAX_SPEED_FACTOR * baseBpm)
-    .toInt();
+int getBpmForSpeed(speedFactor, baseBpm) =>
+    (speedFactor * baseBpm).clamp(MIN_SPEED_FACTOR * baseBpm, MAX_SPEED_FACTOR * baseBpm).toInt();
 
 class SetSpeedAndBPM extends StatefulWidget {
   const SetSpeedAndBPM({super.key});
@@ -46,7 +44,8 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
 
-    bpmController = TextEditingController(text: getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm).toString());
+    bpmController =
+        TextEditingController(text: getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm).toString());
     speedController = TextEditingController(text: _mediaPlayerBlock.speedFactor.toString());
 
     bpmController.addListener(() {
@@ -159,8 +158,10 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
 
     Navigator.pop(context);
   }
+
   void _reset() {
-    _bpmInput.controller.value = _bpmInput.controller.value.copyWith(text: getBpmForSpeed(MediaPlayerParams.defaultSpeedFactor, _mediaPlayerBlock.bpm).toString());
+    _bpmInput.controller.value = _bpmInput.controller.value
+        .copyWith(text: getBpmForSpeed(MediaPlayerParams.defaultSpeedFactor, _mediaPlayerBlock.bpm).toString());
     _speedInput.controller.value =
         _speedInput.controller.value.copyWith(text: MediaPlayerParams.defaultSpeedFactor.toString());
   }

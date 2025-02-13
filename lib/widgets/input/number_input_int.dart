@@ -74,8 +74,8 @@ class _NumberInputIntState extends State<NumberInputInt> {
   // Decrease the currently displayed value
   void _decreaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value
-          .copyWith(text: (int.parse(_valueController.value.text) - widget.step).toString());
+      _valueController.value =
+          _valueController.value.copyWith(text: (int.parse(_valueController.value.text) - widget.step).toString());
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -84,8 +84,8 @@ class _NumberInputIntState extends State<NumberInputInt> {
   // Increase the currently displayed value
   void _increaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value
-          .copyWith(text: (int.parse(_valueController.value.text) + widget.step).toString());
+      _valueController.value =
+          _valueController.value.copyWith(text: (int.parse(_valueController.value.text) + widget.step).toString());
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -166,7 +166,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
               onLongPressUp: _endDecreaseTimer,
               child: TIOFlatButton(
                 onPressed:
-                  (_valueController.value.text == '') ? () {} : (_isMinusButtonActive ? _decreaseValue : () {}),
+                    (_valueController.value.text == '') ? () {} : (_isMinusButtonActive ? _decreaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,
                   shape: const LeftButtonShape(),

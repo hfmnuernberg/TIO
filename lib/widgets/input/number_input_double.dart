@@ -97,8 +97,8 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   // Decrease the currently displayed value
   void _decreaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value.copyWith(
-          text: (double.parse(_valueController.value.text) - widget.step).toStringAsFixed(_maxDigitsRight));
+      _valueController.value = _valueController.value
+          .copyWith(text: (double.parse(_valueController.value.text) - widget.step).toStringAsFixed(_maxDigitsRight));
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -107,8 +107,8 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   // Increase the currently displayed value
   void _increaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value.copyWith(
-          text: (double.parse(_valueController.value.text) + widget.step).toStringAsFixed(_maxDigitsRight));
+      _valueController.value = _valueController.value
+          .copyWith(text: (double.parse(_valueController.value.text) + widget.step).toStringAsFixed(_maxDigitsRight));
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -274,7 +274,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
                 ),
               ),
             ),
-         ],
+          ],
         ),
         Text(widget.descriptionText, style: const TextStyle(color: ColorTheme.primary)),
       ],
