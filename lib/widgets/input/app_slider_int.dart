@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
-class CustomSliderInt extends StatefulWidget {
+class AppSliderInt extends StatefulWidget {
   final int min;
   final int max;
   final int defaultValue;
@@ -9,7 +9,7 @@ class CustomSliderInt extends StatefulWidget {
   final TextEditingController controller;
   final String? semanticLabel;
 
-  const CustomSliderInt({
+  const AppSliderInt({
     super.key,
     required this.min,
     required this.max,
@@ -20,14 +20,13 @@ class CustomSliderInt extends StatefulWidget {
   });
 
   @override
-  State<CustomSliderInt> createState() => _CustomSliderIntState();
+  State<AppSliderInt> createState() => _AppSliderIntState();
 }
 
-class _CustomSliderIntState extends State<CustomSliderInt> {
+class _AppSliderIntState extends State<AppSliderInt> {
   late int _sliderDivisions;
   late int _sliderValue;
 
-  // Initialize variables
   @override
   void initState() {
     super.initState();
@@ -39,14 +38,12 @@ class _CustomSliderIntState extends State<CustomSliderInt> {
     widget.controller.addListener(_onExternalChange);
   }
 
-  // Handle external changes of the displayed text
   void _onExternalChange() {
     _validateInput(int.parse(widget.controller.value.text));
   }
 
   void _validateInput(int input) {
     if (input != '' && input != '-') {
-      // Check for min/max values
       if (input < widget.min) {
         input = widget.min;
       } else {
@@ -55,7 +52,6 @@ class _CustomSliderIntState extends State<CustomSliderInt> {
         }
       }
     } else {
-      // Set default value when input is no number
       input = widget.defaultValue;
     }
     widget.controller.value = widget.controller.value.copyWith(text: input.toString());
@@ -63,7 +59,6 @@ class _CustomSliderIntState extends State<CustomSliderInt> {
     setState(() {});
   }
 
-  // Main build
   @override
   Widget build(BuildContext context) {
     return Semantics(

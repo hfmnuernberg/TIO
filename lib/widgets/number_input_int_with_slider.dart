@@ -1,4 +1,4 @@
-import 'input/custom_slider_int.dart';
+import 'input/app_slider_int.dart';
 import 'input/number_input_int.dart';
 import 'package:flutter/material.dart';
 
@@ -37,14 +37,12 @@ class NumberInputIntWithSlider extends StatefulWidget {
 }
 
 class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
-  // Initialize variables
   @override
   void initState() {
     super.initState();
     widget.controller.value = widget.controller.value.copyWith(text: widget.defaultValue.toString());
   }
 
-  // Main build
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -66,7 +64,7 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 40),
-          child: CustomSliderInt(
+          child: AppSliderInt(
             semanticLabel: '${widget.descriptionText} slider',
             max: widget.max,
             min: widget.min,
