@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    commit-message:
+      prefix: 'ci'
+    schedule:
+      interval: daily
+      time: '02:00'
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: pub
+    directory: /
+    commit-message:
+      prefix: 'fix'
+    schedule:
+      interval: daily
+      time: '03:00'
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 10
