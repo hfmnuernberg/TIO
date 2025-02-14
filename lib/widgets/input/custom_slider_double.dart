@@ -7,6 +7,7 @@ class CustomSliderDouble extends StatefulWidget {
   final double defaultValue;
   final double step;
   final TextEditingController controller;
+  final String? semanticLabel;
 
   const CustomSliderDouble({
     super.key,
@@ -15,6 +16,7 @@ class CustomSliderDouble extends StatefulWidget {
     required this.defaultValue,
     required this.step,
     required this.controller,
+    this.semanticLabel,
   });
 
   @override
@@ -71,20 +73,23 @@ class _CustomSliderDoubleState extends State<CustomSliderDouble> {
   // Main build
   @override
   Widget build(BuildContext context) {
-    return Slider(
-      value: _sliderValue,
-      inactiveColor: ColorTheme.primary80,
-      min: widget.min,
-      max: widget.max,
-      divisions: _sliderDivisions,
-      label: widget.controller.text,
-      onChanged: (newValue) {
-        setState(() {
-          _sliderValue = double.parse(newValue.toStringAsFixed(1));
-          widget.controller.value = widget.controller.value.copyWith(text: _sliderValue.toString());
-          _validateInput(widget.controller.text);
-        });
-      },
+    return Semantics(
+      label: widget.semanticLabel,
+      child: Slider(
+        value: _sliderValue,
+        inactiveColor: ColorTheme.primary80,
+        min: widget.min,
+        max: widget.max,
+        divisions: _sliderDivisions,
+        label: widget.controller.text,
+        onChanged: (newValue) {
+          setState(() {
+            _sliderValue = double.parse(newValue.toStringAsFixed(1));
+            widget.controller.value = widget.controller.value.copyWith(text: _sliderValue.toString());
+            _validateInput(widget.controller.text);
+          });
+        },
+      ),
     );
   }
 }

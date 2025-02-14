@@ -195,6 +195,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
               onLongPress: _startDecreaseTimer,
               onLongPressUp: _endDecreaseTimer,
               child: TIOFlatButton(
+                semanticLabel: 'Minus button',
                 onPressed:
                     (_valueController.value.text == '') ? () {} : (_isMinusButtonActive ? _decreaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
@@ -213,35 +214,38 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
             SizedBox(
               width: widget.textFieldWidth,
               child: Focus(
-                child: TextFormField(
-                  controller: _valueController,
-                  keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers, decimal: true),
-                  inputFormatters: <TextInputFormatter>[
-                    // Allow only positive and negative doubles
-                    FilteringTextInputFormatter.allow(RegExp(r'^-?(\d{0,' +
-                        _maxDigitsLeft.toString() +
-                        r'})[.,]?(\d{0,' +
-                        _maxDigitsRight.toString() +
-                        r'})')),
+                child: Semantics(
+                  label: '${widget.descriptionText} input',
+                  child: TextFormField(
+                    controller: _valueController,
+                    keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers, decimal: true),
+                    inputFormatters: <TextInputFormatter>[
+                      // Allow only positive and negative doubles
+                      FilteringTextInputFormatter.allow(RegExp(r'^-?(\d{0,' +
+                          _maxDigitsLeft.toString() +
+                          r'})[.,]?(\d{0,' +
+                          _maxDigitsRight.toString() +
+                          r'})')),
 
-                    ConvertSemicolonToDot(),
+                      ConvertSemicolonToDot(),
 
-                    // Delete leading zeros and zeros between sign and number
-                    DeleteLeadingZeros(),
-                  ],
-                  decoration: const InputDecoration(
-                    enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                    counterText: '',
+                      // Delete leading zeros and zeros between sign and number
+                      DeleteLeadingZeros(),
+                    ],
+                    decoration: const InputDecoration(
+                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                      counterText: '',
+                    ),
+                    style: TextStyle(fontSize: widget.textFontSize, color: ColorTheme.primary),
+                    textAlign: TextAlign.center,
+                    onChanged: (value) {
+                      _manageButtonActivity(value);
+                    },
+                    onFieldSubmitted: (value) {
+                      _validateInput(value);
+                    },
                   ),
-                  style: TextStyle(fontSize: widget.textFontSize, color: ColorTheme.primary),
-                  textAlign: TextAlign.center,
-                  onChanged: (value) {
-                    _manageButtonActivity(value);
-                  },
-                  onFieldSubmitted: (value) {
-                    _validateInput(value);
-                  },
                 ),
                 onFocusChange: (hasFocus) {
                   if (hasFocus) {
@@ -262,6 +266,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
               onLongPress: _startIncreaseTimer,
               onLongPressUp: _endIncreaseTimer,
               child: TIOFlatButton(
+                semanticLabel: 'Plus button',
                 onPressed: (_valueController.value.text == '') ? () {} : (_isPlusButtonActive ? _increaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,

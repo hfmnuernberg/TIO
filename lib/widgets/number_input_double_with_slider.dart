@@ -70,6 +70,7 @@ class _NumberInputDoubleWithSliderState extends State<NumberInputDoubleWithSlide
         Padding(
           padding: const EdgeInsets.only(top: 40),
           child: CustomSliderDouble(
+            semanticLabel: '${widget.descriptionText} slider',
             min: widget.min,
             max: widget.max,
             defaultValue: widget.defaultValue,

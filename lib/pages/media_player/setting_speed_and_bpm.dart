@@ -105,6 +105,7 @@ class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
       defaultValue: _mediaPlayerBlock.speedFactor,
       step: COUNTING_VALUE,
       controller: speedController,
+      semanticLabel: 'Factor and BPM slider',
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
