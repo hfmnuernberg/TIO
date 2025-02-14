@@ -2,13 +2,12 @@
 
 set -e
 
-files=`git status -s | wc -l`
+files=$(git status -s | wc -l)
 
-if [ $files -le 0 ]; then
-    echo "Nice, no local changes detected! 😎"
-    exit 0
+if [ "$files" -le 0 ]; then
+    echo "✅ No local changes detected."
+else
+  echo "❌ Local changes detected!"
+  git status
+  exit 1
 fi
-
-echo "Warning, local changes detected! 🛑"
-git status
-exit 1
