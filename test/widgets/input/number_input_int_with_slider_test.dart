@@ -53,7 +53,7 @@ class TestWrapper extends StatelessWidget {
       max: max,
       defaultValue: defaultValue,
       step: step,
-      descriptionText: 'Test description',
+      label: 'Test description',
       controller: TextEditingController(),
     );
   }
@@ -66,7 +66,7 @@ void main() {
 
   group('number input int with slider', () {
     group('number input int', () {
-      testWidgets('increases input value when tapping plus button', (WidgetTester tester) async {
+      testWidgets('increase input value when tapping plus button', (WidgetTester tester) async {
         await tester.renderWidget(TestWrapper(defaultValue: 10));
         expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '10');
 
@@ -75,16 +75,16 @@ void main() {
         expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '11');
       });
 
-      testWidgets('decreases input value when tapping minus button', (WidgetTester tester) async {
-        await tester.renderWidget(TestWrapper(defaultValue: 10));
+      testWidgets('do not increases input value higher than max when tapping plus button', (WidgetTester tester) async {
+        await tester.renderWidget(TestWrapper(defaultValue: 10, max: 10));
         expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '10');
 
-        await tester.tapAndSettle(find.bySemanticsLabel('Minus button'));
+        await tester.tapAndSettle(find.bySemanticsLabel('Plus button'));
 
-        expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '9');
+        expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '10');
       });
 
-      testWidgets('increases input value based on given step when tapping plus button', (WidgetTester tester) async {
+      testWidgets('increase input value based on given step when tapping plus button', (WidgetTester tester) async {
         await tester.renderWidget(TestWrapper(defaultValue: 10, step: 5));
         expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '10');
 
@@ -93,7 +93,25 @@ void main() {
         expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '15');
       });
 
-      testWidgets('decreased input value based on given step when tapping minus button', (WidgetTester tester) async {
+      testWidgets('decrease input value when tapping minus button', (WidgetTester tester) async {
+        await tester.renderWidget(TestWrapper(defaultValue: 10));
+        expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '10');
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Minus button'));
+
+        expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '9');
+      });
+
+      testWidgets('do not decrease input value lower than min when tapping minus button', (WidgetTester tester) async {
+        await tester.renderWidget(TestWrapper(defaultValue: 0));
+        expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '0');
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Minus button'));
+
+        expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '0');
+      });
+
+      testWidgets('decrease input value based on given step when tapping minus button', (WidgetTester tester) async {
         await tester.renderWidget(TestWrapper(defaultValue: 10, step: 5));
         expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '10');
 
