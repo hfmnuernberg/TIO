@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/pages/parent_tool/volume.dart';
 import 'package:tiomusic/util/color_constants.dart';

@@ -2,6 +2,7 @@
 name = "rust_lib_tiomusic"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.84.0"
 
 [lib]
 crate-type = ["cdylib", "staticlib"]
