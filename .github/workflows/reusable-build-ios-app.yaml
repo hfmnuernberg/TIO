@@ -40,6 +40,33 @@ jobs:
           ssh-private-key: |
             ${{ secrets.FASTLANE_GITHUB_DEPLOY_PRIVATE_KEY }}
 
+      - name: Install ALSA dev libraries
+        run: sudo apt-get update && sudo apt-get install -y libasound2-dev
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1.10.1
+
+      - name: Install Flutter dependencies
+        run: scripts/app.sh install:flutter:packages
+
+      - name: Install Rust dependencies
+        run: scripts/app.sh install:rust:packages
+
+      - name: Install Flutter/Dart<->Rust binding generator
+        run: scripts/app.sh install:rust:flutter-rust-bridge-codegen
+
+      - name: Generate Rust TIO music library
+        run: scripts/app.sh generate:rust
+
+      - name: Generate splash image assets
+        run: scripts/app.sh generate:splash
+
+      - name: Generate launcher icons
+        run: scripts/app.sh generate:icon
+
+      - name: Generate json *.g.dart files
+        run: scripts/app.sh generate:json
+
       - name: Setup ruby
         uses: ruby/setup-ruby@v1.218.0
         with:
