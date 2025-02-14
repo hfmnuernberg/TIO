@@ -60,8 +60,8 @@ Install [fastlane](https://fastlane.tools/) – e.g., with [Brew](https://formul
 1. Create a new GitHub repository: `TIO-fastlane`
    - _Note: Use `master` as trunk instead of `main`._
 2. Create a new git project on your machine:
-   1. `mkdir mobile.app-fastlane`
-   2. `cd mobile.app-fastlane`
+   1. `mkdir TIO-fastlane`
+   2. `cd TIO-fastlane`
    3. `git init`
    4. `git branch -M master`
 3. Commit an empty `README.md` file:
@@ -148,7 +148,7 @@ git pull
 
 1. Generate a new ssh key
    1. `cd ~/.ssh`
-   2. `ssh-keygen -t ed25519 -C "admin@hfm-nuernberg.de"`
+   2. `ssh-keygen -t ed25519 -C "Relevel@hfm-nuernberg.de"`
    3. Enter `id_tio_fastlane` when asked for the filename
    4. Skip the passphrase by hitting enter twice
 2. Open the [fastlane repo](https://github.com/hfmnuernberg/TIO-fastlane)
@@ -302,4 +302,4 @@ _Note: The following steps follow the instructions, outlined [here](https://docs
    - `cat upload.keystore.jks | base64 | pbcopy`
 5. Add a secret `GOOGLE_SERVICE_ACCOUNT`
    - As value, use the Base64-encoded content of the Google service account json file, generated earlier
-   - `cat hfm-nuernberg-123456789.json | base64 | pbcopy`
+   - `cat tio-music-<123456789>.json | base64 | pbcopy`
