@@ -301,5 +301,5 @@ _Note: The following steps follow the instructions, outlined [here](https://docs
    - As value, use the Base64-encoded content of the upload keystore file, generated earlier
    - `cat upload.keystore.jks | base64 | pbcopy`
 5. Add a secret `GOOGLE_SERVICE_ACCOUNT`
-   - As value, use the Base64-encoded content of the google service account json file, generated earlier
+   - As value, use the Base64-encoded content of the Google service account json file, generated earlier
    - `cat hfm-nuernberg-123456789.json | base64 | pbcopy`

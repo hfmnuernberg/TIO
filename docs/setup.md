@@ -120,7 +120,7 @@ Follow the [Android Studio](https://developer.android.com/studio/) instructions.
 
 ## App Script
 
-We recommended installing the [App Script](app-script.md) – a helper script for regularly used commands.
+We recommend installing the [App Script](app-script.md) – a helper script for regularly used commands.
 
 ## Exclude folders
 
