@@ -1,0 +1,118 @@
+name: Verify
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release to verify
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release to verify
+
+jobs:
+  static-code-analysis:
+    name: Static Code Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v4.7.0
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Flutter
+        uses: kuhnroyal/flutter-fvm-config-action/setup@v3.0
+
+      - name: Install ALSA dev libraries
+        run: sudo apt-get update && sudo apt-get install -y libasound2-dev
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1.10.1
+
+      - name: Install Flutter dependencies
+        run: scripts/app.sh install:flutter:packages
+
+      - name: Install Rust dependencies
+        run: scripts/app.sh install:rust:packages
+
+      - name: Install Flutter/Dart<->Rust binding generator
+        run: scripts/app.sh install:rust:flutter-rust-bridge-codegen
+
+      - name: Generate Rust TIO music library
+        run: scripts/app.sh generate:rust
+
+      - name: Generate splash image assets
+        run: scripts/app.sh generate:splash
+
+      - name: Generate launcher icons
+        run: scripts/app.sh generate:icon
+
+      - name: Generate json *.g.dart files
+        run: scripts/app.sh generate:json
+
+      - name: Format code
+        run: scripts/app.sh format
+
+      - name: Analyze code
+        run: scripts/app.sh analyze
+
+      - name: Analyze outdated dependencies
+        run: scripts/app.sh outdated
+
+      - name: Analyze files with too many lines
+        run: scripts/app.sh analyze:files || true
+
+      - name: Analyze TODOs and FIXMEs
+        run: scripts/app.sh analyze:todos || true
+
+      - name: Ignore anticipated but unwanted local changes
+        run: git checkout "web/index.html" # TODO: remove as soon as no whitespace is automatically added to the file
+
+      - name: Print local changes
+        run: git diff
+
+      - name: Assert no local changes (all code was formatted correctly, all generated code was checked in)
+        run: scripts/assert-no-local-changes.sh
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v4.7.0
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Flutter
+        uses: kuhnroyal/flutter-fvm-config-action/setup@v3.0
+
+      - name: Run unit and integration tests with coverage
+        run: scripts/app.sh coverage:measure:random
+
+      - name: Install lcov
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lcov
+
+      - name: Print coverage
+        run: scripts/app.sh coverage:print

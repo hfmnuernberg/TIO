@@ -110,7 +110,9 @@ void main() {
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
       await tester.enterTextAndSettle(
-          tester.withinAlert(find.bySemanticsLabel('Title input')), 'a'.padLeft(100 + 1, 'a'));
+        tester.withinAlert(find.bySemanticsLabel('Title input')),
+        'a'.padLeft(100 + 1, 'a'),
+      );
 
       final textField = tester.withinAlert(find.bySemanticsLabel('Title input'));
       expect(tester.getSemantics(textField).value, 'a'.padLeft(100, 'a'));
