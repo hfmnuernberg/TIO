@@ -35,7 +35,6 @@ Future<String?> showEditTextDialog({
   );
 }
 
-
 class EditTextDialog extends StatelessWidget {
   final String label;
   final String value;
@@ -103,4 +102,3 @@ class EditTextDialog extends StatelessWidget {
     );
   }
 }
-
