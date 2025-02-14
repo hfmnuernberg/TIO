@@ -6,7 +6,7 @@ on:
 jobs:
   verify:
     name: Verify
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-verify.yaml@TIO-30_run-tests-automatically
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-verify.yaml@main
     secrets: inherit
     with:
       ref: ${{ github.sha }}
