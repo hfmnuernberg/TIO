@@ -18,6 +18,7 @@ class NumberInputInt extends StatefulWidget {
   final double relIconSize;
   final double textFieldWidth;
   final double textFontSize;
+  final bool allowNegativeNumbers;
 
   const NumberInputInt({
     super.key,
@@ -33,6 +34,7 @@ class NumberInputInt extends StatefulWidget {
     this.relIconSize = 0.4,
     this.textFieldWidth = 100,
     this.textFontSize = 40,
+    this.allowNegativeNumbers = false,
   });
 
   @override
@@ -170,7 +172,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
                   label: '${widget.label} input',
                   child: TextFormField(
                     controller: _valueController,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers),
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.allow(RegExp(r'^-?(\d*)')),
                       FilteringTextInputFormatter.deny(RegExp(r'^0+(?=.)')),

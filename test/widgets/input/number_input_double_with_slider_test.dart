@@ -45,7 +45,6 @@ class TestWrapper extends StatelessWidget {
     this.step = 1.0,
   });
 
-
   @override
   Widget build(BuildContext context) {
     return NumberInputDoubleWithSlider(
@@ -76,7 +75,7 @@ void main() {
       });
 
       testWidgets('do not increase input value higher than max when tapping plus button', (WidgetTester tester) async {
-        await tester.renderWidget(TestWrapper(defaultValue: 10.0, max: 10.0,));
+        await tester.renderWidget(TestWrapper(defaultValue: 10.0, max: 10.0));
         expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '10.0');
 
         await tester.tapAndSettle(find.bySemanticsLabel('Plus button'));

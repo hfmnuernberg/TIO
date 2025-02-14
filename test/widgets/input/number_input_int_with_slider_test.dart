@@ -45,7 +45,6 @@ class TestWrapper extends StatelessWidget {
     this.step = 1,
   });
 
-
   @override
   Widget build(BuildContext context) {
     return NumberInputIntWithSlider(
