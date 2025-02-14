@@ -80,6 +80,6 @@ else
   echo "✅  No FIXMEs found."
 fi
 
-if [ -n "$todos" ] || [ -n "$todos" ]; then
+if [ -n "$todos" ] || [ -n "$fixmes" ]; then
   exit 1
 fi
