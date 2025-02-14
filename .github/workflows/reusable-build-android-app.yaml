@@ -1,0 +1,67 @@
+name: Build Android App
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release to verify
+      artifactName:
+        required: true
+        type: string
+        description: The name of the artifact to build
+
+jobs:
+  build-android-app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: ${{github.event.after}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v4.7.0
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Flutter
+        uses: kuhnroyal/flutter-fvm-config-action/setup@v3.0
+
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1.218.0
+        with:
+          ruby-version: '3.3'
+          working-directory: android
+          bundler-cache: true
+
+      - name: Decrypt key.properties file
+        uses: timheuer/base64-to-file@v1.2.4
+        with:
+          fileName: 'key.properties'
+          fileDir: './android'
+          encodedString: ${{ secrets.ANDROID_KEYSTORE_PROPERTIES }}
+
+      - name: Decrypt keystore.jks file
+        uses: timheuer/base64-to-file@v1.2.4
+        with:
+          fileName: 'upload.keystore.jks'
+          fileDir: './android/app/keystore'
+          encodedString: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_JKS }}
+
+      - name: Build bundle
+        run: |
+          flutter build appbundle \
+          --target lib/main.dart \
+          --build-number $((0+$GITHUB_RUN_NUMBER))
+
+      - name: Save bundle
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: ${{ inputs.artifactName }}
+          path: build/app/outputs/bundle/release
+          retention-days: 1

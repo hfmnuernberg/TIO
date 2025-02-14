@@ -1,0 +1,68 @@
+name: Build iOS App
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release to verify
+      artifactName:
+        required: true
+        type: string
+        description: The name of the artifact to build
+      appIdentifier:
+        required: true
+        type: string
+        description: The ID of the app to build
+
+jobs:
+  build-ios-app:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    env:
+      APPLE_DEVELOPER_TEAM_ID: '${{ vars.APPLE_DEVELOPER_TEAM_ID }}'
+      APPLE_APP_STORE_URL: 'https://testflight.apple.com/v1/app/${{ inputs.appIdentifier }}'
+      MATCH_PASSWORD: '${{ secrets.FASTLANE_GITHUB_MATCH_STORAGE_PASSWORD }}'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup flutter
+        uses: kuhnroyal/flutter-fvm-config-action/setup@v3.0
+
+      - name: Install key for fastlane repo
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: |
+            ${{ secrets.FASTLANE_GITHUB_DEPLOY_PRIVATE_KEY }}
+
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1.218.0
+        with:
+          ruby-version: '3.3'
+          working-directory: ios
+          bundler-cache: true
+
+      - name: Install certs
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          lane: get_certs_and_profiles
+          subdirectory: ios
+
+      - name: Build bundle
+        run: |
+          flutter build ipa \
+          --target lib/main.dart \
+          --export-options-plist ios/export-options.plist \
+          --build-number $((0+$GITHUB_RUN_NUMBER))
+
+      - name: Save bundle
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: ${{ inputs.artifactName }}
+          path: build/ios/ipa
+          retention-days: 1

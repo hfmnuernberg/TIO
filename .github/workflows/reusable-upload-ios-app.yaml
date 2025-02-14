@@ -1,0 +1,51 @@
+name: Upload iOS App
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release to verify
+      artifactName:
+        required: true
+        type: string
+        description: The name of the artifact to upload
+
+concurrency:
+  group: ${{ inputs.artifactName }}
+  cancel-in-progress: true
+
+jobs:
+  upload-ios-app:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    env:
+      APPLE_APP_STORE_CONNECT_API_KEY_ID: '${{ vars.APPLE_APP_STORE_CONNECT_API_KEY_ID }}'
+      APPLE_APP_STORE_CONNECT_API_ISSUER_ID: '${{ vars.APPLE_APP_STORE_CONNECT_API_ISSUER_ID }}'
+      APPLE_APP_STORE_CONNECT_API_KEY_SECRET: '${{ secrets.APPLE_APP_STORE_CONNECT_API_KEY_SECRET }}'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Restore bundle
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: ${{ inputs.artifactName }}
+          path: build/ios/ipa
+
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1.218.0
+        with:
+          ruby-version: '3.3'
+          working-directory: ios
+          bundler-cache: true
+
+      - name: Upload bundle
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          lane: push_to_store
+          subdirectory: ios
