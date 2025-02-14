@@ -206,9 +206,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
                           r'})[.,]?(\d{0,' +
                           _maxDigitsRight.toString() +
                           r'})')),
-
                       ConvertSemicolonToDot(),
-
                       DeleteLeadingZeros(),
                     ],
                     decoration: const InputDecoration(

@@ -213,8 +213,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
               onLongPressUp: _endIncreaseTimer,
               child: TIOFlatButton(
                 semanticLabel: 'Plus button',
-                onPressed:
-                    (_valueController.value.text == '') ? () {} : (_isPlusButtonActive ? _increaseValue : () {}),
+                onPressed: (_valueController.value.text == '') ? () {} : (_isPlusButtonActive ? _increaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,
                   shape: const RightButtonShape(),

@@ -287,15 +287,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Expanded(
-              child:
-                  Stack(
+              child: Stack(
                 children: [
                   _isLoading
                       ? const Center(
                           child: CircularProgressIndicator(),
                         )
-                      :
-                      Padding(
+                      : Padding(
                           key: _keyWaveform,
                           padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
                           child: _isRecording
@@ -305,14 +303,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
                                   child: CustomPaint(
                                       painter: _waveformVisualizer, size: Size(_waveFormWidth, waveformHeight))),
                         ),
-
                   Stack(
                     children: _isRecording ? [] : _buildMarkers(),
                   ),
                 ],
               ),
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -338,7 +334,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
                 ),
               ],
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
