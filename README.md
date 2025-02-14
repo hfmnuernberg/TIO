@@ -1,199 +1,86 @@
-[![image](https://github.com/user-attachments/assets/6b77eb21-df3c-4b65-923f-85df667dd619)](https://www.hfm-nuernberg.de/forschung-innovation/relevel/tio-music)
-
-<a href="https://www.hfm-nuernberg.de/">
-    <img align="right" src="https://github.com/user-attachments/assets/e132d231-fb98-4210-9041-23bfc35cf519" alt="HfMN"  height="45px" />
-</a>
-
-<br/>
-<br/>
-
-<a href="https://studiofluffy.de/">
-    <img align="right" src="https://github.com/user-attachments/assets/a63c2f9a-6dc5-4b3a-b849-a95a47ffca27" alt="HfMN"  height="55px" />
-</a>
-
-<br/>
-
 # TIO Music
 
-This repo contains all the source code for the App **TIO Music**.<br/>
+[![image](https://www.hfm-nuernberg.de/fileadmin/_processed_/2/1/csm_RELEVEL_TIO_Music_App_3125e78a17.webp)](https://www.hfm-nuernberg.de/forschung-innovation/relevel/tio-music)
+
+<h2 style='display: flex; justify-content: end; align-items: center; margin: 0'>
+  by
+  &nbsp;
+  <a href="https://www.hfm-nuernberg.de/">
+    <img
+        src="https://www.hfm-nuernberg.de/typo3conf/ext/threeme/Resources/Public/Images/Logo/HFM-Logo.svg"
+        alt="Hochschule für Musik Nürnberg"
+        height="40px" />
+  </a>
+</h2>
+
+<h3 style='display: flex; justify-content: end; align-items: center; margin: 12px 0;'>
+  developed by
+  &nbsp; 
+  <a href="https://cultivate.software" style='display: flex; align-items: center;'>
+    <img
+        src="https://cultivate.software/wp-content/uploads/2022/11/icon-primary-transparent_500.png" 
+        alt="cultivate GmbH"
+        height="24px"
+    />
+    &nbsp;
+    cultivate(software)
+  </a>
+</h3>
+
+<h3 style='display: flex; justify-content: end; align-items: center; margin: 12px 0 48px;'>
+  and
+  &nbsp;
+  <a href="https://studiofluffy.de/" style='display: flex; align-items: center;'>
+    <img
+        src="https://i0.wp.com/studiofluffy.de/wp-content/uploads/2022/11/fluffy-logo-o.png?fit=200%2C200&ssl=1" 
+        alt="Studio Fluffy"
+        height="24px"
+    />
+    &nbsp;
+    Studio Fluffy
+  </a>
+</h3>
+
+This repo contains all the source code for the App **TIO Music**.
+
 **TIO Music** is a notebook for musicians, designed by musicians. It offers a collection of tools for taking musical notes.
 
-For more information on this project check out [the homepage (german)](https://www.hfm-nuernberg.de/forschung-innovation/relevel/tio-music).
+For more information on this project check out the (german) [Homepage](https://www.hfm-nuernberg.de/forschung-innovation/relevel/tio-music).
 
 <br/>
 
 [<img src="https://github.com/user-attachments/assets/d36e9c5a-84cf-4e23-a5b0-a30f45bf6a06" alt="play store" height="58px"/>](https://play.google.com/store/apps/details?id=com.studiofluffy.tonica)
 [<img src="https://github.com/user-attachments/assets/5be14e4f-078e-4ea4-b560-56b3be98d72f" alt="app store" height="58px"/>](https://apps.apple.com/us/app/tio-music/id6477820301?ign-itscg=30200&ign-itsct=apps_box_link)
 
-<br/>
+## Table of Contents
 
-# How does it work?
+- [Setup](docs/setup.md)
+- [App Script – a helper script for regularly used commands](docs/app-script.md)
+- [Upgrade Flutter & Dart](docs/upgrade-flutter-dart.md)
+- [Upgrade Fastlane](docs/upgrade-fastlane.md)
+- [Publish apps to app store](docs/publish-apps-to-app-stores.md)
+- [Unpublish apps from app stores](docs/unpublish-apps-from-app-stores.md)
+- [Troubleshooting](docs/troubleshooting.md)
+- [How does it work?](#how-does-it-work)
+- [Development](#development)
+- [Build for iOS](#build-for-ios)
+- [Build for Android](#build-for-android)
 
-**TIO** is a cross platform app written in Flutter. Under the hood, it is powered by a rust library handling the signal processing tasks for real time pitch shifting, pitch detection, time stretching and more.
+## How does it work?
+
+**TIO** is a [Flutter](https://flutter.dev/) cross-platform app with Android and iOS as target platforms.
+
+Under the hood, it is powered by a [Rust](https://www.rust-lang.org/) library handling the signal processing tasks for real time pitch shifting, pitch detection, time stretching and more.
+
 If you are interested in giving feedback or contributing to **TIO**, please leave an issue or open a PR, or head over to [the survey (german)](https://cloud9.evasys.de/hfmn/online.php?p=Q2TYV).
 
-# Installation
+## Development
 
-## Flutter
-
-### Install FVM
-
-Install the flutter version manager to easily switch between flutter versions in different projects.
-If installed all flutter commands have to be prefixed with `fvm` (e.g. `fvm flutter doctor`).
-
-
-1. Install [FVM](https://fvm.app/docs/getting_started/installation/)
-   - From now on `fvm flutter doctor` will suggest what to do next to get started, but the following steps outline what to do next.
-   - List all available flutter versions: `fvm list`
-   - Install a specific flutter version: `fvm install 3.22.1` (if installed use version with `fvm use 3.22.1`)
-
-- Call `flutter --version`. Your output should look like:
-
-```
-Flutter 3.22.1 • channel stable • https://github.com/flutter/flutter.git
-Framework • revision a14f74ff3a (4 months ago) • 2024-05-22 11:08:21 -0500
-Engine • revision 55eae6864b
-Tools • Dart 3.4.1 • DevTools 2.34.3
-```
-
-- Call `fvm flutter doctor` and resolve all errors. Your output should look like:
-
-```
-Doctor summary (to see all details, run flutter doctor -v):
-[✓] Flutter (Channel stable, 3.22.1, on macOS 14.4.1 23E224 darwin-arm64, locale de-DE)
-[✓] Android toolchain - develop for Android devices (Android SDK version 34.0.0)
-[✓] Xcode - develop for iOS and macOS (Xcode 15.4)
-[✓] Chrome - develop for the web
-[✓] Android Studio (version 2024.1)
-[✓] VS Code (version 1.93.1)
-[✓] Connected device (5 available)
-[✓] Network resources
-
-• No issues found!
-```
-
-- Installing iOS pods:
-
-```shell
-fvm flutter precache --ios
-cd ios
-pod update Sentry
-pod install --repo-update
-cd ..
-```
-
--   If the installation of cocoapods doesn't work, use the approach of [this website.](https://www.rubyonmac.dev/error-error-installing-cocoapods-error-failed-to-build-gem-native-extension)
-
-### Install Flutter dependencies
-
-```
-fvm flutter pub get
-```
-
-### Android Studio
-
--   Get [Android Studio](https://developer.android.com/studio/).
-
-### Android NDK
-
-- If you are using Android Studio you can download and manage the SDK versions there
-  - go to the IDE settings and search for `Android SDK`
-  - go to the SDK tools tab and activate or deactivate the NDK that is references in the gradle files
-  - besides the NDK also activate the `CMake` SDK tool
-
-## Alternative:
--   Download the [Android NDK](https://developer.android.com/ndk/downloads/).
--   In your e.g. `.zshrc` file set the environment variable `ANDROID_NDK_HOME` to the ndk installation folder.
-    -   **If this doesn't work (running flutter app fails because of NDK error), try to install the Android NDK via Android Studio.**
-
-```
-vim ~/.zshrc
-```
-
-Add the line to the bottom:
-
-```
-export ANDROID_NDK_HOME=/path/to/the/android/ndk
-```
-
-Press `Ctrl + X` → `Y` → `Enter`
-
-The path should look like e.g. `export ANDROID_NDK_HOME=/Users/<your username>/Library/Android/sdk/ndk/28.0.12916984`
-
-### Rust
-
--   [Get Rust.](https://www.rust-lang.org/tools/install) (Note: As of 28/01/2025 installing Rust using brew does not work!)
--   Call `cargo -V`. Your output should look like:
-
-```
-cargo 1.81.0 (2dbb1af80 2024-08-20)
-```
-
--   Add rust targets for cross compilation:
-
-```
-rustup target add \
-  aarch64-apple-ios \
-  aarch64-apple-ios-sim \
-  aarch64-linux-android \
-  armv7-linux-androideabi \
-  i686-linux-android \
-  x86_64-apple-ios \
-  x86_64-linux-android
-```
-
--   Install rust binaries using `cargo install flutter_rust_bridge_codegen cargo-ndk`
-    -   [flutter_rust_bridge_codegen](https://crates.io/crates/flutter_rust_bridge_codegen/1.69.0)
-    -   [cargo-ndk](https://crates.io/crates/cargo-ndk/3.0.0)
-    
--   `cd` into `rust` and try building the Rust library (optional).
-
-```
-cd rust
-cargo build
-cd ..
-```
-
----
-
-# App Script
-
-The app script gives an overview of all available commands and helps to run them more conveniently.
-It's like having commands like known from `npm` or `yarn` but for the Flutter app.
-
-### Installing
-
-1. Add the following function to your shell profile (e.g., to `~/.zshrc`):
-
-```
-app () { ~/path/to/this/repo/scripts/app.sh "$@"; }
-```
-
-_Note: If you are using `oh-my-zsh` you can add the function to `~/.oh-my-zsh/custom/aliases.zsh`._
-
-2. Install additional dependencies on your machine:
-
-- to use `app test:watch` you need to install `watchexec` (e.g., [install with brew](https://formulae.brew.sh/formula/watchexec))
-
-### How to use
-
-Run the script like: `app <command> [args]`
-
-To get an overview about all available script commands, simply run:
-
-```
-app
-```
-
----
-
-# Development
-
-### Updating Rust Bridge
+#### Updating Rust Bridge
 
 ```
 rustup upgrade
-cargo install flutter_rust_bridge_codegen --version 2.4.0
+cargo install flutter_rust_bridge_codegen --version 2.7.1
 ```
 
 in `/rust` (update der packages)
@@ -208,36 +95,7 @@ Rust Bridge is responsible for generating the code that handles the FFI. All pub
 python3 ./generate.py rust
 ```
 
-### Auto Generated Files
-
-Use the script `generate.py` to generate files for **rust**, app **splash** screen, app **icon** and **json** serialization - or simply use **all**.
-
-It can be used like:
-
-```python
-python3 ./generate.py rust
-python3 ./generate.py splash
-python3 ./generate.py icon
-python3 ./generate.py json
-```
-
-```python
-python3 ./generate.py all
-```
-
-### Json Serialize/Deserialize
-
-We are using the package [json_serializable](https://pub.dev/packages/json_serializable). The package generates the files automatically, which should be named exactly like the class file but using the extension **.g.dart**.
-
-The generation can be done with `generate.py` or a **continuous runner**:
-
-```
-fvm flutter pub run build_runner watch --delete-conflicting-outputs
-```
-
----
-
-# Build for iOS
+## Build for iOS
 
 -   make sure you installed all rust targets like described above
 -   open the xcode workspace at `ios/Runner.xcworkspace`
@@ -247,7 +105,7 @@ fvm flutter pub run build_runner watch --delete-conflicting-outputs
 -   restart your mac - **don't skip, this is important**
 -   run `fvm flutter build ipa`
 
-# Build for Android
+## Build for Android
 
 -   make sure you installed all rust targets like described above
 -   generate or get your personal upload key ready (see https://developer.android.com/studio/publish/app-signing#generate-key)
