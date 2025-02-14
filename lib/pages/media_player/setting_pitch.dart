@@ -33,7 +33,7 @@ class _SetPitchState extends State<SetPitch> {
       step: 0.1,
       stepIntervalInMs: 200,
       controller: TextEditingController(),
-      descriptionText: "Semitones",
+      label: "Semitones",
       textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
       allowNegativeNumbers: true,
     );

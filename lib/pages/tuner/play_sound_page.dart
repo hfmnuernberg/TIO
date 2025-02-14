@@ -44,7 +44,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
       step: 1,
       controller: TextEditingController(),
       textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
-      descriptionText: "Octave",
+      label: "Octave",
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {

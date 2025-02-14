@@ -9,7 +9,7 @@ class NumberInputDoubleWithSlider extends StatefulWidget {
   final double step;
   final TextEditingController controller;
   final int stepIntervalInMs;
-  final String descriptionText;
+  final String label;
   final double buttonRadius;
   final double buttonGap;
   final double textFieldWidth;
@@ -25,7 +25,7 @@ class NumberInputDoubleWithSlider extends StatefulWidget {
     required this.step,
     required this.controller,
     this.stepIntervalInMs = 100,
-    this.descriptionText = '',
+    this.label = '',
     this.buttonRadius = 25,
     this.buttonGap = 10,
     this.textFieldWidth = 100,
@@ -59,7 +59,7 @@ class _NumberInputDoubleWithSliderState extends State<NumberInputDoubleWithSlide
           step: widget.step,
           controller: widget.controller,
           stepIntervalInMs: widget.stepIntervalInMs,
-          descriptionText: widget.descriptionText,
+          label: widget.label,
           buttonRadius: widget.buttonRadius,
           buttonGap: widget.buttonGap,
           textFieldWidth: widget.textFieldWidth,
@@ -70,7 +70,7 @@ class _NumberInputDoubleWithSliderState extends State<NumberInputDoubleWithSlide
         Padding(
           padding: const EdgeInsets.only(top: 40),
           child: AppSliderDouble(
-            semanticLabel: '${widget.descriptionText} slider',
+            semanticLabel: '${widget.label} slider',
             min: widget.min,
             max: widget.max,
             defaultValue: widget.defaultValue,

@@ -36,7 +36,7 @@ class _SetRandomMuteState extends State<SetRandomMute> {
       defaultValue: _metronomeBlock.randomMute,
       step: 1,
       controller: TextEditingController(),
-      descriptionText: 'Probability in %',
+      label: 'Probability in %',
       buttonRadius: MetronomeParams.plusMinusButtonRadius,
       textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
       textFontSize: MetronomeParams.numInputTextFontSize,

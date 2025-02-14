@@ -1,5 +1,3 @@
-// Number Input of type int consisting of +/- buttons and a manual input
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +12,7 @@ class NumberInputInt extends StatefulWidget {
   final int step;
   final TextEditingController controller;
   final int stepIntervalInMs;
-  final String descriptionText;
+  final String label;
   final double buttonRadius;
   final double buttonGap;
   final double relIconSize;
@@ -29,7 +27,7 @@ class NumberInputInt extends StatefulWidget {
     required this.step,
     required this.controller,
     this.stepIntervalInMs = 100,
-    this.descriptionText = '',
+    this.label = '',
     this.buttonRadius = 25,
     this.buttonGap = 10,
     this.relIconSize = 0.4,
@@ -48,7 +46,6 @@ class _NumberInputIntState extends State<NumberInputInt> {
   Timer? _decreaseTimer;
   Timer? _increaseTimer;
 
-  // Initialize variables
   @override
   void initState() {
     super.initState();
@@ -58,7 +55,6 @@ class _NumberInputIntState extends State<NumberInputInt> {
     widget.controller.addListener(_onExternalChange);
   }
 
-  // Dispose variables
   @override
   void dispose() {
     _decreaseTimer?.cancel();
@@ -66,12 +62,10 @@ class _NumberInputIntState extends State<NumberInputInt> {
     super.dispose();
   }
 
-  // Handle external changes of the displayed text
   void _onExternalChange() {
     _validateInput(widget.controller.value.text);
   }
 
-  // Decrease the currently displayed value
   void _decreaseValue() {
     if (_valueController.value.text != '') {
       _valueController.value =
@@ -81,7 +75,6 @@ class _NumberInputIntState extends State<NumberInputInt> {
     }
   }
 
-  // Increase the currently displayed value
   void _increaseValue() {
     if (_valueController.value.text != '') {
       _valueController.value =
@@ -91,31 +84,26 @@ class _NumberInputIntState extends State<NumberInputInt> {
     }
   }
 
-  // Looped decrease
   void _startDecreaseTimer() {
     _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.stepIntervalInMs), (timer) {
       _decreaseValue();
     });
   }
 
-  // Looped increase
   void _startIncreaseTimer() {
     _increaseTimer = Timer.periodic(Duration(milliseconds: widget.stepIntervalInMs), (timer) {
       _increaseValue();
     });
   }
 
-  // Stop looped decrease
   void _endDecreaseTimer() {
     _decreaseTimer?.cancel();
   }
 
-  // Stop looped increase
   void _endIncreaseTimer() {
     _increaseTimer?.cancel();
   }
 
-  // Check if plus and minus buttons should be active or inactive
   void _manageButtonActivity(String input) {
     if (input != '' && input != '-') {
       if (int.parse(input) <= widget.min) {
@@ -132,10 +120,8 @@ class _NumberInputIntState extends State<NumberInputInt> {
     setState(() {});
   }
 
-  // Check if submitted input is valid
   void _validateInput(String input) {
     if (input != '' && input != '-') {
-      // Check for min/max values
       if (int.parse(input) < widget.min) {
         input = widget.min.toString();
       } else {
@@ -144,7 +130,6 @@ class _NumberInputIntState extends State<NumberInputInt> {
         }
       }
     } else {
-      // Set default value when input is no number
       input = widget.defaultValue.toString();
     }
     _valueController.value = _valueController.value.copyWith(text: input);
@@ -152,7 +137,6 @@ class _NumberInputIntState extends State<NumberInputInt> {
     setState(() {});
   }
 
-  // Main build
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -160,7 +144,6 @@ class _NumberInputIntState extends State<NumberInputInt> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Minus button
             GestureDetector(
               onLongPress: _startDecreaseTimer,
               onLongPressUp: _endDecreaseTimer,
@@ -180,21 +163,17 @@ class _NumberInputIntState extends State<NumberInputInt> {
               ),
             ),
             SizedBox(width: widget.buttonGap),
-            // Text display
             SizedBox(
               width: widget.textFieldWidth,
               child: Focus(
                 child: Semantics(
-                  label: '${widget.descriptionText} input',
+                  label: '${widget.label} input',
                   child: TextFormField(
                     controller: _valueController,
                     keyboardType: TextInputType.number,
                     inputFormatters: <TextInputFormatter>[
-                      // Allow only positive and negative integers
                       FilteringTextInputFormatter.allow(RegExp(r'^-?(\d*)')),
-                      // Delete leading zeros
                       FilteringTextInputFormatter.deny(RegExp(r'^0+(?=.)')),
-                      // Delete zero after sign
                       FilteringTextInputFormatter.deny(RegExp(r'^-0+'), replacementString: '-'),
                     ],
                     maxLength: _valueController.value.text.contains('-')
@@ -229,7 +208,6 @@ class _NumberInputIntState extends State<NumberInputInt> {
               ),
             ),
             SizedBox(width: widget.buttonGap),
-            // Plus button
             GestureDetector(
               onLongPress: _startIncreaseTimer,
               onLongPressUp: _endIncreaseTimer,
@@ -250,7 +228,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
             ),
           ],
         ),
-        Text(widget.descriptionText, style: const TextStyle(color: ColorTheme.primary)),
+        Text(widget.label, style: const TextStyle(color: ColorTheme.primary)),
       ],
     );
   }

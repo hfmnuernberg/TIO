@@ -1,5 +1,3 @@
-// Number Input of type double consisting of +/- buttons and a manual input
-
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -15,7 +13,7 @@ class NumberInputDouble extends StatefulWidget {
   final double step;
   final TextEditingController controller;
   final int stepIntervalInMs;
-  final String descriptionText;
+  final String label;
   final double buttonRadius;
   final double buttonGap;
   final double textFieldWidth;
@@ -31,7 +29,7 @@ class NumberInputDouble extends StatefulWidget {
     required this.step,
     required this.controller,
     this.stepIntervalInMs = 100,
-    this.descriptionText = '',
+    this.label = '',
     this.buttonRadius = 25,
     this.buttonGap = 10,
     this.textFieldWidth = 100,
@@ -53,7 +51,6 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   late int _maxDigitsLeft;
   late int _maxDigitsRight;
 
-  // Initialize variables
   @override
   void initState() {
     super.initState();
@@ -65,7 +62,6 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
     widget.controller.addListener(_onExternalChange);
   }
 
-  // Dispose variables
   @override
   void dispose() {
     _decreaseTimer?.cancel();
@@ -73,12 +69,10 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
     super.dispose();
   }
 
-  // Handle external changes of the displayed text
   void _onExternalChange() {
     _validateInput(widget.controller.value.text);
   }
 
-  // Calculate the maximum number of digits on the display according to maximum and minimum value
   void _calcMaxDigits() {
     String countingValueString = widget.step.toString();
     String maxValueString = widget.max.toString();
@@ -94,7 +88,6 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
     _maxDigitsRight = countingValueString.contains('.') ? countingValueString.split('.')[1].length : 0;
   }
 
-  // Decrease the currently displayed value
   void _decreaseValue() {
     if (_valueController.value.text != '') {
       _valueController.value = _valueController.value
@@ -104,7 +97,6 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
     }
   }
 
-  // Increase the currently displayed value
   void _increaseValue() {
     if (_valueController.value.text != '') {
       _valueController.value = _valueController.value
@@ -114,31 +106,26 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
     }
   }
 
-  // Looped decrease
   void _startDecreaseTimer() {
     _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.stepIntervalInMs), (timer) {
       _decreaseValue();
     });
   }
 
-  // Looped increase
   void _startIncreaseTimer() {
     _increaseTimer = Timer.periodic(Duration(milliseconds: widget.stepIntervalInMs), (timer) {
       _increaseValue();
     });
   }
 
-  // Stop looped decrease
   void _endDecreaseTimer() {
     _decreaseTimer?.cancel();
   }
 
-  // Stop looped increase
   void _endIncreaseTimer() {
     _increaseTimer?.cancel();
   }
 
-  // Check if plus and minus buttons should be active or inactive
   void _manageButtonActivity(String input) {
     if (input != '' && input != '-' && input != '.' && input != '-.') {
       if (double.parse(input) <= widget.min) {
@@ -155,7 +142,6 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
     setState(() {});
   }
 
-  // Check if submitted input is valid
   void _validateInput(String input) {
     if (input != '' && input != '-' && input != '.' && input != '-.') {
       if (input[0] == '.') {
@@ -165,7 +151,6 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
           input = '-0${input.substring(1)}';
         }
       }
-      // Check for min/max values
       if (double.parse(input) < widget.min) {
         input = widget.min.toString();
       } else {
@@ -174,7 +159,6 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
         }
       }
     } else {
-      // Set default value when input is empty
       input = widget.defaultValue.toString();
     }
     _valueController.value = _valueController.value.copyWith(text: input);
@@ -182,7 +166,6 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
     setState(() {});
   }
 
-  // Main build
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -190,7 +173,6 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Minus button
             GestureDetector(
               onLongPress: _startDecreaseTimer,
               onLongPressUp: _endDecreaseTimer,
@@ -210,17 +192,15 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
               ),
             ),
             SizedBox(width: widget.buttonGap),
-            // Text display
             SizedBox(
               width: widget.textFieldWidth,
               child: Focus(
                 child: Semantics(
-                  label: '${widget.descriptionText} input',
+                  label: '${widget.label} input',
                   child: TextFormField(
                     controller: _valueController,
                     keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers, decimal: true),
                     inputFormatters: <TextInputFormatter>[
-                      // Allow only positive and negative doubles
                       FilteringTextInputFormatter.allow(RegExp(r'^-?(\d{0,' +
                           _maxDigitsLeft.toString() +
                           r'})[.,]?(\d{0,' +
@@ -229,7 +209,6 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
 
                       ConvertSemicolonToDot(),
 
-                      // Delete leading zeros and zeros between sign and number
                       DeleteLeadingZeros(),
                     ],
                     decoration: const InputDecoration(
@@ -261,7 +240,6 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
               ),
             ),
             SizedBox(width: widget.buttonGap),
-            // Plus button
             GestureDetector(
               onLongPress: _startIncreaseTimer,
               onLongPressUp: _endIncreaseTimer,
@@ -281,13 +259,12 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
             ),
           ],
         ),
-        Text(widget.descriptionText, style: const TextStyle(color: ColorTheme.primary)),
+        Text(widget.label, style: const TextStyle(color: ColorTheme.primary)),
       ],
     );
   }
 }
 
-// Custom TextInputFormatter to delete leading zeros with and without a sign
 class DeleteLeadingZeros extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(

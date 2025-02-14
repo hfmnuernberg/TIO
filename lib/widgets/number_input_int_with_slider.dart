@@ -9,7 +9,7 @@ class NumberInputIntWithSlider extends StatefulWidget {
   final int step;
   final TextEditingController controller;
   final int stepIntervalInMs;
-  final String descriptionText;
+  final String label;
   final double buttonRadius;
   final double buttonGap;
   final double relIconSize;
@@ -24,7 +24,7 @@ class NumberInputIntWithSlider extends StatefulWidget {
     required this.step,
     required this.controller,
     this.stepIntervalInMs = 100,
-    this.descriptionText = '',
+    this.label = '',
     this.buttonRadius = 25,
     this.buttonGap = 10,
     this.relIconSize = 0.4,
@@ -55,7 +55,7 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
           step: widget.step,
           controller: widget.controller,
           stepIntervalInMs: widget.stepIntervalInMs,
-          descriptionText: widget.descriptionText,
+          label: widget.label,
           buttonRadius: widget.buttonRadius,
           buttonGap: widget.buttonGap,
           relIconSize: widget.relIconSize,
@@ -65,7 +65,7 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
         Padding(
           padding: const EdgeInsets.only(top: 40),
           child: AppSliderInt(
-            semanticLabel: '${widget.descriptionText} slider',
+            semanticLabel: '${widget.label} slider',
             max: widget.max,
             min: widget.min,
             defaultValue: widget.defaultValue,

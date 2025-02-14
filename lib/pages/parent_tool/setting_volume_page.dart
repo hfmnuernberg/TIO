@@ -46,7 +46,7 @@ class _SetVolumeState extends State<SetVolume> {
       stepIntervalInMs: 200,
       controller: TextEditingController(),
       textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
-      descriptionText: "Volume",
+      label: "Volume",
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {

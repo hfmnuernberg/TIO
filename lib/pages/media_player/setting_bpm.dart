@@ -35,7 +35,7 @@ class _SetBPMState extends State<SetBPM> {
       defaultValue: _mediaPlayerBlock.bpm,
       step: 1,
       controller: TextEditingController(),
-      descriptionText: 'Basic Beat',
+      label: 'Basic Beat',
       buttonRadius: 20,
       textFieldWidth: 100,
       textFontSize: 32,

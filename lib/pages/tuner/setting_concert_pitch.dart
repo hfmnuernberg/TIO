@@ -32,7 +32,7 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
       step: 1.0,
       stepIntervalInMs: 200,
       controller: TextEditingController(),
-      descriptionText: "Concert Pitch in Hz",
+      label: "Concert Pitch in Hz",
       textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
     );
   }

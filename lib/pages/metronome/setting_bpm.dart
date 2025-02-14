@@ -35,7 +35,7 @@ class _SetBPMState extends State<SetBPM> {
       defaultValue: _metronomeBlock.bpm,
       step: 1,
       controller: TextEditingController(),
-      descriptionText: 'BPM',
+      label: 'BPM',
       buttonRadius: MetronomeParams.plusMinusButtonRadius,
       textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
       textFontSize: MetronomeParams.numInputTextFontSize,
