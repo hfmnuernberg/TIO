@@ -1,5 +1,3 @@
-// Setting page for BPM value
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
@@ -10,9 +8,9 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
 import 'package:tiomusic/widgets/tap_to_tempo.dart';
 
-final defaultBPM = 80;
-final minBPM = 10;
-final maxBPM = 500;
+final DEFAULT = 80;
+final MIN_BPM = 10;
+final MAX_BPM = 500;
 
 class SetBPM extends StatefulWidget {
   const SetBPM({super.key});
@@ -32,8 +30,8 @@ class _SetBPMState extends State<SetBPM> {
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
 
     _bpmInput = NumberInputIntWithSlider(
-      max: maxBPM,
-      min: minBPM,
+      max: MAX_BPM,
+      min: MIN_BPM,
       defaultValue: _mediaPlayerBlock.bpm,
       step: 1,
       controller: TextEditingController(),
@@ -55,7 +53,7 @@ class _SetBPMState extends State<SetBPM> {
   }
 
   void _reset() {
-    _bpmInput.controller.value = _bpmInput.controller.value.copyWith(text: defaultBPM.toString());
+    _bpmInput.controller.value = _bpmInput.controller.value.copyWith(text: DEFAULT.toString());
   }
 
   void _onCancel() {

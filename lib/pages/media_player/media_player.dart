@@ -423,7 +423,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           subtitle:
               "${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} bpm",
           leadingIcon: Icons.speed,
-          settingPage: const SetSpeedAndBPM(),
+          settingPage: const SetSpeed(),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
           inactive: _isLoading,

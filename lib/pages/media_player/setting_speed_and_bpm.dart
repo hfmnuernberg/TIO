@@ -21,14 +21,14 @@ double getSpeedForBpm(bpm, baseBpm) => (bpm / baseBpm).clamp(MIN_SPEED_FACTOR, M
 int getBpmForSpeed(speedFactor, baseBpm) =>
     (speedFactor * baseBpm).clamp(MIN_SPEED_FACTOR * baseBpm, MAX_SPEED_FACTOR * baseBpm).toInt();
 
-class SetSpeedAndBPM extends StatefulWidget {
-  const SetSpeedAndBPM({super.key});
+class SetSpeed extends StatefulWidget {
+  const SetSpeed({super.key});
 
   @override
-  State<SetSpeedAndBPM> createState() => _SetSpeedAndBPMState();
+  State<SetSpeed> createState() => _SetSpeedState();
 }
 
-class _SetSpeedAndBPMState extends State<SetSpeedAndBPM> {
+class _SetSpeedState extends State<SetSpeed> {
   late NumberInputInt _bpmInput;
   late NumberInputDouble _speedInput;
   late CustomSliderDouble _customSliderDouble;
