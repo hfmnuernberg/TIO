@@ -153,6 +153,16 @@ void main() {
         expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '10.0');
       });
 
+      testWidgets('do not change input value when entering invalid value in text field', (WidgetTester tester) async {
+        await tester.renderWidget(TestWrapper(defaultValue: 20.0, min: 10.0));
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20.0');
+
+        await tester.enterTextAndSettle(find.bySemanticsLabel('Test input'), 'test');
+        await tester.unfocusAndSettle();
+
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20.0');
+      });
+
       testWidgets('do not change input value when entering new empty value in text field', (WidgetTester tester) async {
         await tester.renderWidget(TestWrapper(defaultValue: 50.0));
         expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '50.0');

@@ -41,6 +41,7 @@ class TestWrapper extends StatelessWidget {
   final min;
   final max;
   final step;
+  final allowNegativeNumbers;
 
   const TestWrapper({
     super.key,
@@ -48,6 +49,7 @@ class TestWrapper extends StatelessWidget {
     this.min = 0,
     this.max = 100,
     this.step = 1,
+    this.allowNegativeNumbers = false,
   });
 
   @override
@@ -59,6 +61,7 @@ class TestWrapper extends StatelessWidget {
       step: step,
       label: 'Test',
       controller: TextEditingController(),
+      allowNegativeNumbers: allowNegativeNumbers,
     );
   }
 }
@@ -151,6 +154,16 @@ void main() {
         await tester.unfocusAndSettle();
 
         expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '10');
+      });
+
+      testWidgets('do not change input value when entering invalid value in text field', (WidgetTester tester) async {
+        await tester.renderWidget(TestWrapper(defaultValue: 20, min: 10));
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20');
+
+        await tester.enterTextAndSettle(find.bySemanticsLabel('Test input'), 'test');
+        await tester.unfocusAndSettle();
+
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20');
       });
 
       testWidgets('do not change input value when entering new empty value in text field', (WidgetTester tester) async {

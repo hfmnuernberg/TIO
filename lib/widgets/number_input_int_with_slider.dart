@@ -15,6 +15,7 @@ class NumberInputIntWithSlider extends StatefulWidget {
   final double relIconSize;
   final double textFieldWidth;
   final double textFontSize;
+  final bool allowNegativeNumbers;
 
   const NumberInputIntWithSlider({
     super.key,
@@ -30,6 +31,7 @@ class NumberInputIntWithSlider extends StatefulWidget {
     this.relIconSize = 0.4,
     this.textFieldWidth = 100,
     this.textFontSize = 40,
+    this.allowNegativeNumbers = false,
   });
 
   @override
@@ -61,6 +63,7 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
           relIconSize: widget.relIconSize,
           textFieldWidth: widget.textFieldWidth,
           textFontSize: widget.textFontSize,
+          allowNegativeNumbers: widget.allowNegativeNumbers,
         ),
         Padding(
           padding: const EdgeInsets.only(top: 40),
