@@ -19,6 +19,11 @@ extension WidgetTesterPumpExtension on WidgetTester {
     await pumpAndSettle();
   }
 
+  Future<void> unfocusAndSettle() async {
+    await testTextInput.receiveAction(TextInputAction.done);
+    await pumpAndSettle();
+  }
+
   Future<void> enterTextAndSettle(FinderBase<Element> finder, String text) async {
     await enterText(finder, text);
     await pumpAndSettle();
@@ -119,7 +124,7 @@ void main() {
         expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '5');
       });
 
-      testWidgets('changes input value when enter new value in text field', (WidgetTester tester) async {
+      testWidgets('changes input value when entering new value in text field', (WidgetTester tester) async {
         await tester.renderWidget(TestWrapper(defaultValue: 10));
         expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '10');
 
@@ -128,13 +133,34 @@ void main() {
         expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20');
       });
 
-      testWidgets('do not change input value when enter new empty value in text field', (WidgetTester tester) async {
+      testWidgets('changes input value to max when entering too high value in text field', (WidgetTester tester) async {
+        await tester.renderWidget(TestWrapper(defaultValue: 10, max: 20));
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '10');
+
+        await tester.enterTextAndSettle(find.bySemanticsLabel('Test input'), '30');
+        await tester.unfocusAndSettle();
+
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20');
+      });
+
+      testWidgets('changes input value to min when entering too low value in text field', (WidgetTester tester) async {
+        await tester.renderWidget(TestWrapper(defaultValue: 20, min: 10));
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20');
+
+        await tester.enterTextAndSettle(find.bySemanticsLabel('Test input'), '1');
+        await tester.unfocusAndSettle();
+
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '10');
+      });
+
+      testWidgets('do not change input value when entering new empty value in text field', (WidgetTester tester) async {
         await tester.renderWidget(TestWrapper(defaultValue: 50));
-        expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '50');
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '50');
 
-        await tester.tapAtCenterAndSettle(find.bySemanticsLabel('Test description'));
+        await tester.enterTextAndSettle(find.bySemanticsLabel('Test input'), '');
+        await tester.unfocusAndSettle();
 
-        expect(tester.getSemantics(find.bySemanticsLabel('Test description input')).value, '50');
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '50');
       });
     });
   });
