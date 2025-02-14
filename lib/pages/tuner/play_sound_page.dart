@@ -64,7 +64,6 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
   void _onButtonsChanged() async {
     if (_buttonListener.buttonOn) {
-      // start generator if not running
       if (!_running) {
         await TunerFunctions.startGenerator();
         _running = true;
@@ -80,12 +79,10 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         });
       }
 
-      // play sound
       if (_running) {
         generatorNoteOn(newFreq: _buttonListener.freq);
       }
     } else {
-      // stop sound
       generatorNoteOff();
     }
   }
@@ -144,7 +141,6 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   }
 }
 
-// class for the individual sound buttons
 class SoundButton extends StatefulWidget {
   final int midiNumber;
   final int idx;
@@ -172,7 +168,6 @@ class _SoundButtonState extends State<SoundButton> {
 
   @override
   Widget build(BuildContext context) {
-    // update the frequency on rebuild, in case the octave has changed
     if (widget.buttonListener.buttonOn) {
       generatorNoteOn(newFreq: midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
     }
@@ -183,12 +178,9 @@ class _SoundButtonState extends State<SoundButton> {
         return Listener(
           onPointerDown: (details) async {
             setState(() {
-              // if any button is on, turn it off
               if (widget.buttonListener.buttonOn) {
                 widget.buttonListener.turnOff();
 
-                // if clicked on the same button, do nothing
-                // if clicked on a different button, turn it on
                 if (widget.buttonListener.buttonIdx != widget.idx) {
                   widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
                 }

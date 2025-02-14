@@ -94,7 +94,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _project = Provider.of<Project>(context, listen: false);
     }
 
-    // only allow portrait mode for this tool
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -130,7 +129,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
         }
       }
 
-      // this return is to prevent the call of setState if user exits media player while isLoading
       if (!mounted) return;
       setState(() {
         _isLoading = false;
@@ -171,7 +169,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   void _createWalkthrough() {
-    // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyStartStop,
@@ -210,7 +207,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   void _createWalkthroughWaveformTip() {
-    // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyWaveform,
@@ -292,16 +288,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
           children: [
             Expanded(
               child:
-                  // stack for waveform and markers
                   Stack(
                 children: [
                   _isLoading
-                      // loading spinner
                       ? const Center(
                           child: CircularProgressIndicator(),
                         )
                       :
-                      // waveform
                       Padding(
                           key: _keyWaveform,
                           padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
@@ -313,7 +306,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
                                       painter: _waveformVisualizer, size: Size(_waveFormWidth, waveformHeight))),
                         ),
 
-                  // markers
                   Stack(
                     children: _isRecording ? [] : _buildMarkers(),
                   ),
@@ -324,12 +316,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // minus 10 sec button
                 TextButton(
                   onPressed: () => _jump10Seconds(false),
                   child: const Text("-10 sec"),
                 ),
-                // loop button
                 IconButton(
                   onPressed: () {
                     setState(() {
@@ -342,7 +332,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
                       ? const Icon(Icons.all_inclusive, color: ColorTheme.tertiary)
                       : const Icon(Icons.all_inclusive, color: ColorTheme.surfaceTint),
                 ),
-                // plus 10 sec button
                 TextButton(
                   onPressed: () => _jump10Seconds(true),
                   child: const Text("+10 sec"),
@@ -353,15 +342,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // small button space holder
                 const PlaceholderButton(buttonSize: TIOMusicParams.sizeSmallButtons),
-                // big button in the middle
                 _switchMainButton(_keyStartStop),
-                // small button on the right
                 _switchRightButton(),
               ],
             ),
-            // load audio file button
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TIOFlatButton(
@@ -455,7 +440,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
     );
   }
 
-  // add only if not there yet
   void _addShareOptionToMenu() {
     if (!_menuItems.contains(_shareMenuButton)) {
       _menuItems.add(_shareMenuButton);
@@ -547,7 +531,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
     return markers;
   }
 
-  // jump to playback position on wave tap
   void _onWaveTap(TapDownDetails details) async {
     double relativeTapPosition = details.localPosition.dx / _waveFormWidth;
 
@@ -626,7 +609,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
     }
   }
 
-  // Start/Stop Playing
   void _togglePlaying() async {
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
@@ -664,14 +646,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
     if (mounted) setState(() => _isPlaying = false);
   }
 
-  // Start/Stop Recording
   Future<void> _toggleRecording() async {
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
 
-    // if we are not recording and if there is a file already loaded
     if (!_isRecording && _fileLoaded) {
-      // ask if we really want to record and override the loaded file
       final overrideFile = await askForOverridingFileOnRecordingStart(context);
       if (overrideFile == null || !overrideFile) {
         setState(() => _processingButtonClick = false);
@@ -725,7 +704,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _mediaPlayerBlock.relativePath = newRelativePath;
         if (mounted) {
           FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-          // open the recording because we stopped it by pressing the recording stop button
           setState(() => _isLoading = true);
 
           var fileExtension = _mediaPlayerBlock.getFileExtension();
@@ -795,7 +773,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
     });
   }
 
-  // Functions for the Timer Display while recording
   void _startRecordingTimer() {
     _recordingTimer = Timer.periodic(const Duration(seconds: 1), (_) => _setCountUp());
   }

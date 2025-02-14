@@ -27,7 +27,6 @@ class _AppSliderDoubleState extends State<AppSliderDouble> {
   late int _sliderDivisions;
   late double _sliderValue;
 
-  // Initialize variables
   @override
   void initState() {
     super.initState();
@@ -39,7 +38,6 @@ class _AppSliderDoubleState extends State<AppSliderDouble> {
     widget.controller.addListener(_onExternalChange);
   }
 
-  // Handle external changes of the displayed text
   void _onExternalChange() {
     _validateInput(widget.controller.value.text);
   }
@@ -53,7 +51,6 @@ class _AppSliderDoubleState extends State<AppSliderDouble> {
           input = '-0${input.substring(1)}';
         }
       }
-      // Check for min/max values
       if (double.parse(input) < widget.min) {
         input = widget.min.toString();
       } else {
@@ -62,7 +59,6 @@ class _AppSliderDoubleState extends State<AppSliderDouble> {
         }
       }
     } else {
-      // Set default value when input is empty
       input = widget.defaultValue.toString();
     }
     widget.controller.value = widget.controller.value.copyWith(text: input);
@@ -70,7 +66,6 @@ class _AppSliderDoubleState extends State<AppSliderDouble> {
     setState(() {});
   }
 
-  // Main build
   @override
   Widget build(BuildContext context) {
     return Semantics(

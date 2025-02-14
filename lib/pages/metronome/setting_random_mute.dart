@@ -1,5 +1,3 @@
-// Setting page for random mute
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
