@@ -61,6 +61,7 @@ For more information on this project check out the (german) [Homepage](https://w
 - [Publish apps to app store](docs/publish-apps-to-app-stores.md)
 - [Unpublish apps from app stores](docs/unpublish-apps-from-app-stores.md)
 - [Troubleshooting](docs/troubleshooting.md)
+- [SoundFont Files (.sf2)](docs/soundfont.md)
 - [How does it work?](#how-does-it-work)
 - [Development](#development)
 - [Build for iOS](#build-for-ios)
