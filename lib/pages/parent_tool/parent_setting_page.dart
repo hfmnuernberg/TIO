@@ -51,7 +51,12 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
           ),
           backgroundColor: ColorTheme.primary92,
           body: widget.mustBeScrollable
-              ? SingleChildScrollView(child: isPortrait ? _buildPortrait() : _buildLandscape())
+              ? LayoutBuilder(builder: (BuildContext context, BoxConstraints viewportConstraints) {
+                  return SingleChildScrollView(
+                      child: ConstrainedBox(
+                          constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+                          child: isPortrait ? _buildPortrait() : _buildLandscape()));
+                })
               : isPortrait
                   ? _buildPortrait()
                   : _buildLandscape(),
