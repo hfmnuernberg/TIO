@@ -34,7 +34,7 @@ class NumberInputDouble extends StatefulWidget {
     double? buttonGap,
     double? textFieldWidth,
     double? textFontSize,
-    double? relIconSize = 0.4,
+    double? relIconSize,
     bool? allowNegativeNumbers,
   })  : stepIntervalInMs = stepIntervalInMs ?? 100,
         label = label ?? '',
