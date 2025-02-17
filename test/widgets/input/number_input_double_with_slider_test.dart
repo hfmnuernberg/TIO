@@ -1,18 +1,9 @@
+import '../../utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/widgets/number_input_double_with_slider.dart';
 
 extension WidgetTesterPumpExtension on WidgetTester {
-  Future<void> renderWidget(Widget widget) async {
-    await pumpWidget(MaterialApp(home: Scaffold(body: widget)));
-    await pumpAndSettle();
-  }
-
-  Future<void> tapAndSettle(FinderBase<Element> finder) async {
-    await tap(finder);
-    await pumpAndSettle();
-  }
-
   Future<void> tapAtCenterAndSettle(FinderBase<Element> finder) async {
     final Offset widgetCenter = getCenter(finder);
     await tapAt(widgetCenter);
@@ -21,11 +12,6 @@ extension WidgetTesterPumpExtension on WidgetTester {
 
   Future<void> unfocusAndSettle() async {
     await testTextInput.receiveAction(TextInputAction.done);
-    await pumpAndSettle();
-  }
-
-  Future<void> enterTextAndSettle(FinderBase<Element> finder, String text) async {
-    await enterText(finder, text);
     await pumpAndSettle();
   }
 
