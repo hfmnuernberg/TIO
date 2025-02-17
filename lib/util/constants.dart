@@ -196,19 +196,6 @@ class MetronomeParams {
   // Text font size
   static const double numInputTextFontSize = 32;
 
-  // Tap to tempo
-
-  // Cooldown in ms for the tap to tempo function
-  static const int t2tCooldownMs = 3000;
-  // Duration in ms to hold a color during cooldown color lerp process
-  static const int t2tLerpFrameLengthMs = 50;
-  // Button size
-  static const double t2tButtonSize = 40;
-  // Padding inside button
-  static const double t2tButtonPadding = 20;
-  // Corner radius
-  static const double t2tCornerRadius = 20;
-
   // Size of blinking circle
   static const double blinkingCircleRadius = 5;
   // Size of Rhythm Segments
