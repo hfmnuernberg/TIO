@@ -8,14 +8,14 @@ class NumberInputDoubleWithSlider extends StatefulWidget {
   final double defaultValue;
   final double step;
   final TextEditingController controller;
-  final int stepIntervalInMs;
-  final String label;
-  final double buttonRadius;
-  final double buttonGap;
-  final double textFieldWidth;
-  final double textFontSize;
-  final double relIconSize;
-  final bool allowNegativeNumbers;
+  final int? stepIntervalInMs;
+  final String? label;
+  final double? buttonRadius;
+  final double? buttonGap;
+  final double? textFieldWidth;
+  final double? textFontSize;
+  final double? relIconSize;
+  final bool? allowNegativeNumbers;
 
   const NumberInputDoubleWithSlider({
     super.key,
@@ -24,14 +24,14 @@ class NumberInputDoubleWithSlider extends StatefulWidget {
     required this.defaultValue,
     required this.step,
     required this.controller,
-    this.stepIntervalInMs = 100,
-    this.label = '',
-    this.buttonRadius = 25,
-    this.buttonGap = 10,
-    this.textFieldWidth = 100,
-    this.textFontSize = 40,
-    this.relIconSize = 0.4,
-    this.allowNegativeNumbers = false,
+    this.stepIntervalInMs,
+    this.label,
+    this.buttonRadius,
+    this.buttonGap,
+    this.textFieldWidth,
+    this.textFontSize,
+    this.relIconSize,
+    this.allowNegativeNumbers,
   });
 
   @override
@@ -39,14 +39,12 @@ class NumberInputDoubleWithSlider extends StatefulWidget {
 }
 
 class _NumberInputDoubleWithSliderState extends State<NumberInputDoubleWithSlider> {
-  // Initialize variables
   @override
   void initState() {
     super.initState();
     widget.controller.value = widget.controller.value.copyWith(text: widget.defaultValue.toString());
   }
 
-  // Main build
   @override
   Widget build(BuildContext context) {
     return Column(

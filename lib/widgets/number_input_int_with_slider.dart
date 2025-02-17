@@ -8,14 +8,14 @@ class NumberInputIntWithSlider extends StatefulWidget {
   final int defaultValue;
   final int step;
   final TextEditingController controller;
-  final int stepIntervalInMs;
-  final String label;
-  final double buttonRadius;
-  final double buttonGap;
-  final double relIconSize;
-  final double textFieldWidth;
-  final double textFontSize;
-  final bool allowNegativeNumbers;
+  final int? stepIntervalInMs;
+  final String? label;
+  final double? buttonRadius;
+  final double? buttonGap;
+  final double? relIconSize;
+  final double? textFieldWidth;
+  final double? textFontSize;
+  final bool? allowNegativeNumbers;
 
   const NumberInputIntWithSlider({
     super.key,
@@ -24,14 +24,14 @@ class NumberInputIntWithSlider extends StatefulWidget {
     required this.defaultValue,
     required this.step,
     required this.controller,
-    this.stepIntervalInMs = 100,
-    this.label = '',
-    this.buttonRadius = 25,
-    this.buttonGap = 10,
-    this.relIconSize = 0.4,
-    this.textFieldWidth = 100,
-    this.textFontSize = 40,
-    this.allowNegativeNumbers = false,
+    this.stepIntervalInMs,
+    this.label,
+    this.buttonRadius,
+    this.buttonGap,
+    this.relIconSize,
+    this.textFieldWidth,
+    this.textFontSize,
+    this.allowNegativeNumbers,
   });
 
   @override

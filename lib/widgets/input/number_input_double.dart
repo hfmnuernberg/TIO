@@ -28,15 +28,22 @@ class NumberInputDouble extends StatefulWidget {
     required this.defaultValue,
     required this.step,
     required this.controller,
-    this.stepIntervalInMs = 100,
-    this.label = '',
-    this.buttonRadius = 25,
-    this.buttonGap = 10,
-    this.textFieldWidth = 100,
-    this.textFontSize = 40,
-    this.relIconSize = 0.4,
-    this.allowNegativeNumbers = false,
-  });
+    int? stepIntervalInMs,
+    String? label,
+    double? buttonRadius,
+    double? buttonGap,
+    double? textFieldWidth,
+    double? textFontSize,
+    double? relIconSize = 0.4,
+    bool? allowNegativeNumbers,
+  })  : stepIntervalInMs = stepIntervalInMs ?? 100,
+        label = label ?? '',
+        buttonRadius = buttonRadius ?? 25,
+        buttonGap = buttonGap ?? 10,
+        textFieldWidth = textFieldWidth ?? 100,
+        textFontSize = textFontSize ?? 40,
+        relIconSize = relIconSize ?? 0.4,
+        allowNegativeNumbers = allowNegativeNumbers ?? false;
 
   @override
   State<NumberInputDouble> createState() => _NumberInputDoubleState();
@@ -55,10 +62,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   void initState() {
     super.initState();
     _valueController = TextEditingController(
-      text: widget.controller.value.text.isEmpty
-        ? widget.defaultValue.toString()
-        : widget.controller.value.text
-    );
+        text: widget.controller.value.text.isEmpty ? widget.defaultValue.toString() : widget.controller.value.text);
 
     _calcMaxDigits();
 
