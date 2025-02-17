@@ -41,6 +41,7 @@ class TestWrapper extends StatelessWidget {
   final min;
   final max;
   final step;
+  final allowNegativeNumbers;
 
   const TestWrapper({
     super.key,
@@ -48,6 +49,7 @@ class TestWrapper extends StatelessWidget {
     this.min = 0.0,
     this.max = 100.0,
     this.step = 1.0,
+    this.allowNegativeNumbers = false,
   });
 
   @override
@@ -59,6 +61,7 @@ class TestWrapper extends StatelessWidget {
       step: step,
       label: 'Test',
       controller: TextEditingController(),
+      allowNegativeNumbers: allowNegativeNumbers,
     );
   }
 }
@@ -223,6 +226,15 @@ void main() {
       await tester.tapAtCenterAndSettle(find.bySemanticsLabel('Test slider'));
 
       expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '50.0');
+    });
+
+    testWidgets('changes slider value to input value when changing input value', (WidgetTester tester) async {
+      await tester.renderWidget(TestWrapper(defaultValue: 10.0));
+      expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '10.0');
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Plus button'));
+
+      expect(tester.getSemantics(find.bySemanticsLabel('Test slider')).value, '11.0');
     });
   });
 }

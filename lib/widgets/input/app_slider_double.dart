@@ -70,6 +70,7 @@ class _AppSliderDoubleState extends State<AppSliderDouble> {
   Widget build(BuildContext context) {
     return Semantics(
       label: widget.semanticLabel,
+      value: widget.controller.text,
       child: Slider(
         value: _sliderValue,
         inactiveColor: ColorTheme.primary80,

@@ -227,5 +227,14 @@ void main() {
 
       expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '50');
     });
+
+    testWidgets('changes slider value to input value when changing input value', (WidgetTester tester) async {
+      await tester.renderWidget(TestWrapper(defaultValue: 10));
+      expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '10');
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Plus button'));
+
+      expect(tester.getSemantics(find.bySemanticsLabel('Test slider')).value, '11');
+    });
   });
 }

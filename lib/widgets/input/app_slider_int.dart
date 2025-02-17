@@ -63,6 +63,7 @@ class _AppSliderIntState extends State<AppSliderInt> {
   Widget build(BuildContext context) {
     return Semantics(
       label: widget.semanticLabel,
+      value: widget.controller.text,
       child: Slider(
         value: _sliderValue.toDouble(),
         inactiveColor: ColorTheme.primary80,
