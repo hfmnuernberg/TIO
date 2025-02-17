@@ -244,16 +244,26 @@ class PianoParams {
 
   // There is a problem if sound fonts are too big, they should be about 1 MB, not more
   static const List<String> soundFontPaths = <String>[
-    "assets/sound_fonts/Grand Piano.sf2",
-    "assets/sound_fonts/Electric Piano 1.sf2",
-    "assets/sound_fonts/Reverb Bell Piano.sf2",
+    "assets/sound_fonts/legacy_piano.sf2",
+    "assets/sound_fonts/piano.sf2",
+    "assets/sound_fonts/legacy_electric_piano.sf2",
+    "assets/sound_fonts/electric_piano.sf2",
+    "assets/sound_fonts/legacy_reverb_bell_piano.sf2",
+    "assets/sound_fonts/pipe_organ.sf2",
+    "assets/sound_fonts/harpsichord.sf2",
+    "assets/sound_fonts/rhodes.sf2",
   ];
 
   // this list must match the soundFontPaths list
   static const List<String> soundFontNames = <String>[
+    "Old Grand Piano",
     "Grand Piano",
-    "E-Piano",
+    "Old Electric Piano",
+    "Electric Piano",
     "Reverb Bell Piano",
+    "Pipe Organ",
+    "Harpsichord",
+    "Rhodes",
   ];
 }
 
