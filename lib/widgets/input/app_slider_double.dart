@@ -30,7 +30,6 @@ class _AppSliderDoubleState extends State<AppSliderDouble> {
   @override
   void initState() {
     super.initState();
-    widget.controller.value = widget.controller.value.copyWith(text: widget.defaultValue.toString());
 
     _sliderDivisions = (widget.max - widget.min) ~/ widget.step;
     _sliderValue = widget.defaultValue;
@@ -70,7 +69,7 @@ class _AppSliderDoubleState extends State<AppSliderDouble> {
   Widget build(BuildContext context) {
     return Semantics(
       label: widget.semanticLabel,
-      value: widget.controller.text,
+      value: widget.controller.text.isEmpty ? widget.defaultValue.toString() : widget.controller.text,
       child: Slider(
         value: _sliderValue,
         inactiveColor: ColorTheme.primary80,

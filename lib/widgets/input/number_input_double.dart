@@ -54,8 +54,11 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   @override
   void initState() {
     super.initState();
-    widget.controller.value = widget.controller.value.copyWith(text: widget.defaultValue.toString());
-    _valueController = TextEditingController(text: widget.defaultValue.toString());
+    _valueController = TextEditingController(
+      text: widget.controller.value.text.isEmpty
+        ? widget.defaultValue.toString()
+        : widget.controller.value.text
+    );
 
     _calcMaxDigits();
 
