@@ -13,3 +13,5 @@ key.properties*
 **/*.keystore
 **/*.jks
 *service*account*.json
+
+vendor/

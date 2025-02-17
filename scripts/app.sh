@@ -61,9 +61,11 @@ build() {
 clean() {
   fluttervm clean
   if [ -d "android/.gradle" ]; then rm -rf android/.gradle; fi
+  if [ -d "android/vendor" ];  then rm -rf android/vendor;  fi
   if [ -d "coverage" ];        then rm -rf coverage;        fi
   if [ -d "ios/.symlinks" ];   then rm -rf ios/.symlinks;   fi
   if [ -d "ios/Pods" ];        then rm -rf ios/Pods;        fi
+  if [ -d "ios/vendor" ];      then rm -rf ios/vendor;      fi
   if [ -d "rust/target" ];     then rm -rf rust/target;     fi
 }
 
@@ -97,11 +99,13 @@ install() {
   installRustTargets
   installRustPackages
   installFlutterRustBridgeCodegen
+  installFastlane
 }
 installCocoaPods() { fluttervm precache --ios; cd ios; pod install --repo-update; cd ..; }
+installFastlane() { cd android; bundle install; cd ..; cd ios; bundle install; cd ..; }
 installFlutterPackages() { fluttervm pub get; }
-installRustPackages() { cd rust; cargo build; cd ..; }
 installFlutterRustBridgeCodegen() { cargo install flutter_rust_bridge_codegen --version 2.7.1; }
+installRustPackages() { cd rust; cargo build; cd ..; }
 
 installRustTargets() {
   rustup target add \
@@ -205,6 +209,7 @@ help() {
   echo 'help                                          - print this help'
   echo 'install                                       - install dependencies'
   echo 'install:cocoa:pods                            - install Cocoapods'
+  echo 'install:fastlane                              - install Fastlane'
   echo 'install:flutter:packages                      - install Flutter packages'
   echo 'install:rust:flutter-rust-bridge-codegen      - install Flutter/Dart<->Rust binding generator'
   echo 'install:rust:packages                         - install Rust packages'
@@ -247,6 +252,7 @@ if [ "$1" = 'generate:splash' ]; then generateSplash; exit; fi
 if [ "$1" = 'help' ]; then help; exit; fi
 if [ "$1" = 'install' ]; then install; exit; fi
 if [ "$1" = 'install:cocoa:pods' ]; then installCocoaPods; exit; fi
+if [ "$1" = 'install:fastlane' ]; then installFastlane; exit; fi
 if [ "$1" = 'install:flutter:packages' ]; then installFlutterPackages; exit; fi
 if [ "$1" = 'install:rust:flutter-rust-bridge-codegen' ]; then installFlutterRustBridgeCodegen; exit; fi
 if [ "$1" = 'install:rust:packages' ]; then installRustPackages; exit; fi
