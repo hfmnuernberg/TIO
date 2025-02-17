@@ -161,6 +161,16 @@ void main() {
 
         expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '50.0');
       });
+
+      testWidgets('change input value to min when entering negative value is allowed in text field', (WidgetTester tester) async {
+        await tester.renderWidget(TestWrapper(defaultValue: 20.0, min: 0.0, allowNegativeNumbers: true));
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20.0');
+
+        await tester.enterTextAndSettle(find.bySemanticsLabel('Test input'), '-0.1');
+        await tester.unfocusAndSettle();
+
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '0.0');
+      }, skip: true); // FIXME: Fix text range out of bounds error
     });
   });
 
