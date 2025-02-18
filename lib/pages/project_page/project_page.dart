@@ -52,6 +52,15 @@ class _ProjectPageState extends State<ProjectPage> {
 
     _menuItems.add(
       MenuItemButton(
+        onPressed: () => showDialog<bool>(
+          context: context,
+          builder: (context) => ExportProjectDialog(title: _project.title),
+        ),
+        child: const Text("Export Project", style: TextStyle(color: ColorTheme.primary)),
+      ),
+    );
+    _menuItems.add(
+      MenuItemButton(
         onPressed: () async {
           bool? deleteBlock = await _deleteBlock(deleteAll: true);
           if (deleteBlock != null && deleteBlock) {
@@ -63,15 +72,6 @@ class _ProjectPageState extends State<ProjectPage> {
           }
         },
         child: const Text("Delete all Tools", style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: () => showDialog<bool>(
-          context: context,
-          builder: (context) => ExportProjectDialog(),
-        ),
-        child: const Text("Export Project", style: TextStyle(color: ColorTheme.primary)),
       ),
     );
 

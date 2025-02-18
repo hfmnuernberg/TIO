@@ -9,10 +9,13 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
 class ExportProjectDialog extends StatelessWidget {
+  final String title;
+
+  const ExportProjectDialog({super.key, required this.title});
 
   Future<String> _writeJsonFile(BuildContext context) async {
     final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/exported_project.json';
+    final filePath = '${directory.path}/$title.json';
     final file = File(filePath);
     final projectLibrary = context.read<ProjectLibrary>();
 
