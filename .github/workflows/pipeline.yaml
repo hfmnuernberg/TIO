@@ -6,21 +6,21 @@ on:
     - '*'
   workflow_dispatch:
 
-#concurrency:
-#  group: ${{ github.workflow }}-${{ github.ref }}
-#  cancel-in-progress: true
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   verify:
     name: Verify
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-verify.yaml@TIO-27_setup-pipeline
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-verify.yaml@main
     secrets: inherit
     with:
       ref: ${{ github.sha }}
 
 #  build-ios-app:
 #    name: Build iOS App
-#    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-ios-app.yaml@TIO-27_setup-pipeline
+#    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-ios-app.yaml@main
 #    secrets: inherit
 #    with:
 #      ref: ${{ github.sha }}
@@ -29,7 +29,7 @@ jobs:
 #
 #  build-android-app:
 #    name: Build Android App
-#    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-android-app.yaml@TIO-27_setup-pipeline
+#    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-android-app.yaml@main
 #    secrets: inherit
 #    with:
 #      ref: ${{ github.sha }}
@@ -38,7 +38,7 @@ jobs:
 #  upload-ios-app:
 #    needs: [verify, build-ios-app]
 #    name: Upload iOS App
-#    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-ios-app.yaml@TIO-27_setup-pipeline
+#    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-ios-app.yaml@main
 #    secrets: inherit
 #    with:
 #      ref: ${{ github.sha }}
@@ -47,7 +47,7 @@ jobs:
 #  upload-android-app:
 #    needs: [verify, build-android-app]
 #    name: Upload Android App
-#    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-android-app.yaml@TIO-27_setup-pipeline
+#    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-android-app.yaml@main
 #    secrets: inherit
 #    with:
 #      ref: ${{ github.sha }}
