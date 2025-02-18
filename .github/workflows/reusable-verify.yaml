@@ -116,3 +116,6 @@ jobs:
 
       - name: Print coverage
         run: scripts/app.sh coverage:print
+
+      - name: Validate coverage
+        run: scripts/app.sh coverage:validate 6
