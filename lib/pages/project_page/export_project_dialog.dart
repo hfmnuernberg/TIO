@@ -46,22 +46,30 @@ class ExportProjectDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Export Project", style: TextStyle(color: ColorTheme.primary)),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text("Do you really want to export the project?", style: TextStyle(color: ColorTheme.primary)),
-          const SizedBox(height: 10),
-        ],
+      content: Transform.translate(
+        offset: const Offset(0, 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("Do you really want to export the project?", style: TextStyle(color: ColorTheme.primary)),
+            const SizedBox(height: 10),
+          ],
+        ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text('Cancel'),
-        ),
-        TIOFlatButton(
-          onPressed: () => _exportFile(context),
-          text: "Export",
-          boldText: true,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TIOFlatButton(
+              onPressed: () => _exportFile(context),
+              text: "Export",
+              boldText: true,
+            ),
+          ],
         ),
       ],
     );

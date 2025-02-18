@@ -42,22 +42,30 @@ class ImportProjectDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Import Project", style: TextStyle(color: ColorTheme.primary)),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text("Would you like to import a project?", style: TextStyle(color: ColorTheme.primary)),
-          const SizedBox(height: 10),
-        ],
+      content: Transform.translate(
+        offset: const Offset(0, 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text("Would you like to import a project?", style: TextStyle(color: ColorTheme.primary)),
+            const SizedBox(height: 10),
+          ],
+        ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text('Cancel'),
-        ),
-        TIOFlatButton(
-          onPressed: () => _importFile(context),
-          text: "Import",
-          boldText: true,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel'),
+            ),
+            TIOFlatButton(
+              onPressed: () => _importFile(context),
+              text: "Import",
+              boldText: true,
+            ),
+          ],
         ),
       ],
     );
