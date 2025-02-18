@@ -58,7 +58,7 @@ jobs:
 
     - name: Create new branch
       run: |
-        BRANCH_NAME="bump-build-${{ github.run_id }}"
+        BRANCH_NAME="bump-build-number-to-${{ steps.new_version.outputs.BUILD_NUMBER }}"
         git checkout -b "$BRANCH_NAME"
         git add pubspec.yaml
         git diff --staged --quiet && echo "⚠️ No changes detected."
@@ -67,18 +67,14 @@ jobs:
 
     - name: Create pull request
       id: create_pr
-      uses: peter-evans/create-pull-request@v5
+      uses: peter-evans/create-pull-request@v7.0.6
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        branch: bump-build-${{ github.run_id }}
+        base: TIO-27_setup-pipeline-6
+        branch: bump-build-number-to-${{ steps.new_version.outputs.BUILD_NUMBER }}
         title: "ci: bump build number to ${{ steps.new_version.outputs.BUILD_NUMBER }}"
         body: "Automated bump of build number from ${{ steps.old_version.outputs.BUILD_NUMBER }} to ${{ steps.new_version.outputs.BUILD_NUMBER }}."
         labels: "automated,ci"
-        base: TIO-27_setup-pipeline-6
-        draft: false
         delete-branch: true
-        committer: "GitHub Actions <actions@github.com>"
-        author: "GitHub Actions <actions@github.com>"
         signoff: true
 
     - name: Auto-merge pull request
@@ -89,7 +85,7 @@ jobs:
           exit 1
         fi
         echo "Merging PR: $PR_URL"
-        gh pr merge --auto --squash "bump-build-${{ github.run_id }}"
+        gh pr merge --auto --squash "BRANCH_NAME="bump-build-number-to-${{ steps.new_version.outputs.BUILD_NUMBER }}""
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
