@@ -130,29 +130,29 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   Future<bool?> _deleteBlock({bool deleteAll = false}) => showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text("Delete?", style: TextStyle(color: ColorTheme.primary)),
-      content: deleteAll
-          ? const Text("Do you really want to delete all tools in this project?",
-              style: TextStyle(color: ColorTheme.primary))
-          : const Text("Do you really want to delete this tool?", style: TextStyle(color: ColorTheme.primary)),
-      actions: [
-        TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text("No")),
-        TIOFlatButton(
-          onPressed: () {
-            Navigator.of(context).pop(true);
-          },
-          text: "Yes",
-          boldText: true,
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Delete?", style: TextStyle(color: ColorTheme.primary)),
+          content: deleteAll
+              ? const Text("Do you really want to delete all tools in this project?",
+                  style: TextStyle(color: ColorTheme.primary))
+              : const Text("Do you really want to delete this tool?", style: TextStyle(color: ColorTheme.primary)),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: const Text("No")),
+            TIOFlatButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              text: "Yes",
+              boldText: true,
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 
   void _createBlockAndGoToTool(BlockTypeInfo info, String blockTitle) {
     if (_withoutProject) {

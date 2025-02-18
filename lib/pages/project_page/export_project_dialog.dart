@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
@@ -32,12 +33,12 @@ class ExportProjectDialog extends StatelessWidget {
 
       await Share.shareXFiles([XFile(filePath)]);
 
+      showSnackbar(context: context, message: 'Project file exported successfully!')();
+
       Navigator.of(context).pop();
     } catch (e) {
       print('Error exporting project file: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error exporting project file')),
-      );
+      showSnackbar(context: context, message: 'Error exporting project file')();
     }
   }
 

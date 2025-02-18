@@ -27,6 +27,7 @@ import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
 import 'package:tiomusic/pages/parent_tool/volume.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
+import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -408,7 +409,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   Future<void> _startMetronome() async {
     if (_sound && [VolumeLevel.muted, VolumeLevel.low].contains(_deviceVolumeLevel)) {
-      showSnackbar(context: context, volumeLevel: _deviceVolumeLevel)();
+      showSnackbar(context: context, message: getVolumeInfoText(_deviceVolumeLevel))();
     }
 
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
@@ -700,7 +701,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           block: _metronomeBlock,
           callOnReturn: (value) => setState(() {}),
           icon: getVolumeInfoIcon(_deviceVolumeLevel),
-          onIconPressed: showSnackbar(context: context, volumeLevel: _deviceVolumeLevel),
+          onIconPressed: showSnackbar(context: context, message: getVolumeInfoText(_deviceVolumeLevel)),
         ),
         // BPM
         SettingsTile(

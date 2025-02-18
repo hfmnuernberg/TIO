@@ -6,11 +6,11 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
 class ImportProjectDialog extends StatelessWidget {
-
   Future<void> _importFile(BuildContext context) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -32,20 +32,14 @@ class ImportProjectDialog extends StatelessWidget {
           FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Project file imported successfully!')),
-        );
+        showSnackbar(context: context, message: 'Project file imported successfully!')();
 
         Navigator.of(context).pop(true);
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error importing project file: $e')),
-        );
+        showSnackbar(context: context, message: 'Error importing project file: $e')();
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No project file selected')),
-      );
+      showSnackbar(context: context, message: 'No project file selected')();
     }
   }
 
