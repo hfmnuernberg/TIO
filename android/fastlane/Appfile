@@ -1,0 +1,5 @@
+json_key_file("service_account.json")
+
+package_name("com.studiofluffy.tonica")
+
+app_identifier("com.studiofluffy.tonica")

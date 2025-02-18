@@ -12,6 +12,16 @@ if (localPropertiesFile.exists()) {
     }
 }
 
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '0.0.1'
+}
+
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (!keystorePropertiesFile.exists()) {
@@ -43,8 +53,8 @@ android {
         applicationId "com.studiofluffy.tonica"
         minSdkVersion 31
         targetSdkVersion 35
-        versionCode 91835875
-        versionName "1.0.8"
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
     }
 
     signingConfigs {

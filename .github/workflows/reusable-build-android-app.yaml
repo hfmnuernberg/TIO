@@ -1,0 +1,94 @@
+name: Build Android App
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release to verify
+      artifactName:
+        required: true
+        type: string
+        description: The name of the artifact to build
+
+jobs:
+  build-android-app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: ${{github.event.after}}
+
+      - name: Setup Java
+        uses: actions/setup-java@v4.7.0
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Flutter
+        uses: kuhnroyal/flutter-fvm-config-action/setup@v3.0
+
+      - name: Install ALSA dev libraries
+        run: sudo apt-get update && sudo apt-get install -y libasound2-dev
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1.10.1
+
+      - name: Install cargo-ndk
+        run: cargo install cargo-ndk
+
+      - name: Install Flutter dependencies
+        run: scripts/app.sh install:flutter:packages
+
+      - name: Install Rust dependencies
+        run: scripts/app.sh install:rust:packages
+
+      - name: Install Flutter/Dart<->Rust binding generator
+        run: scripts/app.sh install:rust:flutter-rust-bridge-codegen
+
+      - name: Generate Rust TIO music library
+        run: scripts/app.sh generate:rust
+
+      - name: Generate splash image assets
+        run: scripts/app.sh generate:splash
+
+      - name: Generate launcher icons
+        run: scripts/app.sh generate:icon
+
+      - name: Generate json *.g.dart files
+        run: scripts/app.sh generate:json
+
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1.218.0
+        with:
+          ruby-version: '3.3'
+          working-directory: android
+          bundler-cache: true
+
+      - name: Decrypt key.properties file
+        uses: timheuer/base64-to-file@v1.2.4
+        with:
+          fileName: 'key.properties'
+          fileDir: './android'
+          encodedString: ${{ secrets.ANDROID_KEYSTORE_PROPERTIES }}
+
+      - name: Decrypt keystore.jks file
+        uses: timheuer/base64-to-file@v1.2.4
+        with:
+          fileName: 'upload.keystore.jks'
+          fileDir: './android/app/keystore'
+          encodedString: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_JKS }}
+
+      - name: Build bundle
+        run: scripts/app.sh build android release
+
+      - name: Save bundle
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: ${{ inputs.artifactName }}
+          path: build/app/outputs/bundle/release
+          retention-days: 1

@@ -1,0 +1,89 @@
+name: Build iOS App
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release to verify
+      artifactName:
+        required: true
+        type: string
+        description: The name of the artifact to build
+      appIdentifier:
+        required: true
+        type: string
+        description: The ID of the app to build
+
+jobs:
+  build-ios-app:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    env:
+      APPLE_DEVELOPER_TEAM_ID: '${{ vars.APPLE_DEVELOPER_TEAM_ID }}'
+      APPLE_APP_STORE_URL: 'https://testflight.apple.com/v1/app/${{ inputs.appIdentifier }}'
+      MATCH_PASSWORD: '${{ secrets.FASTLANE_GITHUB_MATCH_STORAGE_PASSWORD }}'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup flutter
+        uses: kuhnroyal/flutter-fvm-config-action/setup@v3.0
+
+      - name: Install key for fastlane repo
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: |
+            ${{ secrets.FASTLANE_GITHUB_DEPLOY_PRIVATE_KEY }}
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1.10.1
+
+      - name: Install Flutter dependencies
+        run: scripts/app.sh install:flutter:packages
+
+      - name: Install Rust dependencies
+        run: scripts/app.sh install:rust:packages
+
+      - name: Install Flutter/Dart<->Rust binding generator
+        run: scripts/app.sh install:rust:flutter-rust-bridge-codegen
+
+      - name: Generate Rust TIO music library
+        run: scripts/app.sh generate:rust
+
+      - name: Generate splash image assets
+        run: scripts/app.sh generate:splash
+
+      - name: Generate launcher icons
+        run: scripts/app.sh generate:icon
+
+      - name: Generate json *.g.dart files
+        run: scripts/app.sh generate:json
+
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1.218.0
+        with:
+          ruby-version: '3.3'
+          working-directory: ios
+          bundler-cache: true
+
+      - name: Install certs
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          lane: get_certs_and_profiles
+          subdirectory: ios
+
+      - name: Build bundle
+        run: scripts/app.sh build android release
+          --export-options-plist ios/export-options.plist \
+
+      - name: Save bundle
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: ${{ inputs.artifactName }}
+          path: build/ios/ipa
+          retention-days: 1

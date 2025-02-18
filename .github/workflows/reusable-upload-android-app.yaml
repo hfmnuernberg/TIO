@@ -1,0 +1,60 @@
+name: Upload Android App
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release to verify
+      artifactName:
+        required: true
+        type: string
+        description: The name of the artifact to upload
+      googlePlayStoreUrl:
+        required: true
+        type: string
+        description: The google play store URL
+
+concurrency:
+  group: ${{ inputs.artifactName }}
+  cancel-in-progress: true
+
+jobs:
+  upload-android-app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GOOGLE_PLAY_STORE_URL: ${{ inputs.googlePlayStoreUrl }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{github.event.after}}
+
+      - name: Restore bundle
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: ${{ inputs.artifactName }}
+          path: build/app/outputs/bundle/release
+
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1.218.0
+        with:
+          ruby-version: '3.3'
+          working-directory: android
+          bundler-cache: true
+
+      - name: Decrypt service-account.json file
+        uses: timheuer/base64-to-file@v1.2.4
+        with:
+          fileName: 'service_account.json'
+          fileDir: './android'
+          encodedString: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+
+      - name: Upload bundle
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          lane: push_to_store
+          subdirectory: android
