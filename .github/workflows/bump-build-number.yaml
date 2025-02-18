@@ -60,6 +60,7 @@ jobs:
       id: create_pr
       uses: peter-evans/create-pull-request@v7.0.6
       with:
+        token: ${{ secrets.VERSION_UPDATE_PAT }}
         base: TIO-27_setup-pipeline-6
         branch: bump-build-number-to-${{ steps.new_version.outputs.BUILD_NUMBER }}
         commit-message: "ci: bump build number to ${{ steps.new_version.outputs.BUILD_NUMBER }}"
