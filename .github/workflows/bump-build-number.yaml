@@ -78,9 +78,13 @@ jobs:
 
     - name: Auto-merge pull request
       run: |
-        PR_URL=$(jq -r ".pull_request.html_url" <<< '${{ steps.create_pr.outputs.pull-request }}')
+        PR_URL="${{ steps.create_pr.outputs.pull-request }}"
+        if [[ -z "$PR_URL" ]]; then
+          echo "❌ No pull request was created. Exiting..."
+          exit 1
+        fi
         echo "Merging PR: $PR_URL"
-        gh pr merge --auto --squash --repo ${{ github.repository }} --head bump-build-${{ github.run_id }}
+        gh pr merge --auto --squash "bump-build-${{ github.run_id }}"
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
