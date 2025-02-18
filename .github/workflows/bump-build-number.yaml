@@ -75,6 +75,10 @@ jobs:
         labels: "automated,ci"
         base: main
         draft: false
+        delete-branch: true
+        committer: "GitHub Actions <actions@github.com>"
+        author: "GitHub Actions <actions@github.com>"
+        signoff: true
 
     - name: Auto-merge pull request
       run: |
