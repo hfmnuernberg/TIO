@@ -1,26 +1,12 @@
+import '../../utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 
 extension WidgetTesterPumpExtension on WidgetTester {
-  Future<void> renderWidget(Widget widget) async {
-    await pumpWidget(MaterialApp(home: Scaffold(body: widget)));
-    await pumpAndSettle();
-  }
-
-  Future<void> tapAndSettle(FinderBase<Element> finder) async {
-    await tap(finder);
-    await pumpAndSettle();
-  }
-
   Future<void> tapAtAndSettle(Offset location) async {
     await tapAt(location);
-    await pumpAndSettle();
-  }
-
-  Future<void> enterTextAndSettle(FinderBase<Element> finder, String text) async {
-    await enterText(finder, text);
     await pumpAndSettle();
   }
 

@@ -196,19 +196,6 @@ class MetronomeParams {
   // Text font size
   static const double numInputTextFontSize = 32;
 
-  // Tap to tempo
-
-  // Cooldown in ms for the tap to tempo function
-  static const int t2tCooldownMs = 3000;
-  // Duration in ms to hold a color during cooldown color lerp process
-  static const int t2tLerpFrameLengthMs = 50;
-  // Button size
-  static const double t2tButtonSize = 40;
-  // Padding inside button
-  static const double t2tButtonPadding = 20;
-  // Corner radius
-  static const double t2tCornerRadius = 20;
-
   // Size of blinking circle
   static const double blinkingCircleRadius = 5;
   // Size of Rhythm Segments
@@ -244,16 +231,26 @@ class PianoParams {
 
   // There is a problem if sound fonts are too big, they should be about 1 MB, not more
   static const List<String> soundFontPaths = <String>[
-    "assets/sound_fonts/Grand Piano.sf2",
-    "assets/sound_fonts/Electric Piano 1.sf2",
-    "assets/sound_fonts/Reverb Bell Piano.sf2",
+    "assets/sound_fonts/piano_01.sf2",
+    "assets/sound_fonts/piano_02.sf2",
+    "assets/sound_fonts/electric_piano_01.sf2",
+    "assets/sound_fonts/electric_piano_02.sf2",
+    "assets/sound_fonts/reverb_bell_piano.sf2",
+    "assets/sound_fonts/pipe_organ.sf2",
+    "assets/sound_fonts/harpsichord.sf2",
+    "assets/sound_fonts/rhodes.sf2",
   ];
 
   // this list must match the soundFontPaths list
   static const List<String> soundFontNames = <String>[
-    "Grand Piano",
-    "E-Piano",
+    "Grand Piano 1",
+    "Grand Piano 2",
+    "Electric Piano 1",
+    "Electric Piano 2",
     "Reverb Bell Piano",
+    "Pipe Organ",
+    "Harpsichord",
+    "Rhodes",
   ];
 }
 
