@@ -12,7 +12,7 @@ MIN_BUILD_NUMBER=100000000
 
 # ===== business logic =====
 
-echo "⚙️ Bumping version and build number in pubspec.yaml..."
+echo "⚙️ Updating version and build number in pubspec.yaml..."
 
 # Get the latest Git tag (version) and remove the "v" prefix
 VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
@@ -34,4 +34,4 @@ sed -i '' "s/^version: .*/version: $VERSION+$BUILD_NUMBER/" pubspec.yaml
 
 # ===== print results =====
 
-echo "✅️ Bumped version and build number in pubspec.yaml to $VERSION ($BUILD_NUMBER)."
+echo "✅️ Updated version and build number in pubspec.yaml to: $VERSION ($BUILD_NUMBER)."

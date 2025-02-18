@@ -22,7 +22,15 @@ jobs:
     with:
       ref: ${{ github.sha }}
 
+  update-version:
+    name: Update version
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-update-version.yaml@TIO-27_setup-pipeline
+    secrets: inherit
+    with:
+      ref: ${{ github.sha }}
+
   build-ios-app:
+    needs: [update-version]
     name: Build iOS App
     uses: hfmnuernberg/TIO/.github/workflows/reusable-build-ios-app.yaml@TIO-27_setup-pipeline
     secrets: inherit
@@ -32,6 +40,7 @@ jobs:
       appIdentifier: 6477820301
 
   build-android-app:
+    needs: [update-version]
     name: Build Android App
     uses: hfmnuernberg/TIO/.github/workflows/reusable-build-android-app.yaml@TIO-27_setup-pipeline
     secrets: inherit

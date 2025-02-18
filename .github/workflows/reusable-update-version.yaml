@@ -1,0 +1,28 @@
+name: Update version
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release to verify
+
+jobs:
+  update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4.2.2
+      with:
+        ref: ${{github.event.after}}
+
+    - name: Setup GitHub PAT
+      run: git remote set-url origin https://x-access-token:${{ secrets.VERSION_UPDATE_PAT }}@github.com/${{ github.repository }}.git
+
+    - name: Update version and build number
+      run: scripts/update-version-and-build-number.sh
+
+    - name: Commit version and build number
+      run: scripts/commit-version-and-build-number.sh
