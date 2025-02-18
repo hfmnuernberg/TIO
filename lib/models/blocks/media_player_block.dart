@@ -15,10 +15,9 @@ part 'media_player_block.g.dart';
 
 @JsonSerializable()
 class MediaPlayerBlock extends ProjectBlock {
-  // add here all the fields that should be compared when checking if two class instances have the same values
-  // for now this check is only used to compare quick tools to the default settings, so some properties are left out here
   @override
   List<Object> get props => [
+        bpm,
         _volume,
         _pitchSemitones,
         _speedFactor,
@@ -80,6 +79,9 @@ class MediaPlayerBlock extends ProjectBlock {
     notifyListeners();
   }
 
+  @JsonKey(defaultValue: 80)
+  late int bpm;
+
   late double _pitchSemitones;
   @JsonKey(defaultValue: MediaPlayerParams.defaultPitchSemitones)
   double get pitchSemitones => _pitchSemitones;
@@ -128,7 +130,6 @@ class MediaPlayerBlock extends ProjectBlock {
     notifyListeners();
   }
 
-  // marker positions as relative positions (0 - 1)
   late List<double> _markerPositions;
   @JsonKey(defaultValue: [])
   List<double> get markerPositions => _markerPositions;
@@ -152,6 +153,7 @@ class MediaPlayerBlock extends ProjectBlock {
     if (_looping) {
       settings.add("Looping");
     }
+    settings.add("$bpm bpm");
     return settings;
   }
 
@@ -159,6 +161,7 @@ class MediaPlayerBlock extends ProjectBlock {
     String title,
     String id,
     String? islandToolID,
+    this.bpm,
     double volume,
     double pitchSemitones,
     double speedFactor,
@@ -188,6 +191,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _title = MediaPlayerParams.displayName;
     _islandToolID = null;
     _id = createNewId();
+    bpm = 80;
     _volume = TIOMusicParams.defaultVolume;
     _pitchSemitones = MediaPlayerParams.defaultPitchSemitones;
     _speedFactor = MediaPlayerParams.defaultSpeedFactor;
@@ -203,6 +207,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _title = newTitle;
     _islandToolID = null;
     _id = createNewId();
+    bpm = 80;
     _volume = TIOMusicParams.defaultVolume;
     _pitchSemitones = MediaPlayerParams.defaultPitchSemitones;
     _speedFactor = MediaPlayerParams.defaultSpeedFactor;
@@ -221,11 +226,9 @@ class MediaPlayerBlock extends ProjectBlock {
   @override
   Map<String, dynamic> toJson() => _$MediaPlayerBlockToJson(this);
 
-  // opens the pick file dialog and sets the path to the new audio file
   Future<bool> pickAudio(BuildContext context, ProjectLibrary projectLibrary) async {
     try {
       final result = await FilePicker.platform.pickFiles(type: FileType.audio);
-      // FileType.audio: this opens the music app on ios and the file system on android
 
       if (result?.files.isEmpty ?? true) return false;
 

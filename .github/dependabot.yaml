@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    commit-message:
+      prefix: 'ci: TIO-84'
+    schedule:
+      interval: daily
+      time: '02:00'
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: pub
+    directory: /
+    commit-message:
+      prefix: 'fix: TIO-84'
+    schedule:
+      interval: daily
+      time: '03:00'
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 10
