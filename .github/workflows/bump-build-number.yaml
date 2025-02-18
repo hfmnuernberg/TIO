@@ -59,10 +59,11 @@ jobs:
     - name: Create new branch
       run: |
         BRANCH_NAME="bump-build-number-to-${{ steps.new_version.outputs.BUILD_NUMBER }}"
-        git checkout -b "$BRANCH_NAME"
+        git switch -c "$BRANCH_NAME"
         git add pubspec.yaml
-        git diff --staged --quiet && echo "⚠️ No changes detected."
+        git diff --staged
         git commit -m "ci: bump build number to ${{ steps.new_version.outputs.BUILD_NUMBER }}"
+        git diff origin/TIO-27_setup-pipeline-6
         git push origin "$BRANCH_NAME"
 
     - name: Create pull request
