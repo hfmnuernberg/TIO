@@ -56,22 +56,13 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git config --global user.name "GitHub Actions"
 
-    - name: Create new branch
-      run: |
-        BRANCH_NAME="bump-build-number-to-${{ steps.new_version.outputs.BUILD_NUMBER }}"
-        git switch -c "$BRANCH_NAME"
-        git add pubspec.yaml
-        git diff --staged
-        git commit -m "ci: bump build number to ${{ steps.new_version.outputs.BUILD_NUMBER }}"
-        git diff origin/TIO-27_setup-pipeline-6
-        git push origin "$BRANCH_NAME"
-
     - name: Create pull request
       id: create_pr
       uses: peter-evans/create-pull-request@v7.0.6
       with:
         base: TIO-27_setup-pipeline-6
         branch: bump-build-number-to-${{ steps.new_version.outputs.BUILD_NUMBER }}
+        commit-message: "ci: bump build number to ${{ steps.new_version.outputs.BUILD_NUMBER }}"
         title: "ci: bump build number to ${{ steps.new_version.outputs.BUILD_NUMBER }}"
         body: "Automated bump of build number from ${{ steps.old_version.outputs.BUILD_NUMBER }} to ${{ steps.new_version.outputs.BUILD_NUMBER }}."
         labels: "automated,ci"
