@@ -11,7 +11,7 @@ import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
-import 'package:tiomusic/widgets/number_input_int.dart';
+import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
 
 const double buttonWidth = 40;
@@ -26,7 +26,7 @@ class PlaySoundPage extends StatefulWidget {
 
 class _PlaySoundPageState extends State<PlaySoundPage> {
   int _octave = 4;
-  late NumberInputInt _octaveInput;
+  late NumberInputIntWithSlider _octaveInput;
 
   final ActiveReferenceSoundButton _buttonListener = ActiveReferenceSoundButton();
   bool _running = false;
@@ -37,20 +37,20 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   void initState() {
     super.initState();
 
-    _octaveInput = NumberInputInt(
-      maxValue: 7,
-      minValue: 1,
+    _octaveInput = NumberInputIntWithSlider(
+      max: 7,
+      min: 1,
       defaultValue: _octave,
-      countingValue: 1,
-      displayText: TextEditingController(),
+      step: 1,
+      controller: TextEditingController(),
       textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
-      descriptionText: "Octave",
+      label: "Octave",
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await TunerFunctions.stop();
 
-      _octaveInput.displayText.addListener(_onOctaveChanged);
+      _octaveInput.controller.addListener(_onOctaveChanged);
 
       _buttonListener.addListener(_onButtonsChanged);
     });
@@ -58,13 +58,12 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
   void _onOctaveChanged() {
     setState(() {
-      _octave = int.parse(_octaveInput.displayText.text);
+      _octave = int.parse(_octaveInput.controller.text);
     });
   }
 
   void _onButtonsChanged() async {
     if (_buttonListener.buttonOn) {
-      // start generator if not running
       if (!_running) {
         await TunerFunctions.startGenerator();
         _running = true;
@@ -80,12 +79,10 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         });
       }
 
-      // play sound
       if (_running) {
         generatorNoteOn(newFreq: _buttonListener.freq);
       }
     } else {
-      // stop sound
       generatorNoteOff();
     }
   }
@@ -144,7 +141,6 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   }
 }
 
-// class for the individual sound buttons
 class SoundButton extends StatefulWidget {
   final int midiNumber;
   final int idx;
@@ -172,7 +168,6 @@ class _SoundButtonState extends State<SoundButton> {
 
   @override
   Widget build(BuildContext context) {
-    // update the frequency on rebuild, in case the octave has changed
     if (widget.buttonListener.buttonOn) {
       generatorNoteOn(newFreq: midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
     }
@@ -183,12 +178,9 @@ class _SoundButtonState extends State<SoundButton> {
         return Listener(
           onPointerDown: (details) async {
             setState(() {
-              // if any button is on, turn it off
               if (widget.buttonListener.buttonOn) {
                 widget.buttonListener.turnOff();
 
-                // if clicked on the same button, do nothing
-                // if clicked on a different button, turn it on
                 if (widget.buttonListener.buttonIdx != widget.idx) {
                   widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
                 }

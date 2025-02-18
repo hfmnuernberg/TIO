@@ -1,11 +1,13 @@
 //Tap to Tempo: Measures the difference of taps to calculate the corresponding BPM number
 
-import 'package:flutter/material.dart';
-import 'package:collection/collection.dart';
-import 'package:tiomusic/util/color_constants.dart';
 import 'dart:async';
-import 'package:tiomusic/util/constants.dart';
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
+
+const int COOLDOWN_IN_MS = 3000;
+const int LERP_FRAME_LENGTH_IN_MS = 50;
 
 class Tap2Tempo extends StatefulWidget {
   final TextEditingController bpmHandle;
@@ -22,7 +24,7 @@ class _Tap2TempoState extends State<Tap2Tempo> {
   var _time2 = DateTime.now();
   var _bpmList = <int>[];
   bool _firstTap = true;
-  int _t2tColorLerpValue = MetronomeParams.t2tCooldownMs;
+  int _t2tColorLerpValue = COOLDOWN_IN_MS;
   late Timer? _t2tTimer;
 
   @override
@@ -59,9 +61,9 @@ class _Tap2TempoState extends State<Tap2Tempo> {
   void _tap2tempoColorLerpTimer() {
     _t2tTimer?.cancel();
     _t2tColorLerpValue = 0;
-    _t2tTimer = Timer.periodic(const Duration(milliseconds: MetronomeParams.t2tLerpFrameLengthMs), (timer) {
-      _t2tColorLerpValue = MetronomeParams.t2tLerpFrameLengthMs * timer.tick;
-      if (_t2tColorLerpValue >= MetronomeParams.t2tCooldownMs) {
+    _t2tTimer = Timer.periodic(const Duration(milliseconds: LERP_FRAME_LENGTH_IN_MS), (timer) {
+      _t2tColorLerpValue = LERP_FRAME_LENGTH_IN_MS * timer.tick;
+      if (_t2tColorLerpValue >= COOLDOWN_IN_MS) {
         timer.cancel();
         _firstTap = true;
       }
@@ -79,11 +81,10 @@ class _Tap2TempoState extends State<Tap2Tempo> {
     return TIOTextButton(
       text: "Tap to tempo",
       onTap: widget.enabled ? _tap2tempo : () {},
-      backgroundColor:
-          Color.lerp(ColorTheme.tertiary60, ColorTheme.surface, _t2tColorLerpValue / MetronomeParams.t2tCooldownMs),
+      backgroundColor: Color.lerp(ColorTheme.tertiary60, ColorTheme.surface, _t2tColorLerpValue / COOLDOWN_IN_MS),
       icon: const Icon(
         Icons.touch_app_outlined,
-        size: MetronomeParams.t2tButtonSize,
+        size: 40,
       ),
     );
   }
