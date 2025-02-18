@@ -10,3 +10,16 @@ jobs:
     secrets: inherit
     with:
       ref: ${{ github.sha }}
+
+  auto-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v4
+
+      - name: Merge PR
+        uses: ahmadnassri/action-dependabot-auto-merge@v2
+        with:
+          target: minor
+          # PAT scopes (Repository permissions): Read access to metadata, Read and Write access to content (code), commit statuses, deployments, and pull requests
+          github-token: ${{ secrets.DEPENDABOT_TOKEN }}
