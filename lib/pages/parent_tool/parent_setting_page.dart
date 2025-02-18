@@ -9,6 +9,7 @@ class ParentSettingPage extends StatefulWidget {
   final Widget? numberInput;
   final Widget? customWidget;
   final Widget? infoWidget;
+  final bool displayResetAtTop;
   final bool mustBeScrollable;
 
   final Function() confirm;
@@ -21,6 +22,7 @@ class ParentSettingPage extends StatefulWidget {
     this.numberInput,
     required this.confirm,
     required this.reset,
+    this.displayResetAtTop = false,
     this.cancel,
     this.customWidget,
     this.infoWidget,
@@ -49,7 +51,12 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
           ),
           backgroundColor: ColorTheme.primary92,
           body: widget.mustBeScrollable
-              ? SingleChildScrollView(child: isPortrait ? _buildPortrait() : _buildLandscape())
+              ? LayoutBuilder(builder: (BuildContext context, BoxConstraints viewportConstraints) {
+                  return SingleChildScrollView(
+                      child: ConstrainedBox(
+                          constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+                          child: isPortrait ? _buildPortrait() : _buildLandscape()));
+                })
               : isPortrait
                   ? _buildPortrait()
                   : _buildLandscape(),
@@ -63,10 +70,17 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        if (widget.displayResetAtTop) ...[
+          const SizedBox(height: 20.0),
+          TIOTextButton(text: "Reset", onTap: widget.reset),
+          const SizedBox(height: 20.0),
+        ],
         widget.numberInput ?? const SizedBox(),
         widget.customWidget ?? const SizedBox(),
-        const SizedBox(height: 20.0),
-        TIOTextButton(text: "Reset", onTap: widget.reset),
+        if (!widget.displayResetAtTop) ...[
+          const SizedBox(height: 20.0),
+          TIOTextButton(text: "Reset", onTap: widget.reset),
+        ],
         const SizedBox(height: 160.0),
       ],
     );

@@ -10,17 +10,18 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
+import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/edit_markers_page.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
-import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
-import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/pages/media_player/setting_bpm.dart';
 import 'package:tiomusic/pages/media_player/setting_pitch.dart';
-import 'package:tiomusic/pages/media_player/setting_trim.dart';
 import 'package:tiomusic/pages/media_player/setting_speed.dart';
+import 'package:tiomusic/pages/media_player/setting_trim.dart';
+import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
+import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
-import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -93,7 +94,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _project = Provider.of<Project>(context, listen: false);
     }
 
-    // only allow portrait mode for this tool
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -129,7 +129,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
         }
       }
 
-      // this return is to prevent the call of setState if user exits media player while isLoading
       if (!mounted) return;
       setState(() {
         _isLoading = false;
@@ -170,7 +169,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   void _createWalkthrough() {
-    // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyStartStop,
@@ -209,7 +207,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   void _createWalkthroughWaveformTip() {
-    // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyWaveform,
@@ -290,18 +287,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Expanded(
-              child:
-                  // stack for waveform and markers
-                  Stack(
+              child: Stack(
                 children: [
                   _isLoading
-                      // loading spinner
                       ? const Center(
                           child: CircularProgressIndicator(),
                         )
-                      :
-                      // waveform
-                      Padding(
+                      : Padding(
                           key: _keyWaveform,
                           padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
                           child: _isRecording
@@ -311,24 +303,19 @@ class _MediaPlayerState extends State<MediaPlayer> {
                                   child: CustomPaint(
                                       painter: _waveformVisualizer, size: Size(_waveFormWidth, waveformHeight))),
                         ),
-
-                  // markers
                   Stack(
                     children: _isRecording ? [] : _buildMarkers(),
                   ),
                 ],
               ),
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                // minus 10 sec button
                 TextButton(
                   onPressed: () => _jump10Seconds(false),
                   child: const Text("-10 sec"),
                 ),
-                // loop button
                 IconButton(
                   onPressed: () {
                     setState(() {
@@ -341,26 +328,20 @@ class _MediaPlayerState extends State<MediaPlayer> {
                       ? const Icon(Icons.all_inclusive, color: ColorTheme.tertiary)
                       : const Icon(Icons.all_inclusive, color: ColorTheme.surfaceTint),
                 ),
-                // plus 10 sec button
                 TextButton(
                   onPressed: () => _jump10Seconds(true),
                   child: const Text("+10 sec"),
                 ),
               ],
             ),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // small button space holder
                 const PlaceholderButton(buttonSize: TIOMusicParams.sizeSmallButtons),
-                // big button in the middle
                 _switchMainButton(_keyStartStop),
-                // small button on the right
                 _switchRightButton(),
               ],
             ),
-            // load audio file button
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TIOFlatButton(
@@ -410,8 +391,17 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
+          title: "Basic Beat",
+          subtitle: "${_mediaPlayerBlock.bpm} bpm",
+          leadingIcon: Icons.touch_app_outlined,
+          settingPage: const SetBPM(),
+          block: _mediaPlayerBlock,
+          callOnReturn: (value) => setState(() {}),
+        ),
+        SettingsTile(
           title: "Speed",
-          subtitle: "${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x",
+          subtitle:
+              "${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} bpm",
           leadingIcon: Icons.speed,
           settingPage: const SetSpeed(),
           block: _mediaPlayerBlock,
@@ -445,7 +435,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
     );
   }
 
-  // add only if not there yet
   void _addShareOptionToMenu() {
     if (!_menuItems.contains(_shareMenuButton)) {
       _menuItems.add(_shareMenuButton);
@@ -537,7 +526,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
     return markers;
   }
 
-  // jump to playback position on wave tap
   void _onWaveTap(TapDownDetails details) async {
     double relativeTapPosition = details.localPosition.dx / _waveFormWidth;
 
@@ -616,7 +604,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
     }
   }
 
-  // Start/Stop Playing
   void _togglePlaying() async {
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
@@ -654,14 +641,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
     if (mounted) setState(() => _isPlaying = false);
   }
 
-  // Start/Stop Recording
   Future<void> _toggleRecording() async {
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
 
-    // if we are not recording and if there is a file already loaded
     if (!_isRecording && _fileLoaded) {
-      // ask if we really want to record and override the loaded file
       final overrideFile = await askForOverridingFileOnRecordingStart(context);
       if (overrideFile == null || !overrideFile) {
         setState(() => _processingButtonClick = false);
@@ -715,7 +699,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _mediaPlayerBlock.relativePath = newRelativePath;
         if (mounted) {
           FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-          // open the recording because we stopped it by pressing the recording stop button
           setState(() => _isLoading = true);
 
           var fileExtension = _mediaPlayerBlock.getFileExtension();
@@ -785,7 +768,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
     });
   }
 
-  // Functions for the Timer Display while recording
   void _startRecordingTimer() {
     _recordingTimer = Timer.periodic(const Duration(seconds: 1), (_) => _setCountUp());
   }
