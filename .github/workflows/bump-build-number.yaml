@@ -14,8 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write
       actions: read
+      contents: write
+      pull-requests: write
 
     outputs:
       old_version: ${{ steps.old_version.outputs.OLD_VERSION }}
@@ -29,9 +30,6 @@ jobs:
       with:
         ref: main
         fetch-depth: 0
-
-    - name: Allow workflow to push changes
-      run: git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
 
     - name: Make scripts executable
       run: chmod +x ./scripts/versioning/*.sh
@@ -53,8 +51,33 @@ jobs:
         echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
         echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
-    - name: Commit and push changes
-      run: ./scripts/versioning/commit.sh
+    - name: Create new branch
+      run: |
+        BRANCH_NAME="bump-build-${{ github.run_id }}"
+        git checkout -b "$BRANCH_NAME"
+        git add pubspec.yaml
+        git commit -m "ci: bump build number to ${{ steps.new_version.outputs.BUILD_NUMBER }}"
+        git push origin "$BRANCH_NAME"
+
+    - name: Create pull request
+      id: create_pr
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: bump-build-${{ github.run_id }}
+        title: "ci: bump build number to ${{ steps.new_version.outputs.BUILD_NUMBER }}"
+        body: "Automated bump of build number from ${{ steps.old_version.outputs.BUILD_NUMBER }} to ${{ steps.new_version.outputs.BUILD_NUMBER }}."
+        labels: "automated,ci"
+        base: main
+        draft: false
+
+    - name: Auto-merge pull request
+      run: |
+        PR_URL=$(jq -r ".pull_request.html_url" <<< '${{ steps.create_pr.outputs.pull-request }}')
+        echo "Merging PR: $PR_URL"
+        gh pr merge --auto --squash --repo ${{ github.repository }} --head bump-build-${{ github.run_id }}
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create tag
       run: ./scripts/versioning/tag.sh
