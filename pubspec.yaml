@@ -17,7 +17,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 
 # this also needs to be changed in android/app/build.gradle for the android build to work
-version: 0.2.0+100000040
+version: 1.0.9+100000000
 
 environment:
     sdk: ">=3.6.1"
