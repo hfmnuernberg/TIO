@@ -30,8 +30,11 @@ jobs:
         ref: TIO-27_setup-pipeline
         fetch-depth: 0
 
-    - name: Setup GitHub PAT
+    - name: Allow workflow to push changes
       run: git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
+    - name: Make scripts executable
+      run: chmod +x ./scripts/versioning/*.sh
 
     - name: Load current version and build number
       id: old_version
