@@ -49,7 +49,6 @@ dependencies:
         path: rust_builder
     share_plus: 10.1.4
     stats: 2.1.0
-    test_cov_console: 0.2.2
     tonic: 0.2.5
     tutorial_coach_mark: 1.2.12
     url_launcher: 6.3.1
@@ -71,6 +70,7 @@ dev_dependencies:
     integration_test:
         sdk: flutter
     json_serializable: 6.9.3
+    test_cov_console: 0.2.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

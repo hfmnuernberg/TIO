@@ -1145,7 +1145,7 @@ packages:
     source: hosted
     version: "0.7.3"
   test_cov_console:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: test_cov_console
       sha256: "73519e8be3689d73f5cffb652c12c310acacf48379396d834da937094836e65e"

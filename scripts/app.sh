@@ -74,26 +74,9 @@ coverageMeasureRandom() { fluttervm test --coverage --test-randomize-ordering-se
 coverageOpen() { open coverage/html/index.html; }
 coveragePrint() { lcov --summary coverage/lcov.info; }
 coverageValidate() {
-  # Ensure a parameter is provided and it's a valid integer between 1 and 100
-  if [ -z "$2" ] || ! echo "$2" | grep -Eq '^[0-9]+$' || [ "$2" -lt 1 ] || [ "$2" -gt 100 ]; then
-    echo "Usage: $0 <integer between 1 and 100>"
-    exit 2
-  fi
-
-  pass_value="$2"
-  result=$(dartvm run test_cov_console --pass="$pass_value")
-
-  # Check the result and exit accordingly
-  if echo "$result" | grep -q "FAILED"; then
-    echo "Test coverage validation: FAILED"
-    exit 1
-  elif echo "$result" | grep -q "PASSED"; then
-    echo "Test coverage validation: PASSED"
-    exit 0
-  else
-    echo "Unexpected response: $result"
-    exit 2
-  fi
+  result=$(dartvm run test_cov_console --pass="$2")
+  echo "$result"
+  if echo "$result" | grep -q "PASSED"; then exit 0; else exit 1; fi
 }
 
 deleteLockFiles() {
