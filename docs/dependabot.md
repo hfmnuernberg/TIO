@@ -33,7 +33,7 @@ The token is only displayed once and can not be edited or viewed after creation.
 If you lose the token, you need to create a new one.
 
 
-## 2. Use the token as secret in your GutHub repository or as company secret
+## 2. Use the token as secret in your GitHub repository or as company secret
 
 1. Go to the repository where you want to enable auto-merging.
 2. Click on "Settings".
