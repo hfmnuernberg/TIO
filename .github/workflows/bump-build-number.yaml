@@ -51,6 +51,11 @@ jobs:
         echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
         echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
+    - name: Configure Git user
+      run: |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "GitHub Actions"
+
     - name: Create new branch
       run: |
         BRANCH_NAME="bump-build-${{ github.run_id }}"
@@ -80,7 +85,10 @@ jobs:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create tag
-      run: ./scripts/versioning/tag.sh
+      run: |
+        TAG="v${{ steps.new_version.outputs.VERSION }}+${{ steps.new_version.outputs.BUILD_NUMBER }}"
+        git tag "$TAG"
+        git push origin "$TAG"
 
     - name: Create summary
       run: echo "Bumped build number from ${{ steps.old_version.outputs.BUILD_NUMBER }} to ${{ steps.new_version.outputs.BUILD_NUMBER }}" >> $GITHUB_STEP_SUMMARY
