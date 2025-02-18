@@ -1,22 +1,19 @@
-// Number Input of type double consisting of +/- buttons and a manual input
-
+import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'dart:async';
-import 'dart:math';
-
 import 'package:tiomusic/util/shapes.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
 class NumberInputDouble extends StatefulWidget {
-  final double maxValue;
-  final double minValue;
+  final double max;
+  final double min;
   final double defaultValue;
-  final double countingValue;
-  final int countingIntervalMs;
-  final TextEditingController displayText;
-  final String descriptionText;
+  final double step;
+  final TextEditingController controller;
+  final int stepIntervalInMs;
+  final String label;
   final double buttonRadius;
   final double buttonGap;
   final double textFieldWidth;
@@ -26,20 +23,27 @@ class NumberInputDouble extends StatefulWidget {
 
   const NumberInputDouble({
     super.key,
-    required this.maxValue,
-    required this.minValue,
+    required this.max,
+    required this.min,
     required this.defaultValue,
-    required this.countingValue,
-    required this.displayText,
-    this.countingIntervalMs = 100,
-    this.descriptionText = '',
-    this.buttonRadius = 25,
-    this.buttonGap = 10,
-    this.textFieldWidth = 100,
-    this.textFontSize = 40,
-    this.relIconSize = 0.4,
-    this.allowNegativeNumbers = false,
-  });
+    required this.step,
+    required this.controller,
+    int? stepIntervalInMs,
+    String? label,
+    double? buttonRadius,
+    double? buttonGap,
+    double? textFieldWidth,
+    double? textFontSize,
+    double? relIconSize,
+    bool? allowNegativeNumbers,
+  })  : stepIntervalInMs = stepIntervalInMs ?? 100,
+        label = label ?? '',
+        buttonRadius = buttonRadius ?? 25,
+        buttonGap = buttonGap ?? 10,
+        textFieldWidth = textFieldWidth ?? 100,
+        textFontSize = textFontSize ?? 40,
+        relIconSize = relIconSize ?? 0.4,
+        allowNegativeNumbers = allowNegativeNumbers ?? false;
 
   @override
   State<NumberInputDouble> createState() => _NumberInputDoubleState();
@@ -53,26 +57,18 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   Timer? _increaseTimer;
   late int _maxDigitsLeft;
   late int _maxDigitsRight;
-  late int _sliderDivisions;
 
-  late double _sliderValue;
-
-  // Initialize variables
   @override
   void initState() {
     super.initState();
-    widget.displayText.value = widget.displayText.value.copyWith(text: widget.defaultValue.toString());
-    _valueController = TextEditingController(text: widget.defaultValue.toString());
+    _valueController = TextEditingController(
+        text: widget.controller.value.text.isEmpty ? widget.defaultValue.toString() : widget.controller.value.text);
 
     _calcMaxDigits();
 
-    _sliderDivisions = (widget.maxValue - widget.minValue) ~/ widget.countingValue;
-    _sliderValue = widget.defaultValue;
-
-    widget.displayText.addListener(_onExternalChange);
+    widget.controller.addListener(_onExternalChange);
   }
 
-  // Dispose variables
   @override
   void dispose() {
     _decreaseTimer?.cancel();
@@ -80,16 +76,14 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
     super.dispose();
   }
 
-  // Handle external changes of the displayed text
   void _onExternalChange() {
-    _validateInput(widget.displayText.value.text);
+    _validateInput(widget.controller.value.text);
   }
 
-  // Calculate the maximum number of digits on the display according to maximum and minimum value
   void _calcMaxDigits() {
-    String countingValueString = widget.countingValue.toString();
-    String maxValueString = widget.maxValue.toString();
-    String minValueString = widget.minValue.toString();
+    String countingValueString = widget.step.toString();
+    String maxValueString = widget.max.toString();
+    String minValueString = widget.min.toString();
 
     int maxDigitsLeftMin =
         (minValueString.contains('.') ? minValueString.split('.')[0].length : minValueString.length) -
@@ -101,59 +95,52 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
     _maxDigitsRight = countingValueString.contains('.') ? countingValueString.split('.')[1].length : 0;
   }
 
-  // Decrease the currently displayed value
   void _decreaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value.copyWith(
-          text: (double.parse(_valueController.value.text) - widget.countingValue).toStringAsFixed(_maxDigitsRight));
+      _valueController.value = _valueController.value
+          .copyWith(text: (double.parse(_valueController.value.text) - widget.step).toStringAsFixed(_maxDigitsRight));
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
   }
 
-  // Increase the currently displayed value
   void _increaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value.copyWith(
-          text: (double.parse(_valueController.value.text) + widget.countingValue).toStringAsFixed(_maxDigitsRight));
+      _valueController.value = _valueController.value
+          .copyWith(text: (double.parse(_valueController.value.text) + widget.step).toStringAsFixed(_maxDigitsRight));
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
   }
 
-  // Looped decrease
   void _startDecreaseTimer() {
-    _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
+    _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.stepIntervalInMs), (timer) {
       _decreaseValue();
     });
   }
 
-  // Looped increase
   void _startIncreaseTimer() {
-    _increaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
+    _increaseTimer = Timer.periodic(Duration(milliseconds: widget.stepIntervalInMs), (timer) {
       _increaseValue();
     });
   }
 
-  // Stop looped decrease
   void _endDecreaseTimer() {
     _decreaseTimer?.cancel();
   }
 
-  // Stop looped increase
   void _endIncreaseTimer() {
     _increaseTimer?.cancel();
   }
 
-  // Check if plus and minus buttons should be active or inactive
   void _manageButtonActivity(String input) {
     if (input != '' && input != '-' && input != '.' && input != '-.') {
-      if (double.parse(input) <= widget.minValue) {
+      if (double.parse(input) <= widget.min) {
         _isMinusButtonActive = false;
       } else {
         _isMinusButtonActive = true;
       }
-      if (double.parse(input) >= widget.maxValue) {
+      if (double.parse(input) >= widget.max) {
         _isPlusButtonActive = false;
       } else {
         _isPlusButtonActive = true;
@@ -162,7 +149,6 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
     setState(() {});
   }
 
-  // Check if submitted input is valid
   void _validateInput(String input) {
     if (input != '' && input != '-' && input != '.' && input != '-.') {
       if (input[0] == '.') {
@@ -172,38 +158,33 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
           input = '-0${input.substring(1)}';
         }
       }
-      // Check for min/max values
-      if (double.parse(input) < widget.minValue) {
-        input = widget.minValue.toString();
+      if (double.parse(input) < widget.min) {
+        input = widget.min.toString();
       } else {
-        if (double.parse(input) > widget.maxValue) {
-          input = widget.maxValue.toString();
+        if (double.parse(input) > widget.max) {
+          input = widget.max.toString();
         }
       }
     } else {
-      // Set default value when input is empty
       input = widget.defaultValue.toString();
     }
     _valueController.value = _valueController.value.copyWith(text: input);
-    widget.displayText.value = widget.displayText.value.copyWith(text: input);
-    _sliderValue = double.parse(input);
+    widget.controller.value = widget.controller.value.copyWith(text: input);
     setState(() {});
   }
 
-  // Main build
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Minus button
             GestureDetector(
               onLongPress: _startDecreaseTimer,
               onLongPressUp: _endDecreaseTimer,
               child: TIOFlatButton(
+                semanticLabel: 'Minus button',
                 onPressed:
                     (_valueController.value.text == '') ? () {} : (_isMinusButtonActive ? _decreaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
@@ -218,39 +199,37 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
               ),
             ),
             SizedBox(width: widget.buttonGap),
-            // Text display
             SizedBox(
               width: widget.textFieldWidth,
               child: Focus(
-                child: TextFormField(
-                  controller: _valueController,
-                  keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers, decimal: true),
-                  inputFormatters: <TextInputFormatter>[
-                    // Allow only positive and negative doubles
-                    FilteringTextInputFormatter.allow(RegExp(r'^-?(\d{0,' +
-                        _maxDigitsLeft.toString() +
-                        r'})[.,]?(\d{0,' +
-                        _maxDigitsRight.toString() +
-                        r'})')),
-
-                    ConvertSemicolonToDot(),
-
-                    // Delete leading zeros and zeros between sign and number
-                    DeleteLeadingZeros(),
-                  ],
-                  decoration: const InputDecoration(
-                    enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                    counterText: '',
+                child: Semantics(
+                  label: '${widget.label} input',
+                  child: TextFormField(
+                    controller: _valueController,
+                    keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers, decimal: true),
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(RegExp(r'^-?(\d{0,' +
+                          _maxDigitsLeft.toString() +
+                          r'})[.,]?(\d{0,' +
+                          _maxDigitsRight.toString() +
+                          r'})')),
+                      ConvertSemicolonToDot(),
+                      DeleteLeadingZeros(),
+                    ],
+                    decoration: const InputDecoration(
+                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                      counterText: '',
+                    ),
+                    style: TextStyle(fontSize: widget.textFontSize, color: ColorTheme.primary),
+                    textAlign: TextAlign.center,
+                    onChanged: (value) {
+                      _manageButtonActivity(value);
+                    },
+                    onFieldSubmitted: (value) {
+                      _validateInput(value);
+                    },
                   ),
-                  style: TextStyle(fontSize: widget.textFontSize, color: ColorTheme.primary),
-                  textAlign: TextAlign.center,
-                  onChanged: (value) {
-                    _manageButtonActivity(value);
-                  },
-                  onFieldSubmitted: (value) {
-                    _validateInput(value);
-                  },
                 ),
                 onFocusChange: (hasFocus) {
                   if (hasFocus) {
@@ -266,11 +245,11 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
               ),
             ),
             SizedBox(width: widget.buttonGap),
-            // Plus button
             GestureDetector(
               onLongPress: _startIncreaseTimer,
               onLongPressUp: _endIncreaseTimer,
               child: TIOFlatButton(
+                semanticLabel: 'Plus button',
                 onPressed: (_valueController.value.text == '') ? () {} : (_isPlusButtonActive ? _increaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,
@@ -285,33 +264,12 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
             ),
           ],
         ),
-        Text(widget.descriptionText, style: const TextStyle(color: ColorTheme.primary)),
-        // slider
-        Padding(
-          padding: const EdgeInsets.only(top: 40),
-          child: Slider(
-            value: _sliderValue,
-            inactiveColor: ColorTheme.primary80,
-            min: widget.minValue,
-            max: widget.maxValue,
-            divisions: _sliderDivisions,
-            label: _valueController.text,
-            onChanged: (newValue) {
-              setState(() {
-                _sliderValue = double.parse(newValue.toStringAsFixed(1));
-                _manageButtonActivity(_sliderValue.toString());
-                _valueController.value = _valueController.value.copyWith(text: _sliderValue.toString());
-                _validateInput(_valueController.text);
-              });
-            },
-          ),
-        ),
+        Text(widget.label, style: const TextStyle(color: ColorTheme.primary)),
       ],
     );
   }
 }
 
-// Custom TextInputFormatter to delete leading zeros with and without a sign
 class DeleteLeadingZeros extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
