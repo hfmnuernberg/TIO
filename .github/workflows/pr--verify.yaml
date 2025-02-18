@@ -22,4 +22,4 @@ jobs:
         with:
           target: minor
           # PAT scopes (Repository permissions): Read access to metadata, Read and Write access to content (code), commit statuses, deployments, and pull requests
-          github-token: ${{ secrets.DEPENDABOT_TOKEN }}
+          github-token: ${{ secrets.DEPENDABOT_PAT }}
