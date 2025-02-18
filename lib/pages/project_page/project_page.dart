@@ -5,6 +5,7 @@ import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/pages/project_page/export_project_dialog.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -39,6 +40,7 @@ class _ProjectPageState extends State<ProjectPage> {
   late Project _project;
   bool _withoutProject = false;
 
+  final List<MenuItemButton> _menuItems = List.empty(growable: true);
   final TextEditingController _titleController = TextEditingController();
 
   final Walkthrough _walkthrough = Walkthrough();
@@ -47,6 +49,31 @@ class _ProjectPageState extends State<ProjectPage> {
   @override
   void initState() {
     super.initState();
+
+    _menuItems.add(
+      MenuItemButton(
+        onPressed: () async {
+          bool? deleteBlock = await _deleteBlock(deleteAll: true);
+          if (deleteBlock != null && deleteBlock) {
+            if (context.mounted) {
+              _project.clearBlocks(context.read<ProjectLibrary>());
+              FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+              setState(() {});
+            }
+          }
+        },
+        child: const Text("Delete all Tools", style: TextStyle(color: ColorTheme.primary)),
+      ),
+    );
+    _menuItems.add(
+      MenuItemButton(
+        onPressed: () => showDialog<bool>(
+          context: context,
+          builder: (context) => ExportProjectDialog(),
+        ),
+        child: const Text("Export Project", style: TextStyle(color: ColorTheme.primary)),
+      ),
+    );
 
     _withoutProject = widget.withoutRealProject;
 
@@ -83,7 +110,6 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   void _createWalkthrough() {
-    // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyChangeTitle,
@@ -104,29 +130,29 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   Future<bool?> _deleteBlock({bool deleteAll = false}) => showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("Delete?", style: TextStyle(color: ColorTheme.primary)),
-          content: deleteAll
-              ? const Text("Do you really want to delete all tools in this project?",
-                  style: TextStyle(color: ColorTheme.primary))
-              : const Text("Do you really want to delete this tool?", style: TextStyle(color: ColorTheme.primary)),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: const Text("No")),
-            TIOFlatButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              text: "Yes",
-              boldText: true,
-            ),
-          ],
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Delete?", style: TextStyle(color: ColorTheme.primary)),
+      content: deleteAll
+          ? const Text("Do you really want to delete all tools in this project?",
+              style: TextStyle(color: ColorTheme.primary))
+          : const Text("Do you really want to delete this tool?", style: TextStyle(color: ColorTheme.primary)),
+      actions: [
+        TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: const Text("No")),
+        TIOFlatButton(
+          onPressed: () {
+            Navigator.of(context).pop(true);
+          },
+          text: "Yes",
+          boldText: true,
         ),
-      );
+      ],
+    ),
+  );
 
   void _createBlockAndGoToTool(BlockTypeInfo info, String blockTitle) {
     if (_withoutProject) {
@@ -180,18 +206,21 @@ class _ProjectPageState extends State<ProjectPage> {
         backgroundColor: ColorTheme.surfaceBright,
         foregroundColor: ColorTheme.primary,
         actions: [
-          IconButton(
-              onPressed: () async {
-                bool? deleteBlock = await _deleteBlock(deleteAll: true);
-                if (deleteBlock != null && deleteBlock) {
-                  if (context.mounted) {
-                    _project.clearBlocks(context.read<ProjectLibrary>());
-                    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-                    setState(() {});
-                  }
-                }
-              },
-              icon: const Icon(Icons.delete_outlined)),
+          MenuAnchor(
+            builder: (BuildContext context, MenuController controller, Widget? child) {
+              return IconButton(
+                onPressed: () {
+                  controller.isOpen ? controller.close() : controller.open();
+                },
+                icon: const Icon(Icons.more_vert),
+              );
+            },
+            style: const MenuStyle(
+              backgroundColor: WidgetStatePropertyAll(ColorTheme.surface),
+              elevation: WidgetStatePropertyAll(0.0),
+            ),
+            menuChildren: _menuItems,
+          ),
         ],
       ),
       body: Stack(
