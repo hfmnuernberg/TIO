@@ -3,7 +3,7 @@ name: Bump Build Number
 on:
   push:
     branches:
-    - main
+    - TIO-27_setup-pipeline-6
     paths-ignore:
     - docs/**
     - README.md
@@ -28,7 +28,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4.2.2
       with:
-        ref: main
+        ref: TIO-27_setup-pipeline-6
         fetch-depth: 0
 
     - name: Make scripts executable
@@ -61,6 +61,7 @@ jobs:
         BRANCH_NAME="bump-build-${{ github.run_id }}"
         git checkout -b "$BRANCH_NAME"
         git add pubspec.yaml
+        git diff --staged --quiet && echo "⚠️ No changes detected."
         git commit -m "ci: bump build number to ${{ steps.new_version.outputs.BUILD_NUMBER }}"
         git push origin "$BRANCH_NAME"
 
@@ -73,7 +74,7 @@ jobs:
         title: "ci: bump build number to ${{ steps.new_version.outputs.BUILD_NUMBER }}"
         body: "Automated bump of build number from ${{ steps.old_version.outputs.BUILD_NUMBER }} to ${{ steps.new_version.outputs.BUILD_NUMBER }}."
         labels: "automated,ci"
-        base: main
+        base: TIO-27_setup-pipeline-6
         draft: false
         delete-branch: true
         committer: "GitHub Actions <actions@github.com>"
