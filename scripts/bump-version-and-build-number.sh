@@ -21,7 +21,7 @@ VERSION=$(git describe --tags --abbrev=0 | sed 's/^v//')
 COMMITS_SINCE_LAST_TAG=$(git rev-list --count HEAD)
 
 # Extract current build number from pubspec.yaml
-CURRENT_BUILD_NUMBER=$(grep -oP '^version: [0-9]+\.[0-9]+\.[0-9]+\+\K[0-9]+' pubspec.yaml)
+CURRENT_BUILD_NUMBER=$(awk -F'[:+]' '/^version:/ {print $3}' pubspec.yaml | tr -d ' ')
 
 # Ensure build number is always increasing
 BUILD_NUMBER=$((MIN_BUILD_NUMBER + COMMITS_SINCE_LAST_TAG))
