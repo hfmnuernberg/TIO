@@ -73,6 +73,28 @@ coverageMeasure() { fluttervm test --coverage test; }
 coverageMeasureRandom() { fluttervm test --coverage --test-randomize-ordering-seed random test; }
 coverageOpen() { open coverage/html/index.html; }
 coveragePrint() { lcov --summary coverage/lcov.info; }
+coverageValidate() {
+  # Ensure a parameter is provided and it's a valid integer between 1 and 100
+  if [ -z "$2" ] || ! echo "$2" | grep -Eq '^[0-9]+$' || [ "$2" -lt 1 ] || [ "$2" -gt 100 ]; then
+    echo "Usage: $0 <integer between 1 and 100>"
+    exit 2
+  fi
+
+  pass_value="$2"
+  result=$(dartvm run test_cov_console --pass="$pass_value")
+
+  # Check the result and exit accordingly
+  if echo "$result" | grep -q "FAILED"; then
+    echo "Test coverage validation: FAILED"
+    exit 1
+  elif echo "$result" | grep -q "PASSED"; then
+    echo "Test coverage validation: PASSED"
+    exit 0
+  else
+    echo "Unexpected response: $result"
+    exit 2
+  fi
+}
 
 deleteLockFiles() {
   rm pubspec.lock
@@ -194,6 +216,7 @@ help() {
   echo 'coverage:measure:random                       - run all tests in random order and measure test coverage'
   echo 'coverage:open                                 - open test coverage report from previous test run'
   echo 'coverage:print                                - print test coverage report from previous test run to console'
+  echo 'coverage:validate <integer>                   - validates the total test coverage against the given threshold'
   echo 'delete:lock                                   - delete lock files'
   echo 'doctor                                        - run flutter doctor'
   echo 'format                                        - format code'
@@ -236,6 +259,7 @@ if [ "$1" = 'coverage:measure' ]; then coverageMeasure; exit; fi
 if [ "$1" = 'coverage:measure:random' ]; then coverageMeasureRandom; exit; fi
 if [ "$1" = 'coverage:open' ]; then coverageOpen; exit; fi
 if [ "$1" = 'coverage:print' ]; then coveragePrint; exit; fi
+if [ "$1" = 'coverage:validate' ]; then coverageValidate "$@"; exit; fi
 if [ "$1" = 'delete:lock' ]; then deleteLockFiles; exit; fi
 if [ "$1" = 'doctor' ]; then doctor; exit; fi
 if [ "$1" = 'format' ]; then format; exit; fi
