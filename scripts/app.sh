@@ -36,26 +36,16 @@ build() {
     exit 1
   fi
 
-  if [ -z "$5" ]; then MODE='debug'; else MODE="$5"; fi
+  if [ -z "$3" ]; then MODE='debug'; else MODE="$3"; fi
 
   echo "Building app for platform: '$PLATFORM' with mode: '$MODE' ..."
 
-  if [ "$PLATFORM" = 'ios' ]; then
-    set -x
-    fluttervm build ipa \
-        --target lib/main.dart \
-        --build-number 1
-    set +x
-  fi
+  if [ "$PLATFORM" = 'ios' ]; then BUILD_COMMAND='ipa'; fi
+  if [ "$PLATFORM" = 'android' ]; then BUILD_COMMAND='appbundle'; fi
 
-  if [ "$PLATFORM" = 'android' ]; then
-    set -x
-    fluttervm build appbundle \
-        --target lib/main.dart \
-        --build-number 1 \
-        "--$MODE"
-    set +x
-  fi
+  set -x
+  fluttervm build "$BUILD_COMMAND" --target lib/main.dart "--$MODE"
+  set +x
 }
 
 clean() {

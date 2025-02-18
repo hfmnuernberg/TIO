@@ -78,11 +78,8 @@ jobs:
           subdirectory: ios
 
       - name: Build bundle
-        run: |
-          flutter build ipa \
-          --target lib/main.dart \
+        run: scripts/app.sh build android release
           --export-options-plist ios/export-options.plist \
-          --build-number $((0+$GITHUB_RUN_NUMBER))
 
       - name: Save bundle
         uses: actions/upload-artifact@v4.6.0

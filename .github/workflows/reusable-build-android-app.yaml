@@ -84,10 +84,7 @@ jobs:
           encodedString: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_JKS }}
 
       - name: Build bundle
-        run: |
-          flutter build appbundle \
-          --target lib/main.dart \
-          --build-number $((0+$GITHUB_RUN_NUMBER))
+        run: scripts/app.sh build android release
 
       - name: Save bundle
         uses: actions/upload-artifact@v4.6.0
