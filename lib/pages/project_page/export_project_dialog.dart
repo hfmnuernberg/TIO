@@ -20,7 +20,7 @@ class ExportProjectDialog extends StatelessWidget {
     final file = File(filePath);
     final projectLibrary = context.read<ProjectLibrary>();
 
-    Map<String, dynamic> jsonData = projectLibrary.toJson();
+    Map<String, dynamic> jsonData = projectLibrary.projects.first.toJson();
     String jsonString = jsonEncode(jsonData);
 
     await file.writeAsString(jsonString);

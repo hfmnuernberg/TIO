@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
@@ -23,14 +22,10 @@ class ImportProjectDialog extends StatelessWidget {
       try {
         String jsonString = await file.readAsString();
         Map<String, dynamic> jsonData = jsonDecode(jsonString);
-        Project project = ProjectLibrary.fromJson(jsonData).projects[0];
+        Project project = Project.fromJson(jsonData);
 
         final projectLibrary = context.read<ProjectLibrary>();
         projectLibrary.addProject(project);
-
-        if (context.mounted) {
-          FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-        }
 
         showSnackbar(context: context, message: 'Project file imported successfully!')();
 
