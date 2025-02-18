@@ -2,13 +2,9 @@ name: Pipeline
 
 on:
   push:
-    branches:
-      - TIO-27_setup-pipeline
-    paths-ignore:
-      - docs/**
-      - README.md
+    tags:
+    - '*'
   workflow_dispatch:
-  workflow_call:
 
 #concurrency:
 #  group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,47 +18,38 @@ jobs:
     with:
       ref: ${{ github.sha }}
 
-  update-version:
-    name: Update version
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-update-version.yaml@TIO-27_setup-pipeline
-    secrets: inherit
-    with:
-      ref: ${{ github.sha }}
-
-  build-ios-app:
-    needs: [update-version]
-    name: Build iOS App
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-ios-app.yaml@TIO-27_setup-pipeline
-    secrets: inherit
-    with:
-      ref: ${{ github.sha }}
-      artifactName: ios-${{ github.sha }}-${{ github.run_number }}
-      appIdentifier: 6477820301
-
-  build-android-app:
-    needs: [update-version]
-    name: Build Android App
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-android-app.yaml@TIO-27_setup-pipeline
-    secrets: inherit
-    with:
-      ref: ${{ github.sha }}
-      artifactName: android-${{ github.sha }}-${{ github.run_number }}
-
-  upload-ios-app:
-    needs: [verify, build-ios-app]
-    name: Upload iOS App
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-ios-app.yaml@TIO-27_setup-pipeline
-    secrets: inherit
-    with:
-      ref: ${{ github.sha }}
-      artifactName: ios-${{ github.sha }}-${{ github.run_number }}
-
-  upload-android-app:
-    needs: [verify, build-android-app]
-    name: Upload Android App
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-android-app.yaml@TIO-27_setup-pipeline
-    secrets: inherit
-    with:
-      ref: ${{ github.sha }}
-      artifactName: android-${{ github.sha }}-${{ github.run_number }}
-      googlePlayStoreUrl: 'https://play.google.com/apps/test/com.studiofluffy.tonica/'
+#  build-ios-app:
+#    name: Build iOS App
+#    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-ios-app.yaml@TIO-27_setup-pipeline
+#    secrets: inherit
+#    with:
+#      ref: ${{ github.sha }}
+#      artifactName: ios-${{ github.sha }}-${{ github.run_number }}
+#      appIdentifier: 6477820301
+#
+#  build-android-app:
+#    name: Build Android App
+#    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-android-app.yaml@TIO-27_setup-pipeline
+#    secrets: inherit
+#    with:
+#      ref: ${{ github.sha }}
+#      artifactName: android-${{ github.sha }}-${{ github.run_number }}
+#
+#  upload-ios-app:
+#    needs: [verify, build-ios-app]
+#    name: Upload iOS App
+#    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-ios-app.yaml@TIO-27_setup-pipeline
+#    secrets: inherit
+#    with:
+#      ref: ${{ github.sha }}
+#      artifactName: ios-${{ github.sha }}-${{ github.run_number }}
+#
+#  upload-android-app:
+#    needs: [verify, build-android-app]
+#    name: Upload Android App
+#    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-android-app.yaml@TIO-27_setup-pipeline
+#    secrets: inherit
+#    with:
+#      ref: ${{ github.sha }}
+#      artifactName: android-${{ github.sha }}-${{ github.run_number }}
+#      googlePlayStoreUrl: 'https://play.google.com/apps/test/com.studiofluffy.tonica/'

@@ -1,0 +1,60 @@
+name: Bump Build Number
+
+on:
+  push:
+    branches:
+    - TIO-27_setup-pipeline
+    paths-ignore:
+    - docs/**
+    - README.md
+  workflow_dispatch:
+
+jobs:
+  bump-build-number:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      actions: read
+
+    outputs:
+      old_version: ${{ steps.old_version.outputs.OLD_VERSION }}
+      old_build_number: ${{ steps.old_version.outputs.OLD_BUILD_NUMBER }}
+      new_version: ${{ steps.new_version.outputs.NEW_VERSION }}
+      new_build_number: ${{ steps.new_version.outputs.NEW_BUILD_NUMBER }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.2.2
+      with:
+        ref: TIO-27_setup-pipeline
+        fetch-depth: 0
+
+    - name: Setup GitHub PAT
+      run: git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+
+    - name: Load current version and build number
+      id: old_version
+      run: |
+        source ./scripts/versioning/load.sh
+        echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+        echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+
+    - name: Increment build number
+      run: ./scripts/versioning/bump-build-number.sh
+
+    - name: Load updated version and build number
+      id: new_version
+      run: |
+        source ./scripts/versioning/load.sh
+        echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+        echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+
+    - name: Commit and push changes
+      run: ./scripts/versioning/commit.sh
+
+    - name: Create tag
+      run: ./scripts/versioning/tag.sh
+
+    - name: Create summary
+      run: echo "Bumped build number from ${{ steps.old_version.outputs.BUILD_NUMBER }} to ${{ steps.new_version.outputs.BUILD_NUMBER }}" >> $GITHUB_STEP_SUMMARY

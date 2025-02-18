@@ -10,7 +10,7 @@ PUBSPEC_FILE=pubspec.yaml
 
 echo "⚙️ Updating version in $PUBSPEC_FILE with latest Git tag..."
 
-source ./scripts/version-and-build-number/load.sh
+source ./scripts/versioning/load.sh
 
 echo "ℹ️️Current version: $VERSION"
 
@@ -21,7 +21,7 @@ if [ -z "$NEW_VERSION" ]; then echo "❌️ No Git tags found!"; exit 1; fi
 
 echo "ℹ️️New version: $NEW_VERSION"
 
-# Update pubspec file safely considering if current OS is macOS or not
+# Update pubspec safely considering if current OS is macOS or not
 if [ "$(uname)" = "Darwin" ]; then
     sed -i '' "s/^version: .*/version: $NEW_VERSION+$BUILD_NUMBER/" "$PUBSPEC_FILE"
 else
