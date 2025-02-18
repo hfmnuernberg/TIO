@@ -66,6 +66,7 @@ For more information on this project check out the (german) [Homepage](https://w
 - [Development](#development)
 - [Build for iOS](#build-for-ios)
 - [Build for Android](#build-for-android)
+- [Create a PAT for Dependabot and enable auto merge](docs/enable-dependabot-auto-merge.md)
 
 ## How does it work?
 
