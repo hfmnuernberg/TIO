@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     commit-message:
-      prefix: 'ci'
+      prefix: 'ci: TIO-84'
     schedule:
       interval: daily
       time: '02:00'
@@ -13,7 +13,7 @@ updates:
   - package-ecosystem: pub
     directory: /
     commit-message:
-      prefix: 'fix'
+      prefix: 'fix: TIO-84'
     schedule:
       interval: daily
       time: '03:00'
