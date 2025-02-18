@@ -59,10 +59,10 @@ To enable auto-merging of pull requests you have to set up a step in your pipeli
     runs-on: ubuntu-latest
     steps:
       - name: Clone project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: Merge PR
-        uses: ahmadnassri/action-dependabot-auto-merge@v2
+        uses: ahmadnassri/action-dependabot-auto-merge@v2.6.6
         with:
           target: minor
           # PAT scopes (Repository permissions): Read access to metadata, Read and Write access to content (code), commit statuses, deployments, and pull requests
