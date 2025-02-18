@@ -67,8 +67,8 @@ class TIOTextButton extends StatelessWidget {
     var style = ElevatedButton.styleFrom(
       elevation: elevation,
       backgroundColor: backgroundColor ?? ColorTheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(MetronomeParams.t2tCornerRadius)),
-      padding: const EdgeInsets.all(MetronomeParams.t2tButtonPadding),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      padding: const EdgeInsets.all(20),
     );
 
     return icon == null
@@ -92,6 +92,7 @@ class TIOFlatButton extends StatelessWidget {
   final Function()? onPressed;
   final bool boldText;
   final ButtonStyle? customStyle;
+  final String? semanticLabel;
 
   const TIOFlatButton({
     super.key,
@@ -100,6 +101,7 @@ class TIOFlatButton extends StatelessWidget {
     required this.onPressed,
     this.boldText = false,
     this.customStyle,
+    this.semanticLabel,
   });
 
   @override
@@ -111,10 +113,13 @@ class TIOFlatButton extends StatelessWidget {
       child = icon!;
     }
 
-    return ElevatedButton(
-      style: customStyle ?? ElevatedButton.styleFrom(elevation: 0, backgroundColor: ColorTheme.surface),
-      onPressed: onPressed,
-      child: child,
+    return Semantics(
+      label: semanticLabel,
+      child: ElevatedButton(
+        style: customStyle ?? ElevatedButton.styleFrom(elevation: 0, backgroundColor: ColorTheme.surface),
+        onPressed: onPressed,
+        child: child,
+      ),
     );
   }
 }
