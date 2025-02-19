@@ -40,11 +40,17 @@ build() {
 
   echo "Building app for platform: '$PLATFORM' with mode: '$MODE' ..."
 
+  if [ "$PLATFORM" = 'ios' ]; then EXPORT_OPTIONS_ARG='--export-options-plist'; fi
+  if [ "$PLATFORM" = 'ios' ]; then EXPORT_OPTIONS_VAL='ios/export-options.plist'; fi
+
   if [ "$PLATFORM" = 'ios' ]; then BUILD_COMMAND='ipa'; fi
   if [ "$PLATFORM" = 'android' ]; then BUILD_COMMAND='appbundle'; fi
 
   set -x
-  fluttervm build "$BUILD_COMMAND" --target lib/main.dart "--$MODE"
+  fluttervm build "$BUILD_COMMAND" \
+    --target lib/main.dart \
+    "$EXPORT_OPTIONS_ARG" "$EXPORT_OPTIONS_VAL" \
+    "--$MODE"
   set +x
 }
 

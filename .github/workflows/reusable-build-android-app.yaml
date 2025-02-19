@@ -21,7 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4.2.2
         with:
-          ref: ${{github.event.after}}
+          ref: ${{ inputs.ref }}
 
       - name: Setup Java
         uses: actions/setup-java@v4.7.0
@@ -82,6 +82,9 @@ jobs:
           fileName: 'upload.keystore.jks'
           fileDir: './android/app/keystore'
           encodedString: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_JKS }}
+
+      - name: Prepare version
+        run: scripts/update-version-and-build-number-in-pubspec-with-latest-tag.sh
 
       - name: Build bundle
         run: scripts/app.sh build android release

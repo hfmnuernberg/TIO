@@ -77,9 +77,11 @@ jobs:
           lane: get_certs_and_profiles
           subdirectory: ios
 
+      - name: Prepare version
+        run: scripts/update-version-and-build-number-in-pubspec-with-latest-tag.sh
+
       - name: Build bundle
-        run: scripts/app.sh build android release
-          --export-options-plist ios/export-options.plist \
+        run: scripts/app.sh build ios release
 
       - name: Save bundle
         uses: actions/upload-artifact@v4.6.0
