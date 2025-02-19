@@ -35,6 +35,9 @@ IconData getVolumeInfoIconData(VolumeLevel volumeLevel) {
   }
 }
 
+Icon getVolumeInfoIcon(VolumeLevel volumeLevel) =>
+    Icon(getVolumeInfoIconData(volumeLevel), color: getVolumeInfoIconColor(volumeLevel));
+
 String getVolumeInfoText(VolumeLevel volumeLevel) {
   switch (volumeLevel) {
     case VolumeLevel.muted:
@@ -45,19 +48,3 @@ String getVolumeInfoText(VolumeLevel volumeLevel) {
       return 'If you struggle to hear the metronome in your current environment, consider connecting your device to an external speaker (e.g., via Bluetooth).';
   }
 }
-
-Icon getVolumeInfoIcon(VolumeLevel volumeLevel) =>
-    Icon(getVolumeInfoIconData(volumeLevel), color: getVolumeInfoIconColor(volumeLevel));
-
-Text getSnackbarTextContent(VolumeLevel volumeLevel) => Text(getVolumeInfoText(volumeLevel));
-
-showSnackbar({
-  required BuildContext context,
-  required VolumeLevel volumeLevel,
-}) =>
-    () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: getSnackbarTextContent(volumeLevel),
-          duration: const Duration(seconds: 5),
-          backgroundColor: ColorTheme.surfaceTint,
-          behavior: SnackBarBehavior.floating,
-        ));
