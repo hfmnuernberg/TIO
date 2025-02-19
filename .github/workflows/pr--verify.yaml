@@ -15,8 +15,7 @@ jobs:
   auto-merge:
     runs-on: ubuntu-latest
     permissions:
-      metadata: read
-      commit-statuses: write
+      statuses: write
       contents: write
       deployments: write
       pull-requests: write
