@@ -10,7 +10,7 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 set +e
-TAG=$(git describe --tags --abbrev=0  2>/dev/null || echo "")
+TAG=$(git tag --sort=-creatordate | head -n 1)
 set -e
 
 if [ -z "$TAG" ]; then
