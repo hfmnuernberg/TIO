@@ -16,15 +16,15 @@ jobs:
     uses: hfmnuernberg/TIO/.github/workflows/reusable-verify.yaml@main
     secrets: inherit
     with:
-      ref: ${{ github.sha }}
+      ref: ${{ github.ref }}
 
 #  build-ios-app:
 #    name: Build iOS App
 #    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-ios-app.yaml@main
 #    secrets: inherit
 #    with:
-#      ref: ${{ github.sha }}
-#      artifactName: ios-${{ github.sha }}-${{ github.run_number }}
+#      ref: ${{ github.ref }}
+#      artifactName: ios-${{ github.ref }}-${{ github.run_number }}
 #      appIdentifier: 6477820301
 #
 #  build-android-app:
@@ -32,8 +32,8 @@ jobs:
 #    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-android-app.yaml@main
 #    secrets: inherit
 #    with:
-#      ref: ${{ github.sha }}
-#      artifactName: android-${{ github.sha }}-${{ github.run_number }}
+#      ref: ${{ github.ref }}
+#      artifactName: android-${{ github.ref }}-${{ github.run_number }}
 #
 #  upload-ios-app:
 #    needs: [verify, build-ios-app]
@@ -41,8 +41,8 @@ jobs:
 #    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-ios-app.yaml@main
 #    secrets: inherit
 #    with:
-#      ref: ${{ github.sha }}
-#      artifactName: ios-${{ github.sha }}-${{ github.run_number }}
+#      ref: ${{ github.ref }}
+#      artifactName: ios-${{ github.ref }}-${{ github.run_number }}
 #
 #  upload-android-app:
 #    needs: [verify, build-android-app]
@@ -50,6 +50,6 @@ jobs:
 #    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-android-app.yaml@main
 #    secrets: inherit
 #    with:
-#      ref: ${{ github.sha }}
-#      artifactName: android-${{ github.sha }}-${{ github.run_number }}
+#      ref: ${{ github.ref }}
+#      artifactName: android-${{ github.ref }}-${{ github.run_number }}
 #      googlePlayStoreUrl: 'https://play.google.com/apps/test/com.studiofluffy.tonica/'
