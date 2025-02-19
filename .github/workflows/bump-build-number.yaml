@@ -3,7 +3,7 @@ name: Bump Build Number
 on:
   push:
     branches:
-    - TIO-27_setup-pipeline-6
+    - main
     paths-ignore:
     - docs/**
     - README.md
@@ -26,7 +26,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4.2.2
       with:
-        ref: TIO-27_setup-pipeline-6
+        ref: main
         fetch-depth: 0
 
     - name: Configure Git user

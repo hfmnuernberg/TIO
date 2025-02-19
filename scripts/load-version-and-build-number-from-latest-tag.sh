@@ -14,14 +14,14 @@ TAG=$(git describe --tags --abbrev=0  2>/dev/null || echo "")
 set -e
 
 if [ -z "$TAG" ]; then
-  echo "⚠️️No Git tag found! Falling back to: 0.0.1+1"
+  echo "⚠️️ No Git tag found! Falling back to: 0.0.1+1"
   VERSION="0.0.1"
   BUILD_NUMBER=1
 else
   VERSION=$(echo "$TAG" | sed -E 's/^v?([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
   BUILD_NUMBER=$(echo "$TAG" | sed -E 's/^v?[0-9]+\.[0-9]+\.[0-9]+\+([0-9]+).*/\1/')
   if [ "$BUILD_NUMBER" = "$TAG" ]; then
-    echo "⚠️️No build number found! Falling back to build number: 1"
+    echo "⚠️️ No build number found! Falling back to build number: 1"
     BUILD_NUMBER=1
   fi
 fi
