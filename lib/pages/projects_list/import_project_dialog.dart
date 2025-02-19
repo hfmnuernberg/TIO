@@ -13,8 +13,8 @@ Future<void> showImportProjectDialog({required BuildContext context}) => showDia
       context: context,
       builder: (context) {
         return ImportProjectDialog(
-            onCancel: () => Navigator.of(context).pop(),
-            );
+          onCancel: () => Navigator.of(context).pop(),
+        );
       },
     );
 
