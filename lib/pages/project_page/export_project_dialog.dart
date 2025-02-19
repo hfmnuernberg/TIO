@@ -14,6 +14,7 @@ Future<void> showExportProjectDialog({required BuildContext context, required St
       builder: (context) {
         return ExportProjectDialog(
           title: title,
+          onConfirm: () => Navigator.of(context).pop(),
           onCancel: () => Navigator.of(context).pop(),
         );
       },
@@ -21,11 +22,13 @@ Future<void> showExportProjectDialog({required BuildContext context, required St
 
 class ExportProjectDialog extends StatelessWidget {
   final String title;
+  final Function() onConfirm;
   final Function() onCancel;
 
   const ExportProjectDialog({
     super.key,
     required this.title,
+    required this.onConfirm,
     required this.onCancel,
   });
 
@@ -50,7 +53,7 @@ class ExportProjectDialog extends StatelessWidget {
 
       showSnackbar(context: context, message: 'Project file exported successfully!')();
 
-      Navigator.of(context).pop();
+      onConfirm();
     } catch (e) {
       print('Error exporting project file: $e');
       showSnackbar(context: context, message: 'Error exporting project file')();

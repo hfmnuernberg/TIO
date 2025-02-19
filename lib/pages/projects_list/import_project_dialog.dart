@@ -13,15 +13,21 @@ Future<void> showImportProjectDialog({required BuildContext context}) => showDia
       context: context,
       builder: (context) {
         return ImportProjectDialog(
+          onConfirm: () => Navigator.of(context).pop(),
           onCancel: () => Navigator.of(context).pop(),
         );
       },
     );
 
 class ImportProjectDialog extends StatelessWidget {
+  final Function() onConfirm;
   final Function() onCancel;
 
-  const ImportProjectDialog({super.key, required this.onCancel});
+  const ImportProjectDialog({
+    super.key,
+    required this.onConfirm,
+    required this.onCancel,
+  });
 
   Future<void> _importFile(BuildContext context) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -42,7 +48,7 @@ class ImportProjectDialog extends StatelessWidget {
 
         showSnackbar(context: context, message: 'Project file imported successfully!')();
 
-        Navigator.of(context).pop(true);
+        onConfirm();
       } catch (e) {
         showSnackbar(context: context, message: 'Error importing project file: $e')();
       }
