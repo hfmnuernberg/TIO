@@ -14,15 +14,14 @@ TAG=$(git tag --sort=-creatordate | head -n 1)
 set -e
 
 if [ -z "$TAG" ]; then
-  echo "⚠️️ No Git tag found! Falling back to: 0.0.1+1"
-  VERSION="0.0.1"
-  BUILD_NUMBER=1
+  echo "⚠️️ No Git tag found!"
+  exit 2
 else
   VERSION=$(echo "$TAG" | sed -E 's/^v?([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
   BUILD_NUMBER=$(echo "$TAG" | sed -E 's/^v?[0-9]+\.[0-9]+\.[0-9]+\+([0-9]+).*/\1/')
   if [ "$BUILD_NUMBER" = "$TAG" ]; then
-    echo "⚠️️ No build number found! Falling back to build number: 1"
-    BUILD_NUMBER=1
+    echo "⚠️️ No build number found!"
+    exit 3
   fi
 fi
 
