@@ -62,10 +62,7 @@ class _ProjectsListState extends State<ProjectsList> {
     );
     _menuItems.add(
       MenuItemButton(
-        onPressed: () => showDialog<bool>(
-          context: context,
-          builder: (context) => ImportProjectDialog(),
-        ),
+        onPressed: () => showImportProjectDialog(context: context),
         child: const Text("Import Project", style: TextStyle(color: ColorTheme.primary)),
       ),
     );

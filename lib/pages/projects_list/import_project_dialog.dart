@@ -9,7 +9,20 @@ import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
+Future<void> showImportProjectDialog({required BuildContext context}) => showDialog(
+      context: context,
+      builder: (context) {
+        return ImportProjectDialog(
+            onCancel: () => Navigator.of(context).pop(),
+            );
+      },
+    );
+
 class ImportProjectDialog extends StatelessWidget {
+  final Function() onCancel;
+
+  const ImportProjectDialog({super.key, required this.onCancel});
+
   Future<void> _importFile(BuildContext context) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -57,7 +70,7 @@ class ImportProjectDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: onCancel,
               child: Text('Cancel'),
             ),
             TIOFlatButton(
