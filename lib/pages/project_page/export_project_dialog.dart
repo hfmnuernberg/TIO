@@ -14,22 +14,19 @@ Future<void> showExportProjectDialog({required BuildContext context, required St
       builder: (context) {
         return ExportProjectDialog(
           title: title,
-          onConfirm: () => Navigator.of(context).pop(),
-          onCancel: () => Navigator.of(context).pop(),
+          onCloseDialog: () => Navigator.of(context).pop(),
         );
       },
     );
 
 class ExportProjectDialog extends StatelessWidget {
   final String title;
-  final Function() onConfirm;
-  final Function() onCancel;
+  final Function() onCloseDialog;
 
   const ExportProjectDialog({
     super.key,
     required this.title,
-    required this.onConfirm,
-    required this.onCancel,
+    required this.onCloseDialog,
   });
 
   Future<String> _writeJsonFile(BuildContext context) async {
@@ -53,7 +50,7 @@ class ExportProjectDialog extends StatelessWidget {
 
       showSnackbar(context: context, message: 'Project file exported successfully!')();
 
-      onConfirm();
+      onCloseDialog();
     } catch (e) {
       print('Error exporting project file: $e');
       showSnackbar(context: context, message: 'Error exporting project file')();
@@ -79,7 +76,7 @@ class ExportProjectDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             TextButton(
-              onPressed: onCancel,
+              onPressed: onCloseDialog,
               child: Text('Cancel'),
             ),
             TIOFlatButton(

@@ -13,20 +13,17 @@ Future<void> showImportProjectDialog({required BuildContext context}) => showDia
       context: context,
       builder: (context) {
         return ImportProjectDialog(
-          onConfirm: () => Navigator.of(context).pop(),
-          onCancel: () => Navigator.of(context).pop(),
+          onCloseDialog: () => Navigator.of(context).pop(),
         );
       },
     );
 
 class ImportProjectDialog extends StatelessWidget {
-  final Function() onConfirm;
-  final Function() onCancel;
+  final Function() onCloseDialog;
 
   const ImportProjectDialog({
     super.key,
-    required this.onConfirm,
-    required this.onCancel,
+    required this.onCloseDialog,
   });
 
   Future<void> _addNewProject(BuildContext context, File file) async {
@@ -40,7 +37,7 @@ class ImportProjectDialog extends StatelessWidget {
 
       showSnackbar(context: context, message: 'Project file imported successfully!')();
 
-      onConfirm();
+      onCloseDialog();
     } catch (e) {
       showSnackbar(context: context, message: 'Error importing project file: $e')();
     }
@@ -81,7 +78,7 @@ class ImportProjectDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             TextButton(
-              onPressed: onCancel,
+              onPressed: onCloseDialog,
               child: Text('Cancel'),
             ),
             TIOFlatButton(
