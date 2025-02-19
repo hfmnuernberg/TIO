@@ -48,7 +48,7 @@ class ImportProjectDialog extends StatelessWidget {
       final file = await _getFile();
 
       if (file == null) {
-        showSnackbar(context: context, message: 'No project file selected!')();
+        showSnackbar(context: context, message: 'No project file selected')();
         onDone();
         return;
       }

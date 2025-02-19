@@ -50,8 +50,14 @@ class ExportProjectDialog extends StatelessWidget {
       final tmpFile = await _getFile(project);
 
       await _writeProjectToFile(project, tmpFile);
-      await Share.shareXFiles([XFile(tmpFile.path)]);
+      final result = await Share.shareXFiles([XFile(tmpFile.path)]);
       await tmpFile.delete();
+
+      if (result.status == ShareResultStatus.dismissed) {
+        showSnackbar(context: context, message: 'Project export cancelled')();
+        onDone();
+        return;
+      }
 
       showSnackbar(context: context, message: 'Project exported successfully!')();
       onDone();
