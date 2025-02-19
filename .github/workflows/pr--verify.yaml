@@ -21,11 +21,12 @@ jobs:
       deployments: write
       pull-requests: write
     steps:
-      - name: Clone project
-        uses: actions/checkout@v4.2.2
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Merge PR
-        uses: ahmadnassri/action-dependabot-auto-merge@v2.6.6
-        with:
-          target: minor
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Enable auto-merge for Dependabot PRs
+        if: github.actor == 'dependabot[bot]'
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
