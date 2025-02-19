@@ -9,14 +9,12 @@ on:
     - README.md
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   bump-build-number:
     runs-on: ubuntu-latest
-
-    permissions:
-      actions: read
-      contents: write
-      pull-requests: write
 
     outputs:
       old_version: ${{ steps.old_version.outputs.OLD_VERSION }}
@@ -31,62 +29,30 @@ jobs:
         ref: TIO-27_setup-pipeline-6
         fetch-depth: 0
 
-    - name: Make scripts executable
-      run: chmod +x ./scripts/versioning/*.sh
-
-    - name: Load current version and build number
-      id: old_version
-      run: |
-        source ./scripts/versioning/load.sh
-        echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
-        echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-
-    - name: Increment build number
-      run: ./scripts/versioning/bump-build-number.sh
-
-    - name: Load updated version and build number
-      id: new_version
-      run: |
-        source ./scripts/versioning/load.sh
-        echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
-        echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-
     - name: Configure Git user
       run: |
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git config --global user.name "GitHub Actions"
 
-    - name: Create pull request
-      id: create_pr
-      uses: peter-evans/create-pull-request@v7.0.6
-      with:
-        token: ${{ secrets.VERSION_UPDATE_PAT }}
-        base: TIO-27_setup-pipeline-6
-        branch: bump-build-number-to-${{ steps.new_version.outputs.BUILD_NUMBER }}
-        commit-message: "ci: bump build number to ${{ steps.new_version.outputs.BUILD_NUMBER }}"
-        title: "ci: bump build number to ${{ steps.new_version.outputs.BUILD_NUMBER }}"
-        body: "Automated bump of build number from ${{ steps.old_version.outputs.BUILD_NUMBER }} to ${{ steps.new_version.outputs.BUILD_NUMBER }}."
-        labels: "automated,ci"
-        delete-branch: true
-        signoff: true
+    - name: Make scripts executable
+      run: chmod +x ./scripts/*.sh
 
-    - name: Auto-merge pull request
+    - name: Load current version and build number
+      id: old_version
       run: |
-        PR_URL="${{ steps.create_pr.outputs.pull-request }}"
-        if [[ -z "$PR_URL" ]]; then
-          echo "❌ No pull request was created. Exiting..."
-          exit 1
-        fi
-        echo "Merging PR: $PR_URL"
-        gh pr merge --auto --squash "BRANCH_NAME="bump-build-number-to-${{ steps.new_version.outputs.BUILD_NUMBER }}""
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        source ./scripts/load-version-and-build-number-from-latest-tag.sh
+        echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+        echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
-    - name: Create tag
+    - name: Bump build number
+      run: ./scripts/bump-build-number-and-tag.sh
+
+    - name: Load updated version and build number
+      id: new_version
       run: |
-        TAG="v${{ steps.new_version.outputs.VERSION }}+${{ steps.new_version.outputs.BUILD_NUMBER }}"
-        git tag "$TAG"
-        git push origin "$TAG"
+        source ./scripts/load-version-and-build-number-from-latest-tag.sh
+        echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+        echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
     - name: Create summary
       run: echo "Bumped build number from ${{ steps.old_version.outputs.BUILD_NUMBER }} to ${{ steps.new_version.outputs.BUILD_NUMBER }}" >> $GITHUB_STEP_SUMMARY

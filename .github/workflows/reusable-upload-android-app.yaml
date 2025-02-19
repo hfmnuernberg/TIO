@@ -31,7 +31,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{github.event.after}}
+          ref: ${{ inputs.ref }}
 
       - name: Restore bundle
         uses: actions/download-artifact@v4.1.8
