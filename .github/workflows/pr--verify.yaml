@@ -14,6 +14,12 @@ jobs:
   # see docs/dependabot.md
   auto-merge:
     runs-on: ubuntu-latest
+    permissions:
+      metadata: read
+      commit-statuses: write
+      contents: write
+      deployments: write
+      pull-requests: write
     steps:
       - name: Clone project
         uses: actions/checkout@v4.2.2
@@ -22,4 +28,4 @@ jobs:
         uses: ahmadnassri/action-dependabot-auto-merge@v2.6.6
         with:
           target: minor
-          github-token: ${{ secrets.DEPENDABOT_PAT }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
