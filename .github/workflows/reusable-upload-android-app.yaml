@@ -53,6 +53,9 @@ jobs:
           fileDir: './android'
           encodedString: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
 
+      - name: Prepare version
+        run: scripts/update-version-and-build-number-in-pubspec-with-latest-tag.sh
+
       - name: Upload bundle
         uses: maierj/fastlane-action@v3.1.0
         with:

@@ -44,6 +44,12 @@ jobs:
           working-directory: ios
           bundler-cache: true
 
+      - name: Print build files
+        run: ll build/ios/ipa
+
+      - name: Prepare version
+        run: scripts/update-version-and-build-number-in-pubspec-with-latest-tag.sh
+
       - name: Upload bundle
         uses: maierj/fastlane-action@v3.1.0
         with:
