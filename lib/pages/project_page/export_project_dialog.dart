@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -17,46 +18,45 @@ Future<void> showExportProjectDialog({required BuildContext context, required St
       builder: (context) {
         return ExportProjectDialog(
           title: title,
-          onCloseDialog: () => Navigator.of(context).pop(),
+          onDone: () => Navigator.of(context).pop(),
         );
       },
     );
 
 class ExportProjectDialog extends StatelessWidget {
   final String title;
-  final Function() onCloseDialog;
+  final Function() onDone;
 
   const ExportProjectDialog({
     super.key,
     required this.title,
-    required this.onCloseDialog,
+    required this.onDone,
   });
 
-  Future<String> _writeJsonFile(BuildContext context) async {
+  Future<File> _getFile(Project project) async {
     final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/tio-music-${_sanitizeString(title)}.json';
-    final file = File(filePath);
-    final projectLibrary = context.read<ProjectLibrary>();
-
-    Map<String, dynamic> jsonData = projectLibrary.projects.first.toJson();
-    String jsonString = jsonEncode(jsonData);
-
-    await file.writeAsString(jsonString);
-    return filePath;
+    final filePath = '${directory.path}/tio-music-${_sanitizeString(project.title)}.json';
+    return File(filePath);
   }
 
-  Future<void> _exportFile(BuildContext context) async {
+  Future<void> _writeProjectToFile(Project project, File file) async {
+    String jsonString = jsonEncode(project.toJson());
+    await file.writeAsString(jsonString);
+  }
+
+  Future<void> _exportProject(BuildContext context) async {
     try {
-      final filePath = await _writeJsonFile(context);
+      final project = context.read<ProjectLibrary>().projects.first;
+      final tmpFile = await _getFile(project);
 
-      await Share.shareXFiles([XFile(filePath)]);
+      await _writeProjectToFile(project, tmpFile);
+      await Share.shareXFiles([XFile(tmpFile.path)]);
+      await tmpFile.delete();
 
-      showSnackbar(context: context, message: 'Project file exported successfully!')();
-
-      onCloseDialog();
-    } catch (e) {
-      print('Error exporting project file: $e');
-      showSnackbar(context: context, message: 'Error exporting project file')();
+      showSnackbar(context: context, message: 'Project exported successfully!')();
+      onDone();
+    } catch (_) {
+      showSnackbar(context: context, message: 'Error exporting project')();
     }
   }
 
@@ -79,11 +79,11 @@ class ExportProjectDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             TextButton(
-              onPressed: onCloseDialog,
+              onPressed: onDone,
               child: Text('Cancel'),
             ),
             TIOFlatButton(
-              onPressed: () => _exportFile(context),
+              onPressed: () => _exportProject(context),
               text: "Export",
               boldText: true,
             ),

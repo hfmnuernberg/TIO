@@ -13,49 +13,53 @@ Future<void> showImportProjectDialog({required BuildContext context}) => showDia
       context: context,
       builder: (context) {
         return ImportProjectDialog(
-          onCloseDialog: () => Navigator.of(context).pop(),
+          onDone: () => Navigator.of(context).pop(),
         );
       },
     );
 
 class ImportProjectDialog extends StatelessWidget {
-  final Function() onCloseDialog;
+  final Function() onDone;
 
   const ImportProjectDialog({
     super.key,
-    required this.onCloseDialog,
+    required this.onDone,
   });
 
-  Future<void> _addNewProject(BuildContext context, File file) async {
-    try {
-      String jsonString = await file.readAsString();
-      Map<String, dynamic> jsonData = jsonDecode(jsonString);
-      Project project = Project.fromJson(jsonData);
-
-      final projectLibrary = context.read<ProjectLibrary>();
-      projectLibrary.addProject(project);
-
-      showSnackbar(context: context, message: 'Project file imported successfully!')();
-
-      onCloseDialog();
-    } catch (e) {
-      showSnackbar(context: context, message: 'Error importing project file: $e')();
-    }
-  }
-
-  Future<void> _importFile(BuildContext context) async {
+  Future<File?> _getFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['json'],
     );
 
-    if (result != null && result.files.single.path != null) {
-      final filePath = result.files.single.path!;
-      final file = File(filePath);
+    return result == null || result.files.single.path == null
+        ? null
+        : File(result.files.single.path!);
+  }
 
-      _addNewProject(context, file);
-    } else {
-      showSnackbar(context: context, message: 'No project file selected')();
+  Future<Project> _readProjectFromFile(File file) async {
+      String jsonString = await file.readAsString();
+      Map<String, dynamic> jsonData = jsonDecode(jsonString);
+      return Project.fromJson(jsonData);
+  }
+
+  Future<void> _importProject(BuildContext context) async {
+    try {
+      final file = await _getFile();
+
+      if (file == null) {
+        showSnackbar(context: context, message: 'No project file selected!')();
+        onDone();
+        return;
+      }
+
+      final project = await _readProjectFromFile(file);
+      context.read<ProjectLibrary>().addProject(project);
+
+      showSnackbar(context: context, message: 'Project imported successfully!')();
+      onDone();
+    } catch (_) {
+      showSnackbar(context: context, message: 'Error importing project')();
     }
   }
 
@@ -78,11 +82,11 @@ class ImportProjectDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             TextButton(
-              onPressed: onCloseDialog,
+              onPressed: onDone,
               child: Text('Cancel'),
             ),
             TIOFlatButton(
-              onPressed: () => _importFile(context),
+              onPressed: () => _importProject(context),
               text: "Import",
               boldText: true,
             ),
