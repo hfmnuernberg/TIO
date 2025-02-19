@@ -32,15 +32,13 @@ class ImportProjectDialog extends StatelessWidget {
       allowedExtensions: ['json'],
     );
 
-    return result == null || result.files.single.path == null
-        ? null
-        : File(result.files.single.path!);
+    return result == null || result.files.single.path == null ? null : File(result.files.single.path!);
   }
 
   Future<Project> _readProjectFromFile(File file) async {
-      String jsonString = await file.readAsString();
-      Map<String, dynamic> jsonData = jsonDecode(jsonString);
-      return Project.fromJson(jsonData);
+    String jsonString = await file.readAsString();
+    Map<String, dynamic> jsonData = jsonDecode(jsonString);
+    return Project.fromJson(jsonData);
   }
 
   Future<void> _importProject(BuildContext context) async {
