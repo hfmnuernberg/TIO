@@ -13,6 +13,7 @@ jobs:
 
   # see docs/dependabot.md
   auto-merge:
+    needs: verify
     runs-on: ubuntu-latest
     permissions:
       statuses: write
@@ -23,9 +24,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+
       - name: Enable auto-merge for Dependabot PRs
         if: github.actor == 'dependabot[bot]'
         run: gh pr merge --auto --squash "$PR_URL"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_URL: ${{ github.event.pull_request.html_url }}
