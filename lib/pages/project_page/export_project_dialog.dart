@@ -9,10 +9,25 @@ import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
+Future<void> showExportProjectDialog({required BuildContext context, required String title}) => showDialog(
+      context: context,
+      builder: (context) {
+        return ExportProjectDialog(
+          title: title,
+          onCancel: () => Navigator.of(context).pop(),
+        );
+      },
+    );
+
 class ExportProjectDialog extends StatelessWidget {
   final String title;
+  final Function() onCancel;
 
-  const ExportProjectDialog({super.key, required this.title});
+  const ExportProjectDialog({
+    super.key,
+    required this.title,
+    required this.onCancel,
+  });
 
   Future<String> _writeJsonFile(BuildContext context) async {
     final directory = await getApplicationDocumentsDirectory();
@@ -61,7 +76,7 @@ class ExportProjectDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: onCancel,
               child: Text('Cancel'),
             ),
             TIOFlatButton(
