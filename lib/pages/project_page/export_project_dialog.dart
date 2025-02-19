@@ -2,10 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tiomusic/models/project.dart';
-import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
@@ -13,23 +11,23 @@ import 'package:tiomusic/widgets/confirm_setting_button.dart';
 String _sanitizeString(String value) =>
     value.trim().replaceAll(RegExp(r'\W+'), '-').replaceAll(RegExp(r'^-+|-+$'), '').toLowerCase();
 
-Future<void> showExportProjectDialog({required BuildContext context, required String title}) => showDialog(
+Future<void> showExportProjectDialog({required BuildContext context, required Project project}) => showDialog(
       context: context,
       builder: (context) {
         return ExportProjectDialog(
-          title: title,
+          project: project,
           onDone: () => Navigator.of(context).pop(),
         );
       },
     );
 
 class ExportProjectDialog extends StatelessWidget {
-  final String title;
+  final Project project;
   final Function() onDone;
 
   const ExportProjectDialog({
     super.key,
-    required this.title,
+    required this.project,
     required this.onDone,
   });
 
@@ -46,7 +44,6 @@ class ExportProjectDialog extends StatelessWidget {
 
   Future<void> _exportProject(BuildContext context) async {
     try {
-      final project = context.read<ProjectLibrary>().projects.first;
       final tmpFile = await _getFile(project);
 
       await _writeProjectToFile(project, tmpFile);

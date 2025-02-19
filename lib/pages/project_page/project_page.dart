@@ -52,7 +52,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
     _menuItems.add(
       MenuItemButton(
-        onPressed: () => showExportProjectDialog(context: context, title: _project.title),
+        onPressed: () => showExportProjectDialog(context: context, project: _project),
         child: const Text("Export Project", style: TextStyle(color: ColorTheme.primary)),
       ),
     );
