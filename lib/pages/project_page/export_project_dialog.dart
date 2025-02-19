@@ -9,6 +9,9 @@ import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
+String _sanitizeString(String value) =>
+    value.trim().replaceAll(RegExp(r'\W+'), '-').replaceAll(RegExp(r'^-+|-+$'), '').toLowerCase();
+
 Future<void> showExportProjectDialog({required BuildContext context, required String title}) => showDialog(
       context: context,
       builder: (context) {
@@ -31,7 +34,7 @@ class ExportProjectDialog extends StatelessWidget {
 
   Future<String> _writeJsonFile(BuildContext context) async {
     final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/$title.json';
+    final filePath = '${directory.path}/tio-music-${_sanitizeString(title)}.json';
     final file = File(filePath);
     final projectLibrary = context.read<ProjectLibrary>();
 
