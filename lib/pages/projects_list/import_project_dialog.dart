@@ -29,6 +29,23 @@ class ImportProjectDialog extends StatelessWidget {
     required this.onCancel,
   });
 
+  Future<void> _addNewProject(BuildContext context, File file) async {
+    try {
+      String jsonString = await file.readAsString();
+      Map<String, dynamic> jsonData = jsonDecode(jsonString);
+      Project project = Project.fromJson(jsonData);
+
+      final projectLibrary = context.read<ProjectLibrary>();
+      projectLibrary.addProject(project);
+
+      showSnackbar(context: context, message: 'Project file imported successfully!')();
+
+      onConfirm();
+    } catch (e) {
+      showSnackbar(context: context, message: 'Error importing project file: $e')();
+    }
+  }
+
   Future<void> _importFile(BuildContext context) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -38,20 +55,8 @@ class ImportProjectDialog extends StatelessWidget {
     if (result != null && result.files.single.path != null) {
       final filePath = result.files.single.path!;
       final file = File(filePath);
-      try {
-        String jsonString = await file.readAsString();
-        Map<String, dynamic> jsonData = jsonDecode(jsonString);
-        Project project = Project.fromJson(jsonData);
 
-        final projectLibrary = context.read<ProjectLibrary>();
-        projectLibrary.addProject(project);
-
-        showSnackbar(context: context, message: 'Project file imported successfully!')();
-
-        onConfirm();
-      } catch (e) {
-        showSnackbar(context: context, message: 'Error importing project file: $e')();
-      }
+      _addNewProject(context, file);
     } else {
       showSnackbar(context: context, message: 'No project file selected')();
     }
