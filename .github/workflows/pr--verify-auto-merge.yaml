@@ -1,0 +1,31 @@
+name: PR - Verify Dependabot Auto Merge
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  metadata: read
+  commit-statuses: write
+  contents: write
+  deployments: write
+  pull-requests: write
+
+  # see docs/dependabot.md
+  auto-merge:
+    runs-on: ubuntu-latest
+    permissions:
+      statuses: write
+      contents: write
+      deployments: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enable auto-merge for Dependabot PRs
+        if: github.actor == 'dependabot[bot]'
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
