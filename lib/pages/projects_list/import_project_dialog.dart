@@ -10,27 +10,19 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
 Future<void> showImportProjectDialog({required BuildContext context}) => showDialog(
-      context: context,
-      builder: (context) {
-        return ImportProjectDialog(
-          onDone: () => Navigator.of(context).pop(),
-        );
-      },
-    );
+  context: context,
+  builder: (context) {
+    return ImportProjectDialog(onDone: () => Navigator.of(context).pop());
+  },
+);
 
 class ImportProjectDialog extends StatelessWidget {
   final Function() onDone;
 
-  const ImportProjectDialog({
-    super.key,
-    required this.onDone,
-  });
+  const ImportProjectDialog({super.key, required this.onDone});
 
   Future<File?> _getFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['json'],
-    );
+    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['json']);
 
     return result == null || result.files.single.path == null ? null : File(result.files.single.path!);
   }
@@ -79,15 +71,8 @@ class ImportProjectDialog extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            TextButton(
-              onPressed: onDone,
-              child: Text('Cancel'),
-            ),
-            TIOFlatButton(
-              onPressed: () => _importProject(context),
-              text: "Import",
-              boldText: true,
-            ),
+            TextButton(onPressed: onDone, child: Text('Cancel')),
+            TIOFlatButton(onPressed: () => _importProject(context), text: "Import", boldText: true),
           ],
         ),
       ],

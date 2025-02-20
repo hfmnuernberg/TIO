@@ -94,10 +94,7 @@ class _AboutPageState extends State<AboutPage> {
               "This app was developed as part of the RE|LEVEL-project at Hochschule für Musik Nürnberg. RE|LEVEL is funded by Stiftung Innovation in der Hochschullehre.",
         ),
         const TextSection(content: "Imprint", sectionType: SectionType.headline2),
-        const TextSection(
-          content: "Editor: University of Music Nuremberg",
-          sectionType: SectionType.text,
-        ),
+        const TextSection(content: "Editor: University of Music Nuremberg", sectionType: SectionType.text),
         InkWell(
           child: const Text('https://www.hfm-nuernberg.de/', style: TextStyle(color: ColorTheme.tertiary)),
           onTap: () async {

@@ -66,10 +66,7 @@ class _PianoState extends State<Piano> {
     super.initState();
 
     // lock screen to only use landscape
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeRight,
-      DeviceOrientation.landscapeLeft,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
 
     _toolTitleFieldFocus = FocusNode();
 
@@ -139,14 +136,10 @@ class _PianoState extends State<Piano> {
         buttonsPosition: ButtonsPosition.bottomright,
       ),
     ];
-    _walkthrough.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () {
-        context.read<ProjectLibrary>().showPianoTutorial = false;
-        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-      },
-      context,
-    );
+    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+      context.read<ProjectLibrary>().showPianoTutorial = false;
+      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    }, context);
   }
 
   @override
@@ -196,31 +189,29 @@ class _PianoState extends State<Piano> {
             children: [
               // close button
               IconButton(
-                  onPressed: () async {
-                    // if quick tool and values have been changed: ask for saving
-                    if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock)) {
-                      final save = await askForSavingQuickTool(context);
+                onPressed: () async {
+                  // if quick tool and values have been changed: ask for saving
+                  if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock)) {
+                    final save = await askForSavingQuickTool(context);
 
-                      // if user taps outside the dialog, we dont want to exit the quick tool and we dont want to save
-                      if (save == null) return;
+                    // if user taps outside the dialog, we dont want to exit the quick tool and we dont want to save
+                    if (save == null) return;
 
-                      if (save) {
-                        setState(() {
-                          _showSavingPage = true;
-                        });
-                      } else {
-                        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-                        if (context.mounted) Navigator.of(context).pop();
-                      }
+                    if (save) {
+                      setState(() {
+                        _showSavingPage = true;
+                      });
                     } else {
                       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-                      Navigator.of(context).pop();
+                      if (context.mounted) Navigator.of(context).pop();
                     }
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: ColorTheme.primary,
-                  )),
+                  } else {
+                    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+                    Navigator.of(context).pop();
+                  }
+                },
+                icon: const Icon(Icons.arrow_back, color: ColorTheme.primary),
+              ),
 
               // title
               Expanded(
@@ -273,114 +264,109 @@ class _PianoState extends State<Piano> {
           // piano
           Expanded(
             child: Container(
-                decoration: const BoxDecoration(
-                  color: ColorTheme.primaryFixedDim,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                ),
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // settings row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          key: _keyOctaveSwitch,
-                          children: [
-                            // octave down button
-                            IconButton(
-                              onPressed: _pianoBlock.octaveDown,
-                              icon: const Icon(Icons.keyboard_double_arrow_left, color: ColorTheme.primary),
-                            ),
-
-                            IconButton(
-                              onPressed: _pianoBlock.toneDown,
-                              icon: const Icon(Icons.keyboard_arrow_left, color: ColorTheme.primary),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          key: _keySettings,
-                          children: [
-                            // sound button
-                            IconButton(
-                              onPressed: () async {
-                                await openSettingPage(const ChooseSound(), context, _pianoBlock);
-
-                                _initPiano(PianoParams.soundFontPaths[_pianoBlock.soundFontIndex]);
-                              },
-                              icon: const CircleAvatar(
-                                backgroundColor: ColorTheme.primary50,
-                                child: Icon(
-                                  Icons.library_music_outlined,
-                                  color: ColorTheme.onPrimary,
-                                ),
-                              ),
-                            ),
-
-                            // volume button
-                            IconButton(
-                              onPressed: () async {
-                                await openSettingPage(
-                                  SetVolume(
-                                    initialValue: _pianoBlock.volume,
-                                    onConfirm: (vol) {
-                                      _pianoBlock.volume = vol;
-                                      pianoSetVolume(volume: vol);
-                                    },
-                                    onUserChangedVolume: (vol) => pianoSetVolume(volume: vol),
-                                    onCancel: () => pianoSetVolume(volume: _pianoBlock.volume),
-                                  ),
-                                  callbackOnReturn: (value) => setState(() {}),
-                                  context,
-                                  _pianoBlock,
-                                );
-                              },
-                              icon: const CircleAvatar(
-                                backgroundColor: ColorTheme.primary50,
-                                child: Icon(
-                                  Icons.volume_up,
-                                  color: ColorTheme.onPrimary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            // octave up button
-                            IconButton(
-                              onPressed: _pianoBlock.toneUp,
-                              icon: const Icon(Icons.keyboard_arrow_right, color: ColorTheme.primary),
-                            ),
-
-                            IconButton(
-                              onPressed: _pianoBlock.octaveUp,
-                              icon: const Icon(Icons.keyboard_double_arrow_right, color: ColorTheme.primary),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    // keys
-                    Consumer<ProjectBlock>(
-                      builder: (context, projectBlock, child) {
-                        var pianoBlock = projectBlock as PianoBlock;
-                        return Expanded(
-                          child: LayoutBuilder(
-                            builder: (BuildContext context, BoxConstraints constraints) {
-                              const double spaceBetweenKeys = 8;
-                              final keyWidth = constraints.maxWidth / 12 - spaceBetweenKeys;
-                              final keyHeight = constraints.maxHeight;
-                              return _keyboard(pianoBlock.keyboardPosition, keyWidth, keyHeight);
-                            },
+              decoration: const BoxDecoration(
+                color: ColorTheme.primaryFixedDim,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+              ),
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // settings row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        key: _keyOctaveSwitch,
+                        children: [
+                          // octave down button
+                          IconButton(
+                            onPressed: _pianoBlock.octaveDown,
+                            icon: const Icon(Icons.keyboard_double_arrow_left, color: ColorTheme.primary),
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                )),
+
+                          IconButton(
+                            onPressed: _pianoBlock.toneDown,
+                            icon: const Icon(Icons.keyboard_arrow_left, color: ColorTheme.primary),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        key: _keySettings,
+                        children: [
+                          // sound button
+                          IconButton(
+                            onPressed: () async {
+                              await openSettingPage(const ChooseSound(), context, _pianoBlock);
+
+                              _initPiano(PianoParams.soundFontPaths[_pianoBlock.soundFontIndex]);
+                            },
+                            icon: const CircleAvatar(
+                              backgroundColor: ColorTheme.primary50,
+                              child: Icon(Icons.library_music_outlined, color: ColorTheme.onPrimary),
+                            ),
+                          ),
+
+                          // volume button
+                          IconButton(
+                            onPressed: () async {
+                              await openSettingPage(
+                                SetVolume(
+                                  initialValue: _pianoBlock.volume,
+                                  onConfirm: (vol) {
+                                    _pianoBlock.volume = vol;
+                                    pianoSetVolume(volume: vol);
+                                  },
+                                  onUserChangedVolume: (vol) => pianoSetVolume(volume: vol),
+                                  onCancel: () => pianoSetVolume(volume: _pianoBlock.volume),
+                                ),
+                                callbackOnReturn: (value) => setState(() {}),
+                                context,
+                                _pianoBlock,
+                              );
+                            },
+                            icon: const CircleAvatar(
+                              backgroundColor: ColorTheme.primary50,
+                              child: Icon(Icons.volume_up, color: ColorTheme.onPrimary),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          // octave up button
+                          IconButton(
+                            onPressed: _pianoBlock.toneUp,
+                            icon: const Icon(Icons.keyboard_arrow_right, color: ColorTheme.primary),
+                          ),
+
+                          IconButton(
+                            onPressed: _pianoBlock.octaveUp,
+                            icon: const Icon(Icons.keyboard_double_arrow_right, color: ColorTheme.primary),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  // keys
+                  Consumer<ProjectBlock>(
+                    builder: (context, projectBlock, child) {
+                      var pianoBlock = projectBlock as PianoBlock;
+                      return Expanded(
+                        child: LayoutBuilder(
+                          builder: (BuildContext context, BoxConstraints constraints) {
+                            const double spaceBetweenKeys = 8;
+                            final keyWidth = constraints.maxWidth / 12 - spaceBetweenKeys;
+                            final keyHeight = constraints.maxHeight;
+                            return _keyboard(pianoBlock.keyboardPosition, keyWidth, keyHeight);
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -445,9 +431,7 @@ class _PianoState extends State<Piano> {
           Container(
             color: ColorTheme.tertiary,
             padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
-            child: Container(
-              color: ColorTheme.onTertiaryFixed,
-            ),
+            child: Container(color: ColorTheme.onTertiaryFixed),
           ),
           Semantics(
             button: true,
@@ -464,10 +448,7 @@ class _PianoState extends State<Piano> {
                 },
                 onTapUp: (_) async => await pianoNoteOff(note: midi),
                 onTapCancel: () async => await pianoNoteOff(note: midi),
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: _showLabelOnC(midi),
-                ),
+                child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
               ),
             ),
           ),
@@ -492,10 +473,7 @@ class _PianoState extends State<Piano> {
             },
             onTapUp: (_) async => await pianoNoteOff(note: midi),
             onTapCancel: () async => await pianoNoteOff(note: midi),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: _showLabelOnC(midi),
-            ),
+            child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
           ),
         ),
       ),
@@ -503,9 +481,7 @@ class _PianoState extends State<Piano> {
   }
 
   Widget _spacingKey(double width, double height, bool half) {
-    return SizedBox(
-      width: half ? width / 2 : width,
-    );
+    return SizedBox(width: half ? width / 2 : width);
   }
 
   Widget _showLabelOnC(int midi) {
@@ -521,10 +497,7 @@ class _PianoState extends State<Piano> {
     return Text(
       pitchName,
       textAlign: TextAlign.center,
-      style: const TextStyle(
-        color: ColorTheme.primaryFixedDim,
-        fontSize: 20,
-      ),
+      style: const TextStyle(color: ColorTheme.primaryFixedDim, fontSize: 20),
     );
   }
 
@@ -569,15 +542,16 @@ class _PianoState extends State<Piano> {
                         padding: const EdgeInsets.only(top: 4, left: 32),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: widget.isQuickTool
-                              ? const Text(
-                                  "Save in ...",
-                                  style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
-                                )
-                              : const Text(
-                                  "Save copy in ...",
-                                  style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
-                                ),
+                          child:
+                              widget.isQuickTool
+                                  ? const Text(
+                                    "Save in ...",
+                                    style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
+                                  )
+                                  : const Text(
+                                    "Save copy in ...",
+                                    style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
+                                  ),
                         ),
                       ),
                       Expanded(
@@ -629,57 +603,55 @@ class _PianoState extends State<Piano> {
     final overlay = Overlay.of(context);
 
     _newToolTitle.text = "${_pianoBlock.title} - copy";
-    _newToolTitle.selection = TextSelection(
-      baseOffset: 0,
-      extentOffset: _newToolTitle.text.length,
-    );
+    _newToolTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newToolTitle.text.length);
 
     _entry = OverlayEntry(
-      builder: (context) => Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: ColorTheme.primary92,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 2,
-                  // textfield for new tool title
-                  child: TextField(
-                    controller: _newToolTitle,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      hintText: "",
-                      border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      label: Text("Tool title:", style: TextStyle(color: ColorTheme.surfaceTint)),
+      builder:
+          (context) => Scaffold(
+            resizeToAvoidBottomInset: false,
+            backgroundColor: ColorTheme.primary92,
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 2,
+                      // textfield for new tool title
+                      child: TextField(
+                        controller: _newToolTitle,
+                        autofocus: true,
+                        decoration: const InputDecoration(
+                          hintText: "",
+                          border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                          label: Text("Tool title:", style: TextStyle(color: ColorTheme.surfaceTint)),
+                        ),
+                        style: const TextStyle(color: ColorTheme.primary),
+                        onSubmitted: (newText) {
+                          _newToolTitle.text = newText;
+                          // close
+                          _hideTextInputOverlay(true, setTileState, index);
+                        },
+                      ),
                     ),
-                    style: const TextStyle(color: ColorTheme.primary),
-                    onSubmitted: (newText) {
-                      _newToolTitle.text = newText;
-                      // close
-                      _hideTextInputOverlay(true, setTileState, index);
-                    },
-                  ),
+                    // close button
+                    TextButton(
+                      onPressed: () => _hideTextInputOverlay(false, setTileState, index),
+                      child: const Text('Cancel'),
+                    ),
+                    TIOFlatButton(
+                      onPressed: () => _hideTextInputOverlay(true, setTileState, index),
+                      text: 'Submit',
+                      boldText: true,
+                    ),
+                  ],
                 ),
-                // close button
-                TextButton(
-                  onPressed: () => _hideTextInputOverlay(false, setTileState, index),
-                  child: const Text('Cancel'),
-                ),
-                TIOFlatButton(
-                  onPressed: () => _hideTextInputOverlay(true, setTileState, index),
-                  text: 'Submit',
-                  boldText: true,
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
     );
 
     overlay.insert(_entry!);
@@ -695,71 +667,65 @@ class _PianoState extends State<Piano> {
     _newProjectTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newProjectTitle.text.length);
 
     _entry = OverlayEntry(
-      builder: (context) => Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: ColorTheme.primary92,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // textfield for new project title
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 3.5,
-                  child: TextField(
-                    controller: _newProjectTitle,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      hintText: "",
-                      border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      label: Text("Project title:", style: TextStyle(color: ColorTheme.surfaceTint)),
+      builder:
+          (context) => Scaffold(
+            resizeToAvoidBottomInset: false,
+            backgroundColor: ColorTheme.primary92,
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // textfield for new project title
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 3.5,
+                      child: TextField(
+                        controller: _newProjectTitle,
+                        autofocus: true,
+                        decoration: const InputDecoration(
+                          hintText: "",
+                          border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                          label: Text("Project title:", style: TextStyle(color: ColorTheme.surfaceTint)),
+                        ),
+                        style: const TextStyle(color: ColorTheme.primary),
+                        onSubmitted: (newText) {
+                          _newProjectTitle.text = newText;
+                          // focus next text field
+                          _toolTitleFieldFocus.requestFocus();
+                        },
+                      ),
                     ),
-                    style: const TextStyle(color: ColorTheme.primary),
-                    onSubmitted: (newText) {
-                      _newProjectTitle.text = newText;
-                      // focus next text field
-                      _toolTitleFieldFocus.requestFocus();
-                    },
-                  ),
-                ),
-                // textfield for new tool title
-                SizedBox(
-                  width: MediaQuery.of(context).size.width / 3.5,
-                  child: TextField(
-                    controller: _newToolTitle,
-                    focusNode: _toolTitleFieldFocus,
-                    decoration: const InputDecoration(
-                      hintText: "",
-                      border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      label: Text("Tool title:", style: TextStyle(color: ColorTheme.surfaceTint)),
+                    // textfield for new tool title
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 3.5,
+                      child: TextField(
+                        controller: _newToolTitle,
+                        focusNode: _toolTitleFieldFocus,
+                        decoration: const InputDecoration(
+                          hintText: "",
+                          border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                          label: Text("Tool title:", style: TextStyle(color: ColorTheme.surfaceTint)),
+                        ),
+                        style: const TextStyle(color: ColorTheme.primary),
+                        onSubmitted: (newText) {
+                          _newToolTitle.text = newText;
+                          // close
+                          _hideTwoTextInputOverlay(true);
+                        },
+                      ),
                     ),
-                    style: const TextStyle(color: ColorTheme.primary),
-                    onSubmitted: (newText) {
-                      _newToolTitle.text = newText;
-                      // close
-                      _hideTwoTextInputOverlay(true);
-                    },
-                  ),
-                ),
 
-                TextButton(
-                  onPressed: () => _hideTwoTextInputOverlay(false),
-                  child: const Text('Cancel'),
+                    TextButton(onPressed: () => _hideTwoTextInputOverlay(false), child: const Text('Cancel')),
+                    TIOFlatButton(onPressed: () => _hideTwoTextInputOverlay(true), text: 'Submit', boldText: true),
+                  ],
                 ),
-                TIOFlatButton(
-                  onPressed: () => _hideTwoTextInputOverlay(true),
-                  text: 'Submit',
-                  boldText: true,
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
     );
 
     overlay.insert(_entry!);
@@ -793,8 +759,14 @@ class _PianoState extends State<Piano> {
 
     if (submitted) {
       _dontStopOnLeave = true;
-      saveToolInNewProject(context, _pianoBlock, widget.isQuickTool, _newProjectTitle.text, _newToolTitle.text,
-          pianoAlreadyOn: true);
+      saveToolInNewProject(
+        context,
+        _pianoBlock,
+        widget.isQuickTool,
+        _newProjectTitle.text,
+        _newToolTitle.text,
+        pianoAlreadyOn: true,
+      );
     }
   }
 }

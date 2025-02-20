@@ -68,9 +68,15 @@ abstract class FileIO {
 
   // returns the relative path of the new file
   // returns null if we don't accept the file format
-  static Future<String?> saveFileToAppStorage(BuildContext context, File fileToSave, String newFileName,
-      String? relativePathOfPreviousFile, ProjectLibrary projectLibrary,
-      {List<String>? acceptedFormats, bool asString = false}) async {
+  static Future<String?> saveFileToAppStorage(
+    BuildContext context,
+    File fileToSave,
+    String newFileName,
+    String? relativePathOfPreviousFile,
+    ProjectLibrary projectLibrary, {
+    List<String>? acceptedFormats,
+    bool asString = false,
+  }) async {
     // check if file exists / can be accessed
     if (!await fileToSave.exists()) {
       // try again after delay, maybe file needs time to download
@@ -128,8 +134,12 @@ abstract class FileIO {
 
   // saves recording to file
   // returns the relative path of the new file
-  static Future<String?> writeSamplesToWaveFile(Float64List samples, String newFileName,
-      String? relativePathOfPreviousFile, ProjectLibrary projectLibrary) async {
+  static Future<String?> writeSamplesToWaveFile(
+    Float64List samples,
+    String newFileName,
+    String? relativePathOfPreviousFile,
+    ProjectLibrary projectLibrary,
+  ) async {
     var nameAndExtension = "$newFileName.wav";
 
     // check if file with this name already exists

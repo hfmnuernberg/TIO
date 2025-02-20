@@ -94,10 +94,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _project = Provider.of<Project>(context, listen: false);
     }
 
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume);
 
@@ -122,8 +119,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
         } else {
           _fileLoaded = true;
           _rmsValues = newRms;
-          _waveformVisualizer =
-              WaveformVisualizer(0.0, _mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd, _rmsValues, _numOfBins);
+          _waveformVisualizer = WaveformVisualizer(
+            0.0,
+            _mediaPlayerBlock.rangeStart,
+            _mediaPlayerBlock.rangeEnd,
+            _rmsValues,
+            _numOfBins,
+          );
 
           _setFileDuration();
         }
@@ -187,23 +189,21 @@ class _MediaPlayerState extends State<MediaPlayer> {
     ];
 
     if (_fileLoaded) {
-      targets.add(CustomTargetFocus(
-        _keyWaveform,
-        "Tap anywhere to jump to that part of your sound file",
-        alignText: ContentAlign.bottom,
-        pointingDirection: PointingDirection.up,
-        shape: ShapeLightFocus.RRect,
-      ));
+      targets.add(
+        CustomTargetFocus(
+          _keyWaveform,
+          "Tap anywhere to jump to that part of your sound file",
+          alignText: ContentAlign.bottom,
+          pointingDirection: PointingDirection.up,
+          shape: ShapeLightFocus.RRect,
+        ),
+      );
     }
-    _walkthrough.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () {
-        context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
-        if (_fileLoaded) context.read<ProjectLibrary>().showWaveformTip = false;
-        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-      },
-      context,
-    );
+    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+      context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
+      if (_fileLoaded) context.read<ProjectLibrary>().showWaveformTip = false;
+      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    }, context);
   }
 
   void _createWalkthroughWaveformTip() {
@@ -217,14 +217,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
       ),
     ];
 
-    _walkthrough.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () {
-        context.read<ProjectLibrary>().showWaveformTip = false;
-        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-      },
-      context,
-    );
+    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+      context.read<ProjectLibrary>().showWaveformTip = false;
+      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    }, context);
   }
 
   Future<void> _queryAndUpdateStateFromRust() async {
@@ -278,10 +274,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           _walkthrough.show(context);
         }
       },
-      island: ParentIslandView(
-        project: widget.isQuickTool ? null : _project,
-        toolBlock: _mediaPlayerBlock,
-      ),
+      island: ParentIslandView(project: widget.isQuickTool ? null : _project, toolBlock: _mediaPlayerBlock),
       centerModule: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -290,32 +283,29 @@ class _MediaPlayerState extends State<MediaPlayer> {
               child: Stack(
                 children: [
                   _isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
+                      ? const Center(child: CircularProgressIndicator())
                       : Padding(
-                          key: _keyWaveform,
-                          padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
-                          child: _isRecording
-                              ? MediaPlayerFunctions.displayRecordingTimer(_recordingDuration, waveformHeight)
-                              : GestureDetector(
+                        key: _keyWaveform,
+                        padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
+                        child:
+                            _isRecording
+                                ? MediaPlayerFunctions.displayRecordingTimer(_recordingDuration, waveformHeight)
+                                : GestureDetector(
                                   onTapDown: _fileLoaded ? _onWaveTap : null,
                                   child: CustomPaint(
-                                      painter: _waveformVisualizer, size: Size(_waveFormWidth, waveformHeight))),
-                        ),
-                  Stack(
-                    children: _isRecording ? [] : _buildMarkers(),
-                  ),
+                                    painter: _waveformVisualizer,
+                                    size: Size(_waveFormWidth, waveformHeight),
+                                  ),
+                                ),
+                      ),
+                  Stack(children: _isRecording ? [] : _buildMarkers()),
                 ],
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                TextButton(
-                  onPressed: () => _jump10Seconds(false),
-                  child: const Text("-10 sec"),
-                ),
+                TextButton(onPressed: () => _jump10Seconds(false), child: const Text("-10 sec")),
                 IconButton(
                   onPressed: () {
                     setState(() {
@@ -324,14 +314,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
                     });
                     mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
                   },
-                  icon: _mediaPlayerBlock.looping
-                      ? const Icon(Icons.all_inclusive, color: ColorTheme.tertiary)
-                      : const Icon(Icons.all_inclusive, color: ColorTheme.surfaceTint),
+                  icon:
+                      _mediaPlayerBlock.looping
+                          ? const Icon(Icons.all_inclusive, color: ColorTheme.tertiary)
+                          : const Icon(Icons.all_inclusive, color: ColorTheme.surfaceTint),
                 ),
-                TextButton(
-                  onPressed: () => _jump10Seconds(true),
-                  child: const Text("+10 sec"),
-                ),
+                TextButton(onPressed: () => _jump10Seconds(true), child: const Text("+10 sec")),
               ],
             ),
             Row(
@@ -382,10 +370,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           title: "Trim",
           subtitle: "${(_mediaPlayerBlock.rangeStart * 100).round()}% → ${(_mediaPlayerBlock.rangeEnd * 100).round()}%",
           leadingIcon: "assets/icons/arrow_range.svg",
-          settingPage: SetTrim(
-            rmsValues: _rmsValues,
-            fileDuration: _fileDuration,
-          ),
+          settingPage: SetTrim(rmsValues: _rmsValues, fileDuration: _fileDuration),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => _queryAndUpdateStateFromRust(),
           inactive: _isLoading,
@@ -513,11 +498,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
             await mediaPlayerSetPlaybackPosFactor(posFactor: pos);
             await _queryAndUpdateStateFromRust();
           },
-          icon: const Icon(
-            Icons.arrow_drop_down,
-            color: ColorTheme.primary,
-            size: MediaPlayerParams.markerIconSize,
-          ),
+          icon: const Icon(Icons.arrow_drop_down, color: ColorTheme.primary, size: MediaPlayerParams.markerIconSize),
         ),
       );
       markers.add(marker);
@@ -568,8 +549,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
       _fileLoaded = false;
       _rmsValues = Float32List(0);
-      _waveformVisualizer =
-          WaveformVisualizer(0.0, _mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd, _rmsValues, _numOfBins);
+      _waveformVisualizer = WaveformVisualizer(
+        0.0,
+        _mediaPlayerBlock.rangeStart,
+        _mediaPlayerBlock.rangeEnd,
+        _rmsValues,
+        _numOfBins,
+      );
 
       setState(() {
         _isLoading = true;
@@ -586,8 +572,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
       } else {
         _fileLoaded = true;
         _rmsValues = newRms;
-        _waveformVisualizer =
-            WaveformVisualizer(0.0, _mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd, _rmsValues, _numOfBins);
+        _waveformVisualizer = WaveformVisualizer(
+          0.0,
+          _mediaPlayerBlock.rangeStart,
+          _mediaPlayerBlock.rangeEnd,
+          _rmsValues,
+          _numOfBins,
+        );
 
         _setFileDuration();
         _addShareOptionToMenu();
@@ -713,7 +704,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
             _fileLoaded = true;
             _rmsValues = newRms;
             _waveformVisualizer = WaveformVisualizer(
-                0.0, _mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd, _rmsValues, _numOfBins);
+              0.0,
+              _mediaPlayerBlock.rangeStart,
+              _mediaPlayerBlock.rangeEnd,
+              _rmsValues,
+              _numOfBins,
+            );
 
             _setFileDuration();
             _addShareOptionToMenu();
@@ -733,8 +729,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
     } else {
       _fileLoaded = true;
       _rmsValues = newRms;
-      _waveformVisualizer =
-          WaveformVisualizer(0.0, _mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd, _rmsValues, _numOfBins);
+      _waveformVisualizer = WaveformVisualizer(
+        0.0,
+        _mediaPlayerBlock.rangeStart,
+        _mediaPlayerBlock.rangeEnd,
+        _rmsValues,
+        _numOfBins,
+      );
 
       _setFileDuration();
       _addShareOptionToMenu();

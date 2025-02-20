@@ -52,8 +52,12 @@ class _SetTrimState extends State<SetTrim> {
       _rangeEndDuration = widget.fileDuration * _rangeValues.end;
 
       setState(() {
-        _waveformVisualizer =
-            WaveformVisualizer.setTrim(_rangeValues.start, _rangeValues.end, widget.rmsValues, _numOfBins);
+        _waveformVisualizer = WaveformVisualizer.setTrim(
+          _rangeValues.start,
+          _rangeValues.end,
+          widget.rmsValues,
+          _numOfBins,
+        );
       });
     });
   }
@@ -88,8 +92,12 @@ class _SetTrimState extends State<SetTrim> {
                   onChanged: (values) {
                     setState(() {
                       _rangeValues = values;
-                      _waveformVisualizer =
-                          WaveformVisualizer.setTrim(values.start, values.end, widget.rmsValues, _numOfBins);
+                      _waveformVisualizer = WaveformVisualizer.setTrim(
+                        values.start,
+                        values.end,
+                        widget.rmsValues,
+                        _numOfBins,
+                      );
                       _rangeStartDuration = widget.fileDuration * _rangeValues.start;
                       _rangeEndDuration = widget.fileDuration * _rangeValues.end;
 

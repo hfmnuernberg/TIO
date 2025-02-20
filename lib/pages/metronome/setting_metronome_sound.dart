@@ -20,11 +20,7 @@ enum SoundType { accented, unaccented, polyAccented, polyUnaccented }
 class SetMetronomeSound extends StatefulWidget {
   final bool running;
   final bool forSecondMetronome;
-  const SetMetronomeSound({
-    super.key,
-    required this.running,
-    this.forSecondMetronome = false,
-  });
+  const SetMetronomeSound({super.key, required this.running, this.forSecondMetronome = false});
 
   @override
   State<SetMetronomeSound> createState() => _SetMetronomeSoundState();
@@ -34,12 +30,10 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
   late MetronomeBlock _metronomeBlock;
 
   final List<Widget> _sounds = List<Widget>.generate(
-      MetronomeParams.metronomeSounds.length,
-      (int index) => Text(
-            MetronomeParams.metronomeSounds[index],
-            style: const TextStyle(color: ColorTheme.primary),
-          ),
-      growable: false);
+    MetronomeParams.metronomeSounds.length,
+    (int index) => Text(MetronomeParams.metronomeSounds[index], style: const TextStyle(color: ColorTheme.primary)),
+    growable: false,
+  );
 
   final List<bool> _selectedAccSound = List<bool>.filled(MetronomeParams.metronomeSounds.length, false);
   final List<bool> _selectedUnaccSound = List<bool>.filled(MetronomeParams.metronomeSounds.length, false);
@@ -150,10 +144,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
               }
             });
           },
-          constraints: const BoxConstraints(
-            minHeight: 40.0,
-            minWidth: 100.0,
-          ),
+          constraints: const BoxConstraints(minHeight: 40.0, minWidth: 100.0),
           isSelected: selectedSound,
           children: _sounds,
         ),
@@ -206,7 +197,10 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
     MetronomeUtils.loadSound(widget.forSecondMetronome, SoundType.unaccented, MetronomeParams.defaultUnaccSound);
     MetronomeUtils.loadSound(widget.forSecondMetronome, SoundType.polyAccented, MetronomeParams.defaultPolyAccSound);
     MetronomeUtils.loadSound(
-        widget.forSecondMetronome, SoundType.polyUnaccented, MetronomeParams.defaultPolyUnaccSound);
+      widget.forSecondMetronome,
+      SoundType.polyUnaccented,
+      MetronomeParams.defaultPolyUnaccSound,
+    );
 
     setState(() {});
   }

@@ -23,17 +23,20 @@ class WaveformVisualizer extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     var midAxisHeight = size.height / 2;
 
-    var blueBrush = Paint()
-      ..color = ColorTheme.primary80
-      ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
+    var blueBrush =
+        Paint()
+          ..color = ColorTheme.primary80
+          ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
 
-    var redBrush = Paint()
-      ..color = ColorTheme.tertiary60
-      ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
+    var redBrush =
+        Paint()
+          ..color = ColorTheme.tertiary60
+          ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
 
-    var lightBlueBrush = Paint()
-      ..color = ColorTheme.primary95
-      ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
+    var lightBlueBrush =
+        Paint()
+          ..color = ColorTheme.primary95
+          ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
 
     double stepSize = MediaPlayerParams.binWidth / 2.0;
 
@@ -80,11 +83,17 @@ class WaveformVisualizer extends CustomPainter {
   }
 
   void _drawWaveLine(Canvas canvas, Size size, double stepSize, var midAxisHeight, int i, Paint brush) {
-    canvas.drawLine(Offset(stepSize, midAxisHeight),
-        Offset(stepSize, midAxisHeight - (_rmsValues[i] * (size.height / 2.2))), brush);
+    canvas.drawLine(
+      Offset(stepSize, midAxisHeight),
+      Offset(stepSize, midAxisHeight - (_rmsValues[i] * (size.height / 2.2))),
+      brush,
+    );
 
-    canvas.drawLine(Offset(stepSize, midAxisHeight),
-        Offset(stepSize, midAxisHeight + (_rmsValues[i] * (size.height / 2.2))), brush);
+    canvas.drawLine(
+      Offset(stepSize, midAxisHeight),
+      Offset(stepSize, midAxisHeight + (_rmsValues[i] * (size.height / 2.2))),
+      brush,
+    );
   }
 
   @override

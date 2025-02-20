@@ -44,8 +44,9 @@ class _SetSpeedState extends State<SetSpeed> {
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
 
-    bpmController =
-        TextEditingController(text: getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm).toString());
+    bpmController = TextEditingController(
+      text: getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm).toString(),
+    );
     speedController = TextEditingController(text: _mediaPlayerBlock.speedFactor.toString());
 
     bpmController.addListener(() {
@@ -152,26 +153,32 @@ class _SetSpeedState extends State<SetSpeed> {
 
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
-      mediaPlayerSetSpeedFactor(speedFactor: newSpeedFactor).then((success) => {
-            if (!success) {throw ("Setting speed factor in rust failed using this value: $newSpeedFactor")}
-          });
+      mediaPlayerSetSpeedFactor(speedFactor: newSpeedFactor).then(
+        (success) => {
+          if (!success) {throw ("Setting speed factor in rust failed using this value: $newSpeedFactor")},
+        },
+      );
     }
 
     Navigator.pop(context);
   }
 
   void _reset() {
-    _bpmInput.controller.value = _bpmInput.controller.value
-        .copyWith(text: getBpmForSpeed(MediaPlayerParams.defaultSpeedFactor, _mediaPlayerBlock.bpm).toString());
-    _speedInput.controller.value =
-        _speedInput.controller.value.copyWith(text: MediaPlayerParams.defaultSpeedFactor.toString());
+    _bpmInput.controller.value = _bpmInput.controller.value.copyWith(
+      text: getBpmForSpeed(MediaPlayerParams.defaultSpeedFactor, _mediaPlayerBlock.bpm).toString(),
+    );
+    _speedInput.controller.value = _speedInput.controller.value.copyWith(
+      text: MediaPlayerParams.defaultSpeedFactor.toString(),
+    );
   }
 
   void _onCancel() {
-    mediaPlayerSetSpeedFactor(speedFactor: _mediaPlayerBlock.speedFactor).then((success) => {
-          if (!success)
-            {throw ("Setting speed factor in rust failed using this value: ${_mediaPlayerBlock.speedFactor}")}
-        });
+    mediaPlayerSetSpeedFactor(speedFactor: _mediaPlayerBlock.speedFactor).then(
+      (success) => {
+        if (!success)
+          {throw ("Setting speed factor in rust failed using this value: ${_mediaPlayerBlock.speedFactor}")},
+      },
+    );
 
     Navigator.pop(context);
   }
@@ -180,9 +187,11 @@ class _SetSpeedState extends State<SetSpeed> {
     if (_speedInput.controller.value.text != '') {
       double newValue = double.parse(_speedInput.controller.value.text);
 
-      mediaPlayerSetSpeedFactor(speedFactor: newValue).then((success) => {
-            if (!success) {throw ("Setting speed factor in rust failed using this value: $newValue")}
-          });
+      mediaPlayerSetSpeedFactor(speedFactor: newValue).then(
+        (success) => {
+          if (!success) {throw ("Setting speed factor in rust failed using this value: $newValue")},
+        },
+      );
     }
   }
 }

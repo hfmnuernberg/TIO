@@ -17,10 +17,7 @@ import 'package:tiomusic/util/util_midi.dart';
 class TunerIslandView extends StatefulWidget {
   final TunerBlock tunerBlock;
 
-  const TunerIslandView({
-    super.key,
-    required this.tunerBlock,
-  });
+  const TunerIslandView({super.key, required this.tunerBlock});
 
   @override
   State<TunerIslandView> createState() => _TunerIslandViewState();
@@ -169,18 +166,21 @@ class PitchIslandViewVisualizer extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     dirty = false;
 
-    var paintCircle = Paint()
-      ..color = ColorTheme.primary
-      ..strokeWidth = 2;
+    var paintCircle =
+        Paint()
+          ..color = ColorTheme.primary
+          ..strokeWidth = 2;
 
-    var paintLine = Paint()
-      ..color = ColorTheme.primaryFixedDim
-      ..strokeWidth = 2;
+    var paintLine =
+        Paint()
+          ..color = ColorTheme.primaryFixedDim
+          ..strokeWidth = 2;
 
-    var paintEmptyCircle = Paint()
-      ..color = ColorTheme.primary
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
+    var paintEmptyCircle =
+        Paint()
+          ..color = ColorTheme.primary
+          ..strokeWidth = 2
+          ..style = PaintingStyle.stroke;
 
     var xPositionFactor = ((size.width - (radiusSideCircles * 2)) * _pitchFactor) + radiusSideCircles;
     var factorPosition = Offset(xPositionFactor, size.height / 2);
@@ -204,7 +204,9 @@ class PitchIslandViewVisualizer extends CustomPainter {
       final textPainter = TextPainter(text: textSpan, textDirection: TextDirection.ltr, textAlign: TextAlign.center);
       textPainter.layout();
       textPainter.paint(
-          canvas, Offset(xPositionFactor - (textPainter.width / 2), size.height / 2 - (textPainter.height / 2)));
+        canvas,
+        Offset(xPositionFactor - (textPainter.width / 2), size.height / 2 - (textPainter.height / 2)),
+      );
     }
   }
 

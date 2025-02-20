@@ -20,8 +20,10 @@ abstract class NoteHandler {
       double beatLength = double.parse(key.split("_").last);
       key = key.substring(0, key.length - (key.split("_").last.length + 1));
 
-      var svg = SvgPicture.asset("assets/notes/$fileName",
-          colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn));
+      var svg = SvgPicture.asset(
+        "assets/notes/$fileName",
+        colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn),
+      );
 
       _noteValues[key] = SvgNote(svg: svg, beatLength: beatLength);
     }
@@ -48,10 +50,7 @@ class SvgNote {
   final SvgPicture svg;
   final double beatLength;
 
-  SvgNote({
-    required this.svg,
-    required this.beatLength,
-  });
+  SvgNote({required this.svg, required this.beatLength});
 }
 
 abstract class NoteValues {

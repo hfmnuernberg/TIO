@@ -40,23 +40,17 @@ class _ParentInnerIslandState extends State<ParentInnerIsland> {
               maintainSize: true,
               maintainState: true,
               child: CircleAvatar(
-                child: IconButton(
-                  onPressed: () => widget.onMainIconPressed(),
-                  icon: widget.mainIcon,
-                ),
+                child: IconButton(onPressed: () => widget.onMainIconPressed(), icon: widget.mainIcon),
               ),
             ),
           ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
-              child: widget.centerView is CustomPainter
-                  ? CustomPaint(
-                      key: widget.customPaintKey,
-                      painter: widget.centerView,
-                      size: Size.infinite,
-                    )
-                  : widget.centerView,
+              child:
+                  widget.centerView is CustomPainter
+                      ? CustomPaint(key: widget.customPaintKey, painter: widget.centerView, size: Size.infinite)
+                      : widget.centerView,
             ),
           ),
           SizedBox(

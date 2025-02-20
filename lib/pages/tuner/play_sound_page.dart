@@ -146,12 +146,7 @@ class SoundButton extends StatefulWidget {
   final int idx;
   final ActiveReferenceSoundButton buttonListener;
 
-  const SoundButton({
-    super.key,
-    required this.midiNumber,
-    required this.idx,
-    required this.buttonListener,
-  });
+  const SoundButton({super.key, required this.midiNumber, required this.idx, required this.buttonListener});
 
   @override
   State<SoundButton> createState() => _SoundButtonState();
@@ -195,18 +190,20 @@ class _SoundButtonState extends State<SoundButton> {
               width: buttonWidth,
               height: 60,
               decoration: BoxDecoration(
-                color: widget.buttonListener.buttonIdx == widget.idx && widget.buttonListener.buttonOn
-                    ? ColorTheme.primary
-                    : ColorTheme.surface,
+                color:
+                    widget.buttonListener.buttonIdx == widget.idx && widget.buttonListener.buttonOn
+                        ? ColorTheme.primary
+                        : ColorTheme.surface,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Center(
                 child: Text(
                   midiToNameOneChar(widget.midiNumber.toInt()),
                   style: TextStyle(
-                    color: widget.buttonListener.buttonIdx == widget.idx && widget.buttonListener.buttonOn
-                        ? ColorTheme.surface
-                        : ColorTheme.primary,
+                    color:
+                        widget.buttonListener.buttonIdx == widget.idx && widget.buttonListener.buttonOn
+                            ? ColorTheme.surface
+                            : ColorTheme.primary,
                   ),
                 ),
               ),

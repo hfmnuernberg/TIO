@@ -40,10 +40,7 @@ import 'package:volume_controller/volume_controller.dart';
 class Metronome extends StatefulWidget {
   final bool isQuickTool;
 
-  const Metronome({
-    super.key,
-    required this.isQuickTool,
-  });
+  const Metronome({super.key, required this.isQuickTool});
 
   @override
   State<Metronome> createState() => _MetronomeState();
@@ -94,15 +91,13 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     _metronomeBlock.timeLastModified = getCurrentDateTime();
 
     // only allow portrait mode for this tool
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     metronomeSetVolume(volume: _metronomeBlock.volume);
     metronomeSetRhythm(
-        bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
-        bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2));
+      bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
+      bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
+    );
     metronomeSetBpm(bpm: _metronomeBlock.bpm.toDouble());
     metronomeSetBeatMuteChance(muteChance: _metronomeBlock.randomMute.toDouble() / 100.0);
 
@@ -114,8 +109,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     _clearAndRebuildRhythmSegments(true);
 
     // Start beat detection timer
-    _beatDetection =
-        Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (Timer t) async {
+    _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
+      Timer t,
+    ) async {
       if (!mounted) {
         t.cancel();
         return;
@@ -179,14 +175,10 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         pointingDirection: PointingDirection.right,
       ),
     ];
-    _walkthrough.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () {
-        context.read<ProjectLibrary>().showMetronomeTutorial = false;
-        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-      },
-      context,
-    );
+    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+      context.read<ProjectLibrary>().showMetronomeTutorial = false;
+      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    }, context);
   }
 
   @override
@@ -251,8 +243,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             }
 
             metronomeSetRhythm(
-                bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
-                bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2));
+              bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
+              bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
+            );
           });
         },
       );
@@ -290,8 +283,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         isSecond ? _rhythmSegmentList2[idx] = newRhythmSegment : _rhythmSegmentList[idx] = newRhythmSegment;
 
         metronomeSetRhythm(
-            bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
-            bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2));
+          bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
+          bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
+        );
         setState(() {});
       });
     }
@@ -304,8 +298,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       _clearAndRebuildRhythmSegments(isSecond);
 
       metronomeSetRhythm(
-          bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
-          bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2));
+        bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
+        bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
+      );
       if (mounted) {
         FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
         setState(() {});
@@ -317,13 +312,17 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     _stopMetronome();
 
     _metronomeBlock.changeRhythmOrder(
-        oldIndex, newIndex, isSecond ? _metronomeBlock.rhythmGroups2 : _metronomeBlock.rhythmGroups);
+      oldIndex,
+      newIndex,
+      isSecond ? _metronomeBlock.rhythmGroups2 : _metronomeBlock.rhythmGroups,
+    );
 
     _clearAndRebuildRhythmSegments(isSecond);
 
     metronomeSetRhythm(
-        bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
-        bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2));
+      bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
+      bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
+    );
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     setState(() {});
   }
@@ -336,23 +335,28 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     _metronomeBlock.rhythmGroups.clear();
     _metronomeBlock.rhythmGroups2.clear();
 
-    _metronomeBlock.rhythmGroups.add(RhythmGroup(
-      MetronomeParams.getNewKeyID(),
-      MetronomeParams.defaultBeats,
-      MetronomeParams.defaultPolyBeats,
-      MetronomeParams.defaultNoteKey,
-    ));
-    _rhythmSegmentList.add(RhythmSegment(
-      activeBeatsNotifier: _activeBeatsModel,
-      barIdx: 0,
-      metronomeBlock: _metronomeBlock,
-      isSecondary: false,
-      editFunction: () => _editRhythmSegment(0, false),
-    ));
+    _metronomeBlock.rhythmGroups.add(
+      RhythmGroup(
+        MetronomeParams.getNewKeyID(),
+        MetronomeParams.defaultBeats,
+        MetronomeParams.defaultPolyBeats,
+        MetronomeParams.defaultNoteKey,
+      ),
+    );
+    _rhythmSegmentList.add(
+      RhythmSegment(
+        activeBeatsNotifier: _activeBeatsModel,
+        barIdx: 0,
+        metronomeBlock: _metronomeBlock,
+        isSecondary: false,
+        editFunction: () => _editRhythmSegment(0, false),
+      ),
+    );
 
     metronomeSetRhythm(
-        bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
-        bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2));
+      bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
+      bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
+    );
     if (mounted) {
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
       setState(() {});
@@ -381,12 +385,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       builder: (BuildContext context, Widget? child) {
         final double animValue = Curves.easeInOut.transform(animation.value);
         final double elevation = lerpDouble(0, 6, animValue)!;
-        return Material(
-          elevation: elevation,
-          color: Colors.transparent,
-          shadowColor: Colors.transparent,
-          child: child,
-        );
+        return Material(elevation: elevation, color: Colors.transparent, shadowColor: Colors.transparent, child: child);
       },
       child: child,
     );
@@ -461,19 +460,17 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   Widget _rhythmGroup(int index, bool isSecond) {
     return Container(
       key: index == 0 && !isSecond ? _keyGroups : null,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(4),
-        color: _listTileMaskColor,
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: _listTileMaskColor),
       child: Padding(
         padding: const EdgeInsets.all(4.0),
         child:
-            // Reordering handle with icon
-            ReorderableDelayedDragStartListener(
+        // Reordering handle with icon
+        ReorderableDelayedDragStartListener(
           index: index,
-          enabled: ((isSecond ? _metronomeBlock.rhythmGroups2.length : _metronomeBlock.rhythmGroups.length) > 1)
-              ? true
-              : false,
+          enabled:
+              ((isSecond ? _metronomeBlock.rhythmGroups2.length : _metronomeBlock.rhythmGroups.length) > 1)
+                  ? true
+                  : false,
           child: GestureDetector(
             onTap: () {
               _editRhythmSegment(index, isSecond);
@@ -505,12 +502,15 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                   itemCount: isSecondMetronome ? _rhythmSegmentList2.length : _rhythmSegmentList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Dismissible(
-                      key: Key(isSecondMetronome
-                          ? _metronomeBlock.rhythmGroups2[index].keyID
-                          : _metronomeBlock.rhythmGroups[index].keyID),
-                      direction: isSecondMetronome
-                          ? DismissDirection.up
-                          : _metronomeBlock.rhythmGroups.length > 1
+                      key: Key(
+                        isSecondMetronome
+                            ? _metronomeBlock.rhythmGroups2[index].keyID
+                            : _metronomeBlock.rhythmGroups[index].keyID,
+                      ),
+                      direction:
+                          isSecondMetronome
+                              ? DismissDirection.up
+                              : _metronomeBlock.rhythmGroups.length > 1
                               ? DismissDirection.up
                               : DismissDirection.none,
                       onDismissed: (_) {
@@ -535,9 +535,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                     _reorderRythmSegments(oldIndex, newIndex, isSecondMetronome);
                   },
                 ),
-                const SizedBox(
-                  width: 4,
-                ),
+                const SizedBox(width: 4),
                 // Button to add more segments
                 CircleAvatar(
                   radius: TIOMusicParams.rhythmPlusButtonSize,
@@ -546,10 +544,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                     child: IconButton(
                       iconSize: TIOMusicParams.rhythmPlusButtonSize,
                       onPressed: () => _addRhythmSegment(isSecondMetronome),
-                      icon: const Icon(
-                        Icons.add,
-                        color: ColorTheme.surfaceTint,
-                      ),
+                      icon: const Icon(Icons.add, color: ColorTheme.surfaceTint),
                     ),
                   ),
                 ),
@@ -575,19 +570,17 @@ class _MetronomeState extends State<Metronome> with RouteAware {
               children: [
                 Text(
                   isSecondMetronome ? "Metronome 2" : "Metronome 1",
-                  style: const TextStyle(
-                    color: ColorTheme.primary,
-                  ),
+                  style: const TextStyle(color: ColorTheme.primary),
                 ),
                 // add second metronome button
                 isSecondMetronome || _metronomeBlock.rhythmGroups2.isNotEmpty
                     ? const SizedBox()
                     : IconButton(
-                        key: _keyAddSecondMetro,
-                        iconSize: TIOMusicParams.rhythmPlusButtonSize,
-                        onPressed: () => _addRhythmSegment(true),
-                        icon: const Icon(Icons.add, color: ColorTheme.primary),
-                      ),
+                      key: _keyAddSecondMetro,
+                      iconSize: TIOMusicParams.rhythmPlusButtonSize,
+                      onPressed: () => _addRhythmSegment(true),
+                      icon: const Icon(Icons.add, color: ColorTheme.primary),
+                    ),
               ],
             ),
           ),
@@ -620,10 +613,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           // Black screen for visual metronome
           Visibility(
             visible: _blink && _blinkIsBeat,
-            child: CustomPaint(
-              size: MediaQuery.of(context).size,
-              painter: FilledScreen(color: ColorTheme.surfaceTint),
-            ),
+            child: CustomPaint(size: MediaQuery.of(context).size, painter: FilledScreen(color: ColorTheme.surfaceTint)),
           ),
           Center(
             child: Column(
@@ -725,14 +715,14 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         _metronomeBlock.rhythmGroups2.isEmpty
             ? const SizedBox()
             : SettingsTile(
-                title: "Sound 2",
-                subtitle:
-                    "Main: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\nPoly: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}",
-                leadingIcon: Icons.library_music_outlined,
-                settingPage: SetMetronomeSound(running: (_sound && _isStarted), forSecondMetronome: true),
-                block: _metronomeBlock,
-                callOnReturn: (value) => setState(() {}),
-              ),
+              title: "Sound 2",
+              subtitle:
+                  "Main: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\nPoly: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}",
+              leadingIcon: Icons.library_music_outlined,
+              settingPage: SetMetronomeSound(running: (_sound && _isStarted), forSecondMetronome: true),
+              block: _metronomeBlock,
+              callOnReturn: (value) => setState(() {}),
+            ),
         // Random mute
         SettingsTile(
           title: "Random Mute",
@@ -754,9 +744,10 @@ class FilledScreen extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    var paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
+    var paint =
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.fill;
     canvas.drawRect(const Offset(0, 0) & size, paint);
   }
 

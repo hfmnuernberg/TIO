@@ -10,30 +10,33 @@ Future<void> startAudioSession() async {
   if (!success) debugPrint('AudioSession could not be activated');
 }
 
-enum AudioSessionType {
-  playback,
-  record,
-}
+enum AudioSessionType { playback, record }
 
 Future<void> configureAudioSession(AudioSessionType type) async {
   final session = await AudioSession.instance;
 
   switch (type) {
     case AudioSessionType.playback:
-      await session.configure(AudioSessionConfiguration(
-        avAudioSessionCategory: AVAudioSessionCategory.playback,
-        avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.defaultToSpeaker &
-            AVAudioSessionCategoryOptions.allowBluetooth &
-            AVAudioSessionCategoryOptions.allowAirPlay,
-      ));
+      await session.configure(
+        AudioSessionConfiguration(
+          avAudioSessionCategory: AVAudioSessionCategory.playback,
+          avAudioSessionCategoryOptions:
+              AVAudioSessionCategoryOptions.defaultToSpeaker &
+              AVAudioSessionCategoryOptions.allowBluetooth &
+              AVAudioSessionCategoryOptions.allowAirPlay,
+        ),
+      );
       break;
     case AudioSessionType.record:
-      await session.configure(AudioSessionConfiguration(
-        avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
-        avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.defaultToSpeaker &
-            AVAudioSessionCategoryOptions.allowBluetooth &
-            AVAudioSessionCategoryOptions.allowAirPlay,
-      ));
+      await session.configure(
+        AudioSessionConfiguration(
+          avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
+          avAudioSessionCategoryOptions:
+              AVAudioSessionCategoryOptions.defaultToSpeaker &
+              AVAudioSessionCategoryOptions.allowBluetooth &
+              AVAudioSessionCategoryOptions.allowAirPlay,
+        ),
+      );
       break;
   }
 }

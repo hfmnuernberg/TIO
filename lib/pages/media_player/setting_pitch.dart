@@ -62,24 +62,29 @@ class _SetPitchState extends State<SetPitch> {
 
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
-      mediaPlayerSetPitchSemitones(pitchSemitones: newPitchValue).then((success) => {
-            if (!success) {throw ("Setting pitch semitones in rust failed using this value: $newPitchValue")}
-          });
+      mediaPlayerSetPitchSemitones(pitchSemitones: newPitchValue).then(
+        (success) => {
+          if (!success) {throw ("Setting pitch semitones in rust failed using this value: $newPitchValue")},
+        },
+      );
     }
 
     Navigator.pop(context);
   }
 
   void _reset() {
-    _pitchInput.controller.value =
-        _pitchInput.controller.value.copyWith(text: MediaPlayerParams.defaultPitchSemitones.toString());
+    _pitchInput.controller.value = _pitchInput.controller.value.copyWith(
+      text: MediaPlayerParams.defaultPitchSemitones.toString(),
+    );
   }
 
   void _onCancel() {
-    mediaPlayerSetPitchSemitones(pitchSemitones: _mediaPlayerBlock.pitchSemitones).then((success) => {
-          if (!success)
-            {throw ("Setting pitch semitones in rust failed using this value: ${_mediaPlayerBlock.pitchSemitones}")}
-        });
+    mediaPlayerSetPitchSemitones(pitchSemitones: _mediaPlayerBlock.pitchSemitones).then(
+      (success) => {
+        if (!success)
+          {throw ("Setting pitch semitones in rust failed using this value: ${_mediaPlayerBlock.pitchSemitones}")},
+      },
+    );
 
     Navigator.pop(context);
   }
@@ -88,9 +93,11 @@ class _SetPitchState extends State<SetPitch> {
     if (_pitchInput.controller.value.text != '') {
       double newPitchValue = double.parse(_pitchInput.controller.value.text);
 
-      mediaPlayerSetPitchSemitones(pitchSemitones: newPitchValue).then((success) => {
-            if (!success) {throw ("Setting pitch semitones in rust failed using this value: $newPitchValue")}
-          });
+      mediaPlayerSetPitchSemitones(pitchSemitones: newPitchValue).then(
+        (success) => {
+          if (!success) {throw ("Setting pitch semitones in rust failed using this value: $newPitchValue")},
+        },
+      );
     }
   }
 }

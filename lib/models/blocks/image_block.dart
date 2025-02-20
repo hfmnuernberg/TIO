@@ -133,11 +133,12 @@ class ImageBlock extends ProjectBlock {
 
       if (context.mounted) {
         final newRelativePath = await FileIO.saveFileToAppStorage(
-            context,
-            File(pickedImage.path),
-            FileIO.getFileNameWithoutExtension(pickedImage.path),
-            _relativePath == "" ? null : _relativePath,
-            projectLibrary);
+          context,
+          File(pickedImage.path),
+          FileIO.getFileNameWithoutExtension(pickedImage.path),
+          _relativePath == "" ? null : _relativePath,
+          projectLibrary,
+        );
 
         if (newRelativePath == null) return;
 

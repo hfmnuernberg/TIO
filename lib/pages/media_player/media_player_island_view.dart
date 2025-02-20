@@ -15,10 +15,7 @@ import 'package:tiomusic/util/util_functions.dart';
 class MediaPlayerIslandView extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;
 
-  const MediaPlayerIslandView({
-    super.key,
-    required this.mediaPlayerBlock,
-  });
+  const MediaPlayerIslandView({super.key, required this.mediaPlayerBlock});
 
   @override
   State<MediaPlayerIslandView> createState() => _MediaPlayerIslandViewState();
@@ -47,11 +44,18 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
     mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
 
-    _waveformVisualizer =
-        WaveformVisualizer(0.0, widget.mediaPlayerBlock.rangeStart, widget.mediaPlayerBlock.rangeEnd, _rmsValues, 0);
+    _waveformVisualizer = WaveformVisualizer(
+      0.0,
+      widget.mediaPlayerBlock.rangeStart,
+      widget.mediaPlayerBlock.rangeEnd,
+      _rmsValues,
+      0,
+    );
 
     MediaPlayerFunctions.setSpeedAndPitchInRust(
-        widget.mediaPlayerBlock.speedFactor, widget.mediaPlayerBlock.pitchSemitones);
+      widget.mediaPlayerBlock.speedFactor,
+      widget.mediaPlayerBlock.pitchSemitones,
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       var customPaintContext = globalKeyCustomPaint.currentContext;
@@ -79,7 +83,12 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
           if (!mounted) return;
           setState(() {
             _waveformVisualizer = WaveformVisualizer(
-                0.0, widget.mediaPlayerBlock.rangeStart, widget.mediaPlayerBlock.rangeEnd, _rmsValues, numOfBins);
+              0.0,
+              widget.mediaPlayerBlock.rangeStart,
+              widget.mediaPlayerBlock.rangeEnd,
+              _rmsValues,
+              numOfBins,
+            );
           });
         }
       }
@@ -97,20 +106,23 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
         return;
       }
       if (!_isPlaying) return;
-      mediaPlayerGetState().then(
-        (mediaPlayerState) {
-          if (mediaPlayerState == null) {
-            debugPrint("State is null");
-            return;
-          }
+      mediaPlayerGetState().then((mediaPlayerState) {
+        if (mediaPlayerState == null) {
+          debugPrint("State is null");
+          return;
+        }
 
-          setState(() {
-            _isPlaying = mediaPlayerState.playing;
-            _waveformVisualizer = WaveformVisualizer(mediaPlayerState.playbackPositionFactor,
-                widget.mediaPlayerBlock.rangeStart, widget.mediaPlayerBlock.rangeEnd, _rmsValues, numOfBins);
-          });
-        },
-      );
+        setState(() {
+          _isPlaying = mediaPlayerState.playing;
+          _waveformVisualizer = WaveformVisualizer(
+            mediaPlayerState.playbackPositionFactor,
+            widget.mediaPlayerBlock.rangeStart,
+            widget.mediaPlayerBlock.rangeEnd,
+            _rmsValues,
+            numOfBins,
+          );
+        });
+      });
     });
   }
 
@@ -131,11 +143,12 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
           _isPlaying ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.mediaPlayerBlock.icon,
       mainButtonIsDisabled: _isLoading,
       parameterText: widget.mediaPlayerBlock.title,
-      centerView: _isLoading
-          // loading spinner
-          ? const Center(child: CircularProgressIndicator())
-          // waveform visualizer
-          : _waveformVisualizer,
+      centerView:
+          _isLoading
+              // loading spinner
+              ? const Center(child: CircularProgressIndicator())
+              // waveform visualizer
+              : _waveformVisualizer,
       customPaintKey: globalKeyCustomPaint,
       textSpaceWidth: 70,
     );
