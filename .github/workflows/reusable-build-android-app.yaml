@@ -47,34 +47,38 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME"
           echo "ANDROID_SDK_HOME=$ANDROID_SDK_HOME"
           echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME"
-          echo "---"
-          ls -la /home/runner/.setup-ndk/r26d/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
-          echo "---"
-          ls -la /opt
-          echo "---"
-          ls -la /opt/hostedtoolcache
-          echo "---"
-          ls -la /opt/hostedtoolcache/ndk
-          echo "---"
-          ls -la /opt/hostedtoolcache/ndk/r26d
-          echo "---"
-          ls -la /opt/hostedtoolcache/ndk/r26d/x64
-          echo "---"
-          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains
-          echo "---"
-          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm
-          echo "---"
-          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt
-          echo "---"
-          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt/linux-x86_64
-          echo "---"
-          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt/linux-x86_64/bin
-          echo "---"
-          chmod +x /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt/linux-x86_64/bin/clang
-          echo "---"
-          /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt/linux-x86_64/bin/clang --version
-          echo "---"
-          /home/runner/.setup-ndk/r26d/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --version
+          echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
+          ls -la ${{ steps.setup_ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin
+          ${{ steps.setup_ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin/clang --version
+          ${{ steps.setup_ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --version
+#          echo "---"
+#          ls -la /home/runner/.setup-ndk/r26d/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
+#          echo "---"
+#          ls -la /opt
+#          echo "---"
+#          ls -la /opt/hostedtoolcache
+#          echo "---"
+#          ls -la /opt/hostedtoolcache/ndk
+#          echo "---"
+#          ls -la /opt/hostedtoolcache/ndk/r26d
+#          echo "---"
+#          ls -la /opt/hostedtoolcache/ndk/r26d/x64
+#          echo "---"
+#          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains
+#          echo "---"
+#          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm
+#          echo "---"
+#          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt
+#          echo "---"
+#          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt/linux-x86_64
+#          echo "---"
+#          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt/linux-x86_64/bin
+#          echo "---"
+#          chmod +x /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt/linux-x86_64/bin/clang
+#          echo "---"
+#          /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt/linux-x86_64/bin/clang --version
+#          echo "---"
+#          /home/runner/.setup-ndk/r26d/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --version
         env:
           ANDROID_NDK_HOME: ${{ steps.setup_ndk.outputs.ndk-path }}
           ANDROID_NDK_ROOT: ${{ steps.setup_ndk.outputs.ndk-path }}
