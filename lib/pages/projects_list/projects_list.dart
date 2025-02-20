@@ -135,7 +135,7 @@ class _ProjectsListState extends State<ProjectsList> {
 
   void _aboutPagePressed() {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return const AboutPage();
+      return AboutPage();
     }));
   }
 
