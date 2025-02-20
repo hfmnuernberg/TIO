@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/info_page.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -25,10 +24,8 @@ class _AboutPageState extends State<AboutPage> {
       final info = await PackageInfo.fromPlatform();
       setState(() {
         _packageInfo = info;
-        _isLoading = false;
       });
-    } catch (_) {
-      showSnackbar(context: context, message: 'Could not load app version.');
+    } finally {
       setState(() {
         _isLoading = false;
       });
@@ -38,7 +35,7 @@ class _AboutPageState extends State<AboutPage> {
   _showAppVersion() {
     if (_isLoading) return const Center(child: CircularProgressIndicator());
     if (_packageInfo == null) return const TextSection(content: 'Could not load app version.');
-    return TextSection(content: 'Version ${_packageInfo!.version} (${_packageInfo!.buildNumber})');
+    return TextSection(content: '${_packageInfo!.version} (${_packageInfo!.buildNumber})');
   }
 
   @override
