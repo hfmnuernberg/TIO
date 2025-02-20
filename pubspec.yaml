@@ -56,7 +56,7 @@ dev_dependencies:
         sdk: flutter
     integration_test:
         sdk: flutter
-    json_serializable: 6.9.3
+    json_serializable: 6.9.4
     test_cov_console: 0.2.2
 
 flutter:
