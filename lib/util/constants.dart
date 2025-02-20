@@ -55,14 +55,7 @@ class TIOMusicParams {
 
   // media file extensions
 
-  static const List<String> audioFormats = [
-    ".wav",
-    ".aiff",
-    ".mp3",
-    ".ogg",
-    ".flac",
-    ".m4a",
-  ];
+  static const List<String> audioFormats = [".wav", ".aiff", ".mp3", ".ogg", ".flac", ".m4a"];
 }
 
 //---------------------------------------------
@@ -288,8 +281,15 @@ class TextParams {
 enum BlockType { tuner, metronome, mediaPlayer, image, piano, text }
 
 class BlockTypeInfo {
-  BlockTypeInfo(this.name, this.kind, this.description, this.icon, this.createWithDefaults, this.createWithTitle,
-      this.createFromJson);
+  BlockTypeInfo(
+    this.name,
+    this.kind,
+    this.description,
+    this.icon,
+    this.createWithDefaults,
+    this.createWithTitle,
+    this.createFromJson,
+  );
 
   String name;
   String kind;

@@ -78,10 +78,7 @@ class EditTextDialog extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            TextButton(
-              onPressed: onCancel,
-              child: const Text('Cancel'),
-            ),
+            TextButton(onPressed: onCancel, child: const Text('Cancel')),
             ValueListenableBuilder<TextEditingValue>(
               valueListenable: controller,
               builder: (context, textValue, _) {
@@ -89,15 +86,11 @@ class EditTextDialog extends StatelessWidget {
                 final isDirty = textValue.text != value;
                 final isSubmitEnabled = isValid && (isNew || isDirty);
 
-                return TIOFlatButton(
-                  onPressed: isSubmitEnabled ? handleSubmit : null,
-                  text: 'Submit',
-                  boldText: true,
-                );
+                return TIOFlatButton(onPressed: isSubmitEnabled ? handleSubmit : null, text: 'Submit', boldText: true);
               },
             ),
           ],
-        )
+        ),
       ],
     );
   }

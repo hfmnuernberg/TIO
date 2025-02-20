@@ -13,20 +13,20 @@ class MetronomeBlock extends ProjectBlock {
   // for now this check is only used to compare quick tools to the default settings, so some properties are left out here
   @override
   List<Object> get props => [
-        bpm,
-        randomMute,
-        _rhythmGroups,
-        _rhythmGroups2,
-        accSound,
-        unaccSound,
-        polyAccSound,
-        polyUnaccSound,
-        accSound2,
-        unaccSound2,
-        polyAccSound2,
-        polyUnaccSound2,
-        _volume,
-      ];
+    bpm,
+    randomMute,
+    _rhythmGroups,
+    _rhythmGroups2,
+    accSound,
+    unaccSound,
+    polyAccSound,
+    polyUnaccSound,
+    accSound2,
+    unaccSound2,
+    polyAccSound2,
+    polyUnaccSound2,
+    _volume,
+  ];
 
   @override
   @JsonKey(defaultValue: MetronomeParams.kind, includeFromJson: false, includeToJson: true)
@@ -153,10 +153,7 @@ class MetronomeBlock extends ProjectBlock {
       ]);
     }
 
-    settings.addAll([
-      "$bpm bpm",
-      "$randomMute % random mute",
-    ]);
+    settings.addAll(["$bpm bpm", "$randomMute % random mute"]);
 
     if (randomMute > 0) {
       settings.add("$randomMute% mute chance");
@@ -166,23 +163,24 @@ class MetronomeBlock extends ProjectBlock {
   }
 
   MetronomeBlock(
-      String title,
-      String id,
-      String? islandToolID,
-      this.bpm,
-      this.randomMute,
-      List<RhythmGroup> rhythmGroups,
-      List<RhythmGroup> rhythmGroups2,
-      this.accSound,
-      this.unaccSound,
-      this.polyAccSound,
-      this.polyUnaccSound,
-      this.accSound2,
-      this.unaccSound2,
-      this.polyAccSound2,
-      this.polyUnaccSound2,
-      DateTime timeLastModified,
-      double volume) {
+    String title,
+    String id,
+    String? islandToolID,
+    this.bpm,
+    this.randomMute,
+    List<RhythmGroup> rhythmGroups,
+    List<RhythmGroup> rhythmGroups2,
+    this.accSound,
+    this.unaccSound,
+    this.polyAccSound,
+    this.polyUnaccSound,
+    this.accSound2,
+    this.unaccSound2,
+    this.polyAccSound2,
+    this.polyUnaccSound2,
+    DateTime timeLastModified,
+    double volume,
+  ) {
     _timeLastModified = timeLastModified;
     _title = title;
     _rhythmGroups = rhythmGroups;
@@ -200,8 +198,12 @@ class MetronomeBlock extends ProjectBlock {
     bpm = MetronomeParams.defaultBPM.toInt();
     randomMute = MetronomeParams.defaultRandomMute;
     _rhythmGroups = [
-      RhythmGroup(MetronomeParams.defaultId, MetronomeParams.defaultBeats, MetronomeParams.defaultPolyBeats,
-          MetronomeParams.defaultNoteKey)
+      RhythmGroup(
+        MetronomeParams.defaultId,
+        MetronomeParams.defaultBeats,
+        MetronomeParams.defaultPolyBeats,
+        MetronomeParams.defaultNoteKey,
+      ),
     ];
     _rhythmGroups2 = [];
     accSound = MetronomeParams.defaultAccSound;
@@ -223,8 +225,12 @@ class MetronomeBlock extends ProjectBlock {
     bpm = MetronomeParams.defaultBPM.toInt();
     randomMute = MetronomeParams.defaultRandomMute;
     _rhythmGroups = [
-      RhythmGroup(MetronomeParams.defaultId, MetronomeParams.defaultBeats, MetronomeParams.defaultPolyBeats,
-          MetronomeParams.defaultNoteKey)
+      RhythmGroup(
+        MetronomeParams.defaultId,
+        MetronomeParams.defaultBeats,
+        MetronomeParams.defaultPolyBeats,
+        MetronomeParams.defaultNoteKey,
+      ),
     ];
     _rhythmGroups2 = [];
     accSound = MetronomeParams.defaultAccSound;

@@ -34,10 +34,7 @@ class _TextToolState extends State<TextTool> {
     _textBlock.timeLastModified = getCurrentDateTime();
 
     // only allow portrait mode for this tool
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     _textController.text = _textBlock.content;
 
@@ -71,11 +68,7 @@ class _TextToolState extends State<TextTool> {
             thumbVisibility: true,
             child: TextField(
               scrollController: _scrollController,
-              decoration: const InputDecoration(
-                filled: true,
-                fillColor: ColorTheme.surface,
-                border: InputBorder.none,
-              ),
+              decoration: const InputDecoration(filled: true, fillColor: ColorTheme.surface, border: InputBorder.none),
               controller: _textController,
               keyboardType: TextInputType.multiline,
               maxLines: null,

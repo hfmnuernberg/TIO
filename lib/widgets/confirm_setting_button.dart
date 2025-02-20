@@ -52,13 +52,7 @@ class TIOTextButton extends StatelessWidget {
   final Color? backgroundColor;
   final Function() onTap;
 
-  const TIOTextButton({
-    super.key,
-    required this.text,
-    required this.onTap,
-    this.backgroundColor,
-    this.icon,
-  });
+  const TIOTextButton({super.key, required this.text, required this.onTap, this.backgroundColor, this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -72,17 +66,8 @@ class TIOTextButton extends StatelessWidget {
     );
 
     return icon == null
-        ? ElevatedButton(
-            onPressed: onTap,
-            style: style,
-            child: Text(text),
-          )
-        : ElevatedButton.icon(
-            onPressed: onTap,
-            style: style,
-            icon: icon!,
-            label: Text(text),
-          );
+        ? ElevatedButton(onPressed: onTap, style: style, child: Text(text))
+        : ElevatedButton.icon(onPressed: onTap, style: style, icon: icon!, label: Text(text));
   }
 }
 

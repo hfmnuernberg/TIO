@@ -34,9 +34,7 @@ Future<void> main() async {
 
 // and then running the main app
 void runMainApp(ProjectLibrary projectLibrary, ThemeData? theme) {
-  runApp(
-    TIOMusicApp(projectLibrary: projectLibrary, ourTheme: theme),
-  );
+  runApp(TIOMusicApp(projectLibrary: projectLibrary, ourTheme: theme));
 }
 
 class TIOMusicApp extends StatelessWidget {
@@ -94,10 +92,7 @@ class _TIOMusicHomePageState extends State<TIOMusicHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: ProjectsList(),
-    );
+    return const Scaffold(resizeToAvoidBottomInset: false, body: ProjectsList());
   }
 }
 
@@ -105,10 +100,7 @@ class _TIOMusicHomePageState extends State<TIOMusicHomePage> {
 class SplashApp extends StatefulWidget {
   final Function(ProjectLibrary, ThemeData?) returnProjectLibraryAndTheme;
 
-  const SplashApp({
-    super.key,
-    required this.returnProjectLibraryAndTheme,
-  });
+  const SplashApp({super.key, required this.returnProjectLibraryAndTheme});
 
   @override
   State<SplashApp> createState() => _SplashAppState();
@@ -129,9 +121,7 @@ class _SplashAppState extends State<SplashApp> {
       final ProjectLibrary? projectLibrary = await _initializeProjectLibrary();
 
       if (projectLibrary != null) {
-        FileReferences.init(projectLibrary).then(
-          (_) => _returnLoadedData(projectLibrary, null),
-        );
+        FileReferences.init(projectLibrary).then((_) => _returnLoadedData(projectLibrary, null));
       }
       // if projectLibrary is null, the hasError flag was set to true and we build the "ask user again" page
     });
@@ -171,11 +161,7 @@ class _SplashAppState extends State<SplashApp> {
       title: 'Splash Screen',
       theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
       darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
-      home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: ColorTheme.primary92,
-        body: _buildBody(),
-      ),
+      home: Scaffold(resizeToAvoidBottomInset: false, backgroundColor: ColorTheme.primary92, body: _buildBody()),
     );
   }
 
@@ -185,15 +171,9 @@ class _SplashAppState extends State<SplashApp> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              "Could not load user data!",
-              style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 24),
-            ),
+            const Text("Could not load user data!", style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 24)),
             const SizedBox(height: 24),
-            TIOFlatButton(
-              onPressed: () => main(),
-              text: "Retry",
-            ),
+            TIOFlatButton(onPressed: () => main(), text: "Retry"),
             const SizedBox(height: 24),
             TIOFlatButton(
               onPressed: () {
@@ -206,8 +186,6 @@ class _SplashAppState extends State<SplashApp> {
         ),
       );
     }
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 }

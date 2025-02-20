@@ -25,10 +25,7 @@ class BigIconButton extends StatelessWidget {
               }
             },
             iconSize: TIOMusicParams.sizeBigButtons,
-            icon: Icon(
-              icon,
-              color: ColorTheme.tertiary,
-            ),
+            icon: Icon(icon, color: ColorTheme.tertiary),
           ),
         ),
       ),

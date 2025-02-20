@@ -19,12 +19,7 @@ class TestWrapper extends StatefulWidget {
   final String label;
   final String value;
 
-  const TestWrapper({
-    super.key,
-    this.label = 'Label',
-    this.value = 'n/a',
-    this.isNew = false,
-  });
+  const TestWrapper({super.key, this.label = 'Label', this.value = 'n/a', this.isNew = false});
 
   @override
   State<TestWrapper> createState() => _TestWrapperState();

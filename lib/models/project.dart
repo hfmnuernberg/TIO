@@ -36,14 +36,16 @@ class Project extends ChangeNotifier {
   }
 
   late Map<String, int> _toolCounter;
-  @JsonKey(defaultValue: {
-    ImageParams.kind: 0,
-    MediaPlayerParams.kind: 0,
-    MetronomeParams.kind: 0,
-    PianoParams.kind: 0,
-    TextParams.kind: 0,
-    TunerParams.kind: 0,
-  })
+  @JsonKey(
+    defaultValue: {
+      ImageParams.kind: 0,
+      MediaPlayerParams.kind: 0,
+      MetronomeParams.kind: 0,
+      PianoParams.kind: 0,
+      TextParams.kind: 0,
+      TunerParams.kind: 0,
+    },
+  )
   Map<String, int> get toolCounter => _toolCounter;
   void increaseCounter(String toolType) {
     _toolCounter.update(
@@ -79,13 +81,7 @@ class Project extends ChangeNotifier {
 
   late DateTime timeLastModified;
 
-  Project(
-    String title,
-    this._blocks,
-    String thumbnailPath,
-    this.timeLastModified,
-    Map<String, int> toolCounter,
-  ) {
+  Project(String title, this._blocks, String thumbnailPath, this.timeLastModified, Map<String, int> toolCounter) {
     _title = title;
     _toolCounter = toolCounter;
     _thumbnailPath = thumbnailPath;

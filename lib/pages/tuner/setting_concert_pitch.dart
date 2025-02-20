@@ -59,7 +59,8 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
   }
 
   void _reset() {
-    _concertPitchInput.controller.value =
-        _concertPitchInput.controller.value.copyWith(text: TunerParams.defaultConcertPitch.toString());
+    _concertPitchInput.controller.value = _concertPitchInput.controller.value.copyWith(
+      text: TunerParams.defaultConcertPitch.toString(),
+    );
   }
 }

@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
-enum BeatButtonType {
-  accented,
-  unaccented,
-  muted,
-}
+enum BeatButtonType { accented, unaccented, muted }
 
 List<BeatButtonType> getBeatButtonsFromBeats(List<BeatType> beats) {
   List<BeatButtonType> beatTypes = List.empty(growable: true);
@@ -87,23 +83,21 @@ class _BeatButtonState extends State<BeatButton> {
     return Center(
       // the center widget is necessary for the width and height of the container to work
       child: Container(
-          width: widget.buttonSize,
-          height: widget.buttonSize,
-          decoration: BoxDecoration(shape: BoxShape.circle, color: standardColor),
-          child: InkWell(
-            customBorder: const CircleBorder(),
-            onTap: widget.onTap,
-            child: Center(
-              child: Container(
-                width: widget.buttonSize * 0.6,
-                height: widget.buttonSize * 0.6,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: innerCircleColor,
-                ),
-              ),
+        width: widget.buttonSize,
+        height: widget.buttonSize,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: standardColor),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: widget.onTap,
+          child: Center(
+            child: Container(
+              width: widget.buttonSize * 0.6,
+              height: widget.buttonSize * 0.6,
+              decoration: BoxDecoration(shape: BoxShape.circle, color: innerCircleColor),
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
 }

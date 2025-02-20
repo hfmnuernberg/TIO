@@ -40,31 +40,19 @@ class CardListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: highlightColor ?? ColorTheme.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(0.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
       margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 8),
       elevation: 0.0,
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: ListTile(
         enabled: !disableTap,
-        title: Text(
-          title,
-          style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
-        ),
-        subtitle: Text(
-          subtitle ?? "",
-          style: TextStyle(color: textColor),
-        ),
+        title: Text(title, style: TextStyle(color: textColor, fontWeight: FontWeight.w500)),
+        subtitle: Text(subtitle ?? "", style: TextStyle(color: textColor)),
         leading: _showPicture(leadingPicture),
         titleAlignment: ListTileTitleAlignment.titleHeight,
         trailing: Wrap(
           spacing: 2, // space between two icons
-          children: <Widget>[
-            menuIconTwo ?? const SizedBox(),
-            menuIconOne ?? const SizedBox(),
-            trailingIcon,
-          ],
+          children: <Widget>[menuIconTwo ?? const SizedBox(), menuIconOne ?? const SizedBox(), trailingIcon],
         ),
         onTap: () {
           onTapFunction();
@@ -76,28 +64,16 @@ class CardListTile extends StatelessWidget {
   Widget _showPicture(dynamic picture) {
     if (picture is ImageProvider) {
       // if picture is an image provider
-      return AspectRatio(
-        aspectRatio: 1,
-        child: Image(
-          image: picture,
-          fit: BoxFit.cover,
-        ),
-      );
+      return AspectRatio(aspectRatio: 1, child: Image(image: picture, fit: BoxFit.cover));
     } else if (picture is String) {
       // if picture is a string to an svg file
       return CircleAvatar(
         backgroundColor: ColorTheme.surface,
-        child: SvgPicture.asset(
-          picture,
-          colorFilter: ColorFilter.mode(leadingIconColor, BlendMode.srcIn),
-        ),
+        child: SvgPicture.asset(picture, colorFilter: ColorFilter.mode(leadingIconColor, BlendMode.srcIn)),
       );
     } else {
       // if picture is an icon or icon button
-      return CircleAvatar(
-        child: picture,
-        backgroundColor: ColorTheme.surface,
-      );
+      return CircleAvatar(child: picture, backgroundColor: ColorTheme.surface);
     }
   }
 }

@@ -23,12 +23,13 @@ class ProjectPage extends StatefulWidget {
   final ProjectBlock? toolToOpenDirectly;
   final bool pianoAlreadyOn;
 
-  const ProjectPage(
-      {super.key,
-      required this.goStraightToTool,
-      this.toolToOpenDirectly,
-      required this.withoutRealProject,
-      this.pianoAlreadyOn = false});
+  const ProjectPage({
+    super.key,
+    required this.goStraightToTool,
+    this.toolToOpenDirectly,
+    required this.withoutRealProject,
+    this.pianoAlreadyOn = false,
+  });
 
   @override
   State<ProjectPage> createState() => _ProjectPageState();
@@ -88,14 +89,15 @@ class _ProjectPageState extends State<ProjectPage> {
 
     if (widget.goStraightToTool) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        goToTool(context, _project, widget.toolToOpenDirectly!, pianoAleadyOn: widget.pianoAlreadyOn)
-            .then((_) => setState(() {}));
+        goToTool(
+          context,
+          _project,
+          widget.toolToOpenDirectly!,
+          pianoAleadyOn: widget.pianoAlreadyOn,
+        ).then((_) => setState(() {}));
       });
     } else {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-      ]);
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     }
 
     if (context.read<ProjectLibrary>().showProjectPageTutorial && !widget.goStraightToTool) {
@@ -116,30 +118,31 @@ class _ProjectPageState extends State<ProjectPage> {
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthrough.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () {
-        context.read<ProjectLibrary>().showProjectPageTutorial = false;
-        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-      },
-      context,
-    );
+    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+      context.read<ProjectLibrary>().showProjectPageTutorial = false;
+      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    }, context);
   }
 
   Future<bool?> _deleteBlock({bool deleteAll = false}) => showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
+    context: context,
+    builder:
+        (context) => AlertDialog(
           title: const Text("Delete?", style: TextStyle(color: ColorTheme.primary)),
-          content: deleteAll
-              ? const Text("Do you really want to delete all tools in this project?",
-                  style: TextStyle(color: ColorTheme.primary))
-              : const Text("Do you really want to delete this tool?", style: TextStyle(color: ColorTheme.primary)),
+          content:
+              deleteAll
+                  ? const Text(
+                    "Do you really want to delete all tools in this project?",
+                    style: TextStyle(color: ColorTheme.primary),
+                  )
+                  : const Text("Do you really want to delete this tool?", style: TextStyle(color: ColorTheme.primary)),
           actions: [
             TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: const Text("No")),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text("No"),
+            ),
             TIOFlatButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
@@ -149,7 +152,7 @@ class _ProjectPageState extends State<ProjectPage> {
             ),
           ],
         ),
-      );
+  );
 
   void _createBlockAndGoToTool(BlockTypeInfo info, String blockTitle) {
     if (_withoutProject) {
@@ -185,11 +188,7 @@ class _ProjectPageState extends State<ProjectPage> {
       appBar: AppBar(
         title: GestureDetector(
           onTap: () async {
-            final newTitle = await showEditTextDialog(
-              context: context,
-              label: 'Project title:',
-              value: _project.title,
-            );
+            final newTitle = await showEditTextDialog(context: context, label: 'Project title:', value: _project.title);
             if (newTitle == null) return;
             _project.title = newTitle;
             if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
@@ -224,12 +223,7 @@ class _ProjectPageState extends State<ProjectPage> {
         alignment: Alignment.bottomCenter,
         fit: StackFit.expand,
         children: [
-          FittedBox(
-            fit: BoxFit.cover,
-            child: Image.asset(
-              "assets/images/tiomusic-bg.png",
-            ),
-          ),
+          FittedBox(fit: BoxFit.cover, child: Image.asset("assets/images/tiomusic-bg.png")),
           Padding(
             padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
             child: ListView.builder(
@@ -244,8 +238,8 @@ class _ProjectPageState extends State<ProjectPage> {
                     subtitle: formatSettingValues(_project.blocks[index].getSettingsFormatted()),
                     leadingPicture: circleToolIcon(_project.blocks[index].icon),
                     trailingIcon: IconButton(
-                      onPressed: () =>
-                          {goToTool(context, _project, _project.blocks[index]).then((_) => setState(() {}))},
+                      onPressed:
+                          () => {goToTool(context, _project, _project.blocks[index]).then((_) => setState(() {}))},
                       icon: const Icon(Icons.arrow_forward),
                       color: ColorTheme.primaryFixedDim,
                     ),
@@ -283,9 +277,7 @@ class _ProjectPageState extends State<ProjectPage> {
                   });
                 },
               ),
-              const SizedBox(
-                height: TIOMusicParams.spaceBetweenPlusButtonAndBottom,
-              ),
+              const SizedBox(height: TIOMusicParams.spaceBetweenPlusButtonAndBottom),
             ],
           ),
         ],
@@ -316,12 +308,7 @@ class _ProjectPageState extends State<ProjectPage> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          FittedBox(
-            fit: BoxFit.cover,
-            child: Image.asset(
-              "assets/images/tiomusic-bg.png",
-            ),
-          ),
+          FittedBox(fit: BoxFit.cover, child: Image.asset("assets/images/tiomusic-bg.png")),
           Padding(
             padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
             child: ListView.builder(

@@ -5,11 +5,7 @@ class InfoPage extends StatelessWidget {
   final String appBarTitle;
   final List<Widget> textSections;
 
-  const InfoPage({
-    super.key,
-    required this.appBarTitle,
-    required this.textSections,
-  });
+  const InfoPage({super.key, required this.appBarTitle, required this.textSections});
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +20,7 @@ class InfoPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: textSections,
-          ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: textSections),
         ),
       ),
     );
@@ -61,13 +54,7 @@ class TextSection extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(top: topSpacing, bottom: bottomSpacing),
-      child: Text(
-        content,
-        style: TextStyle(
-          color: ColorTheme.surfaceTint,
-          fontSize: fontSize,
-        ),
-      ),
+      child: Text(content, style: TextStyle(color: ColorTheme.surfaceTint, fontSize: fontSize)),
     );
   }
 }

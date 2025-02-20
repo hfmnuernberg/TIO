@@ -101,10 +101,7 @@ class _TunerState extends State<Tuner> {
     _tunerBlock.timeLastModified = getCurrentDateTime();
 
     // only allow portrait mode for this tool
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       // start with delay to make sure previous tuner is stopped before new one is started (on copy/save)
@@ -158,16 +155,12 @@ class _TunerState extends State<Tuner> {
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,
         shape: ShapeLightFocus.RRect,
-      )
+      ),
     ];
-    _walkthrough.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () {
-        context.read<ProjectLibrary>().showTunerTutorial = false;
-        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-      },
-      context,
-    );
+    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+      context.read<ProjectLibrary>().showTunerTutorial = false;
+      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    }, context);
   }
 
   @override
@@ -204,29 +197,20 @@ class _TunerState extends State<Tuner> {
                   width: MediaQuery.of(context).size.width / 3.1,
                   child: Align(
                     alignment: Alignment.centerRight,
-                    child: Text(
-                      _freqText.text,
-                      style: const TextStyle(fontSize: 20, color: ColorTheme.primary),
-                    ),
+                    child: Text(_freqText.text, style: const TextStyle(fontSize: 20, color: ColorTheme.primary)),
                   ),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 3,
                   child: Center(
-                    child: Text(
-                      _midiNameText.text,
-                      style: const TextStyle(fontSize: 40, color: ColorTheme.primary),
-                    ),
+                    child: Text(_midiNameText.text, style: const TextStyle(fontSize: 40, color: ColorTheme.primary)),
                   ),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 3.1,
                   child: Align(
                     alignment: Alignment.centerRight,
-                    child: Text(
-                      _centOffsetText.text,
-                      style: const TextStyle(fontSize: 20, color: ColorTheme.primary),
-                    ),
+                    child: Text(_centOffsetText.text, style: const TextStyle(fontSize: 20, color: ColorTheme.primary)),
                   ),
                 ),
               ],
@@ -237,12 +221,14 @@ class _TunerState extends State<Tuner> {
                 children: [
                   Align(
                     alignment: Alignment.center,
-                    child: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-                      return CustomPaint(
-                        painter: _pitchVisualizer,
-                        size: Size(constraints.maxWidth, constraints.maxHeight),
-                      );
-                    }),
+                    child: LayoutBuilder(
+                      builder: (BuildContext context, BoxConstraints constraints) {
+                        return CustomPaint(
+                          painter: _pitchVisualizer,
+                          size: Size(constraints.maxWidth, constraints.maxHeight),
+                        );
+                      },
+                    ),
                   ),
                   // start stop button
                   Align(

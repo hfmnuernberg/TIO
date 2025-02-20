@@ -79,10 +79,7 @@ class _ProjectsListState extends State<ProjectsList> {
       ),
     );
 
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     if (context.read<ProjectLibrary>().showHomepageTutorial) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -123,26 +120,30 @@ class _ProjectsListState extends State<ProjectsList> {
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
     ];
-    _walkthrough.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () {
-        context.read<ProjectLibrary>().showHomepageTutorial = false;
-        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-      },
-      context,
-    );
+    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+      context.read<ProjectLibrary>().showHomepageTutorial = false;
+      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    }, context);
   }
 
   void _aboutPagePressed() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return AboutPage();
-    }));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return AboutPage();
+        },
+      ),
+    );
   }
 
   void _feedbackPagePressed() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return const FeedbackPage();
-    }));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return const FeedbackPage();
+        },
+      ),
+    );
   }
 
   void _deleteAllProjectsPressed() async {
@@ -197,11 +198,17 @@ class _ProjectsListState extends State<ProjectsList> {
       },
     );
 
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return provider;
-    })).then((value) {
-      doActionOnReturn(value);
-    });
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) {
+              return provider;
+            },
+          ),
+        )
+        .then((value) {
+          doActionOnReturn(value);
+        });
   }
 
   void doActionOnReturn(dynamic returnValue) {
@@ -227,18 +234,27 @@ class _ProjectsListState extends State<ProjectsList> {
   }
 
   Future<bool?> _deleteProject({bool deleteAll = false}) => showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
+    context: context,
+    builder:
+        (context) => AlertDialog(
           title: const Text("Delete?", style: TextStyle(color: ColorTheme.primary)),
-          content: deleteAll
-              ? const Text("Do you really want to delete all projects?", style: TextStyle(color: ColorTheme.primary))
-              : const Text("Do you really want to delete this project?", style: TextStyle(color: ColorTheme.primary)),
+          content:
+              deleteAll
+                  ? const Text(
+                    "Do you really want to delete all projects?",
+                    style: TextStyle(color: ColorTheme.primary),
+                  )
+                  : const Text(
+                    "Do you really want to delete this project?",
+                    style: TextStyle(color: ColorTheme.primary),
+                  ),
           actions: [
             TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: const Text("No")),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text("No"),
+            ),
             TIOFlatButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
@@ -248,37 +264,49 @@ class _ProjectsListState extends State<ProjectsList> {
             ),
           ],
         ),
-      );
+  );
 
   void _goToToolOverProjectPage(Project project, ProjectBlock tool, bool pianoAlreadyOn) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ChangeNotifierProvider<Project>.value(
-        value: project,
-        builder: (context, child) {
-          return ProjectPage(
-            goStraightToTool: true,
-            toolToOpenDirectly: tool,
-            withoutRealProject: false,
-            pianoAlreadyOn: pianoAlreadyOn,
-          );
-        },
-      );
-    })).then((value) {
-      doActionOnReturn(value);
-    });
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) {
+              return ChangeNotifierProvider<Project>.value(
+                value: project,
+                builder: (context, child) {
+                  return ProjectPage(
+                    goStraightToTool: true,
+                    toolToOpenDirectly: tool,
+                    withoutRealProject: false,
+                    pianoAlreadyOn: pianoAlreadyOn,
+                  );
+                },
+              );
+            },
+          ),
+        )
+        .then((value) {
+          doActionOnReturn(value);
+        });
   }
 
   void _goToProjectPage(Project project, bool withoutRealProject) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return ChangeNotifierProvider<Project>.value(
-        value: project,
-        builder: (context, child) {
-          return ProjectPage(goStraightToTool: false, withoutRealProject: withoutRealProject);
-        },
-      );
-    })).then((value) {
-      doActionOnReturn(value);
-    });
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) {
+              return ChangeNotifierProvider<Project>.value(
+                value: project,
+                builder: (context, child) {
+                  return ProjectPage(goStraightToTool: false, withoutRealProject: withoutRealProject);
+                },
+              );
+            },
+          ),
+        )
+        .then((value) {
+          doActionOnReturn(value);
+        });
   }
 
   Widget _getSurveyBanner() {
@@ -287,9 +315,7 @@ class _ProjectsListState extends State<ProjectsList> {
       top: 0,
       width: MediaQuery.of(context).size.width,
       child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4.0),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
         elevation: 8.0,
         margin: const EdgeInsets.all(TIOMusicParams.edgeInset),
         color: ColorTheme.onPrimary,
@@ -301,9 +327,7 @@ class _ProjectsListState extends State<ProjectsList> {
             children: [
               const Text(
                 'Do you like TIO Music? Please take part in this survey! (For now the survey is only available in German)',
-                style: TextStyle(
-                  color: ColorTheme.surfaceTint,
-                ),
+                style: TextStyle(color: ColorTheme.surfaceTint),
               ),
               const SizedBox(height: 12),
               Row(
@@ -323,20 +347,21 @@ class _ProjectsListState extends State<ProjectsList> {
                     child: const Text('Fill out'),
                   ),
                   IconButton(
-                      onPressed: () {
-                        _showBanner = false;
+                    onPressed: () {
+                      _showBanner = false;
 
-                        // show banner a second and third time and then never again
-                        var projectLibrary = context.read<ProjectLibrary>();
-                        projectLibrary.idxCheckShowSurvey++;
-                        if (projectLibrary.idxCheckShowSurvey >= projectLibrary.showSurveyAtVisits.length) {
-                          projectLibrary.neverShowSurveyAgain = true;
-                        }
-                        FileIO.saveProjectLibraryToJson(projectLibrary);
+                      // show banner a second and third time and then never again
+                      var projectLibrary = context.read<ProjectLibrary>();
+                      projectLibrary.idxCheckShowSurvey++;
+                      if (projectLibrary.idxCheckShowSurvey >= projectLibrary.showSurveyAtVisits.length) {
+                        projectLibrary.neverShowSurveyAgain = true;
+                      }
+                      FileIO.saveProjectLibraryToJson(projectLibrary);
 
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.close, color: ColorTheme.surfaceTint)),
+                      setState(() {});
+                    },
+                    icon: const Icon(Icons.close, color: ColorTheme.surfaceTint),
+                  ),
                 ],
               ),
             ],
@@ -398,65 +423,62 @@ class _ProjectsListState extends State<ProjectsList> {
         fit: StackFit.expand,
         children: [
           // background image
-          FittedBox(
-            fit: BoxFit.cover,
-            child: Image.asset(
-              "assets/images/tiomusic-bg.png",
-            ),
-          ),
+          FittedBox(fit: BoxFit.cover, child: Image.asset("assets/images/tiomusic-bg.png")),
 
           Column(
             children: [
               Expanded(
                 child:
-                    // list
-                    Consumer<ProjectLibrary>(
-                  builder: (context, projectLibrary, child) => projectLibrary.projects.isEmpty
-                      ? const Padding(
-                          padding: EdgeInsets.all(40),
-                          child: Text(
-                            "Please click on '+' to create a new project.",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 42,
-                            ),
-                          ),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.only(
-                              top: TIOMusicParams.bigSpaceAboveList, bottom: TIOMusicParams.bigSpaceAboveList / 2),
-                          child: ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              itemCount: projectLibrary.projects.length,
-                              itemBuilder: (BuildContext context, int idx) {
-                                return CardListTile(
-                                  title: projectLibrary.projects[idx].title,
-                                  subtitle: getDateAndTimeFormatted(projectLibrary.projects[idx].timeLastModified),
-                                  trailingIcon: IconButton(
-                                    onPressed: () {
-                                      _goToProjectPage(projectLibrary.projects[idx], false);
-                                    },
-                                    icon: const Icon(Icons.arrow_forward),
-                                    color: ColorTheme.primaryFixedDim,
-                                  ),
-                                  menuIconOne: IconButton(
-                                    onPressed: () async {
-                                      bool? deleteProject = await _deleteProject();
-                                      if (deleteProject != null && deleteProject) {
-                                        projectLibrary.removeProject(projectLibrary.projects[idx]);
-                                        FileIO.saveProjectLibraryToJson(projectLibrary);
-                                      }
-                                    },
-                                    icon: const Icon(Icons.delete_outlined),
-                                    color: ColorTheme.surfaceTint,
-                                  ),
-                                  leadingPicture: projectLibrary.projects[idx].thumbnail,
-                                  onTapFunction: () {
-                                    _goToProjectPage(projectLibrary.projects[idx], false);
+                // list
+                Consumer<ProjectLibrary>(
+                  builder:
+                      (context, projectLibrary, child) =>
+                          projectLibrary.projects.isEmpty
+                              ? const Padding(
+                                padding: EdgeInsets.all(40),
+                                child: Text(
+                                  "Please click on '+' to create a new project.",
+                                  style: TextStyle(color: Colors.white, fontSize: 42),
+                                ),
+                              )
+                              : Padding(
+                                padding: const EdgeInsets.only(
+                                  top: TIOMusicParams.bigSpaceAboveList,
+                                  bottom: TIOMusicParams.bigSpaceAboveList / 2,
+                                ),
+                                child: ListView.builder(
+                                  scrollDirection: Axis.vertical,
+                                  itemCount: projectLibrary.projects.length,
+                                  itemBuilder: (BuildContext context, int idx) {
+                                    return CardListTile(
+                                      title: projectLibrary.projects[idx].title,
+                                      subtitle: getDateAndTimeFormatted(projectLibrary.projects[idx].timeLastModified),
+                                      trailingIcon: IconButton(
+                                        onPressed: () {
+                                          _goToProjectPage(projectLibrary.projects[idx], false);
+                                        },
+                                        icon: const Icon(Icons.arrow_forward),
+                                        color: ColorTheme.primaryFixedDim,
+                                      ),
+                                      menuIconOne: IconButton(
+                                        onPressed: () async {
+                                          bool? deleteProject = await _deleteProject();
+                                          if (deleteProject != null && deleteProject) {
+                                            projectLibrary.removeProject(projectLibrary.projects[idx]);
+                                            FileIO.saveProjectLibraryToJson(projectLibrary);
+                                          }
+                                        },
+                                        icon: const Icon(Icons.delete_outlined),
+                                        color: ColorTheme.surfaceTint,
+                                      ),
+                                      leadingPicture: projectLibrary.projects[idx].thumbnail,
+                                      onTapFunction: () {
+                                        _goToProjectPage(projectLibrary.projects[idx], false);
+                                      },
+                                    );
                                   },
-                                );
-                              }),
-                        ),
+                                ),
+                              ),
                 ),
               ),
               Container(
@@ -471,7 +493,10 @@ class _ProjectsListState extends State<ProjectsList> {
                       children: [
                         _quickToolButton(blockTypeInfos[BlockType.metronome]!.icon, "Metronome", BlockType.metronome),
                         _quickToolButton(
-                            blockTypeInfos[BlockType.mediaPlayer]!.icon, "Media Player", BlockType.mediaPlayer),
+                          blockTypeInfos[BlockType.mediaPlayer]!.icon,
+                          "Media Player",
+                          BlockType.mediaPlayer,
+                        ),
                       ],
                     ),
                     Row(
@@ -495,28 +520,27 @@ class _ProjectsListState extends State<ProjectsList> {
 
   Widget _quickToolButton(dynamic icon, String label, BlockType block) {
     return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: ColorTheme.primary90, width: 1),
+      padding: const EdgeInsets.all(2.0),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: ColorTheme.primary90, width: 1),
+        ),
+        width: MediaQuery.of(context).size.width / 2 - TIOMusicParams.edgeInset,
+        child: InkWell(
+          onTap: () => _onQuickToolTapped(block),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                circleToolIcon(icon),
+                const SizedBox(width: 8.0),
+                Text(label, style: const TextStyle(color: ColorTheme.primary)),
+              ],
             ),
-            width: MediaQuery.of(context).size.width / 2 - TIOMusicParams.edgeInset,
-            child: InkWell(
-              onTap: () => _onQuickToolTapped(block),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    circleToolIcon(icon),
-                    const SizedBox(width: 8.0),
-                    Text(
-                      label,
-                      style: const TextStyle(color: ColorTheme.primary),
-                    ),
-                  ],
-                ),
-              ),
-            )));
+          ),
+        ),
+      ),
+    );
   }
 }

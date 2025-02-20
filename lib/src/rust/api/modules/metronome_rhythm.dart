@@ -21,22 +21,11 @@ enum BeatSound {
   PolyUnaccented,
   PolyUnaccented2,
   Muted,
-  ;
 }
 
-enum BeatType {
-  Accented,
-  Unaccented,
-  Muted,
-  ;
-}
+enum BeatType { Accented, Unaccented, Muted }
 
-enum BeatTypePoly {
-  Accented,
-  Unaccented,
-  Muted,
-  ;
-}
+enum BeatTypePoly { Accented, Unaccented, Muted }
 
 class MetroBar {
   final int id;
@@ -44,12 +33,7 @@ class MetroBar {
   final List<BeatTypePoly> polyBeats;
   final double beatLen;
 
-  const MetroBar({
-    required this.id,
-    required this.beats,
-    required this.polyBeats,
-    required this.beatLen,
-  });
+  const MetroBar({required this.id, required this.beats, required this.polyBeats, required this.beatLen});
 
   @override
   int get hashCode => id.hashCode ^ beats.hashCode ^ polyBeats.hashCode ^ beatLen.hashCode;
