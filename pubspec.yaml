@@ -3,7 +3,7 @@ description: home to your musical ideas
 
 publish_to: "none"
 
-version: 1.0.9+10000002
+version: 0.0.1+1
 
 environment:
     sdk: ">=3.6.1"
