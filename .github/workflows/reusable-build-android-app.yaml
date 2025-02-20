@@ -39,7 +39,7 @@ jobs:
         with:
           ndk-version: r26d
 #          link-to-sdk: true
-          local-cache: true
+#          local-cache: true
 
       - name: Print NDK info
         run: |
