@@ -47,6 +47,7 @@ jobs:
           echo "ANDROID_HOME=$ANDROID_HOME"
           echo "ANDROID_SDK_HOME=$ANDROID_SDK_HOME"
           echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME"
+          ls -l /home/runner/.setup-ndk/r26d/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
 
       - name: Install ALSA dev libraries
         run: sudo apt-get update && sudo apt-get install -y libasound2-dev
@@ -106,6 +107,7 @@ jobs:
         run: scripts/app.sh build android release
         env:
           ANDROID_NDK_HOME: ${{ steps.setup_ndk.outputs.ndk-path }}
+          ANDROID_NDK_ROOT: ${{ steps.setup_ndk.outputs.ndk-path }}
 
       - name: Save bundle
         uses: actions/upload-artifact@v4.6.0
