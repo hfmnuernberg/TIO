@@ -11,6 +11,7 @@
 7. [Rust](#rust) 
 8. [App Script](#android-ndk)
 9. [Exclude folders](#exclude-folders)
+10. [Run the app on a physical device](#run-the-app-on-a-physical-device)
 
 ## [Flutter Version Management (FVM)](https://fvm.app/)
 
@@ -32,7 +33,7 @@ _Note: From now on `fvm flutter doctor` will suggest what to do next to get star
 
 ## [Xcode](https://developer.apple.com/xcode/)
 
-Follow the [Install Instructions](https://developer.apple.com/documentation/safari-developer-tools/installing-xcode-and-simulators).
+Follow the [Installation Instructions](https://developer.apple.com/documentation/safari-developer-tools/installing-xcode-and-simulators).
 
 ## Command Line Tools for Xcode
 
@@ -63,12 +64,15 @@ Follow the [Android Studio](https://developer.android.com/studio/) instructions.
 ### With Android Studio
 
 1. go to the IDE settings and search for `Android SDK`
-2. go to the SDK tools tab and activate or deactivate the NDK that is references in the gradle files
+2. go to the SDK tools tab and activate or deactivate the correct NDK version that is references in the [gradle file](../android/app/build.gradle).
+
+   _Note: you need to enable the `Show Package Details` checkbox to see the specific NDK versions_
+
 3. besides the NDK also activate the `CMake` SDK tool
 
 ### Directly
 
-1. Download the [Android NDK](https://developer.android.com/ndk/downloads/).
+1. Download the [Android NDK](https://developer.android.com/ndk/downloads/) in the [required version](../android/app/build.gradle).
 2. In your e.g. `.zshrc` file set the environment variable `ANDROID_NDK_HOME` to the ndk installation folder.
 
    _Note: If this doesn't work (running flutter app fails because of NDK error), try to install the Android NDK via Android Studio._
@@ -82,8 +86,6 @@ Follow the [Android Studio](https://developer.android.com/studio/) instructions.
    ```
 
 4. Save the file and open a new terminal.
-
-   _Note: The path `echo $PATH` should now look something like: `export ANDROID_NDK_HOME=/Users/<your username>/Library/Android/sdk/ndk/28.0.12916984`._
 
 ## Rust
 
@@ -132,3 +134,18 @@ If not done automatically, manually exclude the following folders from the proje
 - `android/.gradle`
 - `ios/.symlink`
 - `ios/Pods`
+
+## Run the app on a physical device
+
+- Ensure that the device is connected to your machine, and the device is trusted.
+- run the following command from the app script or manually:
+
+### iOS
+```shell
+app run ios
+```
+
+### Android
+```shell
+app run android
+```
