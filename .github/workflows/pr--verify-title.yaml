@@ -1,12 +1,13 @@
 name: PR – Verify title
 
 on:
-  pull_request_target:
-    types:
-      - opened
-      - edited
-      - synchronize
-      - reopened
+  workflow_dispatch:
+#  pull_request_target:
+#    types:
+#      - opened
+#      - edited
+#      - synchronize
+#      - reopened
 
 permissions:
   pull-requests: read
