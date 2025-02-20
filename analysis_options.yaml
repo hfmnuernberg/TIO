@@ -7,3 +7,6 @@ analyzer:
 linter:
   rules:
     lines_longer_than_80_chars: false # we prefer 120 chars
+
+formatter:
+  line-length: 120
