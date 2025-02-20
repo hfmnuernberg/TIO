@@ -11,6 +11,7 @@
 7. [Rust](#rust) 
 8. [App Script](#android-ndk)
 9. [Exclude folders](#exclude-folders)
+10. [Run the app on a physical device](#run-the-app-on-a-physical-device)
 
 ## [Flutter Version Management (FVM)](https://fvm.app/)
 
@@ -143,16 +144,8 @@ If not done automatically, manually exclude the following folders from the proje
 ```shell
 app run ios
 ```
-or  
-```shell
-fvm flutter run
-```
 
 ### Android
 ```shell
 app run android
-```
-or
-```shell
-fvm flutter run --debug
 ```
