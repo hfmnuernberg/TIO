@@ -9,7 +9,6 @@ updates:
       time: '02:00'
       timezone: Europe/Berlin
     open-pull-requests-limit: 10
-    auto-merge: true
 
   - package-ecosystem: pub
     directory: /
@@ -20,4 +19,3 @@ updates:
       time: '03:00'
       timezone: Europe/Berlin
     open-pull-requests-limit: 10
-    auto-merge: true
