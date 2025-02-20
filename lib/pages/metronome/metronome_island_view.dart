@@ -17,10 +17,7 @@ import 'package:tiomusic/util/util_functions.dart';
 class MetronomeIslandView extends StatefulWidget {
   final MetronomeBlock metronomeBlock;
 
-  const MetronomeIslandView({
-    super.key,
-    required this.metronomeBlock,
-  });
+  const MetronomeIslandView({super.key, required this.metronomeBlock});
 
   @override
   State<MetronomeIslandView> createState() => _MetronomeIslandViewState();
@@ -42,8 +39,9 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
 
     metronomeSetVolume(volume: widget.metronomeBlock.volume);
     metronomeSetRhythm(
-        bars: getRhythmAsMetroBar(widget.metronomeBlock.rhythmGroups),
-        bars2: getRhythmAsMetroBar(widget.metronomeBlock.rhythmGroups2));
+      bars: getRhythmAsMetroBar(widget.metronomeBlock.rhythmGroups),
+      bars2: getRhythmAsMetroBar(widget.metronomeBlock.rhythmGroups2),
+    );
     metronomeSetBpm(bpm: widget.metronomeBlock.bpm.toDouble());
     metronomeSetBeatMuteChance(muteChance: widget.metronomeBlock.randomMute.toDouble() / 100.0);
     metronomeSetMuted(muted: false);
@@ -51,8 +49,9 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
     MetronomeUtils.loadSounds(widget.metronomeBlock);
 
     // Start beat detection timer
-    _beatDetection =
-        Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (Timer t) {
+    _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
+      Timer t,
+    ) {
       if (!mounted) {
         t.cancel();
         return;
@@ -142,10 +141,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
     if (widget.metronomeBlock.rhythmGroups2.isNotEmpty) {
       children.add(_metronome(isSecondMetronome: true));
     }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: children,
-    );
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: children);
   }
 
   Widget _metronome({bool isSecondMetronome = false}) {
@@ -157,10 +153,9 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
     return ListenableBuilder(
       listenable: _activeBeatsModel,
       builder: (BuildContext context, Widget? child) {
-        String beatsText = rhythmGroups[isSecondMetronome ? _activeBeatsModel.mainBar2 : _activeBeatsModel.mainBar]
-            .beats
-            .length
-            .toString();
+        String beatsText =
+            rhythmGroups[isSecondMetronome ? _activeBeatsModel.mainBar2 : _activeBeatsModel.mainBar].beats.length
+                .toString();
 
         // we need to check if this main beat still has a poly beat, otherwise the poly beat from last bar will still be shown
         if (rhythmGroups[isSecondMetronome ? _activeBeatsModel.mainBar2 : _activeBeatsModel.mainBar]
@@ -212,15 +207,12 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
                     radius: MetronomeParams.rhythmSegmentSize / 4,
                     backgroundColor: Colors.transparent,
                     child: NoteHandler.getNoteSvg(
-                        rhythmGroups[isSecondMetronome ? _activeBeatsModel.mainBar2 : _activeBeatsModel.mainBar]
-                            .noteKey),
+                      rhythmGroups[isSecondMetronome ? _activeBeatsModel.mainBar2 : _activeBeatsModel.mainBar].noteKey,
+                    ),
                   ),
 
                   // beat as number
-                  Text(
-                    beatsText,
-                    style: const TextStyle(color: ColorTheme.surfaceTint),
-                  ),
+                  Text(beatsText, style: const TextStyle(color: ColorTheme.surfaceTint)),
                 ],
               ),
             ),

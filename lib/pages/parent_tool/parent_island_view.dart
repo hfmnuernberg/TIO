@@ -21,11 +21,7 @@ class ParentIslandView extends StatefulWidget {
   final Project? project;
   final ProjectBlock toolBlock;
 
-  const ParentIslandView({
-    super.key,
-    required this.project,
-    required this.toolBlock,
-  });
+  const ParentIslandView({super.key, required this.project, required this.toolBlock});
 
   @override
   State<ParentIslandView> createState() => _ParentIslandViewState();
@@ -64,7 +60,8 @@ class _ParentIslandViewState extends State<ParentIslandView> {
           _empty = false;
         } catch (e) {
           debugPrint(
-              "Something went wrong trying to find the right tool for an island view: $e. Maybe the tool doesn't exist anymore.");
+            "Something went wrong trying to find the right tool for an island view: $e. Maybe the tool doesn't exist anymore.",
+          );
         }
       }
     }
@@ -100,9 +97,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       color: ColorTheme.surface,
       margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
       elevation: 0.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -112,11 +107,8 @@ class _ParentIslandViewState extends State<ParentIslandView> {
             _getCorrectIslandView(),
             IconButton(
               onPressed: () => _chooseToolForIsland(),
-              icon: const Icon(
-                Icons.more_vert,
-                color: ColorTheme.primary,
-              ),
-            )
+              icon: const Icon(Icons.more_vert, color: ColorTheme.primary),
+            ),
           ],
         ),
       ),
@@ -128,9 +120,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       color: ColorTheme.surface,
       margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
       elevation: 0.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: IconButton(
         onPressed: () {
@@ -147,13 +137,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
       child: Align(
         alignment: widget.toolBlock.kind == "piano" ? Alignment.centerRight : Alignment.center,
-        child: const Text(
-          "Use bookmark to save a tool",
-          style: TextStyle(
-            color: ColorTheme.surfaceTint,
-            fontSize: 16,
-          ),
-        ),
+        child: const Text("Use bookmark to save a tool", style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 16)),
       ),
     );
   }
@@ -177,52 +161,58 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   }
 
   void _chooseToolForIsland() {
-    ourModalBottomSheet(context, [
-      CardListTile(
-        title: widget.project!.title,
-        subtitle: getDateAndTimeFormatted(widget.project!.timeLastModified),
-        trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
-        leadingPicture: widget.project!.thumbnail,
-        onTapFunction: () {},
-      ),
-    ], [
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
-          child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: widget.project!.blocks.length,
-            itemBuilder: (BuildContext context, int index) {
-              if (widget.project!.blocks.length < 2) {
-                return const Card(
+    ourModalBottomSheet(
+      context,
+      [
+        CardListTile(
+          title: widget.project!.title,
+          subtitle: getDateAndTimeFormatted(widget.project!.timeLastModified),
+          trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
+          leadingPicture: widget.project!.thumbnail,
+          onTapFunction: () {},
+        ),
+      ],
+      [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
+            child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: widget.project!.blocks.length,
+              itemBuilder: (BuildContext context, int index) {
+                if (widget.project!.blocks.length < 2) {
+                  return const Card(
                     child: Text(
-                        "There is no other tool in this project. Please save another tool first to use it as an island."));
-              } else {
-                // don't show tools of the same type that you are currently in and
-                // don't show the tool that is currently open
-                if (widget.project!.blocks[index].kind == widget.toolBlock.kind) {
-                  return const SizedBox();
-                  // only allow Tuner, Metronome and Media Player to be used as islands for now
-                } else if (widget.project!.blocks[index].kind == "tuner" ||
-                    widget.project!.blocks[index].kind == "metronome" ||
-                    widget.project!.blocks[index].kind == "media_player") {
-                  return CardListTile(
-                    title: widget.project!.blocks[index].title,
-                    subtitle: formatSettingValues(widget.project!.blocks[index].getSettingsFormatted()),
-                    trailingIcon: IconButton(onPressed: () => _onToolTap(index), icon: const SizedBox()),
-                    leadingPicture: circleToolIcon(widget.project!.blocks[index].icon),
-                    onTapFunction: () => _onToolTap(index),
+                      "There is no other tool in this project. Please save another tool first to use it as an island.",
+                    ),
                   );
                 } else {
-                  return const SizedBox();
+                  // don't show tools of the same type that you are currently in and
+                  // don't show the tool that is currently open
+                  if (widget.project!.blocks[index].kind == widget.toolBlock.kind) {
+                    return const SizedBox();
+                    // only allow Tuner, Metronome and Media Player to be used as islands for now
+                  } else if (widget.project!.blocks[index].kind == "tuner" ||
+                      widget.project!.blocks[index].kind == "metronome" ||
+                      widget.project!.blocks[index].kind == "media_player") {
+                    return CardListTile(
+                      title: widget.project!.blocks[index].title,
+                      subtitle: formatSettingValues(widget.project!.blocks[index].getSettingsFormatted()),
+                      trailingIcon: IconButton(onPressed: () => _onToolTap(index), icon: const SizedBox()),
+                      leadingPicture: circleToolIcon(widget.project!.blocks[index].icon),
+                      onTapFunction: () => _onToolTap(index),
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
                 }
-              }
-            },
+              },
+            ),
           ),
         ),
-      ),
-    ]).then((_) => setState(() {}));
+      ],
+    ).then((_) => setState(() {}));
   }
 
   void _onToolTap(int index) {

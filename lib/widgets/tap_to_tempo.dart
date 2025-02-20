@@ -45,8 +45,10 @@ class _Tap2TempoState extends State<Tap2Tempo> {
     _tap2tempoColorLerpTimer();
     var bpm = _ms2BPM(_time2.difference(_time1).inMilliseconds);
     if (_firstTap) {
-      widget.bpmHandle.value =
-          widget.bpmHandle.value.copyWith(text: '', selection: const TextSelection(baseOffset: 0, extentOffset: 0));
+      widget.bpmHandle.value = widget.bpmHandle.value.copyWith(
+        text: '',
+        selection: const TextSelection(baseOffset: 0, extentOffset: 0),
+      );
       _bpmList = List.empty(growable: true);
       _firstTap = false;
     } else {
@@ -82,10 +84,7 @@ class _Tap2TempoState extends State<Tap2Tempo> {
       text: "Tap to tempo",
       onTap: widget.enabled ? _tap2tempo : () {},
       backgroundColor: Color.lerp(ColorTheme.tertiary60, ColorTheme.surface, _t2tColorLerpValue / COOLDOWN_IN_MS),
-      icon: const Icon(
-        Icons.touch_app_outlined,
-        size: 40,
-      ),
+      icon: const Icon(Icons.touch_app_outlined, size: 40),
     );
   }
 }

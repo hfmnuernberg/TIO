@@ -12,24 +12,17 @@ String _sanitizeString(String value) =>
     value.trim().replaceAll(RegExp(r'\W+'), '-').replaceAll(RegExp(r'^-+|-+$'), '').toLowerCase();
 
 Future<void> showExportProjectDialog({required BuildContext context, required Project project}) => showDialog(
-      context: context,
-      builder: (context) {
-        return ExportProjectDialog(
-          project: project,
-          onDone: () => Navigator.of(context).pop(),
-        );
-      },
-    );
+  context: context,
+  builder: (context) {
+    return ExportProjectDialog(project: project, onDone: () => Navigator.of(context).pop());
+  },
+);
 
 class ExportProjectDialog extends StatelessWidget {
   final Project project;
   final Function() onDone;
 
-  const ExportProjectDialog({
-    super.key,
-    required this.project,
-    required this.onDone,
-  });
+  const ExportProjectDialog({super.key, required this.project, required this.onDone});
 
   Future<File> _getFile(Project project) async {
     final directory = await getApplicationDocumentsDirectory();
@@ -81,15 +74,8 @@ class ExportProjectDialog extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            TextButton(
-              onPressed: onDone,
-              child: Text('Cancel'),
-            ),
-            TIOFlatButton(
-              onPressed: () => _exportProject(context),
-              text: "Export",
-              boldText: true,
-            ),
+            TextButton(onPressed: onDone, child: Text('Cancel')),
+            TIOFlatButton(onPressed: () => _exportProject(context), text: "Export", boldText: true),
           ],
         ),
       ],

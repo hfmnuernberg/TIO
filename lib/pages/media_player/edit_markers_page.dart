@@ -16,8 +16,12 @@ class EditMarkersPage extends StatefulWidget {
   final Duration fileDuration;
   final Float32List rmsValues;
 
-  const EditMarkersPage(
-      {super.key, required this.mediaPlayerBlock, required this.fileDuration, required this.rmsValues});
+  const EditMarkersPage({
+    super.key,
+    required this.mediaPlayerBlock,
+    required this.fileDuration,
+    required this.rmsValues,
+  });
 
   @override
   State<EditMarkersPage> createState() => _EditMarkersPageState();
@@ -68,28 +72,24 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(
-              height: TIOMusicParams.edgeInset,
-            ),
+            const SizedBox(height: TIOMusicParams.edgeInset),
             Expanded(
               child:
-                  // stack for waveform and markers
-                  Stack(
+              // stack for waveform and markers
+              Stack(
                 children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
                     child:
-                        // waveform with gesture detector to jump to position on wave tap
-                        GestureDetector(
+                    // waveform with gesture detector to jump to position on wave tap
+                    GestureDetector(
                       onTapDown: _onWaveTap,
                       child: CustomPaint(painter: _waveformVisualizer, size: Size(_waveFormWidth, _waveFormHeight)),
                     ),
                   ),
 
                   // markers
-                  Stack(
-                    children: _buildMarkers(),
-                  ),
+                  Stack(children: _buildMarkers()),
                 ],
               ),
             ),
@@ -119,9 +119,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                 _sliderValue = newValue;
               },
             ),
-            const SizedBox(
-              height: TIOMusicParams.edgeInset,
-            ),
+            const SizedBox(height: TIOMusicParams.edgeInset),
             _listButtons(Icons.add, "Add Marker", _addNewMarker),
             _listButtons(Icons.delete_outlined, "Remove Selected Marker", _removeSelectedMarker),
           ],
@@ -132,8 +130,12 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   Widget _listButtons(IconData icon, String title, Function onTapFunction) {
     return Padding(
-      padding:
-          const EdgeInsets.only(left: TIOMusicParams.edgeInset, right: TIOMusicParams.edgeInset, top: 4, bottom: 4),
+      padding: const EdgeInsets.only(
+        left: TIOMusicParams.edgeInset,
+        right: TIOMusicParams.edgeInset,
+        top: 4,
+        bottom: 4,
+      ),
       child: ListTile(
         leading: Icon(icon),
         title: Text(title),

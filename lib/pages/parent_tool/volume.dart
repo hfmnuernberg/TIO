@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
-enum VolumeLevel {
-  muted,
-  low,
-  normal,
-}
+enum VolumeLevel { muted, low, normal }
 
 VolumeLevel getVolumeLevel(double volume) {
   if (volume <= 0.0) return VolumeLevel.muted;
@@ -43,7 +39,7 @@ String getVolumeInfoText(VolumeLevel volumeLevel) {
     case VolumeLevel.muted:
       return 'The device is muted. Unmute the device to hear the metronome.';
     case VolumeLevel.low:
-      return 'The device volume is very low. If necessary, increase the device volume in addition to the metronome volume.';
+      return 'The device volume is low. If necessary, increase the device volume in addition to the metronome volume.';
     case VolumeLevel.normal:
       return 'If you struggle to hear the metronome in your current environment, consider connecting your device to an external speaker (e.g., via Bluetooth).';
   }

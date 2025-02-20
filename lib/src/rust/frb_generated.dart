@@ -22,26 +22,14 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   RustLib._();
 
   /// Initialize flutter_rust_bridge
-  static Future<void> init({
-    RustLibApi? api,
-    BaseHandler? handler,
-    ExternalLibrary? externalLibrary,
-  }) async {
-    await instance.initImpl(
-      api: api,
-      handler: handler,
-      externalLibrary: externalLibrary,
-    );
+  static Future<void> init({RustLibApi? api, BaseHandler? handler, ExternalLibrary? externalLibrary}) async {
+    await instance.initImpl(api: api, handler: handler, externalLibrary: externalLibrary);
   }
 
   /// Initialize flutter_rust_bridge in mock mode.
   /// No libraries for FFI are loaded.
-  static void initMock({
-    required RustLibApi api,
-  }) {
-    instance.initMockImpl(
-      api: api,
-    );
+  static void initMock({required RustLibApi api}) {
+    instance.initMockImpl(api: api);
   }
 
   /// Dispose flutter_rust_bridge
@@ -167,905 +155,780 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @override
   Future<bool> crateApiApiDebugTestFunction() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiDebugTestFunctionConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiDebugTestFunctionConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiDebugTestFunctionConstMeta => const TaskConstMeta(
-        debugName: "debug_test_function",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiDebugTestFunctionConstMeta =>
+      const TaskConstMeta(debugName: "debug_test_function", argNames: []);
 
   @override
   Future<bool> crateApiApiGeneratorNoteOff() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiGeneratorNoteOffConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiGeneratorNoteOffConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiGeneratorNoteOffConstMeta => const TaskConstMeta(
-        debugName: "generator_note_off",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiGeneratorNoteOffConstMeta =>
+      const TaskConstMeta(debugName: "generator_note_off", argNames: []);
 
   @override
   Future<bool> crateApiApiGeneratorNoteOn({required double newFreq}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_f_32(newFreq, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_f_32(newFreq, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiGeneratorNoteOnConstMeta,
+        argValues: [newFreq],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiGeneratorNoteOnConstMeta,
-      argValues: [newFreq],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiGeneratorNoteOnConstMeta => const TaskConstMeta(
-        debugName: "generator_note_on",
-        argNames: ["newFreq"],
-      );
+  TaskConstMeta get kCrateApiApiGeneratorNoteOnConstMeta =>
+      const TaskConstMeta(debugName: "generator_note_on", argNames: ["newFreq"]);
 
   @override
   Future<bool> crateApiApiGeneratorStart() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiGeneratorStartConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiGeneratorStartConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiGeneratorStartConstMeta => const TaskConstMeta(
-        debugName: "generator_start",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiGeneratorStartConstMeta =>
+      const TaskConstMeta(debugName: "generator_start", argNames: []);
 
   @override
   Future<bool> crateApiApiGeneratorStop() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiGeneratorStopConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiGeneratorStopConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiGeneratorStopConstMeta => const TaskConstMeta(
-        debugName: "generator_stop",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiGeneratorStopConstMeta =>
+      const TaskConstMeta(debugName: "generator_stop", argNames: []);
 
   @override
   Future<int> crateApiApiGetSampleRate() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_CastedPrimitive_usize,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_CastedPrimitive_usize, decodeErrorData: null),
+        constMeta: kCrateApiApiGetSampleRateConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiGetSampleRateConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiGetSampleRateConstMeta => const TaskConstMeta(
-        debugName: "get_sample_rate",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiGetSampleRateConstMeta =>
+      const TaskConstMeta(debugName: "get_sample_rate", argNames: []);
 
   @override
   Future<void> crateApiApiInitAudio() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_unit,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
+        constMeta: kCrateApiApiInitAudioConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiInitAudioConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiInitAudioConstMeta => const TaskConstMeta(
-        debugName: "init_audio",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiInitAudioConstMeta => const TaskConstMeta(debugName: "init_audio", argNames: []);
 
   @override
   Future<void> crateApiSimpleInitRustDefaultsManually() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_unit,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
+        constMeta: kCrateApiSimpleInitRustDefaultsManuallyConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiSimpleInitRustDefaultsManuallyConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiSimpleInitRustDefaultsManuallyConstMeta => const TaskConstMeta(
-        debugName: "init_rust_defaults_manually",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiSimpleInitRustDefaultsManuallyConstMeta =>
+      const TaskConstMeta(debugName: "init_rust_defaults_manually", argNames: []);
 
   @override
   Future<Float64List> crateApiApiMediaPlayerGetRecordingSamples() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_list_prim_f_64_strict,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_list_prim_f_64_strict, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerGetRecordingSamplesConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerGetRecordingSamplesConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerGetRecordingSamplesConstMeta => const TaskConstMeta(
-        debugName: "media_player_get_recording_samples",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerGetRecordingSamplesConstMeta =>
+      const TaskConstMeta(debugName: "media_player_get_recording_samples", argNames: []);
 
   @override
   Future<Float32List> crateApiApiMediaPlayerGetRms({required int nBins}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_CastedPrimitive_usize(nBins, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_list_prim_f_32_strict,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_CastedPrimitive_usize(nBins, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_list_prim_f_32_strict, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerGetRmsConstMeta,
+        argValues: [nBins],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerGetRmsConstMeta,
-      argValues: [nBins],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerGetRmsConstMeta => const TaskConstMeta(
-        debugName: "media_player_get_rms",
-        argNames: ["nBins"],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerGetRmsConstMeta =>
+      const TaskConstMeta(debugName: "media_player_get_rms", argNames: ["nBins"]);
 
   @override
   Future<MediaPlayerState?> crateApiApiMediaPlayerGetState() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_opt_box_autoadd_media_player_state,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_opt_box_autoadd_media_player_state, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerGetStateConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerGetStateConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerGetStateConstMeta => const TaskConstMeta(
-        debugName: "media_player_get_state",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerGetStateConstMeta =>
+      const TaskConstMeta(debugName: "media_player_get_state", argNames: []);
 
   @override
   Future<bool> crateApiApiMediaPlayerLoadWav({required String wavFilePath}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(wavFilePath, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(wavFilePath, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerLoadWavConstMeta,
+        argValues: [wavFilePath],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerLoadWavConstMeta,
-      argValues: [wavFilePath],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerLoadWavConstMeta => const TaskConstMeta(
-        debugName: "media_player_load_wav",
-        argNames: ["wavFilePath"],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerLoadWavConstMeta =>
+      const TaskConstMeta(debugName: "media_player_load_wav", argNames: ["wavFilePath"]);
 
   @override
   Future<void> crateApiApiMediaPlayerSetLoop({required bool looping}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_bool(looping, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_unit,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_bool(looping, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerSetLoopConstMeta,
+        argValues: [looping],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerSetLoopConstMeta,
-      argValues: [looping],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerSetLoopConstMeta => const TaskConstMeta(
-        debugName: "media_player_set_loop",
-        argNames: ["looping"],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerSetLoopConstMeta =>
+      const TaskConstMeta(debugName: "media_player_set_loop", argNames: ["looping"]);
 
   @override
   Future<bool> crateApiApiMediaPlayerSetPitchSemitones({required double pitchSemitones}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_f_32(pitchSemitones, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_f_32(pitchSemitones, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerSetPitchSemitonesConstMeta,
+        argValues: [pitchSemitones],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerSetPitchSemitonesConstMeta,
-      argValues: [pitchSemitones],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerSetPitchSemitonesConstMeta => const TaskConstMeta(
-        debugName: "media_player_set_pitch_semitones",
-        argNames: ["pitchSemitones"],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerSetPitchSemitonesConstMeta =>
+      const TaskConstMeta(debugName: "media_player_set_pitch_semitones", argNames: ["pitchSemitones"]);
 
   @override
   Future<bool> crateApiApiMediaPlayerSetPlaybackPosFactor({required double posFactor}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_f_32(posFactor, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_f_32(posFactor, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerSetPlaybackPosFactorConstMeta,
+        argValues: [posFactor],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerSetPlaybackPosFactorConstMeta,
-      argValues: [posFactor],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerSetPlaybackPosFactorConstMeta => const TaskConstMeta(
-        debugName: "media_player_set_playback_pos_factor",
-        argNames: ["posFactor"],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerSetPlaybackPosFactorConstMeta =>
+      const TaskConstMeta(debugName: "media_player_set_playback_pos_factor", argNames: ["posFactor"]);
 
   @override
   Future<bool> crateApiApiMediaPlayerSetSpeedFactor({required double speedFactor}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_f_32(speedFactor, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_f_32(speedFactor, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerSetSpeedFactorConstMeta,
+        argValues: [speedFactor],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerSetSpeedFactorConstMeta,
-      argValues: [speedFactor],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerSetSpeedFactorConstMeta => const TaskConstMeta(
-        debugName: "media_player_set_speed_factor",
-        argNames: ["speedFactor"],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerSetSpeedFactorConstMeta =>
+      const TaskConstMeta(debugName: "media_player_set_speed_factor", argNames: ["speedFactor"]);
 
   @override
   Future<void> crateApiApiMediaPlayerSetTrim({required double startFactor, required double endFactor}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_f_32(startFactor, serializer);
-        sse_encode_f_32(endFactor, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_unit,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_f_32(startFactor, serializer);
+          sse_encode_f_32(endFactor, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerSetTrimConstMeta,
+        argValues: [startFactor, endFactor],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerSetTrimConstMeta,
-      argValues: [startFactor, endFactor],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerSetTrimConstMeta => const TaskConstMeta(
-        debugName: "media_player_set_trim",
-        argNames: ["startFactor", "endFactor"],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerSetTrimConstMeta =>
+      const TaskConstMeta(debugName: "media_player_set_trim", argNames: ["startFactor", "endFactor"]);
 
   @override
   Future<bool> crateApiApiMediaPlayerSetVolume({required double volume}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_f_32(volume, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_f_32(volume, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerSetVolumeConstMeta,
+        argValues: [volume],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerSetVolumeConstMeta,
-      argValues: [volume],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerSetVolumeConstMeta => const TaskConstMeta(
-        debugName: "media_player_set_volume",
-        argNames: ["volume"],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerSetVolumeConstMeta =>
+      const TaskConstMeta(debugName: "media_player_set_volume", argNames: ["volume"]);
 
   @override
   Future<bool> crateApiApiMediaPlayerStart() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerStartConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerStartConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerStartConstMeta => const TaskConstMeta(
-        debugName: "media_player_start",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerStartConstMeta =>
+      const TaskConstMeta(debugName: "media_player_start", argNames: []);
 
   @override
   Future<bool> crateApiApiMediaPlayerStartRecording() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerStartRecordingConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerStartRecordingConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerStartRecordingConstMeta => const TaskConstMeta(
-        debugName: "media_player_start_recording",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerStartRecordingConstMeta =>
+      const TaskConstMeta(debugName: "media_player_start_recording", argNames: []);
 
   @override
   Future<bool> crateApiApiMediaPlayerStop() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerStopConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerStopConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerStopConstMeta => const TaskConstMeta(
-        debugName: "media_player_stop",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerStopConstMeta =>
+      const TaskConstMeta(debugName: "media_player_stop", argNames: []);
 
   @override
   Future<bool> crateApiApiMediaPlayerStopRecording() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMediaPlayerStopRecordingConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMediaPlayerStopRecordingConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerStopRecordingConstMeta => const TaskConstMeta(
-        debugName: "media_player_stop_recording",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiMediaPlayerStopRecordingConstMeta =>
+      const TaskConstMeta(debugName: "media_player_stop_recording", argNames: []);
 
   @override
   Future<bool> crateApiApiMetronomeLoadFile({required BeatSound beatType, required String wavFilePath}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_beat_sound(beatType, serializer);
-        sse_encode_String(wavFilePath, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_beat_sound(beatType, serializer);
+          sse_encode_String(wavFilePath, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMetronomeLoadFileConstMeta,
+        argValues: [beatType, wavFilePath],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMetronomeLoadFileConstMeta,
-      argValues: [beatType, wavFilePath],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeLoadFileConstMeta => const TaskConstMeta(
-        debugName: "metronome_load_file",
-        argNames: ["beatType", "wavFilePath"],
-      );
+  TaskConstMeta get kCrateApiApiMetronomeLoadFileConstMeta =>
+      const TaskConstMeta(debugName: "metronome_load_file", argNames: ["beatType", "wavFilePath"]);
 
   @override
   Future<BeatHappenedEvent?> crateApiApiMetronomePollBeatEventHappened() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 24, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_opt_box_autoadd_beat_happened_event,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 24, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_opt_box_autoadd_beat_happened_event, decodeErrorData: null),
+        constMeta: kCrateApiApiMetronomePollBeatEventHappenedConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMetronomePollBeatEventHappenedConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomePollBeatEventHappenedConstMeta => const TaskConstMeta(
-        debugName: "metronome_poll_beat_event_happened",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiMetronomePollBeatEventHappenedConstMeta =>
+      const TaskConstMeta(debugName: "metronome_poll_beat_event_happened", argNames: []);
 
   @override
   Future<bool> crateApiApiMetronomeSetBeatMuteChance({required double muteChance}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_f_32(muteChance, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_f_32(muteChance, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMetronomeSetBeatMuteChanceConstMeta,
+        argValues: [muteChance],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMetronomeSetBeatMuteChanceConstMeta,
-      argValues: [muteChance],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeSetBeatMuteChanceConstMeta => const TaskConstMeta(
-        debugName: "metronome_set_beat_mute_chance",
-        argNames: ["muteChance"],
-      );
+  TaskConstMeta get kCrateApiApiMetronomeSetBeatMuteChanceConstMeta =>
+      const TaskConstMeta(debugName: "metronome_set_beat_mute_chance", argNames: ["muteChance"]);
 
   @override
   Future<bool> crateApiApiMetronomeSetBpm({required double bpm}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_f_32(bpm, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 26, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_f_32(bpm, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 26, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMetronomeSetBpmConstMeta,
+        argValues: [bpm],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMetronomeSetBpmConstMeta,
-      argValues: [bpm],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeSetBpmConstMeta => const TaskConstMeta(
-        debugName: "metronome_set_bpm",
-        argNames: ["bpm"],
-      );
+  TaskConstMeta get kCrateApiApiMetronomeSetBpmConstMeta =>
+      const TaskConstMeta(debugName: "metronome_set_bpm", argNames: ["bpm"]);
 
   @override
   Future<bool> crateApiApiMetronomeSetMuted({required bool muted}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_bool(muted, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 27, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_bool(muted, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 27, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMetronomeSetMutedConstMeta,
+        argValues: [muted],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMetronomeSetMutedConstMeta,
-      argValues: [muted],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeSetMutedConstMeta => const TaskConstMeta(
-        debugName: "metronome_set_muted",
-        argNames: ["muted"],
-      );
+  TaskConstMeta get kCrateApiApiMetronomeSetMutedConstMeta =>
+      const TaskConstMeta(debugName: "metronome_set_muted", argNames: ["muted"]);
 
   @override
   Future<bool> crateApiApiMetronomeSetRhythm({required List<MetroBar> bars, required List<MetroBar> bars2}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_list_metro_bar(bars, serializer);
-        sse_encode_list_metro_bar(bars2, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_list_metro_bar(bars, serializer);
+          sse_encode_list_metro_bar(bars2, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMetronomeSetRhythmConstMeta,
+        argValues: [bars, bars2],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMetronomeSetRhythmConstMeta,
-      argValues: [bars, bars2],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeSetRhythmConstMeta => const TaskConstMeta(
-        debugName: "metronome_set_rhythm",
-        argNames: ["bars", "bars2"],
-      );
+  TaskConstMeta get kCrateApiApiMetronomeSetRhythmConstMeta =>
+      const TaskConstMeta(debugName: "metronome_set_rhythm", argNames: ["bars", "bars2"]);
 
   @override
   Future<bool> crateApiApiMetronomeSetVolume({required double volume}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_f_32(volume, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 29, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_f_32(volume, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 29, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMetronomeSetVolumeConstMeta,
+        argValues: [volume],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMetronomeSetVolumeConstMeta,
-      argValues: [volume],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeSetVolumeConstMeta => const TaskConstMeta(
-        debugName: "metronome_set_volume",
-        argNames: ["volume"],
-      );
+  TaskConstMeta get kCrateApiApiMetronomeSetVolumeConstMeta =>
+      const TaskConstMeta(debugName: "metronome_set_volume", argNames: ["volume"]);
 
   @override
   Future<bool> crateApiApiMetronomeStart() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 30, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 30, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMetronomeStartConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMetronomeStartConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeStartConstMeta => const TaskConstMeta(
-        debugName: "metronome_start",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiMetronomeStartConstMeta =>
+      const TaskConstMeta(debugName: "metronome_start", argNames: []);
 
   @override
   Future<bool> crateApiApiMetronomeStop() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 31, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 31, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiMetronomeStopConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiMetronomeStopConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeStopConstMeta => const TaskConstMeta(
-        debugName: "metronome_stop",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiMetronomeStopConstMeta =>
+      const TaskConstMeta(debugName: "metronome_stop", argNames: []);
 
   @override
   Future<bool> crateApiApiPianoNoteOff({required int note}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_i_32(note, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 32, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_i_32(note, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 32, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiPianoNoteOffConstMeta,
+        argValues: [note],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiPianoNoteOffConstMeta,
-      argValues: [note],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiPianoNoteOffConstMeta => const TaskConstMeta(
-        debugName: "piano_note_off",
-        argNames: ["note"],
-      );
+  TaskConstMeta get kCrateApiApiPianoNoteOffConstMeta =>
+      const TaskConstMeta(debugName: "piano_note_off", argNames: ["note"]);
 
   @override
   Future<bool> crateApiApiPianoNoteOn({required int note}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_i_32(note, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 33, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_i_32(note, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 33, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiPianoNoteOnConstMeta,
+        argValues: [note],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiPianoNoteOnConstMeta,
-      argValues: [note],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiPianoNoteOnConstMeta => const TaskConstMeta(
-        debugName: "piano_note_on",
-        argNames: ["note"],
-      );
+  TaskConstMeta get kCrateApiApiPianoNoteOnConstMeta =>
+      const TaskConstMeta(debugName: "piano_note_on", argNames: ["note"]);
 
   @override
   Future<bool> crateApiApiPianoSetVolume({required double volume}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_f_32(volume, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_f_32(volume, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiPianoSetVolumeConstMeta,
+        argValues: [volume],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiPianoSetVolumeConstMeta,
-      argValues: [volume],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiPianoSetVolumeConstMeta => const TaskConstMeta(
-        debugName: "piano_set_volume",
-        argNames: ["volume"],
-      );
+  TaskConstMeta get kCrateApiApiPianoSetVolumeConstMeta =>
+      const TaskConstMeta(debugName: "piano_set_volume", argNames: ["volume"]);
 
   @override
   Future<bool> crateApiApiPianoSetup({required String soundFontPath}) {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        sse_encode_String(soundFontPath, serializer);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 35, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(soundFontPath, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 35, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiPianoSetupConstMeta,
+        argValues: [soundFontPath],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiPianoSetupConstMeta,
-      argValues: [soundFontPath],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiPianoSetupConstMeta => const TaskConstMeta(
-        debugName: "piano_setup",
-        argNames: ["soundFontPath"],
-      );
+  TaskConstMeta get kCrateApiApiPianoSetupConstMeta =>
+      const TaskConstMeta(debugName: "piano_setup", argNames: ["soundFontPath"]);
 
   @override
   Future<bool> crateApiApiPianoStart() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 36, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 36, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiPianoStartConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiPianoStartConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiPianoStartConstMeta => const TaskConstMeta(
-        debugName: "piano_start",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiPianoStartConstMeta => const TaskConstMeta(debugName: "piano_start", argNames: []);
 
   @override
   Future<bool> crateApiApiPianoStop() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 37, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 37, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiPianoStopConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiPianoStopConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiPianoStopConstMeta => const TaskConstMeta(
-        debugName: "piano_stop",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiPianoStopConstMeta => const TaskConstMeta(debugName: "piano_stop", argNames: []);
 
   @override
   Future<double?> crateApiApiTunerGetFrequency() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 38, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_opt_box_autoadd_f_32,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 38, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_opt_box_autoadd_f_32, decodeErrorData: null),
+        constMeta: kCrateApiApiTunerGetFrequencyConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiTunerGetFrequencyConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiTunerGetFrequencyConstMeta => const TaskConstMeta(
-        debugName: "tuner_get_frequency",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiTunerGetFrequencyConstMeta =>
+      const TaskConstMeta(debugName: "tuner_get_frequency", argNames: []);
 
   @override
   Future<bool> crateApiApiTunerStart() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 39, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 39, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiTunerStartConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiTunerStartConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiTunerStartConstMeta => const TaskConstMeta(
-        debugName: "tuner_start",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiTunerStartConstMeta => const TaskConstMeta(debugName: "tuner_start", argNames: []);
 
   @override
   Future<bool> crateApiApiTunerStop() {
-    return handler.executeNormal(NormalTask(
-      callFfi: (port_) {
-        final serializer = SseSerializer(generalizedFrbRustBinding);
-        pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 40, port: port_);
-      },
-      codec: SseCodec(
-        decodeSuccessData: sse_decode_bool,
-        decodeErrorData: null,
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 40, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiApiTunerStopConstMeta,
+        argValues: [],
+        apiImpl: this,
       ),
-      constMeta: kCrateApiApiTunerStopConstMeta,
-      argValues: [],
-      apiImpl: this,
-    ));
+    );
   }
 
-  TaskConstMeta get kCrateApiApiTunerStopConstMeta => const TaskConstMeta(
-        debugName: "tuner_stop",
-        argNames: [],
-      );
+  TaskConstMeta get kCrateApiApiTunerStopConstMeta => const TaskConstMeta(debugName: "tuner_stop", argNames: []);
 
   @protected
   int dco_decode_CastedPrimitive_usize(dynamic raw) {
@@ -1278,12 +1141,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_isSecondary = sse_decode_bool(deserializer);
     var var_beatIndex = sse_decode_i_32(deserializer);
     return BeatHappenedEvent(
-        millisecondsBeforeStart: var_millisecondsBeforeStart,
-        isRandomMute: var_isRandomMute,
-        barIndex: var_barIndex,
-        isPoly: var_isPoly,
-        isSecondary: var_isSecondary,
-        beatIndex: var_beatIndex);
+      millisecondsBeforeStart: var_millisecondsBeforeStart,
+      isRandomMute: var_isRandomMute,
+      barIndex: var_barIndex,
+      isPoly: var_isPoly,
+      isSecondary: var_isSecondary,
+      beatIndex: var_beatIndex,
+    );
   }
 
   @protected
@@ -1416,12 +1280,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_trimStartFactor = sse_decode_f_32(deserializer);
     var var_trimEndFactor = sse_decode_f_32(deserializer);
     return MediaPlayerState(
-        playing: var_playing,
-        playbackPositionFactor: var_playbackPositionFactor,
-        totalLengthSeconds: var_totalLengthSeconds,
-        looping: var_looping,
-        trimStartFactor: var_trimStartFactor,
-        trimEndFactor: var_trimEndFactor);
+      playing: var_playing,
+      playbackPositionFactor: var_playbackPositionFactor,
+      totalLengthSeconds: var_totalLengthSeconds,
+      looping: var_looping,
+      trimStartFactor: var_trimStartFactor,
+      trimEndFactor: var_trimEndFactor,
+    );
   }
 
   @protected

@@ -77,10 +77,7 @@ class _ParentToolState extends State<ParentTool> {
 
     FileIO.saveProjectLibraryToJson(projectLibrary);
 
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.isQuickTool) {
@@ -123,23 +120,18 @@ class _ParentToolState extends State<ParentTool> {
         pointingDirection: PointingDirection.right,
       ),
     ];
-    _walkthroughQuickTool.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () {
-        context.read<ProjectLibrary>().showQuickToolTutorial = false;
-        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    _walkthroughQuickTool.create(targets.map((e) => e.targetFocus).toList(), () {
+      context.read<ProjectLibrary>().showQuickToolTutorial = false;
+      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
-        // start island tutorial
-        if (context.read<ProjectLibrary>().showIslandTutorial &&
-            checkIslandPossible(widget.project, widget.toolBlock)) {
-          _createWalkthroughIsland();
-          Future.delayed(Duration.zero, () => _walkthroughIsland.show(context));
-        } else if (widget.onParentWalkthroughFinished != null) {
-          widget.onParentWalkthroughFinished!();
-        }
-      },
-      context,
-    );
+      // start island tutorial
+      if (context.read<ProjectLibrary>().showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
+        _createWalkthroughIsland();
+        Future.delayed(Duration.zero, () => _walkthroughIsland.show(context));
+      } else if (widget.onParentWalkthroughFinished != null) {
+        widget.onParentWalkthroughFinished!();
+      }
+    }, context);
   }
 
   void _createWalkthroughTool() {
@@ -159,23 +151,18 @@ class _ParentToolState extends State<ParentTool> {
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthroughTool.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () {
-        context.read<ProjectLibrary>().showToolTutorial = false;
-        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    _walkthroughTool.create(targets.map((e) => e.targetFocus).toList(), () {
+      context.read<ProjectLibrary>().showToolTutorial = false;
+      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
-        // start island tutorial
-        if (context.read<ProjectLibrary>().showIslandTutorial &&
-            checkIslandPossible(widget.project, widget.toolBlock)) {
-          _createWalkthroughIsland();
-          Future.delayed(Duration.zero, () => _walkthroughIsland.show(context));
-        } else if (widget.onParentWalkthroughFinished != null) {
-          widget.onParentWalkthroughFinished!();
-        }
-      },
-      context,
-    );
+      // start island tutorial
+      if (context.read<ProjectLibrary>().showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
+        _createWalkthroughIsland();
+        Future.delayed(Duration.zero, () => _walkthroughIsland.show(context));
+      } else if (widget.onParentWalkthroughFinished != null) {
+        widget.onParentWalkthroughFinished!();
+      }
+    }, context);
   }
 
   void _createWalkthroughIsland() {
@@ -189,19 +176,15 @@ class _ParentToolState extends State<ParentTool> {
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthroughIsland.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () {
-        context.read<ProjectLibrary>().showIslandTutorial = false;
-        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    _walkthroughIsland.create(targets.map((e) => e.targetFocus).toList(), () {
+      context.read<ProjectLibrary>().showIslandTutorial = false;
+      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
-        // start specific tool tutorial
-        if (widget.onParentWalkthroughFinished != null) {
-          widget.onParentWalkthroughFinished!();
-        }
-      },
-      context,
-    );
+      // start specific tool tutorial
+      if (widget.onParentWalkthroughFinished != null) {
+        widget.onParentWalkthroughFinished!();
+      }
+    }, context);
   }
 
   @override
@@ -293,84 +276,83 @@ class _ParentToolState extends State<ParentTool> {
   void _openBottomSheetAndSaveTool() {
     var projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
 
-    ourModalBottomSheet(context, [
-      CardListTile(
-        title: widget.barTitle,
-        subtitle: formatSettingValues(widget.toolBlock.getSettingsFormatted()),
-        trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
-        leadingPicture: circleToolIcon(widget.toolBlock.icon),
-        onTapFunction: () {},
-      ),
-    ], [
-      Padding(
-        padding: const EdgeInsets.only(top: 16, left: 32),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: widget.isQuickTool
-              ? const Text(
-                  "Save in ...",
-                  style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
-                )
-              : const Text(
-                  "Save copy in ...",
-                  style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
-                ),
+    ourModalBottomSheet(
+      context,
+      [
+        CardListTile(
+          title: widget.barTitle,
+          subtitle: formatSettingValues(widget.toolBlock.getSettingsFormatted()),
+          trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
+          leadingPicture: circleToolIcon(widget.toolBlock.icon),
+          onTapFunction: () {},
         ),
-      ),
-      Expanded(
-        child: Padding(
-          padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
-          child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            itemCount: projectLibrary.projects.length,
-            itemBuilder: (BuildContext context, int index) {
-              return StatefulBuilder(
-                builder: (BuildContext context, StateSetter setTileState) {
-                  return CardListTile(
-                    title: projectLibrary.projects[index].title,
-                    subtitle: getDateAndTimeFormatted(projectLibrary.projects[index].timeLastModified),
-                    highlightColor: _highlightColorOnSave,
-                    trailingIcon: IconButton(
-                      onPressed: () {
-                        _onSaveInProjectTap(setTileState, index, widget.toolBlock);
-                      },
-                      icon: _bookmarkIcon,
-                      color: ColorTheme.surfaceTint,
-                    ),
-                    leadingPicture: projectLibrary.projects[index].thumbnail,
-                    onTapFunction: () {
-                      _onSaveInProjectTap(setTileState, index, widget.toolBlock);
-                    },
-                  );
-                },
-              );
-            },
+      ],
+      [
+        Padding(
+          padding: const EdgeInsets.only(top: 16, left: 32),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child:
+                widget.isQuickTool
+                    ? const Text("Save in ...", style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
+                    : const Text("Save copy in ...", style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
           ),
         ),
-      ),
-      TIOFlatButton(
-        // creating a new project to save the tool in it
-        onPressed: () async {
-          final newTitles = await editTwoTitles(context, getDateAndTimeNow(), "${widget.toolBlock.title} - copy");
-          if (newTitles == null || newTitles.isEmpty) {
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
+            child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: projectLibrary.projects.length,
+              itemBuilder: (BuildContext context, int index) {
+                return StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setTileState) {
+                    return CardListTile(
+                      title: projectLibrary.projects[index].title,
+                      subtitle: getDateAndTimeFormatted(projectLibrary.projects[index].timeLastModified),
+                      highlightColor: _highlightColorOnSave,
+                      trailingIcon: IconButton(
+                        onPressed: () {
+                          _onSaveInProjectTap(setTileState, index, widget.toolBlock);
+                        },
+                        icon: _bookmarkIcon,
+                        color: ColorTheme.surfaceTint,
+                      ),
+                      leadingPicture: projectLibrary.projects[index].thumbnail,
+                      onTapFunction: () {
+                        _onSaveInProjectTap(setTileState, index, widget.toolBlock);
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+        TIOFlatButton(
+          // creating a new project to save the tool in it
+          onPressed: () async {
+            final newTitles = await editTwoTitles(context, getDateAndTimeNow(), "${widget.toolBlock.title} - copy");
+            if (newTitles == null || newTitles.isEmpty) {
+              if (mounted) {
+                // close the bottom up sheet
+                Navigator.of(context).pop();
+              }
+              return;
+            }
             if (mounted) {
               // close the bottom up sheet
               Navigator.of(context).pop();
-            }
-            return;
-          }
-          if (mounted) {
-            // close the bottom up sheet
-            Navigator.of(context).pop();
 
-            saveToolInNewProject(context, widget.toolBlock, widget.isQuickTool, newTitles[0], newTitles[1]);
-          }
-        },
-        text: "Save in a new project",
-      ),
-      const SizedBox(height: 16),
-    ]);
+              saveToolInNewProject(context, widget.toolBlock, widget.isQuickTool, newTitles[0], newTitles[1]);
+            }
+          },
+          text: "Save in a new project",
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
   }
 
   void _onSaveInProjectTap(StateSetter setTileState, int index, ProjectBlock toolBlock) async {
@@ -448,17 +430,17 @@ class _ParentToolState extends State<ParentTool> {
         widget.island == null
             ? const SizedBox()
             : SizedBox(
-                key: _keyIsland,
-                height: ParentToolParams.islandHeight,
-                width: MediaQuery.of(context).size.width,
-                child: widget.island,
-              ),
+              key: _keyIsland,
+              height: ParentToolParams.islandHeight,
+              width: MediaQuery.of(context).size.width,
+              child: widget.island,
+            ),
         // center module
         hasSettingTiles
             ? SizedBox(
-                height: widget.heightForCenterModule ?? MediaQuery.of(context).size.height / 2.5,
-                child: widget.centerModule,
-              )
+              height: widget.heightForCenterModule ?? MediaQuery.of(context).size.height / 2.5,
+              child: widget.centerModule,
+            )
             : widget.centerModule,
         // empty space between center module and settings
         const SizedBox(height: 8),

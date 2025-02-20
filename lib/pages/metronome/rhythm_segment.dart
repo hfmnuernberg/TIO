@@ -47,10 +47,7 @@ class _RhythmSegmentState extends State<RhythmSegment> {
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(
-          color: ColorTheme.primary87,
-          width: 1,
-        ),
+        border: Border.all(color: ColorTheme.primary87, width: 1),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Padding(
@@ -67,16 +64,20 @@ class _RhythmSegmentState extends State<RhythmSegment> {
             SizedBox(
               // sized box with specific width is needed here for the row to span the whole group width
               width: totalGroupWidth,
-              child: rhythmGroups[widget.barIdx].polyBeats.isEmpty
-                  ? const SizedBox(
-                      height: TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2,
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: _beatButtons(
-                          rhythmGroups[widget.barIdx].polyBeats.length, spaceForEachPoly, rhythmGroups,
-                          isPoly: true),
-                    ),
+              child:
+                  rhythmGroups[widget.barIdx].polyBeats.isEmpty
+                      ? const SizedBox(
+                        height: TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2,
+                      )
+                      : Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: _beatButtons(
+                          rhythmGroups[widget.barIdx].polyBeats.length,
+                          spaceForEachPoly,
+                          rhythmGroups,
+                          isPoly: true,
+                        ),
+                      ),
             ),
           ],
         ),
@@ -121,9 +122,10 @@ class _RhythmSegmentState extends State<RhythmSegment> {
 
           return BeatButton(
             color: ColorTheme.surfaceTint,
-            beatTypes: isPoly
-                ? getBeatButtonsFromBeatsPoly(rhythmGroups[widget.barIdx].polyBeats)
-                : getBeatButtonsFromBeats(rhythmGroups[widget.barIdx].beats),
+            beatTypes:
+                isPoly
+                    ? getBeatButtonsFromBeatsPoly(rhythmGroups[widget.barIdx].polyBeats)
+                    : getBeatButtonsFromBeats(rhythmGroups[widget.barIdx].beats),
             beatTypeIndex: i,
             buttonSize: TIOMusicParams.beatButtonSizeMainPage,
             beatHighlighted: highlight,
@@ -138,13 +140,7 @@ class _RhythmSegmentState extends State<RhythmSegment> {
           child: NoteHandler.getNoteSvg(rhythmGroups[widget.barIdx].noteKey),
         );
 
-        beat = Column(
-          children: [
-            noteSymbol,
-            const SizedBox(height: 4),
-            button,
-          ],
-        );
+        beat = Column(children: [noteSymbol, const SizedBox(height: 4), button]);
       } else {
         beat = button;
       }
@@ -152,9 +148,11 @@ class _RhythmSegmentState extends State<RhythmSegment> {
       buttons.add(Padding(padding: const EdgeInsets.all(TIOMusicParams.beatButtonPadding), child: beat));
 
       if (spaceForEachBeat != null) {
-        buttons.add(SizedBox(
-          width: spaceForEachBeat - TIOMusicParams.beatButtonSizeMainPage - TIOMusicParams.beatButtonPadding * 2,
-        ));
+        buttons.add(
+          SizedBox(
+            width: spaceForEachBeat - TIOMusicParams.beatButtonSizeMainPage - TIOMusicParams.beatButtonPadding * 2,
+          ),
+        );
       }
     }
 

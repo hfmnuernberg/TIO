@@ -10,12 +10,7 @@ class RhythmGeneratorSettingListItem extends StatefulWidget {
   final Function() onTap;
   final bool hasBorder;
 
-  const RhythmGeneratorSettingListItem({
-    super.key,
-    required this.noteKey,
-    required this.onTap,
-    this.hasBorder = false,
-  });
+  const RhythmGeneratorSettingListItem({super.key, required this.noteKey, required this.onTap, this.hasBorder = false});
 
   @override
   State<RhythmGeneratorSettingListItem> createState() => _RhythmGeneratorSettingListItemState();
@@ -28,10 +23,7 @@ class _RhythmGeneratorSettingListItemState extends State<RhythmGeneratorSettingL
       type: MaterialType.transparency,
       child: Ink(
         decoration: BoxDecoration(
-          border: Border.all(
-            style: widget.hasBorder ? BorderStyle.solid : BorderStyle.none,
-            color: ColorTheme.primary,
-          ),
+          border: Border.all(style: widget.hasBorder ? BorderStyle.solid : BorderStyle.none, color: ColorTheme.primary),
           borderRadius: BorderRadius.circular(MetronomeParams.rhythmSegmentSize / 2),
         ),
         child: InkWell(

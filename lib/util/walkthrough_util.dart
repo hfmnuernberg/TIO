@@ -50,7 +50,7 @@ class CustomTargetFocus {
     GlobalKey? key, // set key to null to cover whole screen without specific target (and provide context!)
     String description, {
     BuildContext?
-        context, // context should be provided if using ButtonsPosition left or right and if setting key to null
+    context, // context should be provided if using ButtonsPosition left or right and if setting key to null
     ContentAlign? alignText,
     CustomTargetContentPosition? customTextPosition,
     PointingDirection? pointingDirection,
@@ -71,17 +71,23 @@ class CustomTargetFocus {
         positionNextButton = CustomTargetContentPosition(bottom: edgeSpace);
         break;
       case ButtonsPosition.left:
-        positionNextButton = context == null
-            ? CustomTargetContentPosition(left: edgeSpace, top: 100)
-            : CustomTargetContentPosition(
-                left: edgeSpace, top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons);
+        positionNextButton =
+            context == null
+                ? CustomTargetContentPosition(left: edgeSpace, top: 100)
+                : CustomTargetContentPosition(
+                  left: edgeSpace,
+                  top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons,
+                );
         buttonsColumnCrossAlign = CrossAxisAlignment.start;
         break;
       case ButtonsPosition.right:
-        positionNextButton = context == null
-            ? CustomTargetContentPosition(right: edgeSpace, top: 100)
-            : CustomTargetContentPosition(
-                right: edgeSpace, top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons);
+        positionNextButton =
+            context == null
+                ? CustomTargetContentPosition(right: edgeSpace, top: 100)
+                : CustomTargetContentPosition(
+                  right: edgeSpace,
+                  top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons,
+                );
         buttonsColumnCrossAlign = CrossAxisAlignment.end;
         break;
       case ButtonsPosition.bottomright:
@@ -93,71 +99,74 @@ class CustomTargetFocus {
 
     var contents = List<TargetContent>.empty(growable: true);
     if (key == null) {
-      contents.add(TargetContent(
+      contents.add(
+        TargetContent(
           align: ContentAlign.custom,
-          customPosition:
-              CustomTargetContentPosition(left: 0, right: 0, top: 0, bottom: 0), // this covers the whole screen
+          customPosition: CustomTargetContentPosition(
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+          ), // this covers the whole screen
           padding: EdgeInsets.zero,
-          child: ColoredBox(
-            color: Walkthrough.backgroundColor.withValues(alpha: Walkthrough.backgroundOpacity),
-          )));
+          child: ColoredBox(color: Walkthrough.backgroundColor.withValues(alpha: Walkthrough.backgroundOpacity)),
+        ),
+      );
     }
-    contents.add(TargetContent(
-      align: alignText ?? (customTextPosition != null ? ContentAlign.custom : ContentAlign.bottom),
-      customPosition: customTextPosition,
-      builder: (context, controller) {
-        return Container(
-          decoration: ShapeDecoration(
-            color: Colors.white,
-            shape: MessageBorder(
-              pointingDirection: pointingDirection,
-              pointerOffset: pointerOffset,
-              pointerPosition: pointerPosition,
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              description,
-              style: const TextStyle(
-                color: ColorTheme.tertiary,
-                fontWeight: FontWeight.bold,
+    contents.add(
+      TargetContent(
+        align: alignText ?? (customTextPosition != null ? ContentAlign.custom : ContentAlign.bottom),
+        customPosition: customTextPosition,
+        builder: (context, controller) {
+          return Container(
+            decoration: ShapeDecoration(
+              color: Colors.white,
+              shape: MessageBorder(
+                pointingDirection: pointingDirection,
+                pointerOffset: pointerOffset,
+                pointerPosition: pointerPosition,
               ),
             ),
-          ),
-        );
-      },
-    ));
-    contents.add(TargetContent(
-      align: ContentAlign.custom,
-      customPosition: positionNextButton,
-      builder: (context, controller) {
-        return Column(
-          crossAxisAlignment: buttonsColumnCrossAlign,
-          children: [
-            // NEXT
-            CircleAvatar(
-              backgroundColor: ColorTheme.primary,
-              radius: TIOMusicParams.sizeBigButtons,
-              child: TextButton(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(description, style: const TextStyle(color: ColorTheme.tertiary, fontWeight: FontWeight.bold)),
+            ),
+          );
+        },
+      ),
+    );
+    contents.add(
+      TargetContent(
+        align: ContentAlign.custom,
+        customPosition: positionNextButton,
+        builder: (context, controller) {
+          return Column(
+            crossAxisAlignment: buttonsColumnCrossAlign,
+            children: [
+              // NEXT
+              CircleAvatar(
+                backgroundColor: ColorTheme.primary,
+                radius: TIOMusicParams.sizeBigButtons,
+                child: TextButton(
+                  onPressed: () {
+                    controller.next();
+                  },
+                  child: const Text("Next", style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24)),
+                ),
+              ),
+              const SizedBox(height: 10),
+              // CANCEL
+              TextButton(
                 onPressed: () {
-                  controller.next();
+                  controller.skip();
                 },
-                child: const Text("Next", style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24)),
+                child: const Text("Cancel", style: TextStyle(color: ColorTheme.onPrimary, fontSize: 16)),
               ),
-            ),
-            const SizedBox(height: 10),
-            // CANCEL
-            TextButton(
-              onPressed: () {
-                controller.skip();
-              },
-              child: const Text("Cancel", style: TextStyle(color: ColorTheme.onPrimary, fontSize: 16)),
-            ),
-          ],
-        );
-      },
-    ));
+            ],
+          );
+        },
+      ),
+    );
 
     targetFocus = TargetFocus(
       keyTarget: key,

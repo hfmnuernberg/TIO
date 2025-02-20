@@ -118,8 +118,9 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     );
 
     // Start beat detection timer
-    _beatDetection =
-        Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (Timer t) async {
+    _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
+      Timer t,
+    ) async {
       if (!mounted) {
         t.cancel();
         return;
@@ -177,14 +178,10 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
         pointingDirection: PointingDirection.up,
       ),
     ];
-    _walkthrough.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () {
-        context.read<ProjectLibrary>().showBeatToggleTip = false;
-        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-      },
-      context,
-    );
+    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+      context.read<ProjectLibrary>().showBeatToggleTip = false;
+      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    }, context);
   }
 
   // Handle beat changes
@@ -305,11 +302,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     }
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: RhythmGeneratorSettingListItem(
-        noteKey: noteKey,
-        onTap: () => _selectIcon(noteKey),
-        hasBorder: isSelected,
-      ),
+      child: RhythmGeneratorSettingListItem(noteKey: noteKey, onTap: () => _selectIcon(noteKey), hasBorder: isSelected),
     );
   }
 
@@ -390,10 +383,12 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   void _reset() {
     _selectIcon(MetronomeParams.defaultNoteKey);
-    _numBeatsInput.displayText.value =
-        _numBeatsInput.displayText.value.copyWith(text: MetronomeParams.defaultBeats.length.toString());
-    _numPolyBeatsInput.displayText.value =
-        _numPolyBeatsInput.displayText.value.copyWith(text: MetronomeParams.defaultPolyBeats.length.toString());
+    _numBeatsInput.displayText.value = _numBeatsInput.displayText.value.copyWith(
+      text: MetronomeParams.defaultBeats.length.toString(),
+    );
+    _numPolyBeatsInput.displayText.value = _numPolyBeatsInput.displayText.value.copyWith(
+      text: MetronomeParams.defaultPolyBeats.length.toString(),
+    );
 
     for (var i = 0; i < _beats.length; i++) {
       _beats[i] = MetronomeParams.defaultBeats[i];
@@ -409,13 +404,16 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     Navigator.pop(context);
   }
 
-  Widget _beatCircle(double centerWidgetRadius, double buttonSize, Color beatButtonColor,
-      {List<BeatType>? beats, List<BeatTypePoly>? polyBeats, bool noInnerBorder = true}) {
+  Widget _beatCircle(
+    double centerWidgetRadius,
+    double buttonSize,
+    Color beatButtonColor, {
+    List<BeatType>? beats,
+    List<BeatTypePoly>? polyBeats,
+    bool noInnerBorder = true,
+  }) {
     return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: ColorTheme.primary80),
-      ),
+      decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ColorTheme.primary80)),
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: CircularWidgets(
@@ -454,26 +452,20 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
             );
           },
           itemsLength: beats != null ? beats.length : polyBeats!.length,
-          config: CircularWidgetConfig(
-            itemRadius: 16,
-            centerWidgetRadius: centerWidgetRadius,
-          ),
+          config: CircularWidgetConfig(itemRadius: 16, centerWidgetRadius: centerWidgetRadius),
           centerWidgetBuilder: (context) {
             return noInnerBorder
                 ? Container()
                 : Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: ColorTheme.primary80),
-                    ),
-                    child: OnOffButton(
-                      isActive: _isPlaying,
-                      onTap: _startStopBeatPlayback,
-                      iconOff: Icons.play_arrow,
-                      iconOn: TIOMusicParams.pauseIcon,
-                      buttonSize: TIOMusicParams.sizeBigButtons,
-                    ),
-                  );
+                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ColorTheme.primary80)),
+                  child: OnOffButton(
+                    isActive: _isPlaying,
+                    onTap: _startStopBeatPlayback,
+                    iconOff: Icons.play_arrow,
+                    iconOn: TIOMusicParams.pauseIcon,
+                    buttonSize: TIOMusicParams.sizeBigButtons,
+                  ),
+                );
           },
         ),
       ),

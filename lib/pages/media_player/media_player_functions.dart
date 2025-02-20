@@ -19,16 +19,24 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 abstract class MediaPlayerFunctions {
   static void setSpeedAndPitchInRust(double speedFactor, double pitchSemitones) {
-    mediaPlayerSetSpeedFactor(speedFactor: speedFactor).then((success) => {
-          if (!success) {throw ("Setting speed factor in rust failed using this value: $speedFactor")}
-        });
-    mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones).then((success) => {
-          if (!success) {throw ("Setting pitch semitones in rust failed using this value: $pitchSemitones")}
-        });
+    mediaPlayerSetSpeedFactor(speedFactor: speedFactor).then(
+      (success) => {
+        if (!success) {throw ("Setting speed factor in rust failed using this value: $speedFactor")},
+      },
+    );
+    mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones).then(
+      (success) => {
+        if (!success) {throw ("Setting pitch semitones in rust failed using this value: $pitchSemitones")},
+      },
+    );
   }
 
   static Future<Float32List?> _setAudioFileAndTrimInRust(
-      String absoluteFilePath, double startFactor, double endFactor, int numberOfBins) async {
+    String absoluteFilePath,
+    double startFactor,
+    double endFactor,
+    int numberOfBins,
+  ) async {
     var success = await mediaPlayerLoadWav(wavFilePath: absoluteFilePath);
     if (success) {
       mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor);
@@ -90,7 +98,10 @@ abstract class MediaPlayerFunctions {
   }
 
   static Future<String?> writeRecordingToFile(
-      String newFileName, String? relativePathOfPreviousFile, ProjectLibrary projectLibrary) async {
+    String newFileName,
+    String? relativePathOfPreviousFile,
+    ProjectLibrary projectLibrary,
+  ) async {
     final samples = await mediaPlayerGetRecordingSamples();
     return await FileIO.writeSamplesToWaveFile(samples, newFileName, relativePathOfPreviousFile, projectLibrary);
   }

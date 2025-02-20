@@ -9,20 +9,7 @@ double midiToFreq(int midi, {double concertPitch = 440.0}) {
 }
 
 String midiToName(int midi) {
-  return [
-    "C",
-    "C#/Db",
-    "D",
-    "D#/Eb",
-    "E",
-    "F",
-    "F#/Gb",
-    "G",
-    "G#/Ab",
-    "A",
-    "A#/Bb",
-    "B",
-  ][midi % 12];
+  return ["C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B"][midi % 12];
 }
 
 String midiToNameAndOctave(int midi) {
@@ -30,18 +17,5 @@ String midiToNameAndOctave(int midi) {
 }
 
 String midiToNameOneChar(int midi) {
-  return [
-    "C",
-    "C#",
-    "D",
-    "Eb",
-    "E",
-    "F",
-    "F#",
-    "G",
-    "Ab",
-    "A",
-    "Bb",
-    "B",
-  ][midi % 12];
+  return ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"][midi % 12];
 }

@@ -17,16 +17,16 @@ part 'media_player_block.g.dart';
 class MediaPlayerBlock extends ProjectBlock {
   @override
   List<Object> get props => [
-        bpm,
-        _volume,
-        _pitchSemitones,
-        _speedFactor,
-        _rangeStart,
-        _rangeEnd,
-        _looping,
-        _markerPositions,
-        _relativePath,
-      ];
+    bpm,
+    _volume,
+    _pitchSemitones,
+    _speedFactor,
+    _rangeStart,
+    _rangeEnd,
+    _looping,
+    _markerPositions,
+    _relativePath,
+  ];
 
   @override
   @JsonKey(defaultValue: MediaPlayerParams.kind, includeFromJson: false, includeToJson: true)
@@ -141,8 +141,9 @@ class MediaPlayerBlock extends ProjectBlock {
       settings.add(FileIO.getFileName(_relativePath));
     }
     if (_pitchSemitones.abs() >= 0.01) {
-      settings
-          .add("${_pitchSemitones > 0 ? "↑" : "↓"} ${_pitchSemitones.abs()} semitone${pluralSDouble(_pitchSemitones)}");
+      settings.add(
+        "${_pitchSemitones > 0 ? "↑" : "↓"} ${_pitchSemitones.abs()} semitone${pluralSDouble(_pitchSemitones)}",
+      );
     }
     if (_speedFactor != 1) {
       settings.add("${_speedFactor}x speed");

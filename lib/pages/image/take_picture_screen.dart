@@ -4,10 +4,7 @@ import 'package:tiomusic/util/color_constants.dart';
 
 // A screen that allows users to take a picture using a given camera.
 class TakePictureScreen extends StatefulWidget {
-  const TakePictureScreen({
-    super.key,
-    required this.camera,
-  });
+  const TakePictureScreen({super.key, required this.camera});
 
   final CameraDescription camera;
 
@@ -23,10 +20,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   void initState() {
     super.initState();
 
-    _controller = CameraController(
-      widget.camera,
-      ResolutionPreset.medium,
-    );
+    _controller = CameraController(widget.camera, ResolutionPreset.medium);
 
     _initializeControllerFuture = _controller.initialize();
   }

@@ -55,18 +55,13 @@ class _ImageToolState extends State<ImageTool> {
     _project = Provider.of<Project>(context, listen: false);
 
     // only allow portrait mode for this tool
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     // if imageProvider is null, open dialog to pick or take image
     if (_imageBlock.image == null) {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) async {
-          await _addImageDialog(context);
-        },
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await _addImageDialog(context);
+      });
     } else {
       _addOptionsToMenu();
     }
@@ -101,34 +96,40 @@ class _ImageToolState extends State<ImageTool> {
   }
 
   Future<bool?> _useAsProjectPicture() => showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-            title: const Text("Set Project Thumbnail", style: TextStyle(color: ColorTheme.primary)),
-            content: const Text("Do you want to use the image of this tool as your profile picture for this project?",
-                style: TextStyle(color: ColorTheme.primary)),
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                  child: const Text("No")),
-              TIOFlatButton(
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-                text: "Yes",
-                boldText: true,
-              ),
-            ],
-          ));
+    context: context,
+    builder:
+        (context) => AlertDialog(
+          title: const Text("Set Project Thumbnail", style: TextStyle(color: ColorTheme.primary)),
+          content: const Text(
+            "Do you want to use the image of this tool as your profile picture for this project?",
+            style: TextStyle(color: ColorTheme.primary),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text("No"),
+            ),
+            TIOFlatButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              text: "Yes",
+              boldText: true,
+            ),
+          ],
+        ),
+  );
 
   Future _addImageDialog(BuildContext context) => showDialog(
-        context: context,
-        builder: (context) => AddImageDialog(
+    context: context,
+    builder:
+        (context) => AddImageDialog(
           pickImageFunction: (useAsThumbnail) => _pickImageAndSave(useAsThumbnail),
           takePhotoFunction: (useAsThumbnail) => _takePhotoAndSave(useAsThumbnail),
         ),
-      );
+  );
 
   void _pickImageAndSave(bool useAsThumbnail) async {
     await _imageBlock.pickImage(context, context.read<ProjectLibrary>());
@@ -158,9 +159,13 @@ class _ImageToolState extends State<ImageTool> {
     final firstCamera = cameras.first;
 
     if (mounted) {
-      XFile? image = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        return TakePictureScreen(camera: firstCamera);
-      }));
+      XFile? image = await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) {
+            return TakePictureScreen(camera: firstCamera);
+          },
+        ),
+      );
 
       if (image == null) return;
 
@@ -232,7 +237,7 @@ class _ImageToolState extends State<ImageTool> {
               heroTag: null,
               backgroundColor: ColorTheme.surface,
               child: const Icon(Icons.camera_alt_outlined, color: ColorTheme.primary),
-            )
+            ),
           ],
         ),
       ),

@@ -12,7 +12,9 @@ class FeedbackPage extends StatelessWidget {
       appBarTitle: "Feedback survey",
       textSections: [
         const TextSection(
-            content: "Do you like TIO Music? Please take part in this survey!", sectionType: SectionType.headline3),
+          content: "Do you like TIO Music? Please take part in this survey!",
+          sectionType: SectionType.headline3,
+        ),
         const TextSection(content: "(For now the survey is only available in German)"),
         const SizedBox(height: 12),
         Center(

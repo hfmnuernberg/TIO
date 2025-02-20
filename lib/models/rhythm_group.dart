@@ -26,12 +26,7 @@ class RhythmGroup extends Equatable {
   @JsonKey(includeToJson: false, includeFromJson: false)
   late double beatLen;
 
-  RhythmGroup(
-    this.keyID,
-    this.beats,
-    this.polyBeats,
-    this.noteKey,
-  ) {
+  RhythmGroup(this.keyID, this.beats, this.polyBeats, this.noteKey) {
     if (keyID == "") {
       keyID = MetronomeParams.getNewKeyID();
     }

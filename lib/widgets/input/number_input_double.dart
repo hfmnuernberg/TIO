@@ -36,14 +36,14 @@ class NumberInputDouble extends StatefulWidget {
     double? textFontSize,
     double? relIconSize,
     bool? allowNegativeNumbers,
-  })  : stepIntervalInMs = stepIntervalInMs ?? 100,
-        label = label ?? '',
-        buttonRadius = buttonRadius ?? 25,
-        buttonGap = buttonGap ?? 10,
-        textFieldWidth = textFieldWidth ?? 100,
-        textFontSize = textFontSize ?? 40,
-        relIconSize = relIconSize ?? 0.4,
-        allowNegativeNumbers = allowNegativeNumbers ?? false;
+  }) : stepIntervalInMs = stepIntervalInMs ?? 100,
+       label = label ?? '',
+       buttonRadius = buttonRadius ?? 25,
+       buttonGap = buttonGap ?? 10,
+       textFieldWidth = textFieldWidth ?? 100,
+       textFontSize = textFontSize ?? 40,
+       relIconSize = relIconSize ?? 0.4,
+       allowNegativeNumbers = allowNegativeNumbers ?? false;
 
   @override
   State<NumberInputDouble> createState() => _NumberInputDoubleState();
@@ -62,7 +62,8 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   void initState() {
     super.initState();
     _valueController = TextEditingController(
-        text: widget.controller.value.text.isEmpty ? widget.defaultValue.toString() : widget.controller.value.text);
+      text: widget.controller.value.text.isEmpty ? widget.defaultValue.toString() : widget.controller.value.text,
+    );
 
     _calcMaxDigits();
 
@@ -87,18 +88,19 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
 
     int maxDigitsLeftMin =
         (minValueString.contains('.') ? minValueString.split('.')[0].length : minValueString.length) -
-            (minValueString.contains('-') ? 1 : 0);
+        (minValueString.contains('-') ? 1 : 0);
     int maxDigitsLeftMax =
         (maxValueString.contains('.') ? maxValueString.split('.')[0].length : maxValueString.length) -
-            (maxValueString.contains('-') ? 1 : 0);
+        (maxValueString.contains('-') ? 1 : 0);
     _maxDigitsLeft = [maxDigitsLeftMin, maxDigitsLeftMax].reduce(max);
     _maxDigitsRight = countingValueString.contains('.') ? countingValueString.split('.')[1].length : 0;
   }
 
   void _decreaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value
-          .copyWith(text: (double.parse(_valueController.value.text) - widget.step).toStringAsFixed(_maxDigitsRight));
+      _valueController.value = _valueController.value.copyWith(
+        text: (double.parse(_valueController.value.text) - widget.step).toStringAsFixed(_maxDigitsRight),
+      );
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -106,8 +108,9 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
 
   void _increaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value
-          .copyWith(text: (double.parse(_valueController.value.text) + widget.step).toStringAsFixed(_maxDigitsRight));
+      _valueController.value = _valueController.value.copyWith(
+        text: (double.parse(_valueController.value.text) + widget.step).toStringAsFixed(_maxDigitsRight),
+      );
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -192,10 +195,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
                   shape: const LeftButtonShape(),
                   fixedSize: Size(widget.buttonRadius * 2, widget.buttonRadius * 2),
                 ),
-                icon: Icon(
-                  Icons.remove,
-                  size: widget.buttonRadius * widget.relIconSize * 2,
-                ),
+                icon: Icon(Icons.remove, size: widget.buttonRadius * widget.relIconSize * 2),
               ),
             ),
             SizedBox(width: widget.buttonGap),
@@ -208,11 +208,15 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
                     controller: _valueController,
                     keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers, decimal: true),
                     inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(RegExp(r'^-?(\d{0,' +
-                          _maxDigitsLeft.toString() +
-                          r'})[.,]?(\d{0,' +
-                          _maxDigitsRight.toString() +
-                          r'})')),
+                      FilteringTextInputFormatter.allow(
+                        RegExp(
+                          r'^-?(\d{0,' +
+                              _maxDigitsLeft.toString() +
+                              r'})[.,]?(\d{0,' +
+                              _maxDigitsRight.toString() +
+                              r'})',
+                        ),
+                      ),
                       ConvertSemicolonToDot(),
                       DeleteLeadingZeros(),
                     ],
@@ -234,10 +238,8 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
                 onFocusChange: (hasFocus) {
                   if (hasFocus) {
                     _valueController.value = _valueController.value.copyWith(
-                        selection: TextSelection(
-                      baseOffset: 0,
-                      extentOffset: _valueController.value.text.length,
-                    ));
+                      selection: TextSelection(baseOffset: 0, extentOffset: _valueController.value.text.length),
+                    );
                   } else {
                     _validateInput(_valueController.value.text);
                   }
@@ -256,10 +258,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
                   shape: const RightButtonShape(),
                   fixedSize: Size(widget.buttonRadius * 2, widget.buttonRadius * 2),
                 ),
-                icon: Icon(
-                  Icons.add,
-                  size: widget.buttonRadius * widget.relIconSize * 2,
-                ),
+                icon: Icon(Icons.add, size: widget.buttonRadius * widget.relIconSize * 2),
               ),
             ),
           ],
@@ -272,10 +271,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
 
 class DeleteLeadingZeros extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     String text = newValue.text;
     if (RegExp(r'^-0\d').firstMatch(text) != null) {
       text = '-${text.substring(2)}';
@@ -284,26 +280,17 @@ class DeleteLeadingZeros extends TextInputFormatter {
         text = text.substring(1);
       }
     }
-    return TextEditingValue(
-      text: text,
-      selection: TextSelection.collapsed(offset: text.length),
-    );
+    return TextEditingValue(text: text, selection: TextSelection.collapsed(offset: text.length));
   }
 }
 
 class ConvertSemicolonToDot extends TextInputFormatter {
   @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     String text = newValue.text;
     if (text.contains(',')) {
       text = text.replaceAll(',', '.');
     }
-    return TextEditingValue(
-      text: text,
-      selection: TextSelection.collapsed(offset: text.length),
-    );
+    return TextEditingValue(text: text, selection: TextSelection.collapsed(offset: text.length));
   }
 }

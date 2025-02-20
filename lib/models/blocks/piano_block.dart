@@ -13,11 +13,7 @@ class PianoBlock extends ProjectBlock {
   // add here all the fields that should be compared when checking if two class instances have the same values
   // for now this check is only used to compare quick tools to the default settings, so some properties are left out here
   @override
-  List<Object> get props => [
-        _volume,
-        _keyboardPosition,
-        _soundFontIndex,
-      ];
+  List<Object> get props => [_volume, _keyboardPosition, _soundFontIndex];
 
   @override
   @JsonKey(defaultValue: PianoParams.kind, includeFromJson: false, includeToJson: true)
@@ -89,14 +85,18 @@ class PianoBlock extends ProjectBlock {
 
   @override
   List<String> getSettingsFormatted() {
-    return [
-      "Lowest Key: ${midiToNameAndOctave(_keyboardPosition)}",
-      (PianoParams.soundFontNames[_soundFontIndex]),
-    ];
+    return ["Lowest Key: ${midiToNameAndOctave(_keyboardPosition)}", (PianoParams.soundFontNames[_soundFontIndex])];
   }
 
-  PianoBlock(String title, String id, String? islandToolID, double volume, int keyboardPosition, int soundFontIndex,
-      DateTime timeLastModified) {
+  PianoBlock(
+    String title,
+    String id,
+    String? islandToolID,
+    double volume,
+    int keyboardPosition,
+    int soundFontIndex,
+    DateTime timeLastModified,
+  ) {
     _timeLastModified = timeLastModified;
     _title = title;
     _volume = volume;

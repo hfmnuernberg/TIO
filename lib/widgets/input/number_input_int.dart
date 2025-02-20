@@ -35,14 +35,14 @@ class NumberInputInt extends StatefulWidget {
     double? textFieldWidth,
     double? textFontSize,
     bool? allowNegativeNumbers,
-  })  : stepIntervalInMs = stepIntervalInMs ?? 100,
-        label = label ?? '',
-        buttonRadius = buttonRadius ?? 25,
-        buttonGap = buttonGap ?? 10,
-        relIconSize = relIconSize ?? 0.4,
-        textFieldWidth = textFieldWidth ?? 100,
-        textFontSize = textFontSize ?? 40,
-        allowNegativeNumbers = allowNegativeNumbers ?? false;
+  }) : stepIntervalInMs = stepIntervalInMs ?? 100,
+       label = label ?? '',
+       buttonRadius = buttonRadius ?? 25,
+       buttonGap = buttonGap ?? 10,
+       relIconSize = relIconSize ?? 0.4,
+       textFieldWidth = textFieldWidth ?? 100,
+       textFontSize = textFontSize ?? 40,
+       allowNegativeNumbers = allowNegativeNumbers ?? false;
 
   @override
   State<NumberInputInt> createState() => _NumberInputIntState();
@@ -59,7 +59,8 @@ class _NumberInputIntState extends State<NumberInputInt> {
   void initState() {
     super.initState();
     _valueController = TextEditingController(
-        text: widget.controller.value.text.isEmpty ? widget.defaultValue.toString() : widget.controller.value.text);
+      text: widget.controller.value.text.isEmpty ? widget.defaultValue.toString() : widget.controller.value.text,
+    );
 
     widget.controller.addListener(_onExternalChange);
   }
@@ -77,8 +78,9 @@ class _NumberInputIntState extends State<NumberInputInt> {
 
   void _decreaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value =
-          _valueController.value.copyWith(text: (int.parse(_valueController.value.text) - widget.step).toString());
+      _valueController.value = _valueController.value.copyWith(
+        text: (int.parse(_valueController.value.text) - widget.step).toString(),
+      );
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -86,8 +88,9 @@ class _NumberInputIntState extends State<NumberInputInt> {
 
   void _increaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value =
-          _valueController.value.copyWith(text: (int.parse(_valueController.value.text) + widget.step).toString());
+      _valueController.value = _valueController.value.copyWith(
+        text: (int.parse(_valueController.value.text) + widget.step).toString(),
+      );
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -165,10 +168,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
                   shape: const LeftButtonShape(),
                   fixedSize: Size(widget.buttonRadius * 2, widget.buttonRadius * 2),
                 ),
-                icon: Icon(
-                  Icons.remove,
-                  size: widget.buttonRadius * widget.relIconSize * 2,
-                ),
+                icon: Icon(Icons.remove, size: widget.buttonRadius * widget.relIconSize * 2),
               ),
             ),
             SizedBox(width: widget.buttonGap),
@@ -185,9 +185,10 @@ class _NumberInputIntState extends State<NumberInputInt> {
                       FilteringTextInputFormatter.deny(RegExp(r'^0+(?=.)')),
                       FilteringTextInputFormatter.deny(RegExp(r'^-0+'), replacementString: '-'),
                     ],
-                    maxLength: _valueController.value.text.contains('-')
-                        ? widget.min.toString().length
-                        : widget.max.toString().length,
+                    maxLength:
+                        _valueController.value.text.contains('-')
+                            ? widget.min.toString().length
+                            : widget.max.toString().length,
                     decoration: InputDecoration(
                       enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
                       focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
@@ -206,10 +207,8 @@ class _NumberInputIntState extends State<NumberInputInt> {
                 onFocusChange: (hasFocus) {
                   if (hasFocus) {
                     _valueController.value = _valueController.value.copyWith(
-                        selection: TextSelection(
-                      baseOffset: 0,
-                      extentOffset: _valueController.value.text.length,
-                    ));
+                      selection: TextSelection(baseOffset: 0, extentOffset: _valueController.value.text.length),
+                    );
                   } else {
                     _validateInput(_valueController.value.text);
                   }
@@ -228,10 +227,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
                   shape: const RightButtonShape(),
                   fixedSize: Size(widget.buttonRadius * 2, widget.buttonRadius * 2),
                 ),
-                icon: Icon(
-                  Icons.add,
-                  size: widget.buttonRadius * widget.relIconSize * 2,
-                ),
+                icon: Icon(Icons.add, size: widget.buttonRadius * widget.relIconSize * 2),
               ),
             ),
           ],

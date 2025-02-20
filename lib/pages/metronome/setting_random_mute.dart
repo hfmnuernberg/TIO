@@ -57,8 +57,9 @@ class _SetRandomMuteState extends State<SetRandomMute> {
   }
 
   void _reset() {
-    _randomMuteProbInput.controller.value =
-        _randomMuteProbInput.controller.value.copyWith(text: MetronomeParams.defaultRandomMute.toString());
+    _randomMuteProbInput.controller.value = _randomMuteProbInput.controller.value.copyWith(
+      text: MetronomeParams.defaultRandomMute.toString(),
+    );
   }
 
   void _onCancel() {

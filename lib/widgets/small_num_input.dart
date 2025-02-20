@@ -70,8 +70,9 @@ class _SmallNumInputState extends State<SmallNumInput> {
   // Decrease the currently displayed value
   void _decreaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value
-          .copyWith(text: (int.parse(_valueController.value.text) - widget.countingValue).toString());
+      _valueController.value = _valueController.value.copyWith(
+        text: (int.parse(_valueController.value.text) - widget.countingValue).toString(),
+      );
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -80,8 +81,9 @@ class _SmallNumInputState extends State<SmallNumInput> {
   // Increase the currently displayed value
   void _increaseValue() {
     if (_valueController.value.text != '') {
-      _valueController.value = _valueController.value
-          .copyWith(text: (int.parse(_valueController.value.text) + widget.countingValue).toString());
+      _valueController.value = _valueController.value.copyWith(
+        text: (int.parse(_valueController.value.text) + widget.countingValue).toString(),
+      );
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
     }
@@ -155,13 +157,7 @@ class _SmallNumInputState extends State<SmallNumInput> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // number displayed
-        Text(
-          _valueController.value.text,
-          style: TextStyle(
-            fontSize: widget.textFontSize,
-            color: ColorTheme.primary,
-          ),
-        ),
+        Text(_valueController.value.text, style: TextStyle(fontSize: widget.textFontSize, color: ColorTheme.primary)),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -178,10 +174,7 @@ class _SmallNumInputState extends State<SmallNumInput> {
                   shape: const LeftButtonShape(),
                   fixedSize: Size(widget.buttonRadius, widget.buttonRadius),
                 ),
-                icon: Icon(
-                  Icons.remove,
-                  size: widget.buttonRadius * widget.relIconSize * 2,
-                ),
+                icon: Icon(Icons.remove, size: widget.buttonRadius * widget.relIconSize * 2),
               ),
             ),
             SizedBox(width: widget.buttonGap),
@@ -197,10 +190,7 @@ class _SmallNumInputState extends State<SmallNumInput> {
                   shape: const RightButtonShape(),
                   fixedSize: Size(widget.buttonRadius, widget.buttonRadius),
                 ),
-                icon: Icon(
-                  Icons.add,
-                  size: widget.buttonRadius * widget.relIconSize * 2,
-                ),
+                icon: Icon(Icons.add, size: widget.buttonRadius * widget.relIconSize * 2),
               ),
             ),
           ],

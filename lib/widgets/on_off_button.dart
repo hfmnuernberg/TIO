@@ -43,11 +43,12 @@ class _OnOffButtonState extends State<OnOffButton> {
             backgroundColor: Colors.white,
             radius: widget.buttonSize,
             child: IconButton(
-              onPressed: widget.isDisabled
-                  ? null
-                  : () {
-                      widget.onTap();
-                    },
+              onPressed:
+                  widget.isDisabled
+                      ? null
+                      : () {
+                        widget.onTap();
+                      },
               iconSize: widget.buttonSize,
               icon: widget.isActive ? _getIconOn() : _getIconOff(),
             ),
@@ -59,10 +60,7 @@ class _OnOffButtonState extends State<OnOffButton> {
 
   Widget _getIconOn() {
     if (widget.iconOn is IconData) {
-      return Icon(
-        widget.iconOn,
-        color: ColorTheme.tertiary,
-      );
+      return Icon(widget.iconOn, color: ColorTheme.tertiary);
     } else if (widget.iconOn is SvgPicture) {
       return SvgPicture.asset(
         widget.iconOn,
@@ -77,10 +75,7 @@ class _OnOffButtonState extends State<OnOffButton> {
 
   Widget _getIconOff() {
     if (widget.iconOff is IconData) {
-      return Icon(
-        widget.iconOff,
-        color: ColorTheme.tertiary,
-      );
+      return Icon(widget.iconOff, color: ColorTheme.tertiary);
     } else if (widget.iconOff is String) {
       return SvgPicture.asset(
         widget.iconOff,
@@ -103,10 +98,7 @@ class PlaceholderButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(TIOMusicParams.paddingOnOffButtons, 0, TIOMusicParams.paddingOnOffButtons, 0),
-      child: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        radius: buttonSize,
-      ),
+      child: CircleAvatar(backgroundColor: Colors.transparent, radius: buttonSize),
     );
   }
 }
