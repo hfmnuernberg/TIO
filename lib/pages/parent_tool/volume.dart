@@ -43,7 +43,7 @@ String getVolumeInfoText(VolumeLevel volumeLevel) {
     case VolumeLevel.muted:
       return 'The device is muted. Unmute the device to hear the metronome.';
     case VolumeLevel.low:
-      return 'The device volume is very low. If necessary, increase the device volume in addition to the metronome volume.';
+      return 'The device volume is low. If necessary, increase the device volume in addition to the metronome volume.';
     case VolumeLevel.normal:
       return 'If you struggle to hear the metronome in your current environment, consider connecting your device to an external speaker (e.g., via Bluetooth).';
   }
