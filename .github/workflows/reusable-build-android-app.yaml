@@ -50,7 +50,25 @@ jobs:
           echo "---"
           ls -la /home/runner/.setup-ndk/r26d/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
           echo "---"
-          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt/linux-x86_64/bin/clang
+          ls -la /opt
+          echo "---"
+          ls -la /opt/hostedtoolcache
+          echo "---"
+          ls -la /opt/hostedtoolcache/ndk
+          echo "---"
+          ls -la /opt/hostedtoolcache/ndk/r26d
+          echo "---"
+          ls -la /opt/hostedtoolcache/ndk/r26d/x64
+          echo "---"
+          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains
+          echo "---"
+          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm
+          echo "---"
+          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt
+          echo "---"
+          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt/linux-x86_64
+          echo "---"
+          ls -la /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt/linux-x86_64/bin
           echo "---"
           chmod +x /opt/hostedtoolcache/ndk/r26d/x64/toolchains/llvm/prebuilt/linux-x86_64/bin/clang
           echo "---"
