@@ -12,6 +12,7 @@ key.properties*
 !key.properties.debug
 **/*.keystore
 **/*.jks
+!app/keystore/debug.keystore.jks
 *service*account*.json
 
 vendor/
