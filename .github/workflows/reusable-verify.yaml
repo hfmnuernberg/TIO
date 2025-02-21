@@ -77,9 +77,6 @@ jobs:
       - name: Analyze TODOs and FIXMEs
         run: scripts/app.sh analyze:todos || true
 
-      - name: Ignore anticipated but unwanted local changes
-        run: git checkout "web/index.html" # TODO: remove as soon as no whitespace is automatically added to the file
-
       - name: Print local changes
         run: git diff
 

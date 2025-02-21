@@ -499,6 +499,7 @@ buildNumber.properties
 
 # CMake
 cmake-build-*/
+android/app/.cxx/
 
 # Mongo Explorer plugin
 .idea/**/mongoSettings.xml
