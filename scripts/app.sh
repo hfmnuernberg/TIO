@@ -106,7 +106,12 @@ installCocoaPods() { fluttervm precache --ios; cd ios; pod install --repo-update
 installFastlane() { cd android; bundle install; cd ..; cd ios; bundle install; cd ..; }
 installFlutterPackages() { fluttervm pub get; }
 installFlutterRustBridgeCodegen() { cargo install flutter_rust_bridge_codegen --version 2.7.1; }
-installRustPackages() { cd rust; cargo build; cd ..; }
+installRustPackages() {
+  cd rust;
+  cargo build;
+  cd ..;
+  rm -rf rust_builder/linux rust_builder/macos rust_builder/windows;
+  }
 
 installRustTargets() {
   rustup target add \
