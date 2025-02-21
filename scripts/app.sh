@@ -78,10 +78,10 @@ coverageValidate() {
 }
 
 deleteLockFiles() {
-  rm pubspec.lock
-  rm ios/Podfile.lock
-  rm rust/Cargo.lock
-  rm rust_builder/cargokit/build_tool/pubspec.lock
+  rm -f pubspec.lock
+  rm -f ios/Podfile.lock
+  rm -f rust/Cargo.lock
+  rm -f rust_builder/cargokit/build_tool/pubspec.lock
 }
 
 doctor() { fluttervm doctor; }
@@ -106,7 +106,12 @@ installCocoaPods() { fluttervm precache --ios; cd ios; pod install --repo-update
 installFastlane() { cd android; bundle install; cd ..; cd ios; bundle install; cd ..; }
 installFlutterPackages() { fluttervm pub get; }
 installFlutterRustBridgeCodegen() { cargo install flutter_rust_bridge_codegen --version 2.7.1; }
-installRustPackages() { cd rust; cargo build; cd ..; }
+installRustPackages() {
+  cd rust;
+  cargo build;
+  cd ..;
+  rm -rf rust_builder/linux rust_builder/macos rust_builder/windows;
+}
 
 installRustTargets() {
   rustup target add \
