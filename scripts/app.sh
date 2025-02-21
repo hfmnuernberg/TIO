@@ -111,7 +111,7 @@ installRustPackages() {
   cargo build;
   cd ..;
   rm -rf rust_builder/linux rust_builder/macos rust_builder/windows;
-  }
+}
 
 installRustTargets() {
   rustup target add \
