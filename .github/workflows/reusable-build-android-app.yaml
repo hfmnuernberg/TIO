@@ -38,20 +38,6 @@ jobs:
         uses: nttld/setup-ndk@v1.5.0
         with:
           ndk-version: r26d
-#          link-to-sdk: true
-#          local-cache: true
-
-      - name: Print NDK info
-        run: |
-          echo "ndk-path: ${{ steps.setup_ndk.outputs.ndk-path }}"
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME"
-          echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
-          ${{ steps.setup_ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin/clang --version
-          ${{ steps.setup_ndk.outputs.ndk-path }}/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++ --version
-        env:
-          ANDROID_NDK_HOME: ${{ steps.setup_ndk.outputs.ndk-path }}
-          ANDROID_NDK_ROOT: ${{ steps.setup_ndk.outputs.ndk-path }}
 
       - name: Install ALSA dev libraries
         run: sudo apt-get update && sudo apt-get install -y libasound2-dev
@@ -108,11 +94,7 @@ jobs:
         run: scripts/update-version-and-build-number-in-pubspec-with-latest-tag.sh
 
       - name: Build bundle
-        run: |
-          scripts/app.sh build android release
-#          export CXX_armv7_linux_androideabi="/home/runner/.setup-ndk/r26d/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++"
-#          export CC_armv7_linux_androideabi="/home/runner/.setup-ndk/r26d/toolchains/llvm/prebuilt/linux-x86_64/bin/clang"
-#          export PATH="/home/runner/.setup-ndk/r26d/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH"
+        run: scripts/app.sh build android release
         env:
           ANDROID_NDK_HOME: ${{ steps.setup_ndk.outputs.ndk-path }}
           ANDROID_NDK_ROOT: ${{ steps.setup_ndk.outputs.ndk-path }}
