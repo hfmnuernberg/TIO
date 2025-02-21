@@ -38,16 +38,6 @@ jobs:
         uses: nttld/setup-ndk@v1.5.0
         with:
           ndk-version: r26d
-          link-to-sdk: true
-          local-cache: true
-
-      - name: Print NDK info
-        run: |
-          echo "ndk-path: ${{ steps.setup_ndk.outputs.ndk-path }}"
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_SDK_HOME=$ANDROID_SDK_HOME"
-          echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME"
-          ls -l /home/runner/.setup-ndk/r26d/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++
 
       - name: Install ALSA dev libraries
         run: sudo apt-get update && sudo apt-get install -y libasound2-dev
