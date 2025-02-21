@@ -78,10 +78,10 @@ coverageValidate() {
 }
 
 deleteLockFiles() {
-  rm pubspec.lock
-  rm ios/Podfile.lock
-  rm rust/Cargo.lock
-  rm rust_builder/cargokit/build_tool/pubspec.lock
+  rm -f pubspec.lock
+  rm -f ios/Podfile.lock
+  rm -f rust/Cargo.lock
+  rm -f rust_builder/cargokit/build_tool/pubspec.lock
 }
 
 doctor() { fluttervm doctor; }
