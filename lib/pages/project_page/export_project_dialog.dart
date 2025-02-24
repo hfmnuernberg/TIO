@@ -59,7 +59,7 @@ class ExportProjectDialog extends StatelessWidget {
 
   Future<File> _writeFilesToArchive(List<File> files) async {
     final directory = await getApplicationDocumentsDirectory();
-    final archivePath = '${directory.path}/${_sanitizeString(project.title)}.tio';
+    final archivePath = '${directory.path}/tio-music-${_sanitizeString(project.title)}.zip';
 
     final archive = Archive();
 
