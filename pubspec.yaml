@@ -37,7 +37,7 @@ dependencies:
     share_plus: 10.1.4
     stats: 2.1.0
     tonic: 0.2.5
-    tutorial_coach_mark: 1.2.12
+    tutorial_coach_mark: 1.2.13
     url_launcher: 6.3.1
     url_launcher_ios: 6.3.2
     uuid: 4.5.1
