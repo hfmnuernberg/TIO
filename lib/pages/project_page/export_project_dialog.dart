@@ -36,66 +36,57 @@ class ExportProjectDialog extends StatelessWidget {
 
   Future<File> _createTmpProjectFile(Project project) async {
     final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/tio-music-${_sanitizeString(project.title)}.json';
+    final filePath = '${directory.path}/tio-music-project.json';
 
     return _writeProjectToFile(project, File(filePath));
   }
 
   Future<File> _copyImageToFile(ImageBlock block, Directory directory) async {
     final sourceFile = File('${directory.path}/${block.relativePath}');
-    final destPath = '${directory.path}/${_getMediaFileName(block.relativePath)}.jpg';
+    final destPath = '${directory.path}/${_getMediaFileName(block.relativePath)}';
     return await sourceFile.copy(destPath);
   }
 
   Future<List<File>> _createTmpImageFiles(Project project) async {
     final directory = await getApplicationDocumentsDirectory();
-    List<File> files = [];
 
-    for (final block in project.blocks) {
-      if (block is ImageBlock) {
-        final file = await _copyImageToFile(block, directory);
-        files.add(file);
-      }
-    }
-
-    return files;
+    return await Future.wait(
+      project.blocks
+          .where((block) => block is ImageBlock)
+          .map((block) => _copyImageToFile(block as ImageBlock, directory)),
+    );
   }
 
-  Future<File> _writeFilesToArchive(File projectFile, List<File> imageFiles) async {
+  Future<File> _writeFilesToArchive(List<File> files) async {
     final directory = await getApplicationDocumentsDirectory();
-    final zipPath = '${directory.path}/tio-music-${_sanitizeString(project.title)}.zip';
+    final archivePath = '${directory.path}/${_sanitizeString(project.title)}.tio';
 
     final archive = Archive();
 
-    final projectBytes = await projectFile.readAsBytes();
-    archive.addFile(ArchiveFile(basename(projectFile.path), projectBytes.length, projectBytes));
-
-    for (final imageFile in imageFiles) {
-      final imageFileBytes = await imageFile.readAsBytes();
-      archive.addFile(ArchiveFile(basename(imageFile.path), imageFileBytes.length, imageFileBytes));
+    for (final file in files) {
+      final fileBytes = await file.readAsBytes();
+      archive.addFile(ArchiveFile(basename(file.path), fileBytes.length, fileBytes));
     }
 
-    final zipData = ZipEncoder().encode(archive);
-    final zipFile = File(zipPath);
-    await zipFile.writeAsBytes(zipData);
+    final archiveData = ZipEncoder().encode(archive);
+    final archiveFile = File(archivePath);
+    await archiveFile.writeAsBytes(archiveData);
 
-    return zipFile;
+    return archiveFile;
   }
 
-  _deleteTmpFiles(projectFile, imageFiles) async {
-    await projectFile.delete();
-    for (final file in imageFiles) {
-      await file.delete();
-    }
+  Future<void> _deleteTmpFiles(List<File> files) async {
+    await Future.wait(files.map<Future<FileSystemEntity>>((file) => file.delete()).toList());
   }
 
   Future<File> _archiveProject(Project project) async {
     final projectFile = await _createTmpProjectFile(project);
     final imageFiles = await _createTmpImageFiles(project);
+    final files = [projectFile, ...imageFiles];
 
-    final archive = await _writeFilesToArchive(projectFile, imageFiles);
+    final archive = await _writeFilesToArchive(files);
 
-    _deleteTmpFiles(projectFile, imageFiles);
+    _deleteTmpFiles(files);
 
     return archive;
   }
