@@ -182,7 +182,7 @@ abstract class FileIO {
   }
 
   // saves data of the ProjectLibrary to the json file
-  static void saveProjectLibraryToJson(ProjectLibrary projectLibrary) async {
+  static Future<void> saveProjectLibraryToJson(ProjectLibrary projectLibrary) async {
     Map<String, dynamic> jsonMap = projectLibrary.toJson();
     String jsonString = jsonEncode(jsonMap);
 
