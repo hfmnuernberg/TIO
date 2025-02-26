@@ -168,29 +168,29 @@ abstract class FileIO {
     }
   }
 
-  // reads data from json file and returning a json String
   static Future<String?> readJsonDataFromSave() async {
     try {
       final file = await _localJsonFile;
-      final jsonString = await file.readAsString();
-
-      return jsonString;
+      return await file.readAsString();
     } catch (e) {
       debugPrint("Error getting the jsonString from the json file: $e");
       return null;
     }
   }
 
-  // saves data of the ProjectLibrary to the json file
-  static void saveProjectLibraryToJson(ProjectLibrary projectLibrary) async {
+  static Future<void> saveProjectLibraryToJson(ProjectLibrary projectLibrary) async {
     Map<String, dynamic> jsonMap = projectLibrary.toJson();
     String jsonString = jsonEncode(jsonMap);
 
     (await _localJsonFile).writeAsString(jsonString);
   }
 
-  // deletes the json file
-  static void deleteLocalJsonFile() async {
+  static Future<bool> existsLocalJsonFile() async {
+    final file = await _localJsonFile;
+    return await file.exists();
+  }
+
+  static Future<void> deleteLocalJsonFile() async {
     try {
       final file = await _localJsonFile;
 
