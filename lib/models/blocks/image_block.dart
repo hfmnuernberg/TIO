@@ -15,7 +15,9 @@ part 'image_block.g.dart';
 class ImageBlock extends ProjectBlock {
   // this check is only used for quick tools at the moment
   @override
-  List<Object> get props => [];
+  List<Object> get props => [
+    relativePath,
+  ];
 
   @override
   @JsonKey(defaultValue: ImageParams.kind, includeFromJson: false, includeToJson: true)
@@ -73,14 +75,19 @@ class ImageBlock extends ProjectBlock {
   @JsonKey(includeFromJson: false, includeToJson: false)
   ImageProvider? get image => _image;
 
-  void setImage(String newRelativePath) async {
+  Future<void> setImage(String newRelativePath) async {
+    if (newRelativePath.isEmpty) return;
+
     var absolutePath = await FileIO.getAbsoluteFilePath(newRelativePath);
-    if (await File(absolutePath).exists()) {
-      _image = FileImage(File(absolutePath));
-      _relativePath = newRelativePath;
-    } else {
+
+    if (!await File(absolutePath).exists()) {
       debugPrint("Image could not be set in image block, because no file exists at path: $newRelativePath");
+      return;
     }
+
+    _image = FileImage(File(absolutePath));
+    _relativePath = newRelativePath;
+
     notifyListeners();
   }
 
@@ -106,6 +113,7 @@ class ImageBlock extends ProjectBlock {
     _id = createNewId();
     _relativePath = ImageParams.defaultPath;
     setImage(_relativePath);
+    notifyListeners();
   }
 
   ImageBlock.withTitle(String newTitle) {
@@ -115,6 +123,7 @@ class ImageBlock extends ProjectBlock {
     _id = createNewId();
     _relativePath = ImageParams.defaultPath;
     setImage(_relativePath);
+    notifyListeners();
   }
 
   factory ImageBlock.fromJson(Map<String, dynamic> json) => _$ImageBlockFromJson(json);
@@ -125,27 +134,27 @@ class ImageBlock extends ProjectBlock {
   @override
   Icon get icon => blockTypeInfos[BlockType.image]!.icon;
 
-  Future pickImage(BuildContext context, ProjectLibrary projectLibrary) async {
+  Future<void> pickImage(BuildContext context, ProjectLibrary projectLibrary) async {
     try {
       final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
 
       if (pickedImage == null) return;
 
-      if (context.mounted) {
-        final newRelativePath = await FileIO.saveFileToAppStorage(
-          context,
-          File(pickedImage.path),
-          FileIO.getFileNameWithoutExtension(pickedImage.path),
-          _relativePath == "" ? null : _relativePath,
-          projectLibrary,
-        );
+      if (!context.mounted) return;
 
-        if (newRelativePath == null) return;
+      final newRelativePath = await FileIO.saveFileToAppStorage(
+        context,
+        File(pickedImage.path),
+        FileIO.getFileNameWithoutExtension(pickedImage.path),
+        _relativePath == "" ? null : _relativePath,
+        projectLibrary,
+      );
 
-        setImage(newRelativePath);
+      if (newRelativePath == null) return;
 
-        notifyListeners();
-      }
+      await setImage(newRelativePath);
+
+      notifyListeners();
     } on PlatformException catch (e) {
       debugPrint("Failed to pick image: $e");
     }

@@ -131,23 +131,23 @@ class _ImageToolState extends State<ImageTool> {
         ),
   );
 
-  void _pickImageAndSave(bool useAsThumbnail) async {
+  Future<void> _pickImageAndSave(bool useAsThumbnail) async {
     await _imageBlock.pickImage(context, context.read<ProjectLibrary>());
 
     if (_imageBlock.image != null) {
       _addOptionsToMenu();
     }
 
-    if (mounted) {
-      if (useAsThumbnail) {
-        Provider.of<Project>(context, listen: false).setThumbnail(_imageBlock.relativePath);
-      }
+    if (!mounted) return;
 
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    if (useAsThumbnail) {
+      Provider.of<Project>(context, listen: false).setThumbnail(_imageBlock.relativePath);
     }
+
+    await FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
   }
 
-  void _takePhotoAndSave(bool useAsThumbnail) async {
+  Future<void> _takePhotoAndSave(bool useAsThumbnail) async {
     WidgetsFlutterBinding.ensureInitialized();
     final cameras = await availableCameras();
 
