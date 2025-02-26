@@ -15,9 +15,7 @@ part 'image_block.g.dart';
 class ImageBlock extends ProjectBlock {
   // this check is only used for quick tools at the moment
   @override
-  List<Object> get props => [
-    relativePath,
-  ];
+  List<Object> get props => [relativePath];
 
   @override
   @JsonKey(defaultValue: ImageParams.kind, includeFromJson: false, includeToJson: true)
