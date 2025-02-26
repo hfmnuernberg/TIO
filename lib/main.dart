@@ -127,27 +127,29 @@ class _SplashAppState extends State<SplashApp> {
     });
   }
 
-  Future<ProjectLibrary?> _initializeProjectLibrary() async {
-    String? jsonString = await FileIO.readJsonDataFromSave();
-
-    ProjectLibrary? projectLibrary;
-    if (jsonString == null || jsonString.isEmpty) {
-      projectLibrary = ProjectLibrary.withDefaults();
-      FileIO.deleteLocalJsonFile();
-    } else {
-      try {
-        Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-        projectLibrary = ProjectLibrary.fromJson(jsonMap);
-      } catch (e) {
-        _hasError = true;
-        debugPrint("failed to parse json to library: $e");
-        setState(() {});
-
-        projectLibrary = null;
-      }
+  Future<ProjectLibrary> _initializeProjectLibrary() async {
+    if (!await FileIO.existsLocalJsonFile()) {
+      return ProjectLibrary.withDefaults();
     }
 
-    return projectLibrary;
+    String? jsonString = await FileIO.readJsonDataFromSave();
+
+    if (jsonString == null || jsonString.isEmpty) {
+      await FileIO.deleteLocalJsonFile();
+      return ProjectLibrary.withDefaults();
+    }
+
+    try {
+      Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      return ProjectLibrary.fromJson(jsonMap);
+    } catch (e) {
+      debugPrint("failed to parse json to library: $e");
+      _hasError = true;
+      setState(() {});
+
+      await FileIO.deleteLocalJsonFile();
+      return ProjectLibrary.withDefaults();
+    }
   }
 
   void _returnLoadedData(ProjectLibrary projectLibrary, ThemeData? theme) {
