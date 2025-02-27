@@ -50,11 +50,7 @@ class ExportProjectDialog extends StatelessWidget {
   Future<List<File>> _createTmpImageFiles(Project project) async {
     final directory = await getApplicationDocumentsDirectory();
 
-    return await Future.wait(
-      project.blocks
-          .where((block) => block is ImageBlock)
-          .map((block) => _copyImageToFile(block as ImageBlock, directory)),
-    );
+    return await Future.wait(project.blocks.whereType<ImageBlock>().map((block) => _copyImageToFile(block, directory)));
   }
 
   Future<File> _writeFilesToArchive(List<File> files) async {

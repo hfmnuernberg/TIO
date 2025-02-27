@@ -103,7 +103,7 @@ class PianoBlock extends ProjectBlock {
     _keyboardPosition = keyboardPosition;
     _soundFontIndex = soundFontIndex;
     _islandToolID = islandToolID;
-    _id = setIdOrNewId(id);
+    _id = ProjectBlock.getIdOrCreateNewId(id);
   }
 
   PianoBlock.withDefaults() {
@@ -113,7 +113,7 @@ class PianoBlock extends ProjectBlock {
     _keyboardPosition = PianoParams.defaultKeyboardPosition;
     _soundFontIndex = PianoParams.defaultSoundFontIndex;
     _islandToolID = null;
-    _id = createNewId();
+    _id = ProjectBlock.createNewId();
   }
 
   PianoBlock.withTitle(String newTitle) {
@@ -123,7 +123,7 @@ class PianoBlock extends ProjectBlock {
     _keyboardPosition = PianoParams.defaultKeyboardPosition;
     _soundFontIndex = PianoParams.defaultSoundFontIndex;
     _islandToolID = null;
-    _id = createNewId();
+    _id = ProjectBlock.createNewId();
   }
 
   void toneDown() {

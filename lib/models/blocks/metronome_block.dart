@@ -186,7 +186,7 @@ class MetronomeBlock extends ProjectBlock {
     _rhythmGroups = rhythmGroups;
     _rhythmGroups2 = rhythmGroups2;
     _islandToolID = islandToolID;
-    _id = setIdOrNewId(id);
+    _id = ProjectBlock.getIdOrCreateNewId(id);
     _volume = volume;
   }
 
@@ -214,7 +214,7 @@ class MetronomeBlock extends ProjectBlock {
     unaccSound2 = MetronomeParams.defaultUnaccSound2;
     polyAccSound2 = MetronomeParams.defaultPolyAccSound2;
     polyUnaccSound2 = MetronomeParams.defaultPolyUnaccSound2;
-    _id = createNewId();
+    _id = ProjectBlock.createNewId();
   }
 
   MetronomeBlock.withTitle(String newTitle) {
@@ -241,7 +241,7 @@ class MetronomeBlock extends ProjectBlock {
     unaccSound2 = MetronomeParams.defaultUnaccSound2;
     polyAccSound2 = MetronomeParams.defaultPolyAccSound2;
     polyUnaccSound2 = MetronomeParams.defaultPolyUnaccSound2;
-    _id = createNewId();
+    _id = ProjectBlock.createNewId();
   }
 
   // this method is for copying the class.

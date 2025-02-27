@@ -156,7 +156,7 @@ class Project extends ChangeNotifier {
     }
 
     // new ID, otherwise the copied tool would have the same as the original tool
-    newBlock.id = newBlock.createNewId();
+    newBlock.id = ProjectBlock.createNewId();
     newBlock.title = newTitle;
     addBlock(newBlock);
 

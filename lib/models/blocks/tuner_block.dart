@@ -73,7 +73,7 @@ class TunerBlock extends ProjectBlock {
     _timeLastModified = timeLastModified;
     _chamberNoteHz = chamberNoteHz;
     _title = title;
-    _id = setIdOrNewId(id);
+    _id = ProjectBlock.getIdOrCreateNewId(id);
     _islandToolID = islandToolID;
   }
 
@@ -82,7 +82,7 @@ class TunerBlock extends ProjectBlock {
     _chamberNoteHz = TunerParams.defaultConcertPitch;
     _title = TunerParams.displayName;
     _islandToolID = null;
-    _id = createNewId();
+    _id = ProjectBlock.createNewId();
   }
 
   TunerBlock.withTitle(String newTitle) {
@@ -90,7 +90,7 @@ class TunerBlock extends ProjectBlock {
     _chamberNoteHz = TunerParams.defaultConcertPitch;
     _title = newTitle;
     _islandToolID = null;
-    _id = createNewId();
+    _id = ProjectBlock.createNewId();
   }
 
   @override

@@ -189,7 +189,7 @@ class _ImageToolState extends State<ImageTool> {
             Provider.of<Project>(context, listen: false).setThumbnail(newRelativePath);
           }
 
-          _imageBlock.setImage(newRelativePath);
+          await _imageBlock.setImage(newRelativePath);
           FileIO.saveProjectLibraryToJson(projectLib);
 
           _addOptionsToMenu();
