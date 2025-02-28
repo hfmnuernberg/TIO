@@ -572,14 +572,15 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                   style: const TextStyle(color: ColorTheme.primary),
                 ),
                 // add second metronome button
-                isSecondMetronome || _metronomeBlock.rhythmGroups2.isNotEmpty
-                    ? const SizedBox()
-                    : IconButton(
-                      key: _keyAddSecondMetro,
-                      iconSize: TIOMusicParams.rhythmPlusButtonSize,
-                      onPressed: () => _addRhythmSegment(true),
-                      icon: const Icon(Icons.add, color: ColorTheme.primary),
-                    ),
+                if (isSecondMetronome || _metronomeBlock.rhythmGroups2.isNotEmpty)
+                  const SizedBox()
+                else
+                  IconButton(
+                    key: _keyAddSecondMetro,
+                    iconSize: TIOMusicParams.rhythmPlusButtonSize,
+                    onPressed: () => _addRhythmSegment(true),
+                    icon: const Icon(Icons.add, color: ColorTheme.primary),
+                  ),
               ],
             ),
           ),
@@ -618,7 +619,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             child: Column(
               children: [
                 _rhythmRow(),
-                _metronomeBlock.rhythmGroups2.isNotEmpty ? _rhythmRow(isSecondMetronome: true) : const SizedBox(),
+                if (_metronomeBlock.rhythmGroups2.isNotEmpty) _rhythmRow(isSecondMetronome: true) else const SizedBox(),
 
                 const SizedBox(height: TIOMusicParams.edgeInset),
 
@@ -711,17 +712,18 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           block: _metronomeBlock,
           callOnReturn: (value) => setState(() {}),
         ),
-        _metronomeBlock.rhythmGroups2.isEmpty
-            ? const SizedBox()
-            : SettingsTile(
-              title: 'Sound 2',
-              subtitle:
-                  'Main: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\nPoly: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}',
-              leadingIcon: Icons.library_music_outlined,
-              settingPage: SetMetronomeSound(running: _sound && _isStarted, forSecondMetronome: true),
-              block: _metronomeBlock,
-              callOnReturn: (value) => setState(() {}),
-            ),
+        if (_metronomeBlock.rhythmGroups2.isEmpty)
+          const SizedBox()
+        else
+          SettingsTile(
+            title: 'Sound 2',
+            subtitle:
+                'Main: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\nPoly: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}',
+            leadingIcon: Icons.library_music_outlined,
+            settingPage: SetMetronomeSound(running: _sound && _isStarted, forSecondMetronome: true),
+            block: _metronomeBlock,
+            callOnReturn: (value) => setState(() {}),
+          ),
         // Random mute
         SettingsTile(
           title: 'Random Mute',

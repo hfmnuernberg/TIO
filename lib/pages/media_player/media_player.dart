@@ -282,22 +282,23 @@ class _MediaPlayerState extends State<MediaPlayer> {
             Expanded(
               child: Stack(
                 children: [
-                  _isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : Padding(
-                        key: _keyWaveform,
-                        padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
-                        child:
-                            _isRecording
-                                ? MediaPlayerFunctions.displayRecordingTimer(_recordingDuration, waveformHeight)
-                                : GestureDetector(
-                                  onTapDown: _fileLoaded ? _onWaveTap : null,
-                                  child: CustomPaint(
-                                    painter: _waveformVisualizer,
-                                    size: Size(_waveFormWidth, waveformHeight),
-                                  ),
+                  if (_isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    Padding(
+                      key: _keyWaveform,
+                      padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
+                      child:
+                          _isRecording
+                              ? MediaPlayerFunctions.displayRecordingTimer(_recordingDuration, waveformHeight)
+                              : GestureDetector(
+                                onTapDown: _fileLoaded ? _onWaveTap : null,
+                                child: CustomPaint(
+                                  painter: _waveformVisualizer,
+                                  size: Size(_waveFormWidth, waveformHeight),
                                 ),
-                      ),
+                              ),
+                    ),
                   Stack(children: _isRecording ? [] : _buildMarkers()),
                 ],
               ),

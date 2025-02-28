@@ -434,25 +434,27 @@ class _ParentToolState extends State<ParentTool> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         // island or no island
-        widget.island == null
-            ? const SizedBox()
-            : SizedBox(
-              key: _keyIsland,
-              height: ParentToolParams.islandHeight,
-              width: MediaQuery.of(context).size.width,
-              child: widget.island,
-            ),
+        if (widget.island == null)
+          const SizedBox()
+        else
+          SizedBox(
+            key: _keyIsland,
+            height: ParentToolParams.islandHeight,
+            width: MediaQuery.of(context).size.width,
+            child: widget.island,
+          ),
         // center module
-        hasSettingTiles
-            ? SizedBox(
-              height: widget.heightForCenterModule ?? MediaQuery.of(context).size.height / 2.5,
-              child: widget.centerModule,
-            )
-            : widget.centerModule,
+        if (hasSettingTiles)
+          SizedBox(
+            height: widget.heightForCenterModule ?? MediaQuery.of(context).size.height / 2.5,
+            child: widget.centerModule,
+          )
+        else
+          widget.centerModule,
         // empty space between center module and settings
         const SizedBox(height: 8),
         // setting tiles or no setting tiles
-        hasSettingTiles ? _settingsList(widget.settingTiles) : const SizedBox(),
+        if (hasSettingTiles) _settingsList(widget.settingTiles) else const SizedBox(),
         // empty space at the bottom
         const SizedBox(height: 32),
       ],

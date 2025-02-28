@@ -503,7 +503,7 @@ class _ProjectsListState extends State<ProjectsList> {
             ],
           ),
           // survey banner
-          _showBanner ? _getSurveyBanner() : const SizedBox(),
+          if (_showBanner) _getSurveyBanner() else const SizedBox(),
         ],
       ),
     );
