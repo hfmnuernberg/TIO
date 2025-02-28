@@ -49,7 +49,7 @@ class ImportProjectDialog extends StatelessWidget {
     final bytes = await archiveFile.readAsBytes();
     final archive = ZipDecoder().decodeBytes(bytes);
 
-    Project? project = null;
+    Project? project;
 
     for (final file in archive) {
       if (file.name.endsWith('.json')) {
@@ -67,31 +67,33 @@ class ImportProjectDialog extends StatelessWidget {
       final file = await _getFile();
 
       if (file == null) {
-        showSnackbar(context: context, message: 'No project file selected')();
+        if (context.mounted) showSnackbar(context: context, message: 'No project file selected')();
         return;
       }
+
+      if (!context.mounted) return;
 
       final project = await _extractArchive(context, file);
 
       if (project == null) {
-        showSnackbar(context: context, message: 'Error importing project')();
+        if (context.mounted) showSnackbar(context: context, message: 'Error importing project')();
         return;
       }
 
       await Future.wait(
-        project.blocks.whereType<ImageBlock>().map(
-          (block) async => {print('SetImage 1'), block.setImage(block.relativePath)},
-        ),
+        project.blocks.whereType<ImageBlock>().map((block) async => block.setImage(block.relativePath)),
       );
+
+      if (!context.mounted) return;
 
       final projectLibrary = context.read<ProjectLibrary>();
       projectLibrary.addProject(project);
       await FileIO.saveProjectLibraryToJson(projectLibrary);
       await FileReferences.init(projectLibrary);
 
-      showSnackbar(context: context, message: 'Project imported successfully!')();
+      if (context.mounted) showSnackbar(context: context, message: 'Project imported successfully!')();
     } catch (_) {
-      showSnackbar(context: context, message: 'Error importing project')();
+      if (context.mounted) showSnackbar(context: context, message: 'Error importing project')();
     } finally {
       onDone();
     }

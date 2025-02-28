@@ -852,3 +852,6 @@ lilypond/note.svg
 
 # FVM Version Cache
 .fvm/
+
+macos
+linux

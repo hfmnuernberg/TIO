@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
-const int COOLDOWN_IN_MS = 3000;
-const int LERP_FRAME_LENGTH_IN_MS = 50;
+const int cooldownInMs = 3000;
+const int lerpFrameLengthInMs = 50;
 
 class Tap2Tempo extends StatefulWidget {
   final TextEditingController bpmHandle;
@@ -24,7 +24,7 @@ class _Tap2TempoState extends State<Tap2Tempo> {
   var _time2 = DateTime.now();
   var _bpmList = <int>[];
   bool _firstTap = true;
-  int _t2tColorLerpValue = COOLDOWN_IN_MS;
+  int _t2tColorLerpValue = cooldownInMs;
   late Timer? _t2tTimer;
 
   @override
@@ -63,9 +63,9 @@ class _Tap2TempoState extends State<Tap2Tempo> {
   void _tap2tempoColorLerpTimer() {
     _t2tTimer?.cancel();
     _t2tColorLerpValue = 0;
-    _t2tTimer = Timer.periodic(const Duration(milliseconds: LERP_FRAME_LENGTH_IN_MS), (timer) {
-      _t2tColorLerpValue = LERP_FRAME_LENGTH_IN_MS * timer.tick;
-      if (_t2tColorLerpValue >= COOLDOWN_IN_MS) {
+    _t2tTimer = Timer.periodic(const Duration(milliseconds: lerpFrameLengthInMs), (timer) {
+      _t2tColorLerpValue = lerpFrameLengthInMs * timer.tick;
+      if (_t2tColorLerpValue >= cooldownInMs) {
         timer.cancel();
         _firstTap = true;
       }
@@ -83,7 +83,7 @@ class _Tap2TempoState extends State<Tap2Tempo> {
     return TIOTextButton(
       text: "Tap to tempo",
       onTap: widget.enabled ? _tap2tempo : () {},
-      backgroundColor: Color.lerp(ColorTheme.tertiary60, ColorTheme.surface, _t2tColorLerpValue / COOLDOWN_IN_MS),
+      backgroundColor: Color.lerp(ColorTheme.tertiary60, ColorTheme.surface, _t2tColorLerpValue / cooldownInMs),
       icon: const Icon(Icons.touch_app_outlined, size: 40),
     );
   }

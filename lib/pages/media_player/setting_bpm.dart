@@ -8,9 +8,9 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
 import 'package:tiomusic/widgets/tap_to_tempo.dart';
 
-final DEFAULT = 80;
-final MIN_BPM = 10;
-final MAX_BPM = 500;
+final defaultBpm = 80;
+final minBpm = 10;
+final maxBpm = 500;
 
 class SetBPM extends StatefulWidget {
   const SetBPM({super.key});
@@ -30,8 +30,8 @@ class _SetBPMState extends State<SetBPM> {
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
 
     _bpmInput = NumberInputIntWithSlider(
-      max: MAX_BPM,
-      min: MIN_BPM,
+      max: maxBpm,
+      min: minBpm,
       defaultValue: _mediaPlayerBlock.bpm,
       step: 1,
       controller: TextEditingController(),
@@ -53,7 +53,7 @@ class _SetBPMState extends State<SetBPM> {
   }
 
   void _reset() {
-    _bpmInput.controller.value = _bpmInput.controller.value.copyWith(text: DEFAULT.toString());
+    _bpmInput.controller.value = _bpmInput.controller.value.copyWith(text: defaultBpm.toString());
   }
 
   void _onCancel() {

@@ -11,6 +11,8 @@ import 'package:tiomusic/models/icon_converter.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:uuid/uuid.dart';
 
+// ignore_for_file: must_be_immutable // FIXME: fix these block issues
+
 // This is the parent class of all blocks
 
 @JsonSerializable(createFactory: false)

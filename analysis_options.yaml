@@ -1,12 +1,11 @@
 # https://dart.dev/tools/linter-rules
 
-analyzer:
-  errors:
-    must_be_immutable: info # FIXME: fix these block issues
+include: package:flutter_lints/flutter.yaml
 
-linter:
-  rules:
-    lines_longer_than_80_chars: false # we prefer 120 chars
+analyzer:
+  exclude:
+  - lib/src/rust/**
+  - lib/**.g.dart
 
 formatter:
   line-length: 120
