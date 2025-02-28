@@ -39,6 +39,11 @@ class ImportProjectDialog extends StatelessWidget {
     return Project.fromJson(jsonData);
   }
 
+  Future<void> _writeMediaFileFromArchiveFile(ArchiveFile archiveFile, Directory directory) async {
+    final mediaFile = File('${directory.path}/media/${archiveFile.name}');
+    await mediaFile.writeAsBytes(archiveFile.content as List<int>);
+  }
+
   Future<Project?> _extractArchive(BuildContext context, File archiveFile) async {
     final directory = await getApplicationDocumentsDirectory();
     final bytes = await archiveFile.readAsBytes();
@@ -49,7 +54,8 @@ class ImportProjectDialog extends StatelessWidget {
     for (final file in archive) {
       if (file.name.endsWith('.json')) {
         project = await _readProjectFromArchiveFile(file);
-        continue;
+      } else {
+        await _writeMediaFileFromArchiveFile(file, directory);
       }
 
       final filePath = '${directory.path}/media/${file.name}';

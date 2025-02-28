@@ -11,10 +11,12 @@ import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
+final String MEDIA_FOLDER = "media";
+
 String _sanitizeString(String value) =>
     value.trim().replaceAll(RegExp(r'\W+'), '-').replaceAll(RegExp(r'^-+|-+$'), '').toLowerCase();
 
-String _getMediaFileName(String value) => value.substring(6);
+String _getMediaFileName(String value) => value.substring('$MEDIA_FOLDER/'.length);
 
 Future<void> showExportProjectDialog({required BuildContext context, required Project project}) => showDialog(
   context: context,
