@@ -105,10 +105,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _getCorrectIslandView(),
-            IconButton(
-              onPressed: _chooseToolForIsland,
-              icon: const Icon(Icons.more_vert, color: ColorTheme.primary),
-            ),
+            IconButton(onPressed: _chooseToolForIsland, icon: const Icon(Icons.more_vert, color: ColorTheme.primary)),
           ],
         ),
       ),
@@ -122,10 +119,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       elevation: 0.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
       clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: IconButton(
-        onPressed: _chooseToolForIsland,
-        icon: const Icon(Icons.add_circle, color: ColorTheme.primary),
-      ),
+      child: IconButton(onPressed: _chooseToolForIsland, icon: const Icon(Icons.add_circle, color: ColorTheme.primary)),
     );
   }
 

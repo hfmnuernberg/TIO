@@ -24,12 +24,7 @@ Future<void> main() async {
   await RustLib.init();
   await initRustDefaultsManually();
   // first running loading screen app to load the data from json
-  runApp(
-    SplashApp(
-      key: UniqueKey(),
-      returnProjectLibraryAndTheme: runMainApp,
-    ),
-  );
+  runApp(SplashApp(key: UniqueKey(), returnProjectLibraryAndTheme: runMainApp));
 }
 
 // and then running the main app

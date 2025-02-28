@@ -175,8 +175,7 @@ class _SetSpeedState extends State<SetSpeed> {
   void _onCancel() {
     mediaPlayerSetSpeedFactor(speedFactor: _mediaPlayerBlock.speedFactor).then(
       (success) => {
-        if (!success)
-          {throw 'Setting speed factor in rust failed using this value: ${_mediaPlayerBlock.speedFactor}'},
+        if (!success) {throw 'Setting speed factor in rust failed using this value: ${_mediaPlayerBlock.speedFactor}'},
       },
     );
 
