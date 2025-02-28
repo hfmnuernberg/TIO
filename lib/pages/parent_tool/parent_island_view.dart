@@ -54,7 +54,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
           // there should always only one to be found, because the id should be individual for each block
           if (foundTools.length > 1) {
-            throw ('WARNING: When looking for the tool of an island view, there where more than one tool found! But there should only be one tool found.');
+            throw 'WARNING: When looking for the tool of an island view, there where more than one tool found! But there should only be one tool found.';
           }
           _loadedTool = foundTools.first;
           _empty = false;

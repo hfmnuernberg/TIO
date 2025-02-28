@@ -97,7 +97,7 @@ Future<dynamic> openSettingPage(
       },
     );
   } else {
-    throw ('Block is invalid type');
+    throw 'Block is invalid type';
   }
 
   return Navigator.of(context)
@@ -342,7 +342,7 @@ Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock blo
             } else if (block is TextBlock) {
               return const TextTool(isQuickTool: false);
             } else {
-              throw ('ERROR: The block type of $block is unknown.');
+              throw 'ERROR: The block type of $block is unknown.';
             }
           },
         );

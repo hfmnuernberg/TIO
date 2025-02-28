@@ -155,7 +155,7 @@ class _SetSpeedState extends State<SetSpeed> {
 
       mediaPlayerSetSpeedFactor(speedFactor: newSpeedFactor).then(
         (success) => {
-          if (!success) {throw ('Setting speed factor in rust failed using this value: $newSpeedFactor')},
+          if (!success) {throw 'Setting speed factor in rust failed using this value: $newSpeedFactor'},
         },
       );
     }
@@ -176,7 +176,7 @@ class _SetSpeedState extends State<SetSpeed> {
     mediaPlayerSetSpeedFactor(speedFactor: _mediaPlayerBlock.speedFactor).then(
       (success) => {
         if (!success)
-          {throw ('Setting speed factor in rust failed using this value: ${_mediaPlayerBlock.speedFactor}')},
+          {throw 'Setting speed factor in rust failed using this value: ${_mediaPlayerBlock.speedFactor}'},
       },
     );
 
@@ -189,7 +189,7 @@ class _SetSpeedState extends State<SetSpeed> {
 
       mediaPlayerSetSpeedFactor(speedFactor: newValue).then(
         (success) => {
-          if (!success) {throw ('Setting speed factor in rust failed using this value: $newValue')},
+          if (!success) {throw 'Setting speed factor in rust failed using this value: $newValue'},
         },
       );
     }

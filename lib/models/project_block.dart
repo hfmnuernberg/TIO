@@ -67,7 +67,7 @@ abstract class ProjectBlock extends ChangeNotifier with EquatableMixin {
       case TextParams.kind:
         return TextBlock.fromJson(json);
       default:
-        throw ("Loading blocks from Json threw error: unknown block kind: ${json['kind']}");
+        throw "Loading blocks from Json threw error: unknown block kind: ${json['kind']}";
     }
   }
 

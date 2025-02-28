@@ -21,12 +21,12 @@ abstract class MediaPlayerFunctions {
   static void setSpeedAndPitchInRust(double speedFactor, double pitchSemitones) {
     mediaPlayerSetSpeedFactor(speedFactor: speedFactor).then(
       (success) => {
-        if (!success) {throw ('Setting speed factor in rust failed using this value: $speedFactor')},
+        if (!success) {throw 'Setting speed factor in rust failed using this value: $speedFactor'},
       },
     );
     mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones).then(
       (success) => {
-        if (!success) {throw ('Setting pitch semitones in rust failed using this value: $pitchSemitones')},
+        if (!success) {throw 'Setting pitch semitones in rust failed using this value: $pitchSemitones'},
       },
     );
   }

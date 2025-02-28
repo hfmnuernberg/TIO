@@ -53,7 +53,7 @@ class _Tap2TempoState extends State<Tap2Tempo> {
       _firstTap = false;
     } else {
       _bpmList.add(bpm);
-      widget.bpmHandle.value = widget.bpmHandle.value.copyWith(text: (_bpmList.average).round().toString());
+      widget.bpmHandle.value = widget.bpmHandle.value.copyWith(text: _bpmList.average.round().toString());
     }
     _time1 = _time2;
     setState(() {});
@@ -75,7 +75,7 @@ class _Tap2TempoState extends State<Tap2Tempo> {
 
   // Convert ms to BPM
   int _ms2BPM(int ms) {
-    return (60000 ~/ ms);
+    return 60000 ~/ ms;
   }
 
   @override

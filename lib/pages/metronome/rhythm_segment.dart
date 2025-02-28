@@ -36,7 +36,7 @@ class _RhythmSegmentState extends State<RhythmSegment> {
     // this variable needs to be set here and not in initState, because otherwise the box size of the group would not change with changing the number of beats
     double? spaceForEachPoly;
     double? spaceForEachMainBeat;
-    double totalGroupWidth = (TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2);
+    double totalGroupWidth = TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2;
     if (rhythmGroups[widget.barIdx].polyBeats.length > rhythmGroups[widget.barIdx].beats.length) {
       totalGroupWidth = totalGroupWidth * rhythmGroups[widget.barIdx].polyBeats.length;
       spaceForEachMainBeat = totalGroupWidth / rhythmGroups[widget.barIdx].beats.length;

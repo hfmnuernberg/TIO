@@ -708,7 +708,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           subtitle:
               'Main: ${_metronomeBlock.accSound}, ${_metronomeBlock.unaccSound}\nPoly: ${_metronomeBlock.polyAccSound}, ${_metronomeBlock.polyUnaccSound}',
           leadingIcon: Icons.library_music_outlined,
-          settingPage: SetMetronomeSound(running: (_sound && _isStarted)),
+          settingPage: SetMetronomeSound(running: _sound && _isStarted),
           block: _metronomeBlock,
           callOnReturn: (value) => setState(() {}),
         ),
@@ -719,7 +719,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
               subtitle:
                   'Main: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\nPoly: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}',
               leadingIcon: Icons.library_music_outlined,
-              settingPage: SetMetronomeSound(running: (_sound && _isStarted), forSecondMetronome: true),
+              settingPage: SetMetronomeSound(running: _sound && _isStarted, forSecondMetronome: true),
               block: _metronomeBlock,
               callOnReturn: (value) => setState(() {}),
             ),

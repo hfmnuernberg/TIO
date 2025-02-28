@@ -146,7 +146,7 @@ class Project extends ChangeNotifier {
       case TextParams.kind:
         newBlock = TextBlock.fromJson(jsonMap);
       default:
-        throw ('Error: Failed to copy tool. Unknown block type ${block.kind}!');
+        throw 'Error: Failed to copy tool. Unknown block type ${block.kind}!';
     }
 
     // new ID, otherwise the copied tool would have the same as the original tool

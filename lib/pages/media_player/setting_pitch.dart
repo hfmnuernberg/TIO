@@ -64,7 +64,7 @@ class _SetPitchState extends State<SetPitch> {
 
       mediaPlayerSetPitchSemitones(pitchSemitones: newPitchValue).then(
         (success) => {
-          if (!success) {throw ('Setting pitch semitones in rust failed using this value: $newPitchValue')},
+          if (!success) {throw 'Setting pitch semitones in rust failed using this value: $newPitchValue'},
         },
       );
     }
@@ -82,7 +82,7 @@ class _SetPitchState extends State<SetPitch> {
     mediaPlayerSetPitchSemitones(pitchSemitones: _mediaPlayerBlock.pitchSemitones).then(
       (success) => {
         if (!success)
-          {throw ('Setting pitch semitones in rust failed using this value: ${_mediaPlayerBlock.pitchSemitones}')},
+          {throw 'Setting pitch semitones in rust failed using this value: ${_mediaPlayerBlock.pitchSemitones}'},
       },
     );
 
@@ -95,7 +95,7 @@ class _SetPitchState extends State<SetPitch> {
 
       mediaPlayerSetPitchSemitones(pitchSemitones: newPitchValue).then(
         (success) => {
-          if (!success) {throw ('Setting pitch semitones in rust failed using this value: $newPitchValue')},
+          if (!success) {throw 'Setting pitch semitones in rust failed using this value: $newPitchValue'},
         },
       );
     }

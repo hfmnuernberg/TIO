@@ -81,8 +81,8 @@ class PitchVisualizer extends CustomPainter {
 
       if ((valFrom - valTo).abs() > _maxJumpFactor) continue; // disconnect large jumps
 
-      double yFrom = (size.height * i.toDouble() / _history.length.toDouble());
-      double yTo = (size.height * (i.toDouble() + 1.0) / _history.length.toDouble());
+      double yFrom = size.height * i.toDouble() / _history.length.toDouble();
+      double yTo = size.height * (i.toDouble() + 1.0) / _history.length.toDouble();
 
       canvas.drawLine(Offset(size.width * valFrom, yFrom), Offset(size.width * valTo, yTo), paintLine);
     }

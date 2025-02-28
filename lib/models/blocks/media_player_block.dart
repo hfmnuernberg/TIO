@@ -150,7 +150,7 @@ class MediaPlayerBlock extends ProjectBlock {
     if (_speedFactor != 1) {
       settings.add('${_speedFactor}x speed');
     }
-    if ((_rangeStart).abs() >= 0.001 || (_rangeEnd - 1.0).abs() >= 0.001) {
+    if (_rangeStart.abs() >= 0.001 || (_rangeEnd - 1.0).abs() >= 0.001) {
       settings.add('Trim ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%');
     }
     if (_looping) {

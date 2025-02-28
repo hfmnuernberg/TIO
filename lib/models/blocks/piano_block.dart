@@ -87,7 +87,7 @@ class PianoBlock extends ProjectBlock {
 
   @override
   List<String> getSettingsFormatted() {
-    return ['Lowest Key: ${midiToNameAndOctave(_keyboardPosition)}', (PianoParams.soundFontNames[_soundFontIndex])];
+    return ['Lowest Key: ${midiToNameAndOctave(_keyboardPosition)}', PianoParams.soundFontNames[_soundFontIndex]];
   }
 
   PianoBlock(
