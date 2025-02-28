@@ -207,7 +207,7 @@ class _ProjectsListState extends State<ProjectsList> {
         .then(doActionOnReturn);
   }
 
-  void doActionOnReturn(dynamic returnValue) {
+  void doActionOnReturn(returnValue) {
     setState(() {});
 
     if (returnValue is Map) {
@@ -509,7 +509,7 @@ class _ProjectsListState extends State<ProjectsList> {
     );
   }
 
-  Widget _quickToolButton(dynamic icon, String label, BlockType block) {
+  Widget _quickToolButton(icon, String label, BlockType block) {
     return Padding(
       padding: const EdgeInsets.all(2),
       child: Container(

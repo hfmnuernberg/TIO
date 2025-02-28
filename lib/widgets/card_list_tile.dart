@@ -59,7 +59,7 @@ class CardListTile extends StatelessWidget {
     );
   }
 
-  Widget _showPicture(dynamic picture) {
+  Widget _showPicture(picture) {
     if (picture is ImageProvider) {
       // if picture is an image provider
       return AspectRatio(aspectRatio: 1, child: Image(image: picture, fit: BoxFit.cover));
