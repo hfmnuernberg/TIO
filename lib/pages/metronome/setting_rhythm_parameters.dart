@@ -412,7 +412,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     List<BeatTypePoly>? polyBeats,
     bool noInnerBorder = true,
   }) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ColorTheme.primary80)),
       child: Padding(
         padding: const EdgeInsets.all(8),
@@ -456,7 +456,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
           centerWidgetBuilder: (context) {
             return noInnerBorder
                 ? Container()
-                : Container(
+                : DecoratedBox(
                   decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ColorTheme.primary80)),
                   child: OnOffButton(
                     isActive: _isPlaying,

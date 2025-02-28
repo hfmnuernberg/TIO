@@ -45,7 +45,7 @@ class _RhythmSegmentState extends State<RhythmSegment> {
       spaceForEachPoly = totalGroupWidth / rhythmGroups[widget.barIdx].polyBeats.length;
     }
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         border: Border.all(color: ColorTheme.primary87),
         borderRadius: BorderRadius.circular(4),

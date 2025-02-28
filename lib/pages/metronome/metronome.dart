@@ -458,7 +458,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   Widget _rhythmGroup(int index, bool isSecond) {
-    return Container(
+    return DecoratedBox(
       key: index == 0 && !isSecond ? _keyGroups : null,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: _listTileMaskColor),
       child: Padding(

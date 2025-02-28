@@ -112,7 +112,7 @@ class CustomTargetFocus {
         align: alignText ?? (customTextPosition != null ? ContentAlign.custom : ContentAlign.bottom),
         customPosition: customTextPosition,
         builder: (context, controller) {
-          return Container(
+          return DecoratedBox(
             decoration: ShapeDecoration(
               color: Colors.white,
               shape: MessageBorder(

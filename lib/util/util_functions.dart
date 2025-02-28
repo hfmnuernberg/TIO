@@ -475,7 +475,7 @@ Future<dynamic> ourModalBottomSheet(BuildContext context, List<Widget> titelChil
         heightFactor: 0.75,
         child: Column(
           children: [
-            Container(
+            DecoratedBox(
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
                 color: ColorTheme.surface,
