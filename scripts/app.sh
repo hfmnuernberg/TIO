@@ -19,13 +19,20 @@ getTestCommand() {
   echo "$command"
 }
 
-analyze() { fluttervm analyze --no-fatal-infos lib test; }
+analyze() { fluttervm analyze lib test; }
 analyzeFiles() { scripts/analyze-files-with-too-many-lines.sh .; }
 analyzeFix() { dartvm fix --apply --code="$2"; }
 analyzeFixDryRun() { dartvm fix --dry-run; }
 analyzeTodos() { scripts/analyze-todos-and-fixmes.sh .; }
 
 build() {
+  if [ "$2" = 'help' ]; then
+    echo "Usage: $0 build <platform> [<mode>]"
+    echo "platform  - ios, android"
+    echo 'mode      - debug, profile, release'
+    exit 0
+  fi
+
   if [ "$2" = 'ios' ]; then PLATFORM='ios'; fi
   if [ "$2" = 'android' ]; then PLATFORM='android'; fi
 
@@ -47,7 +54,8 @@ build() {
   if [ "$PLATFORM" = 'android' ]; then BUILD_COMMAND='appbundle'; fi
 
   set -x
-  fluttervm build "$BUILD_COMMAND" \
+  fluttervm build \
+    "$BUILD_COMMAND" \
     --target lib/main.dart \
     "$EXPORT_OPTIONS_ARG" "$EXPORT_OPTIONS_VAL" \
     "--$MODE"
@@ -74,7 +82,7 @@ coveragePrint() { lcov --summary coverage/lcov.info; }
 coverageValidate() {
   result=$(dartvm run test_cov_console --pass="$2")
   echo "$result"
-  if echo "$result" | grep -q "PASSED"; then exit 0; else exit 1; fi
+  if echo "$result" | grep -q "PASSED"; then true; else exit 1; fi
 }
 
 deleteLockFiles() {
@@ -140,28 +148,17 @@ reset() {
 }
 
 run() {
-  if [ "$2" = 'ios' ]; then PLATFORM='ios'; fi
-  if [ "$2" = 'android' ]; then PLATFORM='android'; fi
-
-  if [ -z "$PLATFORM" ]; then
-    echo "Usage: $0 run <platform> [<mode>]"
-    echo "platform  - ios, android"
-    echo 'mode      - debug, profile, release'
-    exit 1
+  if [ "$2" = 'help' ]; then
+    echo "Usage: $0 run [<mode>]"
+    echo 'mode  - debug, profile, release'
+    exit 0
   fi
 
-  if [ -z "$5" ]; then MODE='debug'; else MODE="$5"; fi
+  if [ -z "$2" ]; then MODE='debug'; else MODE="$2"; fi
 
-  echo "Running app on platform: '$PLATFORM' with mode: '$MODE' ..."
+  echo "Running app with mode: '$MODE' ..."
 
-  if [ "$PLATFORM" = 'ios' ]; then
-    fluttervm run
-  fi
-
-  if [ "$PLATFORM" = 'android' ]; then
-    fluttervm run
-      "--$MODE"
-  fi
+  fluttervm run "--$MODE"
 }
 
 simulator() { open -a Simulator; }
@@ -171,6 +168,12 @@ testsRandom() { fluttervm test --test-randomize-ordering-seed random test; }
 testsWatch() { command=$(getTestCommand "$@"); watchexec -e dart "$command"; }
 
 upload() {
+  if [ "$2" = 'help' ]; then
+    echo "Usage: $0 upload <platform>"
+    echo "platform  - ios, android"
+    exit 0
+  fi
+
   if [ "$2" = 'ios' ]; then PLATFORM='ios'; fi
   if [ "$2" = 'android' ]; then PLATFORM='android'; fi
 
@@ -180,10 +183,15 @@ upload() {
     exit 1
   fi
 
-  echo "Uploading '$PLATFORM' app..."
+  if [ "$PLATFORM" = 'ios' ]; then STORE='Apple'; fi
+  if [ "$PLATFORM" = 'android' ]; then STORE='Google'; fi
+
+  echo "Uploading app for platform: '$PLATFORM' to: '$STORE' ..."
 
   cd "$PLATFORM"
+  set -x
   fastlane "$PLATFORM" push_to_store
+  set +x
   cd ..
 }
 
@@ -196,6 +204,7 @@ help() {
   echo 'analyze:files                                 - analyze files with too many lines of code'
   echo 'analyze:fix <rule>                            - fix static code analysis rule violations'
   echo 'analyze:fix:dry                               - simulates fixing static code analysis rule violations'
+  echo 'analyze:todos                                 - analyze TODOs and FIXMEs in code'
   echo 'build <platform> [<mode>]                     - build app for ios or android'
   echo 'clean                                         - clean build'
   echo 'coverage                                      - measure and open test coverage report'
@@ -222,10 +231,12 @@ help() {
   echo 'install:rust:packages                         - install Rust packages'
   echo 'install:rust:targets                          - install Rust targets'
   echo 'lint                                          - synonym for analyze'
+  echo 'lint:files                                    - synonym for analyze:files'
   echo 'lint:fix <rule>                               - synonym for analyze:fix'
   echo 'lint:fix:dry                                  - synonym for analyze:fix:dry'
+  echo 'lint:todos                                    - synonym for analyze:todos'
   echo 'outdated                                      - list outdated dependencies'
-  echo 'reset                                         - re-installs dependencies, re-generates code, runs tests, builds app and more'
+  echo 'reset                                         - deletes lock files, re-installs, re-generates, runs tests, builds, and more'
   echo 'run [<mode>]                                  - run app'
   echo 'simulator                                     - open iOS simulator'
   echo 'start                                         - synonym for run'

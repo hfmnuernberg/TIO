@@ -12,12 +12,12 @@ import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
-final String MEDIA_FOLDER = "media";
+final String mediaFolder = "media";
 
 String _sanitizeString(String value) =>
     value.trim().replaceAll(RegExp(r'\W+'), '-').replaceAll(RegExp(r'^-+|-+$'), '').toLowerCase();
 
-String _getMediaFileName(String value) => value.substring('$MEDIA_FOLDER/'.length);
+String _getMediaFileName(String value) => value.substring('$mediaFolder/'.length);
 
 Future<void> showExportProjectDialog({required BuildContext context, required Project project}) => showDialog(
   context: context,
@@ -106,15 +106,15 @@ class ExportProjectDialog extends StatelessWidget {
       await archiveFile.delete();
 
       if (result.status == ShareResultStatus.dismissed) {
-        showSnackbar(context: context, message: 'Project export cancelled')();
+        if (context.mounted) showSnackbar(context: context, message: 'Project export cancelled')();
         onDone();
         return;
       }
 
-      showSnackbar(context: context, message: 'Project exported successfully!')();
+      if (context.mounted) showSnackbar(context: context, message: 'Project exported successfully!')();
       onDone();
     } catch (_) {
-      showSnackbar(context: context, message: 'Error exporting project')();
+      if (context.mounted) showSnackbar(context: context, message: 'Error exporting project')();
     }
   }
 

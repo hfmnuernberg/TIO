@@ -23,11 +23,11 @@ extension WidgetTesterPumpExtension on WidgetTester {
 }
 
 class TestWrapper extends StatelessWidget {
-  final defaultValue;
-  final min;
-  final max;
-  final step;
-  final allowNegativeNumbers;
+  final double defaultValue;
+  final double min;
+  final double max;
+  final double step;
+  final bool allowNegativeNumbers;
 
   const TestWrapper({
     super.key,

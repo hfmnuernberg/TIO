@@ -6,6 +6,8 @@ import 'package:tiomusic/util/util_functions.dart';
 
 part 'tuner_block.g.dart';
 
+// ignore_for_file: must_be_immutable // FIXME: fix these block issues
+
 @JsonSerializable()
 class TunerBlock extends ProjectBlock {
   // add here all the fields that should be compared when checking if two class instances have the same values

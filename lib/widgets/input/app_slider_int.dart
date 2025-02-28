@@ -43,16 +43,10 @@ class _AppSliderIntState extends State<AppSliderInt> {
   }
 
   void _validateInput(int input) {
-    if (input != '' && input != '-') {
-      if (input < widget.min) {
-        input = widget.min;
-      } else {
-        if (input > widget.max) {
-          input = widget.max;
-        }
-      }
-    } else {
-      input = widget.defaultValue;
+    if (input < widget.min) {
+      input = widget.min;
+    } else if (input > widget.max) {
+      input = widget.max;
     }
     widget.controller.value = widget.controller.value.copyWith(text: input.toString());
     _sliderValue = input;

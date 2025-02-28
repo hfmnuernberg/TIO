@@ -334,12 +334,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
               padding: const EdgeInsets.all(8.0),
               child: TIOFlatButton(
                 onPressed: () async {
-                  _pickNewAudioFile().then((value) {
-                    if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
-                      _createWalkthroughWaveformTip();
-                      _walkthrough.show(context);
-                    }
-                  });
+                  await _pickNewAudioFile();
+                  if (!context.mounted) return;
+                  if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
+                    _createWalkthroughWaveformTip();
+                    _walkthrough.show(context);
+                  }
                 },
                 text: _fileLoaded ? FileIO.getFileName(_mediaPlayerBlock.relativePath) : "Load Audio File",
               ),
@@ -459,13 +459,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
     return OnOffButton(
       key: key,
       isActive: _isRecording,
-      onTap: () {
-        _toggleRecording().then((value) {
-          if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
-            _createWalkthroughWaveformTip();
-            _walkthrough.show(context);
-          }
-        });
+      onTap: () async {
+        await _toggleRecording();
+        if (!mounted) return;
+        if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
+          _createWalkthroughWaveformTip();
+          _walkthrough.show(context);
+        }
       },
       buttonSize: buttonSize,
       iconOff: Icons.mic,

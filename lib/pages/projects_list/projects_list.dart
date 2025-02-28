@@ -162,7 +162,9 @@ class _ProjectsListState extends State<ProjectsList> {
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
     _createWalkthrough();
-    Future.delayed(Duration.zero, () => _walkthrough.show(context));
+    Future.delayed(Duration.zero, () {
+      if (mounted) _walkthrough.show(context);
+    });
   }
 
   void _onQuickToolTapped(BlockType blockType) {

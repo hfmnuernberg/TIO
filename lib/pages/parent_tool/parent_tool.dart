@@ -83,11 +83,15 @@ class _ParentToolState extends State<ParentTool> {
       if (widget.isQuickTool) {
         if (context.read<ProjectLibrary>().showQuickToolTutorial) {
           _createWalkthroughQuickTool();
-          Future.delayed(Duration.zero, () => _walkthroughQuickTool.show(context));
+          Future.delayed(Duration.zero, () {
+            if (mounted) _walkthroughQuickTool.show(context);
+          });
         } else if (context.read<ProjectLibrary>().showIslandTutorial &&
             checkIslandPossible(widget.project, widget.toolBlock)) {
           _createWalkthroughIsland();
-          Future.delayed(Duration.zero, () => _walkthroughIsland.show(context));
+          Future.delayed(Duration.zero, () {
+            if (mounted) _walkthroughIsland.show(context);
+          });
         } else {
           if (widget.onParentWalkthroughFinished != null) {
             widget.onParentWalkthroughFinished!();
@@ -96,11 +100,15 @@ class _ParentToolState extends State<ParentTool> {
       } else {
         if (context.read<ProjectLibrary>().showToolTutorial) {
           _createWalkthroughTool();
-          Future.delayed(Duration.zero, () => _walkthroughTool.show(context));
+          Future.delayed(Duration.zero, () {
+            if (mounted) _walkthroughTool.show(context);
+          });
         } else if (context.read<ProjectLibrary>().showIslandTutorial &&
             checkIslandPossible(widget.project, widget.toolBlock)) {
           _createWalkthroughIsland();
-          Future.delayed(Duration.zero, () => _walkthroughIsland.show(context));
+          Future.delayed(Duration.zero, () {
+            if (mounted) _walkthroughIsland.show(context);
+          });
         } else {
           if (widget.onParentWalkthroughFinished != null) {
             widget.onParentWalkthroughFinished!();
@@ -127,7 +135,9 @@ class _ParentToolState extends State<ParentTool> {
       // start island tutorial
       if (context.read<ProjectLibrary>().showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
         _createWalkthroughIsland();
-        Future.delayed(Duration.zero, () => _walkthroughIsland.show(context));
+        Future.delayed(Duration.zero, () {
+          if (mounted) _walkthroughIsland.show(context);
+        });
       } else if (widget.onParentWalkthroughFinished != null) {
         widget.onParentWalkthroughFinished!();
       }
@@ -158,7 +168,9 @@ class _ParentToolState extends State<ParentTool> {
       // start island tutorial
       if (context.read<ProjectLibrary>().showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
         _createWalkthroughIsland();
-        Future.delayed(Duration.zero, () => _walkthroughIsland.show(context));
+        Future.delayed(Duration.zero, () {
+          if (mounted) _walkthroughIsland.show(context);
+        });
       } else if (widget.onParentWalkthroughFinished != null) {
         widget.onParentWalkthroughFinished!();
       }

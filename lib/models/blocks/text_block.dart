@@ -6,6 +6,8 @@ import 'package:tiomusic/util/util_functions.dart';
 
 part 'text_block.g.dart';
 
+// ignore_for_file: must_be_immutable // FIXME: fix these block issues
+
 @JsonSerializable()
 class TextBlock extends ProjectBlock {
   // this check is only used for quick tools at the moment

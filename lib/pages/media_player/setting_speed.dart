@@ -12,14 +12,14 @@ import 'package:tiomusic/widgets/input/number_input_double.dart';
 import 'package:tiomusic/widgets/input/number_input_int.dart';
 import 'package:tiomusic/widgets/tap_to_tempo.dart';
 
-const MIN_SPEED_FACTOR = 0.1;
-const MAX_SPEED_FACTOR = 10.0;
-const COUNTING_VALUE = 0.1;
+const minSpeedFactor = 0.1;
+const maxSpeedFactor = 10.0;
+const step = 0.1;
 
-double getSpeedForBpm(bpm, baseBpm) => (bpm / baseBpm).clamp(MIN_SPEED_FACTOR, MAX_SPEED_FACTOR);
+double getSpeedForBpm(bpm, baseBpm) => (bpm / baseBpm).clamp(minSpeedFactor, maxSpeedFactor);
 
 int getBpmForSpeed(speedFactor, baseBpm) =>
-    (speedFactor * baseBpm).clamp(MIN_SPEED_FACTOR * baseBpm, MAX_SPEED_FACTOR * baseBpm).toInt();
+    (speedFactor * baseBpm).clamp(minSpeedFactor * baseBpm, maxSpeedFactor * baseBpm).toInt();
 
 class SetSpeed extends StatefulWidget {
   const SetSpeed({super.key});
@@ -76,10 +76,10 @@ class _SetSpeedState extends State<SetSpeed> {
     });
 
     _bpmInput = NumberInputInt(
-      max: getBpmForSpeed(MAX_SPEED_FACTOR, _mediaPlayerBlock.bpm),
-      min: getBpmForSpeed(MIN_SPEED_FACTOR, _mediaPlayerBlock.bpm),
+      max: getBpmForSpeed(maxSpeedFactor, _mediaPlayerBlock.bpm),
+      min: getBpmForSpeed(minSpeedFactor, _mediaPlayerBlock.bpm),
       defaultValue: _mediaPlayerBlock.bpm,
-      step: getBpmForSpeed(COUNTING_VALUE, _mediaPlayerBlock.bpm),
+      step: getBpmForSpeed(step, _mediaPlayerBlock.bpm),
       controller: bpmController,
       label: 'BPM',
       textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
@@ -88,10 +88,10 @@ class _SetSpeedState extends State<SetSpeed> {
     );
 
     _speedInput = NumberInputDouble(
-      max: MAX_SPEED_FACTOR,
-      min: MIN_SPEED_FACTOR,
+      max: maxSpeedFactor,
+      min: minSpeedFactor,
       defaultValue: _mediaPlayerBlock.speedFactor,
-      step: COUNTING_VALUE,
+      step: step,
       stepIntervalInMs: 200,
       controller: speedController,
       label: "Factor",
@@ -101,10 +101,10 @@ class _SetSpeedState extends State<SetSpeed> {
     );
 
     _customSliderDouble = AppSliderDouble(
-      min: MIN_SPEED_FACTOR,
-      max: MAX_SPEED_FACTOR,
+      min: minSpeedFactor,
+      max: maxSpeedFactor,
       defaultValue: _mediaPlayerBlock.speedFactor,
-      step: COUNTING_VALUE,
+      step: step,
       controller: speedController,
       semanticLabel: 'Factor and BPM slider',
     );
