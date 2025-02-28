@@ -37,27 +37,29 @@ class ExportProjectDialog extends StatelessWidget {
   }
 
   Future<File> _createTmpProjectFile(Project project) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/tio-music-project.json';
+    final tmpDirectory = await getTemporaryDirectory();
+    final tmpProjectFile = File('${tmpDirectory.path}/tio-music-project.json');
 
-    return _writeProjectToFile(project, File(filePath));
+    return _writeProjectToFile(project, tmpProjectFile);
   }
 
-  Future<File> _copyImageToFile(ImageBlock block, Directory directory) async {
+  Future<File> _copyImageToFile(ImageBlock block) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final tmpDirectory = await getTemporaryDirectory();
+
     final sourceFile = File('${directory.path}/${block.relativePath}');
-    final destPath = '${directory.path}/${_getMediaFileName(block.relativePath)}';
+    final destPath = '${tmpDirectory.path}/${_getMediaFileName(block.relativePath)}';
+
     return await sourceFile.copy(destPath);
   }
 
   Future<List<File>> _createTmpImageFiles(Project project) async {
-    final directory = await getApplicationDocumentsDirectory();
-
-    return await Future.wait(project.blocks.whereType<ImageBlock>().map((block) => _copyImageToFile(block, directory)));
+    return await Future.wait(project.blocks.whereType<ImageBlock>().map((block) => _copyImageToFile(block)));
   }
 
   Future<File> _writeFilesToArchive(List<File> files) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final archivePath = '${directory.path}/tio-music-${_sanitizeString(project.title)}.zip';
+    final tmpDirectory = await getTemporaryDirectory();
+    final archivePath = '${tmpDirectory.path}/tio-music-${_sanitizeString(project.title)}.zip';
 
     final archive = Archive();
 
