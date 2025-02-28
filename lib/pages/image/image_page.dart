@@ -58,8 +58,7 @@ class _ImageToolState extends State<ImageTool> {
     // only allow portrait mode for this tool
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-    // if imageProvider is null, open dialog to pick or take image
-    if (_imageBlock.image == null) {
+    if (_imageBlock.relativePath.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _addImageDialog(context);
       });
