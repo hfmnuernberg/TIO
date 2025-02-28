@@ -62,6 +62,13 @@ class ImportProjectDialog extends StatelessWidget {
     return project;
   }
 
+  Future<void> _updateProjectLibraryAndApp(BuildContext context, Project project) async {
+    final projectLibrary = context.read<ProjectLibrary>();
+    projectLibrary.addProject(project);
+    await FileIO.saveProjectLibraryToJson(projectLibrary);
+    await FileReferences.init(projectLibrary);
+  }
+
   Future<void> _importProject(BuildContext context) async {
     try {
       final file = await _getFile();
@@ -84,10 +91,7 @@ class ImportProjectDialog extends StatelessWidget {
         ),
       );
 
-      final projectLibrary = context.read<ProjectLibrary>();
-      projectLibrary.addProject(project);
-      await FileIO.saveProjectLibraryToJson(projectLibrary);
-      await FileReferences.init(projectLibrary);
+      await _updateProjectLibraryAndApp(context, project);
 
       showSnackbar(context: context, message: 'Project imported successfully!')();
     } catch (_) {
