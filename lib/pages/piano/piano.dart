@@ -508,7 +508,7 @@ class _PianoState extends State<Piano> {
         builder: (context, projectLibrary, child) {
           return Column(
             children: [
-              Container(
+              ColoredBox(
                 color: ColorTheme.surface,
                 child: Column(
                   children: [
@@ -534,7 +534,7 @@ class _PianoState extends State<Piano> {
                 ),
               ),
               Expanded(
-                child: Container(
+                child: ColoredBox(
                   color: ColorTheme.primary80,
                   child: Column(
                     children: [

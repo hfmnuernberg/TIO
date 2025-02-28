@@ -482,7 +482,7 @@ Future<dynamic> ourModalBottomSheet(BuildContext context, List<Widget> titelChil
               ),
               child: Column(children: [const SizedBox(height: 20), Column(children: titelChildren)]),
             ),
-            Expanded(child: Container(color: ColorTheme.primary80, child: Column(children: contentChildren))),
+            Expanded(child: ColoredBox(color: ColorTheme.primary80, child: Column(children: contentChildren))),
           ],
         ),
       );

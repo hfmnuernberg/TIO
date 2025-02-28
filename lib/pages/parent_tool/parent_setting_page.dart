@@ -124,8 +124,8 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
         : Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
-            Container(
+            ColoredBox(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
+            ColoredBox(
               color: ColorTheme.primary80,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 16),
