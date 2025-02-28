@@ -227,7 +227,6 @@ class _ProjectPageState extends State<ProjectPage> {
           Padding(
             padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
             child: ListView.builder(
-              scrollDirection: Axis.vertical,
               itemCount: _project.blocks.length + 1,
               itemBuilder: (BuildContext context, int index) {
                 if (index >= _project.blocks.length) {
@@ -312,7 +311,6 @@ class _ProjectPageState extends State<ProjectPage> {
           Padding(
             padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
             child: ListView.builder(
-              scrollDirection: Axis.vertical,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: BlockType.values.length,

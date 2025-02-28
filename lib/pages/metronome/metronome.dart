@@ -566,7 +566,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             height: TIOMusicParams.rhythmPlusButtonSize * 2.5,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   isSecondMetronome ? 'Metronome 2' : 'Metronome 1',

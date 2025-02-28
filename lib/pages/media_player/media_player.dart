@@ -64,7 +64,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   double _waveFormWidth = 0.0;
 
   Timer? _recordingTimer;
-  Duration _recordingDuration = const Duration(seconds: 0);
+  Duration _recordingDuration = const Duration();
 
   bool _processingButtonClick = false;
 
@@ -779,7 +779,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   void _resetRecordingTimer() {
     _stopRecordingTimer();
-    setState(() => _recordingDuration = const Duration(seconds: 0));
+    setState(() => _recordingDuration = const Duration());
   }
 
   void _setCountUp() {

@@ -96,7 +96,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             Slider(
               value: _sliderValue,
               inactiveColor: ColorTheme.primary80,
-              max: 1.0,
               divisions: 1000, // how many individual values, only showing labels when division is not null
               label: getDurationFormatedWithMilliseconds(_positionDuration),
               onChanged: (newValue) {

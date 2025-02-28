@@ -171,7 +171,6 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
         }
 
         return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

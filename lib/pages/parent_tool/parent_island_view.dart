@@ -168,7 +168,6 @@ class _ParentIslandViewState extends State<ParentIslandView> {
           child: Padding(
             padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
             child: ListView.builder(
-              scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemCount: widget.project!.blocks.length,
               itemBuilder: (BuildContext context, int index) {

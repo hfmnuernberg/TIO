@@ -83,7 +83,6 @@ class _SetTrimState extends State<SetTrim> {
                 RangeSlider(
                   values: _rangeValues,
                   inactiveColor: ColorTheme.primary80,
-                  max: 1.0,
                   divisions: 1000, // how many individual values, only showing labels when division is not null
                   labels: RangeLabels(
                     getDurationFormatedWithMilliseconds(_rangeStartDuration),

@@ -47,7 +47,7 @@ class _RhythmSegmentState extends State<RhythmSegment> {
 
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: ColorTheme.primary87, width: 1),
+        border: Border.all(color: ColorTheme.primary87),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Padding(
@@ -57,7 +57,6 @@ class _RhythmSegmentState extends State<RhythmSegment> {
             SizedBox(
               width: totalGroupWidth,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: _beatButtons(rhythmGroups[widget.barIdx].beats.length, spaceForEachMainBeat, rhythmGroups),
               ),
             ),
@@ -70,7 +69,6 @@ class _RhythmSegmentState extends State<RhythmSegment> {
                         height: TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2,
                       )
                       : Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: _beatButtons(
                           rhythmGroups[widget.barIdx].polyBeats.length,
                           spaceForEachPoly,

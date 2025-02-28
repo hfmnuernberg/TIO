@@ -439,7 +439,6 @@ class _ProjectsListState extends State<ProjectsList> {
                                   bottom: TIOMusicParams.bigSpaceAboveList / 2,
                                 ),
                                 child: ListView.builder(
-                                  scrollDirection: Axis.vertical,
                                   itemCount: projectLibrary.projects.length,
                                   itemBuilder: (BuildContext context, int idx) {
                                     return CardListTile(
@@ -516,7 +515,7 @@ class _ProjectsListState extends State<ProjectsList> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: ColorTheme.primary90, width: 1),
+          border: Border.all(color: ColorTheme.primary90),
         ),
         width: MediaQuery.of(context).size.width / 2 - TIOMusicParams.edgeInset,
         child: InkWell(

@@ -157,7 +157,7 @@ void main() {
       testWidgets('does not change input value when entering new empty value in text field', (
         WidgetTester tester,
       ) async {
-        await tester.renderWidget(TestWrapper(defaultValue: 50));
+        await tester.renderWidget(TestWrapper());
         expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '50');
 
         await tester.enterTextAndSettle(find.bySemanticsLabel('Test input'), '');
@@ -169,7 +169,7 @@ void main() {
       testWidgets('changes input value to min when entering negative value is allowed in text field', (
         WidgetTester tester,
       ) async {
-        await tester.renderWidget(TestWrapper(defaultValue: 20, min: 0, allowNegativeNumbers: true));
+        await tester.renderWidget(TestWrapper(defaultValue: 20, allowNegativeNumbers: true));
         expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20');
 
         await tester.enterTextAndSettle(find.bySemanticsLabel('Test input'), '-1');
@@ -182,7 +182,7 @@ void main() {
 
   group('slider int', () {
     testWidgets('increases input value when moving slider to right', (WidgetTester tester) async {
-      await tester.renderWidget(TestWrapper(defaultValue: 50));
+      await tester.renderWidget(TestWrapper());
       expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '50');
 
       final Finder slider = find.bySemanticsLabel('Test slider');
@@ -192,7 +192,7 @@ void main() {
     });
 
     testWidgets('decreases input value when moving slider to left', (WidgetTester tester) async {
-      await tester.renderWidget(TestWrapper(defaultValue: 50));
+      await tester.renderWidget(TestWrapper());
       expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '50');
 
       final Finder slider = find.bySemanticsLabel('Test slider');
@@ -202,7 +202,7 @@ void main() {
     });
 
     testWidgets('increases input value to max when moving slider far to right', (WidgetTester tester) async {
-      await tester.renderWidget(TestWrapper(defaultValue: 50, max: 100));
+      await tester.renderWidget(TestWrapper());
       expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '50');
 
       final Finder slider = find.bySemanticsLabel('Test slider');
@@ -212,7 +212,7 @@ void main() {
     });
 
     testWidgets('decreases input value to min when moving slider far to left', (WidgetTester tester) async {
-      await tester.renderWidget(TestWrapper(defaultValue: 50, min: 0));
+      await tester.renderWidget(TestWrapper());
       expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '50');
 
       final Finder slider = find.bySemanticsLabel('Test slider');

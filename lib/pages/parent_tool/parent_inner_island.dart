@@ -30,7 +30,6 @@ class _ParentInnerIslandState extends State<ParentInnerIsland> {
   Widget build(BuildContext context) {
     return Expanded(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 8),

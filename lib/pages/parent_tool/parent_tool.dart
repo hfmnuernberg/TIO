@@ -312,7 +312,6 @@ class _ParentToolState extends State<ParentTool> {
           child: Padding(
             padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
             child: ListView.builder(
-              scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemCount: projectLibrary.projects.length,
               itemBuilder: (BuildContext context, int index) {
@@ -405,7 +404,6 @@ class _ParentToolState extends State<ParentTool> {
         return tiles[index];
       },
       itemCount: tiles.length,
-      scrollDirection: Axis.vertical,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
     );
@@ -434,7 +432,6 @@ class _ParentToolState extends State<ParentTool> {
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // island or no island
         widget.island == null

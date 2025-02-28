@@ -28,8 +28,6 @@ class Walkthrough {
       targets: targets,
       colorShadow: backgroundColor,
       hideSkip: true,
-      paddingFocus: 10,
-      opacityShadow: backgroundOpacity,
       pulseEnable: false,
       onFinish: () {
         onFinish();
@@ -167,7 +165,6 @@ class CustomTargetFocus {
     targetFocus = TargetFocus(
       keyTarget: key,
       targetPosition: key == null ? TargetPosition(MediaQuery.sizeOf(context!), Offset.zero) : null,
-      enableOverlayTab: false,
       enableTargetTab: false,
       shape: shape ?? ShapeLightFocus.Circle,
       contents: contents,

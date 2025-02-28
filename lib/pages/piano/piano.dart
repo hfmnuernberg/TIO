@@ -558,7 +558,6 @@ class _PianoState extends State<Piano> {
                         child: Padding(
                           padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
                           child: ListView.builder(
-                            scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             itemCount: projectLibrary.projects.length,
                             itemBuilder: (BuildContext context, int index) {
@@ -615,7 +614,6 @@ class _PianoState extends State<Piano> {
                 padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
                       width: MediaQuery.of(context).size.width / 2,
@@ -676,7 +674,6 @@ class _PianoState extends State<Piano> {
                 padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // textfield for new project title
                     SizedBox(

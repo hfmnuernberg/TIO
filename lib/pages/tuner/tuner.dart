@@ -220,7 +220,6 @@ class _TunerState extends State<Tuner> {
                 alignment: Alignment.center,
                 children: [
                   Align(
-                    alignment: Alignment.center,
                     child: LayoutBuilder(
                       builder: (BuildContext context, BoxConstraints constraints) {
                         return CustomPaint(
@@ -232,7 +231,6 @@ class _TunerState extends State<Tuner> {
                   ),
                   // start stop button
                   Align(
-                    alignment: Alignment.center,
                     child: OnOffButton(
                       key: _keyStartStop,
                       isActive: _isRunning,
