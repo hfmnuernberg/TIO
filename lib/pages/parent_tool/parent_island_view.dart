@@ -106,7 +106,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
           children: [
             _getCorrectIslandView(),
             IconButton(
-              onPressed: () => _chooseToolForIsland(),
+              onPressed: _chooseToolForIsland,
               icon: const Icon(Icons.more_vert, color: ColorTheme.primary),
             ),
           ],
@@ -123,10 +123,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: IconButton(
-        onPressed: () {
-          // open bottom sheet to choose another tool of the same project as island
-          _chooseToolForIsland();
-        },
+        onPressed: _chooseToolForIsland,
         icon: const Icon(Icons.add_circle, color: ColorTheme.primary),
       ),
     );

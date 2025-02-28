@@ -196,12 +196,8 @@ class _NumberInputIntState extends State<NumberInputInt> {
                     ),
                     style: TextStyle(fontSize: widget.textFontSize, color: ColorTheme.primary),
                     textAlign: TextAlign.center,
-                    onChanged: (value) {
-                      _manageButtonActivity(value);
-                    },
-                    onFieldSubmitted: (value) {
-                      _validateInput(value);
-                    },
+                    onChanged: _manageButtonActivity,
+                    onFieldSubmitted: _validateInput,
                   ),
                 ),
                 onFocusChange: (hasFocus) {

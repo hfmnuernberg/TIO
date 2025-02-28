@@ -209,9 +209,7 @@ class _ParentToolState extends State<ParentTool> {
       // Icon Button for saving the tool
       IconButton(
         key: _keyBookmarkSave,
-        onPressed: () {
-          _openBottomSheetAndSaveTool();
-        },
+        onPressed: _openBottomSheetAndSaveTool,
         icon: Icon(widget.isQuickTool ? Icons.bookmark_outline : Icons.bookmark_add_outlined),
       ),
     ];

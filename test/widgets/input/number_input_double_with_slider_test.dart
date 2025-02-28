@@ -53,9 +53,7 @@ class TestWrapper extends StatelessWidget {
 }
 
 void main() {
-  setUpAll(() {
-    WidgetsFlutterBinding.ensureInitialized();
-  });
+  setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   group('number input double with slider', () {
     group('number input double', () {

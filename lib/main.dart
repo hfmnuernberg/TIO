@@ -27,7 +27,7 @@ Future<void> main() async {
   runApp(
     SplashApp(
       key: UniqueKey(),
-      returnProjectLibraryAndTheme: (projectLibrary, themeData) => runMainApp(projectLibrary, themeData),
+      returnProjectLibraryAndTheme: runMainApp,
     ),
   );
 }
@@ -172,7 +172,7 @@ class _SplashAppState extends State<SplashApp> {
           children: [
             const Text('Could not load user data!', style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 24)),
             const SizedBox(height: 24),
-            TIOFlatButton(onPressed: () => main(), text: 'Retry'),
+            TIOFlatButton(onPressed: main, text: 'Retry'),
             const SizedBox(height: 24),
             TIOFlatButton(
               onPressed: () {

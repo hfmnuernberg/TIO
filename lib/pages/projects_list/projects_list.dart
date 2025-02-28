@@ -204,9 +204,7 @@ class _ProjectsListState extends State<ProjectsList> {
             },
           ),
         )
-        .then((value) {
-          doActionOnReturn(value);
-        });
+        .then(doActionOnReturn);
   }
 
   void doActionOnReturn(dynamic returnValue) {
@@ -283,9 +281,7 @@ class _ProjectsListState extends State<ProjectsList> {
             },
           ),
         )
-        .then((value) {
-          doActionOnReturn(value);
-        });
+        .then(doActionOnReturn);
   }
 
   void _goToProjectPage(Project project, bool withoutRealProject) {
@@ -302,9 +298,7 @@ class _ProjectsListState extends State<ProjectsList> {
             },
           ),
         )
-        .then((value) {
-          doActionOnReturn(value);
-        });
+        .then(doActionOnReturn);
   }
 
   Widget _getSurveyBanner() {

@@ -13,7 +13,7 @@ class CardListTile extends StatelessWidget {
   final IconButton? menuIconTwo;
 
   final dynamic leadingPicture;
-  final Function onTapFunction;
+  final GestureTapCallback onTapFunction;
   final bool disableTap;
 
   final Color? highlightColor;
@@ -54,9 +54,7 @@ class CardListTile extends StatelessWidget {
           spacing: 2, // space between two icons
           children: <Widget>[menuIconTwo ?? const SizedBox(), menuIconOne ?? const SizedBox(), trailingIcon],
         ),
-        onTap: () {
-          onTapFunction();
-        },
+        onTap: onTapFunction,
       ),
     );
   }

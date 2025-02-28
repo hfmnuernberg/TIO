@@ -56,9 +56,7 @@ class _TestWrapperState extends State<TestWrapper> {
 }
 
 void main() {
-  setUpAll(() {
-    WidgetsFlutterBinding.ensureInitialized();
-  });
+  setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   group('edit text dialog', () {
     testWidgets('shows new title when title change is submitted', (WidgetTester tester) async {
