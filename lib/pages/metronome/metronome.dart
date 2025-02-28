@@ -749,7 +749,7 @@ class FilledScreen extends CustomPainter {
         Paint()
           ..color = color
           ..style = PaintingStyle.fill;
-    canvas.drawRect(const Offset(0, 0) & size, paint);
+    canvas.drawRect(Offset.zero & size, paint);
   }
 
   @override
