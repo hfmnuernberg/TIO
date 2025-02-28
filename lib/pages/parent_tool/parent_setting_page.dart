@@ -53,7 +53,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
           body:
               widget.mustBeScrollable
                   ? LayoutBuilder(
-                    builder: (BuildContext context, BoxConstraints viewportConstraints) {
+                    builder: (context, viewportConstraints) {
                       return SingleChildScrollView(
                         child: ConstrainedBox(
                           constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
@@ -76,17 +76,17 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (widget.displayResetAtTop) ...[
-          const SizedBox(height: 20.0),
-          TIOTextButton(text: "Reset", onTap: widget.reset),
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 20),
+          TIOTextButton(text: 'Reset', onTap: widget.reset),
+          const SizedBox(height: 20),
         ],
         widget.numberInput ?? const SizedBox(),
         widget.customWidget ?? const SizedBox(),
         if (!widget.displayResetAtTop) ...[
-          const SizedBox(height: 20.0),
-          TIOTextButton(text: "Reset", onTap: widget.reset),
+          const SizedBox(height: 20),
+          TIOTextButton(text: 'Reset', onTap: widget.reset),
         ],
-        const SizedBox(height: 160.0),
+        const SizedBox(height: 160),
       ],
     );
   }
@@ -111,7 +111,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
           Positioned(
             right: padding + TIOMusicParams.sizeBigButtons * 4.7,
             bottom: padding + TIOMusicParams.sizeBigButtons / 1.5,
-            child: TIOTextButton(text: "Reset", onTap: widget.reset),
+            child: TIOTextButton(text: 'Reset', onTap: widget.reset),
           ),
         ],
       ),
@@ -124,11 +124,11 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
         : Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
-            Container(
+            ColoredBox(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
+            ColoredBox(
               color: ColorTheme.primary80,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
+                padding: const EdgeInsets.only(bottom: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

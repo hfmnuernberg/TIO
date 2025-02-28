@@ -13,7 +13,7 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 
-import '../../models/file_io.dart';
+import 'package:tiomusic/models/file_io.dart';
 
 enum SoundType { accented, unaccented, polyAccented, polyUnaccented }
 
@@ -31,7 +31,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
 
   final List<Widget> _sounds = List<Widget>.generate(
     MetronomeParams.metronomeSounds.length,
-    (int index) => Text(MetronomeParams.metronomeSounds[index], style: const TextStyle(color: ColorTheme.primary)),
+    (index) => Text(MetronomeParams.metronomeSounds[index], style: const TextStyle(color: ColorTheme.primary)),
     growable: false,
   );
 
@@ -62,33 +62,29 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
   // Play the sound if the corresponding field is tapped
   void _playSound(SoundType soundType) async {
     AudioPlayer player = AudioPlayer();
-    String filepath = "${MetronomeParams.metronomeSoundsPath}/";
+    String filepath = '${MetronomeParams.metronomeSoundsPath}/';
 
     switch (soundType) {
       case SoundType.accented:
-        filepath = "$filepath${MetronomeParams.metronomeSounds[_selectedAccSound.indexOf(true)].toLowerCase()}_a.wav";
-        break;
+        filepath = '$filepath${MetronomeParams.metronomeSounds[_selectedAccSound.indexOf(true)].toLowerCase()}_a.wav';
       case SoundType.unaccented:
-        filepath = "$filepath${MetronomeParams.metronomeSounds[_selectedUnaccSound.indexOf(true)].toLowerCase()}.wav";
-        break;
+        filepath = '$filepath${MetronomeParams.metronomeSounds[_selectedUnaccSound.indexOf(true)].toLowerCase()}.wav';
       case SoundType.polyAccented:
         filepath =
-            "$filepath${MetronomeParams.metronomeSounds[_selectedPolyAccSound.indexOf(true)].toLowerCase()}_a.wav";
-        break;
+            '$filepath${MetronomeParams.metronomeSounds[_selectedPolyAccSound.indexOf(true)].toLowerCase()}_a.wav';
       case SoundType.polyUnaccented:
         filepath =
-            "$filepath${MetronomeParams.metronomeSounds[_selectedPolyUnaccSound.indexOf(true)].toLowerCase()}.wav";
-        break;
+            '$filepath${MetronomeParams.metronomeSounds[_selectedPolyUnaccSound.indexOf(true)].toLowerCase()}.wav';
     }
 
     // not sure if the volume parameter has effect here
-    await player.play(AssetSource(filepath.substring(7)), mode: PlayerMode.lowLatency, volume: 4.0);
+    await player.play(AssetSource(filepath.substring(7)), mode: PlayerMode.lowLatency, volume: 4);
   }
 
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: widget.forSecondMetronome ? "Set 2. Metronome Sounds" : "Set Metronome Sounds",
+      title: widget.forSecondMetronome ? 'Set 2. Metronome Sounds' : 'Set Metronome Sounds',
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,
@@ -100,20 +96,20 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Text("Main Beat", style: TextStyle(color: ColorTheme.primary)),
+                const Text('Main Beat', style: TextStyle(color: ColorTheme.primary)),
                 const SizedBox(width: TIOMusicParams.edgeInset),
-                _buildToggleTable("Accented", _selectedAccSound, SoundType.accented),
-                _buildToggleTable("Unaccented", _selectedUnaccSound, SoundType.unaccented),
+                _buildToggleTable('Accented', _selectedAccSound, SoundType.accented),
+                _buildToggleTable('Unaccented', _selectedUnaccSound, SoundType.unaccented),
               ],
             ),
             const SizedBox(height: TIOMusicParams.edgeInset),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Text("Poly Beat", style: TextStyle(color: ColorTheme.primary)),
+                const Text('Poly Beat', style: TextStyle(color: ColorTheme.primary)),
                 const SizedBox(width: TIOMusicParams.edgeInset),
-                _buildToggleTable("Accented", _selectedPolyAccSound, SoundType.polyAccented),
-                _buildToggleTable("Unaccented", _selectedPolyUnaccSound, SoundType.polyUnaccented),
+                _buildToggleTable('Accented', _selectedPolyAccSound, SoundType.polyAccented),
+                _buildToggleTable('Unaccented', _selectedPolyUnaccSound, SoundType.polyUnaccented),
               ],
             ),
           ],
@@ -130,7 +126,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
         const SizedBox(height: TIOMusicParams.edgeInset),
         ToggleButtons(
           direction: Axis.vertical,
-          onPressed: (int index) {
+          onPressed: (index) {
             setState(() {
               for (int i = 0; i < selectedSound.length; i++) {
                 selectedSound[i] = (i == index);
@@ -144,7 +140,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
               }
             });
           },
-          constraints: const BoxConstraints(minHeight: 40.0, minWidth: 100.0),
+          constraints: const BoxConstraints(minHeight: 40, minWidth: 100),
           isSelected: selectedSound,
           children: _sounds,
         ),

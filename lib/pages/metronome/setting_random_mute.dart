@@ -9,7 +9,7 @@ import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
 import 'package:tiomusic/util/constants.dart';
 
-import '../../models/file_io.dart';
+import 'package:tiomusic/models/file_io.dart';
 
 class SetRandomMute extends StatefulWidget {
   const SetRandomMute({super.key});
@@ -77,7 +77,7 @@ class _SetRandomMuteState extends State<SetRandomMute> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Random Mute",
+      title: 'Set Random Mute',
       confirm: _onConfirm,
       reset: _reset,
       numberInput: _randomMuteProbInput,

@@ -72,7 +72,6 @@ class _TextToolState extends State<TextTool> {
               controller: _textController,
               keyboardType: TextInputType.multiline,
               maxLines: null,
-              minLines: null,
               expands: true,
               style: const TextStyle(color: ColorTheme.primary),
             ),

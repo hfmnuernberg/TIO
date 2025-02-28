@@ -83,7 +83,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     _menuItems.add(
       MenuItemButton(
         onPressed: _clearAllRhythms,
-        child: const Text("Clear all rhythms", style: TextStyle(color: ColorTheme.primary)),
+        child: const Text('Clear all rhythms', style: TextStyle(color: ColorTheme.primary)),
       ),
     );
 
@@ -110,7 +110,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
     // Start beat detection timer
     _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
-      Timer t,
+      t,
     ) async {
       if (!mounted) {
         t.cancel();
@@ -148,13 +148,13 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyStartStop,
-        "Tap here to start and stop the metronome",
+        'Tap here to start and stop the metronome',
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
       ),
       CustomTargetFocus(
         _keySettings,
-        "Tap here to adjust the metronome settings",
+        'Tap here to adjust the metronome settings',
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,
@@ -162,7 +162,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       ),
       CustomTargetFocus(
         _keyGroups,
-        "Hold and drag sideways to relocate,\nswipe upwards to delete\nor tap to edit",
+        'Hold and drag sideways to relocate,\nswipe upwards to delete\nor tap to edit',
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
@@ -170,7 +170,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       ),
       CustomTargetFocus(
         _keyAddSecondMetro,
-        "Tap here to add a second metronome",
+        'Tap here to add a second metronome',
         alignText: ContentAlign.left,
         pointingDirection: PointingDirection.right,
       ),
@@ -382,7 +382,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   Widget _proxyDecorator(Widget child, int index, Animation<double> animation) {
     return AnimatedBuilder(
       animation: animation,
-      builder: (BuildContext context, Widget? child) {
+      builder: (context, child) {
         final double animValue = Curves.easeInOut.transform(animation.value);
         final double elevation = lerpDouble(0, 6, animValue)!;
         return Material(elevation: elevation, color: Colors.transparent, shadowColor: Colors.transparent, child: child);
@@ -458,19 +458,16 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   Widget _rhythmGroup(int index, bool isSecond) {
-    return Container(
+    return DecoratedBox(
       key: index == 0 && !isSecond ? _keyGroups : null,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: _listTileMaskColor),
       child: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(4),
         child:
         // Reordering handle with icon
         ReorderableDelayedDragStartListener(
           index: index,
-          enabled:
-              ((isSecond ? _metronomeBlock.rhythmGroups2.length : _metronomeBlock.rhythmGroups.length) > 1)
-                  ? true
-                  : false,
+          enabled: (isSecond ? _metronomeBlock.rhythmGroups2.length : _metronomeBlock.rhythmGroups.length) > 1,
           child: GestureDetector(
             onTap: () {
               _editRhythmSegment(index, isSecond);
@@ -500,7 +497,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
                   itemCount: isSecondMetronome ? _rhythmSegmentList2.length : _rhythmSegmentList.length,
-                  itemBuilder: (BuildContext context, int index) {
+                  itemBuilder: (context, index) {
                     return Dismissible(
                       key: Key(
                         isSecondMetronome
@@ -531,7 +528,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                     });
                   },
                   // Reorder rhythm segments
-                  onReorder: (int oldIndex, int newIndex) {
+                  onReorder: (oldIndex, newIndex) {
                     _reorderRythmSegments(oldIndex, newIndex, isSecondMetronome);
                   },
                 ),
@@ -566,21 +563,21 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             height: TIOMusicParams.rhythmPlusButtonSize * 2.5,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  isSecondMetronome ? "Metronome 2" : "Metronome 1",
+                  isSecondMetronome ? 'Metronome 2' : 'Metronome 1',
                   style: const TextStyle(color: ColorTheme.primary),
                 ),
                 // add second metronome button
-                isSecondMetronome || _metronomeBlock.rhythmGroups2.isNotEmpty
-                    ? const SizedBox()
-                    : IconButton(
-                      key: _keyAddSecondMetro,
-                      iconSize: TIOMusicParams.rhythmPlusButtonSize,
-                      onPressed: () => _addRhythmSegment(true),
-                      icon: const Icon(Icons.add, color: ColorTheme.primary),
-                    ),
+                if (isSecondMetronome || _metronomeBlock.rhythmGroups2.isNotEmpty)
+                  const SizedBox()
+                else
+                  IconButton(
+                    key: _keyAddSecondMetro,
+                    iconSize: TIOMusicParams.rhythmPlusButtonSize,
+                    onPressed: () => _addRhythmSegment(true),
+                    icon: const Icon(Icons.add, color: ColorTheme.primary),
+                  ),
               ],
             ),
           ),
@@ -619,7 +616,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             child: Column(
               children: [
                 _rhythmRow(),
-                _metronomeBlock.rhythmGroups2.isNotEmpty ? _rhythmRow(isSecondMetronome: true) : const SizedBox(),
+                if (_metronomeBlock.rhythmGroups2.isNotEmpty) _rhythmRow(isSecondMetronome: true) else const SizedBox(),
 
                 const SizedBox(height: TIOMusicParams.edgeInset),
 
@@ -676,7 +673,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       settingTiles: [
         // Volume
         SettingsTile(
-          title: "Volume",
+          title: 'Volume',
           subtitle: _metronomeBlock.volume.toString(),
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
@@ -695,8 +692,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         ),
         // BPM
         SettingsTile(
-          title: "BPM",
-          subtitle: "${_metronomeBlock.bpm}",
+          title: 'BPM',
+          subtitle: '${_metronomeBlock.bpm}',
           leadingIcon: Icons.speed,
           settingPage: const SetBPM(),
           block: _metronomeBlock,
@@ -704,29 +701,30 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         ),
         // Sounds
         SettingsTile(
-          title: _metronomeBlock.rhythmGroups2.isEmpty ? "Sound" : "Sound 1",
+          title: _metronomeBlock.rhythmGroups2.isEmpty ? 'Sound' : 'Sound 1',
           subtitle:
-              "Main: ${_metronomeBlock.accSound}, ${_metronomeBlock.unaccSound}\nPoly: ${_metronomeBlock.polyAccSound}, ${_metronomeBlock.polyUnaccSound}",
+              'Main: ${_metronomeBlock.accSound}, ${_metronomeBlock.unaccSound}\nPoly: ${_metronomeBlock.polyAccSound}, ${_metronomeBlock.polyUnaccSound}',
           leadingIcon: Icons.library_music_outlined,
-          settingPage: SetMetronomeSound(running: (_sound && _isStarted)),
+          settingPage: SetMetronomeSound(running: _sound && _isStarted),
           block: _metronomeBlock,
           callOnReturn: (value) => setState(() {}),
         ),
-        _metronomeBlock.rhythmGroups2.isEmpty
-            ? const SizedBox()
-            : SettingsTile(
-              title: "Sound 2",
-              subtitle:
-                  "Main: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\nPoly: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}",
-              leadingIcon: Icons.library_music_outlined,
-              settingPage: SetMetronomeSound(running: (_sound && _isStarted), forSecondMetronome: true),
-              block: _metronomeBlock,
-              callOnReturn: (value) => setState(() {}),
-            ),
+        if (_metronomeBlock.rhythmGroups2.isEmpty)
+          const SizedBox()
+        else
+          SettingsTile(
+            title: 'Sound 2',
+            subtitle:
+                'Main: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\nPoly: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}',
+            leadingIcon: Icons.library_music_outlined,
+            settingPage: SetMetronomeSound(running: _sound && _isStarted, forSecondMetronome: true),
+            block: _metronomeBlock,
+            callOnReturn: (value) => setState(() {}),
+          ),
         // Random mute
         SettingsTile(
-          title: "Random Mute",
-          subtitle: "${_metronomeBlock.randomMute}%",
+          title: 'Random Mute',
+          subtitle: '${_metronomeBlock.randomMute}%',
           leadingIcon: Icons.question_mark,
           settingPage: const SetRandomMute(),
           block: _metronomeBlock,
@@ -748,7 +746,7 @@ class FilledScreen extends CustomPainter {
         Paint()
           ..color = color
           ..style = PaintingStyle.fill;
-    canvas.drawRect(const Offset(0, 0) & size, paint);
+    canvas.drawRect(Offset.zero & size, paint);
   }
 
   @override

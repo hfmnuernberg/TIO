@@ -52,7 +52,7 @@ class ImageBlock extends ProjectBlock {
 
   late String _id;
   @override
-  @JsonKey(defaultValue: "")
+  @JsonKey(defaultValue: '')
   String get id => _id;
   @override
   set id(String newID) {
@@ -81,7 +81,7 @@ class ImageBlock extends ProjectBlock {
     var absolutePath = await FileIO.getAbsoluteFilePath(newRelativePath);
 
     if (!await File(absolutePath).exists()) {
-      debugPrint("Image could not be set in image block, because no file exists at path: $newRelativePath");
+      debugPrint('Image could not be set in image block, because no file exists at path: $newRelativePath');
       return;
     }
 
@@ -161,7 +161,7 @@ class ImageBlock extends ProjectBlock {
 
       notifyListeners();
     } on PlatformException catch (e) {
-      debugPrint("Failed to pick image: $e");
+      debugPrint('Failed to pick image: $e');
     }
   }
 }

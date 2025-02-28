@@ -28,10 +28,10 @@ class _TunerIslandViewState extends State<TunerIslandView> {
   final _midiNameText = TextEditingController();
 
   late double _pitchFactor = 0.5;
-  late String _midiName = "A";
+  late String _midiName = 'A';
   late PitchIslandViewVisualizer _pitchIslandViewVisualizer;
 
-  final _freqHistory = List<double>.filled(10, 0.0);
+  final _freqHistory = List<double>.filled(10, 0);
   var _freqHistoryIndex = 0;
 
   bool _isRunning = false;
@@ -45,17 +45,17 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) stopTuner();
     });
-    return await TunerFunctions.start();
+    return TunerFunctions.start();
   }
 
   Future<bool> stopTuner() async {
     await audioInterruptionListener?.cancel();
     _isRunning = false;
-    _midiNameText.text = "";
+    _midiNameText.text = '';
     _pitchFactor = 0.5;
-    _freqHistory.fillRange(0, _freqHistory.length, 0.0);
+    _freqHistory.fillRange(0, _freqHistory.length, 0);
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
-    return await TunerFunctions.stop();
+    return TunerFunctions.stop();
   }
 
   @override
@@ -64,7 +64,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
 
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
 
-    _timerPollFreq = Timer.periodic(const Duration(milliseconds: TunerParams.freqPollMillis), (Timer t) async {
+    _timerPollFreq = Timer.periodic(const Duration(milliseconds: TunerParams.freqPollMillis), (t) async {
       if (!mounted) {
         t.cancel();
         return;
@@ -96,7 +96,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     return ParentInnerIsland(
       onMainIconPressed: _startStop,
       mainIcon: _isRunning ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.tunerBlock.icon,
-      parameterText: "${formatDoubleToString(widget.tunerBlock.chamberNoteHz)} Hz",
+      parameterText: '${formatDoubleToString(widget.tunerBlock.chamberNoteHz)} Hz',
       centerView: _pitchIslandViewVisualizer,
       textSpaceWidth: 60,
     );
@@ -126,7 +126,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     setState(() {
       _midiNameText.text = midiToNameOneChar(midi.round());
       _midiName = _midiNameText.text;
-      _pitchFactor = clampDouble((midi - midi.round()) + 0.5, 0.0, 1.0);
+      _pitchFactor = clampDouble((midi - midi.round()) + 0.5, 0, 1);
       _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, true);
     });
   }
@@ -152,7 +152,7 @@ class PitchIslandViewVisualizer extends CustomPainter {
   late String _midiName;
   late bool _show = false;
 
-  final double radiusSideCircles = 10.0;
+  final double radiusSideCircles = 10;
 
   bool dirty = true;
 
@@ -186,7 +186,7 @@ class PitchIslandViewVisualizer extends CustomPainter {
     var factorPosition = Offset(xPositionFactor, size.height / 2);
 
     // the line
-    canvas.drawLine(Offset(0.0, size.height / 2), Offset(size.width, size.height / 2), paintLine);
+    canvas.drawLine(Offset(0, size.height / 2), Offset(size.width, size.height / 2), paintLine);
 
     // circles on the sides
     canvas.drawCircle(Offset(radiusSideCircles, size.height / 2), radiusSideCircles, paintLine);

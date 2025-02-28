@@ -26,7 +26,6 @@ Future<void> configureAudioSession(AudioSessionType type) async {
               AVAudioSessionCategoryOptions.allowAirPlay,
         ),
       );
-      break;
     case AudioSessionType.record:
       await session.configure(
         AudioSessionConfiguration(
@@ -37,6 +36,5 @@ Future<void> configureAudioSession(AudioSessionType type) async {
               AVAudioSessionCategoryOptions.allowAirPlay,
         ),
       );
-      break;
   }
 }
