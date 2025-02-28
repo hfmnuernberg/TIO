@@ -6,6 +6,8 @@ import 'package:tiomusic/util/constants.dart';
 
 part 'rhythm_group.g.dart';
 
+// ignore_for_file: must_be_immutable // FIXME: fix these block issues
+
 @JsonSerializable()
 class RhythmGroup extends Equatable {
   @override

@@ -1,5 +1,7 @@
 import 'package:tiomusic/models/project_block.dart';
 
+// ignore_for_file: must_be_immutable // FIXME: fix these block issues
+
 // This empty block is needed to avoid a weird bug when opening the same block type as the previous one in an island
 
 class EmptyBlock extends ProjectBlock {

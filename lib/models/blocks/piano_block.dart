@@ -8,6 +8,8 @@ import 'package:tiomusic/util/util_midi.dart';
 
 part 'piano_block.g.dart';
 
+// ignore_for_file: must_be_immutable // FIXME: fix these block issues
+
 @JsonSerializable()
 class PianoBlock extends ProjectBlock {
   // add here all the fields that should be compared when checking if two class instances have the same values

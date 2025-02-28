@@ -18,7 +18,7 @@ class Walkthrough {
   void show(BuildContext context) {
     // showing walkthrough delayed to avoid misplaced tooltips when new page is animated in from the side
     Future.delayed(const Duration(milliseconds: 400), () {
-      _tutorialCoachMark?.show(context: context);
+      if (context.mounted) _tutorialCoachMark?.show(context: context);
     });
   }
 

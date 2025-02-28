@@ -118,12 +118,9 @@ class _SplashAppState extends State<SplashApp> {
 
       await NoteHandler.createNoteBeatLengthMap();
 
-      final ProjectLibrary? projectLibrary = await _initializeProjectLibrary();
+      final ProjectLibrary projectLibrary = await _initializeProjectLibrary();
 
-      if (projectLibrary != null) {
-        FileReferences.init(projectLibrary).then((_) => _returnLoadedData(projectLibrary, null));
-      }
-      // if projectLibrary is null, the hasError flag was set to true and we build the "ask user again" page
+      FileReferences.init(projectLibrary).then((_) => _returnLoadedData(projectLibrary, null));
     });
   }
 

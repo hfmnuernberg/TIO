@@ -62,7 +62,7 @@ class _ProjectPageState extends State<ProjectPage> {
         onPressed: () async {
           bool? deleteBlock = await _deleteBlock(deleteAll: true);
           if (deleteBlock != null && deleteBlock) {
-            if (context.mounted) {
+            if (mounted) {
               _project.clearBlocks(context.read<ProjectLibrary>());
               FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
               setState(() {});
