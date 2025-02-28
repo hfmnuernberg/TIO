@@ -44,22 +44,24 @@ class ExportProjectDialog extends StatelessWidget {
     return _writeProjectToFile(project, tmpProjectFile);
   }
 
-  Future<File> _copyMediaToFile(dynamic block) async {
+  Future<File> _copyMediaToFile(String relativePath) async {
     final directory = await getApplicationDocumentsDirectory();
     final tmpDirectory = await getTemporaryDirectory();
 
-    final sourceFile = File('${directory.path}/${block.relativePath}');
-    final destPath = '${tmpDirectory.path}/${_getMediaFileName(block.relativePath)}';
+    final sourceFile = File('${directory.path}/${relativePath}');
+    final destPath = '${tmpDirectory.path}/${_getMediaFileName(relativePath)}';
 
     return await sourceFile.copy(destPath);
   }
 
   Future<List<File>> _createTmpImageFiles(Project project) async {
-    return await Future.wait(
-        project.blocks
-            .where((block) => block is MediaPlayerBlock || block is ImageBlock)
-            .map((block) => _copyMediaToFile(block))
+    final imageFiles = await Future.wait(
+      project.blocks.whereType<ImageBlock>().map((block) => _copyMediaToFile(block.relativePath)),
     );
+    final mediaPlayerFiles = await Future.wait(
+      project.blocks.whereType<MediaPlayerBlock>().map((block) => _copyMediaToFile(block.relativePath)),
+    );
+    return [...imageFiles, ...mediaPlayerFiles];
   }
 
   Future<File> _writeFilesToArchive(List<File> files) async {
