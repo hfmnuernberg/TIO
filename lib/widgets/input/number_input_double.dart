@@ -209,13 +209,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
                     keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers, decimal: true),
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.allow(
-                        RegExp(
-                          r'^-?(\d{0,' +
-                              _maxDigitsLeft.toString() +
-                              r'})[.,]?(\d{0,' +
-                              _maxDigitsRight.toString() +
-                              r'})',
-                        ),
+                        RegExp('^-?(\\d{0,$_maxDigitsLeft})[.,]?(\\d{0,$_maxDigitsRight})'),
                       ),
                       ConvertSemicolonToDot(),
                       DeleteLeadingZeros(),

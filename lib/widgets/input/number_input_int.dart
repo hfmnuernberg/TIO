@@ -182,8 +182,8 @@ class _NumberInputIntState extends State<NumberInputInt> {
                     keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers),
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.allow(RegExp(r'^-?(\d*)')),
-                      FilteringTextInputFormatter.deny(RegExp(r'^0+(?=.)')),
-                      FilteringTextInputFormatter.deny(RegExp(r'^-0+'), replacementString: '-'),
+                      FilteringTextInputFormatter.deny(RegExp('^0+(?=.)')),
+                      FilteringTextInputFormatter.deny(RegExp('^-0+'), replacementString: '-'),
                     ],
                     maxLength:
                         _valueController.value.text.contains('-')

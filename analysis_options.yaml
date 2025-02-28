@@ -91,7 +91,7 @@ linter:
     unnecessary_library_directive: true
     unnecessary_null_aware_operator_on_extension_on_nullable: true
     unnecessary_parenthesis: true
-#    unnecessary_raw_strings: true
+    unnecessary_raw_strings: true
     unnecessary_statements: true
     unnecessary_underscores: true
 #    unreachable_from_main: true
