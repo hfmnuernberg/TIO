@@ -86,7 +86,7 @@ linter:
 #    type_annotate_public_apis: true
 #    unawaited_futures: true
 #    unnecessary_await_in_return: true
-#    unnecessary_breaks: true
+    unnecessary_breaks: true
 #    unnecessary_lambdas: true
     unnecessary_library_directive: true
     unnecessary_null_aware_operator_on_extension_on_nullable: true

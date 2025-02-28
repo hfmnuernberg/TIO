@@ -135,22 +135,16 @@ class Project extends ChangeNotifier {
     switch (block.kind) {
       case TunerParams.kind:
         newBlock = TunerBlock.fromJson(jsonMap);
-        break;
       case MetronomeParams.kind:
         newBlock = MetronomeBlock.from(block as MetronomeBlock);
-        break;
       case MediaPlayerParams.kind:
         newBlock = MediaPlayerBlock.fromJson(jsonMap);
-        break;
       case ImageParams.kind:
         newBlock = ImageBlock.fromJson(jsonMap);
-        break;
       case PianoParams.kind:
         newBlock = PianoBlock.fromJson(jsonMap);
-        break;
       case TextParams.kind:
         newBlock = TextBlock.fromJson(jsonMap);
-        break;
       default:
         throw ('Error: Failed to copy tool. Unknown block type ${block.kind}!');
     }

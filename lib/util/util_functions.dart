@@ -560,19 +560,15 @@ void updateFileReferenceForFileOfBlock(
     switch (increaseOrDecrease) {
       case IncreaseOrDecrease.increase:
         FileReferences.increaseFileReference(block.relativePath);
-        break;
       case IncreaseOrDecrease.decrease:
         FileReferences.decreaseFileReference(block.relativePath, projectLibrary);
-        break;
     }
   } else if (block is ImageBlock && block.relativePath != '') {
     switch (increaseOrDecrease) {
       case IncreaseOrDecrease.increase:
         FileReferences.increaseFileReference(block.relativePath);
-        break;
       case IncreaseOrDecrease.decrease:
         FileReferences.decreaseFileReference(block.relativePath, projectLibrary);
-        break;
     }
   }
 }

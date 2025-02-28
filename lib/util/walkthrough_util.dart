@@ -66,10 +66,8 @@ class CustomTargetFocus {
     switch (buttonsPosition) {
       case ButtonsPosition.top:
         positionNextButton = CustomTargetContentPosition(top: edgeSpace);
-        break;
       case ButtonsPosition.bottom:
         positionNextButton = CustomTargetContentPosition(bottom: edgeSpace);
-        break;
       case ButtonsPosition.left:
         positionNextButton =
             context == null
@@ -79,7 +77,6 @@ class CustomTargetFocus {
                   top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons,
                 );
         buttonsColumnCrossAlign = CrossAxisAlignment.start;
-        break;
       case ButtonsPosition.right:
         positionNextButton =
             context == null
@@ -89,7 +86,6 @@ class CustomTargetFocus {
                   top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons,
                 );
         buttonsColumnCrossAlign = CrossAxisAlignment.end;
-        break;
       case ButtonsPosition.bottomright:
         positionNextButton = CustomTargetContentPosition(bottom: edgeSpace);
         buttonsColumnCrossAlign = CrossAxisAlignment.end;

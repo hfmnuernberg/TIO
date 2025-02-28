@@ -67,18 +67,14 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
     switch (soundType) {
       case SoundType.accented:
         filepath = '$filepath${MetronomeParams.metronomeSounds[_selectedAccSound.indexOf(true)].toLowerCase()}_a.wav';
-        break;
       case SoundType.unaccented:
         filepath = '$filepath${MetronomeParams.metronomeSounds[_selectedUnaccSound.indexOf(true)].toLowerCase()}.wav';
-        break;
       case SoundType.polyAccented:
         filepath =
             '$filepath${MetronomeParams.metronomeSounds[_selectedPolyAccSound.indexOf(true)].toLowerCase()}_a.wav';
-        break;
       case SoundType.polyUnaccented:
         filepath =
             '$filepath${MetronomeParams.metronomeSounds[_selectedPolyUnaccSound.indexOf(true)].toLowerCase()}.wav';
-        break;
     }
 
     // not sure if the volume parameter has effect here

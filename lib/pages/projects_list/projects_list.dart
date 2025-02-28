@@ -176,19 +176,15 @@ class _ProjectsListState extends State<ProjectsList> {
       case BlockType.metronome:
         block = MetronomeBlock.withDefaults();
         toolPage = const Metronome(isQuickTool: true);
-        break;
       case BlockType.tuner:
         block = TunerBlock.withDefaults();
         toolPage = const Tuner(isQuickTool: true);
-        break;
       case BlockType.mediaPlayer:
         block = MediaPlayerBlock.withDefaults();
         toolPage = const MediaPlayer(isQuickTool: true);
-        break;
       case BlockType.piano:
         block = PianoBlock.withDefaults();
         toolPage = const Piano(isQuickTool: true);
-        break;
       default:
         throw Exception('Wrong BlockType');
     }

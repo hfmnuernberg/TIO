@@ -71,31 +71,23 @@ abstract class MetronomeUtils {
       switch (soundType) {
         case SoundType.accented:
           beatType = BeatSound.Accented2;
-          break;
         case SoundType.unaccented:
           beatType = BeatSound.Unaccented2;
-          break;
         case SoundType.polyAccented:
           beatType = BeatSound.PolyAccented2;
-          break;
         case SoundType.polyUnaccented:
           beatType = BeatSound.PolyUnaccented2;
-          break;
       }
     } else {
       switch (soundType) {
         case SoundType.accented:
           beatType = BeatSound.Accented;
-          break;
         case SoundType.unaccented:
           beatType = BeatSound.Unaccented;
-          break;
         case SoundType.polyAccented:
           beatType = BeatSound.PolyAccented;
-          break;
         case SoundType.polyUnaccented:
           beatType = BeatSound.PolyUnaccented;
-          break;
       }
     }
 
