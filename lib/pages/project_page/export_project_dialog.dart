@@ -1,15 +1,22 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
+final String MEDIA_FOLDER = "media";
+
 String _sanitizeString(String value) =>
     value.trim().replaceAll(RegExp(r'\W+'), '-').replaceAll(RegExp(r'^-+|-+$'), '').toLowerCase();
+
+String _getMediaFileName(String value) => value.substring('$MEDIA_FOLDER/'.length);
 
 Future<void> showExportProjectDialog({required BuildContext context, required Project project}) => showDialog(
   context: context,
@@ -24,24 +31,72 @@ class ExportProjectDialog extends StatelessWidget {
 
   const ExportProjectDialog({super.key, required this.project, required this.onDone});
 
-  Future<File> _getFile(Project project) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final filePath = '${directory.path}/tio-music-${_sanitizeString(project.title)}.json';
-    return File(filePath);
+  Future<File> _writeProjectToFile(Project project, File tmpProjectFile) async {
+    String jsonString = jsonEncode(project.toJson());
+    return await tmpProjectFile.writeAsString(jsonString);
   }
 
-  Future<void> _writeProjectToFile(Project project, File file) async {
-    String jsonString = jsonEncode(project.toJson());
-    await file.writeAsString(jsonString);
+  Future<File> _createTmpProjectFile(Project project) async {
+    final tmpDirectory = await getTemporaryDirectory();
+    final tmpProjectFile = File('${tmpDirectory.path}/tio-music-project.json');
+
+    return _writeProjectToFile(project, tmpProjectFile);
+  }
+
+  Future<File> _copyImageToFile(ImageBlock block) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final tmpDirectory = await getTemporaryDirectory();
+
+    final sourceFile = File('${directory.path}/${block.relativePath}');
+    final destPath = '${tmpDirectory.path}/${_getMediaFileName(block.relativePath)}';
+
+    return await sourceFile.copy(destPath);
+  }
+
+  Future<List<File>> _createTmpImageFiles(Project project) async {
+    return await Future.wait(project.blocks.whereType<ImageBlock>().map((block) => _copyImageToFile(block)));
+  }
+
+  Future<File> _writeFilesToArchive(List<File> files) async {
+    final tmpDirectory = await getTemporaryDirectory();
+    final archivePath = '${tmpDirectory.path}/tio-music-${_sanitizeString(project.title)}.zip';
+
+    final archive = Archive();
+
+    for (final file in files) {
+      final fileBytes = await file.readAsBytes();
+      archive.addFile(ArchiveFile(basename(file.path), fileBytes.length, fileBytes));
+    }
+
+    final archiveData = ZipEncoder().encode(archive);
+    final archiveFile = File(archivePath);
+    await archiveFile.writeAsBytes(archiveData);
+
+    return archiveFile;
+  }
+
+  Future<void> _deleteTmpFiles(List<File> files) async {
+    await Future.wait(files.map<Future<FileSystemEntity>>((file) => file.delete()).toList());
+  }
+
+  Future<File> _archiveProject(Project project) async {
+    final projectFile = await _createTmpProjectFile(project);
+    final imageFiles = await _createTmpImageFiles(project);
+    final files = [projectFile, ...imageFiles];
+
+    final archive = await _writeFilesToArchive(files);
+
+    _deleteTmpFiles(files);
+
+    return archive;
   }
 
   Future<void> _exportProject(BuildContext context) async {
     try {
-      final tmpFile = await _getFile(project);
+      final archiveFile = await _archiveProject(project);
 
-      await _writeProjectToFile(project, tmpFile);
-      final result = await Share.shareXFiles([XFile(tmpFile.path)]);
-      await tmpFile.delete();
+      final result = await Share.shareXFiles([XFile(archiveFile.path)]);
+      await archiveFile.delete();
 
       if (result.status == ShareResultStatus.dismissed) {
         showSnackbar(context: context, message: 'Project export cancelled')();

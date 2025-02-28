@@ -94,33 +94,38 @@ class ImageBlock extends ProjectBlock {
     return [FileIO.getFileName(_relativePath)];
   }
 
+  static Future<ImageBlock> create(
+    String title,
+    String id,
+    String? islandToolID,
+    String relativePath,
+    DateTime timeLastModified,
+  ) async {
+    final imageBlock = ImageBlock(title, id, islandToolID, relativePath, timeLastModified);
+    await imageBlock.setImage(relativePath);
+    return imageBlock;
+  }
+
+  factory ImageBlock.withDefaults() {
+    return ImageBlock(
+      ImageParams.displayName,
+      ProjectBlock.createNewId(),
+      null,
+      ImageParams.defaultPath,
+      DateTime.now(),
+    );
+  }
+
+  factory ImageBlock.withTitle(String title) {
+    return ImageBlock(title, ProjectBlock.createNewId(), null, ImageParams.defaultPath, DateTime.now());
+  }
+
   ImageBlock(String title, String id, String? islandToolID, String relativePath, DateTime timeLastModified) {
     _timeLastModified = timeLastModified;
     _title = title;
     _relativePath = relativePath;
-    setImage(_relativePath);
     _islandToolID = islandToolID;
-    _id = setIdOrNewId(id);
-    notifyListeners();
-  }
-
-  ImageBlock.withDefaults() {
-    _timeLastModified = DateTime.now();
-    _title = ImageParams.displayName;
-    _islandToolID = null;
-    _id = createNewId();
-    _relativePath = ImageParams.defaultPath;
-    setImage(_relativePath);
-    notifyListeners();
-  }
-
-  ImageBlock.withTitle(String newTitle) {
-    _timeLastModified = DateTime.now();
-    _title = newTitle;
-    _islandToolID = null;
-    _id = createNewId();
-    _relativePath = ImageParams.defaultPath;
-    setImage(_relativePath);
+    _id = ProjectBlock.getIdOrCreateNewId(id);
     notifyListeners();
   }
 
@@ -144,7 +149,7 @@ class ImageBlock extends ProjectBlock {
         context,
         File(pickedImage.path),
         FileIO.getFileNameWithoutExtension(pickedImage.path),
-        _relativePath == "" ? null : _relativePath,
+        _relativePath.isEmpty ? null : _relativePath,
         projectLibrary,
       );
 

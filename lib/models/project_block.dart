@@ -28,7 +28,7 @@ abstract class ProjectBlock extends ChangeNotifier with EquatableMixin {
   set timeLastModified(DateTime newTime);
 
   // Uuid object
-  final Uuid _uuid = const Uuid();
+  static final Uuid _uuid = const Uuid();
 
   String? get islandToolID;
   set islandToolID(String? newToolID);
@@ -42,17 +42,11 @@ abstract class ProjectBlock extends ChangeNotifier with EquatableMixin {
     return List.empty();
   }
 
-  // return the ID as it is or create a new one
-  String setIdOrNewId(String idToCheck) {
-    if (idToCheck == "") {
-      var newID = _uuid.v4();
-      return newID;
-    } else {
-      return idToCheck;
-    }
+  static String getIdOrCreateNewId(String id) {
+    return id == "" ? _uuid.v4() : id;
   }
 
-  String createNewId() {
+  static String createNewId() {
     return _uuid.v4();
   }
 

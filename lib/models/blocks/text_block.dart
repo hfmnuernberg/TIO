@@ -76,7 +76,7 @@ class TextBlock extends ProjectBlock {
     _timeLastModified = timeLastModified;
     _content = content;
     _title = title;
-    _id = setIdOrNewId(id);
+    _id = ProjectBlock.getIdOrCreateNewId(id);
     _islandToolID = islandToolID;
   }
 
@@ -85,7 +85,7 @@ class TextBlock extends ProjectBlock {
     _content = TextParams.defaultContent;
     _title = TextParams.displayName;
     _islandToolID = null;
-    _id = createNewId();
+    _id = ProjectBlock.createNewId();
   }
 
   TextBlock.withTitle(String newTitle) {
@@ -93,7 +93,7 @@ class TextBlock extends ProjectBlock {
     _content = TextParams.defaultContent;
     _title = newTitle;
     _islandToolID = null;
-    _id = createNewId();
+    _id = ProjectBlock.createNewId();
   }
 
   @override

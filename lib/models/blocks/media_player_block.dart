@@ -176,7 +176,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _timeLastModified = timeLastModified;
     _title = title;
     _islandToolID = islandToolID;
-    _id = setIdOrNewId(id);
+    _id = ProjectBlock.getIdOrCreateNewId(id);
     _volume = volume;
     _pitchSemitones = pitchSemitones;
     _speedFactor = speedFactor;
@@ -191,7 +191,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _timeLastModified = DateTime.now();
     _title = MediaPlayerParams.displayName;
     _islandToolID = null;
-    _id = createNewId();
+    _id = ProjectBlock.createNewId();
     bpm = 80;
     _volume = TIOMusicParams.defaultVolume;
     _pitchSemitones = MediaPlayerParams.defaultPitchSemitones;
@@ -207,7 +207,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _timeLastModified = DateTime.now();
     _title = newTitle;
     _islandToolID = null;
-    _id = createNewId();
+    _id = ProjectBlock.createNewId();
     bpm = 80;
     _volume = TIOMusicParams.defaultVolume;
     _pitchSemitones = MediaPlayerParams.defaultPitchSemitones;
