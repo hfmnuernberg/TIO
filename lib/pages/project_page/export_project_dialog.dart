@@ -6,6 +6,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
+import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -43,7 +44,7 @@ class ExportProjectDialog extends StatelessWidget {
     return _writeProjectToFile(project, tmpProjectFile);
   }
 
-  Future<File> _copyImageToFile(ImageBlock block) async {
+  Future<File> _copyMediaToFile(dynamic block) async {
     final directory = await getApplicationDocumentsDirectory();
     final tmpDirectory = await getTemporaryDirectory();
 
@@ -54,7 +55,11 @@ class ExportProjectDialog extends StatelessWidget {
   }
 
   Future<List<File>> _createTmpImageFiles(Project project) async {
-    return await Future.wait(project.blocks.whereType<ImageBlock>().map((block) => _copyImageToFile(block)));
+    return await Future.wait(
+        project.blocks
+            .where((block) => block is MediaPlayerBlock || block is ImageBlock)
+            .map((block) => _copyMediaToFile(block))
+    );
   }
 
   Future<File> _writeFilesToArchive(List<File> files) async {
