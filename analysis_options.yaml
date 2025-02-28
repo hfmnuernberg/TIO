@@ -55,7 +55,7 @@ linter:
     no_literal_bool_comparisons: true
     no_runtimetype_tostring: true
     no_self_assignments: true
-#    noop_primitive_operations: true
+    noop_primitive_operations: true
 #    omit_local_variable_types: true
     one_member_abstracts: true
 #    only_throw_errors: true

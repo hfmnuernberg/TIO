@@ -197,7 +197,7 @@ class MetronomeBlock extends ProjectBlock {
     _title = MetronomeParams.displayName;
     _islandToolID = null;
     _volume = TIOMusicParams.defaultVolume;
-    bpm = MetronomeParams.defaultBPM.toInt();
+    bpm = MetronomeParams.defaultBPM;
     randomMute = MetronomeParams.defaultRandomMute;
     _rhythmGroups = [
       RhythmGroup(
@@ -224,7 +224,7 @@ class MetronomeBlock extends ProjectBlock {
     _title = newTitle;
     _islandToolID = null;
     _volume = TIOMusicParams.defaultVolume;
-    bpm = MetronomeParams.defaultBPM.toInt();
+    bpm = MetronomeParams.defaultBPM;
     randomMute = MetronomeParams.defaultRandomMute;
     _rhythmGroups = [
       RhythmGroup(

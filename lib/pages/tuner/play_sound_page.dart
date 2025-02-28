@@ -198,7 +198,7 @@ class _SoundButtonState extends State<SoundButton> {
               ),
               child: Center(
                 child: Text(
-                  midiToNameOneChar(widget.midiNumber.toInt()),
+                  midiToNameOneChar(widget.midiNumber),
                   style: TextStyle(
                     color:
                         widget.buttonListener.buttonIdx == widget.idx && widget.buttonListener.buttonOn

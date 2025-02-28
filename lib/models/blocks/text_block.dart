@@ -68,7 +68,7 @@ class TextBlock extends ProjectBlock {
   @override
   List<String> getSettingsFormatted() {
     if (_content.characters.length < 50) {
-      return [_content.toString().trim()];
+      return [_content.trim()];
     } else {
       return ['${_content.characters.take(50).toString().trim()}...'];
     }
