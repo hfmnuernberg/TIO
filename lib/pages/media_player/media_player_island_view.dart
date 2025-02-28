@@ -45,7 +45,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
 
     _waveformVisualizer = WaveformVisualizer(
-      0.0,
+      0,
       widget.mediaPlayerBlock.rangeStart,
       widget.mediaPlayerBlock.rangeEnd,
       _rmsValues,
@@ -83,7 +83,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
           if (!mounted) return;
           setState(() {
             _waveformVisualizer = WaveformVisualizer(
-              0.0,
+              0,
               widget.mediaPlayerBlock.rangeStart,
               widget.mediaPlayerBlock.rangeEnd,
               _rmsValues,

@@ -13,7 +13,7 @@ class PitchOffset {
 
   PitchOffset.withValue(offsetMidi) {
     isValue = true;
-    offsetFactor = clampDouble(offsetMidi + 0.5, 0.0, 1.0);
+    offsetFactor = clampDouble(offsetMidi + 0.5, 0, 1);
   }
 }
 

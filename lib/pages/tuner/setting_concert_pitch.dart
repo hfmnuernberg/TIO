@@ -26,10 +26,10 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
     _tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
 
     _concertPitchInput = NumberInputDoubleWithSlider(
-      max: 600.0,
-      min: 200.0,
+      max: 600,
+      min: 200,
       defaultValue: _tunerBlock.chamberNoteHz,
-      step: 1.0,
+      step: 1,
       stepIntervalInMs: 200,
       controller: TextEditingController(),
       label: 'Concert Pitch in Hz',

@@ -227,7 +227,7 @@ class _ParentToolState extends State<ParentTool> {
           },
           style: const MenuStyle(
             backgroundColor: WidgetStatePropertyAll(ColorTheme.surface),
-            elevation: WidgetStatePropertyAll(0.0),
+            elevation: WidgetStatePropertyAll(0),
           ),
           menuChildren: widget.menuItems!,
         ),

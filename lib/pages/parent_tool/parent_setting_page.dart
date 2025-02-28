@@ -76,17 +76,17 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (widget.displayResetAtTop) ...[
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 20),
           TIOTextButton(text: 'Reset', onTap: widget.reset),
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 20),
         ],
         widget.numberInput ?? const SizedBox(),
         widget.customWidget ?? const SizedBox(),
         if (!widget.displayResetAtTop) ...[
-          const SizedBox(height: 20.0),
+          const SizedBox(height: 20),
           TIOTextButton(text: 'Reset', onTap: widget.reset),
         ],
-        const SizedBox(height: 160.0),
+        const SizedBox(height: 160),
       ],
     );
   }
@@ -128,7 +128,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
             Container(
               color: ColorTheme.primary80,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
+                padding: const EdgeInsets.only(bottom: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -78,7 +78,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
     }
 
     // not sure if the volume parameter has effect here
-    await player.play(AssetSource(filepath.substring(7)), mode: PlayerMode.lowLatency, volume: 4.0);
+    await player.play(AssetSource(filepath.substring(7)), mode: PlayerMode.lowLatency, volume: 4);
   }
 
   @override
@@ -140,7 +140,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
               }
             });
           },
-          constraints: const BoxConstraints(minHeight: 40.0, minWidth: 100.0),
+          constraints: const BoxConstraints(minHeight: 40, minWidth: 100),
           isSelected: selectedSound,
           children: _sounds,
         ),

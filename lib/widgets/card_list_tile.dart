@@ -40,9 +40,9 @@ class CardListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: highlightColor ?? ColorTheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 8),
-      elevation: 0.0,
+      elevation: 0,
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: ListTile(
         enabled: !disableTap,

@@ -96,11 +96,11 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     return Card(
       color: ColorTheme.surface,
       margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
-      elevation: 0.0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -116,8 +116,8 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     return Card(
       color: ColorTheme.surface,
       margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
-      elevation: 0.0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: IconButton(onPressed: _chooseToolForIsland, icon: const Icon(Icons.add_circle, color: ColorTheme.primary)),
     );
@@ -125,7 +125,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
   Widget _quickToolHintView() {
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+      padding: const EdgeInsets.only(left: 8, right: 8),
       child: Align(
         alignment: widget.toolBlock.kind == 'piano' ? Alignment.centerRight : Alignment.center,
         child: const Text('Use bookmark to save a tool', style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 16)),

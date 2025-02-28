@@ -61,7 +61,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   int _numOfBins = 0;
 
   late WaveformVisualizer _waveformVisualizer;
-  double _waveFormWidth = 0.0;
+  double _waveFormWidth = 0;
 
   Timer? _recordingTimer;
   Duration _recordingDuration = const Duration();
@@ -85,7 +85,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       child: const Text('Share audio file', style: TextStyle(color: ColorTheme.primary)),
     );
 
-    _waveformVisualizer = WaveformVisualizer(0.0, 0.0, 1.0, _rmsValues, 0);
+    _waveformVisualizer = WaveformVisualizer(0, 0, 1, _rmsValues, 0);
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
     _mediaPlayerBlock.timeLastModified = getCurrentDateTime();
@@ -120,7 +120,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           _fileLoaded = true;
           _rmsValues = newRms;
           _waveformVisualizer = WaveformVisualizer(
-            0.0,
+            0,
             _mediaPlayerBlock.rangeStart,
             _mediaPlayerBlock.rangeEnd,
             _rmsValues,
@@ -332,7 +332,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8),
               child: TIOFlatButton(
                 onPressed: () async {
                   await _pickNewAudioFile();
@@ -551,7 +551,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _fileLoaded = false;
       _rmsValues = Float32List(0);
       _waveformVisualizer = WaveformVisualizer(
-        0.0,
+        0,
         _mediaPlayerBlock.rangeStart,
         _mediaPlayerBlock.rangeEnd,
         _rmsValues,
@@ -574,7 +574,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _fileLoaded = true;
         _rmsValues = newRms;
         _waveformVisualizer = WaveformVisualizer(
-          0.0,
+          0,
           _mediaPlayerBlock.rangeStart,
           _mediaPlayerBlock.rangeEnd,
           _rmsValues,
@@ -705,7 +705,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
             _fileLoaded = true;
             _rmsValues = newRms;
             _waveformVisualizer = WaveformVisualizer(
-              0.0,
+              0,
               _mediaPlayerBlock.rangeStart,
               _mediaPlayerBlock.rangeEnd,
               _rmsValues,
@@ -731,7 +731,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _fileLoaded = true;
       _rmsValues = newRms;
       _waveformVisualizer = WaveformVisualizer(
-        0.0,
+        0,
         _mediaPlayerBlock.rangeStart,
         _mediaPlayerBlock.rangeEnd,
         _rmsValues,

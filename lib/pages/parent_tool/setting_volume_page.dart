@@ -39,8 +39,8 @@ class _SetVolumeState extends State<SetVolume> {
     VolumeController.instance.addListener(handleVolumeChange);
 
     _volumeInput = NumberInputDoubleWithSlider(
-      max: 1.0,
-      min: 0.0,
+      max: 1,
+      min: 0,
       defaultValue: widget.initialValue,
       step: 0.1,
       stepIntervalInMs: 200,

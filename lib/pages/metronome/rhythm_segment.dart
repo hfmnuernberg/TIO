@@ -51,7 +51,7 @@ class _RhythmSegmentState extends State<RhythmSegment> {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(4),
         child: Column(
           children: [
             SizedBox(

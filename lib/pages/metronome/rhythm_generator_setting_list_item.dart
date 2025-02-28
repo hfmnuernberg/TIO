@@ -29,7 +29,7 @@ class _RhythmGeneratorSettingListItemState extends State<RhythmGeneratorSettingL
         child: InkWell(
           borderRadius: BorderRadius.circular(MetronomeParams.rhythmSegmentSize),
           onTap: widget.onTap,
-          child: Padding(padding: const EdgeInsets.all(10.0), child: NoteHandler.getNoteSvg(widget.noteKey)),
+          child: Padding(padding: const EdgeInsets.all(10), child: NoteHandler.getNoteSvg(widget.noteKey)),
         ),
       ),
     );

@@ -27,8 +27,8 @@ class _SetPitchState extends State<SetPitch> {
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
 
     _pitchInput = NumberInputDoubleWithSlider(
-      max: 24.0,
-      min: -24.0,
+      max: 24,
+      min: -24,
       defaultValue: _mediaPlayerBlock.pitchSemitones,
       step: 0.1,
       stepIntervalInMs: 200,

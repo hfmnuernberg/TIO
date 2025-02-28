@@ -213,7 +213,7 @@ class _ProjectPageState extends State<ProjectPage> {
             },
             style: const MenuStyle(
               backgroundColor: WidgetStatePropertyAll(ColorTheme.surface),
-              elevation: WidgetStatePropertyAll(0.0),
+              elevation: WidgetStatePropertyAll(0),
             ),
             menuChildren: _menuItems,
           ),

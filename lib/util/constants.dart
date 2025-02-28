@@ -21,21 +21,21 @@ class TIOMusicParams {
   static const String noImagePath = '';
   static const String tiomusicIconPath = 'assets/icons/tiomusic.png';
 
-  static const double spaceBetweenPlusButtonAndBottom = 24.0;
-  static const double sizeBigButtons = 40.0;
-  static const double sizeSmallButtons = 24.0;
+  static const double spaceBetweenPlusButtonAndBottom = 24;
+  static const double sizeBigButtons = 40;
+  static const double sizeSmallButtons = 24;
   static const IconData pauseIcon = Icons.pause;
 
-  static const double paddingOnOffButtons = 4.0;
+  static const double paddingOnOffButtons = 4;
 
   static const double defaultVolume = 0.5;
 
-  static const double smallSpaceAboveList = 16.0;
-  static const double bigSpaceAboveList = 32.0;
+  static const double smallSpaceAboveList = 16;
+  static const double bigSpaceAboveList = 32;
 
-  static const double edgeInset = 16.0;
+  static const double edgeInset = 16;
 
-  static const double titleFontSize = 22.0;
+  static const double titleFontSize = 22;
 
   static const double textFieldWidth1Digit = 80;
   static const double textFieldWidth2Digits = 100;
@@ -44,14 +44,14 @@ class TIOMusicParams {
 
   static const int millisecondsPlayPauseDebounce = 250;
 
-  static const double beatButtonSizeBig = 32.0;
-  static const double beatButtonSizeSmall = 28.0;
-  static const double beatButtonSizeMainPage = 16.0;
-  static const double beatButtonSizeIsland = 12.0;
+  static const double beatButtonSizeBig = 32;
+  static const double beatButtonSizeSmall = 28;
+  static const double beatButtonSizeMainPage = 16;
+  static const double beatButtonSizeIsland = 12;
 
-  static const double beatButtonPadding = 2.0;
+  static const double beatButtonPadding = 2;
 
-  static const double rhythmPlusButtonSize = 16.0;
+  static const double rhythmPlusButtonSize = 16;
 
   // media file extensions
 
@@ -79,16 +79,16 @@ class MediaPlayerParams {
   static const String displayName = 'Media Player';
   static const String description = 'record and play';
 
-  static const double defaultPitchSemitones = 0.0;
-  static const double defaultSpeedFactor = 1.0;
-  static const double defaultRangeStart = 0.0;
-  static const double defaultRangeEnd = 1.0;
+  static const double defaultPitchSemitones = 0;
+  static const double defaultSpeedFactor = 1;
+  static const double defaultRangeStart = 0;
+  static const double defaultRangeEnd = 1;
   static const String defaultPath = '';
   static const bool defaultLooping = false;
 
-  static const double binWidth = 8.0;
+  static const double binWidth = 8;
 
-  static const double markerIconSize = 36.0;
+  static const double markerIconSize = 36;
 }
 
 //---------------------------------------------
@@ -258,7 +258,7 @@ class TunerParams {
 
   static const String svgIconPath = 'assets/icons/Tuner.svg';
 
-  static const double defaultConcertPitch = 440.0;
+  static const double defaultConcertPitch = 440;
   static const int freqPollMillis = 35;
 }
 

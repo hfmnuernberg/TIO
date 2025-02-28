@@ -218,7 +218,7 @@ class _SoundButtonState extends State<SoundButton> {
 class ActiveReferenceSoundButton with ChangeNotifier {
   int buttonIdx = 0;
   bool buttonOn = false;
-  double freq = 0.0;
+  double freq = 0;
 
   void turnOff() {
     buttonOn = false;

@@ -462,7 +462,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       key: index == 0 && !isSecond ? _keyGroups : null,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: _listTileMaskColor),
       child: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(4),
         child:
         // Reordering handle with icon
         ReorderableDelayedDragStartListener(

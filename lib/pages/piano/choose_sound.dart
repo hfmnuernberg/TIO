@@ -53,7 +53,7 @@ class _ChooseSoundState extends State<ChooseSound> {
             }
           });
         },
-        constraints: const BoxConstraints(minHeight: 30.0, minWidth: 200.0),
+        constraints: const BoxConstraints(minHeight: 30, minWidth: 200),
         isSelected: _selectedSounds,
         children: _sounds,
       ),

@@ -54,7 +54,7 @@ class _TunerState extends State<Tuner> {
 
   late PitchVisualizer _pitchVisualizer;
 
-  final _freqHistory = List<double>.filled(10, 0.0);
+  final _freqHistory = List<double>.filled(10, 0);
   var _freqHistoryIndex = 0;
 
   bool _processingButtonClick = false;
@@ -77,7 +77,7 @@ class _TunerState extends State<Tuner> {
 
   Future<bool> stopTuner() async {
     await audioInterruptionListener?.cancel();
-    _freqHistory.fillRange(0, _freqHistory.length, 0.0);
+    _freqHistory.fillRange(0, _freqHistory.length, 0);
     _history.fillRange(0, _history.length, PitchOffset.withoutValue());
     _freqHistoryIndex = 0;
     _gettingPitchInput = false;

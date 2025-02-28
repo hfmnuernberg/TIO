@@ -129,7 +129,7 @@ Future<List<String>?> editTwoTitles(BuildContext context, String currentProjectT
         (context) => SimpleDialog(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 0),
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
               child: Column(
                 children: [
                   TextField(
@@ -144,7 +144,7 @@ Future<List<String>?> editTwoTitles(BuildContext context, String currentProjectT
                     controller: projectController,
                     onSubmitted: (_) => focusSecondField.requestFocus(),
                   ),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 16),
                   TextField(
                     focusNode: focusSecondField,
                     decoration: const InputDecoration(
@@ -157,7 +157,7 @@ Future<List<String>?> editTwoTitles(BuildContext context, String currentProjectT
                     controller: toolController,
                     onSubmitted: (_) => _submitTitles(context, projectController, toolController),
                   ),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -477,7 +477,7 @@ Future<dynamic> ourModalBottomSheet(BuildContext context, List<Widget> titelChil
           children: [
             Container(
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0)),
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
                 color: ColorTheme.surface,
               ),
               child: Column(children: [const SizedBox(height: 20), Column(children: titelChildren)]),

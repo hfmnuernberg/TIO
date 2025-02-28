@@ -307,8 +307,8 @@ class _ProjectsListState extends State<ProjectsList> {
       top: 0,
       width: MediaQuery.of(context).size.width,
       child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
-        elevation: 8.0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        elevation: 8,
         margin: const EdgeInsets.all(TIOMusicParams.edgeInset),
         color: ColorTheme.onPrimary,
         surfaceTintColor: ColorTheme.onPrimary,
@@ -404,7 +404,7 @@ class _ProjectsListState extends State<ProjectsList> {
             },
             style: const MenuStyle(
               backgroundColor: WidgetStatePropertyAll(ColorTheme.surface),
-              elevation: WidgetStatePropertyAll(0.0),
+              elevation: WidgetStatePropertyAll(0),
             ),
             menuChildren: _menuItems,
           ),
@@ -511,7 +511,7 @@ class _ProjectsListState extends State<ProjectsList> {
 
   Widget _quickToolButton(dynamic icon, String label, BlockType block) {
     return Padding(
-      padding: const EdgeInsets.all(2.0),
+      padding: const EdgeInsets.all(2),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
@@ -521,11 +521,11 @@ class _ProjectsListState extends State<ProjectsList> {
         child: InkWell(
           onTap: () => _onQuickToolTapped(block),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8),
             child: Row(
               children: [
                 circleToolIcon(icon),
-                const SizedBox(width: 8.0),
+                const SizedBox(width: 8),
                 Text(label, style: const TextStyle(color: ColorTheme.primary)),
               ],
             ),

@@ -222,7 +222,7 @@ class _ImageToolState extends State<ImageTool> {
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
