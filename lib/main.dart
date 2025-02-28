@@ -47,16 +47,14 @@ class TIOMusicApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'TIO Music',
         theme: ourTheme ?? ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
-        home: const TIOMusicHomePage(title: 'TIO Music'),
+        home: const TIOMusicHomePage(),
       ),
     );
   }
 }
 
 class TIOMusicHomePage extends StatefulWidget {
-  const TIOMusicHomePage({super.key, required this.title});
-
-  final String title;
+  const TIOMusicHomePage({super.key});
 
   @override
   State<TIOMusicHomePage> createState() => _TIOMusicHomePageState();

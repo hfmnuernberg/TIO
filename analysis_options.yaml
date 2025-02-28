@@ -94,7 +94,7 @@ linter:
     unnecessary_raw_strings: true
     unnecessary_statements: true
     unnecessary_underscores: true
-#    unreachable_from_main: true
+    unreachable_from_main: true
 #    use_colored_box: true
 #    use_decorated_box: true
     use_enums: true
