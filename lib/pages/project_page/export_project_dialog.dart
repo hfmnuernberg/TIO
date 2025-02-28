@@ -48,7 +48,7 @@ class ExportProjectDialog extends StatelessWidget {
     final directory = await getApplicationDocumentsDirectory();
     final tmpDirectory = await getTemporaryDirectory();
 
-    final sourceFile = File('${directory.path}/${relativePath}');
+    final sourceFile = File('${directory.path}/$relativePath');
     final destPath = '${tmpDirectory.path}/${_getMediaFileName(relativePath)}';
 
     return await sourceFile.copy(destPath);
