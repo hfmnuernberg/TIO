@@ -1,5 +1,5 @@
-import 'input/app_slider_int.dart';
-import 'input/number_input_int.dart';
+import 'package:tiomusic/widgets/input/app_slider_int.dart';
+import 'package:tiomusic/widgets/input/number_input_int.dart';
 import 'package:flutter/material.dart';
 
 class NumberInputIntWithSlider extends StatefulWidget {

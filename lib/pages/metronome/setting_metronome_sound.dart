@@ -13,7 +13,7 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 
-import '../../models/file_io.dart';
+import 'package:tiomusic/models/file_io.dart';
 
 enum SoundType { accented, unaccented, polyAccented, polyUnaccented }
 
