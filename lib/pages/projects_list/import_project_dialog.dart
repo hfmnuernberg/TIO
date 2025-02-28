@@ -28,7 +28,7 @@ class ImportProjectDialog extends StatelessWidget {
   const ImportProjectDialog({super.key, required this.onDone});
 
   Future<File?> _getFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['.zip']);
+    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['zip']);
 
     return result == null || result.files.single.path == null ? null : File(result.files.single.path!);
   }
