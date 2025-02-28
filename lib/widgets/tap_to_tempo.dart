@@ -81,7 +81,7 @@ class _Tap2TempoState extends State<Tap2Tempo> {
   @override
   Widget build(BuildContext context) {
     return TIOTextButton(
-      text: "Tap to tempo",
+      text: 'Tap to tempo',
       onTap: widget.enabled ? _tap2tempo : () {},
       backgroundColor: Color.lerp(ColorTheme.tertiary60, ColorTheme.surface, _t2tColorLerpValue / cooldownInMs),
       icon: const Icon(Icons.touch_app_outlined, size: 40),

@@ -62,22 +62,22 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
   // Play the sound if the corresponding field is tapped
   void _playSound(SoundType soundType) async {
     AudioPlayer player = AudioPlayer();
-    String filepath = "${MetronomeParams.metronomeSoundsPath}/";
+    String filepath = '${MetronomeParams.metronomeSoundsPath}/';
 
     switch (soundType) {
       case SoundType.accented:
-        filepath = "$filepath${MetronomeParams.metronomeSounds[_selectedAccSound.indexOf(true)].toLowerCase()}_a.wav";
+        filepath = '$filepath${MetronomeParams.metronomeSounds[_selectedAccSound.indexOf(true)].toLowerCase()}_a.wav';
         break;
       case SoundType.unaccented:
-        filepath = "$filepath${MetronomeParams.metronomeSounds[_selectedUnaccSound.indexOf(true)].toLowerCase()}.wav";
+        filepath = '$filepath${MetronomeParams.metronomeSounds[_selectedUnaccSound.indexOf(true)].toLowerCase()}.wav';
         break;
       case SoundType.polyAccented:
         filepath =
-            "$filepath${MetronomeParams.metronomeSounds[_selectedPolyAccSound.indexOf(true)].toLowerCase()}_a.wav";
+            '$filepath${MetronomeParams.metronomeSounds[_selectedPolyAccSound.indexOf(true)].toLowerCase()}_a.wav';
         break;
       case SoundType.polyUnaccented:
         filepath =
-            "$filepath${MetronomeParams.metronomeSounds[_selectedPolyUnaccSound.indexOf(true)].toLowerCase()}.wav";
+            '$filepath${MetronomeParams.metronomeSounds[_selectedPolyUnaccSound.indexOf(true)].toLowerCase()}.wav';
         break;
     }
 
@@ -88,7 +88,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: widget.forSecondMetronome ? "Set 2. Metronome Sounds" : "Set Metronome Sounds",
+      title: widget.forSecondMetronome ? 'Set 2. Metronome Sounds' : 'Set Metronome Sounds',
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,
@@ -100,20 +100,20 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Text("Main Beat", style: TextStyle(color: ColorTheme.primary)),
+                const Text('Main Beat', style: TextStyle(color: ColorTheme.primary)),
                 const SizedBox(width: TIOMusicParams.edgeInset),
-                _buildToggleTable("Accented", _selectedAccSound, SoundType.accented),
-                _buildToggleTable("Unaccented", _selectedUnaccSound, SoundType.unaccented),
+                _buildToggleTable('Accented', _selectedAccSound, SoundType.accented),
+                _buildToggleTable('Unaccented', _selectedUnaccSound, SoundType.unaccented),
               ],
             ),
             const SizedBox(height: TIOMusicParams.edgeInset),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Text("Poly Beat", style: TextStyle(color: ColorTheme.primary)),
+                const Text('Poly Beat', style: TextStyle(color: ColorTheme.primary)),
                 const SizedBox(width: TIOMusicParams.edgeInset),
-                _buildToggleTable("Accented", _selectedPolyAccSound, SoundType.polyAccented),
-                _buildToggleTable("Unaccented", _selectedPolyUnaccSound, SoundType.polyUnaccented),
+                _buildToggleTable('Accented', _selectedPolyAccSound, SoundType.polyAccented),
+                _buildToggleTable('Unaccented', _selectedPolyUnaccSound, SoundType.polyUnaccented),
               ],
             ),
           ],

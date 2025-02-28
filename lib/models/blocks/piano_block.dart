@@ -42,7 +42,7 @@ class PianoBlock extends ProjectBlock {
 
   late String _id;
   @override
-  @JsonKey(defaultValue: "")
+  @JsonKey(defaultValue: '')
   String get id => _id;
   @override
   set id(String newID) {
@@ -87,7 +87,7 @@ class PianoBlock extends ProjectBlock {
 
   @override
   List<String> getSettingsFormatted() {
-    return ["Lowest Key: ${midiToNameAndOctave(_keyboardPosition)}", (PianoParams.soundFontNames[_soundFontIndex])];
+    return ['Lowest Key: ${midiToNameAndOctave(_keyboardPosition)}', (PianoParams.soundFontNames[_soundFontIndex])];
   }
 
   PianoBlock(

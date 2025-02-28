@@ -29,7 +29,7 @@ class RhythmGroup extends Equatable {
   late double beatLen;
 
   RhythmGroup(this.keyID, this.beats, this.polyBeats, this.noteKey) {
-    if (keyID == "") {
+    if (keyID == '') {
       keyID = MetronomeParams.getNewKeyID();
     }
     beatLen = NoteHandler.getBeatLength(noteKey);

@@ -40,7 +40,7 @@ class TunerBlock extends ProjectBlock {
 
   late String _id;
   @override
-  @JsonKey(defaultValue: "")
+  @JsonKey(defaultValue: '')
   String get id => _id;
   @override
   set id(String newID) {
@@ -68,7 +68,7 @@ class TunerBlock extends ProjectBlock {
 
   @override
   List<String> getSettingsFormatted() {
-    return ["${formatDoubleToString(_chamberNoteHz)} Hz"];
+    return ['${formatDoubleToString(_chamberNoteHz)} Hz'];
   }
 
   TunerBlock(String title, String id, String? islandToolID, double chamberNoteHz, DateTime timeLastModified) {

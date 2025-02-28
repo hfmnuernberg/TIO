@@ -104,13 +104,13 @@ class ImportProjectDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Import Project", style: TextStyle(color: ColorTheme.primary)),
+      title: const Text('Import Project', style: TextStyle(color: ColorTheme.primary)),
       content: Transform.translate(
         offset: const Offset(0, 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text("Would you like to import a project?", style: TextStyle(color: ColorTheme.primary)),
+            const Text('Would you like to import a project?', style: TextStyle(color: ColorTheme.primary)),
             const SizedBox(height: 10),
           ],
         ),
@@ -120,7 +120,7 @@ class ImportProjectDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             TextButton(onPressed: onDone, child: Text('Cancel')),
-            TIOFlatButton(onPressed: () => _importProject(context), text: "Import", boldText: true),
+            TIOFlatButton(onPressed: () => _importProject(context), text: 'Import', boldText: true),
           ],
         ),
       ],

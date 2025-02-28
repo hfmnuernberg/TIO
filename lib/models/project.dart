@@ -20,7 +20,7 @@ part 'project.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Project extends ChangeNotifier {
   late String _title;
-  @JsonKey(defaultValue: "Default Title")
+  @JsonKey(defaultValue: 'Default Title')
   String get title => _title;
   set title(String newTitle) {
     _title = newTitle;
@@ -152,7 +152,7 @@ class Project extends ChangeNotifier {
         newBlock = TextBlock.fromJson(jsonMap);
         break;
       default:
-        throw ("Error: Failed to copy tool. Unknown block type ${block.kind}!");
+        throw ('Error: Failed to copy tool. Unknown block type ${block.kind}!');
     }
 
     // new ID, otherwise the copied tool would have the same as the original tool

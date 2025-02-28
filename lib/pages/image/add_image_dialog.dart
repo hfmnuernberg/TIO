@@ -18,12 +18,12 @@ class _AddImageDialogState extends State<AddImageDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("No image in this tool", style: TextStyle(color: ColorTheme.primary)),
+      title: const Text('No image in this tool', style: TextStyle(color: ColorTheme.primary)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const Text(
-            "Pick an image from your device or take a photo using the camera",
+            'Pick an image from your device or take a photo using the camera',
             style: TextStyle(color: ColorTheme.primary),
           ),
           const SizedBox(height: 10),
@@ -32,14 +32,14 @@ class _AddImageDialogState extends State<AddImageDialog> {
               widget.pickImageFunction(useImageAsProjectThumbnail);
               Navigator.pop(context);
             },
-            text: "Pick an image",
+            text: 'Pick an image',
           ),
           TIOFlatButton(
             onPressed: () {
               widget.takePhotoFunction(useImageAsProjectThumbnail);
               Navigator.pop(context);
             },
-            text: "Take a photo",
+            text: 'Take a photo',
           ),
           CheckboxListTile(
             value: useImageAsProjectThumbnail,
@@ -48,7 +48,7 @@ class _AddImageDialogState extends State<AddImageDialog> {
                 useImageAsProjectThumbnail = value!;
               });
             },
-            title: const Text("Use image as project thumbnail", style: TextStyle(color: ColorTheme.primary)),
+            title: const Text('Use image as project thumbnail', style: TextStyle(color: ColorTheme.primary)),
           ),
         ],
       ),

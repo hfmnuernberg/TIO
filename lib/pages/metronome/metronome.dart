@@ -83,7 +83,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     _menuItems.add(
       MenuItemButton(
         onPressed: _clearAllRhythms,
-        child: const Text("Clear all rhythms", style: TextStyle(color: ColorTheme.primary)),
+        child: const Text('Clear all rhythms', style: TextStyle(color: ColorTheme.primary)),
       ),
     );
 
@@ -148,13 +148,13 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyStartStop,
-        "Tap here to start and stop the metronome",
+        'Tap here to start and stop the metronome',
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
       ),
       CustomTargetFocus(
         _keySettings,
-        "Tap here to adjust the metronome settings",
+        'Tap here to adjust the metronome settings',
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,
@@ -162,7 +162,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       ),
       CustomTargetFocus(
         _keyGroups,
-        "Hold and drag sideways to relocate,\nswipe upwards to delete\nor tap to edit",
+        'Hold and drag sideways to relocate,\nswipe upwards to delete\nor tap to edit',
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
@@ -170,7 +170,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       ),
       CustomTargetFocus(
         _keyAddSecondMetro,
-        "Tap here to add a second metronome",
+        'Tap here to add a second metronome',
         alignText: ContentAlign.left,
         pointingDirection: PointingDirection.right,
       ),
@@ -569,7 +569,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  isSecondMetronome ? "Metronome 2" : "Metronome 1",
+                  isSecondMetronome ? 'Metronome 2' : 'Metronome 1',
                   style: const TextStyle(color: ColorTheme.primary),
                 ),
                 // add second metronome button
@@ -676,7 +676,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       settingTiles: [
         // Volume
         SettingsTile(
-          title: "Volume",
+          title: 'Volume',
           subtitle: _metronomeBlock.volume.toString(),
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
@@ -695,8 +695,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         ),
         // BPM
         SettingsTile(
-          title: "BPM",
-          subtitle: "${_metronomeBlock.bpm}",
+          title: 'BPM',
+          subtitle: '${_metronomeBlock.bpm}',
           leadingIcon: Icons.speed,
           settingPage: const SetBPM(),
           block: _metronomeBlock,
@@ -704,9 +704,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         ),
         // Sounds
         SettingsTile(
-          title: _metronomeBlock.rhythmGroups2.isEmpty ? "Sound" : "Sound 1",
+          title: _metronomeBlock.rhythmGroups2.isEmpty ? 'Sound' : 'Sound 1',
           subtitle:
-              "Main: ${_metronomeBlock.accSound}, ${_metronomeBlock.unaccSound}\nPoly: ${_metronomeBlock.polyAccSound}, ${_metronomeBlock.polyUnaccSound}",
+              'Main: ${_metronomeBlock.accSound}, ${_metronomeBlock.unaccSound}\nPoly: ${_metronomeBlock.polyAccSound}, ${_metronomeBlock.polyUnaccSound}',
           leadingIcon: Icons.library_music_outlined,
           settingPage: SetMetronomeSound(running: (_sound && _isStarted)),
           block: _metronomeBlock,
@@ -715,9 +715,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         _metronomeBlock.rhythmGroups2.isEmpty
             ? const SizedBox()
             : SettingsTile(
-              title: "Sound 2",
+              title: 'Sound 2',
               subtitle:
-                  "Main: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\nPoly: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}",
+                  'Main: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\nPoly: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}',
               leadingIcon: Icons.library_music_outlined,
               settingPage: SetMetronomeSound(running: (_sound && _isStarted), forSecondMetronome: true),
               block: _metronomeBlock,
@@ -725,8 +725,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             ),
         // Random mute
         SettingsTile(
-          title: "Random Mute",
-          subtitle: "${_metronomeBlock.randomMute}%",
+          title: 'Random Mute',
+          subtitle: '${_metronomeBlock.randomMute}%',
           leadingIcon: Icons.question_mark,
           settingPage: const SetRandomMute(),
           block: _metronomeBlock,

@@ -55,7 +55,7 @@ class MediaPlayerBlock extends ProjectBlock {
 
   late String _id;
   @override
-  @JsonKey(defaultValue: "")
+  @JsonKey(defaultValue: '')
   String get id => _id;
   @override
   set id(String newID) {
@@ -148,15 +148,15 @@ class MediaPlayerBlock extends ProjectBlock {
       );
     }
     if (_speedFactor != 1) {
-      settings.add("${_speedFactor}x speed");
+      settings.add('${_speedFactor}x speed');
     }
     if ((_rangeStart).abs() >= 0.001 || (_rangeEnd - 1.0).abs() >= 0.001) {
-      settings.add("Trim ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%");
+      settings.add('Trim ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%');
     }
     if (_looping) {
-      settings.add("Looping");
+      settings.add('Looping');
     }
-    settings.add("$bpm bpm");
+    settings.add('$bpm bpm');
     return settings;
   }
 
@@ -242,7 +242,7 @@ class MediaPlayerBlock extends ProjectBlock {
           context,
           pickedAudioFile,
           FileIO.getFileNameWithoutExtension(pickedAudioFile.path),
-          _relativePath == "" ? null : _relativePath,
+          _relativePath == '' ? null : _relativePath,
           projectLibrary,
           acceptedFormats: TIOMusicParams.audioFormats,
         );
@@ -254,7 +254,7 @@ class MediaPlayerBlock extends ProjectBlock {
         notifyListeners();
       }
     } on PlatformException catch (e) {
-      debugPrint("Failed to pick audio: $e");
+      debugPrint('Failed to pick audio: $e');
       return false;
     }
     return true;
@@ -262,8 +262,8 @@ class MediaPlayerBlock extends ProjectBlock {
 
   String? getFileExtension() {
     if (relativePath.isEmpty) return null;
-    var split = relativePath.split(".");
+    var split = relativePath.split('.');
     if (split.isEmpty) return null;
-    return ".${split.last}";
+    return '.${split.last}';
   }
 }

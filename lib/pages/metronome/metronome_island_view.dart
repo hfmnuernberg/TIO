@@ -130,7 +130,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
       onMainIconPressed: _onMetronomeToggleButtonClicked,
       mainIcon:
           _isStarted ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.metronomeBlock.icon,
-      parameterText: "${widget.metronomeBlock.bpm} bpm",
+      parameterText: '${widget.metronomeBlock.bpm} bpm',
       centerView: _centerView(),
       textSpaceWidth: 60,
     );
@@ -166,7 +166,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
               .polyBeats
               .isNotEmpty) {
             beatsText +=
-                ":${rhythmGroups[isSecondMetronome ? _activeBeatsModel.polyBar2 : _activeBeatsModel.polyBar].polyBeats.length}";
+                ':${rhythmGroups[isSecondMetronome ? _activeBeatsModel.polyBar2 : _activeBeatsModel.polyBar].polyBeats.length}';
           }
         }
 

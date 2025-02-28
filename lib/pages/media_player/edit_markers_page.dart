@@ -65,7 +65,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Edit Markers",
+      title: 'Edit Markers',
       confirm: _onConfirm,
       reset: _removeAllMarkers,
       customWidget: Expanded(
@@ -120,8 +120,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               },
             ),
             const SizedBox(height: TIOMusicParams.edgeInset),
-            _listButtons(Icons.add, "Add Marker", _addNewMarker),
-            _listButtons(Icons.delete_outlined, "Remove Selected Marker", _removeSelectedMarker),
+            _listButtons(Icons.add, 'Add Marker', _addNewMarker),
+            _listButtons(Icons.delete_outlined, 'Remove Selected Marker', _removeSelectedMarker),
           ],
         ),
       ),

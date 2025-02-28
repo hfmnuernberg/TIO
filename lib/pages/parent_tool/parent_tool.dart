@@ -123,7 +123,7 @@ class _ParentToolState extends State<ParentTool> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyBookmarkSave,
-        "Tap here to save the tool to a project",
+        'Tap here to save the tool to a project',
         alignText: ContentAlign.left,
         pointingDirection: PointingDirection.right,
       ),
@@ -149,13 +149,13 @@ class _ParentToolState extends State<ParentTool> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyBookmarkSave,
-        "Tap here to copy your tool to another project",
+        'Tap here to copy your tool to another project',
         alignText: ContentAlign.left,
         pointingDirection: PointingDirection.right,
       ),
       CustomTargetFocus(
         _keyChangeTitle,
-        "Tap here to edit the title of your tool",
+        'Tap here to edit the title of your tool',
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
@@ -182,7 +182,7 @@ class _ParentToolState extends State<ParentTool> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyIsland,
-        "Tap here to combine your tool with a metronome, tuner or media player",
+        'Tap here to combine your tool with a metronome, tuner or media player',
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
@@ -306,8 +306,8 @@ class _ParentToolState extends State<ParentTool> {
             alignment: Alignment.centerLeft,
             child:
                 widget.isQuickTool
-                    ? const Text("Save in ...", style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
-                    : const Text("Save copy in ...", style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
+                    ? const Text('Save in ...', style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
+                    : const Text('Save copy in ...', style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
           ),
         ),
         Expanded(
@@ -345,7 +345,7 @@ class _ParentToolState extends State<ParentTool> {
         TIOFlatButton(
           // creating a new project to save the tool in it
           onPressed: () async {
-            final newTitles = await editTwoTitles(context, getDateAndTimeNow(), "${widget.toolBlock.title} - copy");
+            final newTitles = await editTwoTitles(context, getDateAndTimeNow(), '${widget.toolBlock.title} - copy');
             if (newTitles == null || newTitles.isEmpty) {
               if (mounted) {
                 // close the bottom up sheet
@@ -360,7 +360,7 @@ class _ParentToolState extends State<ParentTool> {
               saveToolInNewProject(context, widget.toolBlock, widget.isQuickTool, newTitles[0], newTitles[1]);
             }
           },
-          text: "Save in a new project",
+          text: 'Save in a new project',
         ),
         const SizedBox(height: 16),
       ],
@@ -371,7 +371,7 @@ class _ParentToolState extends State<ParentTool> {
     final newTitle = await showEditTextDialog(
       context: context,
       label: 'Tool title:',
-      value: "${toolBlock.title} - copy",
+      value: '${toolBlock.title} - copy',
       isNew: true,
     );
     if (newTitle == null) {

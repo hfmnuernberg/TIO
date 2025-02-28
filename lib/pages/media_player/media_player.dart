@@ -82,7 +82,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     _shareMenuButton = MenuItemButton(
       onPressed: _shareFilePressed,
-      child: const Text("Share audio file", style: TextStyle(color: ColorTheme.primary)),
+      child: const Text('Share audio file', style: TextStyle(color: ColorTheme.primary)),
     );
 
     _waveformVisualizer = WaveformVisualizer(0.0, 0.0, 1.0, _rmsValues, 0);
@@ -174,13 +174,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyStartStop,
-        "Tap here to start and stop recording or to play a sound file",
+        'Tap here to start and stop recording or to play a sound file',
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
       ),
       CustomTargetFocus(
         _keySettings,
-        "Tap here to adjust your sound file",
+        'Tap here to adjust your sound file',
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,
@@ -192,7 +192,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       targets.add(
         CustomTargetFocus(
           _keyWaveform,
-          "Tap anywhere to jump to that part of your sound file",
+          'Tap anywhere to jump to that part of your sound file',
           alignText: ContentAlign.bottom,
           pointingDirection: PointingDirection.up,
           shape: ShapeLightFocus.RRect,
@@ -210,7 +210,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyWaveform,
-        "Tap anywhere to jump to that part of your sound file",
+        'Tap anywhere to jump to that part of your sound file',
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
@@ -305,7 +305,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                TextButton(onPressed: () => _jump10Seconds(false), child: const Text("-10 sec")),
+                TextButton(onPressed: () => _jump10Seconds(false), child: const Text('-10 sec')),
                 IconButton(
                   onPressed: () {
                     setState(() {
@@ -319,7 +319,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                           ? const Icon(Icons.all_inclusive, color: ColorTheme.tertiary)
                           : const Icon(Icons.all_inclusive, color: ColorTheme.surfaceTint),
                 ),
-                TextButton(onPressed: () => _jump10Seconds(true), child: const Text("+10 sec")),
+                TextButton(onPressed: () => _jump10Seconds(true), child: const Text('+10 sec')),
               ],
             ),
             Row(
@@ -341,7 +341,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                     _walkthrough.show(context);
                   }
                 },
-                text: _fileLoaded ? FileIO.getFileName(_mediaPlayerBlock.relativePath) : "Load Audio File",
+                text: _fileLoaded ? FileIO.getFileName(_mediaPlayerBlock.relativePath) : 'Load Audio File',
               ),
             ),
           ],
@@ -350,7 +350,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       keySettingsList: _keySettings,
       settingTiles: [
         SettingsTile(
-          title: "Volume",
+          title: 'Volume',
           subtitle: _mediaPlayerBlock.volume.toString(),
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
@@ -367,26 +367,26 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
-          title: "Trim",
-          subtitle: "${(_mediaPlayerBlock.rangeStart * 100).round()}% → ${(_mediaPlayerBlock.rangeEnd * 100).round()}%",
-          leadingIcon: "assets/icons/arrow_range.svg",
+          title: 'Trim',
+          subtitle: '${(_mediaPlayerBlock.rangeStart * 100).round()}% → ${(_mediaPlayerBlock.rangeEnd * 100).round()}%',
+          leadingIcon: 'assets/icons/arrow_range.svg',
           settingPage: SetTrim(rmsValues: _rmsValues, fileDuration: _fileDuration),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => _queryAndUpdateStateFromRust(),
           inactive: _isLoading,
         ),
         SettingsTile(
-          title: "Basic Beat",
-          subtitle: "${_mediaPlayerBlock.bpm} bpm",
+          title: 'Basic Beat',
+          subtitle: '${_mediaPlayerBlock.bpm} bpm',
           leadingIcon: Icons.touch_app_outlined,
           settingPage: const SetBPM(),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
         ),
         SettingsTile(
-          title: "Speed",
+          title: 'Speed',
           subtitle:
-              "${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} bpm",
+              '${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} bpm',
           leadingIcon: Icons.speed,
           settingPage: const SetSpeed(),
           block: _mediaPlayerBlock,
@@ -394,7 +394,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
-          title: "Pitch",
+          title: 'Pitch',
           subtitle:
               "${_mediaPlayerBlock.pitchSemitones.abs() < 0.001 ? "" : (_mediaPlayerBlock.pitchSemitones > 0 ? "↑ " : "↓ ")}${formatDoubleToString(_mediaPlayerBlock.pitchSemitones.abs())} semitone${pluralSDouble(_mediaPlayerBlock.pitchSemitones)}",
           leadingIcon: Icons.height,
@@ -404,7 +404,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
-          title: "Markers",
+          title: 'Markers',
           subtitle: _mediaPlayerBlock.markerPositions.length.toString(),
           leadingIcon: Icons.arrow_drop_down,
           settingPage: EditMarkersPage(
@@ -525,7 +525,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   void _jump10Seconds(bool forward) async {
     final state = await mediaPlayerGetState();
     if (state == null) {
-      debugPrint("Cannot jump 10 seconds - State is null");
+      debugPrint('Cannot jump 10 seconds - State is null');
       return;
     }
 
@@ -611,11 +611,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   Future<void> _startPlaying() async {
     if (_isRecording) {
-      debugPrint("Cannot play while recording");
+      debugPrint('Cannot play while recording');
       return;
     }
     if (!_fileLoaded) {
-      debugPrint("Cannot play - No file loaded");
+      debugPrint('Cannot play - No file loaded');
       return;
     }
 
@@ -628,7 +628,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   Future<void> _stopPlaying() async {
     bool success = await MediaPlayerFunctions.stopPlaying();
-    if (!success) debugPrint("Error stopping playback");
+    if (!success) debugPrint('Error stopping playback');
     if (mounted) setState(() => _isPlaying = false);
   }
 
@@ -677,12 +677,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
     if (success && mounted) {
       _resetRecordingTimer();
 
-      var projectTitle = widget.isQuickTool ? "Quick Tool" : _project!.title;
-      var newName = "$projectTitle-${_mediaPlayerBlock.title}";
+      var projectTitle = widget.isQuickTool ? 'Quick Tool' : _project!.title;
+      var newName = '$projectTitle-${_mediaPlayerBlock.title}';
 
       var newRelativePath = await MediaPlayerFunctions.writeRecordingToFile(
         newName,
-        _mediaPlayerBlock.relativePath == "" ? null : _mediaPlayerBlock.relativePath,
+        _mediaPlayerBlock.relativePath == '' ? null : _mediaPlayerBlock.relativePath,
         context.read<ProjectLibrary>(),
       );
 
@@ -719,7 +719,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           setState(() => _isLoading = false);
         }
       } else {
-        debugPrint("Error saving recording to file");
+        debugPrint('Error saving recording to file');
       }
     }
 
@@ -750,12 +750,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
   Future _askForKeepRecordingOnExit() async {
     MediaPlayerFunctions.stopRecording().then((success) async {
       if (success && mounted) {
-        var projectTitle = widget.isQuickTool ? "Quick Tool" : _project!.title;
-        var newName = "$projectTitle-${_mediaPlayerBlock.title}";
+        var projectTitle = widget.isQuickTool ? 'Quick Tool' : _project!.title;
+        var newName = '$projectTitle-${_mediaPlayerBlock.title}';
 
         var newRelativePath = await MediaPlayerFunctions.writeRecordingToFile(
           newName,
-          _mediaPlayerBlock.relativePath == "" ? null : _mediaPlayerBlock.relativePath,
+          _mediaPlayerBlock.relativePath == '' ? null : _mediaPlayerBlock.relativePath,
           context.read<ProjectLibrary>(),
         );
 

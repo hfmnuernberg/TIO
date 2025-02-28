@@ -73,7 +73,7 @@ linter:
 #    prefer_int_literals: true
     prefer_mixin: true
 #    prefer_null_aware_method_calls: true
-#    prefer_single_quotes: true
+    prefer_single_quotes: true
     prefer_void_to_null: true
 #    require_trailing_commas: true
     sized_box_shrink_expand: true

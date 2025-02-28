@@ -51,31 +51,31 @@ class _ProjectsListState extends State<ProjectsList> {
     _menuItems.add(
       MenuItemButton(
         onPressed: _aboutPagePressed,
-        child: const Text("About", style: TextStyle(color: ColorTheme.primary)),
+        child: const Text('About', style: TextStyle(color: ColorTheme.primary)),
       ),
     );
     _menuItems.add(
       MenuItemButton(
         onPressed: _feedbackPagePressed,
-        child: const Text("Feedback", style: TextStyle(color: ColorTheme.primary)),
+        child: const Text('Feedback', style: TextStyle(color: ColorTheme.primary)),
       ),
     );
     _menuItems.add(
       MenuItemButton(
         onPressed: () => showImportProjectDialog(context: context),
-        child: const Text("Import Project", style: TextStyle(color: ColorTheme.primary)),
+        child: const Text('Import Project', style: TextStyle(color: ColorTheme.primary)),
       ),
     );
     _menuItems.add(
       MenuItemButton(
         onPressed: _deleteAllProjectsPressed,
-        child: const Text("Delete all Projects", style: TextStyle(color: ColorTheme.primary)),
+        child: const Text('Delete all Projects', style: TextStyle(color: ColorTheme.primary)),
       ),
     );
     _menuItems.add(
       MenuItemButton(
         onPressed: _showTutorialAgainPressed,
-        child: const Text("Show Walkthrough", style: TextStyle(color: ColorTheme.primary)),
+        child: const Text('Show Walkthrough', style: TextStyle(color: ColorTheme.primary)),
       ),
     );
 
@@ -94,14 +94,14 @@ class _ProjectsListState extends State<ProjectsList> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyAddProjectButton,
-        "Tap here to create a new project",
+        'Tap here to create a new project',
         alignText: ContentAlign.right,
         pointingDirection: PointingDirection.left,
         pointerPosition: PointerPosition.left,
       ),
       CustomTargetFocus(
         _keyNavigationBar,
-        "Tap here to start using a tool",
+        'Tap here to start using a tool',
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
@@ -110,13 +110,13 @@ class _ProjectsListState extends State<ProjectsList> {
       CustomTargetFocus(
         null,
         context: context,
-        "Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.",
+        'Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.',
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
       CustomTargetFocus(
         null,
         context: context,
-        "Projects can include multiple tools\n(tuner, metronome, piano setting, media player, image and text),\neven several tools of the same type.",
+        'Projects can include multiple tools\n(tuner, metronome, piano setting, media player, image and text),\neven several tools of the same type.',
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
     ];
@@ -190,7 +190,7 @@ class _ProjectsListState extends State<ProjectsList> {
         toolPage = const Piano(isQuickTool: true);
         break;
       default:
-        throw Exception("Wrong BlockType");
+        throw Exception('Wrong BlockType');
     }
 
     provider = ChangeNotifierProvider<ProjectBlock>.value(
@@ -217,8 +217,8 @@ class _ProjectsListState extends State<ProjectsList> {
     setState(() {});
 
     if (returnValue is Map) {
-      if (returnValue["action"] == ReturnAction.goToNewTool) {
-        _goToToolOverProjectPage(returnValue["project"], returnValue["block"], returnValue["pianoAlreadyOn"]);
+      if (returnValue['action'] == ReturnAction.goToNewTool) {
+        _goToToolOverProjectPage(returnValue['project'], returnValue['block'], returnValue['pianoAlreadyOn']);
       }
     } else {
       // on every return to the home page
@@ -239,15 +239,15 @@ class _ProjectsListState extends State<ProjectsList> {
     context: context,
     builder:
         (context) => AlertDialog(
-          title: const Text("Delete?", style: TextStyle(color: ColorTheme.primary)),
+          title: const Text('Delete?', style: TextStyle(color: ColorTheme.primary)),
           content:
               deleteAll
                   ? const Text(
-                    "Do you really want to delete all projects?",
+                    'Do you really want to delete all projects?',
                     style: TextStyle(color: ColorTheme.primary),
                   )
                   : const Text(
-                    "Do you really want to delete this project?",
+                    'Do you really want to delete this project?',
                     style: TextStyle(color: ColorTheme.primary),
                   ),
           actions: [
@@ -255,13 +255,13 @@ class _ProjectsListState extends State<ProjectsList> {
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: const Text("No"),
+              child: const Text('No'),
             ),
             TIOFlatButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              text: "Yes",
+              text: 'Yes',
               boldText: true,
             ),
           ],
@@ -425,7 +425,7 @@ class _ProjectsListState extends State<ProjectsList> {
         fit: StackFit.expand,
         children: [
           // background image
-          FittedBox(fit: BoxFit.cover, child: Image.asset("assets/images/tiomusic-bg.png")),
+          FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
 
           Column(
             children: [
@@ -493,10 +493,10 @@ class _ProjectsListState extends State<ProjectsList> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _quickToolButton(blockTypeInfos[BlockType.metronome]!.icon, "Metronome", BlockType.metronome),
+                        _quickToolButton(blockTypeInfos[BlockType.metronome]!.icon, 'Metronome', BlockType.metronome),
                         _quickToolButton(
                           blockTypeInfos[BlockType.mediaPlayer]!.icon,
-                          "Media Player",
+                          'Media Player',
                           BlockType.mediaPlayer,
                         ),
                       ],
@@ -504,8 +504,8 @@ class _ProjectsListState extends State<ProjectsList> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _quickToolButton(blockTypeInfos[BlockType.tuner]!.icon, "Tuner", BlockType.tuner),
-                        _quickToolButton(blockTypeInfos[BlockType.piano]!.icon, "Piano", BlockType.piano),
+                        _quickToolButton(blockTypeInfos[BlockType.tuner]!.icon, 'Tuner', BlockType.tuner),
+                        _quickToolButton(blockTypeInfos[BlockType.piano]!.icon, 'Piano', BlockType.piano),
                       ],
                     ),
                   ],

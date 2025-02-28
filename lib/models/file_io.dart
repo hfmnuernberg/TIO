@@ -23,18 +23,18 @@ abstract class FileIO {
     return (await getApplicationDocumentsDirectory()).path;
   }
 
-  static String get _mediaFolder => "media";
+  static String get _mediaFolder => 'media';
 
   // this is called in main when starting the app
   static Future createMediaDirectory() async {
     // create the media folder if it does not exist
     final path = await _appDirectory;
-    await Directory("$path/$_mediaFolder").create(recursive: true);
+    await Directory('$path/$_mediaFolder').create(recursive: true);
   }
 
   static Future<String> getAbsoluteFilePath(String relativeFilePath) async {
     String appDirectory = await _appDirectory;
-    return "$appDirectory/$relativeFilePath";
+    return '$appDirectory/$relativeFilePath';
   }
 
   static Future<String> getRelativeFilePath(String absoluteFilePath) async {
@@ -44,7 +44,7 @@ abstract class FileIO {
 
   // allocate new file
   static Future<File> _allocateNewFileInMediaFolder(String fileName) async {
-    String absolutePath = await getAbsoluteFilePath("$_mediaFolder/$fileName");
+    String absolutePath = await getAbsoluteFilePath('$_mediaFolder/$fileName');
     return File(absolutePath);
   }
 
@@ -55,7 +55,7 @@ abstract class FileIO {
     if (await file.exists()) {
       return file;
     } else {
-      debugPrint("File not found! At path: $path");
+      debugPrint('File not found! At path: $path');
       return null;
     }
   }
@@ -109,8 +109,8 @@ abstract class FileIO {
 
     // check if file with this name already exists
     int increment = 1;
-    while (await _getExistingFile("$_mediaFolder/$nameAndExtension") != null) {
-      newFileName = "${newFileName}_$increment";
+    while (await _getExistingFile('$_mediaFolder/$nameAndExtension') != null) {
+      newFileName = '${newFileName}_$increment';
       increment++;
       nameAndExtension = newFileName + extension;
     }
@@ -140,19 +140,19 @@ abstract class FileIO {
     String? relativePathOfPreviousFile,
     ProjectLibrary projectLibrary,
   ) async {
-    var nameAndExtension = "$newFileName.wav";
+    var nameAndExtension = '$newFileName.wav';
 
     // check if file with this name already exists
     int increment = 1;
-    while (await _getExistingFile("$_mediaFolder/$nameAndExtension") != null) {
-      newFileName = "${newFileName}_$increment";
+    while (await _getExistingFile('$_mediaFolder/$nameAndExtension') != null) {
+      newFileName = '${newFileName}_$increment';
       increment++;
-      nameAndExtension = "$newFileName.wav";
+      nameAndExtension = '$newFileName.wav';
     }
 
     List<Float64List> listOfChannels = [samples];
     var wavFile = Wav(listOfChannels, await getSampleRate(), WavFormat.float32);
-    var relativePath = "$_mediaFolder/$nameAndExtension";
+    var relativePath = '$_mediaFolder/$nameAndExtension';
 
     await wavFile.writeFile(await getAbsoluteFilePath(relativePath));
 
@@ -173,7 +173,7 @@ abstract class FileIO {
       final file = await _localJsonFile;
       return await file.readAsString();
     } catch (e) {
-      debugPrint("Error getting the jsonString from the json file: $e");
+      debugPrint('Error getting the jsonString from the json file: $e');
       return null;
     }
   }
@@ -196,10 +196,10 @@ abstract class FileIO {
 
       if (await file.exists()) {
         await file.delete();
-        debugPrint("Local json file deleted!");
+        debugPrint('Local json file deleted!');
       }
     } catch (e) {
-      debugPrint("Error: Could not delete local json file: $e");
+      debugPrint('Error: Could not delete local json file: $e');
     }
   }
 
@@ -209,7 +209,7 @@ abstract class FileIO {
     if (await file.exists()) {
       await file.delete();
     } else {
-      throw Exception("Could not delete file. File not found at path: $relativePath");
+      throw Exception('Could not delete file. File not found at path: $relativePath');
     }
   }
 

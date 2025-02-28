@@ -41,7 +41,7 @@ class _ChooseSoundState extends State<ChooseSound> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Piano Sound",
+      title: 'Set Piano Sound',
       confirm: _onConfirm,
       reset: _reset,
       customWidget: ToggleButtons(

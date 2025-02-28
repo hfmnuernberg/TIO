@@ -77,7 +77,7 @@ class _SetRandomMuteState extends State<SetRandomMute> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Random Mute",
+      title: 'Set Random Mute',
       confirm: _onConfirm,
       reset: _reset,
       numberInput: _randomMuteProbInput,

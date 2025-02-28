@@ -45,7 +45,7 @@ abstract class ProjectBlock extends ChangeNotifier with EquatableMixin {
   }
 
   static String getIdOrCreateNewId(String id) {
-    return id == "" ? _uuid.v4() : id;
+    return id == '' ? _uuid.v4() : id;
   }
 
   static String createNewId() {

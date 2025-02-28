@@ -140,7 +140,7 @@ class _SplashAppState extends State<SplashApp> {
       Map<String, dynamic> jsonMap = jsonDecode(jsonString);
       return ProjectLibrary.fromJson(jsonMap);
     } catch (e) {
-      debugPrint("failed to parse json to library: $e");
+      debugPrint('failed to parse json to library: $e');
       _hasError = true;
       setState(() {});
 
@@ -170,16 +170,16 @@ class _SplashAppState extends State<SplashApp> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("Could not load user data!", style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 24)),
+            const Text('Could not load user data!', style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 24)),
             const SizedBox(height: 24),
-            TIOFlatButton(onPressed: () => main(), text: "Retry"),
+            TIOFlatButton(onPressed: () => main(), text: 'Retry'),
             const SizedBox(height: 24),
             TIOFlatButton(
               onPressed: () {
                 FileIO.deleteLocalJsonFile();
                 _returnLoadedData(ProjectLibrary.withDefaults(), null);
               },
-              text: "Open anyway (All data is lost!)",
+              text: 'Open anyway (All data is lost!)',
             ),
           ],
         ),

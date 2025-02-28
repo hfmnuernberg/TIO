@@ -151,7 +151,7 @@ class CustomTargetFocus {
                   onPressed: () {
                     controller.next();
                   },
-                  child: const Text("Next", style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24)),
+                  child: const Text('Next', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24)),
                 ),
               ),
               const SizedBox(height: 10),
@@ -160,7 +160,7 @@ class CustomTargetFocus {
                 onPressed: () {
                   controller.skip();
                 },
-                child: const Text("Cancel", style: TextStyle(color: ColorTheme.onPrimary, fontSize: 16)),
+                child: const Text('Cancel', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 16)),
               ),
             ],
           );

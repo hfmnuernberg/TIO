@@ -108,7 +108,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       if (!_isPlaying) return;
       mediaPlayerGetState().then((mediaPlayerState) {
         if (mediaPlayerState == null) {
-          debugPrint("State is null");
+          debugPrint('State is null');
           return;
         }
 

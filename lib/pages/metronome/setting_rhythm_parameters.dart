@@ -101,7 +101,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
       defaultValue: widget.currentBeats.length,
       countingValue: 1,
       displayText: TextEditingController(),
-      descriptionText: "Number of Beats",
+      descriptionText: 'Number of Beats',
       buttonRadius: MetronomeParams.popupButtonRadius,
       textFontSize: MetronomeParams.popupTextFontSize,
     );
@@ -112,7 +112,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
       defaultValue: widget.currentPolyBeats.length,
       countingValue: 1,
       displayText: TextEditingController(),
-      descriptionText: "Number of Poly Beats",
+      descriptionText: 'Number of Poly Beats',
       buttonRadius: MetronomeParams.popupButtonRadius,
       textFontSize: MetronomeParams.popupTextFontSize,
     );
@@ -173,7 +173,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyToggleBeats,
-        "Tap a beat to switch between accented, unaccented and muted",
+        'Tap a beat to switch between accented, unaccented and muted',
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
       ),
@@ -196,7 +196,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
             _beats.removeRange(newNumberOfBeats, _beats.length);
           }
 
-          var bars = getRhythmAsMetroBar([RhythmGroup("", _beats, _polyBeats, _noteKey)]);
+          var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
           metronomeSetRhythm(bars: bars, bars2: []);
         }
       }
@@ -214,7 +214,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
             _polyBeats.removeRange(newNumberOfBeats, _polyBeats.length);
           }
 
-          var bars = getRhythmAsMetroBar([RhythmGroup("", _beats, _polyBeats, _noteKey)]);
+          var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
           metronomeSetRhythm(bars: bars, bars2: []);
         }
       }
@@ -225,7 +225,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   void _selectIcon(String chosenNoteKey) {
     setState(() {
       _noteKey = chosenNoteKey;
-      var bars = getRhythmAsMetroBar([RhythmGroup("", _beats, _polyBeats, _noteKey)]);
+      var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
       metronomeSetRhythm(bars: bars, bars2: []);
     });
   }
@@ -309,7 +309,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Beat",
+      title: 'Set Beat',
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,
@@ -394,7 +394,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
       _beats[i] = MetronomeParams.defaultBeats[i];
     }
 
-    var bars = getRhythmAsMetroBar([RhythmGroup("", _beats, _polyBeats, _noteKey)]);
+    var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
     metronomeSetRhythm(bars: bars, bars2: []);
   }
 
@@ -443,7 +443,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                         polyBeats![index] = _getBeatTypePolyOnTap(polyBeats[index]);
                       }
 
-                      var bars = getRhythmAsMetroBar([RhythmGroup("", _beats, _polyBeats, _noteKey)]);
+                      var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
                       metronomeSetRhythm(bars: bars, bars2: []);
                     });
                   },
@@ -488,7 +488,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   Future<void> _startBeat() async {
     // set beat in rust
-    var bars = getRhythmAsMetroBar([RhythmGroup("", _beats, _polyBeats, _noteKey)]);
+    var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
     metronomeSetRhythm(bars: bars, bars2: []);
 
     await MetronomeFunctions.stop();

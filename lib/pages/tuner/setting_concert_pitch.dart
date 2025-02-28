@@ -32,7 +32,7 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
       step: 1.0,
       stepIntervalInMs: 200,
       controller: TextEditingController(),
-      label: "Concert Pitch in Hz",
+      label: 'Concert Pitch in Hz',
       textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
     );
   }
@@ -40,7 +40,7 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Concert Pitch",
+      title: 'Set Concert Pitch',
       numberInput: _concertPitchInput,
       confirm: _onConfirm,
       reset: _reset,

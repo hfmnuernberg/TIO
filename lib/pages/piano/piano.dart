@@ -120,7 +120,7 @@ class _PianoState extends State<Piano> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyOctaveSwitch,
-        "Tap the left or right arrows to move up or down per key or per octave",
+        'Tap the left or right arrows to move up or down per key or per octave',
         alignText: ContentAlign.right,
         pointingDirection: PointingDirection.left,
         shape: ShapeLightFocus.RRect,
@@ -129,7 +129,7 @@ class _PianoState extends State<Piano> {
       ),
       CustomTargetFocus(
         _keySettings,
-        "Tap here to adjust sound and volume",
+        'Tap here to adjust sound and volume',
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         shape: ShapeLightFocus.RRect,
@@ -159,7 +159,7 @@ class _PianoState extends State<Piano> {
 
   Future<bool> _initPiano(String soundFontPath) async {
     Directory tempDir = await getTemporaryDirectory();
-    String tempSoundFontPath = "${tempDir.path}/sound_font.sf2";
+    String tempSoundFontPath = '${tempDir.path}/sound_font.sf2';
     // rust cannot access asset files which are not really files on disk, so we need to copy to a temp file
     final byteData = await rootBundle.load(soundFontPath);
     final file = File(tempSoundFontPath);
@@ -545,11 +545,11 @@ class _PianoState extends State<Piano> {
                           child:
                               widget.isQuickTool
                                   ? const Text(
-                                    "Save in ...",
+                                    'Save in ...',
                                     style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
                                   )
                                   : const Text(
-                                    "Save copy in ...",
+                                    'Save copy in ...',
                                     style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
                                   ),
                         ),
@@ -585,7 +585,7 @@ class _PianoState extends State<Piano> {
                       TIOFlatButton(
                         // creating a new project to save the tool in it
                         onPressed: _buildTwoTextInputOverlay,
-                        text: "Save in a new project",
+                        text: 'Save in a new project',
                       ),
                       const SizedBox(height: 4),
                     ],
@@ -602,7 +602,7 @@ class _PianoState extends State<Piano> {
   void _buildTextInputOverlay(StateSetter setTileState, int index) {
     final overlay = Overlay.of(context);
 
-    _newToolTitle.text = "${_pianoBlock.title} - copy";
+    _newToolTitle.text = '${_pianoBlock.title} - copy';
     _newToolTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newToolTitle.text.length);
 
     _entry = OverlayEntry(
@@ -624,10 +624,10 @@ class _PianoState extends State<Piano> {
                         controller: _newToolTitle,
                         autofocus: true,
                         decoration: const InputDecoration(
-                          hintText: "",
+                          hintText: '',
                           border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
                           enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          label: Text("Tool title:", style: TextStyle(color: ColorTheme.surfaceTint)),
+                          label: Text('Tool title:', style: TextStyle(color: ColorTheme.surfaceTint)),
                         ),
                         style: const TextStyle(color: ColorTheme.primary),
                         onSubmitted: (newText) {
@@ -660,7 +660,7 @@ class _PianoState extends State<Piano> {
   void _buildTwoTextInputOverlay() {
     final overlay = Overlay.of(context);
 
-    _newToolTitle.text = "${_pianoBlock.title} - copy";
+    _newToolTitle.text = '${_pianoBlock.title} - copy';
     _newToolTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newToolTitle.text.length);
 
     _newProjectTitle.text = getDateAndTimeNow();
@@ -685,10 +685,10 @@ class _PianoState extends State<Piano> {
                         controller: _newProjectTitle,
                         autofocus: true,
                         decoration: const InputDecoration(
-                          hintText: "",
+                          hintText: '',
                           border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
                           enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          label: Text("Project title:", style: TextStyle(color: ColorTheme.surfaceTint)),
+                          label: Text('Project title:', style: TextStyle(color: ColorTheme.surfaceTint)),
                         ),
                         style: const TextStyle(color: ColorTheme.primary),
                         onSubmitted: (newText) {
@@ -705,10 +705,10 @@ class _PianoState extends State<Piano> {
                         controller: _newToolTitle,
                         focusNode: _toolTitleFieldFocus,
                         decoration: const InputDecoration(
-                          hintText: "",
+                          hintText: '',
                           border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
                           enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          label: Text("Tool title:", style: TextStyle(color: ColorTheme.surfaceTint)),
+                          label: Text('Tool title:', style: TextStyle(color: ColorTheme.surfaceTint)),
                         ),
                         style: const TextStyle(color: ColorTheme.primary),
                         onSubmitted: (newText) {

@@ -42,15 +42,15 @@ Future<String> copyAssetToTemp(String assetPath) async {
 // format the settings into Text that can be displayed
 
 String formatSettingValues(List settingValues) {
-  String resultString = "";
+  String resultString = '';
   bool firstTime = true;
   for (dynamic settingValue in settingValues) {
     if (firstTime) {
       firstTime = false;
     } else {
-      resultString = "$resultString\n";
+      resultString = '$resultString\n';
     }
-    resultString = "$resultString$settingValue";
+    resultString = '$resultString$settingValue';
   }
   return resultString;
 }
@@ -97,7 +97,7 @@ Future<dynamic> openSettingPage(
       },
     );
   } else {
-    throw ("Block is invalid type");
+    throw ('Block is invalid type');
   }
 
   return Navigator.of(context)
@@ -135,10 +135,10 @@ Future<List<String>?> editTwoTitles(BuildContext context, String currentProjectT
                   TextField(
                     autofocus: true,
                     decoration: const InputDecoration(
-                      hintText: "",
+                      hintText: '',
                       border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
                       enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      label: Text("Project title:", style: TextStyle(color: ColorTheme.surfaceTint)),
+                      label: Text('Project title:', style: TextStyle(color: ColorTheme.surfaceTint)),
                     ),
                     style: const TextStyle(color: ColorTheme.primary),
                     controller: projectController,
@@ -148,10 +148,10 @@ Future<List<String>?> editTwoTitles(BuildContext context, String currentProjectT
                   TextField(
                     focusNode: focusSecondField,
                     decoration: const InputDecoration(
-                      hintText: "",
+                      hintText: '',
                       border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
                       enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      label: Text("Tool title:", style: TextStyle(color: ColorTheme.surfaceTint)),
+                      label: Text('Tool title:', style: TextStyle(color: ColorTheme.surfaceTint)),
                     ),
                     style: const TextStyle(color: ColorTheme.primary),
                     controller: toolController,
@@ -190,9 +190,9 @@ Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => show
   context: context,
   builder:
       (context) => AlertDialog(
-        title: const Text("Overwrite?", style: TextStyle(color: ColorTheme.primary)),
+        title: const Text('Overwrite?', style: TextStyle(color: ColorTheme.primary)),
         content: const Text(
-          "Do you want to overwrite the current audio file and start recording?",
+          'Do you want to overwrite the current audio file and start recording?',
           style: TextStyle(color: ColorTheme.primary),
         ),
         actions: [
@@ -200,13 +200,13 @@ Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => show
             onPressed: () {
               Navigator.of(context).pop(false);
             },
-            child: const Text("No"),
+            child: const Text('No'),
           ),
           TIOFlatButton(
             onPressed: () {
               Navigator.of(context).pop(true);
             },
-            text: "Yes",
+            text: 'Yes',
             boldText: true,
           ),
         ],
@@ -220,19 +220,19 @@ Future<bool?> askForSavingQuickTool(BuildContext context) => showDialog<bool>(
   context: context,
   builder:
       (context) => AlertDialog(
-        title: const Text("Save Quick Tool?", style: TextStyle(color: ColorTheme.primary)),
+        title: const Text('Save Quick Tool?', style: TextStyle(color: ColorTheme.primary)),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(false);
             },
-            child: const Text("No"),
+            child: const Text('No'),
           ),
           TIOFlatButton(
             onPressed: () {
               Navigator.of(context).pop(true);
             },
-            text: "Yes",
+            text: 'Yes',
             boldText: true,
           ),
         ],
@@ -246,12 +246,12 @@ Future<void> showFormatNotSupportedDialog(BuildContext context, String format) =
   context: context,
   builder:
       (context) => AlertDialog(
-        title: const Text("File format not supported", style: TextStyle(color: ColorTheme.primary)),
+        title: const Text('File format not supported', style: TextStyle(color: ColorTheme.primary)),
         content: Text(
           "The file format '$format' is not supported. Please choose a different file.",
           style: const TextStyle(color: ColorTheme.primary),
         ),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("Got it"))],
+        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
       ),
 );
 
@@ -259,19 +259,19 @@ Future<void> showFormatNotSupportedDialog(BuildContext context, String format) =
 // show a dialog to tell the user that the file could not be opened
 
 Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) {
-  if (fileName != null && fileName == "") {
+  if (fileName != null && fileName == '') {
     fileName = null;
   }
   return showDialog<void>(
     context: context,
     builder:
         (context) => AlertDialog(
-          title: const Text("File could not be opened.", style: TextStyle(color: ColorTheme.primary)),
+          title: const Text('File could not be opened.', style: TextStyle(color: ColorTheme.primary)),
           content: Text(
             "Something went wrong while trying to open the file. Please try again.${fileName != null ? "\n\nFile: ${FileIO.getFileName(fileName)}" : ""}",
             style: const TextStyle(color: ColorTheme.primary),
           ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("Got it"))],
+          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
         ),
   );
 }
@@ -280,19 +280,19 @@ Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) 
 // show a dialog to tell the user that the file is somehow not accessible
 
 Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName}) {
-  if (fileName != null && fileName == "") {
+  if (fileName != null && fileName == '') {
     fileName = null;
   }
   return showDialog<void>(
     context: context,
     builder:
         (context) => AlertDialog(
-          title: const Text("File is not accessible.", style: TextStyle(color: ColorTheme.primary)),
+          title: const Text('File is not accessible.', style: TextStyle(color: ColorTheme.primary)),
           content: Text(
             "Maybe the file needs to be downloaded first if it doesn't exist locally on your phone.${fileName != null ? "\n\nFile: ${FileIO.getFileName(fileName)}" : ""}",
             style: const TextStyle(color: ColorTheme.primary),
           ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("Got it"))],
+          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
         ),
   );
 }
@@ -305,12 +305,12 @@ Future<void> showNoCameraFoundDialog(BuildContext context) {
     context: context,
     builder:
         (context) => AlertDialog(
-          title: const Text("No camera found", style: TextStyle(color: ColorTheme.primary)),
+          title: const Text('No camera found', style: TextStyle(color: ColorTheme.primary)),
           content: const Text(
-            "There is no camera available on this device.",
+            'There is no camera available on this device.',
             style: TextStyle(color: ColorTheme.primary),
           ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("Got it"))],
+          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
         ),
   );
 }
@@ -342,7 +342,7 @@ Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock blo
             } else if (block is TextBlock) {
               return const TextTool(isQuickTool: false);
             } else {
-              throw ("ERROR: The block type of $block is unknown.");
+              throw ('ERROR: The block type of $block is unknown.');
             }
           },
         );
@@ -355,11 +355,11 @@ Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock blo
 // get the current date and time
 
 String getDateAndTimeNow() {
-  return DateFormat("dd.MM.yyyy - HH:mm:ss").format(DateTime.now());
+  return DateFormat('dd.MM.yyyy - HH:mm:ss').format(DateTime.now());
 }
 
 String getDateAndTimeFormatted(DateTime time) {
-  return DateFormat("dd.MM.yyyy - HH:mm:ss").format(time);
+  return DateFormat('dd.MM.yyyy - HH:mm:ss').format(time);
 }
 
 DateTime getCurrentDateTime() {
@@ -412,10 +412,10 @@ void saveToolInProject(
     }
     // pop back to home page
     final returnData = {
-      "action": ReturnAction.goToNewTool,
-      "project": projectLibrary.projects[index],
-      "block": newBlock,
-      "pianoAlreadyOn": pianoAlreadyOn,
+      'action': ReturnAction.goToNewTool,
+      'project': projectLibrary.projects[index],
+      'block': newBlock,
+      'pianoAlreadyOn': pianoAlreadyOn,
     };
     Navigator.of(context).pop(returnData);
   }
@@ -452,10 +452,10 @@ void saveToolInNewProject(
     }
     // pop back to home page
     final returnData = {
-      "action": ReturnAction.goToNewTool,
-      "project": newProject,
-      "block": newBlock,
-      "pianoAlreadyOn": pianoAlreadyOn,
+      'action': ReturnAction.goToNewTool,
+      'project': newProject,
+      'block': newBlock,
+      'pianoAlreadyOn': pianoAlreadyOn,
     };
     Navigator.of(context).pop(returnData);
   }
@@ -508,11 +508,11 @@ String formatDoubleToString(double value) {
 }
 
 String pluralSDouble(double number) {
-  return (number.abs() - 1.0).abs() < 0.001 ? "" : "s";
+  return (number.abs() - 1.0).abs() < 0.001 ? '' : 's';
 }
 
 String pluralSInt(int number) {
-  return (number - 1).abs() == 0 ? "" : "s";
+  return (number - 1).abs() == 0 ? '' : 's';
 }
 
 bool checkIslandPossible(Project? project, ProjectBlock toolBlock) {
@@ -526,7 +526,7 @@ bool checkIslandPossible(Project? project, ProjectBlock toolBlock) {
         // don't allow the same kind that is currently open
         if (block.kind != toolBlock.kind) {
           // only allow tuner, metronome and media player as islands
-          if (block.kind == "tuner" || block.kind == "metronome" || block.kind == "media_player") {
+          if (block.kind == 'tuner' || block.kind == 'metronome' || block.kind == 'media_player') {
             possibleToolFound = true;
           }
         }
@@ -556,7 +556,7 @@ void updateFileReferenceForFileOfBlock(
   IncreaseOrDecrease increaseOrDecrease,
   ProjectLibrary projectLibrary,
 ) {
-  if (block is MediaPlayerBlock && block.relativePath != "") {
+  if (block is MediaPlayerBlock && block.relativePath != '') {
     switch (increaseOrDecrease) {
       case IncreaseOrDecrease.increase:
         FileReferences.increaseFileReference(block.relativePath);
@@ -565,7 +565,7 @@ void updateFileReferenceForFileOfBlock(
         FileReferences.decreaseFileReference(block.relativePath, projectLibrary);
         break;
     }
-  } else if (block is ImageBlock && block.relativePath != "") {
+  } else if (block is ImageBlock && block.relativePath != '') {
     switch (increaseOrDecrease) {
       case IncreaseOrDecrease.increase:
         FileReferences.increaseFileReference(block.relativePath);

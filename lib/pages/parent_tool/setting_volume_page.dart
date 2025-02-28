@@ -46,7 +46,7 @@ class _SetVolumeState extends State<SetVolume> {
       stepIntervalInMs: 200,
       controller: TextEditingController(),
       textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
-      label: "Volume",
+      label: 'Volume',
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -59,7 +59,7 @@ class _SetVolumeState extends State<SetVolume> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Volume",
+      title: 'Set Volume',
       numberInput: _volumeInput,
       infoWidget: Padding(
         padding: const EdgeInsets.all(TIOMusicParams.edgeInset),

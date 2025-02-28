@@ -82,9 +82,9 @@ class _TunerState extends State<Tuner> {
     _freqHistoryIndex = 0;
     _gettingPitchInput = false;
     _pitchVisualizer = PitchVisualizer(_history, _gettingPitchInput);
-    _midiNameText.text = "";
-    _freqText.text = "";
-    _centOffsetText.text = "";
+    _midiNameText.text = '';
+    _freqText.text = '';
+    _centOffsetText.text = '';
     _isRunning = false;
     return await TunerFunctions.stop();
   }
@@ -144,13 +144,13 @@ class _TunerState extends State<Tuner> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyStartStop,
-        "Tap here to start and stop the tuner",
+        'Tap here to start and stop the tuner',
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
       ),
       CustomTargetFocus(
         _keySettings,
-        "Tap here to adjust the concert pitch or play a reference tone",
+        'Tap here to adjust the concert pitch or play a reference tone',
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,
@@ -251,8 +251,8 @@ class _TunerState extends State<Tuner> {
       keySettingsList: _keySettings,
       settingTiles: [
         SettingsTile(
-          title: "Concert Pitch",
-          subtitle: "${formatDoubleToString(_tunerBlock.chamberNoteHz)} Hz",
+          title: 'Concert Pitch',
+          subtitle: '${formatDoubleToString(_tunerBlock.chamberNoteHz)} Hz',
           leadingIcon: Icons.location_searching,
           settingPage: const SetConcertPitch(),
           block: _tunerBlock,
@@ -260,8 +260,8 @@ class _TunerState extends State<Tuner> {
           inactive: _isInStartUp,
         ),
         SettingsTile(
-          title: "Play Reference",
-          subtitle: "",
+          title: 'Play Reference',
+          subtitle: '',
           leadingIcon: Icons.music_note,
           settingPage: const PlaySoundPage(),
           block: _tunerBlock,
@@ -301,10 +301,10 @@ class _TunerState extends State<Tuner> {
     var centOffset = ((midi - midi.round()) * 100.0).round();
 
     setState(() {
-      _freqText.text = "${freq.toStringAsFixed(1)} Hz";
+      _freqText.text = '${freq.toStringAsFixed(1)} Hz';
       _midiText.text = midi.toString();
       _midiNameText.text = midiToName(midi.round());
-      _centOffsetText.text = "$centOffset Cent";
+      _centOffsetText.text = '$centOffset Cent';
       _setPitchOffset(midi - midi.round());
       _gettingPitchInput = true;
       _pitchVisualizer = PitchVisualizer(_history, _gettingPitchInput);

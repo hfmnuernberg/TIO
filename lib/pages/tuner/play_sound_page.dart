@@ -44,7 +44,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
       step: 1,
       controller: TextEditingController(),
       textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
-      label: "Octave",
+      label: 'Octave',
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -101,7 +101,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text("Play Reference"),
+          title: const Text('Play Reference'),
           backgroundColor: ColorTheme.surfaceBright,
           foregroundColor: ColorTheme.primary,
         ),

@@ -77,14 +77,14 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
       children: [
         if (widget.displayResetAtTop) ...[
           const SizedBox(height: 20.0),
-          TIOTextButton(text: "Reset", onTap: widget.reset),
+          TIOTextButton(text: 'Reset', onTap: widget.reset),
           const SizedBox(height: 20.0),
         ],
         widget.numberInput ?? const SizedBox(),
         widget.customWidget ?? const SizedBox(),
         if (!widget.displayResetAtTop) ...[
           const SizedBox(height: 20.0),
-          TIOTextButton(text: "Reset", onTap: widget.reset),
+          TIOTextButton(text: 'Reset', onTap: widget.reset),
         ],
         const SizedBox(height: 160.0),
       ],
@@ -111,7 +111,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
           Positioned(
             right: padding + TIOMusicParams.sizeBigButtons * 4.7,
             bottom: padding + TIOMusicParams.sizeBigButtons / 1.5,
-            child: TIOTextButton(text: "Reset", onTap: widget.reset),
+            child: TIOTextButton(text: 'Reset', onTap: widget.reset),
           ),
         ],
       ),

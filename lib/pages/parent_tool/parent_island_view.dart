@@ -54,7 +54,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
           // there should always only one to be found, because the id should be individual for each block
           if (foundTools.length > 1) {
-            throw ("WARNING: When looking for the tool of an island view, there where more than one tool found! But there should only be one tool found.");
+            throw ('WARNING: When looking for the tool of an island view, there where more than one tool found! But there should only be one tool found.');
           }
           _loadedTool = foundTools.first;
           _empty = false;
@@ -136,8 +136,8 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     return Padding(
       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
       child: Align(
-        alignment: widget.toolBlock.kind == "piano" ? Alignment.centerRight : Alignment.center,
-        child: const Text("Use bookmark to save a tool", style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 16)),
+        alignment: widget.toolBlock.kind == 'piano' ? Alignment.centerRight : Alignment.center,
+        child: const Text('Use bookmark to save a tool', style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 16)),
       ),
     );
   }
@@ -156,7 +156,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     } else if (_loadedTool is EmptyBlock) {
       return EmptyIsland(callOnInit: _setChoosenIsland);
     } else {
-      return Text("$_loadedTool has no Island View!");
+      return Text('$_loadedTool has no Island View!');
     }
   }
 
@@ -184,7 +184,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                 if (widget.project!.blocks.length < 2) {
                   return const Card(
                     child: Text(
-                      "There is no other tool in this project. Please save another tool first to use it as an island.",
+                      'There is no other tool in this project. Please save another tool first to use it as an island.',
                     ),
                   );
                 } else {
@@ -193,9 +193,9 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                   if (widget.project!.blocks[index].kind == widget.toolBlock.kind) {
                     return const SizedBox();
                     // only allow Tuner, Metronome and Media Player to be used as islands for now
-                  } else if (widget.project!.blocks[index].kind == "tuner" ||
-                      widget.project!.blocks[index].kind == "metronome" ||
-                      widget.project!.blocks[index].kind == "media_player") {
+                  } else if (widget.project!.blocks[index].kind == 'tuner' ||
+                      widget.project!.blocks[index].kind == 'metronome' ||
+                      widget.project!.blocks[index].kind == 'media_player') {
                     return CardListTile(
                       title: widget.project!.blocks[index].title,
                       subtitle: formatSettingValues(widget.project!.blocks[index].getSettingsFormatted()),
@@ -220,7 +220,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     // to force calling the initState of the new island, first open an empty island
     // and then in init of empty island open the new island
     _loadedTool = _emptyBlock;
-    widget.toolBlock.islandToolID = "empty";
+    widget.toolBlock.islandToolID = 'empty';
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     _empty = false;
 

@@ -28,7 +28,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
   final _midiNameText = TextEditingController();
 
   late double _pitchFactor = 0.5;
-  late String _midiName = "A";
+  late String _midiName = 'A';
   late PitchIslandViewVisualizer _pitchIslandViewVisualizer;
 
   final _freqHistory = List<double>.filled(10, 0.0);
@@ -51,7 +51,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
   Future<bool> stopTuner() async {
     await audioInterruptionListener?.cancel();
     _isRunning = false;
-    _midiNameText.text = "";
+    _midiNameText.text = '';
     _pitchFactor = 0.5;
     _freqHistory.fillRange(0, _freqHistory.length, 0.0);
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
@@ -96,7 +96,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     return ParentInnerIsland(
       onMainIconPressed: _startStop,
       mainIcon: _isRunning ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.tunerBlock.icon,
-      parameterText: "${formatDoubleToString(widget.tunerBlock.chamberNoteHz)} Hz",
+      parameterText: '${formatDoubleToString(widget.tunerBlock.chamberNoteHz)} Hz',
       centerView: _pitchIslandViewVisualizer,
       textSpaceWidth: 60,
     );

@@ -47,7 +47,7 @@ class CardListTile extends StatelessWidget {
       child: ListTile(
         enabled: !disableTap,
         title: Text(title, style: TextStyle(color: textColor, fontWeight: FontWeight.w500)),
-        subtitle: Text(subtitle ?? "", style: TextStyle(color: textColor)),
+        subtitle: Text(subtitle ?? '', style: TextStyle(color: textColor)),
         leading: _showPicture(leadingPicture),
         titleAlignment: ListTileTitleAlignment.titleHeight,
         trailing: Wrap(

@@ -65,7 +65,7 @@ class _SetTrimState extends State<SetTrim> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Trim",
+      title: 'Set Trim',
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,

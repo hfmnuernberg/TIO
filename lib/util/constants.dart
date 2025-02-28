@@ -18,8 +18,8 @@ import 'package:uuid/uuid.dart';
 //---------------------------------------------
 
 class TIOMusicParams {
-  static const String noImagePath = "";
-  static const String tiomusicIconPath = "assets/icons/tiomusic.png";
+  static const String noImagePath = '';
+  static const String tiomusicIconPath = 'assets/icons/tiomusic.png';
 
   static const double spaceBetweenPlusButtonAndBottom = 24.0;
   static const double sizeBigButtons = 40.0;
@@ -55,7 +55,7 @@ class TIOMusicParams {
 
   // media file extensions
 
-  static const List<String> audioFormats = [".wav", ".aiff", ".mp3", ".ogg", ".flac", ".m4a"];
+  static const List<String> audioFormats = ['.wav', '.aiff', '.mp3', '.ogg', '.flac', '.m4a'];
 }
 
 //---------------------------------------------
@@ -63,11 +63,11 @@ class TIOMusicParams {
 //---------------------------------------------
 
 class ImageParams {
-  static const String kind = "image";
-  static const String displayName = "Image";
-  static const String description = "take or load a picture";
+  static const String kind = 'image';
+  static const String displayName = 'Image';
+  static const String description = 'take or load a picture';
 
-  static const String defaultPath = "";
+  static const String defaultPath = '';
 }
 
 //---------------------------------------------
@@ -75,15 +75,15 @@ class ImageParams {
 //---------------------------------------------
 
 class MediaPlayerParams {
-  static const String kind = "media_player";
-  static const String displayName = "Media Player";
-  static const String description = "record and play";
+  static const String kind = 'media_player';
+  static const String displayName = 'Media Player';
+  static const String description = 'record and play';
 
   static const double defaultPitchSemitones = 0.0;
   static const double defaultSpeedFactor = 1.0;
   static const double defaultRangeStart = 0.0;
   static const double defaultRangeEnd = 1.0;
-  static const String defaultPath = "";
+  static const String defaultPath = '';
   static const bool defaultLooping = false;
 
   static const double binWidth = 8.0;
@@ -109,11 +109,11 @@ class ParentToolParams {
 class MetronomeParams {
   static const Uuid _uuid = Uuid();
 
-  static const String kind = "metronome";
-  static const String displayName = "Metronome";
-  static const String description = "create a rhythm";
+  static const String kind = 'metronome';
+  static const String displayName = 'Metronome';
+  static const String description = 'create a rhythm';
 
-  static const String svgIconPath = "assets/icons/Metronome.svg";
+  static const String svgIconPath = 'assets/icons/Metronome.svg';
 
   static const int beatDetectionDurationMillis = 15;
 
@@ -124,7 +124,7 @@ class MetronomeParams {
   // Default random mute value
   static const int defaultRandomMute = 0;
   // Default rhythm
-  static const String defaultId = "";
+  static const String defaultId = '';
   // this function should be called in the constructor of the RhythmGroup class, to turn the empty string into a unique id
   static String getNewKeyID() {
     return _uuid.v4();
@@ -142,35 +142,35 @@ class MetronomeParams {
   // Metronome Sound
 
   // Path to sound files
-  static const String metronomeSoundsPath = "assets/metronome_sounds";
+  static const String metronomeSoundsPath = 'assets/metronome_sounds';
   // Sound names
   static const List<String> metronomeSounds = [
-    "bop",
-    "click",
-    "clock",
-    "heart",
-    "ping",
-    "tick",
-    "wood",
-    "cowbell",
-    "clap",
-    "rim",
-    "blup",
-    "digi click",
-    "kick",
-    "noise",
-    "pling",
+    'bop',
+    'click',
+    'clock',
+    'heart',
+    'ping',
+    'tick',
+    'wood',
+    'cowbell',
+    'clap',
+    'rim',
+    'blup',
+    'digi click',
+    'kick',
+    'noise',
+    'pling',
   ];
 
-  static const String defaultAccSound = "click";
-  static const String defaultUnaccSound = "click";
-  static const String defaultPolyAccSound = "ping";
-  static const String defaultPolyUnaccSound = "ping";
+  static const String defaultAccSound = 'click';
+  static const String defaultUnaccSound = 'click';
+  static const String defaultPolyAccSound = 'ping';
+  static const String defaultPolyUnaccSound = 'ping';
 
-  static const String defaultAccSound2 = "clock";
-  static const String defaultUnaccSound2 = "clock";
-  static const String defaultPolyAccSound2 = "cowbell";
-  static const String defaultPolyUnaccSound2 = "cowbell";
+  static const String defaultAccSound2 = 'clock';
+  static const String defaultUnaccSound2 = 'clock';
+  static const String defaultPolyAccSound2 = 'cowbell';
+  static const String defaultPolyUnaccSound2 = 'cowbell';
 
   // Turn visual metronome on/off by default
   static const bool defaultVisualMetronome = false;
@@ -208,9 +208,9 @@ class MetronomeParams {
 //---------------------------------------------
 
 class PianoParams {
-  static const String kind = "piano";
-  static const String displayName = "Piano";
-  static const String description = "become the next Herbie Hancock";
+  static const String kind = 'piano';
+  static const String displayName = 'Piano';
+  static const String description = 'become the next Herbie Hancock';
 
   static const int defaultKeyboardPosition = 60;
 
@@ -224,26 +224,26 @@ class PianoParams {
 
   // There is a problem if sound fonts are too big, they should be about 1 MB, not more
   static const List<String> soundFontPaths = <String>[
-    "assets/sound_fonts/piano_01.sf2",
-    "assets/sound_fonts/piano_02.sf2",
-    "assets/sound_fonts/electric_piano_01.sf2",
-    "assets/sound_fonts/electric_piano_02.sf2",
-    "assets/sound_fonts/reverb_bell_piano.sf2",
-    "assets/sound_fonts/pipe_organ.sf2",
-    "assets/sound_fonts/harpsichord.sf2",
-    "assets/sound_fonts/rhodes.sf2",
+    'assets/sound_fonts/piano_01.sf2',
+    'assets/sound_fonts/piano_02.sf2',
+    'assets/sound_fonts/electric_piano_01.sf2',
+    'assets/sound_fonts/electric_piano_02.sf2',
+    'assets/sound_fonts/reverb_bell_piano.sf2',
+    'assets/sound_fonts/pipe_organ.sf2',
+    'assets/sound_fonts/harpsichord.sf2',
+    'assets/sound_fonts/rhodes.sf2',
   ];
 
   // this list must match the soundFontPaths list
   static const List<String> soundFontNames = <String>[
-    "Grand Piano 1",
-    "Grand Piano 2",
-    "Electric Piano 1",
-    "Electric Piano 2",
-    "Reverb Bell Piano",
-    "Pipe Organ",
-    "Harpsichord",
-    "Rhodes",
+    'Grand Piano 1',
+    'Grand Piano 2',
+    'Electric Piano 1',
+    'Electric Piano 2',
+    'Reverb Bell Piano',
+    'Pipe Organ',
+    'Harpsichord',
+    'Rhodes',
   ];
 }
 
@@ -252,11 +252,11 @@ class PianoParams {
 //---------------------------------------------
 
 class TunerParams {
-  static const String kind = "tuner";
-  static const String displayName = "Tuner";
-  static const String description = "tune your instrument";
+  static const String kind = 'tuner';
+  static const String displayName = 'Tuner';
+  static const String description = 'tune your instrument';
 
-  static const String svgIconPath = "assets/icons/Tuner.svg";
+  static const String svgIconPath = 'assets/icons/Tuner.svg';
 
   static const double defaultConcertPitch = 440.0;
   static const int freqPollMillis = 35;
@@ -267,11 +267,11 @@ class TunerParams {
 //---------------------------------------------
 
 class TextParams {
-  static const String kind = "text";
-  static const String displayName = "Text";
-  static const String description = "write down your notes";
+  static const String kind = 'text';
+  static const String displayName = 'Text';
+  static const String description = 'write down your notes';
 
-  static const String defaultContent = "";
+  static const String defaultContent = '';
 }
 
 //---------------------------------------------
@@ -307,7 +307,7 @@ final blockTypeInfos = {
     TunerParams.kind,
     TunerParams.description,
     SvgPicture.asset(
-      "assets/icons/Tuner.svg",
+      'assets/icons/Tuner.svg',
       colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
     ),
     () => TunerBlock.withDefaults(),
@@ -319,7 +319,7 @@ final blockTypeInfos = {
     MetronomeParams.kind,
     MetronomeParams.description,
     SvgPicture.asset(
-      "assets/icons/Metronome.svg",
+      'assets/icons/Metronome.svg',
       colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
     ),
     () => MetronomeBlock.withDefaults(),

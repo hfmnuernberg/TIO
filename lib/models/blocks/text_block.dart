@@ -39,7 +39,7 @@ class TextBlock extends ProjectBlock {
 
   late String _id;
   @override
-  @JsonKey(defaultValue: "")
+  @JsonKey(defaultValue: '')
   String get id => _id;
   @override
   set id(String newID) {
@@ -70,7 +70,7 @@ class TextBlock extends ProjectBlock {
     if (_content.characters.length < 50) {
       return [_content.toString().trim()];
     } else {
-      return ["${_content.characters.take(50).toString().trim()}..."];
+      return ['${_content.characters.take(50).toString().trim()}...'];
     }
   }
 

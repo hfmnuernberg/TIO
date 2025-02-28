@@ -21,12 +21,12 @@ abstract class MediaPlayerFunctions {
   static void setSpeedAndPitchInRust(double speedFactor, double pitchSemitones) {
     mediaPlayerSetSpeedFactor(speedFactor: speedFactor).then(
       (success) => {
-        if (!success) {throw ("Setting speed factor in rust failed using this value: $speedFactor")},
+        if (!success) {throw ('Setting speed factor in rust failed using this value: $speedFactor')},
       },
     );
     mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones).then(
       (success) => {
-        if (!success) {throw ("Setting pitch semitones in rust failed using this value: $pitchSemitones")},
+        if (!success) {throw ('Setting pitch semitones in rust failed using this value: $pitchSemitones')},
       },
     );
   }
@@ -80,7 +80,7 @@ abstract class MediaPlayerFunctions {
     }
 
     if (!await Permission.microphone.request().isGranted) {
-      debugPrint("failed to get mic permissions (in starting Recording in Media Player)");
+      debugPrint('failed to get mic permissions (in starting Recording in Media Player)');
       return false;
     }
 
@@ -118,7 +118,7 @@ abstract class MediaPlayerFunctions {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("Recording...", style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
+          Text('Recording...', style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
           Text(getDurationFormated(duration), style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 6)),
         ],
       ),

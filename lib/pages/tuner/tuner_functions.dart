@@ -15,7 +15,7 @@ abstract class TunerFunctions {
       }
       return success;
     } else {
-      debugPrint("failed to get mic permissions");
+      debugPrint('failed to get mic permissions');
       return false;
     }
   }
