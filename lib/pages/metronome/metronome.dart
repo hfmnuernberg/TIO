@@ -467,10 +467,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         // Reordering handle with icon
         ReorderableDelayedDragStartListener(
           index: index,
-          enabled:
-              ((isSecond ? _metronomeBlock.rhythmGroups2.length : _metronomeBlock.rhythmGroups.length) > 1)
-                  ? true
-                  : false,
+          enabled: (isSecond ? _metronomeBlock.rhythmGroups2.length : _metronomeBlock.rhythmGroups.length) > 1,
           child: GestureDetector(
             onTap: () {
               _editRhythmSegment(index, isSecond);
