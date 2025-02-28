@@ -30,7 +30,7 @@ abstract class ProjectBlock extends ChangeNotifier with EquatableMixin {
   set timeLastModified(DateTime newTime);
 
   // Uuid object
-  static final Uuid _uuid = const Uuid();
+  static const Uuid _uuid = Uuid();
 
   String? get islandToolID;
   set islandToolID(String? newToolID);
