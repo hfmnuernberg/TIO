@@ -126,9 +126,9 @@ class ExportProjectDialog extends StatelessWidget {
         offset: const Offset(0, 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Do you really want to export the project?', style: TextStyle(color: ColorTheme.primary)),
-            const SizedBox(height: 10),
+          children: const [
+            Text('Do you really want to export the project?', style: TextStyle(color: ColorTheme.primary)),
+            SizedBox(height: 10),
           ],
         ),
       ),

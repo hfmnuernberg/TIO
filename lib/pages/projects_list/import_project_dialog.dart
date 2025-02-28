@@ -109,9 +109,9 @@ class ImportProjectDialog extends StatelessWidget {
         offset: const Offset(0, 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Would you like to import a project?', style: TextStyle(color: ColorTheme.primary)),
-            const SizedBox(height: 10),
+          children: const [
+            Text('Would you like to import a project?', style: TextStyle(color: ColorTheme.primary)),
+            SizedBox(height: 10),
           ],
         ),
       ),
