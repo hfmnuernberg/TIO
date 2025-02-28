@@ -100,7 +100,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       });
     });
 
-    _timerPollPlaybackPosition = Timer.periodic(const Duration(milliseconds: 120), (Timer t) {
+    _timerPollPlaybackPosition = Timer.periodic(const Duration(milliseconds: 120), (t) {
       if (!mounted) {
         t.cancel();
         return;

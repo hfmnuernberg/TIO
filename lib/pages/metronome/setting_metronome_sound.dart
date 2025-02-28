@@ -31,7 +31,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
 
   final List<Widget> _sounds = List<Widget>.generate(
     MetronomeParams.metronomeSounds.length,
-    (int index) => Text(MetronomeParams.metronomeSounds[index], style: const TextStyle(color: ColorTheme.primary)),
+    (index) => Text(MetronomeParams.metronomeSounds[index], style: const TextStyle(color: ColorTheme.primary)),
     growable: false,
   );
 
@@ -126,7 +126,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
         const SizedBox(height: TIOMusicParams.edgeInset),
         ToggleButtons(
           direction: Axis.vertical,
-          onPressed: (int index) {
+          onPressed: (index) {
             setState(() {
               for (int i = 0; i < selectedSound.length; i++) {
                 selectedSound[i] = (i == index);

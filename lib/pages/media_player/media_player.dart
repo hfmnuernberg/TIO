@@ -160,7 +160,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       }
     });
 
-    _timerPollPlaybackPosition = Timer.periodic(const Duration(milliseconds: 120), (Timer t) async {
+    _timerPollPlaybackPosition = Timer.periodic(const Duration(milliseconds: 120), (t) async {
       if (!mounted) {
         t.cancel();
         return;

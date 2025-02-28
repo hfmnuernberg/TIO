@@ -170,7 +170,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: widget.project!.blocks.length,
-              itemBuilder: (BuildContext context, int index) {
+              itemBuilder: (context, index) {
                 if (widget.project!.blocks.length < 2) {
                   return const Card(
                     child: Text(

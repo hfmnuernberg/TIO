@@ -119,7 +119,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
     // Start beat detection timer
     _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
-      Timer t,
+      t,
     ) async {
       if (!mounted) {
         t.cancel();
@@ -420,7 +420,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
           itemBuilder: (context, index) {
             return ListenableBuilder(
               listenable: _activeBeatsModel,
-              builder: (BuildContext context, Widget? child) {
+              builder: (context, child) {
                 var highlight = false;
                 if (beats != null && index == _activeBeatsModel.mainBeat) {
                   highlight = _activeBeatsModel.mainBeatOn;

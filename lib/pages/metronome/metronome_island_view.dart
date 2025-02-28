@@ -49,16 +49,14 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
     MetronomeUtils.loadSounds(widget.metronomeBlock);
 
     // Start beat detection timer
-    _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
-      Timer t,
-    ) {
+    _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (t) {
       if (!mounted) {
         t.cancel();
         return;
       }
       if (!_isStarted) return;
 
-      metronomePollBeatEventHappened().then((BeatHappenedEvent? event) {
+      metronomePollBeatEventHappened().then((event) {
         if (event != null) _onBeatHappened(event);
       });
       if (!mounted) return;
@@ -152,7 +150,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
 
     return ListenableBuilder(
       listenable: _activeBeatsModel,
-      builder: (BuildContext context, Widget? child) {
+      builder: (context, child) {
         String beatsText =
             rhythmGroups[isSecondMetronome ? _activeBeatsModel.mainBar2 : _activeBeatsModel.mainBar].beats.length
                 .toString();

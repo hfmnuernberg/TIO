@@ -53,7 +53,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
           body:
               widget.mustBeScrollable
                   ? LayoutBuilder(
-                    builder: (BuildContext context, BoxConstraints viewportConstraints) {
+                    builder: (context, viewportConstraints) {
                       return SingleChildScrollView(
                         child: ConstrainedBox(
                           constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),

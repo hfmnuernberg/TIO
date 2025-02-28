@@ -110,7 +110,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
     // Start beat detection timer
     _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
-      Timer t,
+      t,
     ) async {
       if (!mounted) {
         t.cancel();
@@ -382,7 +382,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   Widget _proxyDecorator(Widget child, int index, Animation<double> animation) {
     return AnimatedBuilder(
       animation: animation,
-      builder: (BuildContext context, Widget? child) {
+      builder: (context, child) {
         final double animValue = Curves.easeInOut.transform(animation.value);
         final double elevation = lerpDouble(0, 6, animValue)!;
         return Material(elevation: elevation, color: Colors.transparent, shadowColor: Colors.transparent, child: child);
@@ -497,7 +497,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
                   itemCount: isSecondMetronome ? _rhythmSegmentList2.length : _rhythmSegmentList.length,
-                  itemBuilder: (BuildContext context, int index) {
+                  itemBuilder: (context, index) {
                     return Dismissible(
                       key: Key(
                         isSecondMetronome
@@ -528,7 +528,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                     });
                   },
                   // Reorder rhythm segments
-                  onReorder: (int oldIndex, int newIndex) {
+                  onReorder: (oldIndex, newIndex) {
                     _reorderRythmSegments(oldIndex, newIndex, isSecondMetronome);
                   },
                 ),

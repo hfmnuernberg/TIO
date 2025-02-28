@@ -43,7 +43,7 @@ class _AddImageDialogState extends State<AddImageDialog> {
           ),
           CheckboxListTile(
             value: useImageAsProjectThumbnail,
-            onChanged: (bool? value) {
+            onChanged: (value) {
               setState(() {
                 useImageAsProjectThumbnail = value!;
               });

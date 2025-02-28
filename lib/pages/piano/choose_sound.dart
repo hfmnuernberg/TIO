@@ -20,7 +20,7 @@ class _ChooseSoundState extends State<ChooseSound> {
 
   final List<Widget> _sounds =
       PianoParams.soundFontNames
-          .map((String soundFontName) => Text(soundFontName, style: const TextStyle(color: ColorTheme.primary)))
+          .map((soundFontName) => Text(soundFontName, style: const TextStyle(color: ColorTheme.primary)))
           .toList();
 
   final List<bool> _selectedSounds = List<bool>.filled(PianoParams.soundFontNames.length, false);
@@ -46,7 +46,7 @@ class _ChooseSoundState extends State<ChooseSound> {
       reset: _reset,
       customWidget: ToggleButtons(
         direction: Axis.vertical,
-        onPressed: (int index) {
+        onPressed: (index) {
           setState(() {
             for (int i = 0; i < _selectedSounds.length; i++) {
               _selectedSounds[i] = i == index;

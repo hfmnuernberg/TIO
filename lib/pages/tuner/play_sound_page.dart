@@ -169,7 +169,7 @@ class _SoundButtonState extends State<SoundButton> {
 
     return ListenableBuilder(
       listenable: widget.buttonListener,
-      builder: (BuildContext context, Widget? child) {
+      builder: (context, child) {
         return Listener(
           onPointerDown: (details) async {
             setState(() {

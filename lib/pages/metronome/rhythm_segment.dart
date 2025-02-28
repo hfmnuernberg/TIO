@@ -91,7 +91,7 @@ class _RhythmSegmentState extends State<RhythmSegment> {
 
       var button = ListenableBuilder(
         listenable: widget.activeBeatsNotifier,
-        builder: (BuildContext context, Widget? child) {
+        builder: (context, child) {
           bool highlight = false;
           bool polyBeatOn = widget.activeBeatsNotifier.polyBeatOn;
           bool mainBeatOn = widget.activeBeatsNotifier.mainBeatOn;

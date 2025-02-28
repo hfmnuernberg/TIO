@@ -394,7 +394,7 @@ class _ProjectsListState extends State<ProjectsList> {
         ),
         actions: [
           MenuAnchor(
-            builder: (BuildContext context, MenuController controller, Widget? child) {
+            builder: (context, controller, child) {
               return IconButton(
                 onPressed: () {
                   controller.isOpen ? controller.close() : controller.open();
@@ -440,7 +440,7 @@ class _ProjectsListState extends State<ProjectsList> {
                                 ),
                                 child: ListView.builder(
                                   itemCount: projectLibrary.projects.length,
-                                  itemBuilder: (BuildContext context, int idx) {
+                                  itemBuilder: (context, idx) {
                                     return CardListTile(
                                       title: projectLibrary.projects[idx].title,
                                       subtitle: getDateAndTimeFormatted(projectLibrary.projects[idx].timeLastModified),

@@ -354,7 +354,7 @@ class _PianoState extends State<Piano> {
                       var pianoBlock = projectBlock as PianoBlock;
                       return Expanded(
                         child: LayoutBuilder(
-                          builder: (BuildContext context, BoxConstraints constraints) {
+                          builder: (context, constraints) {
                             const double spaceBetweenKeys = 8;
                             final keyWidth = constraints.maxWidth / 12 - spaceBetweenKeys;
                             final keyHeight = constraints.maxHeight;
@@ -560,9 +560,9 @@ class _PianoState extends State<Piano> {
                           child: ListView.builder(
                             shrinkWrap: true,
                             itemCount: projectLibrary.projects.length,
-                            itemBuilder: (BuildContext context, int index) {
+                            itemBuilder: (context, index) {
                               return StatefulBuilder(
-                                builder: (BuildContext context, StateSetter setTileState) {
+                                builder: (context, setTileState) {
                                   return CardListTile(
                                     title: projectLibrary.projects[index].title,
                                     subtitle: getDateAndTimeFormatted(projectLibrary.projects[index].timeLastModified),

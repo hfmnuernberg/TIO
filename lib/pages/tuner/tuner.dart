@@ -118,7 +118,7 @@ class _TunerState extends State<Tuner> {
         }
       });
 
-      _timerPollFreq = Timer.periodic(const Duration(milliseconds: TunerParams.freqPollMillis), (Timer t) async {
+      _timerPollFreq = Timer.periodic(const Duration(milliseconds: TunerParams.freqPollMillis), (t) async {
         if (!mounted) {
           t.cancel();
           return;
@@ -221,7 +221,7 @@ class _TunerState extends State<Tuner> {
                 children: [
                   Align(
                     child: LayoutBuilder(
-                      builder: (BuildContext context, BoxConstraints constraints) {
+                      builder: (context, constraints) {
                         return CustomPaint(
                           painter: _pitchVisualizer,
                           size: Size(constraints.maxWidth, constraints.maxHeight),

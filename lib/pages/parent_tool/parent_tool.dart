@@ -217,7 +217,7 @@ class _ParentToolState extends State<ParentTool> {
     if (widget.menuItems != null && widget.menuItems!.isNotEmpty) {
       appBarActions.add(
         MenuAnchor(
-          builder: (BuildContext context, MenuController controller, Widget? child) {
+          builder: (context, controller, child) {
             return IconButton(
               onPressed: () {
                 controller.isOpen ? controller.close() : controller.open();
@@ -314,9 +314,9 @@ class _ParentToolState extends State<ParentTool> {
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: projectLibrary.projects.length,
-              itemBuilder: (BuildContext context, int index) {
+              itemBuilder: (context, index) {
                 return StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setTileState) {
+                  builder: (context, setTileState) {
                     return CardListTile(
                       title: projectLibrary.projects[index].title,
                       subtitle: getDateAndTimeFormatted(projectLibrary.projects[index].timeLastModified),
@@ -400,7 +400,7 @@ class _ParentToolState extends State<ParentTool> {
   Widget _settingsList(List<Widget> tiles) {
     return ListView.builder(
       key: widget.keySettingsList,
-      itemBuilder: (BuildContext context, int index) {
+      itemBuilder: (context, index) {
         return tiles[index];
       },
       itemCount: tiles.length,

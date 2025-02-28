@@ -64,7 +64,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
 
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
 
-    _timerPollFreq = Timer.periodic(const Duration(milliseconds: TunerParams.freqPollMillis), (Timer t) async {
+    _timerPollFreq = Timer.periodic(const Duration(milliseconds: TunerParams.freqPollMillis), (t) async {
       if (!mounted) {
         t.cancel();
         return;

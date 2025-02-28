@@ -59,7 +59,7 @@ void main() {
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   group('edit text dialog', () {
-    testWidgets('shows new title when title change is submitted', (WidgetTester tester) async {
+    testWidgets('shows new title when title change is submitted', (tester) async {
       await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
       expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'Old title');
 
@@ -74,7 +74,7 @@ void main() {
       expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'Edited title');
     });
 
-    testWidgets('hides edit text dialog when cancel is pressed', (WidgetTester tester) async {
+    testWidgets('hides edit text dialog when cancel is pressed', (tester) async {
       await tester.renderWidget(TestWrapper());
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
@@ -84,7 +84,7 @@ void main() {
       expect(find.bySemanticsLabel('Alert'), findsNothing);
     });
 
-    testWidgets('does not allow entering title longer than max value', (WidgetTester tester) async {
+    testWidgets('does not allow entering title longer than max value', (tester) async {
       await tester.renderWidget(TestWrapper(label: 'Title input', value: ''));
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
@@ -100,7 +100,7 @@ void main() {
       expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'a'.padLeft(100, 'a'));
     });
 
-    testWidgets('shows old title when title change is canceled', (WidgetTester tester) async {
+    testWidgets('shows old title when title change is canceled', (tester) async {
       await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
@@ -110,7 +110,7 @@ void main() {
       expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'Old title');
     });
 
-    testWidgets('disables submit button when title is empty', (WidgetTester tester) async {
+    testWidgets('disables submit button when title is empty', (tester) async {
       await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
@@ -120,7 +120,7 @@ void main() {
       expect(tester.getSemantics(submitButton).hasFlag(SemanticsFlag.isEnabled), isFalse);
     });
 
-    testWidgets('disables submit button when title has not changed', (WidgetTester tester) async {
+    testWidgets('disables submit button when title has not changed', (tester) async {
       await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
@@ -129,7 +129,7 @@ void main() {
       expect(tester.getSemantics(submitButton).hasFlag(SemanticsFlag.isEnabled), isFalse);
     });
 
-    testWidgets('submits title when title has not changed but is marked as new', (WidgetTester tester) async {
+    testWidgets('submits title when title has not changed but is marked as new', (tester) async {
       await tester.renderWidget(TestWrapper(label: 'Title input', value: 'New title', isNew: true));
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
@@ -139,7 +139,7 @@ void main() {
       expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'Edited title');
     });
 
-    testWidgets('does not close dialog when clicking outside of dialog', (WidgetTester tester) async {
+    testWidgets('does not close dialog when clicking outside of dialog', (tester) async {
       await tester.renderWidget(TestWrapper());
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));

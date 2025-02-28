@@ -203,7 +203,7 @@ class _ProjectPageState extends State<ProjectPage> {
         foregroundColor: ColorTheme.primary,
         actions: [
           MenuAnchor(
-            builder: (BuildContext context, MenuController controller, Widget? child) {
+            builder: (context, controller, child) {
               return IconButton(
                 onPressed: () {
                   controller.isOpen ? controller.close() : controller.open();
@@ -228,7 +228,7 @@ class _ProjectPageState extends State<ProjectPage> {
             padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
             child: ListView.builder(
               itemCount: _project.blocks.length + 1,
-              itemBuilder: (BuildContext context, int index) {
+              itemBuilder: (context, index) {
                 if (index >= _project.blocks.length) {
                   return const SizedBox(height: 120);
                 } else {
@@ -314,7 +314,7 @@ class _ProjectPageState extends State<ProjectPage> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: BlockType.values.length,
-              itemBuilder: (BuildContext context, int index) {
+              itemBuilder: (context, index) {
                 var info = blockTypeInfos[BlockType.values[index]]!;
                 return CardListTile(
                   title: info.name,
