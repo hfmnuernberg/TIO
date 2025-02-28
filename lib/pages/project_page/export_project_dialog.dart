@@ -6,6 +6,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
+import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -43,18 +44,24 @@ class ExportProjectDialog extends StatelessWidget {
     return _writeProjectToFile(project, tmpProjectFile);
   }
 
-  Future<File> _copyImageToFile(ImageBlock block) async {
+  Future<File> _copyMediaToFile(String relativePath) async {
     final directory = await getApplicationDocumentsDirectory();
     final tmpDirectory = await getTemporaryDirectory();
 
-    final sourceFile = File('${directory.path}/${block.relativePath}');
-    final destPath = '${tmpDirectory.path}/${_getMediaFileName(block.relativePath)}';
+    final sourceFile = File('${directory.path}/$relativePath');
+    final destPath = '${tmpDirectory.path}/${_getMediaFileName(relativePath)}';
 
     return await sourceFile.copy(destPath);
   }
 
   Future<List<File>> _createTmpImageFiles(Project project) async {
-    return await Future.wait(project.blocks.whereType<ImageBlock>().map((block) => _copyImageToFile(block)));
+    final imageFiles = await Future.wait(
+      project.blocks.whereType<ImageBlock>().map((block) => _copyMediaToFile(block.relativePath)),
+    );
+    final mediaPlayerFiles = await Future.wait(
+      project.blocks.whereType<MediaPlayerBlock>().map((block) => _copyMediaToFile(block.relativePath)),
+    );
+    return [...imageFiles, ...mediaPlayerFiles];
   }
 
   Future<File> _writeFilesToArchive(List<File> files) async {
