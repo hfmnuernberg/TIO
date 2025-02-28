@@ -51,6 +51,7 @@ class _ImageToolState extends State<ImageTool> {
 
     _imageBlock = Provider.of<ProjectBlock>(context, listen: false) as ImageBlock;
     _imageBlock.timeLastModified = getCurrentDateTime();
+    _imageBlock.setImage(_imageBlock.relativePath);
 
     _project = Provider.of<Project>(context, listen: false);
 
