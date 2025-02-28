@@ -80,7 +80,7 @@ class ImportProjectDialog extends StatelessWidget {
 
       await Future.wait(
         project.blocks.whereType<ImageBlock>().map(
-          (block) async => {print('SetImage 1'), block.setImage(block.relativePath)},
+          (block) async => block.setImage(block.relativePath),
         ),
       );
 
