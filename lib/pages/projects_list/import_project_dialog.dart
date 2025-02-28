@@ -57,10 +57,6 @@ class ImportProjectDialog extends StatelessWidget {
       } else {
         await _writeMediaFileFromArchiveFile(file, directory);
       }
-
-      final filePath = '${directory.path}/media/${file.name}';
-      final mediaFile = File(filePath);
-      await mediaFile.writeAsBytes(file.content as List<int>);
     }
 
     return project;
@@ -82,7 +78,11 @@ class ImportProjectDialog extends StatelessWidget {
         return;
       }
 
-      await Future.wait(project.blocks.whereType<ImageBlock>().map((block) => block.setImage(block.relativePath)));
+      await Future.wait(
+        project.blocks.whereType<ImageBlock>().map(
+          (block) async => {print('SetImage 1'), block.setImage(block.relativePath)},
+        ),
+      );
 
       final projectLibrary = context.read<ProjectLibrary>();
       projectLibrary.addProject(project);
