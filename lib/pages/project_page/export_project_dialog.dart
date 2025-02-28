@@ -34,7 +34,7 @@ class ExportProjectDialog extends StatelessWidget {
 
   Future<File> _writeProjectToFile(Project project, File tmpProjectFile) async {
     String jsonString = jsonEncode(project.toJson());
-    return await tmpProjectFile.writeAsString(jsonString);
+    return tmpProjectFile.writeAsString(jsonString);
   }
 
   Future<File> _createTmpProjectFile(Project project) async {
@@ -51,7 +51,7 @@ class ExportProjectDialog extends StatelessWidget {
     final sourceFile = File('${directory.path}/$relativePath');
     final destPath = '${tmpDirectory.path}/${_getMediaFileName(relativePath)}';
 
-    return await sourceFile.copy(destPath);
+    return sourceFile.copy(destPath);
   }
 
   Future<List<File>> _createTmpImageFiles(Project project) async {

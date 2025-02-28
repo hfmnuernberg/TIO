@@ -70,7 +70,7 @@ abstract class MediaPlayerFunctions {
 
   static Future<bool> stopPlaying() async {
     await WakelockPlus.disable();
-    return await mediaPlayerStop();
+    return mediaPlayerStop();
   }
 
   static Future<bool> startRecording(bool isPlaying) async {
@@ -94,7 +94,7 @@ abstract class MediaPlayerFunctions {
 
   static Future<bool> stopRecording() async {
     await WakelockPlus.disable();
-    return await mediaPlayerStopRecording();
+    return mediaPlayerStopRecording();
   }
 
   static Future<String?> writeRecordingToFile(
@@ -103,13 +103,13 @@ abstract class MediaPlayerFunctions {
     ProjectLibrary projectLibrary,
   ) async {
     final samples = await mediaPlayerGetRecordingSamples();
-    return await FileIO.writeSamplesToWaveFile(samples, newFileName, relativePathOfPreviousFile, projectLibrary);
+    return FileIO.writeSamplesToWaveFile(samples, newFileName, relativePathOfPreviousFile, projectLibrary);
   }
 
   static Future<Float32List?> openAudioFileInRustAndGetRMSValues(MediaPlayerBlock block, int numOfBins) async {
     var absolutePath = await FileIO.getAbsoluteFilePath(block.relativePath);
     if (!await File(absolutePath).exists()) return null;
-    return await _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
+    return _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }
 
   // Functions for the Timer Display while recording

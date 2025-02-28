@@ -165,7 +165,7 @@ class _PianoState extends State<Piano> {
     final file = File(tempSoundFontPath);
     await file.create(recursive: true);
     await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-    return await pianoSetup(soundFontPath: tempSoundFontPath);
+    return pianoSetup(soundFontPath: tempSoundFontPath);
   }
 
   @override
@@ -446,8 +446,8 @@ class _PianoState extends State<Piano> {
                   if (!_isPlaying) _pianoStart();
                   await pianoNoteOn(note: midi);
                 },
-                onTapUp: (_) async => await pianoNoteOff(note: midi),
-                onTapCancel: () async => await pianoNoteOff(note: midi),
+                onTapUp: (_) async => pianoNoteOff(note: midi),
+                onTapCancel: () async => pianoNoteOff(note: midi),
                 child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
               ),
             ),
@@ -471,8 +471,8 @@ class _PianoState extends State<Piano> {
               if (!_isPlaying) _pianoStart();
               await pianoNoteOn(note: midi);
             },
-            onTapUp: (_) async => await pianoNoteOff(note: midi),
-            onTapCancel: () async => await pianoNoteOff(note: midi),
+            onTapUp: (_) async => pianoNoteOff(note: midi),
+            onTapCancel: () async => pianoNoteOff(note: midi),
             child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
           ),
         ),

@@ -72,7 +72,7 @@ class _TunerState extends State<Tuner> {
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) stopTuner();
     });
-    return await TunerFunctions.start();
+    return TunerFunctions.start();
   }
 
   Future<bool> stopTuner() async {
@@ -86,7 +86,7 @@ class _TunerState extends State<Tuner> {
     _freqText.text = '';
     _centOffsetText.text = '';
     _isRunning = false;
-    return await TunerFunctions.stop();
+    return TunerFunctions.stop();
   }
 
   @override

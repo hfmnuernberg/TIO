@@ -74,8 +74,8 @@ class _TIOMusicHomePageState extends State<TIOMusicHomePage> {
 
     if (Platform.isIOS) {
       startAudioSession()
-          .then((_) async => await configureAudioSession(AudioSessionType.playback))
-          .then((_) async => await Future.delayed(const Duration(milliseconds: 500)))
+          .then((_) async => configureAudioSession(AudioSessionType.playback))
+          .then((_) async => Future.delayed(const Duration(milliseconds: 500)))
           .then((_) => initAudio());
     } else {
       initAudio();

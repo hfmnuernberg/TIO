@@ -45,7 +45,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) stopTuner();
     });
-    return await TunerFunctions.start();
+    return TunerFunctions.start();
   }
 
   Future<bool> stopTuner() async {
@@ -55,7 +55,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     _pitchFactor = 0.5;
     _freqHistory.fillRange(0, _freqHistory.length, 0.0);
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
-    return await TunerFunctions.stop();
+    return TunerFunctions.stop();
   }
 
   @override

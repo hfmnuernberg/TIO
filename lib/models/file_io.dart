@@ -187,7 +187,7 @@ abstract class FileIO {
 
   static Future<bool> existsLocalJsonFile() async {
     final file = await _localJsonFile;
-    return await file.exists();
+    return file.exists();
   }
 
   static Future<void> deleteLocalJsonFile() async {
@@ -216,7 +216,7 @@ abstract class FileIO {
   static Future<List<FileSystemEntity>> getAllMediaFiles() async {
     // the files in the media folder should only be media files, so we don't need to check which format they are
     final mediaDir = Directory(await getAbsoluteFilePath(_mediaFolder));
-    return await mediaDir.list().toList();
+    return mediaDir.list().toList();
   }
 
   // this is to prevent a conflict between the path package and flutter packages in other files
