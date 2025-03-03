@@ -89,7 +89,7 @@ class _ImageToolState extends State<ImageTool> {
       if (useAsProfilePicture != null && useAsProfilePicture) {
         _project.setThumbnail(_imageBlock.relativePath);
         if (mounted) {
-          FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+          await FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
         }
       }
     }

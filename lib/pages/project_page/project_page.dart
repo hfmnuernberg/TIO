@@ -249,7 +249,8 @@ class _ProjectPageState extends State<ProjectPage> {
                         if (deleteBlock != null && deleteBlock) {
                           if (context.mounted) {
                             _project.removeBlock(_project.blocks[index], context.read<ProjectLibrary>());
-                            FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+                            _project.setThumbnail('');
+                            await FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
                           }
                           setState(() {});
                         }
