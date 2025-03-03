@@ -24,12 +24,7 @@ Future<void> main() async {
   await RustLib.init();
   await initRustDefaultsManually();
   // first running loading screen app to load the data from json
-  runApp(
-    SplashApp(
-      key: UniqueKey(),
-      returnProjectLibraryAndTheme: (projectLibrary, themeData) => runMainApp(projectLibrary, themeData),
-    ),
-  );
+  runApp(SplashApp(key: UniqueKey(), returnProjectLibraryAndTheme: runMainApp));
 }
 
 // and then running the main app
@@ -52,16 +47,14 @@ class TIOMusicApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'TIO Music',
         theme: ourTheme ?? ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
-        home: const TIOMusicHomePage(title: 'TIO Music'),
+        home: const TIOMusicHomePage(),
       ),
     );
   }
 }
 
 class TIOMusicHomePage extends StatefulWidget {
-  const TIOMusicHomePage({super.key, required this.title});
-
-  final String title;
+  const TIOMusicHomePage({super.key});
 
   @override
   State<TIOMusicHomePage> createState() => _TIOMusicHomePageState();
@@ -74,8 +67,8 @@ class _TIOMusicHomePageState extends State<TIOMusicHomePage> {
 
     if (Platform.isIOS) {
       startAudioSession()
-          .then((_) async => await configureAudioSession(AudioSessionType.playback))
-          .then((_) async => await Future.delayed(const Duration(milliseconds: 500)))
+          .then((_) async => configureAudioSession(AudioSessionType.playback))
+          .then((_) async => Future.delayed(const Duration(milliseconds: 500)))
           .then((_) => initAudio());
     } else {
       initAudio();
@@ -140,7 +133,7 @@ class _SplashAppState extends State<SplashApp> {
       Map<String, dynamic> jsonMap = jsonDecode(jsonString);
       return ProjectLibrary.fromJson(jsonMap);
     } catch (e) {
-      debugPrint("failed to parse json to library: $e");
+      debugPrint('failed to parse json to library: $e');
       _hasError = true;
       setState(() {});
 
@@ -170,16 +163,16 @@ class _SplashAppState extends State<SplashApp> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("Could not load user data!", style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 24)),
+            const Text('Could not load user data!', style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 24)),
             const SizedBox(height: 24),
-            TIOFlatButton(onPressed: () => main(), text: "Retry"),
+            TIOFlatButton(onPressed: main, text: 'Retry'),
             const SizedBox(height: 24),
             TIOFlatButton(
               onPressed: () {
                 FileIO.deleteLocalJsonFile();
                 _returnLoadedData(ProjectLibrary.withDefaults(), null);
               },
-              text: "Open anyway (All data is lost!)",
+              text: 'Open anyway (All data is lost!)',
             ),
           ],
         ),

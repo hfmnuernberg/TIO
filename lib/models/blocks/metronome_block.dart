@@ -55,7 +55,7 @@ class MetronomeBlock extends ProjectBlock {
 
   late String _id;
   @override
-  @JsonKey(defaultValue: "")
+  @JsonKey(defaultValue: '')
   String get id => _id;
   @override
   set id(String newID) {
@@ -137,28 +137,28 @@ class MetronomeBlock extends ProjectBlock {
     List<String> settings = [];
 
     if (_rhythmGroups2.isNotEmpty) {
-      settings.add("_____ 1 _____");
+      settings.add('_____ 1 _____');
     }
 
     settings.addAll([
-      "${_rhythmGroups.length} segment${pluralSInt(_rhythmGroups.length)}",
-      "Sound: $accSound/$unaccSound",
-      "Poly-Sound: $polyAccSound/$polyUnaccSound",
+      '${_rhythmGroups.length} segment${pluralSInt(_rhythmGroups.length)}',
+      'Sound: $accSound/$unaccSound',
+      'Poly-Sound: $polyAccSound/$polyUnaccSound',
     ]);
 
     if (_rhythmGroups2.isNotEmpty) {
       settings.addAll([
-        "_____ 2 _____",
-        "${_rhythmGroups2.length} segment${pluralSInt(_rhythmGroups2.length)}",
-        "Sound: $accSound2/$unaccSound2",
-        "Poly-Sound: $polyAccSound2/$polyUnaccSound2",
+        '_____ 2 _____',
+        '${_rhythmGroups2.length} segment${pluralSInt(_rhythmGroups2.length)}',
+        'Sound: $accSound2/$unaccSound2',
+        'Poly-Sound: $polyAccSound2/$polyUnaccSound2',
       ]);
     }
 
-    settings.addAll(["$bpm bpm", "$randomMute % random mute"]);
+    settings.addAll(['$bpm bpm', '$randomMute % random mute']);
 
     if (randomMute > 0) {
-      settings.add("$randomMute% mute chance");
+      settings.add('$randomMute% mute chance');
     }
 
     return settings;
@@ -197,7 +197,7 @@ class MetronomeBlock extends ProjectBlock {
     _title = MetronomeParams.displayName;
     _islandToolID = null;
     _volume = TIOMusicParams.defaultVolume;
-    bpm = MetronomeParams.defaultBPM.toInt();
+    bpm = MetronomeParams.defaultBPM;
     randomMute = MetronomeParams.defaultRandomMute;
     _rhythmGroups = [
       RhythmGroup(
@@ -224,7 +224,7 @@ class MetronomeBlock extends ProjectBlock {
     _title = newTitle;
     _islandToolID = null;
     _volume = TIOMusicParams.defaultVolume;
-    bpm = MetronomeParams.defaultBPM.toInt();
+    bpm = MetronomeParams.defaultBPM;
     randomMute = MetronomeParams.defaultRandomMute;
     _rhythmGroups = [
       RhythmGroup(

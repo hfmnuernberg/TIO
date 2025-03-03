@@ -29,10 +29,10 @@ class EditMarkersPage extends StatefulWidget {
 
 class _EditMarkersPageState extends State<EditMarkersPage> {
   late WaveformVisualizer _waveformVisualizer;
-  double _waveFormWidth = 0.0;
-  final double _waveFormHeight = 200.0;
+  double _waveFormWidth = 0;
+  final double _waveFormHeight = 200;
   late int _numOfBins;
-  double _sliderValue = 0.0;
+  double _sliderValue = 0;
 
   Duration _positionDuration = Duration.zero;
 
@@ -50,14 +50,14 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     _positionDuration = widget.fileDuration * _sliderValue;
 
-    _waveformVisualizer = WaveformVisualizer.singleView(0.0, widget.rmsValues, 0, true);
+    _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, 0, true);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
       _numOfBins = (_waveFormWidth / MediaPlayerParams.binWidth).floor();
 
       setState(() {
-        _waveformVisualizer = WaveformVisualizer.singleView(0.0, widget.rmsValues, _numOfBins, true);
+        _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, _numOfBins, true);
       });
     });
   }
@@ -65,7 +65,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Edit Markers",
+      title: 'Edit Markers',
       confirm: _onConfirm,
       reset: _removeAllMarkers,
       customWidget: Expanded(
@@ -96,7 +96,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             Slider(
               value: _sliderValue,
               inactiveColor: ColorTheme.primary80,
-              max: 1.0,
               divisions: 1000, // how many individual values, only showing labels when division is not null
               label: getDurationFormatedWithMilliseconds(_positionDuration),
               onChanged: (newValue) {
@@ -120,8 +119,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               },
             ),
             const SizedBox(height: TIOMusicParams.edgeInset),
-            _listButtons(Icons.add, "Add Marker", _addNewMarker),
-            _listButtons(Icons.delete_outlined, "Remove Selected Marker", _removeSelectedMarker),
+            _listButtons(Icons.add, 'Add Marker', _addNewMarker),
+            _listButtons(Icons.delete_outlined, 'Remove Selected Marker', _removeSelectedMarker),
           ],
         ),
       ),

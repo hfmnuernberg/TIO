@@ -12,7 +12,7 @@ import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
-final String mediaFolder = "media";
+const String mediaFolder = 'media';
 
 String _sanitizeString(String value) =>
     value.trim().replaceAll(RegExp(r'\W+'), '-').replaceAll(RegExp(r'^-+|-+$'), '').toLowerCase();
@@ -34,7 +34,7 @@ class ExportProjectDialog extends StatelessWidget {
 
   Future<File> _writeProjectToFile(Project project, File tmpProjectFile) async {
     String jsonString = jsonEncode(project.toJson());
-    return await tmpProjectFile.writeAsString(jsonString);
+    return tmpProjectFile.writeAsString(jsonString);
   }
 
   Future<File> _createTmpProjectFile(Project project) async {
@@ -51,7 +51,7 @@ class ExportProjectDialog extends StatelessWidget {
     final sourceFile = File('${directory.path}/$relativePath');
     final destPath = '${tmpDirectory.path}/${_getMediaFileName(relativePath)}';
 
-    return await sourceFile.copy(destPath);
+    return sourceFile.copy(destPath);
   }
 
   Future<List<File>> _createTmpImageFiles(Project project) async {
@@ -121,14 +121,14 @@ class ExportProjectDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Export Project", style: TextStyle(color: ColorTheme.primary)),
+      title: const Text('Export Project', style: TextStyle(color: ColorTheme.primary)),
       content: Transform.translate(
         offset: const Offset(0, 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("Do you really want to export the project?", style: TextStyle(color: ColorTheme.primary)),
-            const SizedBox(height: 10),
+          children: const [
+            Text('Do you really want to export the project?', style: TextStyle(color: ColorTheme.primary)),
+            SizedBox(height: 10),
           ],
         ),
       ),
@@ -137,7 +137,7 @@ class ExportProjectDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             TextButton(onPressed: onDone, child: Text('Cancel')),
-            TIOFlatButton(onPressed: () => _exportProject(context), text: "Export", boldText: true),
+            TIOFlatButton(onPressed: () => _exportProject(context), text: 'Export', boldText: true),
           ],
         ),
       ],

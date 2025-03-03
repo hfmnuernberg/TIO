@@ -49,16 +49,14 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
     MetronomeUtils.loadSounds(widget.metronomeBlock);
 
     // Start beat detection timer
-    _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
-      Timer t,
-    ) {
+    _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (t) {
       if (!mounted) {
         t.cancel();
         return;
       }
       if (!_isStarted) return;
 
-      metronomePollBeatEventHappened().then((BeatHappenedEvent? event) {
+      metronomePollBeatEventHappened().then((event) {
         if (event != null) _onBeatHappened(event);
       });
       if (!mounted) return;
@@ -130,7 +128,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
       onMainIconPressed: _onMetronomeToggleButtonClicked,
       mainIcon:
           _isStarted ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.metronomeBlock.icon,
-      parameterText: "${widget.metronomeBlock.bpm} bpm",
+      parameterText: '${widget.metronomeBlock.bpm} bpm',
       centerView: _centerView(),
       textSpaceWidth: 60,
     );
@@ -152,7 +150,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
 
     return ListenableBuilder(
       listenable: _activeBeatsModel,
-      builder: (BuildContext context, Widget? child) {
+      builder: (context, child) {
         String beatsText =
             rhythmGroups[isSecondMetronome ? _activeBeatsModel.mainBar2 : _activeBeatsModel.mainBar].beats.length
                 .toString();
@@ -166,12 +164,11 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
               .polyBeats
               .isNotEmpty) {
             beatsText +=
-                ":${rhythmGroups[isSecondMetronome ? _activeBeatsModel.polyBar2 : _activeBeatsModel.polyBar].polyBeats.length}";
+                ':${rhythmGroups[isSecondMetronome ? _activeBeatsModel.polyBar2 : _activeBeatsModel.polyBar].polyBeats.length}';
           }
         }
 
         return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

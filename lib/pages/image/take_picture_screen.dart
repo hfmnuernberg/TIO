@@ -66,7 +66,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               Navigator.pop(context, image);
             }
           } catch (e) {
-            debugPrint("Error: $e");
+            debugPrint('Error: $e');
           }
         },
         backgroundColor: ColorTheme.surface,

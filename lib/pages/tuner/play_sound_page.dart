@@ -44,7 +44,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
       step: 1,
       controller: TextEditingController(),
       textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
-      label: "Octave",
+      label: 'Octave',
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -101,7 +101,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text("Play Reference"),
+          title: const Text('Play Reference'),
           backgroundColor: ColorTheme.surfaceBright,
           foregroundColor: ColorTheme.primary,
         ),
@@ -169,7 +169,7 @@ class _SoundButtonState extends State<SoundButton> {
 
     return ListenableBuilder(
       listenable: widget.buttonListener,
-      builder: (BuildContext context, Widget? child) {
+      builder: (context, child) {
         return Listener(
           onPointerDown: (details) async {
             setState(() {
@@ -198,7 +198,7 @@ class _SoundButtonState extends State<SoundButton> {
               ),
               child: Center(
                 child: Text(
-                  midiToNameOneChar(widget.midiNumber.toInt()),
+                  midiToNameOneChar(widget.midiNumber),
                   style: TextStyle(
                     color:
                         widget.buttonListener.buttonIdx == widget.idx && widget.buttonListener.buttonOn
@@ -218,7 +218,7 @@ class _SoundButtonState extends State<SoundButton> {
 class ActiveReferenceSoundButton with ChangeNotifier {
   int buttonIdx = 0;
   bool buttonOn = false;
-  double freq = 0.0;
+  double freq = 0;
 
   void turnOff() {
     buttonOn = false;

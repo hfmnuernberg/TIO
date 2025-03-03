@@ -13,8 +13,8 @@ class BigIconButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
       child: Material(
-        elevation: 16.0,
-        borderRadius: BorderRadius.circular(800.0),
+        elevation: 16,
+        borderRadius: BorderRadius.circular(800),
         child: CircleAvatar(
           backgroundColor: Colors.white,
           radius: TIOMusicParams.sizeBigButtons,

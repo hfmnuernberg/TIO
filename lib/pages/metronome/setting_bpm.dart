@@ -78,7 +78,7 @@ class _SetBPMState extends State<SetBPM> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set BPM",
+      title: 'Set BPM',
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,

@@ -13,7 +13,7 @@ class CardListTile extends StatelessWidget {
   final IconButton? menuIconTwo;
 
   final dynamic leadingPicture;
-  final Function onTapFunction;
+  final GestureTapCallback onTapFunction;
   final bool disableTap;
 
   final Color? highlightColor;
@@ -40,28 +40,26 @@ class CardListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       color: highlightColor ?? ColorTheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
       margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 8),
-      elevation: 0.0,
+      elevation: 0,
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: ListTile(
         enabled: !disableTap,
         title: Text(title, style: TextStyle(color: textColor, fontWeight: FontWeight.w500)),
-        subtitle: Text(subtitle ?? "", style: TextStyle(color: textColor)),
+        subtitle: Text(subtitle ?? '', style: TextStyle(color: textColor)),
         leading: _showPicture(leadingPicture),
         titleAlignment: ListTileTitleAlignment.titleHeight,
         trailing: Wrap(
           spacing: 2, // space between two icons
           children: <Widget>[menuIconTwo ?? const SizedBox(), menuIconOne ?? const SizedBox(), trailingIcon],
         ),
-        onTap: () {
-          onTapFunction();
-        },
+        onTap: onTapFunction,
       ),
     );
   }
 
-  Widget _showPicture(dynamic picture) {
+  Widget _showPicture(picture) {
     if (picture is ImageProvider) {
       // if picture is an image provider
       return AspectRatio(aspectRatio: 1, child: Image(image: picture, fit: BoxFit.cover));

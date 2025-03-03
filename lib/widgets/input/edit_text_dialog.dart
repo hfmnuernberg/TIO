@@ -64,7 +64,7 @@ class EditTextDialog extends StatelessWidget {
           autofocus: true,
           maxLength: 100,
           decoration: InputDecoration(
-            hintText: "",
+            hintText: '',
             border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
             enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
             label: Text(label, style: TextStyle(color: ColorTheme.surfaceTint)),
