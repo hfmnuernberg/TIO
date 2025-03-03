@@ -74,7 +74,13 @@ class _SetTrimState extends State<SetTrim> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
-            child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 200)),
+            child: ClipRect(
+              child: Transform(
+                transform: Matrix4.identity()..scale(2.0, 1.0),
+                alignment: Alignment.center,
+                child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 400)),
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
