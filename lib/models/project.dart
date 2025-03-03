@@ -64,7 +64,7 @@ class Project extends ChangeNotifier {
   @JsonKey(includeFromJson: false, includeToJson: false)
   ImageProvider? get thumbnail => _thumbnail;
 
-  void setThumbnail(String newRelativePath) async {
+  Future<void> setThumbnail(String newRelativePath) async {
     _thumbnailPath = newRelativePath;
     var absolutePath = await FileIO.getAbsoluteFilePath(newRelativePath);
     if (File(absolutePath).existsSync()) {
