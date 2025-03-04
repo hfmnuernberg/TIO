@@ -157,8 +157,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
   void _deleteThumbnailWhenNecessary(Project project, ProjectBlock block) {
     if (block is !ImageBlock) return;
-    if (project.thumbnailPath != block.relativePath) return;
-    project.setThumbnail('');
+    if (project.thumbnailPath != block.relativePath) project.setThumbnail('');
   }
 
   void _createBlockAndGoToTool(BlockTypeInfo info, String blockTitle) {
