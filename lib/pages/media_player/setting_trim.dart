@@ -74,27 +74,9 @@ class _SetTrimState extends State<SetTrim> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
-            // SOLUTION 1 - simple centered zoomed view
-            // child: ClipRect(
-            //   child: Transform(
-            //     transform: Matrix4.identity()..scale(2.0, 1.0),
-            //     alignment: Alignment.center,
-            //     child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 400)),
-            //   ),
-            // ),
-            // SOLUTION 2 - pinch and zoom view
-            // child: InteractiveViewer(
-            //   minScale: 1.0,
-            //   maxScale: 5.0,
-            //   child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 400)),
-            // ),
-            // SOLUTION 3 - zoomable widget
-            // child: ZoomableWidget(
-            //   child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 400)),
-            // ),
-            // SOLUTION 4 - zoomable info screen layer
             child: Zoomable(
-              child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 400)),)
+              child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 400)),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
