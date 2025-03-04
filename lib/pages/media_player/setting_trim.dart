@@ -1,10 +1,9 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
-import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/file_io.dart';
+import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
@@ -12,6 +11,7 @@ import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
+import 'package:tiomusic/widgets/zoomable.dart';
 
 class SetTrim extends StatefulWidget {
   final Float32List rmsValues;
@@ -74,13 +74,27 @@ class _SetTrimState extends State<SetTrim> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
-            child: ClipRect(
-              child: Transform(
-                transform: Matrix4.identity()..scale(2.0, 1.0),
-                alignment: Alignment.center,
-                child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 400)),
-              ),
-            ),
+            // SOLUTION 1 - simple centered zoomed view
+            // child: ClipRect(
+            //   child: Transform(
+            //     transform: Matrix4.identity()..scale(2.0, 1.0),
+            //     alignment: Alignment.center,
+            //     child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 400)),
+            //   ),
+            // ),
+            // SOLUTION 2 - pinch and zoom view
+            // child: InteractiveViewer(
+            //   minScale: 1.0,
+            //   maxScale: 5.0,
+            //   child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 400)),
+            // ),
+            // SOLUTION 3 - zoomable widget
+            // child: ZoomableWidget(
+            //   child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 400)),
+            // ),
+            // SOLUTION 4 - zoomable info screen layer
+            child: Zoomable(
+              child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 400)),)
           ),
           Padding(
             padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
