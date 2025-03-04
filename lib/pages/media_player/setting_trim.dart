@@ -75,7 +75,7 @@ class _SetTrimState extends State<SetTrim> {
           Padding(
             padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
             child: Zoomable(
-              child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 400)),
+              child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 200)),
             ),
           ),
           Padding(
