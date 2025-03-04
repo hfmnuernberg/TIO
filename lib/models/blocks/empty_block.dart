@@ -9,7 +9,7 @@ class EmptyBlock extends ProjectBlock {
   List<Object> get props => [];
 
   @override
-  String get kind => "empty";
+  String get kind => 'empty';
 
   late String _title;
   @override
@@ -48,9 +48,9 @@ class EmptyBlock extends ProjectBlock {
 
   EmptyBlock() {
     _timeLastModified = DateTime.now();
-    _title = "Empty";
-    _id = "empty";
-    _islandToolID = "";
+    _title = 'Empty';
+    _id = 'empty';
+    _islandToolID = '';
   }
 
   @override

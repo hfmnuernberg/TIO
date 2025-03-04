@@ -123,7 +123,7 @@ class _ParentToolState extends State<ParentTool> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyBookmarkSave,
-        "Tap here to save the tool to a project",
+        'Tap here to save the tool to a project',
         alignText: ContentAlign.left,
         pointingDirection: PointingDirection.right,
       ),
@@ -149,13 +149,13 @@ class _ParentToolState extends State<ParentTool> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyBookmarkSave,
-        "Tap here to copy your tool to another project",
+        'Tap here to copy your tool to another project',
         alignText: ContentAlign.left,
         pointingDirection: PointingDirection.right,
       ),
       CustomTargetFocus(
         _keyChangeTitle,
-        "Tap here to edit the title of your tool",
+        'Tap here to edit the title of your tool',
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
@@ -182,7 +182,7 @@ class _ParentToolState extends State<ParentTool> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyIsland,
-        "Tap here to combine your tool with a metronome, tuner or media player",
+        'Tap here to combine your tool with a metronome, tuner or media player',
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
@@ -209,9 +209,7 @@ class _ParentToolState extends State<ParentTool> {
       // Icon Button for saving the tool
       IconButton(
         key: _keyBookmarkSave,
-        onPressed: () {
-          _openBottomSheetAndSaveTool();
-        },
+        onPressed: _openBottomSheetAndSaveTool,
         icon: Icon(widget.isQuickTool ? Icons.bookmark_outline : Icons.bookmark_add_outlined),
       ),
     ];
@@ -219,7 +217,7 @@ class _ParentToolState extends State<ParentTool> {
     if (widget.menuItems != null && widget.menuItems!.isNotEmpty) {
       appBarActions.add(
         MenuAnchor(
-          builder: (BuildContext context, MenuController controller, Widget? child) {
+          builder: (context, controller, child) {
             return IconButton(
               onPressed: () {
                 controller.isOpen ? controller.close() : controller.open();
@@ -229,7 +227,7 @@ class _ParentToolState extends State<ParentTool> {
           },
           style: const MenuStyle(
             backgroundColor: WidgetStatePropertyAll(ColorTheme.surface),
-            elevation: WidgetStatePropertyAll(0.0),
+            elevation: WidgetStatePropertyAll(0),
           ),
           menuChildren: widget.menuItems!,
         ),
@@ -306,20 +304,19 @@ class _ParentToolState extends State<ParentTool> {
             alignment: Alignment.centerLeft,
             child:
                 widget.isQuickTool
-                    ? const Text("Save in ...", style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
-                    : const Text("Save copy in ...", style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
+                    ? const Text('Save in ...', style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
+                    : const Text('Save copy in ...', style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
           ),
         ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
             child: ListView.builder(
-              scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemCount: projectLibrary.projects.length,
-              itemBuilder: (BuildContext context, int index) {
+              itemBuilder: (context, index) {
                 return StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setTileState) {
+                  builder: (context, setTileState) {
                     return CardListTile(
                       title: projectLibrary.projects[index].title,
                       subtitle: getDateAndTimeFormatted(projectLibrary.projects[index].timeLastModified),
@@ -345,7 +342,7 @@ class _ParentToolState extends State<ParentTool> {
         TIOFlatButton(
           // creating a new project to save the tool in it
           onPressed: () async {
-            final newTitles = await editTwoTitles(context, getDateAndTimeNow(), "${widget.toolBlock.title} - copy");
+            final newTitles = await editTwoTitles(context, getDateAndTimeNow(), '${widget.toolBlock.title} - copy');
             if (newTitles == null || newTitles.isEmpty) {
               if (mounted) {
                 // close the bottom up sheet
@@ -360,7 +357,7 @@ class _ParentToolState extends State<ParentTool> {
               saveToolInNewProject(context, widget.toolBlock, widget.isQuickTool, newTitles[0], newTitles[1]);
             }
           },
-          text: "Save in a new project",
+          text: 'Save in a new project',
         ),
         const SizedBox(height: 16),
       ],
@@ -371,7 +368,7 @@ class _ParentToolState extends State<ParentTool> {
     final newTitle = await showEditTextDialog(
       context: context,
       label: 'Tool title:',
-      value: "${toolBlock.title} - copy",
+      value: '${toolBlock.title} - copy',
       isNew: true,
     );
     if (newTitle == null) {
@@ -403,11 +400,10 @@ class _ParentToolState extends State<ParentTool> {
   Widget _settingsList(List<Widget> tiles) {
     return ListView.builder(
       key: widget.keySettingsList,
-      itemBuilder: (BuildContext context, int index) {
+      itemBuilder: (context, index) {
         return tiles[index];
       },
       itemCount: tiles.length,
-      scrollDirection: Axis.vertical,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
     );
@@ -436,28 +432,29 @@ class _ParentToolState extends State<ParentTool> {
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // island or no island
-        widget.island == null
-            ? const SizedBox()
-            : SizedBox(
-              key: _keyIsland,
-              height: ParentToolParams.islandHeight,
-              width: MediaQuery.of(context).size.width,
-              child: widget.island,
-            ),
+        if (widget.island == null)
+          const SizedBox()
+        else
+          SizedBox(
+            key: _keyIsland,
+            height: ParentToolParams.islandHeight,
+            width: MediaQuery.of(context).size.width,
+            child: widget.island,
+          ),
         // center module
-        hasSettingTiles
-            ? SizedBox(
-              height: widget.heightForCenterModule ?? MediaQuery.of(context).size.height / 2.5,
-              child: widget.centerModule,
-            )
-            : widget.centerModule,
+        if (hasSettingTiles)
+          SizedBox(
+            height: widget.heightForCenterModule ?? MediaQuery.of(context).size.height / 2.5,
+            child: widget.centerModule,
+          )
+        else
+          widget.centerModule,
         // empty space between center module and settings
         const SizedBox(height: 8),
         // setting tiles or no setting tiles
-        hasSettingTiles ? _settingsList(widget.settingTiles) : const SizedBox(),
+        if (hasSettingTiles) _settingsList(widget.settingTiles) else const SizedBox(),
         // empty space at the bottom
         const SizedBox(height: 32),
       ],

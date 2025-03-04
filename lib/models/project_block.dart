@@ -30,7 +30,7 @@ abstract class ProjectBlock extends ChangeNotifier with EquatableMixin {
   set timeLastModified(DateTime newTime);
 
   // Uuid object
-  static final Uuid _uuid = const Uuid();
+  static const Uuid _uuid = Uuid();
 
   String? get islandToolID;
   set islandToolID(String? newToolID);
@@ -45,7 +45,7 @@ abstract class ProjectBlock extends ChangeNotifier with EquatableMixin {
   }
 
   static String getIdOrCreateNewId(String id) {
-    return id == "" ? _uuid.v4() : id;
+    return id == '' ? _uuid.v4() : id;
   }
 
   static String createNewId() {
@@ -67,7 +67,7 @@ abstract class ProjectBlock extends ChangeNotifier with EquatableMixin {
       case TextParams.kind:
         return TextBlock.fromJson(json);
       default:
-        throw ("Loading blocks from Json threw error: unknown block kind: ${json['kind']}");
+        throw "Loading blocks from Json threw error: unknown block kind: ${json['kind']}";
     }
   }
 

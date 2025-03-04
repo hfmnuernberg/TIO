@@ -27,13 +27,13 @@ class _SetPitchState extends State<SetPitch> {
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
 
     _pitchInput = NumberInputDoubleWithSlider(
-      max: 24.0,
-      min: -24.0,
+      max: 24,
+      min: -24,
       defaultValue: _mediaPlayerBlock.pitchSemitones,
       step: 0.1,
       stepIntervalInMs: 200,
       controller: TextEditingController(),
-      label: "Semitones",
+      label: 'Semitones',
       textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
       allowNegativeNumbers: true,
     );
@@ -46,7 +46,7 @@ class _SetPitchState extends State<SetPitch> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Pitch",
+      title: 'Set Pitch',
       confirm: _onConfirm,
       reset: _reset,
       numberInput: _pitchInput,
@@ -64,7 +64,7 @@ class _SetPitchState extends State<SetPitch> {
 
       mediaPlayerSetPitchSemitones(pitchSemitones: newPitchValue).then(
         (success) => {
-          if (!success) {throw ("Setting pitch semitones in rust failed using this value: $newPitchValue")},
+          if (!success) {throw 'Setting pitch semitones in rust failed using this value: $newPitchValue'},
         },
       );
     }
@@ -82,7 +82,7 @@ class _SetPitchState extends State<SetPitch> {
     mediaPlayerSetPitchSemitones(pitchSemitones: _mediaPlayerBlock.pitchSemitones).then(
       (success) => {
         if (!success)
-          {throw ("Setting pitch semitones in rust failed using this value: ${_mediaPlayerBlock.pitchSemitones}")},
+          {throw 'Setting pitch semitones in rust failed using this value: ${_mediaPlayerBlock.pitchSemitones}'},
       },
     );
 
@@ -95,7 +95,7 @@ class _SetPitchState extends State<SetPitch> {
 
       mediaPlayerSetPitchSemitones(pitchSemitones: newPitchValue).then(
         (success) => {
-          if (!success) {throw ("Setting pitch semitones in rust failed using this value: $newPitchValue")},
+          if (!success) {throw 'Setting pitch semitones in rust failed using this value: $newPitchValue'},
         },
       );
     }

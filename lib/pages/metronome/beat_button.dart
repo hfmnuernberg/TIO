@@ -10,13 +10,10 @@ List<BeatButtonType> getBeatButtonsFromBeats(List<BeatType> beats) {
     switch (beatType) {
       case BeatType.Accented:
         beatTypes.add(BeatButtonType.accented);
-        break;
       case BeatType.Unaccented:
         beatTypes.add(BeatButtonType.unaccented);
-        break;
       case BeatType.Muted:
         beatTypes.add(BeatButtonType.muted);
-        break;
     }
   }
   return beatTypes;
@@ -28,13 +25,10 @@ List<BeatButtonType> getBeatButtonsFromBeatsPoly(List<BeatTypePoly> beatsPoly) {
     switch (beatTypePoly) {
       case BeatTypePoly.Accented:
         beatTypes.add(BeatButtonType.accented);
-        break;
       case BeatTypePoly.Unaccented:
         beatTypes.add(BeatButtonType.unaccented);
-        break;
       case BeatTypePoly.Muted:
         beatTypes.add(BeatButtonType.muted);
-        break;
     }
   }
   return beatTypes;

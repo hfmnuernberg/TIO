@@ -7,7 +7,7 @@ enum PointerPosition { center, left, right }
 class MessageBorder extends ShapeBorder {
   final bool usePadding;
   final PointingDirection? pointingDirection;
-  final double _padding = 16;
+  double get _padding => 16;
   final double pointerOffset; // for the offset to use, set pointerPosition to center
   final PointerPosition pointerPosition;
 
