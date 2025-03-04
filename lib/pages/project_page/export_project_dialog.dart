@@ -127,7 +127,10 @@ class ExportProjectDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: const [
-            Text('Do you really want to export the project?', style: TextStyle(color: ColorTheme.primary)),
+            Text(
+              'By exporting and sharing this project, you confirm that you have the necessary rights and permissions for all included content (e.g., text, images, audio recordings) and that you do not violate intellectual property laws or personal rights. You also confirm that you have obtained consent from any individuals depicted or recorded, as required by data protection regulations (including GDPR). If you lack such rights or consents, you must not export and share this project. The creators of this app are not liable for any legal claims arising from your use of this feature.',
+              style: TextStyle(color: ColorTheme.primary),
+            ),
             SizedBox(height: 10),
           ],
         ),
@@ -137,7 +140,7 @@ class ExportProjectDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             TextButton(onPressed: onDone, child: Text('Cancel')),
-            TIOFlatButton(onPressed: () => _exportProject(context), text: 'Export', boldText: true),
+            TIOFlatButton(onPressed: () => _exportProject(context), text: 'Confirm', boldText: true),
           ],
         ),
       ],
