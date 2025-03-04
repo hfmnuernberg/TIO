@@ -29,7 +29,7 @@ class RhythmGroup extends Equatable {
   late double beatLen;
 
   RhythmGroup(this.keyID, this.beats, this.polyBeats, this.noteKey) {
-    if (keyID == "") {
+    if (keyID == '') {
       keyID = MetronomeParams.getNewKeyID();
     }
     beatLen = NoteHandler.getBeatLength(noteKey);
@@ -43,8 +43,8 @@ class RhythmGroup extends Equatable {
     }
 
     // we need to do list.from with growable true to avoid the unmodifiable list error
-    beats = List<BeatType>.from(beats, growable: true);
-    polyBeats = List<BeatTypePoly>.from(polyBeats, growable: true);
+    beats = List<BeatType>.from(beats);
+    polyBeats = List<BeatTypePoly>.from(polyBeats);
   }
 
   factory RhythmGroup.fromJson(Map<String, dynamic> json) => _$RhythmGroupFromJson(json);

@@ -21,12 +21,12 @@ abstract class MediaPlayerFunctions {
   static void setSpeedAndPitchInRust(double speedFactor, double pitchSemitones) {
     mediaPlayerSetSpeedFactor(speedFactor: speedFactor).then(
       (success) => {
-        if (!success) {throw ("Setting speed factor in rust failed using this value: $speedFactor")},
+        if (!success) {throw 'Setting speed factor in rust failed using this value: $speedFactor'},
       },
     );
     mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones).then(
       (success) => {
-        if (!success) {throw ("Setting pitch semitones in rust failed using this value: $pitchSemitones")},
+        if (!success) {throw 'Setting pitch semitones in rust failed using this value: $pitchSemitones'},
       },
     );
   }
@@ -70,7 +70,7 @@ abstract class MediaPlayerFunctions {
 
   static Future<bool> stopPlaying() async {
     await WakelockPlus.disable();
-    return await mediaPlayerStop();
+    return mediaPlayerStop();
   }
 
   static Future<bool> startRecording(bool isPlaying) async {
@@ -80,7 +80,7 @@ abstract class MediaPlayerFunctions {
     }
 
     if (!await Permission.microphone.request().isGranted) {
-      debugPrint("failed to get mic permissions (in starting Recording in Media Player)");
+      debugPrint('failed to get mic permissions (in starting Recording in Media Player)');
       return false;
     }
 
@@ -94,7 +94,7 @@ abstract class MediaPlayerFunctions {
 
   static Future<bool> stopRecording() async {
     await WakelockPlus.disable();
-    return await mediaPlayerStopRecording();
+    return mediaPlayerStopRecording();
   }
 
   static Future<String?> writeRecordingToFile(
@@ -103,13 +103,13 @@ abstract class MediaPlayerFunctions {
     ProjectLibrary projectLibrary,
   ) async {
     final samples = await mediaPlayerGetRecordingSamples();
-    return await FileIO.writeSamplesToWaveFile(samples, newFileName, relativePathOfPreviousFile, projectLibrary);
+    return FileIO.writeSamplesToWaveFile(samples, newFileName, relativePathOfPreviousFile, projectLibrary);
   }
 
   static Future<Float32List?> openAudioFileInRustAndGetRMSValues(MediaPlayerBlock block, int numOfBins) async {
     var absolutePath = await FileIO.getAbsoluteFilePath(block.relativePath);
     if (!await File(absolutePath).exists()) return null;
-    return await _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
+    return _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }
 
   // Functions for the Timer Display while recording
@@ -118,7 +118,7 @@ abstract class MediaPlayerFunctions {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("Recording...", style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
+          Text('Recording...', style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
           Text(getDurationFormated(duration), style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 6)),
         ],
       ),

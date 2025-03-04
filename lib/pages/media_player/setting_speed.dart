@@ -94,7 +94,7 @@ class _SetSpeedState extends State<SetSpeed> {
       step: step,
       stepIntervalInMs: 200,
       controller: speedController,
-      label: "Factor",
+      label: 'Factor',
       textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
       buttonRadius: 20,
       textFontSize: 32,
@@ -124,7 +124,7 @@ class _SetSpeedState extends State<SetSpeed> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Speed",
+      title: 'Set Speed',
       displayResetAtTop: true,
       mustBeScrollable: true,
       confirm: _onConfirm,
@@ -155,7 +155,7 @@ class _SetSpeedState extends State<SetSpeed> {
 
       mediaPlayerSetSpeedFactor(speedFactor: newSpeedFactor).then(
         (success) => {
-          if (!success) {throw ("Setting speed factor in rust failed using this value: $newSpeedFactor")},
+          if (!success) {throw 'Setting speed factor in rust failed using this value: $newSpeedFactor'},
         },
       );
     }
@@ -175,8 +175,7 @@ class _SetSpeedState extends State<SetSpeed> {
   void _onCancel() {
     mediaPlayerSetSpeedFactor(speedFactor: _mediaPlayerBlock.speedFactor).then(
       (success) => {
-        if (!success)
-          {throw ("Setting speed factor in rust failed using this value: ${_mediaPlayerBlock.speedFactor}")},
+        if (!success) {throw 'Setting speed factor in rust failed using this value: ${_mediaPlayerBlock.speedFactor}'},
       },
     );
 
@@ -189,7 +188,7 @@ class _SetSpeedState extends State<SetSpeed> {
 
       mediaPlayerSetSpeedFactor(speedFactor: newValue).then(
         (success) => {
-          if (!success) {throw ("Setting speed factor in rust failed using this value: $newValue")},
+          if (!success) {throw 'Setting speed factor in rust failed using this value: $newValue'},
         },
       );
     }

@@ -15,24 +15,24 @@ abstract class TunerFunctions {
       }
       return success;
     } else {
-      debugPrint("failed to get mic permissions");
+      debugPrint('failed to get mic permissions');
       return false;
     }
   }
 
   static Future<bool> stop() async {
     await WakelockPlus.disable();
-    return await tunerStop();
+    return tunerStop();
   }
 
   static Future<bool> startGenerator() async {
     await configureAudioSession(AudioSessionType.playback);
-    return await generatorStart();
+    return generatorStart();
   }
 
   static Future<bool> stopGenerator() async {
     await generatorNoteOff();
     await Future.delayed(const Duration(milliseconds: 70));
-    return await generatorStop();
+    return generatorStop();
   }
 }

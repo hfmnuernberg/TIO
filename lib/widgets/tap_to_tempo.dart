@@ -53,7 +53,7 @@ class _Tap2TempoState extends State<Tap2Tempo> {
       _firstTap = false;
     } else {
       _bpmList.add(bpm);
-      widget.bpmHandle.value = widget.bpmHandle.value.copyWith(text: (_bpmList.average).round().toString());
+      widget.bpmHandle.value = widget.bpmHandle.value.copyWith(text: _bpmList.average.round().toString());
     }
     _time1 = _time2;
     setState(() {});
@@ -75,13 +75,13 @@ class _Tap2TempoState extends State<Tap2Tempo> {
 
   // Convert ms to BPM
   int _ms2BPM(int ms) {
-    return (60000 ~/ ms);
+    return 60000 ~/ ms;
   }
 
   @override
   Widget build(BuildContext context) {
     return TIOTextButton(
-      text: "Tap to tempo",
+      text: 'Tap to tempo',
       onTap: widget.enabled ? _tap2tempo : () {},
       backgroundColor: Color.lerp(ColorTheme.tertiary60, ColorTheme.surface, _t2tColorLerpValue / cooldownInMs),
       icon: const Icon(Icons.touch_app_outlined, size: 40),
