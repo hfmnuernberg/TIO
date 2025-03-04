@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:archive/archive_io.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -56,10 +57,19 @@ class ExportProjectDialog extends StatelessWidget {
 
   Future<List<File>> _createTmpImageFiles(Project project) async {
     final imageFiles = await Future.wait(
-      project.blocks.whereType<ImageBlock>().map((block) => _copyMediaToFile(block.relativePath)),
+      project.blocks
+          .whereType<ImageBlock>()
+          .map((block) => block.relativePath)
+          .whereNot((relativePath) => relativePath == '')
+          .map(_copyMediaToFile),
     );
+
     final mediaPlayerFiles = await Future.wait(
-      project.blocks.whereType<MediaPlayerBlock>().map((block) => _copyMediaToFile(block.relativePath)),
+      project.blocks
+          .whereType<MediaPlayerBlock>()
+          .map((block) => block.relativePath)
+          .whereNot((relativePath) => relativePath == '')
+          .map(_copyMediaToFile),
     );
     return [...imageFiles, ...mediaPlayerFiles];
   }
