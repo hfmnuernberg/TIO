@@ -45,7 +45,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
 
     _waveformVisualizer = WaveformVisualizer(
-      0.0,
+      0,
       widget.mediaPlayerBlock.rangeStart,
       widget.mediaPlayerBlock.rangeEnd,
       _rmsValues,
@@ -63,7 +63,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
         final customPaintRenderBox = customPaintContext.findRenderObject() as RenderBox;
         numOfBins = (customPaintRenderBox.size.width / MediaPlayerParams.binWidth).floor();
       } else {
-        throw ("WARNING: couldn't set numOfBins because the custom painter context was null!");
+        throw "WARNING: couldn't set numOfBins because the custom painter context was null!";
       }
 
       setState(() {
@@ -83,7 +83,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
           if (!mounted) return;
           setState(() {
             _waveformVisualizer = WaveformVisualizer(
-              0.0,
+              0,
               widget.mediaPlayerBlock.rangeStart,
               widget.mediaPlayerBlock.rangeEnd,
               _rmsValues,
@@ -100,7 +100,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       });
     });
 
-    _timerPollPlaybackPosition = Timer.periodic(const Duration(milliseconds: 120), (Timer t) {
+    _timerPollPlaybackPosition = Timer.periodic(const Duration(milliseconds: 120), (t) {
       if (!mounted) {
         t.cancel();
         return;
@@ -108,7 +108,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       if (!_isPlaying) return;
       mediaPlayerGetState().then((mediaPlayerState) {
         if (mediaPlayerState == null) {
-          debugPrint("State is null");
+          debugPrint('State is null');
           return;
         }
 

@@ -36,7 +36,7 @@ class _RhythmSegmentState extends State<RhythmSegment> {
     // this variable needs to be set here and not in initState, because otherwise the box size of the group would not change with changing the number of beats
     double? spaceForEachPoly;
     double? spaceForEachMainBeat;
-    double totalGroupWidth = (TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2);
+    double totalGroupWidth = TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2;
     if (rhythmGroups[widget.barIdx].polyBeats.length > rhythmGroups[widget.barIdx].beats.length) {
       totalGroupWidth = totalGroupWidth * rhythmGroups[widget.barIdx].polyBeats.length;
       spaceForEachMainBeat = totalGroupWidth / rhythmGroups[widget.barIdx].beats.length;
@@ -45,19 +45,18 @@ class _RhythmSegmentState extends State<RhythmSegment> {
       spaceForEachPoly = totalGroupWidth / rhythmGroups[widget.barIdx].polyBeats.length;
     }
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
-        border: Border.all(color: ColorTheme.primary87, width: 1),
+        border: Border.all(color: ColorTheme.primary87),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(4.0),
+        padding: const EdgeInsets.all(4),
         child: Column(
           children: [
             SizedBox(
               width: totalGroupWidth,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: _beatButtons(rhythmGroups[widget.barIdx].beats.length, spaceForEachMainBeat, rhythmGroups),
               ),
             ),
@@ -70,7 +69,6 @@ class _RhythmSegmentState extends State<RhythmSegment> {
                         height: TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2,
                       )
                       : Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
                         children: _beatButtons(
                           rhythmGroups[widget.barIdx].polyBeats.length,
                           spaceForEachPoly,
@@ -93,7 +91,7 @@ class _RhythmSegmentState extends State<RhythmSegment> {
 
       var button = ListenableBuilder(
         listenable: widget.activeBeatsNotifier,
-        builder: (BuildContext context, Widget? child) {
+        builder: (context, child) {
           bool highlight = false;
           bool polyBeatOn = widget.activeBeatsNotifier.polyBeatOn;
           bool mainBeatOn = widget.activeBeatsNotifier.mainBeatOn;

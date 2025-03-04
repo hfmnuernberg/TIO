@@ -30,7 +30,7 @@ class _SetTrimState extends State<SetTrim> {
 
   late WaveformVisualizer _waveformVisualizer;
   late int _numOfBins;
-  double _waveFormWidth = 0.0;
+  double _waveFormWidth = 0;
 
   Duration _rangeStartDuration = Duration.zero;
   Duration _rangeEndDuration = Duration.zero;
@@ -42,7 +42,7 @@ class _SetTrimState extends State<SetTrim> {
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
     _rangeValues = RangeValues(_mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd);
 
-    _waveformVisualizer = WaveformVisualizer.setTrim(0.0, 1.0, widget.rmsValues, 0);
+    _waveformVisualizer = WaveformVisualizer.setTrim(0, 1, widget.rmsValues, 0);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
@@ -65,7 +65,7 @@ class _SetTrimState extends State<SetTrim> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Trim",
+      title: 'Set Trim',
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,
@@ -85,7 +85,6 @@ class _SetTrimState extends State<SetTrim> {
                 RangeSlider(
                   values: _rangeValues,
                   inactiveColor: ColorTheme.primary80,
-                  max: 1.0,
                   divisions: 1000, // how many individual values, only showing labels when division is not null
                   labels: RangeLabels(
                     getDurationFormatedWithMilliseconds(_rangeStartDuration),
@@ -140,7 +139,7 @@ class _SetTrimState extends State<SetTrim> {
   void _reset() {
     setState(() {
       _rangeValues = const RangeValues(MediaPlayerParams.defaultRangeStart, MediaPlayerParams.defaultRangeEnd);
-      _waveformVisualizer = WaveformVisualizer.setTrim(0.0, 1.0, widget.rmsValues, _numOfBins);
+      _waveformVisualizer = WaveformVisualizer.setTrim(0, 1, widget.rmsValues, _numOfBins);
     });
   }
 

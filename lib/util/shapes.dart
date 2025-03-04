@@ -7,7 +7,7 @@ class LeftButtonShape extends OutlinedBorder {
 
   @override
   EdgeInsetsGeometry get dimensions {
-    return const EdgeInsets.only();
+    return EdgeInsets.zero;
   }
 
   @override
@@ -45,7 +45,7 @@ class RightButtonShape extends OutlinedBorder {
 
   @override
   EdgeInsetsGeometry get dimensions {
-    return const EdgeInsets.only();
+    return EdgeInsets.zero;
   }
 
   @override

@@ -41,12 +41,12 @@ class _ImageToolState extends State<ImageTool> {
 
     _shareMenuButton = MenuItemButton(
       onPressed: _shareFilePressed,
-      child: const Text("Share image", style: TextStyle(color: ColorTheme.primary)),
+      child: const Text('Share image', style: TextStyle(color: ColorTheme.primary)),
     );
 
     _setAsThumbnailMenuButton = MenuItemButton(
       onPressed: _setAsThumbnail,
-      child: const Text("Set as thumbnail", style: TextStyle(color: ColorTheme.primary)),
+      child: const Text('Set as thumbnail', style: TextStyle(color: ColorTheme.primary)),
     );
 
     _imageBlock = Provider.of<ProjectBlock>(context, listen: false) as ImageBlock;
@@ -89,7 +89,7 @@ class _ImageToolState extends State<ImageTool> {
       if (useAsProfilePicture != null && useAsProfilePicture) {
         _project.setThumbnail(_imageBlock.relativePath);
         if (mounted) {
-          FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+          await FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
         }
       }
     }
@@ -99,9 +99,9 @@ class _ImageToolState extends State<ImageTool> {
     context: context,
     builder:
         (context) => AlertDialog(
-          title: const Text("Set Project Thumbnail", style: TextStyle(color: ColorTheme.primary)),
+          title: const Text('Set Project Thumbnail', style: TextStyle(color: ColorTheme.primary)),
           content: const Text(
-            "Do you want to use the image of this tool as your profile picture for this project?",
+            'Do you want to use the image of this tool as your profile picture for this project?',
             style: TextStyle(color: ColorTheme.primary),
           ),
           actions: [
@@ -109,13 +109,13 @@ class _ImageToolState extends State<ImageTool> {
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: const Text("No"),
+              child: const Text('No'),
             ),
             TIOFlatButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              text: "Yes",
+              text: 'Yes',
               boldText: true,
             ),
           ],
@@ -169,7 +169,7 @@ class _ImageToolState extends State<ImageTool> {
 
       if (image == null) return;
 
-      var newFileName = "${_project.title}-${_imageBlock.title}";
+      var newFileName = '${_project.title}-${_imageBlock.title}';
 
       if (mounted) {
         var projectLib = context.read<ProjectLibrary>();
@@ -178,7 +178,7 @@ class _ImageToolState extends State<ImageTool> {
           context,
           File(image.path),
           newFileName,
-          _imageBlock.relativePath == "" ? null : _imageBlock.relativePath,
+          _imageBlock.relativePath == '' ? null : _imageBlock.relativePath,
           projectLib,
         );
 
@@ -215,14 +215,14 @@ class _ImageToolState extends State<ImageTool> {
               if (imageBlock.image != null) {
                 return Image(image: imageBlock.image!);
               } else {
-                return const Text("No image in this tool.", style: TextStyle(color: ColorTheme.primary));
+                return const Text('No image in this tool.', style: TextStyle(color: ColorTheme.primary));
               }
             },
           ),
         ),
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[

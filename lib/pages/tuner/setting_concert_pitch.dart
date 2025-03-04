@@ -26,13 +26,13 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
     _tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
 
     _concertPitchInput = NumberInputDoubleWithSlider(
-      max: 600.0,
-      min: 200.0,
+      max: 600,
+      min: 200,
       defaultValue: _tunerBlock.chamberNoteHz,
-      step: 1.0,
+      step: 1,
       stepIntervalInMs: 200,
       controller: TextEditingController(),
-      label: "Concert Pitch in Hz",
+      label: 'Concert Pitch in Hz',
       textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
     );
   }
@@ -40,7 +40,7 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Concert Pitch",
+      title: 'Set Concert Pitch',
       numberInput: _concertPitchInput,
       confirm: _onConfirm,
       reset: _reset,

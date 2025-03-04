@@ -20,7 +20,7 @@ part 'project.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Project extends ChangeNotifier {
   late String _title;
-  @JsonKey(defaultValue: "Default Title")
+  @JsonKey(defaultValue: 'Default Title')
   String get title => _title;
   set title(String newTitle) {
     _title = newTitle;
@@ -64,7 +64,7 @@ class Project extends ChangeNotifier {
   @JsonKey(includeFromJson: false, includeToJson: false)
   ImageProvider? get thumbnail => _thumbnail;
 
-  void setThumbnail(String newRelativePath) async {
+  Future<void> setThumbnail(String newRelativePath) async {
     _thumbnailPath = newRelativePath;
     var absolutePath = await FileIO.getAbsoluteFilePath(newRelativePath);
     if (File(absolutePath).existsSync()) {
@@ -135,24 +135,18 @@ class Project extends ChangeNotifier {
     switch (block.kind) {
       case TunerParams.kind:
         newBlock = TunerBlock.fromJson(jsonMap);
-        break;
       case MetronomeParams.kind:
         newBlock = MetronomeBlock.from(block as MetronomeBlock);
-        break;
       case MediaPlayerParams.kind:
         newBlock = MediaPlayerBlock.fromJson(jsonMap);
-        break;
       case ImageParams.kind:
         newBlock = ImageBlock.fromJson(jsonMap);
-        break;
       case PianoParams.kind:
         newBlock = PianoBlock.fromJson(jsonMap);
-        break;
       case TextParams.kind:
         newBlock = TextBlock.fromJson(jsonMap);
-        break;
       default:
-        throw ("Error: Failed to copy tool. Unknown block type ${block.kind}!");
+        throw 'Error: Failed to copy tool. Unknown block type ${block.kind}!';
     }
 
     // new ID, otherwise the copied tool would have the same as the original tool

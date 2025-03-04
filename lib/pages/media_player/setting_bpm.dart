@@ -8,9 +8,9 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
 import 'package:tiomusic/widgets/tap_to_tempo.dart';
 
-final defaultBpm = 80;
-final minBpm = 10;
-final maxBpm = 500;
+const defaultBpm = 80;
+const minBpm = 10;
+const maxBpm = 500;
 
 class SetBPM extends StatefulWidget {
   const SetBPM({super.key});
@@ -63,7 +63,7 @@ class _SetBPMState extends State<SetBPM> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: "Set Basic Beat",
+      title: 'Set Basic Beat',
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,

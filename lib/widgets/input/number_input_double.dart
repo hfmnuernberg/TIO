@@ -209,13 +209,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
                     keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers, decimal: true),
                     inputFormatters: <TextInputFormatter>[
                       FilteringTextInputFormatter.allow(
-                        RegExp(
-                          r'^-?(\d{0,' +
-                              _maxDigitsLeft.toString() +
-                              r'})[.,]?(\d{0,' +
-                              _maxDigitsRight.toString() +
-                              r'})',
-                        ),
+                        RegExp('^-?(\\d{0,$_maxDigitsLeft})[.,]?(\\d{0,$_maxDigitsRight})'),
                       ),
                       ConvertSemicolonToDot(),
                       DeleteLeadingZeros(),
@@ -227,12 +221,8 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
                     ),
                     style: TextStyle(fontSize: widget.textFontSize, color: ColorTheme.primary),
                     textAlign: TextAlign.center,
-                    onChanged: (value) {
-                      _manageButtonActivity(value);
-                    },
-                    onFieldSubmitted: (value) {
-                      _validateInput(value);
-                    },
+                    onChanged: _manageButtonActivity,
+                    onFieldSubmitted: _validateInput,
                   ),
                 ),
                 onFocusChange: (hasFocus) {

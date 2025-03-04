@@ -28,8 +28,6 @@ class Walkthrough {
       targets: targets,
       colorShadow: backgroundColor,
       hideSkip: true,
-      paddingFocus: 10,
-      opacityShadow: backgroundOpacity,
       pulseEnable: false,
       onFinish: () {
         onFinish();
@@ -66,10 +64,8 @@ class CustomTargetFocus {
     switch (buttonsPosition) {
       case ButtonsPosition.top:
         positionNextButton = CustomTargetContentPosition(top: edgeSpace);
-        break;
       case ButtonsPosition.bottom:
         positionNextButton = CustomTargetContentPosition(bottom: edgeSpace);
-        break;
       case ButtonsPosition.left:
         positionNextButton =
             context == null
@@ -79,7 +75,6 @@ class CustomTargetFocus {
                   top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons,
                 );
         buttonsColumnCrossAlign = CrossAxisAlignment.start;
-        break;
       case ButtonsPosition.right:
         positionNextButton =
             context == null
@@ -89,7 +84,6 @@ class CustomTargetFocus {
                   top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons,
                 );
         buttonsColumnCrossAlign = CrossAxisAlignment.end;
-        break;
       case ButtonsPosition.bottomright:
         positionNextButton = CustomTargetContentPosition(bottom: edgeSpace);
         buttonsColumnCrossAlign = CrossAxisAlignment.end;
@@ -118,7 +112,7 @@ class CustomTargetFocus {
         align: alignText ?? (customTextPosition != null ? ContentAlign.custom : ContentAlign.bottom),
         customPosition: customTextPosition,
         builder: (context, controller) {
-          return Container(
+          return DecoratedBox(
             decoration: ShapeDecoration(
               color: Colors.white,
               shape: MessageBorder(
@@ -151,7 +145,7 @@ class CustomTargetFocus {
                   onPressed: () {
                     controller.next();
                   },
-                  child: const Text("Next", style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24)),
+                  child: const Text('Next', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24)),
                 ),
               ),
               const SizedBox(height: 10),
@@ -160,7 +154,7 @@ class CustomTargetFocus {
                 onPressed: () {
                   controller.skip();
                 },
-                child: const Text("Cancel", style: TextStyle(color: ColorTheme.onPrimary, fontSize: 16)),
+                child: const Text('Cancel', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 16)),
               ),
             ],
           );
@@ -171,7 +165,6 @@ class CustomTargetFocus {
     targetFocus = TargetFocus(
       keyTarget: key,
       targetPosition: key == null ? TargetPosition(MediaQuery.sizeOf(context!), Offset.zero) : null,
-      enableOverlayTab: false,
       enableTargetTab: false,
       shape: shape ?? ShapeLightFocus.Circle,
       contents: contents,

@@ -12,118 +12,75 @@ import 'package:tiomusic/models/file_references.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
-import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
-Future<void> showImportProjectDialog({required BuildContext context}) => showDialog(
-  context: context,
-  builder: (context) {
-    return ImportProjectDialog(onDone: () => Navigator.of(context).pop());
-  },
-);
+Future<File?> _getFile() async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['zip']);
 
-class ImportProjectDialog extends StatelessWidget {
-  final Function() onDone;
+  return result == null || result.files.single.path == null ? null : File(result.files.single.path!);
+}
 
-  const ImportProjectDialog({super.key, required this.onDone});
+Future<Project> _readProjectFromArchiveFile(ArchiveFile archiveFile) async {
+  final jsonString = utf8.decode(archiveFile.content as List<int>);
+  final Map<String, dynamic> jsonData = jsonDecode(jsonString);
+  return Project.fromJson(jsonData);
+}
 
-  Future<File?> _getFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['zip']);
+Future<void> _writeMediaFileFromArchiveFile(ArchiveFile archiveFile, Directory directory) async {
+  final mediaFile = File('${directory.path}/media/${archiveFile.name}');
+  await mediaFile.writeAsBytes(archiveFile.content as List<int>);
+}
 
-    return result == null || result.files.single.path == null ? null : File(result.files.single.path!);
+Future<Project?> _extractArchive(BuildContext context, File archiveFile) async {
+  final directory = await getApplicationDocumentsDirectory();
+  final bytes = await archiveFile.readAsBytes();
+  final archive = ZipDecoder().decodeBytes(bytes);
+
+  Project? project;
+
+  for (final file in archive) {
+    if (file.name.endsWith('.json')) {
+      project = await _readProjectFromArchiveFile(file);
+    } else {
+      await _writeMediaFileFromArchiveFile(file, directory);
+    }
   }
 
-  Future<Project> _readProjectFromArchiveFile(ArchiveFile archiveFile) async {
-    final jsonString = utf8.decode(archiveFile.content as List<int>);
-    final Map<String, dynamic> jsonData = jsonDecode(jsonString);
-    return Project.fromJson(jsonData);
-  }
+  return project;
+}
 
-  Future<void> _writeMediaFileFromArchiveFile(ArchiveFile archiveFile, Directory directory) async {
-    final mediaFile = File('${directory.path}/media/${archiveFile.name}');
-    await mediaFile.writeAsBytes(archiveFile.content as List<int>);
-  }
+Future<void> _addProjectToLibrary(BuildContext context, Project project) async {
+  final projectLibrary = context.read<ProjectLibrary>();
+  projectLibrary.addProject(project);
+  await FileIO.saveProjectLibraryToJson(projectLibrary);
+  await FileReferences.init(projectLibrary);
+}
 
-  Future<Project?> _extractArchive(BuildContext context, File archiveFile) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final bytes = await archiveFile.readAsBytes();
-    final archive = ZipDecoder().decodeBytes(bytes);
+Future<void> importProject(BuildContext context) async {
+  try {
+    final file = await _getFile();
 
-    Project? project;
-
-    for (final file in archive) {
-      if (file.name.endsWith('.json')) {
-        project = await _readProjectFromArchiveFile(file);
-      } else {
-        await _writeMediaFileFromArchiveFile(file, directory);
-      }
+    if (file == null) {
+      if (context.mounted) showSnackbar(context: context, message: 'No project file selected')();
+      return;
     }
 
-    return project;
-  }
+    if (!context.mounted) return;
 
-  Future<void> _addProjectToLibrary(BuildContext context, Project project) async {
-    final projectLibrary = context.read<ProjectLibrary>();
-    projectLibrary.addProject(project);
-    await FileIO.saveProjectLibraryToJson(projectLibrary);
-    await FileReferences.init(projectLibrary);
-  }
+    final project = await _extractArchive(context, file);
 
-  Future<void> _importProject(BuildContext context) async {
-    try {
-      final file = await _getFile();
-
-      if (file == null) {
-        if (context.mounted) showSnackbar(context: context, message: 'No project file selected')();
-        return;
-      }
-
-      if (!context.mounted) return;
-
-      final project = await _extractArchive(context, file);
-
-      if (project == null) {
-        if (context.mounted) showSnackbar(context: context, message: 'Error importing project')();
-        return;
-      }
-
-      await Future.wait(project.blocks.whereType<ImageBlock>().map((block) => block.setImage(block.relativePath)));
-
-      if (!context.mounted) return;
-
-      await _addProjectToLibrary(context, project);
-
-      if (context.mounted) showSnackbar(context: context, message: 'Project imported successfully!')();
-    } catch (_) {
+    if (project == null) {
       if (context.mounted) showSnackbar(context: context, message: 'Error importing project')();
-    } finally {
-      onDone();
+      return;
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text("Import Project", style: TextStyle(color: ColorTheme.primary)),
-      content: Transform.translate(
-        offset: const Offset(0, 10),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("Would you like to import a project?", style: TextStyle(color: ColorTheme.primary)),
-            const SizedBox(height: 10),
-          ],
-        ),
-      ),
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            TextButton(onPressed: onDone, child: Text('Cancel')),
-            TIOFlatButton(onPressed: () => _importProject(context), text: "Import", boldText: true),
-          ],
-        ),
-      ],
-    );
+    await Future.wait(project.blocks.whereType<ImageBlock>().map((block) => block.setImage(block.relativePath)));
+
+    if (!context.mounted) return;
+
+    await _addProjectToLibrary(context, project);
+
+    if (context.mounted) showSnackbar(context: context, message: 'Project imported successfully!')();
+  } catch (_) {
+    if (context.mounted) showSnackbar(context: context, message: 'Error importing project')();
   }
 }

@@ -14,6 +14,6 @@ abstract class MetronomeFunctions {
 
   static Future<bool> stop() async {
     await WakelockPlus.disable();
-    return await metronomeStop();
+    return metronomeStop();
   }
 }

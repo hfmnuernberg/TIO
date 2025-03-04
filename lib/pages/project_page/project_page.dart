@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
@@ -54,7 +55,7 @@ class _ProjectPageState extends State<ProjectPage> {
     _menuItems.add(
       MenuItemButton(
         onPressed: () => showExportProjectDialog(context: context, project: _project),
-        child: const Text("Export Project", style: TextStyle(color: ColorTheme.primary)),
+        child: const Text('Export Project', style: TextStyle(color: ColorTheme.primary)),
       ),
     );
     _menuItems.add(
@@ -69,7 +70,7 @@ class _ProjectPageState extends State<ProjectPage> {
             }
           }
         },
-        child: const Text("Delete all Tools", style: TextStyle(color: ColorTheme.primary)),
+        child: const Text('Delete all Tools', style: TextStyle(color: ColorTheme.primary)),
       ),
     );
 
@@ -112,7 +113,7 @@ class _ProjectPageState extends State<ProjectPage> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyChangeTitle,
-        "Tap here to edit the title of your project",
+        'Tap here to edit the title of your project',
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
@@ -128,31 +129,36 @@ class _ProjectPageState extends State<ProjectPage> {
     context: context,
     builder:
         (context) => AlertDialog(
-          title: const Text("Delete?", style: TextStyle(color: ColorTheme.primary)),
+          title: const Text('Delete?', style: TextStyle(color: ColorTheme.primary)),
           content:
               deleteAll
                   ? const Text(
-                    "Do you really want to delete all tools in this project?",
+                    'Do you really want to delete all tools in this project?',
                     style: TextStyle(color: ColorTheme.primary),
                   )
-                  : const Text("Do you really want to delete this tool?", style: TextStyle(color: ColorTheme.primary)),
+                  : const Text('Do you really want to delete this tool?', style: TextStyle(color: ColorTheme.primary)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: const Text("No"),
+              child: const Text('No'),
             ),
             TIOFlatButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              text: "Yes",
+              text: 'Yes',
               boldText: true,
             ),
           ],
         ),
   );
+
+  void _deleteThumbnailWhenNecessary(Project project, ProjectBlock block) {
+    if (block is! ImageBlock) return;
+    if (project.thumbnailPath == block.relativePath) project.setThumbnail('');
+  }
 
   void _createBlockAndGoToTool(BlockTypeInfo info, String blockTitle) {
     if (_withoutProject) {
@@ -203,7 +209,7 @@ class _ProjectPageState extends State<ProjectPage> {
         foregroundColor: ColorTheme.primary,
         actions: [
           MenuAnchor(
-            builder: (BuildContext context, MenuController controller, Widget? child) {
+            builder: (context, controller, child) {
               return IconButton(
                 onPressed: () {
                   controller.isOpen ? controller.close() : controller.open();
@@ -213,7 +219,7 @@ class _ProjectPageState extends State<ProjectPage> {
             },
             style: const MenuStyle(
               backgroundColor: WidgetStatePropertyAll(ColorTheme.surface),
-              elevation: WidgetStatePropertyAll(0.0),
+              elevation: WidgetStatePropertyAll(0),
             ),
             menuChildren: _menuItems,
           ),
@@ -223,13 +229,12 @@ class _ProjectPageState extends State<ProjectPage> {
         alignment: Alignment.bottomCenter,
         fit: StackFit.expand,
         children: [
-          FittedBox(fit: BoxFit.cover, child: Image.asset("assets/images/tiomusic-bg.png")),
+          FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
           Padding(
             padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
             child: ListView.builder(
-              scrollDirection: Axis.vertical,
               itemCount: _project.blocks.length + 1,
-              itemBuilder: (BuildContext context, int index) {
+              itemBuilder: (context, index) {
                 if (index >= _project.blocks.length) {
                   return const SizedBox(height: 120);
                 } else {
@@ -248,8 +253,9 @@ class _ProjectPageState extends State<ProjectPage> {
                         bool? deleteBlock = await _deleteBlock();
                         if (deleteBlock != null && deleteBlock) {
                           if (context.mounted) {
+                            _deleteThumbnailWhenNecessary(_project, _project.blocks[index]);
                             _project.removeBlock(_project.blocks[index], context.read<ProjectLibrary>());
-                            FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+                            await FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
                           }
                           setState(() {});
                         }
@@ -289,7 +295,7 @@ class _ProjectPageState extends State<ProjectPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text("Choose Type of Tool"),
+        title: const Text('Choose Type of Tool'),
         backgroundColor: ColorTheme.surfaceBright,
         foregroundColor: ColorTheme.primary,
         leading: IconButton(
@@ -308,15 +314,14 @@ class _ProjectPageState extends State<ProjectPage> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          FittedBox(fit: BoxFit.cover, child: Image.asset("assets/images/tiomusic-bg.png")),
+          FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
           Padding(
             padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
             child: ListView.builder(
-              scrollDirection: Axis.vertical,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: BlockType.values.length,
-              itemBuilder: (BuildContext context, int index) {
+              itemBuilder: (context, index) {
                 var info = blockTypeInfos[BlockType.values[index]]!;
                 return CardListTile(
                   title: info.name,
@@ -345,7 +350,7 @@ class _ProjectPageState extends State<ProjectPage> {
     final newTitle = await showEditTextDialog(
       context: context,
       label: 'Tool title:',
-      value: "${info.name} ${_project.toolCounter[info.kind]! + 1}",
+      value: '${info.name} ${_project.toolCounter[info.kind]! + 1}',
       isNew: true,
     );
     if (newTitle == null) return;
