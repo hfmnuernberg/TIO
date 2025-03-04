@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:archive/archive_io.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,6 +14,8 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
 const String mediaFolder = 'media';
+const String disclaimer =
+    'By exporting and sharing this project, you confirm that you have the necessary rights and permissions for all included content (e.g., text, images, audio recordings) and that you do not violate intellectual property laws or personal rights. You also confirm that you have obtained consent from any individuals depicted or recorded, as required by data protection regulations (including GDPR). If you lack such rights or consents, you must not export and share this project. The creators of this app are not liable for any legal claims arising from your use of this feature.';
 
 String _sanitizeString(String value) =>
     value.trim().replaceAll(RegExp(r'\W+'), '-').replaceAll(RegExp(r'^-+|-+$'), '').toLowerCase();
@@ -56,10 +59,19 @@ class ExportProjectDialog extends StatelessWidget {
 
   Future<List<File>> _createTmpImageFiles(Project project) async {
     final imageFiles = await Future.wait(
-      project.blocks.whereType<ImageBlock>().map((block) => _copyMediaToFile(block.relativePath)),
+      project.blocks
+          .whereType<ImageBlock>()
+          .map((block) => block.relativePath)
+          .whereNot((relativePath) => relativePath == '')
+          .map(_copyMediaToFile),
     );
+
     final mediaPlayerFiles = await Future.wait(
-      project.blocks.whereType<MediaPlayerBlock>().map((block) => _copyMediaToFile(block.relativePath)),
+      project.blocks
+          .whereType<MediaPlayerBlock>()
+          .map((block) => block.relativePath)
+          .whereNot((relativePath) => relativePath == '')
+          .map(_copyMediaToFile),
     );
     return [...imageFiles, ...mediaPlayerFiles];
   }
@@ -126,10 +138,7 @@ class ExportProjectDialog extends StatelessWidget {
         offset: const Offset(0, 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: const [
-            Text('Do you really want to export the project?', style: TextStyle(color: ColorTheme.primary)),
-            SizedBox(height: 10),
-          ],
+          children: const [Text(disclaimer, style: TextStyle(color: ColorTheme.primary)), SizedBox(height: 10)],
         ),
       ),
       actions: [
@@ -137,7 +146,7 @@ class ExportProjectDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             TextButton(onPressed: onDone, child: Text('Cancel')),
-            TIOFlatButton(onPressed: () => _exportProject(context), text: 'Export', boldText: true),
+            TIOFlatButton(onPressed: () => _exportProject(context), text: 'Confirm', boldText: true),
           ],
         ),
       ],
