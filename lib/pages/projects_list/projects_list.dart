@@ -372,25 +372,28 @@ class _ProjectsListState extends State<ProjectsList> {
         centerTitle: true,
         backgroundColor: ColorTheme.surfaceBright,
         foregroundColor: ColorTheme.primary,
-        leading: IconButton(
-          key: _keyAddProjectButton,
-          onPressed: () async {
-            final newTitle = await showEditTextDialog(
-              context: context,
-              label: 'New project:',
-              value: getDateAndTimeNow(),
-              isNew: true,
-            );
-            if (newTitle == null) return;
+        leading: Semantics(
+          label: 'Add new project',
+          child: IconButton(
+            key: _keyAddProjectButton,
+            onPressed: () async {
+              final newTitle = await showEditTextDialog(
+                context: context,
+                label: 'New project title',
+                value: getDateAndTimeNow(),
+                isNew: true,
+              );
+              if (newTitle == null) return;
 
-            final newProject = Project.defaultPicture(newTitle);
-            if (context.mounted) {
-              FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-            }
+              final newProject = Project.defaultPicture(newTitle);
+              if (context.mounted) {
+                FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+              }
 
-            _goToProjectPage(newProject, true);
-          },
-          icon: const Icon(Icons.add),
+              _goToProjectPage(newProject, true);
+            },
+            icon: const Icon(Icons.add),
+          ),
         ),
         actions: [
           MenuAnchor(
@@ -451,6 +454,7 @@ class _ProjectsListState extends State<ProjectsList> {
                                         icon: const Icon(Icons.arrow_forward),
                                         color: ColorTheme.primaryFixedDim,
                                       ),
+                                      trailingLabel: 'Project details',
                                       menuIconOne: IconButton(
                                         onPressed: () async {
                                           bool? deleteProject = await _deleteProject();
@@ -462,6 +466,7 @@ class _ProjectsListState extends State<ProjectsList> {
                                         icon: const Icon(Icons.delete_outlined),
                                         color: ColorTheme.surfaceTint,
                                       ),
+                                      menuLabelOne: 'Delete project',
                                       leadingPicture: projectLibrary.projects[idx].thumbnail,
                                       onTapFunction: () {
                                         _goToProjectPage(projectLibrary.projects[idx], false);

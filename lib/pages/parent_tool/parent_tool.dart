@@ -264,7 +264,7 @@ class _ParentToolState extends State<ParentTool> {
         onTap: () async {
           final newTitle = await showEditTextDialog(
             context: context,
-            label: 'New tool:',
+            label: 'New tool title',
             value: widget.toolBlock.title,
           );
           if (newTitle == null) return;
@@ -367,7 +367,7 @@ class _ParentToolState extends State<ParentTool> {
   void _onSaveInProjectTap(StateSetter setTileState, int index, ProjectBlock toolBlock) async {
     final newTitle = await showEditTextDialog(
       context: context,
-      label: 'Tool title:',
+      label: 'Tool title',
       value: '${toolBlock.title} - copy',
       isNew: true,
     );
