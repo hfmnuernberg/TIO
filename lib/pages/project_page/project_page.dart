@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
@@ -154,6 +155,12 @@ class _ProjectPageState extends State<ProjectPage> {
         ),
   );
 
+  void _deleteThumbnailWhenNecessary(Project project, ProjectBlock block) {
+    if (block is !ImageBlock) return;
+    if (project.thumbnailPath != block.relativePath) return;
+    project.setThumbnail('');
+  }
+
   void _createBlockAndGoToTool(BlockTypeInfo info, String blockTitle) {
     if (_withoutProject) {
       final projectLibrary = context.read<ProjectLibrary>();
@@ -248,8 +255,8 @@ class _ProjectPageState extends State<ProjectPage> {
                         bool? deleteBlock = await _deleteBlock();
                         if (deleteBlock != null && deleteBlock) {
                           if (context.mounted) {
+                            _deleteThumbnailWhenNecessary(_project, _project.blocks[index]);
                             _project.removeBlock(_project.blocks[index], context.read<ProjectLibrary>());
-                            _project.setThumbnail('');
                             await FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
                           }
                           setState(() {});
