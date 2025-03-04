@@ -8,7 +8,8 @@ fluttervm() { if command -v fvm >/dev/null 2>&1; then fvm flutter "$@"; else flu
 dartvm() { if command -v fvm >/dev/null 2>&1; then fvm dart "$@"; else dart "$@"; fi }
 
 getTestCommand() {
-  command="fluttervm test"
+  if command -v fvm >/dev/null 2>&1; then flutterCommand="fvm flutter"; else flutterCommand="flutter"; fi
+  command="$flutterCommand test"
 
   if [ -n "$2" ]; then TEST_PATH="$2"; fi
   if [ "${TEST_PATH#test/}" = "$TEST_PATH" ]; then TEST_PATH="test/$TEST_PATH"; fi
@@ -163,9 +164,9 @@ run() {
 
 simulator() { open -a Simulator; }
 
-tests() { eval "$(getTestCommand "$@")"; }
-testsRandom() { fluttervm test --test-randomize-ordering-seed random test; }
-testsWatch() { command=$(getTestCommand "$@"); watchexec -e dart "$command"; }
+test() { eval "$(getTestCommand "$@")"; }
+testRandom() { fluttervm test --test-randomize-ordering-seed random test; }
+testWatch() { command=$(getTestCommand "$@"); watchexec -e dart "$command"; }
 
 upload() {
   if [ "$2" = 'help' ]; then
@@ -286,9 +287,9 @@ if [ "$1" = 'reset' ]; then reset; exit; fi
 if [ "$1" = 'run' ]; then run "$@"; exit; fi
 if [ "$1" = 'simulator' ]; then simulator; exit; fi
 if [ "$1" = 'start' ]; then run "$@"; exit; fi
-if [ "$1" = 'test' ]; then tests "$@"; exit; fi
-if [ "$1" = 'test:random' ]; then testsRandom "$@"; exit; fi
-if [ "$1" = 'test:watch' ]; then testsWatch "$@"; exit; fi
+if [ "$1" = 'test' ]; then test "$@"; exit; fi
+if [ "$1" = 'test:random' ]; then testRandom "$@"; exit; fi
+if [ "$1" = 'test:watch' ]; then testWatch "$@"; exit; fi
 if [ "$1" = 'upload' ]; then upload "$@"; exit; fi
 
 help
