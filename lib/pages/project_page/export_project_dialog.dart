@@ -14,6 +14,8 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
 const String mediaFolder = 'media';
+const String disclaimer =
+    'By exporting and sharing this project, you confirm that you have the necessary rights and permissions for all included content (e.g., text, images, audio recordings) and that you do not violate intellectual property laws or personal rights. You also confirm that you have obtained consent from any individuals depicted or recorded, as required by data protection regulations (including GDPR). If you lack such rights or consents, you must not export and share this project. The creators of this app are not liable for any legal claims arising from your use of this feature.';
 
 String _sanitizeString(String value) =>
     value.trim().replaceAll(RegExp(r'\W+'), '-').replaceAll(RegExp(r'^-+|-+$'), '').toLowerCase();
@@ -136,13 +138,7 @@ class ExportProjectDialog extends StatelessWidget {
         offset: const Offset(0, 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: const [
-            Text(
-              'By exporting and sharing this project, you confirm that you have the necessary rights and permissions for all included content (e.g., text, images, audio recordings) and that you do not violate intellectual property laws or personal rights. You also confirm that you have obtained consent from any individuals depicted or recorded, as required by data protection regulations (including GDPR). If you lack such rights or consents, you must not export and share this project. The creators of this app are not liable for any legal claims arising from your use of this feature.',
-              style: TextStyle(color: ColorTheme.primary),
-            ),
-            SizedBox(height: 10),
-          ],
+          children: const [Text(disclaimer, style: TextStyle(color: ColorTheme.primary)), SizedBox(height: 10)],
         ),
       ),
       actions: [
