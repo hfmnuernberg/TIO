@@ -9,6 +9,7 @@ class Zoomable extends StatefulWidget {
 }
 
 class ZoomableState extends State<Zoomable> {
+  final TransformationController _transformationController = TransformationController();
   bool _showHint = true;
 
   @override
@@ -17,6 +18,18 @@ class ZoomableState extends State<Zoomable> {
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) setState(() => _showHint = false);
     });
+
+    _transformationController.addListener(_onTransform);
+  }
+
+  void _onTransform() {
+    Matrix4 matrix = _transformationController.value;
+    double scale = matrix.getMaxScaleOnAxis();
+    if (scale > 1.0) {
+      double horizontalTranslation = matrix.getTranslation().x;
+      matrix.setTranslationRaw(horizontalTranslation, 0, 0);
+      _transformationController.value = matrix;
+    }
   }
 
   void _onUserInteraction() {
@@ -26,13 +39,25 @@ class ZoomableState extends State<Zoomable> {
   }
 
   @override
+  void dispose() {
+    _transformationController.removeListener(_onTransform);
+    _transformationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onScaleStart: (_) => _onUserInteraction(),
       onTap: _onUserInteraction,
       child: Stack(
         children: [
-          InteractiveViewer(minScale: 1.0, maxScale: 4.0, child: widget.child),
+          InteractiveViewer(
+            transformationController: _transformationController,
+            minScale: 1,
+            maxScale: 4,
+            child: widget.child,
+          ),
           if (_showHint)
             Center(
               child: AnimatedOpacity(
@@ -41,7 +66,7 @@ class ZoomableState extends State<Zoomable> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: Colors.black..withValues(alpha: 0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
