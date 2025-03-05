@@ -81,7 +81,7 @@ class ZoomableState extends State<Zoomable> {
                   maxScale: 4,
                   boundaryMargin: const EdgeInsets.only(left: 150),
                   alignment: Alignment.center,
-                  onInteractionEnd: (_) => _adjustVerticalTranslation(),
+                  onInteractionEnd: (_) => _onTransform(),
                   child: widget.child,
                 ),
                 if (_showHint)
