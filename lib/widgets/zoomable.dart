@@ -68,6 +68,7 @@ class ZoomableState extends State<Zoomable> {
     return LayoutBuilder(
       builder: (context, constraints) {
         _viewportSize = Size(constraints.maxWidth, constraints.maxHeight);
+
         return SizedBox(
           height: widget.childWidgetHeight,
           child: GestureDetector(
