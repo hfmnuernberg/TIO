@@ -64,6 +64,8 @@ class _SetTrimState extends State<SetTrim> {
 
   @override
   Widget build(BuildContext context) {
+    const double waveFormWidgetHeight = 200;
+
     return ParentSettingPage(
       title: 'Set Trim',
       confirm: _onConfirm,
@@ -75,7 +77,11 @@ class _SetTrimState extends State<SetTrim> {
           Padding(
             padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
             child: Zoomable(
-              child: CustomPaint(painter: _waveformVisualizer, size: Size(MediaQuery.of(context).size.width, 200)),
+              childWidgetHeight: waveFormWidgetHeight,
+              child: CustomPaint(
+                painter: _waveformVisualizer,
+                size: Size(MediaQuery.of(context).size.width, waveFormWidgetHeight),
+              ),
             ),
           ),
           Padding(
