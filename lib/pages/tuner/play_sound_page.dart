@@ -26,7 +26,7 @@ class PlaySoundPage extends StatefulWidget {
 
 class _PlaySoundPageState extends State<PlaySoundPage> {
   int _octave = 4;
-  double _frequency = 440;
+  double _frequency = 0;
   late NumberInputIntWithSlider _octaveInput;
 
   final ActiveReferenceSoundButton _buttonListener = ActiveReferenceSoundButton();
@@ -104,6 +104,10 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
       }
     } else {
       generatorNoteOff();
+
+      setState(() {
+        _frequency = 0;
+      });
     }
   }
 
