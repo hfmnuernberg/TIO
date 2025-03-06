@@ -215,6 +215,7 @@ class _ProjectPageState extends State<ProjectPage> {
                   controller.isOpen ? controller.close() : controller.open();
                 },
                 icon: const Icon(Icons.more_vert),
+                tooltip: 'Project menu',
               );
             },
             style: const MenuStyle(
