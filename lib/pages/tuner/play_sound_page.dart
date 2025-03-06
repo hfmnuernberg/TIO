@@ -159,12 +159,7 @@ class SoundButton extends StatefulWidget {
   final int idx;
   final ActiveReferenceSoundButton buttonListener;
 
-  const SoundButton({
-    super.key,
-    required this.midiNumber,
-    required this.idx,
-    required this.buttonListener,
-  });
+  const SoundButton({super.key, required this.midiNumber, required this.idx, required this.buttonListener});
 
   @override
   State<SoundButton> createState() => _SoundButtonState();
@@ -181,7 +176,6 @@ class _SoundButtonState extends State<SoundButton> {
 
   @override
   Widget build(BuildContext context) {
-
     return ListenableBuilder(
       listenable: widget.buttonListener,
       builder: (context, child) {
