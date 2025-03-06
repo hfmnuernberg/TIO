@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
+import 'package:tiomusic/services/file_service.dart';
+import 'package:tiomusic/services/share_service.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
@@ -32,21 +34,21 @@ class ExportProjectDialog extends StatelessWidget {
 
   const ExportProjectDialog({super.key, required this.project, required this.onDone});
 
-  Future<File> _writeProjectToFile(Project project, File tmpProjectFile) async {
+  Future<void> _writeProjectToFile(Project project, File tmpProjectFile) async {
     String jsonString = jsonEncode(project.toJson());
-    return tmpProjectFile.writeAsString(jsonString);
+    await tmpProjectFile.writeAsString(jsonString);
   }
 
-  Future<File> _createTmpProjectFile(Project project) async {
-    final tmpDirectory = await getTemporaryDirectory();
+  Future<File> _createTmpProjectFile(FileService fileService, Project project) async {
+    final tmpDirectory = await fileService.getTemporaryDirectory();
     final tmpProjectFile = File('${tmpDirectory.path}/tio-music-project.json');
-
-    return _writeProjectToFile(project, tmpProjectFile);
+    await _writeProjectToFile(project, tmpProjectFile);
+    return tmpProjectFile;
   }
 
-  Future<File> _copyMediaToFile(String relativePath) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final tmpDirectory = await getTemporaryDirectory();
+  Future<File> _copyMediaToFile(FileService fileService, String relativePath) async {
+    final directory = await fileService.getApplicationDocumentsDirectory();
+    final tmpDirectory = await fileService.getTemporaryDirectory();
 
     final sourceFile = File('${directory.path}/$relativePath');
     final destPath = '${tmpDirectory.path}/${_getMediaFileName(relativePath)}';
@@ -54,18 +56,18 @@ class ExportProjectDialog extends StatelessWidget {
     return sourceFile.copy(destPath);
   }
 
-  Future<List<File>> _createTmpImageFiles(Project project) async {
+  Future<List<File>> _createTmpImageFiles(FileService fileService, Project project) async {
     final imageFiles = await Future.wait(
-      project.blocks.whereType<ImageBlock>().map((block) => _copyMediaToFile(block.relativePath)),
+      project.blocks.whereType<ImageBlock>().map((block) => _copyMediaToFile(fileService, block.relativePath)),
     );
     final mediaPlayerFiles = await Future.wait(
-      project.blocks.whereType<MediaPlayerBlock>().map((block) => _copyMediaToFile(block.relativePath)),
+      project.blocks.whereType<MediaPlayerBlock>().map((block) => _copyMediaToFile(fileService, block.relativePath)),
     );
     return [...imageFiles, ...mediaPlayerFiles];
   }
 
-  Future<File> _writeFilesToArchive(List<File> files) async {
-    final tmpDirectory = await getTemporaryDirectory();
+  Future<File> _writeFilesToArchive(FileService fileService, List<File> files) async {
+    final tmpDirectory = await fileService.getTemporaryDirectory();
     final archivePath = '${tmpDirectory.path}/tio-music-${_sanitizeString(project.title)}.zip';
 
     final archive = Archive();
@@ -86,12 +88,12 @@ class ExportProjectDialog extends StatelessWidget {
     await Future.wait(files.map<Future<FileSystemEntity>>((file) => file.delete()).toList());
   }
 
-  Future<File> _archiveProject(Project project) async {
-    final projectFile = await _createTmpProjectFile(project);
-    final imageFiles = await _createTmpImageFiles(project);
+  Future<File> _archiveProject(FileService fileService, Project project) async {
+    final projectFile = await _createTmpProjectFile(fileService, project);
+    final imageFiles = await _createTmpImageFiles(fileService, project);
     final files = [projectFile, ...imageFiles];
 
-    final archive = await _writeFilesToArchive(files);
+    final archive = await _writeFilesToArchive(fileService, files);
 
     _deleteTmpFiles(files);
 
@@ -99,13 +101,16 @@ class ExportProjectDialog extends StatelessWidget {
   }
 
   Future<void> _exportProject(BuildContext context) async {
+    final shareService = Provider.of<ShareService>(context, listen: false);
+    final fileService = Provider.of<FileService>(context, listen: false);
     try {
-      final archiveFile = await _archiveProject(project);
+      final archiveFile = await _archiveProject(fileService, project);
 
-      final result = await Share.shareXFiles([XFile(archiveFile.path)]);
+      if (!context.mounted) return;
+      final result = await shareService.shareXFiles([XFile(archiveFile.path)]);
       await archiveFile.delete();
 
-      if (result.status == ShareResultStatus.dismissed) {
+      if (result.status != ShareResultStatus.success) {
         if (context.mounted) showSnackbar(context: context, message: 'Project export cancelled')();
         onDone();
         return;

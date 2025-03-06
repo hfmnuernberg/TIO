@@ -10,6 +10,8 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/projects_list/projects_list.dart';
 
 import 'package:tiomusic/models/file_io.dart';
+import 'package:tiomusic/services/file_service.dart';
+import 'package:tiomusic/services/share_service.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/simple.dart';
 import 'package:tiomusic/src/rust/frb_generated.dart';
@@ -23,11 +25,9 @@ final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 Future<void> main() async {
   await RustLib.init();
   await initRustDefaultsManually();
-  // first running loading screen app to load the data from json
   runApp(SplashApp(key: UniqueKey(), returnProjectLibraryAndTheme: runMainApp));
 }
 
-// and then running the main app
 void runMainApp(ProjectLibrary projectLibrary, ThemeData? theme) {
   runApp(TIOMusicApp(projectLibrary: projectLibrary, ourTheme: theme));
 }
@@ -40,8 +40,12 @@ class TIOMusicApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ProjectLibrary>.value(
-      value: projectLibrary,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ProjectLibrary>.value(value: projectLibrary),
+        Provider<ShareService>(create: (_) => ShareServiceImpl()),
+        Provider<FileService>(create: (_) => FileServiceImpl()),
+      ],
       child: MaterialApp(
         navigatorObservers: [routeObserver],
         debugShowCheckedModeBanner: false,
@@ -73,14 +77,6 @@ class _TIOMusicHomePageState extends State<TIOMusicHomePage> {
     } else {
       initAudio();
     }
-
-    // if (kDebugMode) {
-    //   Timer.periodic(const Duration(milliseconds: 3), (Timer t) {
-    //     pollDebugLogMessage().then((message) {
-    //       if (message != null && message.isNotEmpty) debugPrint(message);
-    //     });
-    //   });
-    // }
   }
 
   @override
@@ -89,7 +85,6 @@ class _TIOMusicHomePageState extends State<TIOMusicHomePage> {
   }
 }
 
-// app for the loading screen and for loading the data
 class SplashApp extends StatefulWidget {
   final Function(ProjectLibrary, ThemeData?) returnProjectLibraryAndTheme;
 
