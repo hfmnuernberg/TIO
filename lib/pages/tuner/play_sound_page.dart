@@ -57,20 +57,12 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
     });
   }
 
-  void _onUpdateFrequency(double frequency) {
-    print('_onUpdateFrequency > Frequency: $frequency');
-    setState(() {
-      _frequency = frequency;
-    });
-  }
-
   List<Widget> _buildSoundButtons(List<int> midiNumbers, int startIdx, int offset) {
     return List.generate(midiNumbers.length, (index) {
       return SoundButton(
         midiNumber: midiNumbers[index] + offset,
         idx: startIdx + index,
         buttonListener: _buttonListener,
-        updateFrequency: _onUpdateFrequency,
       );
     });
   }
@@ -101,11 +93,9 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
       if (_running) {
         generatorNoteOn(newFreq: _buttonListener.freq);
 
-        // TODO: Variant 1
-        // setState(() {
-        //   print('_onButtonsChanged > Frequency: ${_buttonListener.freq}');
-        //   _frequency = _buttonListener.freq;
-        // });
+        setState(() {
+          _frequency = _buttonListener.freq;
+        });
       }
     } else {
       generatorNoteOff();
@@ -163,14 +153,12 @@ class SoundButton extends StatefulWidget {
   final int midiNumber;
   final int idx;
   final ActiveReferenceSoundButton buttonListener;
-  final Function updateFrequency;
 
   const SoundButton({
     super.key,
     required this.midiNumber,
     required this.idx,
     required this.buttonListener,
-    required this.updateFrequency,
   });
 
   @override
@@ -188,9 +176,6 @@ class _SoundButtonState extends State<SoundButton> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.buttonListener.buttonOn) {
-      generatorNoteOn(newFreq: midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
-    }
 
     return ListenableBuilder(
       listenable: widget.buttonListener,
@@ -201,14 +186,11 @@ class _SoundButtonState extends State<SoundButton> {
               if (widget.buttonListener.buttonOn) {
                 widget.buttonListener.turnOff();
 
-                // TODO: Variant 2
                 if (widget.buttonListener.buttonIdx != widget.idx) {
                   widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
-                  // widget.updateFrequency(midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
                 }
               } else {
                 widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
-                // widget.updateFrequency(midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
               }
             });
           },
@@ -254,7 +236,6 @@ class ActiveReferenceSoundButton with ChangeNotifier {
   }
 
   void turnOn(int idx, double frequency) {
-    print('Frequency: $frequency');
     buttonOn = true;
     buttonIdx = idx;
     freq = frequency;
