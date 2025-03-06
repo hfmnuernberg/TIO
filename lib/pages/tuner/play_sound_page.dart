@@ -68,8 +68,13 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   }
 
   void _onOctaveChanged() {
+    double newFreq = _frequency;
+    if (int.parse(_octaveInput.controller.text) > _octave) newFreq = _frequency * 2;
+    if (int.parse(_octaveInput.controller.text) < _octave) newFreq = _frequency / 2;
+
     setState(() {
       _octave = int.parse(_octaveInput.controller.text);
+      _frequency = newFreq;
     });
   }
 
