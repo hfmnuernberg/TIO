@@ -194,7 +194,7 @@ class _ProjectPageState extends State<ProjectPage> {
       appBar: AppBar(
         title: GestureDetector(
           onTap: () async {
-            final newTitle = await showEditTextDialog(context: context, label: 'Project title:', value: _project.title);
+            final newTitle = await showEditTextDialog(context: context, label: 'Project title', value: _project.title);
             if (newTitle == null) return;
             _project.title = newTitle;
             if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
@@ -349,7 +349,7 @@ class _ProjectPageState extends State<ProjectPage> {
   void _onNewToolTilePressed(BlockTypeInfo info) async {
     final newTitle = await showEditTextDialog(
       context: context,
-      label: 'Tool title:',
+      label: 'Tool title',
       value: '${info.name} ${_project.toolCounter[info.kind]! + 1}',
       isNew: true,
     );

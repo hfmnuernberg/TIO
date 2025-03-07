@@ -9,8 +9,11 @@ class CardListTile extends StatelessWidget {
 
   // those three should be of the same type (IconButton or Icon), otherwise the spacing is problematic
   final IconButton trailingIcon;
+  final String? trailingLabel;
   final IconButton? menuIconOne;
+  final String? menuLabelOne;
   final IconButton? menuIconTwo;
+  final String? menuLabelTwo;
 
   final dynamic leadingPicture;
   final GestureTapCallback onTapFunction;
@@ -26,8 +29,11 @@ class CardListTile extends StatelessWidget {
     required this.title,
     this.subtitle,
     required this.trailingIcon,
+    this.trailingLabel,
     this.menuIconOne,
+    this.menuLabelOne,
     this.menuIconTwo,
+    this.menuLabelTwo,
     required this.leadingPicture,
     required this.onTapFunction,
     this.highlightColor,
@@ -38,23 +44,42 @@ class CardListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: highlightColor ?? ColorTheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-      margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 8),
-      elevation: 0,
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: ListTile(
-        enabled: !disableTap,
-        title: Text(title, style: TextStyle(color: textColor, fontWeight: FontWeight.w500)),
-        subtitle: Text(subtitle ?? '', style: TextStyle(color: textColor)),
-        leading: _showPicture(leadingPicture),
-        titleAlignment: ListTileTitleAlignment.titleHeight,
-        trailing: Wrap(
-          spacing: 2, // space between two icons
-          children: <Widget>[menuIconTwo ?? const SizedBox(), menuIconOne ?? const SizedBox(), trailingIcon],
+    return Semantics(
+      label: title,
+      child: Card(
+        color: highlightColor ?? ColorTheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+        margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 8),
+        elevation: 0,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        child: ListTile(
+          enabled: !disableTap,
+          title: Text(title, style: TextStyle(color: textColor, fontWeight: FontWeight.w500)),
+          subtitle: Text(subtitle ?? '', style: TextStyle(color: textColor)),
+          leading: _showPicture(leadingPicture),
+          titleAlignment: ListTileTitleAlignment.titleHeight,
+          trailing: Wrap(
+            spacing: 2, // space between two icons
+            children: <Widget>[
+              if (menuIconTwo == null)
+                const SizedBox()
+              else if (menuLabelTwo == null)
+                menuIconTwo!
+              else
+                Semantics(container: true, label: menuLabelTwo, child: menuIconTwo),
+
+              if (menuIconOne == null)
+                const SizedBox()
+              else if (menuLabelOne == null)
+                menuIconOne!
+              else
+                Semantics(container: true, label: menuLabelOne, child: menuIconOne),
+
+              Semantics(container: true, label: trailingLabel ?? 'Details', child: trailingIcon),
+            ],
+          ),
+          onTap: onTapFunction,
         ),
-        onTap: onTapFunction,
       ),
     );
   }
