@@ -36,7 +36,7 @@ jobs:
         with:
           xcode-version: 16.2.0
 
-      - name: Install iOS 18.2 runtime
+      - name: Install iOS runtime
         run: |
           echo "Checking available Xcode platforms..."
           xcodebuild -showsdks
