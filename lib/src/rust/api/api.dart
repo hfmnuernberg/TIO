@@ -13,6 +13,8 @@ Future<void> initAudio() => RustLib.instance.api.crateApiApiInitAudio();
 
 Future<double?> tunerGetFrequency() => RustLib.instance.api.crateApiApiTunerGetFrequency();
 
+// Future<double?> pianoSetTuning() => await RustLib.instance.api.crateApiApiPianoSetTuning(tuningRatio: ratio);
+
 Future<bool> tunerStart() => RustLib.instance.api.crateApiApiTunerStart();
 
 Future<bool> tunerStop() => RustLib.instance.api.crateApiApiTunerStop();

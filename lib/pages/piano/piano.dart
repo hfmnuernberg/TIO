@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,6 +14,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
+import 'package:tiomusic/pages/piano/set_concert_pitch.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -103,6 +105,9 @@ class _PianoState extends State<Piano> {
     bool initSuccess = await _initPiano(PianoParams.soundFontPaths[_pianoBlock.soundFontIndex]);
     await configureAudioSession(AudioSessionType.playback);
     if (!initSuccess) return;
+
+    pianoSetTuning(_pianoBlock.concertPitch);
+
     bool success = await pianoStart();
     _isPlaying = success;
   }
@@ -114,6 +119,40 @@ class _PianoState extends State<Piano> {
     }
     _isPlaying = false;
   }
+
+  Future<void> pianoSetTuning(double concertPitch) async {
+    // Standard MIDI note for A4
+    // const int midiA4 = 69;
+
+    // Calculate the tuning ratio relative to the standard 440 Hz
+    double tuningRatio = concertPitch / 440.0;
+
+    print('>>>>>>>>>>>>>>>>');
+    print('concertPitch: $concertPitch');
+    print('tuningRatio: $tuningRatio');
+
+    // Call the function that communicates with the Rust library.
+    await sendTuningChange(tuningRatio);
+  }
+
+  Future<void> sendTuningChange(double ratio) async {
+    try {
+      // How to create/generate new Rust method?
+      // Rust API method:
+      // Future<double?> pianoSetTuning() => await RustLib.instance.api.crateApiApiPianoSetTuning(tuningRatio: ratio);
+
+      // Call the new Rust function to update the tuning ratio.
+      // bool success = await pianoSetTuning;
+      // if (!success) {
+      //   print('Rust library failed to update tuning.');
+      // }
+
+      print('sendTuningChange UPDATE');
+    } catch (e) {
+      print('Error setting piano tuning: $e');
+    }
+  }
+
 
   void _createWalkthrough() {
     // add the targets here
@@ -330,6 +369,23 @@ class _PianoState extends State<Piano> {
                               child: Icon(Icons.volume_up, color: ColorTheme.onPrimary),
                             ),
                           ),
+                          IconButton(
+                            onPressed: () async {
+                              await openSettingPage(
+                                SetConcertPitch(),
+                                callbackOnReturn: (value) async  => {
+                                  await pianoSetTuning(_pianoBlock.concertPitch),
+                                  setState(() {}),
+                                },
+                                context,
+                                _pianoBlock,
+                              );
+                            },
+                            icon: const CircleAvatar(
+                              backgroundColor: ColorTheme.primary50,
+                              child: Icon(Icons.tune, color: ColorTheme.onPrimary),
+                            ),
+                          ),
                         ],
                       ),
                       Row(
@@ -448,7 +504,8 @@ class _PianoState extends State<Piano> {
                 },
                 onTapUp: (_) async => pianoNoteOff(note: midi),
                 onTapCancel: () async => pianoNoteOff(note: midi),
-                child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
+                // child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
+                child: Align(alignment: Alignment.bottomCenter, child: _showPitchLabel(midi) ),
               ),
             ),
           ),
@@ -473,7 +530,8 @@ class _PianoState extends State<Piano> {
             },
             onTapUp: (_) async => pianoNoteOff(note: midi),
             onTapCancel: () async => pianoNoteOff(note: midi),
-            child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
+            // child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
+            child: Align(alignment: Alignment.bottomCenter, child: _showPitchLabel(midi) ),
           ),
         ),
       ),
@@ -482,6 +540,26 @@ class _PianoState extends State<Piano> {
 
   Widget _spacingKey(double width, double height, bool half) {
     return SizedBox(width: half ? width / 2 : width);
+  }
+
+  Widget _showPitchLabel(int midi) {
+    final pitchName = Pitch.fromMidiNumber(midi).toString();
+    double frequency = _pianoBlock.concertPitch * math.pow(2, (midi - 69) / 12).toDouble();
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text(
+          pitchName,
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: ColorTheme.primaryFixedDim, fontSize: 20),
+        ),
+        Text(
+          '${frequency.toStringAsFixed(2)} Hz',
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: ColorTheme.primaryFixedDim, fontSize: 16),
+        ),
+      ],
+    );
   }
 
   Widget _showLabelOnC(int midi) {
