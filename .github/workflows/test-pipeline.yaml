@@ -1,4 +1,4 @@
-name: Build iOS App
+name: Build iOS App for testing Xcode version
 
 on:
   pull_request_target:
