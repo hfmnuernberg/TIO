@@ -12,6 +12,15 @@ jobs:
     timeout-minutes: 20
 
     steps:
+      - name: Setup Flutter
+        uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
+
+      - name: Install Flutter dependencies
+        run: scripts/app.sh install:flutter:packages
+
+      - name: Run Flutter doctor
+        run: scripts/app.sh doctor
+
       - name: Check macOS version
         run: sw_vers
 
@@ -21,3 +30,6 @@ jobs:
 
       - name: Check macOS version
         run: sw_vers
+
+      - name: Run Flutter doctor again
+        run: scripts/app.sh doctor
