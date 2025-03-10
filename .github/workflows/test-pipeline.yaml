@@ -12,7 +12,8 @@ permissions:
   pull-requests: read
 
 jobs:
-  build-ios-app:
+  main:
+    name: for testing Xcode version
     runs-on: macos-latest
     timeout-minutes: 20
     env:
