@@ -19,19 +19,3 @@ jobs:
       - uses: amannn/action-semantic-pull-request@v5.5.3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  build-ios-app:
-    name: test Xcode and macOS version
-    runs-on: macos-latest
-    timeout-minutes: 20
-
-    steps:
-      - name: Check macOS version
-        run: sw_vers
-
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
-
-      - name: Check macOS version
-        run: sw_vers

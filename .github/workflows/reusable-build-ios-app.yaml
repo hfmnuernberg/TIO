@@ -32,6 +32,10 @@ jobs:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
 
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 16.2.0
+
       - name: Setup flutter
         uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
 
