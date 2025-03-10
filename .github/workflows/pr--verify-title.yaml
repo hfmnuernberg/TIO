@@ -24,10 +24,6 @@ jobs:
     name: test Xcode and macOS version
     runs-on: macos-latest
     timeout-minutes: 20
-    env:
-      APPLE_DEVELOPER_TEAM_ID: '${{ vars.APPLE_DEVELOPER_TEAM_ID }}'
-      APPLE_APP_STORE_URL: 'https://testflight.apple.com/v1/app/${{ inputs.appIdentifier }}'
-      MATCH_PASSWORD: '${{ secrets.FASTLANE_GITHUB_MATCH_STORAGE_PASSWORD }}'
 
     steps:
       - name: Check macOS version
