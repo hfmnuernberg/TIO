@@ -1,4 +1,5 @@
 name: PR - Label Dependabot PRs by Semver
+
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
@@ -7,6 +8,7 @@ jobs:
   label-dependabot:
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]'
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -15,11 +17,11 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
       - name: Make scripts executable
-        run: chmod +x .github/scripts/*.sh
+        run: chmod +x scripts/*.sh
 
       - name: Label PR by semver
         run: |
-          scripts/label-dependabot.sh \
+          scripts/label-pr-by-semver.sh \
             "${{ github.event.pull_request.title }}" \
             "${{ github.event.pull_request.number }}"
         env:
