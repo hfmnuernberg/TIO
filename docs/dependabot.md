@@ -9,6 +9,13 @@ The configuration for Dependabot is stored in the [Dependabot config](../.github
 
 To auto-merge only minor and patch version updates, the Dependabot PR needs to be labeled with `semver: minor` or `semver: patch`.
 For that we have a [GitHub workflow](../.github/workflows/pr--label-dependabot-pull-requests.yaml) that checks the versions in the PR title and adds a semver label accordingly.
+The workflow needs the following permissions to add labels to the PR:
+
+```yaml
+permissions:
+  contents: write
+  pull-requests: write
+```
 
 ## Dependabot auto-merge
 
