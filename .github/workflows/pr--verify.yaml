@@ -3,6 +3,10 @@ name: PR - Verify
 on:
   pull_request:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   verify:
     name: Verify
@@ -11,9 +15,32 @@ jobs:
     with:
       ref: ${{ github.sha }}
 
+  label-dependabot-pull-requests:
+    name: Label Dependabot PRs by Semver
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Label PR by semver
+        run: |
+          scripts/label-pr-by-semver.sh \
+            "${{ github.event.pull_request.title }}" \
+            "${{ github.event.pull_request.number }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   # see docs/dependabot.md
   auto-merge:
-    needs: verify
+    needs: [verify, label-dependabot-pull-requests]
     runs-on: ubuntu-latest
     permissions:
       statuses: write
@@ -27,8 +54,13 @@ jobs:
       - name: Authenticate GitHub CLI
         run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
-      - name: Enable auto-merge for Dependabot PRs
-        if: github.actor == 'dependabot[bot]'
+      - name: Enable auto-merge for Dependabot PRs (minor/patch only)
+        if: >
+          github.actor == 'dependabot[bot]' &&
+          (
+            contains(toJSON(github.event.pull_request.labels), 'semver: minor') ||
+            contains(toJSON(github.event.pull_request.labels), 'semver: patch')
+          )
         run: gh pr merge --auto --squash "$PR_URL"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

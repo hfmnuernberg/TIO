@@ -11,7 +11,7 @@ environment:
 dependencies:
     archive: 4.0.4
     audio_session: 0.1.24
-    audioplayers: 6.3.0
+    audioplayers: 6.4.0
     camera: 0.11.1
     circular_widgets: 3.0.0
     collection: 1.19.1
@@ -48,7 +48,7 @@ dependencies:
 dev_dependencies:
     build_runner: 2.4.15
     dependency_validator: 4.1.2
-    ffigen: 16.1.0
+    ffigen: 18.0.0
     flutter_launcher_icons: 0.14.3
     flutter_lints: 5.0.0
     flutter_native_splash: 2.4.5
