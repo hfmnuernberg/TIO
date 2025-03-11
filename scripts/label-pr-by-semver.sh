@@ -8,7 +8,7 @@ PR_TITLE="$1"
 PR_NUMBER="$2"
 
 echo "PR title: $PR_TITLE"
-echo "PR number: $PR_PR_NUMBER"
+echo "PR number: $PR_NUMBER"
 
 echo "Extract OLD_VERSION and NEW_VERSION..."
 OLD_VERSION=$(echo "$PR_TITLE" | sed -n 's/.* from \([^ ]*\) to.*/\1/p')
