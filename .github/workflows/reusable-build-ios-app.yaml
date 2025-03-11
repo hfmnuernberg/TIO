@@ -36,14 +36,8 @@ jobs:
         with:
           xcode-version: 16.2.0
 
-      - name: Install iOS runtime
-        run: |
-          echo "Checking available Xcode platforms..."
-          xcodebuild -showsdks
-
-          echo "Installing iOS 18.2 runtime..."
-          sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
-          sudo softwareupdate --install "iOS 18.2 Simulator"
+      - name: Install iOS simulator
+        run: sudo softwareupdate --install "iOS 18.2 Simulator"
 
       - name: Setup flutter
         uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
