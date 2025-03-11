@@ -6,6 +6,7 @@ on:
 
 jobs:
   label-dependabot:
+    name: Label Dependabot PRs by Semver
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]'
 
