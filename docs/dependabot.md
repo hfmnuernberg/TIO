@@ -3,7 +3,12 @@
 ## Dependabot
 
 This repository uses Dependabot to create automatic pull requests for updating dependencies.
-The configuration for Dependabot is stored in the `.github/dependabot.yml` file.
+The configuration for Dependabot is stored in the [Dependabot config](../.github/dependabot.yaml) file.
+
+## Label Dependabot PRs to auto-merge only minor/patch updates
+
+To auto-merge only minor and patch version updates, the Dependabot PR needs to be labeled with `semver: minor` or `semver: patch`.
+For that we have a [GitHub workflow](../.github/workflows/pr--label-dependabot-pull-requests.yaml) that checks the versions in the PR title and adds a semver label accordingly.
 
 ## Dependabot auto-merge
 
@@ -41,8 +46,13 @@ auto-merge:
     - name: Authenticate GitHub CLI
       run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
-    - name: Enable auto-merge for Dependabot PRs
-      if: github.actor == 'dependabot[bot]'
+    - name: Enable auto-merge for Dependabot PRs (minor/patch only)
+      if: >
+        github.actor == 'dependabot[bot]' &&
+        (
+          contains(toJSON(github.event.pull_request.labels), 'semver: minor') ||
+          contains(toJSON(github.event.pull_request.labels), 'semver: patch')
+        )
       run: gh pr merge --auto --squash "$PR_URL"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
