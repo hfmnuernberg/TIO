@@ -26,6 +26,9 @@ Future<bool> generatorNoteOn({required double newFreq}) =>
 
 Future<bool> generatorNoteOff() => RustLib.instance.api.crateApiApiGeneratorNoteOff();
 
+Future<bool> pianoSetConcertPitch({required double newConcertPitch}) =>
+    RustLib.instance.api.crateApiApiPianoSetConcertPitch(newConcertPitch: newConcertPitch);
+
 Future<bool> mediaPlayerLoadWav({required String wavFilePath}) =>
     RustLib.instance.api.crateApiApiMediaPlayerLoadWav(wavFilePath: wavFilePath);
 

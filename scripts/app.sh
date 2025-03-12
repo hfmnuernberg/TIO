@@ -108,7 +108,6 @@ install() {
   installRustTargets
   installRustPackages
   installFlutterRustBridgeCodegen
-  installFastlane
 }
 installCocoaPods() { fluttervm precache --ios; cd ios; pod install --repo-update; cd ..; }
 installFastlane() { cd android; bundle install; cd ..; cd ios; bundle install; cd ..; }

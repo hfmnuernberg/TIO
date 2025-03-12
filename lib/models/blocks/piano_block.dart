@@ -85,6 +85,8 @@ class PianoBlock extends ProjectBlock {
     notifyListeners();
   }
 
+  double concertPitch = 440;
+
   @override
   List<String> getSettingsFormatted() {
     return ['Lowest Key: ${midiToNameAndOctave(_keyboardPosition)}', PianoParams.soundFontNames[_soundFontIndex]];

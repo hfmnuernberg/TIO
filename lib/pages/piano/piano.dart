@@ -13,6 +13,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
+import 'package:tiomusic/pages/piano/set_concert_pitch.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -103,6 +104,9 @@ class _PianoState extends State<Piano> {
     bool initSuccess = await _initPiano(PianoParams.soundFontPaths[_pianoBlock.soundFontIndex]);
     await configureAudioSession(AudioSessionType.playback);
     if (!initSuccess) return;
+
+    _pianoSetConcertPitch(_pianoBlock.concertPitch);
+
     bool success = await pianoStart();
     _isPlaying = success;
   }
@@ -113,6 +117,14 @@ class _PianoState extends State<Piano> {
       await pianoStop();
     }
     _isPlaying = false;
+  }
+
+  Future<void> _pianoSetConcertPitch(double concertPitch) async {
+    bool success = await pianoSetConcertPitch(newConcertPitch: concertPitch);
+
+    if (!success) {
+      throw 'Rust library failed to update new concert pitch: $concertPitch';
+    }
   }
 
   void _createWalkthrough() {
@@ -328,6 +340,24 @@ class _PianoState extends State<Piano> {
                             icon: const CircleAvatar(
                               backgroundColor: ColorTheme.primary50,
                               child: Icon(Icons.volume_up, color: ColorTheme.onPrimary),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () async {
+                              await openSettingPage(
+                                SetConcertPitch(),
+                                callbackOnReturn:
+                                    (value) async => {
+                                      await _pianoSetConcertPitch(_pianoBlock.concertPitch),
+                                      setState(() {}),
+                                    },
+                                context,
+                                _pianoBlock,
+                              );
+                            },
+                            icon: const CircleAvatar(
+                              backgroundColor: ColorTheme.primary50,
+                              child: Icon(Icons.location_searching, color: ColorTheme.onPrimary),
                             ),
                           ),
                         ],
