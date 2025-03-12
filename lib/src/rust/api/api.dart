@@ -13,8 +13,6 @@ Future<void> initAudio() => RustLib.instance.api.crateApiApiInitAudio();
 
 Future<double?> tunerGetFrequency() => RustLib.instance.api.crateApiApiTunerGetFrequency();
 
-// Future<double?> pianoSetTuning() => await RustLib.instance.api.crateApiApiPianoSetTuning(tuningRatio: ratio);
-
 Future<bool> tunerStart() => RustLib.instance.api.crateApiApiTunerStart();
 
 Future<bool> tunerStop() => RustLib.instance.api.crateApiApiTunerStop();
@@ -27,6 +25,9 @@ Future<bool> generatorNoteOn({required double newFreq}) =>
     RustLib.instance.api.crateApiApiGeneratorNoteOn(newFreq: newFreq);
 
 Future<bool> generatorNoteOff() => RustLib.instance.api.crateApiApiGeneratorNoteOff();
+
+Future<bool> pianoSetConcertPitch({required double tuningRatio}) =>
+    RustLib.instance.api.crateApiApiPianoSetConcertPitch(tuningRatio: tuningRatio);
 
 Future<bool> mediaPlayerLoadWav({required String wavFilePath}) =>
     RustLib.instance.api.crateApiApiMediaPlayerLoadWav(wavFilePath: wavFilePath);

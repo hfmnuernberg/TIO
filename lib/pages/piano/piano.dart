@@ -106,7 +106,7 @@ class _PianoState extends State<Piano> {
     await configureAudioSession(AudioSessionType.playback);
     if (!initSuccess) return;
 
-    pianoSetTuning(_pianoBlock.concertPitch);
+    // pianoSetTuning(_pianoBlock.concertPitch);
 
     bool success = await pianoStart();
     _isPlaying = success;
@@ -121,9 +121,6 @@ class _PianoState extends State<Piano> {
   }
 
   Future<void> pianoSetTuning(double concertPitch) async {
-    // Standard MIDI note for A4
-    // const int midiA4 = 69;
-
     // Calculate the tuning ratio relative to the standard 440 Hz
     double tuningRatio = concertPitch / 440.0;
 
@@ -137,22 +134,17 @@ class _PianoState extends State<Piano> {
 
   Future<void> sendTuningChange(double ratio) async {
     try {
-      // How to create/generate new Rust method?
-      // Rust API method:
-      // Future<double?> pianoSetTuning() => await RustLib.instance.api.crateApiApiPianoSetTuning(tuningRatio: ratio);
-
       // Call the new Rust function to update the tuning ratio.
-      // bool success = await pianoSetTuning;
-      // if (!success) {
-      //   print('Rust library failed to update tuning.');
-      // }
+      bool success = await pianoSetConcertPitch(tuningRatio: ratio);
+      if (!success) {
+        print('Rust library failed to update tuning.');
+      }
 
       print('sendTuningChange UPDATE');
     } catch (e) {
       print('Error setting piano tuning: $e');
     }
   }
-
 
   void _createWalkthrough() {
     // add the targets here
@@ -373,10 +365,8 @@ class _PianoState extends State<Piano> {
                             onPressed: () async {
                               await openSettingPage(
                                 SetConcertPitch(),
-                                callbackOnReturn: (value) async  => {
-                                  await pianoSetTuning(_pianoBlock.concertPitch),
-                                  setState(() {}),
-                                },
+                                callbackOnReturn:
+                                    (value) async => {await pianoSetTuning(_pianoBlock.concertPitch), setState(() {})},
                                 context,
                                 _pianoBlock,
                               );
@@ -505,7 +495,7 @@ class _PianoState extends State<Piano> {
                 onTapUp: (_) async => pianoNoteOff(note: midi),
                 onTapCancel: () async => pianoNoteOff(note: midi),
                 // child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
-                child: Align(alignment: Alignment.bottomCenter, child: _showPitchLabel(midi) ),
+                child: Align(alignment: Alignment.bottomCenter, child: _showPitchLabel(midi)),
               ),
             ),
           ),
@@ -531,7 +521,7 @@ class _PianoState extends State<Piano> {
             onTapUp: (_) async => pianoNoteOff(note: midi),
             onTapCancel: () async => pianoNoteOff(note: midi),
             // child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
-            child: Align(alignment: Alignment.bottomCenter, child: _showPitchLabel(midi) ),
+            child: Align(alignment: Alignment.bottomCenter, child: _showPitchLabel(midi)),
           ),
         ),
       ),

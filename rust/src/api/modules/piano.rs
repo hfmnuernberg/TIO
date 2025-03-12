@@ -189,6 +189,33 @@ pub fn piano_trigger_note_on(note: i32) -> bool {
 }
 
 #[flutter_rust_bridge::frb(ignore)]
+pub fn piano_trigger_set_concert_pitch(tuning_ratio: f32) -> bool {
+    let mut synth_option = SYNTHESIZER
+        .lock()
+        .expect("Could not lock mutex to SYNTHESIZER");
+
+    match synth_option.as_mut() {
+        Some(synth) => {
+            let bend14 = 4096;
+            let low7Bits = bend14 & 0x7F;
+            let high7Bits = (bend14 >> 7) & 0x7F;
+            let setPitchBendCommand = 0xE0;
+            let channel = 0;
+
+            synth.process_midi_message(channel, setPitchBendCommand, low7Bits, high7Bits);
+
+            log::info!("set_pitch_bend done with tuning_ratio: {}", tuning_ratio);
+            true
+        }
+        None => {
+            log::info!("Failed to set concert pitch - Synth is None");
+            false
+        }
+    }
+}
+
+
+#[flutter_rust_bridge::frb(ignore)]
 pub fn piano_trigger_note_off(note: i32) -> bool {
     let mut synth_option = SYNTHESIZER
         .lock()
