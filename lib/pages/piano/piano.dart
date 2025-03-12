@@ -120,11 +120,11 @@ class _PianoState extends State<Piano> {
   }
 
   Future<void> _pianoSetConcertPitch(double concertPitch) async {
-    pianoSetConcertPitch(newConcertPitch: concertPitch).then(
-      (success) => {
-        if (!success) {throw 'Rust library failed to update new concert pitch: $concertPitch'},
-      },
-    );
+    bool success = await pianoSetConcertPitch(newConcertPitch: concertPitch);
+
+    if (!success) {
+      throw 'Rust library failed to update new concert pitch: $concertPitch';
+    }
   }
 
   void _createWalkthrough() {
