@@ -357,7 +357,7 @@ class _PianoState extends State<Piano> {
                             },
                             icon: const CircleAvatar(
                               backgroundColor: ColorTheme.primary50,
-                              child: Icon(Icons.tune, color: ColorTheme.onPrimary),
+                              child: Icon(Icons.location_searching, color: ColorTheme.onPrimary),
                             ),
                           ),
                         ],
