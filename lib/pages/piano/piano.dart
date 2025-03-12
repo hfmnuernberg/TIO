@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math' as math;
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -106,7 +105,7 @@ class _PianoState extends State<Piano> {
     await configureAudioSession(AudioSessionType.playback);
     if (!initSuccess) return;
 
-    // pianoSetTuning(_pianoBlock.concertPitch);
+    _pianoSetConcertPitch(_pianoBlock.concertPitch);
 
     bool success = await pianoStart();
     _isPlaying = success;
@@ -120,30 +119,12 @@ class _PianoState extends State<Piano> {
     _isPlaying = false;
   }
 
-  Future<void> pianoSetTuning(double concertPitch) async {
-    // Calculate the tuning ratio relative to the standard 440 Hz
-    double tuningRatio = concertPitch / 440.0;
-
-    print('>>>>>>>>>>>>>>>>');
-    print('concertPitch: $concertPitch');
-    print('tuningRatio: $tuningRatio');
-
-    // Call the function that communicates with the Rust library.
-    await sendTuningChange(tuningRatio);
-  }
-
-  Future<void> sendTuningChange(double ratio) async {
-    try {
-      // Call the new Rust function to update the tuning ratio.
-      bool success = await pianoSetConcertPitch(tuningRatio: ratio);
-      if (!success) {
-        print('Rust library failed to update tuning.');
-      }
-
-      print('sendTuningChange UPDATE');
-    } catch (e) {
-      print('Error setting piano tuning: $e');
-    }
+  Future<void> _pianoSetConcertPitch(double concertPitch) async {
+    pianoSetConcertPitch(newConcertPitch: concertPitch).then(
+      (success) => {
+        if (!success) {throw 'Rust library failed to update new concert pitch: $concertPitch'},
+      },
+    );
   }
 
   void _createWalkthrough() {
@@ -366,7 +347,10 @@ class _PianoState extends State<Piano> {
                               await openSettingPage(
                                 SetConcertPitch(),
                                 callbackOnReturn:
-                                    (value) async => {await pianoSetTuning(_pianoBlock.concertPitch), setState(() {})},
+                                    (value) async => {
+                                      await _pianoSetConcertPitch(_pianoBlock.concertPitch),
+                                      setState(() {}),
+                                    },
                                 context,
                                 _pianoBlock,
                               );
@@ -494,8 +478,7 @@ class _PianoState extends State<Piano> {
                 },
                 onTapUp: (_) async => pianoNoteOff(note: midi),
                 onTapCancel: () async => pianoNoteOff(note: midi),
-                // child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
-                child: Align(alignment: Alignment.bottomCenter, child: _showPitchLabel(midi)),
+                child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
               ),
             ),
           ),
@@ -520,8 +503,7 @@ class _PianoState extends State<Piano> {
             },
             onTapUp: (_) async => pianoNoteOff(note: midi),
             onTapCancel: () async => pianoNoteOff(note: midi),
-            // child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
-            child: Align(alignment: Alignment.bottomCenter, child: _showPitchLabel(midi)),
+            child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
           ),
         ),
       ),
@@ -530,26 +512,6 @@ class _PianoState extends State<Piano> {
 
   Widget _spacingKey(double width, double height, bool half) {
     return SizedBox(width: half ? width / 2 : width);
-  }
-
-  Widget _showPitchLabel(int midi) {
-    final pitchName = Pitch.fromMidiNumber(midi).toString();
-    double frequency = _pianoBlock.concertPitch * math.pow(2, (midi - 69) / 12).toDouble();
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Text(
-          pitchName,
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: ColorTheme.primaryFixedDim, fontSize: 20),
-        ),
-        Text(
-          '${frequency.toStringAsFixed(2)} Hz',
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: ColorTheme.primaryFixedDim, fontSize: 16),
-        ),
-      ],
-    );
   }
 
   Widget _showLabelOnC(int midi) {

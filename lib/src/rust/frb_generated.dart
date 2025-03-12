@@ -130,7 +130,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<bool> crateApiApiPianoNoteOn({required int note});
 
-  Future<bool> crateApiApiPianoSetConcertPitch({required double tuningRatio});
+  Future<bool> crateApiApiPianoSetConcertPitch({required double newConcertPitch});
 
   Future<bool> crateApiApiPianoSetVolume({required double volume});
 
@@ -802,24 +802,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "piano_note_on", argNames: ["note"]);
 
   @override
-  Future<bool> crateApiApiPianoSetConcertPitch({required double tuningRatio}) {
+  Future<bool> crateApiApiPianoSetConcertPitch({required double newConcertPitch}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_f_32(tuningRatio, serializer);
+          sse_encode_f_32(newConcertPitch, serializer);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiPianoSetConcertPitchConstMeta,
-        argValues: [tuningRatio],
+        argValues: [newConcertPitch],
         apiImpl: this,
       ),
     );
   }
 
   TaskConstMeta get kCrateApiApiPianoSetConcertPitchConstMeta =>
-      const TaskConstMeta(debugName: "piano_set_concert_pitch", argNames: ["tuningRatio"]);
+      const TaskConstMeta(debugName: "piano_set_concert_pitch", argNames: ["newConcertPitch"]);
 
   @override
   Future<bool> crateApiApiPianoSetVolume({required double volume}) {

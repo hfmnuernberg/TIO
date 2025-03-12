@@ -1181,12 +1181,12 @@ fn wire__crate__api__api__piano_set_concert_pitch_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_tuning_ratio = <f32>::sse_decode(&mut deserializer);
+            let api_new_concert_pitch = <f32>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(crate::api::api::piano_set_concert_pitch(
-                        api_tuning_ratio,
+                        api_new_concert_pitch,
                     ))?;
                     Ok(output_ok)
                 })())

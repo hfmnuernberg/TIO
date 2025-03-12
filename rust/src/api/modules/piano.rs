@@ -189,22 +189,29 @@ pub fn piano_trigger_note_on(note: i32) -> bool {
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn piano_trigger_set_concert_pitch(tuning_ratio: f32) -> bool {
+pub fn piano_trigger_set_concert_pitch(concert_pitch: f32) -> bool {
     let mut synth_option = SYNTHESIZER
         .lock()
         .expect("Could not lock mutex to SYNTHESIZER");
 
     match synth_option.as_mut() {
         Some(synth) => {
-            let bend14 = 4096;
-            let low7Bits = bend14 & 0x7F;
-            let high7Bits = (bend14 >> 7) & 0x7F;
-            let setPitchBendCommand = 0xE0;
+            let ratio = concert_pitch / 440.0; // Calculate the tuning ratio relative to the standard 440 Hz
+            let semitones_diff = 12.0 * ratio.log2();
+
+            let center = 8192.0;
+            let steps_per_semitone = 4096.0; // since ±2 semitones => 2 semitones = 8192 from center
+            let bend_float = center + semitones_diff * steps_per_semitone;
+            let bend_float = bend_float.clamp(0.0, 16383.0); // clamp to valid MIDI range
+
+            let bend14 = bend_float.round() as i32;
+            let low_7_bits = bend14 & 0x7F;
+            let high_7_bits = (bend14 >> 7) & 0x7F;
+            let set_pitch_bend_command = 0xE0;
             let channel = 0;
 
-            synth.process_midi_message(channel, setPitchBendCommand, low7Bits, high7Bits);
+            synth.process_midi_message(channel, set_pitch_bend_command, low_7_bits, high_7_bits);
 
-            log::info!("set_pitch_bend done with tuning_ratio: {}", tuning_ratio);
             true
         }
         None => {

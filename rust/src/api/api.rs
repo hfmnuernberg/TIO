@@ -160,10 +160,10 @@ pub fn generator_note_off() -> bool {
     }
 }
 
-pub fn piano_set_concert_pitch(tuning_ratio: f32) -> bool {
+pub fn piano_set_concert_pitch(new_concert_pitch: f32) -> bool {
     log::info!("piano set concert pitch");
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        piano_trigger_set_concert_pitch(tuning_ratio)
+        piano_trigger_set_concert_pitch(new_concert_pitch)
     } else {
         false
     }
