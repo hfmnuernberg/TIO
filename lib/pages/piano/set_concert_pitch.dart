@@ -57,7 +57,6 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     }
 
-    // TODO(jeromeweiss): Refactor > Navigation should not be done here!
     Navigator.pop(context);
   }
 
