@@ -196,21 +196,14 @@ pub fn piano_trigger_set_concert_pitch(concert_pitch: f32) -> bool {
 
     match synth_option.as_mut() {
         Some(synth) => {
-            let ratio = concert_pitch / 440.0; // Calculate the tuning ratio relative to the standard 440 Hz
-            let semitones_diff = 12.0 * ratio.log2();
+            const CHANNEL: i32 = 0;
+            const SET_PITCH_BEND_COMMAND: i32 = 0xE0;
 
-            let center = 8192.0;
-            let steps_per_semitone = 4096.0; // since ±2 semitones => 2 semitones = 8192 from center
-            let bend_float = center + semitones_diff * steps_per_semitone;
-            let bend_float = bend_float.clamp(0.0, 16383.0); // clamp to valid MIDI range
+            let bend = calc_bend_value(concert_pitch);
+            let low_7_bits = bend & 0x7F;
+            let high_7_bits = (bend >> 7) & 0x7F;
 
-            let bend14 = bend_float.round() as i32;
-            let low_7_bits = bend14 & 0x7F;
-            let high_7_bits = (bend14 >> 7) & 0x7F;
-            let set_pitch_bend_command = 0xE0;
-            let channel = 0;
-
-            synth.process_midi_message(channel, set_pitch_bend_command, low_7_bits, high_7_bits);
+            synth.process_midi_message(CHANNEL, SET_PITCH_BEND_COMMAND, low_7_bits, high_7_bits);
 
             true
         }
@@ -219,6 +212,21 @@ pub fn piano_trigger_set_concert_pitch(concert_pitch: f32) -> bool {
             false
         }
     }
+}
+
+fn calc_bend_value(concert_pitch: f32) -> i32 {
+    const STANDARD_CONCERT_PITCH: f32 = 440.0;
+    const SEMITONES: f32 = 12.0;
+    let ratio = concert_pitch / STANDARD_CONCERT_PITCH;
+    let semitones_diff = SEMITONES * ratio.log2();
+
+    const STEPS_PER_SEMITONES: f32 = 4096.0;
+    const CENTER: f32 = STEPS_PER_SEMITONES * 2.0;
+    let bend = CENTER + semitones_diff * STEPS_PER_SEMITONES;
+
+    const MIN_MIDI_RANGE: f32 = 0.0;
+    const MAX_MIDI_RANGE: f32 = CENTER * 2.0 - 1.0;
+    bend.clamp(MIN_MIDI_RANGE, MAX_MIDI_RANGE).round() as i32
 }
 
 
