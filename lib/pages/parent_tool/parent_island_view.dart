@@ -139,11 +139,11 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
   Widget _getCorrectIslandView() {
     if (_loadedTool is TunerBlock) {
-      return TunerIslandView(tunerBlock: _loadedTool as TunerBlock);
+      return TunerIslandView(tunerBlock: _loadedTool! as TunerBlock);
     } else if (_loadedTool is MetronomeBlock) {
-      return MetronomeIslandView(metronomeBlock: _loadedTool as MetronomeBlock);
+      return MetronomeIslandView(metronomeBlock: _loadedTool! as MetronomeBlock);
     } else if (_loadedTool is MediaPlayerBlock) {
-      return MediaPlayerIslandView(mediaPlayerBlock: _loadedTool as MediaPlayerBlock);
+      return MediaPlayerIslandView(mediaPlayerBlock: _loadedTool! as MediaPlayerBlock);
     } else if (_loadedTool is EmptyBlock) {
       return EmptyIsland(callOnInit: _setChoosenIsland);
     } else {
