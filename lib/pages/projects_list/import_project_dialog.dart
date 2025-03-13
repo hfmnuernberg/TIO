@@ -1,16 +1,17 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:tiomusic/models/blocks/image_block.dart';
-import 'package:tiomusic/models/file_io.dart';
-import 'package:tiomusic/models/file_references.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/services/file_references.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
@@ -62,14 +63,11 @@ class ImportProjectDialog extends StatelessWidget {
     return project;
   }
 
-  Future<void> _addProjectToLibrary(BuildContext context, Project project) async {
-    final projectLibrary = context.read<ProjectLibrary>();
-    projectLibrary.addProject(project);
-    await FileIO.saveProjectLibraryToJson(projectLibrary);
-    await FileReferences.init(projectLibrary);
-  }
-
   Future<void> _importProject(BuildContext context) async {
+    final fs = Provider.of<FileSystem>(context, listen: false);
+    final projectLibraryRepo = Provider.of<ProjectLibraryRepository>(context, listen: false);
+    final fileReferences = Provider.of<FileReferences>(context, listen: false);
+    final projectLibrary = context.read<ProjectLibrary>();
     try {
       final file = await _getFile();
 
@@ -87,11 +85,11 @@ class ImportProjectDialog extends StatelessWidget {
         return;
       }
 
-      await Future.wait(project.blocks.whereType<ImageBlock>().map((block) => block.setImage(block.relativePath)));
-
       if (!context.mounted) return;
 
-      await _addProjectToLibrary(context, project);
+      projectLibrary.addProject(project);
+      await projectLibraryRepo.save(projectLibrary);
+      await fileReferences.init(projectLibrary);
 
       if (context.mounted) showSnackbar(context: context, message: 'Project imported successfully!')();
     } catch (_) {

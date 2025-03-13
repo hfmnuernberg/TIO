@@ -1,15 +1,13 @@
 import 'dart:collection';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/blocks/text_block.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -59,19 +57,13 @@ class Project extends ChangeNotifier {
     );
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  ImageProvider? _thumbnail;
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  ImageProvider? get thumbnail => _thumbnail;
+  Future<void> setThumbnail(String relativePath) async {
+    _thumbnailPath = relativePath;
+    notifyListeners();
+  }
 
-  Future<void> setThumbnail(String newRelativePath) async {
-    _thumbnailPath = newRelativePath;
-    var absolutePath = await FileIO.getAbsoluteFilePath(newRelativePath);
-    if (File(absolutePath).existsSync()) {
-      _thumbnail = FileImage(File(absolutePath));
-    } else {
-      _thumbnail = const AssetImage(TIOMusicParams.tiomusicIconPath);
-    }
+  Future<void> setDefaultThumbnail() async {
+    _thumbnailPath = TIOMusicParams.noImagePath;
     notifyListeners();
   }
 
@@ -83,9 +75,8 @@ class Project extends ChangeNotifier {
 
   Project(String title, this._blocks, String thumbnailPath, this.timeLastModified, Map<String, int> toolCounter) {
     _title = title;
-    _toolCounter = toolCounter;
     _thumbnailPath = thumbnailPath;
-    setThumbnail(_thumbnailPath);
+    _toolCounter = toolCounter;
   }
 
   Project.defaultPicture(String title) {
@@ -100,8 +91,7 @@ class Project extends ChangeNotifier {
       TunerParams.kind: 0,
     };
     _blocks = List.empty(growable: true);
-    _thumbnailPath = TIOMusicParams.noImagePath;
-    setThumbnail(_thumbnailPath);
+    setDefaultThumbnail();
   }
 
   factory Project.fromJson(Map<String, dynamic> json) => _$ProjectFromJson(json);
@@ -127,7 +117,6 @@ class Project extends ChangeNotifier {
     notifyListeners();
   }
 
-  // returning the new projectBlock
   ProjectBlock copyTool(ProjectBlock block, String newTitle) {
     Map<String, dynamic> jsonMap = block.toJson();
     ProjectBlock newBlock;

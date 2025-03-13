@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:tiomusic/models/file_io.dart';
+import 'package:path/path.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 abstract class NoteHandler {
@@ -16,7 +16,7 @@ abstract class NoteHandler {
     for (var fileName in noteFiles) {
       debugPrint(fileName);
 
-      var key = FileIO.getFileNameWithoutExtension(fileName);
+      var key = basenameWithoutExtension(fileName);
       double beatLength = double.parse(key.split('_').last);
       key = key.substring(0, key.length - (key.split('_').last.length + 1));
 

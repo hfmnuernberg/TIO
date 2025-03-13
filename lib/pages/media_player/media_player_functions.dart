@@ -8,8 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
-import 'package:tiomusic/models/file_io.dart';
-import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -97,17 +96,8 @@ abstract class MediaPlayerFunctions {
     return mediaPlayerStopRecording();
   }
 
-  static Future<String?> writeRecordingToFile(
-    String newFileName,
-    String? relativePathOfPreviousFile,
-    ProjectLibrary projectLibrary,
-  ) async {
-    final samples = await mediaPlayerGetRecordingSamples();
-    return FileIO.writeSamplesToWaveFile(samples, newFileName, relativePathOfPreviousFile, projectLibrary);
-  }
-
-  static Future<Float32List?> openAudioFileInRustAndGetRMSValues(MediaPlayerBlock block, int numOfBins) async {
-    var absolutePath = await FileIO.getAbsoluteFilePath(block.relativePath);
+  static Future<Float32List?> openAudioFileInRustAndGetRMSValues(FileSystem fs, MediaPlayerBlock block, int numOfBins) async {
+    var absolutePath = fs.toAbsoluteFilePath(block.relativePath);
     if (!await File(absolutePath).exists()) return null;
     return _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }

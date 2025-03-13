@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -22,6 +21,10 @@ import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
+import 'package:tiomusic/services/file_references.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/media_repository.dart';
+import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -42,6 +45,11 @@ class MediaPlayer extends StatefulWidget {
 }
 
 class _MediaPlayerState extends State<MediaPlayer> {
+  late FileSystem _fs;
+  late FileReferences _fileReferences;
+  late MediaRepository _mediaRepo;
+  late ProjectLibraryRepository _projectLibraryRepo;
+
   var _isPlaying = false;
   var _isRecording = false;
   var _fileLoaded = false;
@@ -80,6 +88,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
   void initState() {
     super.initState();
 
+    _fs = Provider.of<FileSystem>(context, listen: false);
+    _fileReferences = Provider.of<FileReferences>(context, listen: false);
+    _mediaRepo = Provider.of<MediaRepository>(context, listen: false);
+    _projectLibraryRepo = Provider.of<ProjectLibraryRepository>(context, listen: false);
+
     _shareMenuButton = MenuItemButton(
       onPressed: _shareFilePressed,
       child: const Text('Share audio file', style: TextStyle(color: ColorTheme.primary)),
@@ -107,13 +120,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
       setState(() {
         _isLoading = true;
       });
-      var fileExtension = _mediaPlayerBlock.getFileExtension();
+      final fileExtension = _fs.toExtension(_mediaPlayerBlock.relativePath);
       if (mounted && fileExtension != null && !TIOMusicParams.audioFormats.contains(fileExtension)) {
         await showFormatNotSupportedDialog(context, fileExtension);
       }
 
       if (_mediaPlayerBlock.relativePath.isNotEmpty) {
-        var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_mediaPlayerBlock, _numOfBins);
+        var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_fs, _mediaPlayerBlock, _numOfBins);
         if (newRms == null) {
           if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
         } else {
@@ -199,10 +212,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
         ),
       );
     }
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
       if (_fileLoaded) context.read<ProjectLibrary>().showWaveformTip = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -217,9 +230,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
       ),
     ];
 
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showWaveformTip = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -308,11 +321,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
               children: [
                 TextButton(onPressed: () => _jump10Seconds(false), child: const Text('-10 sec')),
                 IconButton(
-                  onPressed: () {
+                  onPressed: () async {
                     setState(() {
                       _mediaPlayerBlock.looping = !_mediaPlayerBlock.looping;
-                      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
                     });
+                    await _projectLibraryRepo.save(context.read<ProjectLibrary>());
                     mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
                   },
                   icon:
@@ -342,7 +355,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                     _walkthrough.show(context);
                   }
                 },
-                text: _fileLoaded ? FileIO.getFileName(_mediaPlayerBlock.relativePath) : 'Load Audio File',
+                text: _fileLoaded ? _fs.toBasename(_mediaPlayerBlock.relativePath) : 'Load Audio File',
               ),
             ),
           ],
@@ -428,7 +441,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   void _shareFilePressed() async {
-    XFile file = XFile(await FileIO.getAbsoluteFilePath(_mediaPlayerBlock.relativePath));
+    XFile file = XFile(_fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath));
     await Share.shareXFiles([file]);
   }
 
@@ -543,10 +556,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   Future<void> _pickNewAudioFile() async {
-    var newFilePicked = await _mediaPlayerBlock.pickAudio(context, context.read<ProjectLibrary>());
+    var newFilePicked = await _pickAudioFile(context, context.read<ProjectLibrary>());
 
     if (newFilePicked && mounted) {
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
 
       _fileLoaded = false;
       _rmsValues = Float32List(0);
@@ -562,12 +575,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _isLoading = true;
       });
 
-      var fileExtension = _mediaPlayerBlock.getFileExtension();
+      final fileExtension = _fs.toExtension(_mediaPlayerBlock.relativePath);
       if (mounted && fileExtension != null && !TIOMusicParams.audioFormats.contains(fileExtension)) {
         await showFormatNotSupportedDialog(context, fileExtension);
       }
 
-      var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_mediaPlayerBlock, _numOfBins);
+      var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_fs, _mediaPlayerBlock, _numOfBins);
       if (newRms == null) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
       } else {
@@ -585,7 +598,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
         if (mounted) {
-          FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+          await _projectLibraryRepo.save(context.read<ProjectLibrary>());
         }
       }
       setState(() {
@@ -593,6 +606,27 @@ class _MediaPlayerState extends State<MediaPlayer> {
       });
 
       await _queryAndUpdateStateFromRust();
+    }
+  }
+
+  Future<bool> _pickAudioFile(BuildContext context, ProjectLibrary projectLibrary) async {
+    try {
+      final pickedAudioFile = await _fs.pickAudio();
+
+      if (pickedAudioFile == null) return false;
+
+      if (!context.mounted) return false;
+
+      final newRelativePath = await _mediaRepo.import(pickedAudioFile, _fs.toBasename(pickedAudioFile),
+        // TODO
+        // acceptedFormats: TIOMusicParams.audioFormats,
+      );
+
+      if (newRelativePath == null) return false;
+      return true;
+    } on PlatformException catch (e) {
+      debugPrint('Failed to pick audio: $e');
+      return false;
     }
   }
 
@@ -681,50 +715,53 @@ class _MediaPlayerState extends State<MediaPlayer> {
       var projectTitle = widget.isQuickTool ? 'Quick Tool' : _project!.title;
       var newName = '$projectTitle-${_mediaPlayerBlock.title}';
 
-      var newRelativePath = await MediaPlayerFunctions.writeRecordingToFile(
-        newName,
-        _mediaPlayerBlock.relativePath == '' ? null : _mediaPlayerBlock.relativePath,
-        context.read<ProjectLibrary>(),
-      );
+      final samples = await mediaPlayerGetRecordingSamples();
+      final newRelativePath = await _mediaRepo.saveSamplesToWaveFile(samples: samples, basename: newName);
 
-      if (newRelativePath != null) {
-        _mediaPlayerBlock.relativePath = newRelativePath;
-        if (mounted) {
-          FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-          setState(() => _isLoading = true);
-
-          var fileExtension = _mediaPlayerBlock.getFileExtension();
-          if (mounted && fileExtension != null && !TIOMusicParams.audioFormats.contains(fileExtension)) {
-            await showFormatNotSupportedDialog(context, fileExtension);
-          }
-
-          var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_mediaPlayerBlock, _numOfBins);
-          if (newRms == null) {
-            if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
-          } else {
-            _fileLoaded = true;
-            _rmsValues = newRms;
-            _waveformVisualizer = WaveformVisualizer(
-              0,
-              _mediaPlayerBlock.rangeStart,
-              _mediaPlayerBlock.rangeEnd,
-              _rmsValues,
-              _numOfBins,
-            );
-
-            _setFileDuration();
-            _addShareOptionToMenu();
-            _mediaPlayerBlock.markerPositions.clear();
-            if (mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-          }
-          setState(() => _isLoading = false);
-        }
-      } else {
+      if (newRelativePath == null) {
         debugPrint('Error saving recording to file');
+        return;
       }
+
+      _fileReferences.inc(newRelativePath);
+      if (_mediaPlayerBlock.relativePath.isNotEmpty) {
+        _fileReferences.dec(_mediaPlayerBlock.relativePath, context.read<ProjectLibrary>());
+      }
+      _mediaPlayerBlock.relativePath = newRelativePath;
+
+      if (!mounted) return;
+
+      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      setState(() => _isLoading = true);
+
+      final fileExtension = _fs.toExtension(_mediaPlayerBlock.relativePath);
+      if (mounted && fileExtension != null && !TIOMusicParams.audioFormats.contains(fileExtension)) {
+        await showFormatNotSupportedDialog(context, fileExtension);
+      }
+
+      var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_fs, _mediaPlayerBlock, _numOfBins);
+      if (newRms == null) {
+        if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
+      } else {
+        _fileLoaded = true;
+        _rmsValues = newRms;
+        _waveformVisualizer = WaveformVisualizer(
+          0,
+          _mediaPlayerBlock.rangeStart,
+          _mediaPlayerBlock.rangeEnd,
+          _rmsValues,
+          _numOfBins,
+        );
+
+        _setFileDuration();
+        _addShareOptionToMenu();
+        _mediaPlayerBlock.markerPositions.clear();
+        if (mounted) await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      }
+      setState(() => _isLoading = false);
     }
 
-    var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_mediaPlayerBlock, _numOfBins);
+    var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_fs, _mediaPlayerBlock, _numOfBins);
     if (newRms == null) {
       if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
     } else {
@@ -741,7 +778,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _setFileDuration();
       _addShareOptionToMenu();
       _mediaPlayerBlock.markerPositions.clear();
-      if (mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      if (mounted) await _projectLibraryRepo.save(context.read<ProjectLibrary>());
     }
     setState(() {
       _isLoading = false;
@@ -751,21 +788,22 @@ class _MediaPlayerState extends State<MediaPlayer> {
   Future _askForKeepRecordingOnExit() async {
     MediaPlayerFunctions.stopRecording().then((success) async {
       if (success && mounted) {
-        var projectTitle = widget.isQuickTool ? 'Quick Tool' : _project!.title;
-        var newName = '$projectTitle-${_mediaPlayerBlock.title}';
+        final projectTitle = widget.isQuickTool ? 'Quick Tool' : _project!.title;
+        final newName = '$projectTitle-${_mediaPlayerBlock.title}';
 
-        var newRelativePath = await MediaPlayerFunctions.writeRecordingToFile(
-          newName,
-          _mediaPlayerBlock.relativePath == '' ? null : _mediaPlayerBlock.relativePath,
-          context.read<ProjectLibrary>(),
-        );
+        final samples = await mediaPlayerGetRecordingSamples();
+        final newRelativePath = await _mediaRepo.saveSamplesToWaveFile(samples: samples, basename: newName);
 
-        if (newRelativePath != null) {
-          _mediaPlayerBlock.relativePath = newRelativePath;
-          if (mounted) {
-            FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-          }
+        if (newRelativePath == null) return;
+
+        _fileReferences.inc(newRelativePath);
+        if (_mediaPlayerBlock.relativePath.isNotEmpty) {
+          _fileReferences.dec(_mediaPlayerBlock.relativePath, context.read<ProjectLibrary>());
         }
+        _mediaPlayerBlock.relativePath = newRelativePath;
+
+        if (!mounted) return;
+        await _projectLibraryRepo.save(context.read<ProjectLibrary>());
       }
     });
   }

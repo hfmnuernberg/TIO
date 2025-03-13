@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
@@ -9,11 +12,9 @@ import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/blocks/text_block.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
-import 'package:tiomusic/models/file_references.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/image/image_page.dart';
 import 'package:tiomusic/pages/media_player/media_player.dart';
@@ -21,10 +22,9 @@ import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/text/text.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
+import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
 // ---------------------------------------------------------------
@@ -268,7 +268,7 @@ Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) 
         (context) => AlertDialog(
           title: const Text('File could not be opened.', style: TextStyle(color: ColorTheme.primary)),
           content: Text(
-            "Something went wrong while trying to open the file. Please try again.${fileName != null ? "\n\nFile: ${FileIO.getFileName(fileName)}" : ""}",
+            "Something went wrong while trying to open the file. Please try again.${fileName != null ? "\n\nFile: ${basename(fileName)}" : ""}",
             style: const TextStyle(color: ColorTheme.primary),
           ),
           actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
@@ -289,7 +289,7 @@ Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName
         (context) => AlertDialog(
           title: const Text('File is not accessible.', style: TextStyle(color: ColorTheme.primary)),
           content: Text(
-            "Maybe the file needs to be downloaded first if it doesn't exist locally on your phone.${fileName != null ? "\n\nFile: ${FileIO.getFileName(fileName)}" : ""}",
+            "Maybe the file needs to be downloaded first if it doesn't exist locally on your phone.${fileName != null ? "\n\nFile: ${basename(fileName)}" : ""}",
             style: const TextStyle(color: ColorTheme.primary),
           ),
           actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
@@ -386,14 +386,14 @@ String getDurationFormatedWithMilliseconds(Duration dur) {
 // ---------------------------------------------------------------
 // save tool in existing project
 
-void saveToolInProject(
+Future<void> saveToolInProject(
   BuildContext context,
   int index,
   ProjectBlock tool,
   bool isQuickTool,
   String newTitle, {
   bool pianoAlreadyOn = false,
-}) {
+}) async {
   ProjectLibrary projectLibrary = context.read<ProjectLibrary>();
   ProjectBlock newBlock = projectLibrary.projects[index].copyTool(tool, newTitle);
 
@@ -402,7 +402,7 @@ void saveToolInProject(
     updateFileReferenceForFileOfBlock(newBlock, IncreaseOrDecrease.increase, projectLibrary);
   }
 
-  FileIO.saveProjectLibraryToJson(projectLibrary);
+  await context.read<ProjectLibraryRepository>().save(projectLibrary);
 
   if (context.mounted) {
     // if we save a tool, that already belongs to a project
@@ -442,7 +442,7 @@ void saveToolInNewProject(
     updateFileReferenceForFileOfBlock(newBlock, IncreaseOrDecrease.increase, projectLibrary);
   }
 
-  FileIO.saveProjectLibraryToJson(projectLibrary);
+  context.read<ProjectLibraryRepository>().save(projectLibrary);
 
   if (context.mounted) {
     // if we save a tool, that already belongs to a project
