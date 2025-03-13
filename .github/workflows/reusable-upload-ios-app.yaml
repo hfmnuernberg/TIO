@@ -11,6 +11,10 @@ on:
         required: true
         type: string
         description: The name of the artifact to upload
+      appIdentifier:
+        required: true
+        type: string
+        description: The ID of the app to build
 
 concurrency:
   group: ${{ inputs.artifactName }}
@@ -20,10 +24,16 @@ jobs:
   upload-ios-app:
     runs-on: macos-latest
     timeout-minutes: 20
+    environment: production
+    permissions:
+      deployments: write
+      id-token: write
+      contents: read
     env:
       APPLE_APP_STORE_CONNECT_API_KEY_ID: '${{ vars.APPLE_APP_STORE_CONNECT_API_KEY_ID }}'
       APPLE_APP_STORE_CONNECT_API_ISSUER_ID: '${{ vars.APPLE_APP_STORE_CONNECT_API_ISSUER_ID }}'
       APPLE_APP_STORE_CONNECT_API_KEY_SECRET: '${{ secrets.APPLE_APP_STORE_CONNECT_API_KEY_SECRET }}'
+      APPLE_APP_STORE_URL: 'https://testflight.apple.com/v1/app/${{ inputs.appIdentifier }}'
 
     steps:
       - name: Checkout code
@@ -45,6 +55,14 @@ jobs:
           working-directory: ios
           bundler-cache: true
 
+      - name: Create GitHub deployment
+        uses: chrnorm/deployment-action@v22.0.7
+        id: deployment
+        with:
+          token: '${{ github.token }}'
+          environment-url: ${{ env.APPLE_APP_STORE_URL }}
+          environment: production
+
       - name: Prepare version
         run: scripts/update-version-and-build-number-in-pubspec-with-latest-tag.sh
 
@@ -53,3 +71,21 @@ jobs:
         with:
           lane: push_to_store
           subdirectory: ios
+
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@v2.0.3
+        with:
+          token: '${{ github.token }}'
+          environment-url: ${{ env.APPLE_APP_STORE_URL }}
+          state: 'success'
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@v2.0.3
+        with:
+          token: '${{ github.token }}'
+          environment-url: ${{ env.APPLE_APP_STORE_URL }}
+          state: 'failure'
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}

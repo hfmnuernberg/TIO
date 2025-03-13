@@ -47,6 +47,7 @@ jobs:
     with:
       ref: ${{ github.ref }}
       artifactName: ios-${{ github.sha }}-${{ github.run_number }}
+      appIdentifier: 6477820301
 
   upload-android-app:
     needs: [verify, build-android-app]

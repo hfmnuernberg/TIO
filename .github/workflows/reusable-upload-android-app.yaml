@@ -24,6 +24,11 @@ jobs:
   upload-android-app:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    environment: production
+    permissions:
+      deployments: write
+      id-token: write
+      contents: read
     env:
       GOOGLE_PLAY_STORE_URL: ${{ inputs.googlePlayStoreUrl }}
 
@@ -47,6 +52,14 @@ jobs:
           working-directory: android
           bundler-cache: true
 
+      - name: Create GitHub deployment
+        uses: chrnorm/deployment-action@v2.0.7
+        id: deployment
+        with:
+          token: '${{ github.token }}'
+          environment-url: ${{ env.GOOGLE_PLAY_STORE_URL }}
+          environment: production
+
       - name: Decrypt service-account.json file
         uses: timheuer/base64-to-file@v1.2.4
         with:
@@ -62,3 +75,21 @@ jobs:
         with:
           lane: push_to_store
           subdirectory: android
+
+      - name: Update deployment status (success)
+        if: success()
+        uses: chrnorm/deployment-status@v2.0.3
+        with:
+          token: '${{ github.token }}'
+          environment-url: ${{ env.GOOGLE_PLAY_STORE_URL }}
+          state: 'success'
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - name: Update deployment status (failure)
+        if: failure()
+        uses: chrnorm/deployment-status@v2.0.3
+        with:
+          token: '${{ github.token }}'
+          environment-url: ${{ env.GOOGLE_PLAY_STORE_URL }}
+          state: 'failure'
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
