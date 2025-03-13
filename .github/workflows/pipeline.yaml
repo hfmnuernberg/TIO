@@ -60,6 +60,7 @@ jobs:
     permissions:
       deployments: write
       id-token: write
+      contents: read
     with:
       ref: ${{ github.ref }}
       artifactName: android-${{ github.sha }}-${{ github.run_number }}
