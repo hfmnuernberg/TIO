@@ -44,6 +44,9 @@ jobs:
     name: Upload iOS App
     uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-ios-app.yaml@main
     secrets: inherit
+    permissions:
+      deployments: write
+      id-token: write
     with:
       ref: ${{ github.ref }}
       artifactName: ios-${{ github.sha }}-${{ github.run_number }}
@@ -54,6 +57,9 @@ jobs:
     name: Upload Android App
     uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-android-app.yaml@main
     secrets: inherit
+    permissions:
+      deployments: write
+      id-token: write
     with:
       ref: ${{ github.ref }}
       artifactName: android-${{ github.sha }}-${{ github.run_number }}
