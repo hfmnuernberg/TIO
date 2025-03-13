@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/log.dart';
 
 // A screen that allows users to take a picture using a given camera.
 class TakePictureScreen extends StatefulWidget {
@@ -13,6 +14,8 @@ class TakePictureScreen extends StatefulWidget {
 }
 
 class TakePictureScreenState extends State<TakePictureScreen> {
+  static final _logger = createPrefixLogger('TakePictureScreen');
+
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
 
@@ -66,7 +69,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               Navigator.pop(context, image);
             }
           } catch (e) {
-            debugPrint('Error: $e');
+            _logger.e('Unable to take picture.', error: e);
           }
         },
         backgroundColor: ColorTheme.surface,

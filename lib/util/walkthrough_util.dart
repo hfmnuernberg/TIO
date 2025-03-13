@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
@@ -33,8 +33,9 @@ class Walkthrough {
         onFinish();
       },
       onSkip: () {
-        context.read<ProjectLibrary>().dismissAllTutorials();
-        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+        final projectLibrary = context.read<ProjectLibrary>();
+        projectLibrary.dismissAllTutorials();
+        context.read<ProjectLibraryRepository>().save(projectLibrary);
         return true;
       },
     );

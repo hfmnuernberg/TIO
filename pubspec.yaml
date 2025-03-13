@@ -26,6 +26,7 @@ dependencies:
     image_picker: 1.1.2
     intl: 0.20.2
     json_annotation: 4.9.0
+    logger: 2.5.0
     meta: 1.16.0
     package_info_plus: 8.3.0
     path: 1.9.1

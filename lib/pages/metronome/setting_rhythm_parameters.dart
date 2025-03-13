@@ -13,6 +13,7 @@ import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm_segment.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
@@ -21,8 +22,8 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/pages/metronome/rhythm_generator_setting_list_item.dart';
 import 'package:provider/provider.dart';
 
-import 'package:tiomusic/models/file_io.dart';
 import 'package:circular_widgets/circular_widgets.dart';
+import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/walkthrough_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
@@ -57,6 +58,8 @@ class SetRhythmParameters extends StatefulWidget {
 }
 
 class _SetRhythmParametersState extends State<SetRhythmParameters> {
+  static final _logger = createPrefixLogger('SetRhythmParameters');
+
   late SmallNumInput _numBeatsInput;
   late SmallNumInput _numPolyBeatsInput;
 
@@ -180,7 +183,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     ];
     _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showBeatToggleTip = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      context.read<ProjectLibraryRepository>().save(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -377,7 +380,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
     MetronomeUtils.loadSounds(widget.metronomeBlock);
 
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    context.read<ProjectLibraryRepository>().save(context.read<ProjectLibrary>());
     Navigator.of(context).pop(true);
   }
 
@@ -494,7 +497,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     await MetronomeFunctions.stop();
     final success = await MetronomeFunctions.start();
     if (!success) {
-      debugPrint('failed to start metronome');
+      _logger.e('Unable to start metronome.');
       return;
     }
     _isPlaying = true;

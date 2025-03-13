@@ -1,18 +1,20 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -38,6 +40,9 @@ class Piano extends StatefulWidget {
 }
 
 class _PianoState extends State<Piano> {
+  late FileSystem _fs;
+  late ProjectLibraryRepository _projectLibraryRepo;
+
   late PianoBlock _pianoBlock;
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
@@ -65,6 +70,9 @@ class _PianoState extends State<Piano> {
   void initState() {
     super.initState();
 
+    _fs = context.read<FileSystem>();
+    _projectLibraryRepo = context.read<ProjectLibraryRepository>();
+
     // lock screen to only use landscape
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
 
@@ -78,7 +86,7 @@ class _PianoState extends State<Piano> {
     var projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
     projectLibrary.visitedToolsCounter++;
 
-    FileIO.saveProjectLibraryToJson(projectLibrary);
+    unawaited(_projectLibraryRepo.save(projectLibrary));
 
     if (widget.withoutInitAndStart) {
       _isPlaying = true;
@@ -136,9 +144,9 @@ class _PianoState extends State<Piano> {
         buttonsPosition: ButtonsPosition.bottomright,
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showPianoTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -224,7 +232,9 @@ class _PianoState extends State<Piano> {
                     );
                     if (newTitle == null) return;
                     _pianoBlock.title = newTitle;
-                    if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+                    if (context.mounted) {
+                      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+                    }
                     setState(() {});
                   },
                   child: Text(
@@ -572,7 +582,9 @@ class _PianoState extends State<Piano> {
                                       icon: _bookmarkIcon,
                                       color: ColorTheme.surfaceTint,
                                     ),
-                                    leadingPicture: projectLibrary.projects[index].thumbnail,
+                                    leadingPicture: FileImage(
+                                      File(_fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath)),
+                                    ),
                                     onTapFunction: () => _buildTextInputOverlay(setTileState, index),
                                   );
                                 },
@@ -745,7 +757,14 @@ class _PianoState extends State<Piano> {
       // saving the tool in a project
       if (mounted) {
         _dontStopOnLeave = true;
-        saveToolInProject(context, index, _pianoBlock, widget.isQuickTool, _newToolTitle.text, pianoAlreadyOn: true);
+        await saveToolInProject(
+          context,
+          index,
+          _pianoBlock,
+          widget.isQuickTool,
+          _newToolTitle.text,
+          pianoAlreadyOn: true,
+        );
       }
     }
   }

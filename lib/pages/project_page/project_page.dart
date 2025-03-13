@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
-import 'package:tiomusic/models/file_io.dart';
+import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/project_page/export_project_dialog.dart';
+import 'package:tiomusic/services/file_references.dart';
+import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -37,6 +39,9 @@ class ProjectPage extends StatefulWidget {
 }
 
 class _ProjectPageState extends State<ProjectPage> {
+  late ProjectLibraryRepository _projectLibraryRepo;
+  late FileReferences _fileReferences;
+
   late bool _showBlocks;
 
   late Project _project;
@@ -51,6 +56,8 @@ class _ProjectPageState extends State<ProjectPage> {
   @override
   void initState() {
     super.initState();
+    _projectLibraryRepo = context.read<ProjectLibraryRepository>();
+    _fileReferences = context.read<FileReferences>();
 
     _menuItems.add(
       MenuItemButton(
@@ -60,16 +67,7 @@ class _ProjectPageState extends State<ProjectPage> {
     );
     _menuItems.add(
       MenuItemButton(
-        onPressed: () async {
-          bool? deleteBlock = await _deleteBlock(deleteAll: true);
-          if (deleteBlock != null && deleteBlock) {
-            if (mounted) {
-              _project.clearBlocks(context.read<ProjectLibrary>());
-              FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-              setState(() {});
-            }
-          }
-        },
+        onPressed: _handleDeleteAllBlocks,
         child: const Text('Delete all Tools', style: TextStyle(color: ColorTheme.primary)),
       ),
     );
@@ -119,13 +117,13 @@ class _ProjectPageState extends State<ProjectPage> {
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showProjectPageTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
     }, context);
   }
 
-  Future<bool?> _deleteBlock({bool deleteAll = false}) => showDialog<bool>(
+  Future<bool?> _confirmDeleteBlock({bool deleteAll = false}) => showDialog<bool>(
     context: context,
     builder:
         (context) => AlertDialog(
@@ -155,12 +153,7 @@ class _ProjectPageState extends State<ProjectPage> {
         ),
   );
 
-  void _deleteThumbnailWhenNecessary(Project project, ProjectBlock block) {
-    if (block is! ImageBlock) return;
-    if (project.thumbnailPath == block.relativePath) project.setThumbnail('');
-  }
-
-  void _createBlockAndGoToTool(BlockTypeInfo info, String blockTitle) {
+  void _createBlockAndGoToTool(BlockTypeInfo info, String blockTitle) async {
     if (_withoutProject) {
       final projectLibrary = context.read<ProjectLibrary>();
       projectLibrary.addProject(_project);
@@ -170,13 +163,55 @@ class _ProjectPageState extends State<ProjectPage> {
     final newBlock = info.createWithTitle(blockTitle);
 
     _project.addBlock(newBlock);
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    await _projectLibraryRepo.save(context.read<ProjectLibrary>());
 
     setState(() {
       _showBlocks = true;
     });
 
+    if (!mounted) return;
+
     goToTool(context, _project, newBlock).then((_) => setState(() {}));
+  }
+
+  void _handleDeleteBlock(int index) async {
+    bool? isConfirmed = await _confirmDeleteBlock();
+    if (isConfirmed != true) return;
+
+    if (!mounted) return;
+    final projectLibrary = context.read<ProjectLibrary>();
+    final block = _project.blocks[index];
+
+    if (block is ImageBlock && _project.thumbnailPath == block.relativePath) _project.setDefaultThumbnail();
+    if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+    if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+
+    _project.removeBlock(block, projectLibrary);
+
+    await _projectLibraryRepo.save(projectLibrary);
+
+    setState(() {});
+  }
+
+  void _handleDeleteAllBlocks() async {
+    bool? isConfirmed = await _confirmDeleteBlock(deleteAll: true);
+    if (isConfirmed != true) return;
+
+    if (!mounted) return;
+    final projectLibrary = context.read<ProjectLibrary>();
+    final blocks = _project.blocks;
+
+    for (final block in blocks) {
+      if (block is ImageBlock && _project.thumbnailPath == block.relativePath) _project.setDefaultThumbnail();
+      if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+      if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+    }
+
+    _project.clearBlocks(projectLibrary);
+
+    await _projectLibraryRepo.save(projectLibrary);
+
+    setState(() {});
   }
 
   @override
@@ -197,7 +232,7 @@ class _ProjectPageState extends State<ProjectPage> {
             final newTitle = await showEditTextDialog(context: context, label: 'Project title', value: _project.title);
             if (newTitle == null) return;
             _project.title = newTitle;
-            if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+            if (context.mounted) await _projectLibraryRepo.save(context.read<ProjectLibrary>());
             setState(() {});
           },
           child: Text(
@@ -250,17 +285,7 @@ class _ProjectPageState extends State<ProjectPage> {
                       color: ColorTheme.primaryFixedDim,
                     ),
                     menuIconOne: IconButton(
-                      onPressed: () async {
-                        bool? deleteBlock = await _deleteBlock();
-                        if (deleteBlock != null && deleteBlock) {
-                          if (context.mounted) {
-                            _deleteThumbnailWhenNecessary(_project, _project.blocks[index]);
-                            _project.removeBlock(_project.blocks[index], context.read<ProjectLibrary>());
-                            await FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-                          }
-                          setState(() {});
-                        }
-                      },
+                      onPressed: () => _handleDeleteBlock(index),
                       icon: const Icon(Icons.delete_outlined),
                       color: ColorTheme.surfaceTint,
                     ),
@@ -358,7 +383,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
     _project.increaseCounter(info.kind);
     if (mounted) {
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
     }
 
     _createBlockAndGoToTool(info, newTitle);

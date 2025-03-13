@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/models/blocks/text_block.dart';
+import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -87,6 +87,6 @@ class _TextToolState extends State<TextTool> {
   }
 
   void _saveText() {
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    context.read<ProjectLibraryRepository>().save(context.read<ProjectLibrary>());
   }
 }
