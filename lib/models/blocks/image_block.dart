@@ -80,7 +80,7 @@ class ImageBlock extends ProjectBlock {
 
     var absolutePath = await FileIO.getAbsoluteFilePath(newRelativePath);
 
-    if (!await File(absolutePath).exists()) {
+    if (!File(absolutePath).existsSync()) {
       debugPrint('Image could not be set in image block, because no file exists at path: $newRelativePath');
       return;
     }
