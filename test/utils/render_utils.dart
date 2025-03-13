@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-import 'package:tiomusic/main.dart';
 import 'package:tiomusic/util/color_schemes.g.dart';
 
 extension WidgetTesterRenderExtension on WidgetTester {
@@ -11,7 +10,7 @@ extension WidgetTesterRenderExtension on WidgetTester {
       MultiProvider(
         providers: providers,
         child: MaterialApp(
-          navigatorObservers: [routeObserver],
+          navigatorObservers: [RouteObserver<PageRoute>()],
           theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
           home: scaffold,
         ),

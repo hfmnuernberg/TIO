@@ -5,7 +5,6 @@ import 'package:stats/stats.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
@@ -17,6 +16,7 @@ import 'package:tiomusic/pages/tuner/setting_concert_pitch.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
 
 import 'package:tiomusic/pages/tuner/pitch_visualizer.dart';
+import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -159,7 +159,7 @@ class _TunerState extends State<Tuner> {
     ];
     _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showTunerTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      context.read<ProjectLibraryRepository>().save(context.read<ProjectLibrary>());
     }, context);
   }
 

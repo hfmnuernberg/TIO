@@ -3,10 +3,12 @@ import 'dart:typed_data';
 
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
+import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -58,6 +60,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final fs = context.read<FileSystem>();
       var customPaintContext = globalKeyCustomPaint.currentContext;
       if (customPaintContext != null) {
         final customPaintRenderBox = customPaintContext.findRenderObject() as RenderBox;
@@ -69,13 +72,17 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       setState(() {
         _isLoading = true;
       });
-      var fileExtension = widget.mediaPlayerBlock.getFileExtension();
+      final fileExtension = fs.toExtension(widget.mediaPlayerBlock.relativePath);
       if (mounted && fileExtension != null && !TIOMusicParams.audioFormats.contains(fileExtension)) {
         await showFormatNotSupportedDialog(context, fileExtension);
       }
 
       if (widget.mediaPlayerBlock.relativePath.isNotEmpty) {
-        var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(widget.mediaPlayerBlock, numOfBins);
+        var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(
+          fs,
+          widget.mediaPlayerBlock,
+          numOfBins,
+        );
         if (newRms != null) {
           _rmsValues = newRms;
 

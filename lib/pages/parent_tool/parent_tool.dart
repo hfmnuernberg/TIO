@@ -1,10 +1,14 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -54,6 +58,9 @@ class ParentTool extends StatefulWidget {
 }
 
 class _ParentToolState extends State<ParentTool> {
+  late FileSystem _fs;
+  late ProjectLibraryRepository _projectLibraryRepo;
+
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
   final TextEditingController _toolTitle = TextEditingController();
@@ -70,12 +77,15 @@ class _ParentToolState extends State<ParentTool> {
   void initState() {
     super.initState();
 
+    _fs = context.read<FileSystem>();
+    _projectLibraryRepo = context.read<ProjectLibraryRepository>();
+
     _toolTitle.text = widget.barTitle;
 
     var projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
     projectLibrary.visitedToolsCounter++;
 
-    FileIO.saveProjectLibraryToJson(projectLibrary);
+    unawaited(_projectLibraryRepo.save(projectLibrary));
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
@@ -128,12 +138,13 @@ class _ParentToolState extends State<ParentTool> {
         pointingDirection: PointingDirection.right,
       ),
     ];
-    _walkthroughQuickTool.create(targets.map((e) => e.targetFocus).toList(), () {
-      context.read<ProjectLibrary>().showQuickToolTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    _walkthroughQuickTool.create(targets.map((e) => e.targetFocus).toList(), () async {
+      final projectLibrary = context.read<ProjectLibrary>();
+      projectLibrary.showQuickToolTutorial = false;
+      await _projectLibraryRepo.save(projectLibrary);
 
       // start island tutorial
-      if (context.read<ProjectLibrary>().showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
+      if (projectLibrary.showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
         _createWalkthroughIsland();
         Future.delayed(Duration.zero, () {
           if (mounted) _walkthroughIsland.show(context);
@@ -161,12 +172,13 @@ class _ParentToolState extends State<ParentTool> {
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthroughTool.create(targets.map((e) => e.targetFocus).toList(), () {
-      context.read<ProjectLibrary>().showToolTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    _walkthroughTool.create(targets.map((e) => e.targetFocus).toList(), () async {
+      final projectLibrary = context.read<ProjectLibrary>();
+      projectLibrary.showToolTutorial = false;
+      await _projectLibraryRepo.save(projectLibrary);
 
       // start island tutorial
-      if (context.read<ProjectLibrary>().showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
+      if (projectLibrary.showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
         _createWalkthroughIsland();
         Future.delayed(Duration.zero, () {
           if (mounted) _walkthroughIsland.show(context);
@@ -188,9 +200,9 @@ class _ParentToolState extends State<ParentTool> {
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthroughIsland.create(targets.map((e) => e.targetFocus).toList(), () {
+    _walkthroughIsland.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showIslandTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
 
       // start specific tool tutorial
       if (widget.onParentWalkthroughFinished != null) {
@@ -269,7 +281,7 @@ class _ParentToolState extends State<ParentTool> {
           );
           if (newTitle == null) return;
           widget.toolBlock.title = newTitle;
-          if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+          if (context.mounted) await _projectLibraryRepo.save(context.read<ProjectLibrary>());
           setState(() {});
         },
         child: Text(
@@ -328,7 +340,10 @@ class _ParentToolState extends State<ParentTool> {
                         icon: _bookmarkIcon,
                         color: ColorTheme.surfaceTint,
                       ),
-                      leadingPicture: projectLibrary.projects[index].thumbnail,
+                      leadingPicture:
+                          projectLibrary.projects[index].thumbnailPath.isEmpty
+                              ? const AssetImage(TIOMusicParams.tiomusicIconPath)
+                              : FileImage(File(_fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath))),
                       onTapFunction: () {
                         _onSaveInProjectTap(setTileState, index, widget.toolBlock);
                       },
@@ -393,7 +408,7 @@ class _ParentToolState extends State<ParentTool> {
 
     // saving the tool in a project
     if (mounted) {
-      saveToolInProject(context, index, toolBlock, widget.isQuickTool, newTitle);
+      await saveToolInProject(context, index, toolBlock, widget.isQuickTool, newTitle);
     }
   }
 

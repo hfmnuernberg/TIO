@@ -1,11 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -17,6 +19,9 @@ import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
 import 'package:tiomusic/pages/projects_list/import_project_dialog.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
+import 'package:tiomusic/services/file_references.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -36,6 +41,10 @@ class ProjectsList extends StatefulWidget {
 }
 
 class _ProjectsListState extends State<ProjectsList> {
+  late FileSystem _fs;
+  late FileReferences _fileReferences;
+  late ProjectLibraryRepository _projectLibraryRepo;
+
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
 
   bool _showBanner = false;
@@ -47,6 +56,10 @@ class _ProjectsListState extends State<ProjectsList> {
   @override
   void initState() {
     super.initState();
+
+    _fs = context.read<FileSystem>();
+    _fileReferences = context.read<FileReferences>();
+    _projectLibraryRepo = context.read<ProjectLibraryRepository>();
 
     _menuItems.add(
       MenuItemButton(
@@ -68,7 +81,7 @@ class _ProjectsListState extends State<ProjectsList> {
     );
     _menuItems.add(
       MenuItemButton(
-        onPressed: _deleteAllProjectsPressed,
+        onPressed: _handleDeleteAllProjects,
         child: const Text('Delete all Projects', style: TextStyle(color: ColorTheme.primary)),
       ),
     );
@@ -120,9 +133,9 @@ class _ProjectsListState extends State<ProjectsList> {
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showHomepageTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -146,20 +159,9 @@ class _ProjectsListState extends State<ProjectsList> {
     );
   }
 
-  void _deleteAllProjectsPressed() async {
-    bool? deleteProject = await _deleteProject(deleteAll: true);
-    if (deleteProject != null && deleteProject) {
-      if (mounted) {
-        final projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
-        projectLibrary.clearProjects();
-        FileIO.saveProjectLibraryToJson(projectLibrary);
-      }
-    }
-  }
-
-  void _showTutorialAgainPressed() {
+  void _showTutorialAgainPressed() async {
     context.read<ProjectLibrary>().resetAllTutorials();
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    await _projectLibraryRepo.save(context.read<ProjectLibrary>());
 
     _createWalkthrough();
     Future.delayed(Duration.zero, () {
@@ -229,7 +231,7 @@ class _ProjectsListState extends State<ProjectsList> {
     }
   }
 
-  Future<bool?> _deleteProject({bool deleteAll = false}) => showDialog<bool>(
+  Future<bool?> _confirmDeleteProject({bool deleteAll = false}) => showDialog<bool>(
     context: context,
     builder:
         (context) => AlertDialog(
@@ -261,6 +263,43 @@ class _ProjectsListState extends State<ProjectsList> {
           ],
         ),
   );
+
+  void _handleDeleteProject(int index) async {
+    bool? isConfirmed = await _confirmDeleteProject();
+    if (isConfirmed != true) return;
+
+    if (!mounted) return;
+    final projectLibrary = context.read<ProjectLibrary>();
+    final project = projectLibrary.projects[index];
+
+    for (final block in project.blocks) {
+      if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+      if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+    }
+
+    projectLibrary.removeProject(projectLibrary.projects[index]);
+
+    await _projectLibraryRepo.save(projectLibrary);
+  }
+
+  void _handleDeleteAllProjects() async {
+    bool? isConfirmed = await _confirmDeleteProject();
+    if (isConfirmed != true) return;
+
+    if (!mounted) return;
+    final projectLibrary = context.read<ProjectLibrary>();
+
+    for (final project in projectLibrary.projects) {
+      for (final block in project.blocks) {
+        if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+        if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+      }
+    }
+
+    projectLibrary.clearProjects();
+
+    await _projectLibraryRepo.save(projectLibrary);
+  }
 
   void _goToToolOverProjectPage(Project project, ProjectBlock tool, bool pianoAlreadyOn) {
     Navigator.of(context)
@@ -332,14 +371,14 @@ class _ProjectsListState extends State<ProjectsList> {
                       if (await launchUrl(url) && mounted) {
                         _showBanner = false;
                         context.read<ProjectLibrary>().neverShowSurveyAgain = true;
-                        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+                        await _projectLibraryRepo.save(context.read<ProjectLibrary>());
                         setState(() {});
                       }
                     },
                     child: const Text('Fill out'),
                   ),
                   IconButton(
-                    onPressed: () {
+                    onPressed: () async {
                       _showBanner = false;
 
                       // show banner a second and third time and then never again
@@ -348,7 +387,7 @@ class _ProjectsListState extends State<ProjectsList> {
                       if (projectLibrary.idxCheckShowSurvey >= projectLibrary.showSurveyAtVisits.length) {
                         projectLibrary.neverShowSurveyAgain = true;
                       }
-                      FileIO.saveProjectLibraryToJson(projectLibrary);
+                      await _projectLibraryRepo.save(projectLibrary);
 
                       setState(() {});
                     },
@@ -385,7 +424,7 @@ class _ProjectsListState extends State<ProjectsList> {
 
             final newProject = Project.defaultPicture(newTitle);
             if (context.mounted) {
-              FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+              await _projectLibraryRepo.save(context.read<ProjectLibrary>());
             }
 
             _goToProjectPage(newProject, true);
@@ -457,15 +496,16 @@ class _ProjectsListState extends State<ProjectsList> {
                                         tooltip: 'Delete project',
                                         icon: const Icon(Icons.delete_outlined),
                                         color: ColorTheme.surfaceTint,
-                                        onPressed: () async {
-                                          bool? deleteProject = await _deleteProject();
-                                          if (deleteProject != null && deleteProject) {
-                                            projectLibrary.removeProject(projectLibrary.projects[idx]);
-                                            FileIO.saveProjectLibraryToJson(projectLibrary);
-                                          }
-                                        },
+                                        onPressed: () => _handleDeleteProject(idx),
                                       ),
-                                      leadingPicture: projectLibrary.projects[idx].thumbnail,
+                                      leadingPicture:
+                                          projectLibrary.projects[idx].thumbnailPath.isEmpty
+                                              ? const AssetImage(TIOMusicParams.tiomusicIconPath)
+                                              : FileImage(
+                                                File(
+                                                  _fs.toAbsoluteFilePath(projectLibrary.projects[idx].thumbnailPath),
+                                                ),
+                                              ),
                                       onTapFunction: () {
                                         _goToProjectPage(projectLibrary.projects[idx], false);
                                       },

@@ -15,7 +15,7 @@ By adding a function as an `app` alias to your shell profile, you can execute th
 Add the following function to your shell profile (e.g., to `~/.oh-my-zsh/custom/aliases.zsh`):
 
 ```shell
-app () { ~/path/to/this/repo/scripts/app.sh "$@"; }
+app () { ./scripts/app.sh "$@"; }
 ```
 
 Now you can run the script even more conveniently:
