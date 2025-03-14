@@ -6,7 +6,7 @@ pub const NUM_CHANNELS: usize = 1;
 
 pub const AUDIO_STREAM_CREATE_TIMEOUT_SECONDS: u64 = 10;
 
-pub const SAMPLE_RATE: i32 = 44100;
+pub const SAMPLE_RATE: usize = 44100;
 pub const SAMPLE_RATE_HALF: i32 = 22050;
 pub const SAMPLE_RATE_IN_KHZ: f32 = 44.1;
 
