@@ -438,12 +438,16 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   // React to beat signal
   void _onBeatHappened(BeatHappenedEvent event) {
+    print(
+      'event beatIndex: ${event.beatIndex} | event ms: ${event.millisecondsBeforeStart} | time: ${DateTime.now().millisecondsSinceEpoch}',
+    );
     if (!event.isRandomMute) {
       Timer(Duration(milliseconds: event.millisecondsBeforeStart), () {
         if (!mounted) return;
         setState(() {
           _blinkIsBeat = true;
           _activeBeatsModel.setBeatOnOff(true, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
+          print('Metronome _onBeatHappened setState 1 > system time: ${DateTime.now().millisecondsSinceEpoch}');
         });
       });
 
@@ -452,12 +456,14 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         setState(() {
           _blinkIsBeat = false;
           _activeBeatsModel.setBeatOnOff(false, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
+          print('Metronome _onBeatHappened setState 2 > system time: ${DateTime.now().millisecondsSinceEpoch}');
         });
       });
     }
   }
 
   Widget _rhythmGroup(int index, bool isSecond) {
+    print('Metronome rhythm group > system time: ${DateTime.now().millisecondsSinceEpoch}');
     return DecoratedBox(
       key: index == 0 && !isSecond ? _keyGroups : null,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: _listTileMaskColor),
@@ -588,6 +594,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
+    print('Metronome build method > system time: ${DateTime.now().millisecondsSinceEpoch}');
     return ParentTool(
       barTitle: _metronomeBlock.title,
       isQuickTool: widget.isQuickTool,

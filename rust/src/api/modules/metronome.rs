@@ -172,6 +172,7 @@ fn on_audio_callback(data: &mut [f32], _: &cpal::OutputCallbackInfo) {
             ));
         }
 
+        log::info!("Rust > System Time: {} (msBeforeStart: {})", chrono::Local::now().timestamp_millis(), (samples_before_start as f32 / 44.1).round() as i32);
         if beat_event_queue.len() < 4 {
             beat_event_queue.push(BeatHappenedEvent {
                 beat_index: next_event.beat_index,
