@@ -17,7 +17,7 @@ use crate::{
     api::audio::{audio_buffer::AudioBufferReader, global::GLOBAL_AUDIO_LOCK},
     api::modules::metronome_rhythm::BeatSound,
     api::util::{
-        constants::{AUDIO_STREAM_CREATE_TIMEOUT_SECONDS, OUTPUT_SAMPLE_RATE},
+        constants::{AUDIO_STREAM_CREATE_TIMEOUT_SECONDS, OUTPUT_SAMPLE_RATE, SAMPLE_RATE_HALF, SAMPLE_RATE_IN_KHZ},
         util_functions::{
             get_platform_default_cpal_output_config, quarters_to_samples, samples_to_quarters,
         },
@@ -62,6 +62,7 @@ pub struct BeatHappenedEvent {
     pub is_poly: bool,
     pub is_secondary: bool,
     pub beat_index: i32,
+    pub timestamp: i64,
 }
 
 static VOLUME: Mutex<f32> = Mutex::new(1.0);
@@ -162,7 +163,7 @@ fn on_audio_callback(data: &mut [f32], _: &cpal::OutputCallbackInfo) {
     for next_event in next_events.iter().chain(next_events_2.iter()) {
         let is_random_mute = rng.gen_range(0.0..1.0) < beat_mute_chance;
         let samples_before_start =
-            quarters_to_samples(next_event.quarters_until_start, sample_rate as f32, bpm);
+            quarters_to_samples(next_event.quarters_until_start, sample_rate as f32, bpm) + SAMPLE_RATE_HALF;
 
         if next_event.beat_sound != BeatSound::Muted && !is_random_mute {
             playing_buffers.push(AudioBufferReader::new(
@@ -172,15 +173,15 @@ fn on_audio_callback(data: &mut [f32], _: &cpal::OutputCallbackInfo) {
             ));
         }
 
-        log::info!("Rust > System Time: {} (msBeforeStart: {})", chrono::Local::now().timestamp_millis(), (samples_before_start as f32 / 44.1).round() as i32);
         if beat_event_queue.len() < 4 {
             beat_event_queue.push(BeatHappenedEvent {
                 beat_index: next_event.beat_index,
                 is_poly: next_event.is_poly,
                 bar_index: next_event.bar_index,
-                milliseconds_before_start: (samples_before_start as f32 / 44.1).round() as i32,
+                milliseconds_before_start: (samples_before_start as f32 / SAMPLE_RATE_IN_KHZ).round() as i32,
                 is_random_mute,
                 is_secondary: next_event.is_secondary,
+                timestamp: chrono::Local::now().timestamp_millis(),
             });
         }
     }

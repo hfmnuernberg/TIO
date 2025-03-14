@@ -6,8 +6,12 @@ pub const NUM_CHANNELS: usize = 1;
 
 pub const AUDIO_STREAM_CREATE_TIMEOUT_SECONDS: u64 = 10;
 
-pub static OUTPUT_SAMPLE_RATE: Mutex<usize> = Mutex::new(44100);
-pub static INPUT_SAMPLE_RATE: Mutex<usize> = Mutex::new(44100);
+pub const SAMPLE_RATE: i32 = 44100;
+pub const SAMPLE_RATE_HALF: i32 = 22050;
+pub const SAMPLE_RATE_IN_KHZ: f32 = 44.1;
+
+pub static OUTPUT_SAMPLE_RATE: Mutex<usize> = Mutex::new(SAMPLE_RATE);
+pub static INPUT_SAMPLE_RATE: Mutex<usize> = Mutex::new(SAMPLE_RATE);
 
 // media player
 

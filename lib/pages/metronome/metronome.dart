@@ -47,6 +47,9 @@ class Metronome extends StatefulWidget {
 }
 
 class _MetronomeState extends State<Metronome> with RouteAware {
+  int _lastStateChange = DateTime.now().millisecondsSinceEpoch;
+  final List<int> _lastRenderTimes = List.empty(growable: true);
+  int _avgRenderTime = 0;
   bool _isStarted = false;
   bool _sound = true;
   bool _blink = MetronomeParams.defaultVisualMetronome;
@@ -438,32 +441,38 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   // React to beat signal
   void _onBeatHappened(BeatHappenedEvent event) {
-    print(
-      'event beatIndex: ${event.beatIndex} | event ms: ${event.millisecondsBeforeStart} | time: ${DateTime.now().millisecondsSinceEpoch}',
-    );
     if (!event.isRandomMute) {
-      Timer(Duration(milliseconds: event.millisecondsBeforeStart), () {
+      final timeStamp = DateTime.now().millisecondsSinceEpoch;
+      final msUntilNextFlashOn = event.millisecondsBeforeStart + event.timestamp - timeStamp - _avgRenderTime;
+      final msUntilNextFlashOff = msUntilNextFlashOn + MetronomeParams.blackScreenDurationMs;
+
+      Timer(Duration(milliseconds: msUntilNextFlashOn), () {
         if (!mounted) return;
+        _lastStateChange = DateTime.now().millisecondsSinceEpoch;
         setState(() {
           _blinkIsBeat = true;
           _activeBeatsModel.setBeatOnOff(true, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
-          print('Metronome _onBeatHappened setState 1 > system time: ${DateTime.now().millisecondsSinceEpoch}');
+        });
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final renderTime = DateTime.now().millisecondsSinceEpoch - _lastStateChange;
+          _lastRenderTimes.add(renderTime);
+          if (_lastRenderTimes.length > 5) _lastRenderTimes.removeAt(0);
+          _avgRenderTime = _lastRenderTimes.reduce((a, b) => a + b) ~/ _lastRenderTimes.length;
         });
       });
 
-      Timer(Duration(milliseconds: event.millisecondsBeforeStart + MetronomeParams.blackScreenDurationMs), () {
+      Timer(Duration(milliseconds: msUntilNextFlashOff), () {
         if (!mounted) return;
         setState(() {
           _blinkIsBeat = false;
           _activeBeatsModel.setBeatOnOff(false, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
-          print('Metronome _onBeatHappened setState 2 > system time: ${DateTime.now().millisecondsSinceEpoch}');
         });
       });
     }
   }
 
   Widget _rhythmGroup(int index, bool isSecond) {
-    print('Metronome rhythm group > system time: ${DateTime.now().millisecondsSinceEpoch}');
     return DecoratedBox(
       key: index == 0 && !isSecond ? _keyGroups : null,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: _listTileMaskColor),
@@ -594,7 +603,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    print('Metronome build method > system time: ${DateTime.now().millisecondsSinceEpoch}');
     return ParentTool(
       barTitle: _metronomeBlock.title,
       isQuickTool: widget.isQuickTool,

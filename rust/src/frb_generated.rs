@@ -1442,6 +1442,7 @@ impl SseDecode for crate::api::modules::metronome::BeatHappenedEvent {
         let mut var_isPoly = <bool>::sse_decode(deserializer);
         let mut var_isSecondary = <bool>::sse_decode(deserializer);
         let mut var_beatIndex = <i32>::sse_decode(deserializer);
+        let mut var_timestamp = <i64>::sse_decode(deserializer);
         return crate::api::modules::metronome::BeatHappenedEvent {
             milliseconds_before_start: var_millisecondsBeforeStart,
             is_random_mute: var_isRandomMute,
@@ -1449,6 +1450,7 @@ impl SseDecode for crate::api::modules::metronome::BeatHappenedEvent {
             is_poly: var_isPoly,
             is_secondary: var_isSecondary,
             beat_index: var_beatIndex,
+            timestamp: var_timestamp,
         };
     }
 }
@@ -1523,6 +1525,13 @@ impl SseDecode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         deserializer.cursor.read_i32::<NativeEndian>().unwrap()
+    }
+}
+
+impl SseDecode for i64 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        deserializer.cursor.read_i64::<NativeEndian>().unwrap()
     }
 }
 
@@ -1821,6 +1830,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::modules::metronome::BeatHappe
             self.is_poly.into_into_dart().into_dart(),
             self.is_secondary.into_into_dart().into_dart(),
             self.beat_index.into_into_dart().into_dart(),
+            self.timestamp.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -1973,6 +1983,7 @@ impl SseEncode for crate::api::modules::metronome::BeatHappenedEvent {
         <bool>::sse_encode(self.is_poly, serializer);
         <bool>::sse_encode(self.is_secondary, serializer);
         <i32>::sse_encode(self.beat_index, serializer);
+        <i64>::sse_encode(self.timestamp, serializer);
     }
 }
 
@@ -2058,6 +2069,13 @@ impl SseEncode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         serializer.cursor.write_i32::<NativeEndian>(self).unwrap();
+    }
+}
+
+impl SseEncode for i64 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        serializer.cursor.write_i64::<NativeEndian>(self).unwrap();
     }
 }
 
