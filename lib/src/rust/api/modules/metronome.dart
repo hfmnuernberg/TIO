@@ -18,6 +18,7 @@ class BeatHappenedEvent {
   final bool isPoly;
   final bool isSecondary;
   final int beatIndex;
+  final PlatformInt64 timestamp;
 
   const BeatHappenedEvent({
     required this.millisecondsBeforeStart,
@@ -26,6 +27,7 @@ class BeatHappenedEvent {
     required this.isPoly,
     required this.isSecondary,
     required this.beatIndex,
+    required this.timestamp,
   });
 
   @override
@@ -35,7 +37,8 @@ class BeatHappenedEvent {
       barIndex.hashCode ^
       isPoly.hashCode ^
       isSecondary.hashCode ^
-      beatIndex.hashCode;
+      beatIndex.hashCode ^
+      timestamp.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -47,5 +50,6 @@ class BeatHappenedEvent {
           barIndex == other.barIndex &&
           isPoly == other.isPoly &&
           isSecondary == other.isSecondary &&
-          beatIndex == other.beatIndex;
+          beatIndex == other.beatIndex &&
+          timestamp == other.timestamp;
 }

@@ -47,6 +47,9 @@ class Metronome extends StatefulWidget {
 }
 
 class _MetronomeState extends State<Metronome> with RouteAware {
+  int _lastStateChange = DateTime.now().millisecondsSinceEpoch;
+  final List<int> _lastRenderTimes = List.empty(growable: true);
+  int _avgRenderTime = 0;
   bool _isStarted = false;
   bool _sound = true;
   bool _blink = MetronomeParams.defaultVisualMetronome;
@@ -439,15 +442,27 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   // React to beat signal
   void _onBeatHappened(BeatHappenedEvent event) {
     if (!event.isRandomMute) {
-      Timer(Duration(milliseconds: event.millisecondsBeforeStart), () {
+      final timeStamp = DateTime.now().millisecondsSinceEpoch;
+      final msUntilNextFlashOn = event.millisecondsBeforeStart + event.timestamp - timeStamp - _avgRenderTime;
+      final msUntilNextFlashOff = msUntilNextFlashOn + MetronomeParams.blackScreenDurationMs;
+
+      Timer(Duration(milliseconds: msUntilNextFlashOn), () {
         if (!mounted) return;
+        _lastStateChange = DateTime.now().millisecondsSinceEpoch;
         setState(() {
           _blinkIsBeat = true;
           _activeBeatsModel.setBeatOnOff(true, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
         });
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final renderTime = DateTime.now().millisecondsSinceEpoch - _lastStateChange;
+          _lastRenderTimes.add(renderTime);
+          if (_lastRenderTimes.length > 5) _lastRenderTimes.removeAt(0);
+          _avgRenderTime = _lastRenderTimes.reduce((a, b) => a + b) ~/ _lastRenderTimes.length;
+        });
       });
 
-      Timer(Duration(milliseconds: event.millisecondsBeforeStart + MetronomeParams.blackScreenDurationMs), () {
+      Timer(Duration(milliseconds: msUntilNextFlashOff), () {
         if (!mounted) return;
         setState(() {
           _blinkIsBeat = false;

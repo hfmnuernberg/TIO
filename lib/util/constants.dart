@@ -115,7 +115,7 @@ class MetronomeParams {
 
   static const String svgIconPath = 'assets/icons/Metronome.svg';
 
-  static const int beatDetectionDurationMillis = 15;
+  static const int beatDetectionDurationMillis = 10;
 
   // General parameters
 
