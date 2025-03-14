@@ -366,7 +366,7 @@ pub fn metronome_set_rhythm(bars: Vec<MetroBar>, bars_2: Vec<MetroBar>) -> bool 
 }
 
 pub fn metronome_poll_beat_event_happened() -> Option<BeatHappenedEvent> {
-//     log::info!("metronome poll beat event happened");
+    log::info!("metronome poll beat event happened");
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.try_lock() {
         metronome_get_beat_event()
     } else {
