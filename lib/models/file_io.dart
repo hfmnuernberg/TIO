@@ -52,7 +52,7 @@ abstract class FileIO {
   static Future<File?> _getExistingFile(String relativeFilePath) async {
     String path = await getAbsoluteFilePath(relativeFilePath);
     var file = File(path);
-    if (await file.exists()) {
+    if (file.existsSync()) {
       return file;
     } else {
       debugPrint('File not found! At path: $path');
@@ -78,11 +78,11 @@ abstract class FileIO {
     bool asString = false,
   }) async {
     // check if file exists / can be accessed
-    if (!await fileToSave.exists()) {
+    if (!fileToSave.existsSync()) {
       // try again after delay, maybe file needs time to download
       await Future.delayed(const Duration(milliseconds: 500));
 
-      if (!await fileToSave.exists()) {
+      if (!fileToSave.existsSync()) {
         if (context.mounted) {
           await showFileNotAccessibleDialog(context, fileName: fileToSave.path);
         }
@@ -187,14 +187,14 @@ abstract class FileIO {
 
   static Future<bool> existsLocalJsonFile() async {
     final file = await _localJsonFile;
-    return file.exists();
+    return file.existsSync();
   }
 
   static Future<void> deleteLocalJsonFile() async {
     try {
       final file = await _localJsonFile;
 
-      if (await file.exists()) {
+      if (file.existsSync()) {
         await file.delete();
         debugPrint('Local json file deleted!');
       }
@@ -206,7 +206,7 @@ abstract class FileIO {
   // looking for file and delets it if it exists
   static void deleteFile(String relativePath) async {
     final file = File(await getAbsoluteFilePath(relativePath));
-    if (await file.exists()) {
+    if (file.existsSync()) {
       await file.delete();
     } else {
       throw Exception('Could not delete file. File not found at path: $relativePath');

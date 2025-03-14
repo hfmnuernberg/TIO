@@ -120,7 +120,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
   @override
   Widget build(BuildContext context) {
-    int offset = _octave * 12;
+    int offset = (_octave - 1) * 12;
     return DismissKeyboard(
       child: Scaffold(
         resizeToAvoidBottomInset: false,

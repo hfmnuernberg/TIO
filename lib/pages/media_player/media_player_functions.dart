@@ -108,7 +108,7 @@ abstract class MediaPlayerFunctions {
 
   static Future<Float32List?> openAudioFileInRustAndGetRMSValues(MediaPlayerBlock block, int numOfBins) async {
     var absolutePath = await FileIO.getAbsoluteFilePath(block.relativePath);
-    if (!await File(absolutePath).exists()) return null;
+    if (!File(absolutePath).existsSync()) return null;
     return _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }
 
