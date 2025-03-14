@@ -228,10 +228,8 @@ class PianoParams {
     'assets/sound_fonts/piano_02.sf2',
     'assets/sound_fonts/electric_piano_01.sf2',
     'assets/sound_fonts/electric_piano_02.sf2',
-    'assets/sound_fonts/reverb_bell_piano.sf2',
     'assets/sound_fonts/pipe_organ.sf2',
     'assets/sound_fonts/harpsichord.sf2',
-    'assets/sound_fonts/rhodes.sf2',
   ];
 
   // this list must match the soundFontPaths list
@@ -240,10 +238,8 @@ class PianoParams {
     'Grand Piano 2',
     'Electric Piano 1',
     'Electric Piano 2',
-    'Reverb Bell Piano',
     'Pipe Organ',
     'Harpsichord',
-    'Rhodes',
   ];
 }
 
