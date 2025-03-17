@@ -28,10 +28,11 @@ import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tonic/tonic.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-class KeyBoundary {
-  final Rect rect;
-  final int midi;
-  KeyBoundary(this.rect, this.midi);
+class Key {
+  final Rect boundary;
+  final int note;
+
+  Key(this.boundary, this.note);
 }
 
 class Piano extends StatefulWidget {
@@ -47,8 +48,8 @@ class Piano extends StatefulWidget {
 class _PianoState extends State<Piano> {
   late PianoBlock _pianoBlock;
 
-  final List<KeyBoundary> _keyBoundaries = [];
-  int? _lastPlayedMidi;
+  final List<Key> _keys = [];
+  Key? _lastPlayedKey;
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
@@ -105,37 +106,35 @@ class _PianoState extends State<Piano> {
   }
 
   void _handlePointerEvent(Offset position) {
-    for (final keyBoundary in _keyBoundaries) {
-      if (keyBoundary.rect.contains(position)) {
-        final newMidi = keyBoundary.midi;
-
-        // If it's a new key, switch notes
-        if (newMidi != _lastPlayedMidi) {
-          if (_lastPlayedMidi != null) {
-            pianoNoteOff(note: _lastPlayedMidi!);
-          }
-
-          if (!_isPlaying) _pianoStart();
-          pianoNoteOn(note: newMidi);
-
-          _lastPlayedMidi = newMidi;
-        }
-        return; // Stop checking once a key is found
-      }
+    for (final key in _keys.reversed) {
+      if (!key.boundary.contains(position)) continue;
+      if (key.note == _lastPlayedKey?.note) return;
+      if (!_isPlaying) _pianoStart();
+      if (_lastPlayedKey != null) _keyPressUp(_lastPlayedKey!);
+      _keyPressDown(key);
+      return;
     }
 
-    // If no key is detected (finger outside keys), stop last note
-    if (_lastPlayedMidi != null) {
-      pianoNoteOff(note: _lastPlayedMidi!);
-      _lastPlayedMidi = null;
+    if (_lastPlayedKey != null) {
+      pianoNoteOff(note: _lastPlayedKey!.note);
+      _lastPlayedKey = null;
     }
   }
 
   void _handlePointerUp() {
-    if (_lastPlayedMidi != null) {
-      pianoNoteOff(note: _lastPlayedMidi!);
-      _lastPlayedMidi = null;
-    }
+    if (_lastPlayedKey != null) _keyPressUp(_lastPlayedKey!);
+  }
+
+  void _keyPressDown(Key key) {
+    pianoNoteOn(note: key.note);
+    _lastPlayedKey = key;
+    setState(() {}); // TODO: remove setState
+  }
+
+  void _keyPressUp(Key key) {
+    pianoNoteOff(note: key.note);
+    _lastPlayedKey = null;
+    setState(() {}); // TODO: remove setState
   }
 
   Future<void> _pianoStart() async {
@@ -431,7 +430,7 @@ class _PianoState extends State<Piano> {
                             const double spaceBetweenKeys = 8;
                             final keyWidth = constraints.maxWidth / 12 - spaceBetweenKeys;
                             final keyHeight = constraints.maxHeight;
-                            return _keyboard(pianoBlock.keyboardPosition, keyWidth, keyHeight);
+                            return _keyboard(pianoBlock.keyboardPosition, keyWidth, keyHeight, spaceBetweenKeys);
                           },
                         ),
                       );
@@ -446,8 +445,8 @@ class _PianoState extends State<Piano> {
     );
   }
 
-  Widget _keyboard(int lowestKey, double keyWidth, double keyHeight) {
-    _keyBoundaries.clear(); // Reset boundaries every time keyboard is built
+  Widget _keyboard(int lowestKey, double keyWidth, double keyHeight, double spaceBetweenKeys) {
+    _keys.clear();
 
     return Listener(
       onPointerDown: (event) => _handlePointerEvent(event.localPosition),
@@ -457,57 +456,61 @@ class _PianoState extends State<Piano> {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: _buildWhiteKeyRow(lowestKey, keyWidth, keyHeight),
+            children: _buildWhiteKeyRow(lowestKey, keyWidth, keyHeight, spaceBetweenKeys),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: _buildBlackKeyRow(lowestKey, keyWidth, keyHeight),
+            children: _buildBlackKeyRow(lowestKey, keyWidth, keyHeight, spaceBetweenKeys),
           ),
+          if (_lastPlayedKey != null) Positioned(
+              top: _lastPlayedKey!.boundary.top,
+              left: _lastPlayedKey!.boundary.left,
+              width: _lastPlayedKey!.boundary.width,
+              height: _lastPlayedKey!.boundary.height,
+              child: ColoredBox(color: Colors.red.withValues(alpha: 0.5))
+              )
+          ,
         ],
       ),
     );
   }
 
-  List<Widget> _buildWhiteKeyRow(int lowestKey, double keyWidth, double keyHeight) {
+  List<Widget> _buildWhiteKeyRow(int lowestKey, double keyWidth, double keyHeight, double spaceBetweenKeys) {
     var keys = <Widget>[];
     var midi = lowestKey;
-    double currentHorizontalPosition = 0; // Track the horizontal position of each white key
+    double x = 0;
 
     for (int i = 0; i < PianoParams.numberOfWhiteKeys; i++) {
-      if (midiToName(midi).length > 1) {
-        midi++;
-      }
+      if (midiToName(midi).length > 1) midi++;
 
-      keys.add(_whiteKey(midi, keyWidth, keyHeight, currentHorizontalPosition));
+      keys.add(_whiteKey(midi, keyWidth, keyHeight, x));
 
       midi++;
-      currentHorizontalPosition += keyWidth; // Move position for next key
+      x += keyWidth + spaceBetweenKeys;
     }
 
     return keys;
   }
 
 
-  List<Widget> _buildBlackKeyRow(int lowestKey, double keyWidth, double keyHeight) {
+  List<Widget> _buildBlackKeyRow(int lowestKey, double keyWidth, double keyHeight, double spaceBetweenKeys) {
     var keys = <Widget>[];
     var midi = lowestKey;
-    double currentHorizontalPosition = 0; // Track the horizontal position of each white key
+    double x = 0;
 
     keys.add(_spacingKey(keyWidth, keyHeight, true));
 
     for (int i = 0; i < PianoParams.numberOfWhiteKeys - 1; i++) {
-      if (midiToName(midi).length > 1) {
-        midi++;
-      }
+      if (midiToName(midi).length > 1) midi++;
 
       if (midiToName(midi + 1).length > 1) {
-        keys.add(_blackKey(midi + 1, keyWidth, keyHeight, currentHorizontalPosition + (keyWidth * 0.75)));
+        keys.add(_blackKey(midi + 1, keyWidth, keyHeight, x + (keyWidth * 0.75)));
       } else {
         keys.add(_spacingKey(keyWidth, keyHeight, false));
       }
 
       midi++;
-      currentHorizontalPosition += keyWidth; // Move position for next key
+      x += keyWidth + spaceBetweenKeys;
     }
 
     keys.add(_spacingKey(keyWidth, keyHeight, true));
@@ -515,13 +518,7 @@ class _PianoState extends State<Piano> {
   }
 
   Widget _blackKey(int midi, double width, double height, double leftOffset) {
-    // Store the boundary for glissando tracking
-    _keyBoundaries.add(
-      KeyBoundary(
-        Rect.fromLTWH(leftOffset, 0, width, height / 2),
-        midi,
-      ),
-    );
+    _keys.add(Key(Rect.fromLTWH(leftOffset, 0, width, height / 2), midi));
 
     return SizedBox(
       width: width,
@@ -550,13 +547,7 @@ class _PianoState extends State<Piano> {
   }
 
   Widget _whiteKey(int midi, double width, double height, double leftOffset) {
-    // Store the boundary for glissando tracking
-    _keyBoundaries.add(
-      KeyBoundary(
-        Rect.fromLTWH(leftOffset, 0, width, height),
-        midi,
-      ),
-    );
+    _keys.add(Key(Rect.fromLTWH(leftOffset, 0, width, height), midi));
 
     return SizedBox(
       width: width,
