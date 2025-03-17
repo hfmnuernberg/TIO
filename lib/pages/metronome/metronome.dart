@@ -45,7 +45,8 @@ int calcMsUntilNextFlashOn({
   required int avgRenderTimeInMs,
 }) => max(0, eventDelayInMs + eventTimestamp - timestamp - avgRenderTimeInMs);
 
-int calcMsUntilNextFlashOff({required int msUntilNextFlashOn}) => msUntilNextFlashOn + MetronomeParams.flashDurationInMs;
+int calcMsUntilNextFlashOff({required int msUntilNextFlashOn}) =>
+    msUntilNextFlashOn + MetronomeParams.flashDurationInMs;
 
 class Metronome extends StatefulWidget {
   final bool isQuickTool;
