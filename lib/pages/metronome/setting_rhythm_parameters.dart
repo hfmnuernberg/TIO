@@ -160,7 +160,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
       });
     });
 
-    Timer(Duration(milliseconds: event.millisecondsBeforeStart + MetronomeParams.blackScreenDurationMs), () {
+    Timer(Duration(milliseconds: event.millisecondsBeforeStart + MetronomeParams.flashDurationInMs), () {
       if (!mounted) return;
       setState(() {
         _activeBeatsModel.setBeatOnOff(false, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
