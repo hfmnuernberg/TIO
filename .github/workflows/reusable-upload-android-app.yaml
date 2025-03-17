@@ -46,7 +46,7 @@ jobs:
           path: build/app/outputs/bundle/release
 
       - name: Setup ruby
-        uses: ruby/setup-ruby@v1.225.0
+        uses: ruby/setup-ruby@v1.226.0
         with:
           ruby-version: '3.3'
           working-directory: android
