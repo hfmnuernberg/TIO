@@ -28,6 +28,12 @@ import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tonic/tonic.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
+class KeyBoundary {
+  final Rect rect;
+  final int midi;
+  KeyBoundary(this.rect, this.midi);
+}
+
 class Piano extends StatefulWidget {
   final bool isQuickTool;
   final bool withoutInitAndStart;
@@ -40,6 +46,9 @@ class Piano extends StatefulWidget {
 
 class _PianoState extends State<Piano> {
   late PianoBlock _pianoBlock;
+
+  final List<KeyBoundary> _keyBoundaries = [];
+  int? _lastPlayedMidi;
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
@@ -93,6 +102,40 @@ class _PianoState extends State<Piano> {
         _walkthrough.show(context);
       }
     });
+  }
+
+  void _handlePointerEvent(Offset position) {
+    for (final keyBoundary in _keyBoundaries) {
+      if (keyBoundary.rect.contains(position)) {
+        final newMidi = keyBoundary.midi;
+
+        // If it's a new key, switch notes
+        if (newMidi != _lastPlayedMidi) {
+          if (_lastPlayedMidi != null) {
+            pianoNoteOff(note: _lastPlayedMidi!);
+          }
+
+          if (!_isPlaying) _pianoStart();
+          pianoNoteOn(note: newMidi);
+
+          _lastPlayedMidi = newMidi;
+        }
+        return; // Stop checking once a key is found
+      }
+    }
+
+    // If no key is detected (finger outside keys), stop last note
+    if (_lastPlayedMidi != null) {
+      pianoNoteOff(note: _lastPlayedMidi!);
+      _lastPlayedMidi = null;
+    }
+  }
+
+  void _handlePointerUp() {
+    if (_lastPlayedMidi != null) {
+      pianoNoteOff(note: _lastPlayedMidi!);
+      _lastPlayedMidi = null;
+    }
   }
 
   Future<void> _pianoStart() async {
@@ -404,55 +447,82 @@ class _PianoState extends State<Piano> {
   }
 
   Widget _keyboard(int lowestKey, double keyWidth, double keyHeight) {
-    return Stack(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: _buildWhiteKeyRow(lowestKey, keyWidth, keyHeight),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: _buildBlackKeyRow(lowestKey, keyWidth, keyHeight),
-        ),
-      ],
+    _keyBoundaries.clear(); // Reset boundaries every time keyboard is built
+
+    return Listener(
+      onPointerDown: (event) => _handlePointerEvent(event.localPosition),
+      onPointerMove: (event) => _handlePointerEvent(event.localPosition),
+      onPointerUp: (event) => _handlePointerUp(),
+      child: Stack(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: _buildWhiteKeyRow(lowestKey, keyWidth, keyHeight),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: _buildBlackKeyRow(lowestKey, keyWidth, keyHeight),
+          ),
+        ],
+      ),
     );
   }
 
   List<Widget> _buildWhiteKeyRow(int lowestKey, double keyWidth, double keyHeight) {
     var keys = <Widget>[];
     var midi = lowestKey;
+    double currentHorizontalPosition = 0; // Track the horizontal position of each white key
+
     for (int i = 0; i < PianoParams.numberOfWhiteKeys; i++) {
       if (midiToName(midi).length > 1) {
         midi++;
       }
-      keys.add(_whiteKey(midi, keyWidth, keyHeight));
+
+      keys.add(_whiteKey(midi, keyWidth, keyHeight, currentHorizontalPosition));
+
       midi++;
+      currentHorizontalPosition += keyWidth; // Move position for next key
     }
+
     return keys;
   }
+
 
   List<Widget> _buildBlackKeyRow(int lowestKey, double keyWidth, double keyHeight) {
     var keys = <Widget>[];
     var midi = lowestKey;
+    double currentHorizontalPosition = 0; // Track the horizontal position of each white key
+
     keys.add(_spacingKey(keyWidth, keyHeight, true));
 
     for (int i = 0; i < PianoParams.numberOfWhiteKeys - 1; i++) {
       if (midiToName(midi).length > 1) {
         midi++;
       }
+
       if (midiToName(midi + 1).length > 1) {
-        keys.add(_blackKey(midi + 1, keyWidth, keyHeight));
+        keys.add(_blackKey(midi + 1, keyWidth, keyHeight, currentHorizontalPosition + (keyWidth * 0.75)));
       } else {
         keys.add(_spacingKey(keyWidth, keyHeight, false));
       }
+
       midi++;
+      currentHorizontalPosition += keyWidth; // Move position for next key
     }
 
     keys.add(_spacingKey(keyWidth, keyHeight, true));
     return keys;
   }
 
-  Widget _blackKey(int midi, double width, double height) {
+  Widget _blackKey(int midi, double width, double height, double leftOffset) {
+    // Store the boundary for glissando tracking
+    _keyBoundaries.add(
+      KeyBoundary(
+        Rect.fromLTWH(leftOffset, 0, width, height / 2),
+        midi,
+      ),
+    );
+
     return SizedBox(
       width: width,
       height: height / 2,
@@ -470,14 +540,6 @@ class _PianoState extends State<Piano> {
               child: InkWell(
                 splashColor: Colors.transparent,
                 highlightColor: Colors.transparent,
-                focusColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                onTapDown: (_) async {
-                  if (!_isPlaying) _pianoStart();
-                  await pianoNoteOn(note: midi);
-                },
-                onTapUp: (_) async => pianoNoteOff(note: midi),
-                onTapCancel: () async => pianoNoteOff(note: midi),
                 child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
               ),
             ),
@@ -487,7 +549,15 @@ class _PianoState extends State<Piano> {
     );
   }
 
-  Widget _whiteKey(int midi, double width, double height) {
+  Widget _whiteKey(int midi, double width, double height, double leftOffset) {
+    // Store the boundary for glissando tracking
+    _keyBoundaries.add(
+      KeyBoundary(
+        Rect.fromLTWH(leftOffset, 0, width, height),
+        midi,
+      ),
+    );
+
     return SizedBox(
       width: width,
       child: Semantics(
@@ -497,12 +567,6 @@ class _PianoState extends State<Piano> {
           child: InkWell(
             splashColor: ColorTheme.secondaryContainer,
             highlightColor: ColorTheme.secondaryContainer,
-            onTapDown: (_) async {
-              if (!_isPlaying) _pianoStart();
-              await pianoNoteOn(note: midi);
-            },
-            onTapUp: (_) async => pianoNoteOff(note: midi),
-            onTapCancel: () async => pianoNoteOff(note: midi),
             child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
           ),
         ),
