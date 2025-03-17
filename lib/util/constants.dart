@@ -180,7 +180,7 @@ class MetronomeParams {
   // Minimum BPM value
   static const int minBPM = 10;
   // Duration of Blackscreen in ms when visual metronome is enabled
-  static const int blackScreenDurationMs = 100;
+  static const int flashDurationInMs = 100;
 
   // BPM input
 

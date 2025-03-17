@@ -1,6 +1,7 @@
 // Metronome User Interface
 
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,15 @@ import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:volume_controller/volume_controller.dart';
 
+int calcMsUntilNextFlashOn({
+  required int timestamp,
+  required int eventTimestamp,
+  required int eventDelayInMs,
+  required int avgRenderTimeInMs,
+}) => max(0, eventDelayInMs + eventTimestamp - timestamp - avgRenderTimeInMs);
+
+int calcMsUntilNextFlashOff({required int msUntilNextFlashOn}) => msUntilNextFlashOn + MetronomeParams.flashDurationInMs;
+
 class Metronome extends StatefulWidget {
   final bool isQuickTool;
 
@@ -53,7 +63,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   bool _isStarted = false;
   bool _sound = true;
   bool _blink = MetronomeParams.defaultVisualMetronome;
-  bool _blinkIsBeat = false;
+  bool _isFlashOn = false;
   VolumeLevel _deviceVolumeLevel = VolumeLevel.normal;
   final List<RhythmSegment> _rhythmSegmentList = List.empty(growable: true);
   final List<RhythmSegment> _rhythmSegmentList2 = List.empty(growable: true);
@@ -443,14 +453,19 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   void _onBeatHappened(BeatHappenedEvent event) {
     if (!event.isRandomMute) {
       final timeStamp = DateTime.now().millisecondsSinceEpoch;
-      final msUntilNextFlashOn = event.millisecondsBeforeStart + event.timestamp - timeStamp - _avgRenderTime;
-      final msUntilNextFlashOff = msUntilNextFlashOn + MetronomeParams.blackScreenDurationMs;
+      final msUntilNextFlashOn = calcMsUntilNextFlashOn(
+        timestamp: timeStamp,
+        eventTimestamp: event.timestamp,
+        eventDelayInMs: event.millisecondsBeforeStart,
+        avgRenderTimeInMs: _avgRenderTime,
+      );
+      final msUntilNextFlashOff = calcMsUntilNextFlashOff(msUntilNextFlashOn: msUntilNextFlashOn);
 
       Timer(Duration(milliseconds: msUntilNextFlashOn), () {
         if (!mounted) return;
         _lastStateChange = DateTime.now().millisecondsSinceEpoch;
         setState(() {
-          _blinkIsBeat = true;
+          _isFlashOn = true;
           _activeBeatsModel.setBeatOnOff(true, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
         });
 
@@ -465,7 +480,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       Timer(Duration(milliseconds: msUntilNextFlashOff), () {
         if (!mounted) return;
         setState(() {
-          _blinkIsBeat = false;
+          _isFlashOn = false;
           _activeBeatsModel.setBeatOnOff(false, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
         });
       });
@@ -624,7 +639,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         children: <Widget>[
           // Black screen for visual metronome
           Visibility(
-            visible: _blink && _blinkIsBeat,
+            visible: _blink && _isFlashOn,
             child: CustomPaint(size: MediaQuery.of(context).size, painter: FilledScreen(color: ColorTheme.surfaceTint)),
           ),
           Center(
