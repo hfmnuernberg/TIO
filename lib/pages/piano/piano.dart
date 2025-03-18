@@ -557,6 +557,9 @@ class _PianoState extends State<Piano> {
           child: InkWell(
             splashColor: ColorTheme.secondaryContainer,
             highlightColor: ColorTheme.secondaryContainer,
+            onTapDown: (_) => _keyPressDown(midi as Key), // TODO: remove as Key
+            onTapUp: (_) => _keyPressUp(midi as Key), // TODO: remove as Key
+            onTapCancel: () => _keyPressUp(midi as Key), // TODO: remove as Key
             child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
           ),
         ),
