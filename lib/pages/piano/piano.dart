@@ -49,7 +49,7 @@ class _PianoState extends State<Piano> {
   late PianoBlock _pianoBlock;
 
   final List<Key> _keys = [];
-  final Set<int> _pressedKeys = {};
+  Key? _lastPlayedKey;
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
@@ -108,33 +108,33 @@ class _PianoState extends State<Piano> {
   void _handlePointerEvent(Offset position) {
     for (final key in _keys.reversed) {
       if (!key.boundary.contains(position)) continue;
-      if (_pressedKeys.contains(key.note)) return;
+      if (key.note == _lastPlayedKey?.note) return;
       if (!_isPlaying) _pianoStart();
-      _keyPressDown(key.note);
+      if (_lastPlayedKey != null) _keyPressUp(_lastPlayedKey!);
+      _keyPressDown(key);
       return;
+    }
+
+    if (_lastPlayedKey != null) {
+      pianoNoteOff(note: _lastPlayedKey!.note);
+      _lastPlayedKey = null;
     }
   }
 
   void _handlePointerUp() {
-    final keysToRelease = List<int>.from(_pressedKeys);
-
-    for (int note in keysToRelease) {
-      _keyPressUp(note);
-    }
-    _pressedKeys.clear();
+    if (_lastPlayedKey != null) _keyPressUp(_lastPlayedKey!);
   }
 
-  void _keyPressDown(int note) {
-    if (_pressedKeys.contains(note)) return;
-    _pressedKeys.add(note);
-    pianoNoteOn(note: note);
-    setState(() {});
+  void _keyPressDown(Key key) {
+    pianoNoteOn(note: key.note);
+    _lastPlayedKey = key;
+    setState(() {}); // TODO: remove setState
   }
 
-  void _keyPressUp(int note) {
-    _pressedKeys.remove(note);
-    pianoNoteOff(note: note);
-    setState(() {});
+  void _keyPressUp(Key key) {
+    pianoNoteOff(note: key.note);
+    _lastPlayedKey = null;
+    setState(() {}); // TODO: remove setState
   }
 
   Future<void> _pianoStart() async {
@@ -462,16 +462,14 @@ class _PianoState extends State<Piano> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: _buildBlackKeyRow(lowestKey, keyWidth, keyHeight, spaceBetweenKeys),
           ),
-          for (final note in _pressedKeys)
-            for (final key in _keys)
-              if (key.note == note)
-                Positioned(
-                  top: key.boundary.top,
-                  left: key.boundary.left,
-                  width: key.boundary.width,
-                  height: key.boundary.height,
-                  child: ColoredBox(color: Colors.red.withValues(alpha: 0.5)),
-                ),
+          if (_lastPlayedKey != null)
+            Positioned(
+              top: _lastPlayedKey!.boundary.top,
+              left: _lastPlayedKey!.boundary.left,
+              width: _lastPlayedKey!.boundary.width,
+              height: _lastPlayedKey!.boundary.height,
+              child: ColoredBox(color: Colors.red.withValues(alpha: 0.5)),
+            ),
         ],
       ),
     );
@@ -552,34 +550,16 @@ class _PianoState extends State<Piano> {
 
     return SizedBox(
       width: width,
-      height: height,
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: Semantics(
-              button: true,
-              child: Material(
-                color: Colors.transparent,
-                child: Ink(
-                  color: Colors.white,
-                  child: GestureDetector(
-                    onTapDown: (_) => _keyPressDown(midi),
-                    onTapUp: (_) => _keyPressUp(midi),
-                    onTapCancel: () => _keyPressUp(midi),
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 100),
-                      color:
-                          _pressedKeys.contains(midi)
-                              ? ColorTheme.secondaryContainer.withValues(alpha: 0.5)
-                              : Colors.white,
-                      child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+      child: Semantics(
+        button: true,
+        child: Material(
+          color: Colors.white,
+          child: InkWell(
+            splashColor: ColorTheme.secondaryContainer,
+            highlightColor: ColorTheme.secondaryContainer,
+            child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
           ),
-        ],
+        ),
       ),
     );
   }
