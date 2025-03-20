@@ -293,6 +293,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                               ? MediaPlayerFunctions.displayRecordingTimer(_recordingDuration, waveformHeight)
                               : GestureDetector(
                                 onTapDown: _fileLoaded ? _onWaveTap : null,
+                                onHorizontalDragUpdate: _fileLoaded ? _onWaveMove : null,
                                 child: CustomPaint(
                                   painter: _waveformVisualizer,
                                   size: Size(_waveFormWidth, waveformHeight),
@@ -512,6 +513,19 @@ class _MediaPlayerState extends State<MediaPlayer> {
     double relativeTapPosition = details.localPosition.dx / _waveFormWidth;
 
     await mediaPlayerSetPlaybackPosFactor(posFactor: relativeTapPosition);
+    await _queryAndUpdateStateFromRust();
+  }
+
+  void _onWaveMove(DragUpdateDetails details) async {
+    double relativePosition = details.localPosition.dx / _waveFormWidth;
+
+    if (relativePosition < 0) {
+      relativePosition = 0;
+    } else if (relativePosition > 1) {
+      relativePosition = 1;
+    }
+
+    await mediaPlayerSetPlaybackPosFactor(posFactor: relativePosition);
     await _queryAndUpdateStateFromRust();
   }
 
