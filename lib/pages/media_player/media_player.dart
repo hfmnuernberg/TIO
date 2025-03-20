@@ -292,8 +292,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
                           _isRecording
                               ? MediaPlayerFunctions.displayRecordingTimer(_recordingDuration, waveformHeight)
                               : GestureDetector(
-                                onTapDown: _fileLoaded ? _onWaveTap : null,
-                                onHorizontalDragUpdate: _fileLoaded ? _onWaveMove : null,
+                                onTapDown: (details) => _fileLoaded ? _onWaveGesture(details.localPosition) : null,
+                                onHorizontalDragUpdate:
+                                    (details) => _fileLoaded ? _onWaveGesture(details.localPosition) : null,
                                 child: CustomPaint(
                                   painter: _waveformVisualizer,
                                   size: Size(_waveFormWidth, waveformHeight),
@@ -509,23 +510,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
     return markers;
   }
 
-  void _onWaveTap(TapDownDetails details) async {
-    double relativeTapPosition = details.localPosition.dx / _waveFormWidth;
+  void _onWaveGesture(Offset localPosition) async {
+    double relativeTapPosition = localPosition.dx / _waveFormWidth;
 
-    await mediaPlayerSetPlaybackPosFactor(posFactor: relativeTapPosition);
-    await _queryAndUpdateStateFromRust();
-  }
-
-  void _onWaveMove(DragUpdateDetails details) async {
-    double relativePosition = details.localPosition.dx / _waveFormWidth;
-
-    if (relativePosition < 0) {
-      relativePosition = 0;
-    } else if (relativePosition > 1) {
-      relativePosition = 1;
-    }
-
-    await mediaPlayerSetPlaybackPosFactor(posFactor: relativePosition);
+    await mediaPlayerSetPlaybackPosFactor(posFactor: relativeTapPosition.clamp(0, 1));
     await _queryAndUpdateStateFromRust();
   }
 
