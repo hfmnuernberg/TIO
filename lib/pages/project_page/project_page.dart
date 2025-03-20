@@ -6,7 +6,7 @@ import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/project_page/export_project_dialog.dart';
+import 'package:tiomusic/pages/project_page/export_project.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -54,7 +54,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
     _menuItems.add(
       MenuItemButton(
-        onPressed: () => showExportProjectDialog(context: context, project: _project),
+        onPressed: () => exportProject(context, _project),
         child: const Text('Export Project', style: TextStyle(color: ColorTheme.primary)),
       ),
     );
