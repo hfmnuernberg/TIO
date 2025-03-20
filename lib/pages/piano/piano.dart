@@ -305,16 +305,17 @@ class _PianoState extends State<Piano> {
                           ),
                         ],
                       ),
+                      SizedBox(
+                        width: 120,
+                        child: Text(
+                          '$_concertPitch',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: ColorTheme.onPrimary),
+                        ),
+                      ),
                       Row(
                         key: _keySettings,
                         children: [
-                          Text(
-                            '$_concertPitch',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: ColorTheme.onPrimary, fontSize: 20),
-                          ),
-                          SizedBox(width: 20),
-
                           IconButton(
                             onPressed: () async {
                               await openSettingPage(
@@ -337,7 +338,6 @@ class _PianoState extends State<Piano> {
                               ),
                             ),
                           ),
-
                           IconButton(
                             onPressed: () async {
                               await openSettingPage(
@@ -360,7 +360,6 @@ class _PianoState extends State<Piano> {
                               child: Icon(Icons.volume_up, color: ColorTheme.onPrimary),
                             ),
                           ),
-
                           IconButton(
                             onPressed: () async {
                               await openSettingPage(const ChooseSound(), context, _pianoBlock);
@@ -374,14 +373,15 @@ class _PianoState extends State<Piano> {
                               child: Icon(Icons.library_music_outlined, color: ColorTheme.onPrimary),
                             ),
                           ),
-
-                          SizedBox(width: 20),
-                          Text(
-                            _instrumentName,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: ColorTheme.onPrimary, fontSize: 20),
-                          ),
                         ],
+                      ),
+                      SizedBox(
+                        width: 120,
+                        child: Text(
+                          _instrumentName,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: ColorTheme.onPrimary),
+                        ),
                       ),
                       Row(
                         children: [
