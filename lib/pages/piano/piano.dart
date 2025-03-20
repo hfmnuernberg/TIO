@@ -374,6 +374,13 @@ class _PianoState extends State<Piano> {
                               child: Icon(Icons.library_music_outlined, color: ColorTheme.onPrimary),
                             ),
                           ),
+
+                          SizedBox(width: 20),
+                          Text(
+                            _instrumentName,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: ColorTheme.onPrimary, fontSize: 20),
+                          ),
                         ],
                       ),
                       Row(
