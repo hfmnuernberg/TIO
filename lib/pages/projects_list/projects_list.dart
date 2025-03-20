@@ -15,7 +15,7 @@ import 'package:tiomusic/pages/media_player/media_player.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
-import 'package:tiomusic/pages/projects_list/import_project_dialog.dart';
+import 'package:tiomusic/pages/projects_list/import_project.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
