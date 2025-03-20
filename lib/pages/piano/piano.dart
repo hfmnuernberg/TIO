@@ -308,7 +308,13 @@ class _PianoState extends State<Piano> {
                       Row(
                         key: _keySettings,
                         children: [
-                          // sound button
+                          Text(
+                            '$_concertPitch',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: ColorTheme.onPrimary, fontSize: 20),
+                          ),
+                          SizedBox(width: 20),
+
                           IconButton(
                             onPressed: () async {
                               await openSettingPage(
