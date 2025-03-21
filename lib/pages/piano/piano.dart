@@ -40,6 +40,8 @@ class Piano extends StatefulWidget {
 
 class _PianoState extends State<Piano> {
   late PianoBlock _pianoBlock;
+  late double _concertPitch = _pianoBlock.concertPitch;
+  late String _instrumentName = PianoParams.soundFontNames[_pianoBlock.soundFontIndex];
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
@@ -303,23 +305,39 @@ class _PianoState extends State<Piano> {
                           ),
                         ],
                       ),
+                      SizedBox(
+                        width: 120,
+                        child: Text(
+                          '$_concertPitch',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: ColorTheme.onPrimary),
+                        ),
+                      ),
                       Row(
                         key: _keySettings,
                         children: [
-                          // sound button
                           IconButton(
                             onPressed: () async {
-                              await openSettingPage(const ChooseSound(), context, _pianoBlock);
+                              await openSettingPage(
+                                SetConcertPitch(),
+                                callbackOnReturn: (value) async {
+                                  await _pianoSetConcertPitch(_pianoBlock.concertPitch);
+                                },
+                                context,
+                                _pianoBlock,
+                              );
 
-                              _initPiano(PianoParams.soundFontPaths[_pianoBlock.soundFontIndex]);
+                              setState(() => _concertPitch = _pianoBlock.concertPitch);
                             },
                             icon: const CircleAvatar(
                               backgroundColor: ColorTheme.primary50,
-                              child: Icon(Icons.library_music_outlined, color: ColorTheme.onPrimary),
+                              child: Text(
+                                'Hz',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: ColorTheme.onPrimary, fontSize: 20),
+                              ),
                             ),
                           ),
-
-                          // volume button
                           IconButton(
                             onPressed: () async {
                               await openSettingPage(
@@ -344,23 +362,26 @@ class _PianoState extends State<Piano> {
                           ),
                           IconButton(
                             onPressed: () async {
-                              await openSettingPage(
-                                SetConcertPitch(),
-                                callbackOnReturn:
-                                    (value) async => {
-                                      await _pianoSetConcertPitch(_pianoBlock.concertPitch),
-                                      setState(() {}),
-                                    },
-                                context,
-                                _pianoBlock,
-                              );
+                              await openSettingPage(const ChooseSound(), context, _pianoBlock);
+
+                              _initPiano(PianoParams.soundFontPaths[_pianoBlock.soundFontIndex]);
+
+                              setState(() => _instrumentName = PianoParams.soundFontNames[_pianoBlock.soundFontIndex]);
                             },
                             icon: const CircleAvatar(
                               backgroundColor: ColorTheme.primary50,
-                              child: Icon(Icons.location_searching, color: ColorTheme.onPrimary),
+                              child: Icon(Icons.library_music_outlined, color: ColorTheme.onPrimary),
                             ),
                           ),
                         ],
+                      ),
+                      SizedBox(
+                        width: 120,
+                        child: Text(
+                          _instrumentName,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: ColorTheme.onPrimary),
+                        ),
                       ),
                       Row(
                         children: [
