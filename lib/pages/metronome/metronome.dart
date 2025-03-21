@@ -1,8 +1,8 @@
 // Metronome User Interface
 
 import 'dart:async';
-import 'dart:math';
 import 'dart:ui';
+
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,15 +38,9 @@ import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:volume_controller/volume_controller.dart';
 
-int calcMsUntilNextFlashOn({
-  required int timestamp,
-  required int eventTimestamp,
-  required int eventDelayInMs,
-  required int avgRenderTimeInMs,
-}) => max(0, eventDelayInMs + eventTimestamp - timestamp - avgRenderTimeInMs);
+int calcMsUntilNextFlashOn(int eventDelayInMs, int avgRenderTimeInMs) => eventDelayInMs + avgRenderTimeInMs;
 
-int calcMsUntilNextFlashOff({required int msUntilNextFlashOn}) =>
-    msUntilNextFlashOn + MetronomeParams.flashDurationInMs;
+int calcMsUntilNextFlashOff(int msUntilNextFlashOn) => msUntilNextFlashOn + MetronomeParams.flashDurationInMs;
 
 class Metronome extends StatefulWidget {
   final bool isQuickTool;
@@ -60,7 +54,7 @@ class Metronome extends StatefulWidget {
 class _MetronomeState extends State<Metronome> with RouteAware {
   int _lastStateChange = DateTime.now().millisecondsSinceEpoch;
   final List<int> _lastRenderTimes = List.empty(growable: true);
-  int _avgRenderTime = 0;
+  int _avgRenderTimeInMs = 0;
   bool _isStarted = false;
   bool _sound = true;
   bool _blink = MetronomeParams.defaultVisualMetronome;
@@ -453,14 +447,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   // React to beat signal
   void _onBeatHappened(BeatHappenedEvent event) {
     if (!event.isRandomMute) {
-      final timeStamp = DateTime.now().millisecondsSinceEpoch;
-      final msUntilNextFlashOn = calcMsUntilNextFlashOn(
-        timestamp: timeStamp,
-        eventTimestamp: event.timestamp,
-        eventDelayInMs: event.millisecondsBeforeStart,
-        avgRenderTimeInMs: _avgRenderTime,
-      );
-      final msUntilNextFlashOff = calcMsUntilNextFlashOff(msUntilNextFlashOn: msUntilNextFlashOn);
+      final msUntilNextFlashOn = calcMsUntilNextFlashOn(event.millisecondsBeforeStart, _avgRenderTimeInMs);
+      final msUntilNextFlashOff = calcMsUntilNextFlashOff(msUntilNextFlashOn);
 
       Timer(Duration(milliseconds: msUntilNextFlashOn), () {
         if (!mounted) return;
@@ -470,12 +458,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           _activeBeatsModel.setBeatOnOff(true, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
         });
 
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          final renderTime = DateTime.now().millisecondsSinceEpoch - _lastStateChange;
-          _lastRenderTimes.add(renderTime);
-          if (_lastRenderTimes.length > 5) _lastRenderTimes.removeAt(0);
-          _avgRenderTime = _lastRenderTimes.reduce((a, b) => a + b) ~/ _lastRenderTimes.length;
-        });
+        WidgetsBinding.instance.addPostFrameCallback(_updateAvgRenderTime);
       });
 
       Timer(Duration(milliseconds: msUntilNextFlashOff), () {
@@ -486,6 +469,13 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         });
       });
     }
+  }
+
+  void _updateAvgRenderTime(Duration timeStamp) {
+    final renderTime = DateTime.now().millisecondsSinceEpoch - _lastStateChange;
+    _lastRenderTimes.add(renderTime);
+    if (_lastRenderTimes.length > 5) _lastRenderTimes.removeAt(0);
+    _avgRenderTimeInMs = _lastRenderTimes.reduce((a, b) => a + b) ~/ _lastRenderTimes.length;
   }
 
   Widget _rhythmGroup(int index, bool isSecond) {

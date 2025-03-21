@@ -968,7 +968,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   BeatHappenedEvent dco_decode_beat_happened_event(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 7) throw Exception('unexpected arr length: expect 7 but see ${arr.length}');
+    if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
     return BeatHappenedEvent(
       millisecondsBeforeStart: dco_decode_i_32(arr[0]),
       isRandomMute: dco_decode_bool(arr[1]),
@@ -976,7 +976,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       isPoly: dco_decode_bool(arr[3]),
       isSecondary: dco_decode_bool(arr[4]),
       beatIndex: dco_decode_i_32(arr[5]),
-      timestamp: dco_decode_i_64(arr[6]),
     );
   }
 
@@ -1038,12 +1037,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   int dco_decode_i_32(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
-  }
-
-  @protected
-  PlatformInt64 dco_decode_i_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dcoDecodeI64(raw);
   }
 
   @protected
@@ -1169,7 +1162,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_isPoly = sse_decode_bool(deserializer);
     var var_isSecondary = sse_decode_bool(deserializer);
     var var_beatIndex = sse_decode_i_32(deserializer);
-    var var_timestamp = sse_decode_i_64(deserializer);
     return BeatHappenedEvent(
       millisecondsBeforeStart: var_millisecondsBeforeStart,
       isRandomMute: var_isRandomMute,
@@ -1177,7 +1169,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       isPoly: var_isPoly,
       isSecondary: var_isSecondary,
       beatIndex: var_beatIndex,
-      timestamp: var_timestamp,
     );
   }
 
@@ -1242,12 +1233,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   int sse_decode_i_32(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getInt32();
-  }
-
-  @protected
-  PlatformInt64 sse_decode_i_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getPlatformInt64();
   }
 
   @protected
@@ -1407,7 +1392,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self.isPoly, serializer);
     sse_encode_bool(self.isSecondary, serializer);
     sse_encode_i_32(self.beatIndex, serializer);
-    sse_encode_i_64(self.timestamp, serializer);
   }
 
   @protected
@@ -1468,12 +1452,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_i_32(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putInt32(self);
-  }
-
-  @protected
-  void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putPlatformInt64(self);
   }
 
   @protected

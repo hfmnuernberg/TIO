@@ -133,6 +133,13 @@ installRustTargets() {
 
 outdated() { fluttervm pub outdated; }
 
+refresh() {
+  clean
+  install
+  generate
+  run
+}
+
 reset() {
   doctor
   clean
@@ -143,7 +150,7 @@ reset() {
   format
   analyze
   coverage
-  run ios
+  run
 }
 
 run() {
@@ -235,7 +242,8 @@ help() {
   echo 'lint:fix:dry                                  - synonym for analyze:fix:dry'
   echo 'lint:todos                                    - synonym for analyze:todos'
   echo 'outdated                                      - list outdated dependencies'
-  echo 'reset                                         - deletes lock files, re-installs, re-generates, runs tests, builds, and more'
+  echo 'refresh                                       - clean, install, generate, run'
+  echo 'reset                                         - clean, delete lock files, install, generate, analyze, test, build, run'
   echo 'run [<mode>]                                  - run app'
   echo 'simulator                                     - open iOS simulator'
   echo 'start                                         - synonym for run'
@@ -281,6 +289,7 @@ if [ "$1" = 'lint:fix' ]; then analyzeFix "$@"; exit; fi
 if [ "$1" = 'lint:fix:dry' ]; then analyzeFixDryRun; exit; fi
 if [ "$1" = 'lint:todos' ]; then analyzeTodos; exit; fi
 if [ "$1" = 'outdated' ]; then outdated; exit; fi
+if [ "$1" = 'refresh' ]; then refresh; exit; fi
 if [ "$1" = 'reset' ]; then reset; exit; fi
 if [ "$1" = 'run' ]; then run "$@"; exit; fi
 if [ "$1" = 'simulator' ]; then simulator; exit; fi
