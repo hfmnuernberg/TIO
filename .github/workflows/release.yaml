@@ -11,12 +11,6 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
 
-    outputs:
-      old_version: ${{ steps.old_version.outputs.OLD_VERSION }}
-      old_build_number: ${{ steps.old_version.outputs.OLD_BUILD_NUMBER }}
-      new_version: ${{ steps.new_version.outputs.NEW_VERSION }}
-      new_build_number: ${{ steps.new_version.outputs.NEW_BUILD_NUMBER }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
@@ -33,17 +27,16 @@ jobs:
         run: chmod +x ./scripts/*.sh
 
       - name: Load current version and build number
-        id: old_version
+        id: old
         run: |
           source ./scripts/load-version-and-build-number-from-latest-tag.sh
-          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
           echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub release
         id: semantic_release
         uses: cycjimmy/semantic-release-action@v4.2.0
         with:
-          tag_format: v${version}+${{ steps.old_version.outputs.BUILD_NUMBER }}
+          tag_format: r${version}+${{ steps.old.outputs.BUILD_NUMBER }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -55,7 +48,7 @@ jobs:
 
       - name: Load updated version and build number
         if: steps.semantic_release.outputs.new_release_published == 'true'
-        id: new_version
+        id: new
         run: |
           source ./scripts/load-version-and-build-number-from-latest-tag.sh
           echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
@@ -63,4 +56,4 @@ jobs:
 
       - name: Create summary
         if: steps.semantic_release.outputs.new_release_published == 'true'
-        run: echo "Released v${{ steps.new_version.outputs.VERSION }}+${{ steps.new_version.outputs.BUILD_NUMBER }}" >> $GITHUB_STEP_SUMMARY
+        run: echo "Released r${{ steps.new.outputs.VERSION }}+${{ steps.new.outputs.BUILD_NUMBER }}" >> $GITHUB_STEP_SUMMARY
