@@ -385,7 +385,7 @@ class _PianoState extends State<Piano> {
                             textAlign: TextAlign.start,
                             style: const TextStyle(color: ColorTheme.onPrimary),
                           ),
-                        )
+                        ),
                       ),
                       Row(
                         children: [
