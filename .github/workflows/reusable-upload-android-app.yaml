@@ -22,6 +22,7 @@ concurrency:
 
 jobs:
   upload-android-app:
+    name: Upload Android App
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment: production

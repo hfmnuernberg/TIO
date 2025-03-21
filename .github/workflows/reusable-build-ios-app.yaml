@@ -18,6 +18,7 @@ on:
 
 jobs:
   build-ios-app:
+    name: Build iOS App
     runs-on: macos-latest
     timeout-minutes: 20
     env:
