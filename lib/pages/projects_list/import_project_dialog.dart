@@ -13,6 +13,7 @@ import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
 Future<void> showImportProjectDialog({required BuildContext context}) => showDialog(
@@ -23,6 +24,8 @@ Future<void> showImportProjectDialog({required BuildContext context}) => showDia
 );
 
 class ImportProjectDialog extends StatelessWidget {
+  static final _logger = createPrefixLogger('ImportProjectDialog');
+
   final Function() onDone;
 
   const ImportProjectDialog({super.key, required this.onDone});
@@ -90,7 +93,8 @@ class ImportProjectDialog extends StatelessWidget {
       await fileReferences.init(projectLibrary);
 
       if (context.mounted) showSnackbar(context: context, message: 'Project imported successfully!')();
-    } catch (_) {
+    } catch (e) {
+      _logger.e('Unable to import project.', error: e);
       if (context.mounted) showSnackbar(context: context, message: 'Error importing project')();
     } finally {
       onDone();

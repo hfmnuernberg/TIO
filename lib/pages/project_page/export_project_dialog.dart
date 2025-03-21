@@ -11,6 +11,7 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
 const String mediaFolder = 'media';
@@ -28,6 +29,8 @@ Future<void> showExportProjectDialog({required BuildContext context, required Pr
 );
 
 class ExportProjectDialog extends StatelessWidget {
+  static final _logger = createPrefixLogger('ExportProjectDialog');
+
   final Project project;
   final Function() onDone;
 
@@ -110,7 +113,8 @@ class ExportProjectDialog extends StatelessWidget {
 
       if (context.mounted) showSnackbar(context: context, message: 'Project exported successfully!')();
       onDone();
-    } catch (_) {
+    } catch (e) {
+      _logger.e('Unable to export project.', error: e);
       if (context.mounted) showSnackbar(context: context, message: 'Error exporting project')();
     }
   }
