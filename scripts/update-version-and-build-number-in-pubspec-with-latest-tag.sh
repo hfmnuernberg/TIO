@@ -6,7 +6,8 @@ PUBSPEC_FILE=pubspec.yaml
 
 echo "⚙️ Updating version in $PUBSPEC_FILE with latest Git tag..."
 
-source ./scripts/load-version-and-build-number-from-latest-tag.sh
+source ./scripts/load-version-from-latest-tag.sh
+source ./scripts/load-build-number-from-latest-tag.sh
 
 # Update pubspec safely considering if current OS is macOS or not
 if [ "$(uname)" = "Darwin" ]; then

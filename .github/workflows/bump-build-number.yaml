@@ -32,19 +32,19 @@ jobs:
     - name: Make scripts executable
       run: chmod +x ./scripts/*.sh
 
-    - name: Load current version and build number
+    - name: Load current build number
       id: old
       run: |
-        source ./scripts/load-version-and-build-number-from-latest-tag.sh
+        source ./scripts/load-build-number-from-latest-tag.sh
         echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
     - name: Bump build number
       run: ./scripts/bump-build-number-and-tag.sh
 
-    - name: Load updated version and build number
+    - name: Load updated build number
       id: new
       run: |
-        source ./scripts/load-version-and-build-number-from-latest-tag.sh
+        source ./scripts/load-build-number-from-latest-tag.sh
         echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
     - name: Create summary

@@ -4,7 +4,7 @@ set -e
 
 echo "⚙️ Bumping build number and creating tag..."
 
-source ./scripts/load-version-and-build-number-from-latest-tag.sh
+source ./scripts/load-build-number-from-latest-tag.sh
 
 NEW_BUILD_NUMBER=$((BUILD_NUMBER + 1))
 
