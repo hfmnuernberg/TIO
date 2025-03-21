@@ -101,7 +101,7 @@ jobs:
           ANDROID_NDK_ROOT: ${{ steps.setup_ndk.outputs.ndk-path }}
 
       - name: Save bundle
-        uses: actions/upload-artifact@v4.6.1
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: ${{ inputs.artifactName }}
           path: build/app/outputs/bundle/release
