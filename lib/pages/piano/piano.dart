@@ -305,12 +305,14 @@ class _PianoState extends State<Piano> {
                           ),
                         ],
                       ),
-                      SizedBox(
-                        width: 120,
-                        child: Text(
-                          '$_concertPitch',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: ColorTheme.onPrimary),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(right: TIOMusicParams.edgeInset),
+                          child: Text(
+                            '$_concertPitch',
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(color: ColorTheme.onPrimary),
+                          ),
                         ),
                       ),
                       Row(
@@ -375,13 +377,15 @@ class _PianoState extends State<Piano> {
                           ),
                         ],
                       ),
-                      SizedBox(
-                        width: 120,
-                        child: Text(
-                          _instrumentName,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: ColorTheme.onPrimary),
-                        ),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(left: TIOMusicParams.edgeInset),
+                          child: Text(
+                            _instrumentName,
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(color: ColorTheme.onPrimary),
+                          ),
+                        )
                       ),
                       Row(
                         children: [
