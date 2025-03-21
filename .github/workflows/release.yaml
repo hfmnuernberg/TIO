@@ -18,25 +18,9 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Configure Git user
-        run: |
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "GitHub Actions"
-
-      - name: Make scripts executable
-        run: chmod +x ./scripts/*.sh
-
-      - name: Load current version and build number
-        id: old
-        run: |
-          source ./scripts/load-version-and-build-number-from-latest-tag.sh
-          echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-
       - name: Create GitHub release
         id: semantic_release
         uses: cycjimmy/semantic-release-action@v4.2.0
-        with:
-          tag_format: r${version}+${{ steps.old.outputs.BUILD_NUMBER }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -46,14 +30,6 @@ jobs:
           echo "❌ No new released published! See workflow logs for details." >> $GITHUB_STEP_SUMMARY
           exit 1
 
-      - name: Load updated version and build number
-        if: steps.semantic_release.outputs.new_release_published == 'true'
-        id: new
-        run: |
-          source ./scripts/load-version-and-build-number-from-latest-tag.sh
-          echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-
       - name: Create summary
         if: steps.semantic_release.outputs.new_release_published == 'true'
-        run: echo "Released r${{ steps.new.outputs.VERSION }}+${{ steps.new.outputs.BUILD_NUMBER }}" >> $GITHUB_STEP_SUMMARY
+        run: echo "Released ${{ steps.new.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
