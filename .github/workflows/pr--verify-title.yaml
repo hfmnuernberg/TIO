@@ -23,7 +23,7 @@ jobs:
           subjectPatternError: >
             The PR title must include a JIRA ticket number in the format:
             "<type>[(<scope>)]: TIO-<#>: <description>"
-            (example: fix(login): TIO-123: show error message on failed login attempt)'
+            (example: fix(login): TIO-123: show error message on failed login attempt)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
