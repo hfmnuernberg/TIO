@@ -1,4 +1,4 @@
-ranches:
+branches:
   - main
 preset: angular
 plugins:
