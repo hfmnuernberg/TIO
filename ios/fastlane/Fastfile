@@ -32,10 +32,11 @@ platform :ios do
 
       pilot(
         app_identifier: CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier),
-        skip_waiting_for_build_processing: true,
-        distribute_external: false,
-        ipa: "../build/ios/ipa/TIO Music.ipa",
         api_key: api_key()
+        ipa: "../build/ios/ipa/TIO Music.ipa",
+        skip_waiting_for_build_processing: true,
+        distribute_external: true,
+        notify_external_testers: true,
       )
     end
 end
