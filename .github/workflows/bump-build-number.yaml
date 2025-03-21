@@ -14,6 +14,7 @@ permissions:
 
 jobs:
   bump-build-number:
+    name: Bump Build Number
     runs-on: ubuntu-latest
 
     outputs:

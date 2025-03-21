@@ -14,6 +14,7 @@ on:
 
 jobs:
   build-android-app:
+    name: Build Android App
     runs-on: ubuntu-latest
     timeout-minutes: 25
 
