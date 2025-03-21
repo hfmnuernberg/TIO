@@ -2,7 +2,6 @@ name: Release
 
 on:
   workflow_dispatch:
-  pull_request:
 
 permissions:
   contents: write
@@ -42,13 +41,20 @@ jobs:
 
       - name: Create GitHub release
         id: semantic_release
-        uses: cycjimmy/semantic-release-action@v4
+        uses: cycjimmy/semantic-release-action@v4.2.0
         with:
           tag_format: v${version}+${{ steps.old_version.outputs.BUILD_NUMBER }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Assert new release published
+        if: steps.semantic_release.outputs.new_release_published == 'false'
+        run: |
+          echo "❌ No new released published! See workflow logs for details." >> $GITHUB_STEP_SUMMARY
+          exit 1
+
       - name: Load updated version and build number
+        if: steps.semantic_release.outputs.new_release_published == 'true'
         id: new_version
         run: |
           source ./scripts/load-version-and-build-number-from-latest-tag.sh
@@ -56,4 +62,5 @@ jobs:
           echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
       - name: Create summary
+        if: steps.semantic_release.outputs.new_release_published == 'true'
         run: echo "Released v${{ steps.new_version.outputs.VERSION }}+${{ steps.new_version.outputs.BUILD_NUMBER }}" >> $GITHUB_STEP_SUMMARY
