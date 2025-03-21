@@ -11,8 +11,7 @@ import 'api/simple.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
-import 'frb_generated.io.dart'
-    if (dart.library.js_interop) 'frb_generated.web.dart';
+import 'frb_generated.io.dart' if (dart.library.js_interop) 'frb_generated.web.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 /// Main entrypoint of the Rust API
@@ -23,16 +22,8 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   RustLib._();
 
   /// Initialize flutter_rust_bridge
-  static Future<void> init({
-    RustLibApi? api,
-    BaseHandler? handler,
-    ExternalLibrary? externalLibrary,
-  }) async {
-    await instance.initImpl(
-      api: api,
-      handler: handler,
-      externalLibrary: externalLibrary,
-    );
+  static Future<void> init({RustLibApi? api, BaseHandler? handler, ExternalLibrary? externalLibrary}) async {
+    await instance.initImpl(api: api, handler: handler, externalLibrary: externalLibrary);
   }
 
   /// Initialize flutter_rust_bridge in mock mode.
@@ -48,19 +39,16 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   static void dispose() => instance.disposeImpl();
 
   @override
-  ApiImplConstructor<RustLibApiImpl, RustLibWire> get apiImplConstructor =>
-      RustLibApiImpl.new;
+  ApiImplConstructor<RustLibApiImpl, RustLibWire> get apiImplConstructor => RustLibApiImpl.new;
 
   @override
-  WireConstructor<RustLibWire> get wireConstructor =>
-      RustLibWire.fromExternalLibrary;
+  WireConstructor<RustLibWire> get wireConstructor => RustLibWire.fromExternalLibrary;
 
   @override
   Future<void> executeRustInitializers() async {}
 
   @override
-  ExternalLibraryLoaderConfig get defaultExternalLibraryLoaderConfig =>
-      kDefaultExternalLibraryLoaderConfig;
+  ExternalLibraryLoaderConfig get defaultExternalLibraryLoaderConfig => kDefaultExternalLibraryLoaderConfig;
 
   @override
   String get codegenVersion => '2.9.0';
@@ -68,12 +56,11 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   @override
   int get rustContentHash => 1546940576;
 
-  static const kDefaultExternalLibraryLoaderConfig =
-      ExternalLibraryLoaderConfig(
-        stem: 'rust_lib_tiomusic',
-        ioDirectory: 'rust/target/release/',
-        webPrefix: 'pkg/',
-      );
+  static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
+    stem: 'rust_lib_tiomusic',
+    ioDirectory: 'rust/target/release/',
+    webPrefix: 'pkg/',
+  );
 }
 
 abstract class RustLibApi extends BaseApi {
@@ -103,22 +90,13 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiApiMediaPlayerSetLoop({required bool looping});
 
-  Future<bool> crateApiApiMediaPlayerSetPitchSemitones({
-    required double pitchSemitones,
-  });
+  Future<bool> crateApiApiMediaPlayerSetPitchSemitones({required double pitchSemitones});
 
-  Future<bool> crateApiApiMediaPlayerSetPlaybackPosFactor({
-    required double posFactor,
-  });
+  Future<bool> crateApiApiMediaPlayerSetPlaybackPosFactor({required double posFactor});
 
-  Future<bool> crateApiApiMediaPlayerSetSpeedFactor({
-    required double speedFactor,
-  });
+  Future<bool> crateApiApiMediaPlayerSetSpeedFactor({required double speedFactor});
 
-  Future<void> crateApiApiMediaPlayerSetTrim({
-    required double startFactor,
-    required double endFactor,
-  });
+  Future<void> crateApiApiMediaPlayerSetTrim({required double startFactor, required double endFactor});
 
   Future<bool> crateApiApiMediaPlayerSetVolume({required double volume});
 
@@ -130,25 +108,17 @@ abstract class RustLibApi extends BaseApi {
 
   Future<bool> crateApiApiMediaPlayerStopRecording();
 
-  Future<bool> crateApiApiMetronomeLoadFile({
-    required BeatSound beatType,
-    required String wavFilePath,
-  });
+  Future<bool> crateApiApiMetronomeLoadFile({required BeatSound beatType, required String wavFilePath});
 
   Future<BeatHappenedEvent?> crateApiApiMetronomePollBeatEventHappened();
 
-  Future<bool> crateApiApiMetronomeSetBeatMuteChance({
-    required double muteChance,
-  });
+  Future<bool> crateApiApiMetronomeSetBeatMuteChance({required double muteChance});
 
   Future<bool> crateApiApiMetronomeSetBpm({required double bpm});
 
   Future<bool> crateApiApiMetronomeSetMuted({required bool muted});
 
-  Future<bool> crateApiApiMetronomeSetRhythm({
-    required List<MetroBar> bars,
-    required List<MetroBar> bars2,
-  });
+  Future<bool> crateApiApiMetronomeSetRhythm({required List<MetroBar> bars, required List<MetroBar> bars2});
 
   Future<bool> crateApiApiMetronomeSetVolume({required double volume});
 
@@ -160,9 +130,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<bool> crateApiApiPianoNoteOn({required int note});
 
-  Future<bool> crateApiApiPianoSetConcertPitch({
-    required double newConcertPitch,
-  });
+  Future<bool> crateApiApiPianoSetConcertPitch({required double newConcertPitch});
 
   Future<bool> crateApiApiPianoSetVolume({required double volume});
 
@@ -193,17 +161,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 1,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiDebugTestFunctionConstMeta,
         argValues: [],
         apiImpl: this,
@@ -220,17 +180,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 2,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiGeneratorNoteOffConstMeta,
         argValues: [],
         apiImpl: this,
@@ -248,17 +200,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_f_32(newFreq, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 3,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiGeneratorNoteOnConstMeta,
         argValues: [newFreq],
         apiImpl: this,
@@ -266,10 +210,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiApiGeneratorNoteOnConstMeta => const TaskConstMeta(
-    debugName: "generator_note_on",
-    argNames: ["newFreq"],
-  );
+  TaskConstMeta get kCrateApiApiGeneratorNoteOnConstMeta =>
+      const TaskConstMeta(debugName: "generator_note_on", argNames: ["newFreq"]);
 
   @override
   Future<bool> crateApiApiGeneratorStart() {
@@ -277,17 +219,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 4,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiGeneratorStartConstMeta,
         argValues: [],
         apiImpl: this,
@@ -304,17 +238,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 5,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiGeneratorStopConstMeta,
         argValues: [],
         apiImpl: this,
@@ -331,17 +257,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 6,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_CastedPrimitive_usize,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_CastedPrimitive_usize, decodeErrorData: null),
         constMeta: kCrateApiApiGetSampleRateConstMeta,
         argValues: [],
         apiImpl: this,
@@ -358,17 +276,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 7,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
         constMeta: kCrateApiApiInitAudioConstMeta,
         argValues: [],
         apiImpl: this,
@@ -376,8 +286,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiApiInitAudioConstMeta =>
-      const TaskConstMeta(debugName: "init_audio", argNames: []);
+  TaskConstMeta get kCrateApiApiInitAudioConstMeta => const TaskConstMeta(debugName: "init_audio", argNames: []);
 
   @override
   Future<void> crateApiSimpleInitRustDefaultsManually() {
@@ -385,17 +294,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 8,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
         constMeta: kCrateApiSimpleInitRustDefaultsManuallyConstMeta,
         argValues: [],
         apiImpl: this,
@@ -404,10 +305,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiSimpleInitRustDefaultsManuallyConstMeta =>
-      const TaskConstMeta(
-        debugName: "init_rust_defaults_manually",
-        argNames: [],
-      );
+      const TaskConstMeta(debugName: "init_rust_defaults_manually", argNames: []);
 
   @override
   Future<Float64List> crateApiApiMediaPlayerGetRecordingSamples() {
@@ -415,17 +313,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 9,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_prim_f_64_strict,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_list_prim_f_64_strict, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerGetRecordingSamplesConstMeta,
         argValues: [],
         apiImpl: this,
@@ -434,10 +324,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMediaPlayerGetRecordingSamplesConstMeta =>
-      const TaskConstMeta(
-        debugName: "media_player_get_recording_samples",
-        argNames: [],
-      );
+      const TaskConstMeta(debugName: "media_player_get_recording_samples", argNames: []);
 
   @override
   Future<Float32List> crateApiApiMediaPlayerGetRms({required int nBins}) {
@@ -446,17 +333,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_CastedPrimitive_usize(nBins, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 10,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_list_prim_f_32_strict,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_list_prim_f_32_strict, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerGetRmsConstMeta,
         argValues: [nBins],
         apiImpl: this,
@@ -465,10 +344,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMediaPlayerGetRmsConstMeta =>
-      const TaskConstMeta(
-        debugName: "media_player_get_rms",
-        argNames: ["nBins"],
-      );
+      const TaskConstMeta(debugName: "media_player_get_rms", argNames: ["nBins"]);
 
   @override
   Future<MediaPlayerState?> crateApiApiMediaPlayerGetState() {
@@ -476,17 +352,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 11,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_opt_box_autoadd_media_player_state,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_opt_box_autoadd_media_player_state, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerGetStateConstMeta,
         argValues: [],
         apiImpl: this,
@@ -504,17 +372,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(wavFilePath, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 12,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerLoadWavConstMeta,
         argValues: [wavFilePath],
         apiImpl: this,
@@ -523,10 +383,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMediaPlayerLoadWavConstMeta =>
-      const TaskConstMeta(
-        debugName: "media_player_load_wav",
-        argNames: ["wavFilePath"],
-      );
+      const TaskConstMeta(debugName: "media_player_load_wav", argNames: ["wavFilePath"]);
 
   @override
   Future<void> crateApiApiMediaPlayerSetLoop({required bool looping}) {
@@ -535,17 +392,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_bool(looping, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 13,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerSetLoopConstMeta,
         argValues: [looping],
         apiImpl: this,
@@ -554,31 +403,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMediaPlayerSetLoopConstMeta =>
-      const TaskConstMeta(
-        debugName: "media_player_set_loop",
-        argNames: ["looping"],
-      );
+      const TaskConstMeta(debugName: "media_player_set_loop", argNames: ["looping"]);
 
   @override
-  Future<bool> crateApiApiMediaPlayerSetPitchSemitones({
-    required double pitchSemitones,
-  }) {
+  Future<bool> crateApiApiMediaPlayerSetPitchSemitones({required double pitchSemitones}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_f_32(pitchSemitones, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 14,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerSetPitchSemitonesConstMeta,
         argValues: [pitchSemitones],
         apiImpl: this,
@@ -587,31 +423,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMediaPlayerSetPitchSemitonesConstMeta =>
-      const TaskConstMeta(
-        debugName: "media_player_set_pitch_semitones",
-        argNames: ["pitchSemitones"],
-      );
+      const TaskConstMeta(debugName: "media_player_set_pitch_semitones", argNames: ["pitchSemitones"]);
 
   @override
-  Future<bool> crateApiApiMediaPlayerSetPlaybackPosFactor({
-    required double posFactor,
-  }) {
+  Future<bool> crateApiApiMediaPlayerSetPlaybackPosFactor({required double posFactor}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_f_32(posFactor, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 15,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerSetPlaybackPosFactorConstMeta,
         argValues: [posFactor],
         apiImpl: this,
@@ -620,31 +443,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMediaPlayerSetPlaybackPosFactorConstMeta =>
-      const TaskConstMeta(
-        debugName: "media_player_set_playback_pos_factor",
-        argNames: ["posFactor"],
-      );
+      const TaskConstMeta(debugName: "media_player_set_playback_pos_factor", argNames: ["posFactor"]);
 
   @override
-  Future<bool> crateApiApiMediaPlayerSetSpeedFactor({
-    required double speedFactor,
-  }) {
+  Future<bool> crateApiApiMediaPlayerSetSpeedFactor({required double speedFactor}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_f_32(speedFactor, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 16,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerSetSpeedFactorConstMeta,
         argValues: [speedFactor],
         apiImpl: this,
@@ -653,33 +463,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMediaPlayerSetSpeedFactorConstMeta =>
-      const TaskConstMeta(
-        debugName: "media_player_set_speed_factor",
-        argNames: ["speedFactor"],
-      );
+      const TaskConstMeta(debugName: "media_player_set_speed_factor", argNames: ["speedFactor"]);
 
   @override
-  Future<void> crateApiApiMediaPlayerSetTrim({
-    required double startFactor,
-    required double endFactor,
-  }) {
+  Future<void> crateApiApiMediaPlayerSetTrim({required double startFactor, required double endFactor}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_f_32(startFactor, serializer);
           sse_encode_f_32(endFactor, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 17,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerSetTrimConstMeta,
         argValues: [startFactor, endFactor],
         apiImpl: this,
@@ -688,10 +484,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMediaPlayerSetTrimConstMeta =>
-      const TaskConstMeta(
-        debugName: "media_player_set_trim",
-        argNames: ["startFactor", "endFactor"],
-      );
+      const TaskConstMeta(debugName: "media_player_set_trim", argNames: ["startFactor", "endFactor"]);
 
   @override
   Future<bool> crateApiApiMediaPlayerSetVolume({required double volume}) {
@@ -700,17 +493,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_f_32(volume, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 18,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerSetVolumeConstMeta,
         argValues: [volume],
         apiImpl: this,
@@ -719,10 +504,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMediaPlayerSetVolumeConstMeta =>
-      const TaskConstMeta(
-        debugName: "media_player_set_volume",
-        argNames: ["volume"],
-      );
+      const TaskConstMeta(debugName: "media_player_set_volume", argNames: ["volume"]);
 
   @override
   Future<bool> crateApiApiMediaPlayerStart() {
@@ -730,17 +512,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 19,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerStartConstMeta,
         argValues: [],
         apiImpl: this,
@@ -757,17 +531,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 20,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerStartRecordingConstMeta,
         argValues: [],
         apiImpl: this,
@@ -776,10 +542,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMediaPlayerStartRecordingConstMeta =>
-      const TaskConstMeta(
-        debugName: "media_player_start_recording",
-        argNames: [],
-      );
+      const TaskConstMeta(debugName: "media_player_start_recording", argNames: []);
 
   @override
   Future<bool> crateApiApiMediaPlayerStop() {
@@ -787,17 +550,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 21,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerStopConstMeta,
         argValues: [],
         apiImpl: this,
@@ -814,17 +569,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 22,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMediaPlayerStopRecordingConstMeta,
         argValues: [],
         apiImpl: this,
@@ -833,33 +580,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMediaPlayerStopRecordingConstMeta =>
-      const TaskConstMeta(
-        debugName: "media_player_stop_recording",
-        argNames: [],
-      );
+      const TaskConstMeta(debugName: "media_player_stop_recording", argNames: []);
 
   @override
-  Future<bool> crateApiApiMetronomeLoadFile({
-    required BeatSound beatType,
-    required String wavFilePath,
-  }) {
+  Future<bool> crateApiApiMetronomeLoadFile({required BeatSound beatType, required String wavFilePath}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_beat_sound(beatType, serializer);
           sse_encode_String(wavFilePath, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 23,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMetronomeLoadFileConstMeta,
         argValues: [beatType, wavFilePath],
         apiImpl: this,
@@ -868,10 +601,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMetronomeLoadFileConstMeta =>
-      const TaskConstMeta(
-        debugName: "metronome_load_file",
-        argNames: ["beatType", "wavFilePath"],
-      );
+      const TaskConstMeta(debugName: "metronome_load_file", argNames: ["beatType", "wavFilePath"]);
 
   @override
   Future<BeatHappenedEvent?> crateApiApiMetronomePollBeatEventHappened() {
@@ -879,17 +609,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 24,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 24, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_opt_box_autoadd_beat_happened_event,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_opt_box_autoadd_beat_happened_event, decodeErrorData: null),
         constMeta: kCrateApiApiMetronomePollBeatEventHappenedConstMeta,
         argValues: [],
         apiImpl: this,
@@ -898,31 +620,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMetronomePollBeatEventHappenedConstMeta =>
-      const TaskConstMeta(
-        debugName: "metronome_poll_beat_event_happened",
-        argNames: [],
-      );
+      const TaskConstMeta(debugName: "metronome_poll_beat_event_happened", argNames: []);
 
   @override
-  Future<bool> crateApiApiMetronomeSetBeatMuteChance({
-    required double muteChance,
-  }) {
+  Future<bool> crateApiApiMetronomeSetBeatMuteChance({required double muteChance}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_f_32(muteChance, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 25,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMetronomeSetBeatMuteChanceConstMeta,
         argValues: [muteChance],
         apiImpl: this,
@@ -931,10 +640,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMetronomeSetBeatMuteChanceConstMeta =>
-      const TaskConstMeta(
-        debugName: "metronome_set_beat_mute_chance",
-        argNames: ["muteChance"],
-      );
+      const TaskConstMeta(debugName: "metronome_set_beat_mute_chance", argNames: ["muteChance"]);
 
   @override
   Future<bool> crateApiApiMetronomeSetBpm({required double bpm}) {
@@ -943,17 +649,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_f_32(bpm, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 26,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 26, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMetronomeSetBpmConstMeta,
         argValues: [bpm],
         apiImpl: this,
@@ -971,17 +669,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_bool(muted, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 27,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 27, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMetronomeSetMutedConstMeta,
         argValues: [muted],
         apiImpl: this,
@@ -990,33 +680,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMetronomeSetMutedConstMeta =>
-      const TaskConstMeta(
-        debugName: "metronome_set_muted",
-        argNames: ["muted"],
-      );
+      const TaskConstMeta(debugName: "metronome_set_muted", argNames: ["muted"]);
 
   @override
-  Future<bool> crateApiApiMetronomeSetRhythm({
-    required List<MetroBar> bars,
-    required List<MetroBar> bars2,
-  }) {
+  Future<bool> crateApiApiMetronomeSetRhythm({required List<MetroBar> bars, required List<MetroBar> bars2}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_list_metro_bar(bars, serializer);
           sse_encode_list_metro_bar(bars2, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 28,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMetronomeSetRhythmConstMeta,
         argValues: [bars, bars2],
         apiImpl: this,
@@ -1025,10 +701,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMetronomeSetRhythmConstMeta =>
-      const TaskConstMeta(
-        debugName: "metronome_set_rhythm",
-        argNames: ["bars", "bars2"],
-      );
+      const TaskConstMeta(debugName: "metronome_set_rhythm", argNames: ["bars", "bars2"]);
 
   @override
   Future<bool> crateApiApiMetronomeSetVolume({required double volume}) {
@@ -1037,17 +710,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_f_32(volume, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 29,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 29, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMetronomeSetVolumeConstMeta,
         argValues: [volume],
         apiImpl: this,
@@ -1056,10 +721,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiMetronomeSetVolumeConstMeta =>
-      const TaskConstMeta(
-        debugName: "metronome_set_volume",
-        argNames: ["volume"],
-      );
+      const TaskConstMeta(debugName: "metronome_set_volume", argNames: ["volume"]);
 
   @override
   Future<bool> crateApiApiMetronomeStart() {
@@ -1067,17 +729,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 30,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 30, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMetronomeStartConstMeta,
         argValues: [],
         apiImpl: this,
@@ -1094,17 +748,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 31,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 31, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiMetronomeStopConstMeta,
         argValues: [],
         apiImpl: this,
@@ -1122,17 +768,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_i_32(note, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 32,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 32, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiPianoNoteOffConstMeta,
         argValues: [note],
         apiImpl: this,
@@ -1150,17 +788,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_i_32(note, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 33,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 33, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiPianoNoteOnConstMeta,
         argValues: [note],
         apiImpl: this,
@@ -1172,25 +802,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "piano_note_on", argNames: ["note"]);
 
   @override
-  Future<bool> crateApiApiPianoSetConcertPitch({
-    required double newConcertPitch,
-  }) {
+  Future<bool> crateApiApiPianoSetConcertPitch({required double newConcertPitch}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_f_32(newConcertPitch, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 34,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiPianoSetConcertPitchConstMeta,
         argValues: [newConcertPitch],
         apiImpl: this,
@@ -1199,10 +819,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiApiPianoSetConcertPitchConstMeta =>
-      const TaskConstMeta(
-        debugName: "piano_set_concert_pitch",
-        argNames: ["newConcertPitch"],
-      );
+      const TaskConstMeta(debugName: "piano_set_concert_pitch", argNames: ["newConcertPitch"]);
 
   @override
   Future<bool> crateApiApiPianoSetVolume({required double volume}) {
@@ -1211,17 +828,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_f_32(volume, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 35,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 35, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiPianoSetVolumeConstMeta,
         argValues: [volume],
         apiImpl: this,
@@ -1239,17 +848,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_String(soundFontPath, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 36,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 36, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiPianoSetupConstMeta,
         argValues: [soundFontPath],
         apiImpl: this,
@@ -1257,10 +858,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiApiPianoSetupConstMeta => const TaskConstMeta(
-    debugName: "piano_setup",
-    argNames: ["soundFontPath"],
-  );
+  TaskConstMeta get kCrateApiApiPianoSetupConstMeta =>
+      const TaskConstMeta(debugName: "piano_setup", argNames: ["soundFontPath"]);
 
   @override
   Future<bool> crateApiApiPianoStart() {
@@ -1268,17 +867,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 37,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 37, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiPianoStartConstMeta,
         argValues: [],
         apiImpl: this,
@@ -1286,8 +877,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiApiPianoStartConstMeta =>
-      const TaskConstMeta(debugName: "piano_start", argNames: []);
+  TaskConstMeta get kCrateApiApiPianoStartConstMeta => const TaskConstMeta(debugName: "piano_start", argNames: []);
 
   @override
   Future<bool> crateApiApiPianoStop() {
@@ -1295,17 +885,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 38,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 38, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiPianoStopConstMeta,
         argValues: [],
         apiImpl: this,
@@ -1313,8 +895,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiApiPianoStopConstMeta =>
-      const TaskConstMeta(debugName: "piano_stop", argNames: []);
+  TaskConstMeta get kCrateApiApiPianoStopConstMeta => const TaskConstMeta(debugName: "piano_stop", argNames: []);
 
   @override
   Future<double?> crateApiApiTunerGetFrequency() {
@@ -1322,17 +903,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 39,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 39, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_opt_box_autoadd_f_32,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_opt_box_autoadd_f_32, decodeErrorData: null),
         constMeta: kCrateApiApiTunerGetFrequencyConstMeta,
         argValues: [],
         apiImpl: this,
@@ -1349,17 +922,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 40,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 40, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiTunerStartConstMeta,
         argValues: [],
         apiImpl: this,
@@ -1367,8 +932,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiApiTunerStartConstMeta =>
-      const TaskConstMeta(debugName: "tuner_start", argNames: []);
+  TaskConstMeta get kCrateApiApiTunerStartConstMeta => const TaskConstMeta(debugName: "tuner_start", argNames: []);
 
   @override
   Future<bool> crateApiApiTunerStop() {
@@ -1376,17 +940,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 41,
-            port: port_,
-          );
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 41, port: port_);
         },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
-        ),
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiApiTunerStopConstMeta,
         argValues: [],
         apiImpl: this,
@@ -1394,15 +950,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     );
   }
 
-  TaskConstMeta get kCrateApiApiTunerStopConstMeta =>
-      const TaskConstMeta(debugName: "tuner_stop", argNames: []);
+  TaskConstMeta get kCrateApiApiTunerStopConstMeta => const TaskConstMeta(debugName: "tuner_stop", argNames: []);
 
   @protected
   int dco_decode_CastedPrimitive_usize(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
-    throw UnimplementedError(
-      'Not implemented in this codec, please use the other one',
-    );
+    throw UnimplementedError('Not implemented in this codec, please use the other one');
   }
 
   @protected
@@ -1415,8 +968,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   BeatHappenedEvent dco_decode_beat_happened_event(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 6)
-      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
     return BeatHappenedEvent(
       millisecondsBeforeStart: dco_decode_i_32(arr[0]),
       isRandomMute: dco_decode_bool(arr[1]),
@@ -1527,8 +1079,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   MediaPlayerState dco_decode_media_player_state(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 6)
-      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
     return MediaPlayerState(
       playing: dco_decode_bool(arr[0]),
       playbackPositionFactor: dco_decode_f_32(arr[1]),
@@ -1543,8 +1094,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   MetroBar dco_decode_metro_bar(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    if (arr.length != 4) throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
     return MetroBar(
       id: dco_decode_i_32(arr[0]),
       beats: dco_decode_list_beat_type(arr[1]),
@@ -1554,9 +1104,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  BeatHappenedEvent? dco_decode_opt_box_autoadd_beat_happened_event(
-    dynamic raw,
-  ) {
+  BeatHappenedEvent? dco_decode_opt_box_autoadd_beat_happened_event(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_beat_happened_event(raw);
   }
@@ -1606,9 +1154,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  BeatHappenedEvent sse_decode_beat_happened_event(
-    SseDeserializer deserializer,
-  ) {
+  BeatHappenedEvent sse_decode_beat_happened_event(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_millisecondsBeforeStart = sse_decode_i_32(deserializer);
     var var_isRandomMute = sse_decode_bool(deserializer);
@@ -1654,9 +1200,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  BeatHappenedEvent sse_decode_box_autoadd_beat_happened_event(
-    SseDeserializer deserializer,
-  ) {
+  BeatHappenedEvent sse_decode_box_autoadd_beat_happened_event(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_beat_happened_event(deserializer));
   }
@@ -1668,9 +1212,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  MediaPlayerState sse_decode_box_autoadd_media_player_state(
-    SseDeserializer deserializer,
-  ) {
+  MediaPlayerState sse_decode_box_autoadd_media_player_state(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_media_player_state(deserializer));
   }
@@ -1706,9 +1248,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<BeatTypePoly> sse_decode_list_beat_type_poly(
-    SseDeserializer deserializer,
-  ) {
+  List<BeatTypePoly> sse_decode_list_beat_type_poly(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     var len_ = sse_decode_i_32(deserializer);
@@ -1778,18 +1318,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_beats = sse_decode_list_beat_type(deserializer);
     var var_polyBeats = sse_decode_list_beat_type_poly(deserializer);
     var var_beatLen = sse_decode_f_32(deserializer);
-    return MetroBar(
-      id: var_id,
-      beats: var_beats,
-      polyBeats: var_polyBeats,
-      beatLen: var_beatLen,
-    );
+    return MetroBar(id: var_id, beats: var_beats, polyBeats: var_polyBeats, beatLen: var_beatLen);
   }
 
   @protected
-  BeatHappenedEvent? sse_decode_opt_box_autoadd_beat_happened_event(
-    SseDeserializer deserializer,
-  ) {
+  BeatHappenedEvent? sse_decode_opt_box_autoadd_beat_happened_event(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     if (sse_decode_bool(deserializer)) {
@@ -1811,9 +1344,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  MediaPlayerState? sse_decode_opt_box_autoadd_media_player_state(
-    SseDeserializer deserializer,
-  ) {
+  MediaPlayerState? sse_decode_opt_box_autoadd_media_player_state(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     if (sse_decode_bool(deserializer)) {
@@ -1853,10 +1384,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_beat_happened_event(
-    BeatHappenedEvent self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_beat_happened_event(BeatHappenedEvent self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.millisecondsBeforeStart, serializer);
     sse_encode_bool(self.isRandomMute, serializer);
@@ -1891,10 +1419,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_box_autoadd_beat_happened_event(
-    BeatHappenedEvent self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_box_autoadd_beat_happened_event(BeatHappenedEvent self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_beat_happened_event(self, serializer);
   }
@@ -1906,10 +1431,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_box_autoadd_media_player_state(
-    MediaPlayerState self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_box_autoadd_media_player_state(MediaPlayerState self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_media_player_state(self, serializer);
   }
@@ -1933,10 +1455,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_beat_type(
-    List<BeatType> self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_beat_type(List<BeatType> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
@@ -1945,10 +1464,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_beat_type_poly(
-    List<BeatTypePoly> self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_beat_type_poly(List<BeatTypePoly> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
@@ -1957,10 +1473,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_metro_bar(
-    List<MetroBar> self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_metro_bar(List<MetroBar> self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
@@ -1969,40 +1482,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_prim_f_32_strict(
-    Float32List self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_prim_f_32_strict(Float32List self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     serializer.buffer.putFloat32List(self);
   }
 
   @protected
-  void sse_encode_list_prim_f_64_strict(
-    Float64List self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_prim_f_64_strict(Float64List self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     serializer.buffer.putFloat64List(self);
   }
 
   @protected
-  void sse_encode_list_prim_u_8_strict(
-    Uint8List self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     serializer.buffer.putUint8List(self);
   }
 
   @protected
-  void sse_encode_media_player_state(
-    MediaPlayerState self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_media_player_state(MediaPlayerState self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_bool(self.playing, serializer);
     sse_encode_f_32(self.playbackPositionFactor, serializer);
@@ -2022,10 +1523,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_opt_box_autoadd_beat_happened_event(
-    BeatHappenedEvent? self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_opt_box_autoadd_beat_happened_event(BeatHappenedEvent? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     sse_encode_bool(self != null, serializer);
@@ -2045,10 +1543,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_opt_box_autoadd_media_player_state(
-    MediaPlayerState? self,
-    SseSerializer serializer,
-  ) {
+  void sse_encode_opt_box_autoadd_media_player_state(MediaPlayerState? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     sse_encode_bool(self != null, serializer);

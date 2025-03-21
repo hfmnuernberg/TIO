@@ -33,16 +33,10 @@ class MetroBar {
   final List<BeatTypePoly> polyBeats;
   final double beatLen;
 
-  const MetroBar({
-    required this.id,
-    required this.beats,
-    required this.polyBeats,
-    required this.beatLen,
-  });
+  const MetroBar({required this.id, required this.beats, required this.polyBeats, required this.beatLen});
 
   @override
-  int get hashCode =>
-      id.hashCode ^ beats.hashCode ^ polyBeats.hashCode ^ beatLen.hashCode;
+  int get hashCode => id.hashCode ^ beats.hashCode ^ polyBeats.hashCode ^ beatLen.hashCode;
 
   @override
   bool operator ==(Object other) =>
