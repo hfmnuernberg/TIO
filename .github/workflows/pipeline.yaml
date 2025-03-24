@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   verify:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     name: Verify
     uses: hfmnuernberg/TIO/.github/workflows/reusable-verify.yaml@main
     secrets: inherit
@@ -23,7 +23,7 @@ jobs:
       ref: ${{ github.ref }}
 
   build-ios-app:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     name: Build iOS App
     uses: hfmnuernberg/TIO/.github/workflows/reusable-build-ios-app.yaml@main
     secrets: inherit
@@ -33,7 +33,7 @@ jobs:
       appIdentifier: 6477820301
 
   build-android-app:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     name: Build Android App
     uses: hfmnuernberg/TIO/.github/workflows/reusable-build-android-app.yaml@main
     secrets: inherit
@@ -42,7 +42,6 @@ jobs:
       artifactName: android-${{ github.sha }}-${{ github.run_number }}
 
   upload-ios-app:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     needs: [verify, build-ios-app]
     name: Upload iOS App
     uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-ios-app.yaml@main
@@ -57,7 +56,6 @@ jobs:
       appIdentifier: 6477820301
 
   upload-android-app:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     needs: [verify, build-android-app]
     name: Upload Android App
     uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-android-app.yaml@main
