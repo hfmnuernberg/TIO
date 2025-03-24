@@ -2,11 +2,16 @@ name: Bump Build Number
 
 on:
   push:
+    tags:
+    - 'v*'
     branches:
     - main
     paths-ignore:
     - docs/**
     - README.md
+  workflow_run:
+    workflows: ["Release"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -14,6 +19,7 @@ permissions:
 
 jobs:
   bump-build-number:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Bump Build Number
     runs-on: ubuntu-latest
 
