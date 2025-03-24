@@ -41,11 +41,6 @@ jobs:
         run: |
           echo "actor: '${{ github.actor }}'"
           echo "bump type: '${{ steps.semver.outputs.BUMP_TYPE }}'"
-          echo
-          echo "github.actor == 'dependabot[bot]': '${{ github.actor == 'dependabot[bot]' }}'"
-          echo "steps.semver.outputs.BUMP_TYPE == 'minor': '${{ steps.semver.outputs.BUMP_TYPE == 'minor' }}'"
-          echo "steps.semver.outputs.BUMP_TYPE == 'patch': '${{ steps.semver.outputs.BUMP_TYPE == 'patch' }}'"
-          echo "actot && (minor || patch): '${{ github.actor == 'dependabot[bot]' && (steps.semver.outputs.BUMP_TYPE == 'minor' || steps.semver.outputs.BUMP_TYPE == 'patch') }}'"
 
       - name: Auto-merge if actor is Dependabot and bump is minor or patch
         if: >
