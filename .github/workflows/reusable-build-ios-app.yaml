@@ -48,7 +48,7 @@ jobs:
         uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
 
       - name: Install key for fastlane repo
-        uses: webfactory/ssh-agent@v0.9.0
+        uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: |
             ${{ secrets.FASTLANE_GITHUB_DEPLOY_PRIVATE_KEY }}
