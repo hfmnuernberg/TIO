@@ -36,6 +36,7 @@ jobs:
         id: semver
         run: |
           scripts/load-semver-from-pr-title.sh "${{ github.event.pull_request.title }}"
+          echo "BUMP_TYPE=$BUMP_TYPE"
           echo "BUMP_TYPE=$BUMP_TYPE" >> "$GITHUB_OUTPUT"
 
       - name: Print actor and bump type
