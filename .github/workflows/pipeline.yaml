@@ -5,7 +5,7 @@ on:
     tags:
     - '*'
   workflow_run:
-    workflows: ["Bump Build Number"]
+    workflows: ["Bump Build Number", "Release"]
     types:
     - completed
   workflow_dispatch:
