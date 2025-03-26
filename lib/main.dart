@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/delegate.dart';
 import 'package:tiomusic/models/file_references.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -45,6 +47,8 @@ class TIOMusicApp extends StatelessWidget {
       child: MaterialApp(
         navigatorObservers: [routeObserver],
         debugShowCheckedModeBanner: false,
+        localizationsDelegates: [...GlobalMaterialLocalizations.delegates, AppLocalizationsDelegate()],
+        supportedLocales: const [Locale('en', 'US'), Locale('de', 'DE')],
         title: 'TIO Music',
         theme: ourTheme ?? ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
         home: const TIOMusicHomePage(),

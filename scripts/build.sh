@@ -22,8 +22,8 @@ if [ -z "$PLATFORM" ]; then help; exit 1; fi
 if [ -z "$2" ]; then MODE="debug"; else MODE="$2"; fi
 
 echo "Building app ..."
-echo "  platform:     $PLATFORM"
-echo "  mode:         $MODE"
+echo "  platform:  $PLATFORM"
+echo "  mode:      $MODE"
 
 if [ "$PLATFORM" = 'ios' ]; then EXPORT_OPTIONS_ARG='--export-options-plist'; fi
 if [ "$PLATFORM" = 'ios' ]; then EXPORT_OPTIONS_VAL='ios/export-options.plist'; fi
