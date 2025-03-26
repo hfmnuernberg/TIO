@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
@@ -365,10 +366,12 @@ class _ProjectsListState extends State<ProjectsList> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Home'),
+        title: Text(l10n.home),
         centerTitle: true,
         backgroundColor: ColorTheme.surfaceBright,
         foregroundColor: ColorTheme.primary,
@@ -377,7 +380,7 @@ class _ProjectsListState extends State<ProjectsList> {
           onPressed: () async {
             final newTitle = await showEditTextDialog(
               context: context,
-              label: 'New project:',
+              label: '${l10n.newProject}:',
               value: getDateAndTimeNow(),
               isNew: true,
             );
