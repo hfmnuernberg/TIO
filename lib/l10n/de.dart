@@ -1,4 +1,4 @@
-import 'package:tiomusic/l10n/l10n.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 
 class German extends AppLocalizations {
   String get home => 'Startseite';
