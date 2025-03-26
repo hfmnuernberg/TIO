@@ -232,35 +232,32 @@ class _ProjectsListState extends State<ProjectsList> {
 
   Future<bool?> _deleteProject({bool deleteAll = false}) => showDialog<bool>(
     context: context,
-    builder:
-        (context) => AlertDialog(
-          title: const Text('Delete?', style: TextStyle(color: ColorTheme.primary)),
-          content:
-              deleteAll
-                  ? const Text(
-                    'Do you really want to delete all projects?',
-                    style: TextStyle(color: ColorTheme.primary),
-                  )
-                  : const Text(
-                    'Do you really want to delete this project?',
-                    style: TextStyle(color: ColorTheme.primary),
-                  ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: const Text('No'),
-            ),
-            TIOFlatButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              text: 'Yes',
-              boldText: true,
-            ),
-          ],
-        ),
+    builder: (context) {
+      final l10n = context.l10n;
+
+      return AlertDialog(
+        title: Text(l10n.delete, style: const TextStyle(color: ColorTheme.primary)),
+        content:
+            deleteAll
+                ? Text(l10n.deleteAllProjects, style: TextStyle(color: ColorTheme.primary))
+                : Text(l10n.deleteSingleProject, style: TextStyle(color: ColorTheme.primary)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Text(l10n.no),
+          ),
+          TIOFlatButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            text: l10n.yes,
+            boldText: true,
+          ),
+        ],
+      );
+    },
   );
 
   void _goToToolOverProjectPage(Project project, ProjectBlock tool, bool pianoAlreadyOn) {
@@ -303,6 +300,8 @@ class _ProjectsListState extends State<ProjectsList> {
   }
 
   Widget _getSurveyBanner() {
+    final l10n = context.l10n;
+
     return Positioned(
       left: 0,
       top: 0,
@@ -318,17 +317,13 @@ class _ProjectsListState extends State<ProjectsList> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Do you like TIO Music? Please take part in this survey! (For now the survey is only available in German)',
-                style: TextStyle(color: ColorTheme.surfaceTint),
-              ),
+              Text(l10n.askForSurvey, style: TextStyle(color: ColorTheme.surfaceTint)),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
                     onPressed: () async {
-                      // open link in browser
                       final Uri url = Uri.parse('https://cloud9.evasys.de/hfmn/online.php?p=Q2TYV');
                       if (await launchUrl(url) && mounted) {
                         _showBanner = false;
@@ -337,7 +332,7 @@ class _ProjectsListState extends State<ProjectsList> {
                         setState(() {});
                       }
                     },
-                    child: const Text('Fill out'),
+                    child: Text(l10n.fillOutButton),
                   ),
                   IconButton(
                     onPressed: () {
@@ -380,7 +375,7 @@ class _ProjectsListState extends State<ProjectsList> {
           onPressed: () async {
             final newTitle = await showEditTextDialog(
               context: context,
-              label: l10n.newProject,
+              label: l10n.newTitle,
               value: getDateAndTimeNow(),
               isNew: true,
             );
@@ -429,11 +424,11 @@ class _ProjectsListState extends State<ProjectsList> {
                   builder:
                       (context, projectLibrary, child) =>
                           projectLibrary.projects.isEmpty
-                              ? const Padding(
-                                padding: EdgeInsets.all(40),
+                              ? Padding(
+                                padding: const EdgeInsets.all(40),
                                 child: Text(
-                                  "Please click on '+' to create a new project.",
-                                  style: TextStyle(color: Colors.white, fontSize: 42),
+                                  l10n.backgroundText,
+                                  style: const TextStyle(color: Colors.white, fontSize: 42),
                                 ),
                               )
                               : Padding(
@@ -485,10 +480,10 @@ class _ProjectsListState extends State<ProjectsList> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _quickToolButton(blockTypeInfos[BlockType.metronome]!.icon, 'Metronome', BlockType.metronome),
+                        _quickToolButton(blockTypeInfos[BlockType.metronome]!.icon, l10n.metronome, BlockType.metronome),
                         _quickToolButton(
                           blockTypeInfos[BlockType.mediaPlayer]!.icon,
-                          'Media Player',
+                          l10n.mediaPlayer,
                           BlockType.mediaPlayer,
                         ),
                       ],
@@ -496,8 +491,8 @@ class _ProjectsListState extends State<ProjectsList> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _quickToolButton(blockTypeInfos[BlockType.tuner]!.icon, 'Tuner', BlockType.tuner),
-                        _quickToolButton(blockTypeInfos[BlockType.piano]!.icon, 'Piano', BlockType.piano),
+                        _quickToolButton(blockTypeInfos[BlockType.tuner]!.icon, l10n.tuner, BlockType.tuner),
+                        _quickToolButton(blockTypeInfos[BlockType.piano]!.icon, l10n.piano, BlockType.piano),
                       ],
                     ),
                   ],
