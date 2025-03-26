@@ -1,4 +1,6 @@
+// overriding keys do not change something; ignored because soft warning
 // ignore_for_file: annotate_overrides
+
 import 'package:tiomusic/l10n/app_localization.dart';
 
 class German extends AppLocalizations {
