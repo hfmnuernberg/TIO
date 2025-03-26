@@ -95,14 +95,14 @@ class _ProjectsListState extends State<ProjectsList> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyAddProjectButton,
-        'Tap here to create a new project',
+        context.l10n.walkthroughAddProject,
         alignText: ContentAlign.right,
         pointingDirection: PointingDirection.left,
         pointerPosition: PointerPosition.left,
       ),
       CustomTargetFocus(
         _keyNavigationBar,
-        'Tap here to start using a tool',
+        context.l10n.walkthroughStartUsingTool,
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
@@ -111,13 +111,13 @@ class _ProjectsListState extends State<ProjectsList> {
       CustomTargetFocus(
         null,
         context: context,
-        'Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.',
+        context.l10n.walkthroughHowToUseTio,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
       CustomTargetFocus(
         null,
         context: context,
-        'Projects can include multiple tools\n(tuner, metronome, piano setting, media player, image and text),\neven several tools of the same type.',
+        context.l10n.walkthroughIncludeMultipleTools,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
     ];
@@ -480,7 +480,11 @@ class _ProjectsListState extends State<ProjectsList> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _quickToolButton(blockTypeInfos[BlockType.metronome]!.icon, l10n.metronome, BlockType.metronome),
+                        _quickToolButton(
+                          blockTypeInfos[BlockType.metronome]!.icon,
+                          l10n.metronome,
+                          BlockType.metronome,
+                        ),
                         _quickToolButton(
                           blockTypeInfos[BlockType.mediaPlayer]!.icon,
                           l10n.mediaPlayer,

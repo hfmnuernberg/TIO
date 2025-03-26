@@ -28,6 +28,12 @@ class English extends AppLocalizations {
   String get piano => 'Piano';
 
   // walkthrough
+  String get walkthroughAddProject => 'Tap here to create a new project';
+  String get walkthroughStartUsingTool => 'Tap here to start using a tool';
+  String get walkthroughHowToUseTio =>
+      'Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.';
+  String get walkthroughIncludeMultipleTools =>
+      'Projects can include multiple tools\n(tuner, metronome, piano setting, media player, image and text),\neven several tools of the same type.';
 
   // menu
   String get about => 'About';

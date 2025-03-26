@@ -22,6 +22,10 @@ abstract class AppLocalizations {
   String get piano;
 
   // walkthrough
+  String get walkthroughAddProject;
+  String get walkthroughStartUsingTool;
+  String get walkthroughHowToUseTio;
+  String get walkthroughIncludeMultipleTools;
 
   // menu
   String get about;
