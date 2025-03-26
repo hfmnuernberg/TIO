@@ -39,5 +39,5 @@ class German extends AppLocalizations {
   String get feedback => 'Feedback';
   String get importProject => 'Projekt importieren';
   String get deleteAllProjects => 'Alle Projekte löschen';
-  String get showWalkthrough => 'Anleitung anzeigen';
+  String get showWalkthrough => 'Tutorial anzeigen';
 }
