@@ -38,6 +38,7 @@ class ProjectsList extends StatefulWidget {
 
 class _ProjectsListState extends State<ProjectsList> {
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
+  bool _initializedMenuItems = false;
 
   bool _showBanner = false;
 
@@ -48,50 +49,58 @@ class _ProjectsListState extends State<ProjectsList> {
   @override
   void initState() {
     super.initState();
-
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _aboutPagePressed,
-        child: Text(context.l10n.about, style: const TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _feedbackPagePressed,
-        child: Text(context.l10n.feedback, style: const TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: () => importProject(context),
-        child: Text(context.l10n.importProject, style: const TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _deleteAllProjectsPressed,
-        child: Text(context.l10n.deleteAllProjects, style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _showTutorialAgainPressed,
-        child: Text(context.l10n.showWalkthrough, style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  }
 
-    if (context.read<ProjectLibrary>().showHomepageTutorial) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_initializedMenuItems) {
+      _initializedMenuItems = true;
+      final l10n = context.l10n;
+
+      _menuItems.addAll([
+        MenuItemButton(
+          onPressed: _aboutPagePressed,
+          child: Text(l10n.about, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: _feedbackPagePressed,
+          child: Text(l10n.feedback, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: () => importProject(context),
+          child: Text(l10n.importProject, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: _deleteAllProjectsPressed,
+          child: Text(l10n.deleteAllProjects, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: _showTutorialAgainPressed,
+          child: Text(l10n.showWalkthrough, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+      ]);
+    }
+
+    _showTutorial();
+  }
+
+  void _showTutorial() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final projectLibrary = context.read<ProjectLibrary>();
+
+      if (projectLibrary.showHomepageTutorial) {
+        projectLibrary.showHomepageTutorial = false;
+        FileIO.saveProjectLibraryToJson(projectLibrary);
         _createWalkthrough();
         _walkthrough.show(context);
-      });
-    }
+      }
+    });
   }
 
   void _createWalkthrough() {
-    // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyAddProjectButton,
