@@ -20,11 +20,13 @@ dependencies:
     file_picker: 9.2.1
     flutter:
         sdk: flutter
+    flutter_localizations:
+        sdk: flutter
     flutter_rust_bridge: 2.9.0
     flutter_svg: 2.0.17
     frontend_server_client: 4.0.0
     image_picker: 1.1.2
-    intl: 0.20.2
+    intl: 0.19.0 # TODO: upgrade as soon as flutter_localizations supports it
     json_annotation: 4.9.0
     meta: 1.16.0
     package_info_plus: 8.3.0
