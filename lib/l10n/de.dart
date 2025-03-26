@@ -12,8 +12,8 @@ class German extends AppLocalizations {
   String get backgroundText => 'Bitte klicke auf das "+" um ein neues Projekt zu erstellen.';
 
   String get delete => 'Löschen?';
-  String get deleteAllProjects => 'Möchtest du wirklich alle Projekte löschen?';
-  String get deleteSingleProject => 'Möchtest du dieses Projekt wirklich löschen?';
+  String get deleteAllProjectsQuestion => 'Möchtest du wirklich alle Projekte löschen?';
+  String get deleteSingleProjectQuestion => 'Möchtest du dieses Projekt wirklich löschen?';
   String get yes => 'Ja';
   String get no => 'Nein';
 
@@ -25,4 +25,13 @@ class German extends AppLocalizations {
   String get mediaPlayer => 'Media Player';
   String get tuner => 'Stimmgerät';
   String get piano => 'Klavier';
+
+  // walkthrough
+
+  // menu
+  String get about => 'Über TIO Music';
+  String get feedback => 'Feedback';
+  String get importProject => 'Projekt importieren';
+  String get deleteAllProjects => 'Alle Projekte löschen';
+  String get showWalkthrough => 'Anleitung anzeigen';
 }

@@ -12,8 +12,8 @@ class English extends AppLocalizations {
   String get backgroundText => 'Please click on "+" to create a new project.';
 
   String get delete => 'Delete?';
-  String get deleteAllProjects => 'Do you really want to delete all projects?';
-  String get deleteSingleProject => 'Do you really want to delete this project?';
+  String get deleteAllProjectsQuestion => 'Do you really want to delete all projects?';
+  String get deleteSingleProjectQuestion => 'Do you really want to delete this project?';
   String get yes => 'Yes';
   String get no => 'No';
 
@@ -26,4 +26,13 @@ class English extends AppLocalizations {
   String get mediaPlayer => 'Media Player';
   String get tuner => 'Tuner';
   String get piano => 'Piano';
+
+  // walkthrough
+
+  // menu
+  String get about => 'About';
+  String get feedback => 'Feedback';
+  String get importProject => 'Import Project';
+  String get deleteAllProjects => 'Delete all Projects';
+  String get showWalkthrough => 'Show Walkthrough';
 }

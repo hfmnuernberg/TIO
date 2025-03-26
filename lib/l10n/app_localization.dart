@@ -7,8 +7,8 @@ abstract class AppLocalizations {
   String get backgroundText;
 
   String get delete;
-  String get deleteAllProjects;
-  String get deleteSingleProject;
+  String get deleteAllProjectsQuestion;
+  String get deleteSingleProjectQuestion;
   String get yes;
   String get no;
 
@@ -20,4 +20,13 @@ abstract class AppLocalizations {
   String get mediaPlayer;
   String get tuner;
   String get piano;
+
+  // walkthrough
+
+  // menu
+  String get about;
+  String get feedback;
+  String get importProject;
+  String get deleteAllProjects;
+  String get showWalkthrough;
 }

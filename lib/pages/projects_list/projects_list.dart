@@ -52,31 +52,31 @@ class _ProjectsListState extends State<ProjectsList> {
     _menuItems.add(
       MenuItemButton(
         onPressed: _aboutPagePressed,
-        child: const Text('About', style: TextStyle(color: ColorTheme.primary)),
+        child: Text(context.l10n.about, style: const TextStyle(color: ColorTheme.primary)),
       ),
     );
     _menuItems.add(
       MenuItemButton(
         onPressed: _feedbackPagePressed,
-        child: const Text('Feedback', style: TextStyle(color: ColorTheme.primary)),
+        child: Text(context.l10n.feedback, style: const TextStyle(color: ColorTheme.primary)),
       ),
     );
     _menuItems.add(
       MenuItemButton(
         onPressed: () => importProject(context),
-        child: const Text('Import Project', style: TextStyle(color: ColorTheme.primary)),
+        child: Text(context.l10n.importProject, style: const TextStyle(color: ColorTheme.primary)),
       ),
     );
     _menuItems.add(
       MenuItemButton(
         onPressed: _deleteAllProjectsPressed,
-        child: const Text('Delete all Projects', style: TextStyle(color: ColorTheme.primary)),
+        child: Text(context.l10n.deleteAllProjects, style: TextStyle(color: ColorTheme.primary)),
       ),
     );
     _menuItems.add(
       MenuItemButton(
         onPressed: _showTutorialAgainPressed,
-        child: const Text('Show Walkthrough', style: TextStyle(color: ColorTheme.primary)),
+        child: Text(context.l10n.showWalkthrough, style: TextStyle(color: ColorTheme.primary)),
       ),
     );
 
@@ -239,8 +239,8 @@ class _ProjectsListState extends State<ProjectsList> {
         title: Text(l10n.delete, style: const TextStyle(color: ColorTheme.primary)),
         content:
             deleteAll
-                ? Text(l10n.deleteAllProjects, style: TextStyle(color: ColorTheme.primary))
-                : Text(l10n.deleteSingleProject, style: TextStyle(color: ColorTheme.primary)),
+                ? Text(l10n.deleteAllProjectsQuestion, style: TextStyle(color: ColorTheme.primary))
+                : Text(l10n.deleteSingleProjectQuestion, style: TextStyle(color: ColorTheme.primary)),
         actions: [
           TextButton(
             onPressed: () {
