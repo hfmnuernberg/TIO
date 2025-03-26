@@ -380,7 +380,7 @@ class _ProjectsListState extends State<ProjectsList> {
           onPressed: () async {
             final newTitle = await showEditTextDialog(
               context: context,
-              label: '${l10n.newProject}:',
+              label: l10n.newProject,
               value: getDateAndTimeNow(),
               isNew: true,
             );
