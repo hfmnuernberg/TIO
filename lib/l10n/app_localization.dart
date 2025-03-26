@@ -1,36 +1,33 @@
 abstract class AppLocalizations {
+  String get commonDelete;
+  String get commonNo;
+  String get commonYes;
+
   String get home;
+  String get homeAbout;
+  String get homeFeedback;
 
-  // projects
-  String get newTitle;
-
-  String get backgroundText;
-
-  String get delete;
-  String get deleteAllProjectsQuestion;
-  String get deleteSingleProjectQuestion;
-  String get yes;
-  String get no;
-
-  String get askForSurvey;
-  String get fillOutButton;
-
-  // tools
-  String get metronome;
   String get mediaPlayer;
-  String get tuner;
+
+  String get metronome;
+
   String get piano;
 
-  // walkthrough
+  String get projectsDeleteAll;
+  String get projectsDeleteAllConfirmation;
+  String get projectsDeleteConfirmation;
+  String get projectsImport;
+  String get projectsNew;
+  String get projectsNoProjects;
+
+  String get surveyCta;
+  String get surveyQuestion;
+
+  String get tuner;
+
   String get walkthroughAddProject;
-  String get walkthroughStartUsingTool;
   String get walkthroughHowToUseTio;
   String get walkthroughIncludeMultipleTools;
-
-  // menu
-  String get about;
-  String get feedback;
-  String get importProject;
-  String get deleteAllProjects;
-  String get showWalkthrough;
+  String get walkthroughStart;
+  String get walkthroughStartUsingTool;
 }

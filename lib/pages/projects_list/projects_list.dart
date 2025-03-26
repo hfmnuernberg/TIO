@@ -63,23 +63,23 @@ class _ProjectsListState extends State<ProjectsList> {
       _menuItems.addAll([
         MenuItemButton(
           onPressed: _aboutPagePressed,
-          child: Text(l10n.about, style: const TextStyle(color: ColorTheme.primary)),
+          child: Text(l10n.homeAbout, style: const TextStyle(color: ColorTheme.primary)),
         ),
         MenuItemButton(
           onPressed: _feedbackPagePressed,
-          child: Text(l10n.feedback, style: const TextStyle(color: ColorTheme.primary)),
+          child: Text(l10n.homeFeedback, style: const TextStyle(color: ColorTheme.primary)),
         ),
         MenuItemButton(
           onPressed: () => importProject(context),
-          child: Text(l10n.importProject, style: const TextStyle(color: ColorTheme.primary)),
+          child: Text(l10n.projectsImport, style: const TextStyle(color: ColorTheme.primary)),
         ),
         MenuItemButton(
           onPressed: _deleteAllProjectsPressed,
-          child: Text(l10n.deleteAllProjects, style: const TextStyle(color: ColorTheme.primary)),
+          child: Text(l10n.projectsDeleteAll, style: const TextStyle(color: ColorTheme.primary)),
         ),
         MenuItemButton(
           onPressed: _showTutorialAgainPressed,
-          child: Text(l10n.showWalkthrough, style: const TextStyle(color: ColorTheme.primary)),
+          child: Text(l10n.walkthroughStart, style: const TextStyle(color: ColorTheme.primary)),
         ),
       ]);
     }
@@ -245,23 +245,23 @@ class _ProjectsListState extends State<ProjectsList> {
       final l10n = context.l10n;
 
       return AlertDialog(
-        title: Text(l10n.delete, style: const TextStyle(color: ColorTheme.primary)),
+        title: Text(l10n.commonDelete, style: const TextStyle(color: ColorTheme.primary)),
         content:
             deleteAll
-                ? Text(l10n.deleteAllProjectsQuestion, style: TextStyle(color: ColorTheme.primary))
-                : Text(l10n.deleteSingleProjectQuestion, style: TextStyle(color: ColorTheme.primary)),
+                ? Text(l10n.projectsDeleteAllConfirmation, style: TextStyle(color: ColorTheme.primary))
+                : Text(l10n.projectsDeleteConfirmation, style: TextStyle(color: ColorTheme.primary)),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(false);
             },
-            child: Text(l10n.no),
+            child: Text(l10n.commonNo),
           ),
           TIOFlatButton(
             onPressed: () {
               Navigator.of(context).pop(true);
             },
-            text: l10n.yes,
+            text: l10n.commonYes,
             boldText: true,
           ),
         ],
@@ -326,7 +326,7 @@ class _ProjectsListState extends State<ProjectsList> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(l10n.askForSurvey, style: TextStyle(color: ColorTheme.surfaceTint)),
+              Text(l10n.surveyQuestion, style: TextStyle(color: ColorTheme.surfaceTint)),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -341,7 +341,7 @@ class _ProjectsListState extends State<ProjectsList> {
                         setState(() {});
                       }
                     },
-                    child: Text(l10n.fillOutButton),
+                    child: Text(l10n.surveyCta),
                   ),
                   IconButton(
                     onPressed: () {
@@ -384,7 +384,7 @@ class _ProjectsListState extends State<ProjectsList> {
           onPressed: () async {
             final newTitle = await showEditTextDialog(
               context: context,
-              label: l10n.newTitle,
+              label: l10n.projectsNew,
               value: getDateAndTimeNow(),
               isNew: true,
             );
@@ -436,7 +436,7 @@ class _ProjectsListState extends State<ProjectsList> {
                               ? Padding(
                                 padding: const EdgeInsets.all(40),
                                 child: Text(
-                                  l10n.backgroundText,
+                                  l10n.projectsNoProjects,
                                   style: const TextStyle(color: Colors.white, fontSize: 42),
                                 ),
                               )
