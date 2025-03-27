@@ -54,6 +54,9 @@ class English extends AppLocalizations {
   String get projectsDeleteAllConfirmation => 'Do you really want to delete all projects?';
   String get projectsDeleteConfirmation => 'Do you really want to delete this project?';
   String get projectsImport => 'Import Project';
+  String get projectsImportError => 'Error importing project';
+  String get projectsImportNoFileSelected => 'No project file selected';
+  String get projectsImportSuccess => 'Project imported successfully!';
   String get projectsNew => 'New Project';
   String get projectsNoProjects => 'Please click on "+" to create a new project.';
 

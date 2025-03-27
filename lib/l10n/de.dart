@@ -54,6 +54,9 @@ class German extends AppLocalizations {
   String get projectsDeleteAllConfirmation => 'Möchtest du wirklich alle Projekte löschen?';
   String get projectsDeleteConfirmation => 'Möchtest du dieses Projekt wirklich löschen?';
   String get projectsImport => 'Projekt importieren';
+  String get projectsImportError => 'Fehler beim Importieren des Projekts';
+  String get projectsImportNoFileSelected => 'Keine Projektdatei ausgewählt';
+  String get projectsImportSuccess => 'Projekt erfolgreich importiert!';
   String get projectsNew => 'Neues Projekt';
   String get projectsNoProjects => 'Bitte klicke auf das "+" um ein neues Projekt zu erstellen.';
 
