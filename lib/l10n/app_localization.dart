@@ -44,6 +44,9 @@ abstract class AppLocalizations {
   String get homeFeedback;
 
   String get mediaPlayer;
+  String get mediaPlayerTutorialAdjust;
+  String get mediaPlayerTutorialJumpTo;
+  String get mediaPlayerTutorialStartStop;
 
   String get metronome;
 

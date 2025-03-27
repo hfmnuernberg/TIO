@@ -60,6 +60,9 @@ class English extends AppLocalizations {
   String get homeFeedback => 'Feedback';
 
   String get mediaPlayer => 'Media Player';
+  String get mediaPlayerTutorialAdjust => 'Tap here to adjust your sound file';
+  String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file';
+  String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file';
 
   String get metronome => 'Metronome';
 
@@ -96,4 +99,5 @@ class English extends AppLocalizations {
       'Projects can include multiple tools\n(tuner, metronome, piano setting, media player, image and text),\neven several tools of the same type.';
   String get tutorialStart => 'Show Tutorial';
   String get tutorialStartUsingTool => 'Tap here to start using a tool';
+
 }
