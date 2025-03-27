@@ -14,7 +14,7 @@ class German extends AppLocalizations {
   String get aboutEditor => 'Herausgeber: Hochschule für Musik Nürnberg';
   String get aboutFeatures => 'Funktionen';
   String get aboutFirstParagraph =>
-      'TIO Music integriert zahlreiche Werkzeuge (Stimmgerät, Metronom, Media Player, Klavier, Bildnotizen und Textnotizen) in einer App und ermöglicht die kombinierte Nutzung der einzelnen Werkzeuge. Durch das Erstellen von Projekten ist es möglich, verschiedene Konfigurationen zu speichern und so das Üben und Musizieren zu erleichtern. Die Werkzeuge können auch einzeln verwendet werden, z.B. für schnelles Stimmen von Instrumenten oder zum Aufnehmen von Proben. TIO Music wurde von Musikern für Musiker aller Erfahrungsstufen, für Anfänger und Profis entwickelt. Die App ist und bleibt vollständig kostenlos und werbefrei.';
+      'TIO Music integriert zahlreiche Tools (Stimmgerät, Metronom, Media Player, Klavier, Bildnotizen und Textnotizen) in einer App und ermöglicht die kombinierte Nutzung der einzelnen Tools. Durch das Erstellen von Projekten ist es möglich, verschiedene Konfigurationen zu speichern und so das Üben und Musizieren zu erleichtern. Die Tools können auch einzeln verwendet werden, z.B. für schnelles Stimmen von Instrumenten oder zum Aufnehmen von Proben. TIO Music wurde von Musikern für Musiker aller Erfahrungsstufen, für Anfänger und Profis entwickelt. Die App ist und bleibt vollständig kostenlos und werbefrei.';
   String get aboutImage => 'Bild';
   String get aboutImageExplanation =>
       'Du kannst Bilder oder Notenblätter über die Kamera deines Geräts in die App hochladen.';
@@ -65,16 +65,16 @@ class German extends AppLocalizations {
 
   String get piano => 'Klavier';
 
-  String get projectDeleteAllTools => 'Alle Werkzeuge löschen';
-  String get projectDeleteAllToolsConfirmation => 'Möchtest du wirklich alle Werkzeuge in diesem Projekt löschen?';
-  String get projectDeleteToolConfirmation => 'Möchtest du dieses Werkzeug wirklich löschen?';
-  String get projectEmpty => 'Wähle ein Werkzeug';
+  String get projectDeleteAllTools => 'Alle Tools löschen';
+  String get projectDeleteAllToolsConfirmation => 'Möchtest du wirklich alle Tools in diesem Projekt löschen?';
+  String get projectDeleteToolConfirmation => 'Möchtest du dieses Tool wirklich löschen?';
+  String get projectEmpty => 'Wähle ein Tool';
   String get projectExport => 'Projekt exportieren';
   String get projectExportCancelled => 'Projektexport abgebrochen';
   String get projectExportError => 'Fehler beim Exportieren des Projekts';
   String get projectExportSuccess => 'Projekt erfolgreich exportiert!';
   String get projectNew => 'Projekttitel';
-  String get projectNewTool => 'Werkzeugtitel';
+  String get projectNewTool => 'Tool-Titel';
 
   String get projectsDeleteAll => 'Alle Projekte löschen';
   String get projectsDeleteAllConfirmation => 'Möchtest du wirklich alle Projekte löschen?';
@@ -91,9 +91,9 @@ class German extends AppLocalizations {
   String get tutorialAddProject => 'Tippe hier um ein neues Projekt zu erstellen';
   String get tutorialEditProjectTitle => 'Tippe hier um den Projekttitel zu bearbeiten';
   String get tutorialHowToUseTio =>
-      'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Werkzeuge hinzu.\n2. Starte mit der Verwendung eines Werkzeugs und speichere deine spezifischen Einstellungen in einem Projekt.';
+      'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
   String get tutorialIncludeMultipleTools =>
-      'Projekte können mehrere Werkzeuge enthalten\n(Stimmgerät, Metronom, Klaviereinstellungen, Media Player, Bild und Text),\nsogar mehrere Werkzeuge des gleichen Typs.';
+      'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Klaviereinstellungen, Media Player, Bild und Text),\nsogar mehrere Tools des gleichen Typs.';
   String get tutorialStart => 'Tutorial anzeigen';
-  String get tutorialStartUsingTool => 'Tippe hier um ein Werkzeug zu verwenden';
+  String get tutorialStartUsingTool => 'Tippe hier um ein Tool zu verwenden';
 }
