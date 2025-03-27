@@ -108,6 +108,8 @@ class _ProjectPageState extends State<ProjectPage> {
         ),
       ]);
     }
+
+    _showTutorial();
   }
 
   void _showTutorial() {
