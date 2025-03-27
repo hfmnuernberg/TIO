@@ -7,6 +7,7 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/main.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/file_io.dart';
@@ -152,17 +153,17 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   void _createTutorial() {
-    // add the targets here
+    final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyStartStop,
-        'Tap here to start and stop the metronome',
+        l10n.metronomeTutorialStartStop,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
       ),
       CustomTargetFocus(
         _keySettings,
-        'Tap here to adjust the metronome settings',
+        l10n.metronomeTutorialAdjust,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,
@@ -170,7 +171,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       ),
       CustomTargetFocus(
         _keyGroups,
-        'Hold and drag sideways to relocate,\nswipe upwards to delete\nor tap to edit',
+        l10n.metronomeTutorialRelocate,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
@@ -178,7 +179,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       ),
       CustomTargetFocus(
         _keyAddSecondMetro,
-        'Tap here to add a second metronome',
+        l10n.metronomeTutorialAddNew,
         alignText: ContentAlign.left,
         pointingDirection: PointingDirection.right,
       ),

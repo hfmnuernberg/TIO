@@ -49,6 +49,11 @@ abstract class AppLocalizations {
   String get mediaPlayerTutorialStartStop;
 
   String get metronome;
+  String get metronomeTutorialAddNew;
+  String get metronomeTutorialAdjust;
+  String get metronomeTutorialEditBeats;
+  String get metronomeTutorialRelocate;
+  String get metronomeTutorialStartStop;
 
   String get piano;
 

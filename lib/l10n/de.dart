@@ -65,6 +65,11 @@ class German extends AppLocalizations {
   String get mediaPlayerTutorialStartStop => 'Tippe hier um die Aufnahme zu starten und zu stoppen oder um eine Audiodatei abzuspielen';
 
   String get metronome => 'Metronom';
+  String get metronomeTutorialAddNew => 'Tippe hier um ein zweites Metronom hinzuzufügen';
+  String get metronomeTutorialAdjust => 'Tippe hier um die Metronomeinstellungen anzupassen';
+  String get metronomeTutorialEditBeats => 'Tippe auf einen Schlag um zwischen akzentuiert, unakzentuiert und stumm zu wechseln';
+  String get metronomeTutorialRelocate => 'Halte und ziehe seitlich um zu verschieben,\nstreiche nach oben um zu löschen\noder tippe um zu bearbeiten';
+  String get metronomeTutorialStartStop => 'Tippe hier um das Metronom zu starten und zu stoppen';
 
   String get piano => 'Klavier';
 

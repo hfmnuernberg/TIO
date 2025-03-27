@@ -65,6 +65,11 @@ class English extends AppLocalizations {
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file';
 
   String get metronome => 'Metronome';
+  String get metronomeTutorialAddNew => 'Tap here to add a second metronome';
+  String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings';
+  String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted';
+  String get metronomeTutorialRelocate => 'Hold and drag sideways to relocate,\nswipe upwards to delete\nor tap to edit';
+  String get metronomeTutorialStartStop => 'Tap here to start and stop the metronome';
 
   String get piano => 'Piano';
 
