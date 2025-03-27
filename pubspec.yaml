@@ -44,7 +44,7 @@ dependencies:
     url_launcher_ios: 6.3.2
     uuid: 4.5.1
     volume_controller: 3.3.2
-    wakelock_plus: 1.2.10
+    wakelock_plus: 1.2.11
     wav: 1.4.0
 
 dev_dependencies:
