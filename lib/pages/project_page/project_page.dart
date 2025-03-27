@@ -104,7 +104,7 @@ class _ProjectPageState extends State<ProjectPage> {
               }
             }
           },
-          child: Text(context.l10n.projectDeleteAll, style: TextStyle(color: ColorTheme.primary)),
+          child: Text(context.l10n.projectDeleteAllTools, style: TextStyle(color: ColorTheme.primary)),
         ),
       ]);
     }
@@ -150,8 +150,8 @@ class _ProjectPageState extends State<ProjectPage> {
         title: Text(l10n.commonDelete, style: TextStyle(color: ColorTheme.primary)),
         content:
             deleteAll
-                ? Text(l10n.projectDeleteAllConfirmation, style: TextStyle(color: ColorTheme.primary))
-                : Text(l10n.projectDeleteConfirmation, style: TextStyle(color: ColorTheme.primary)),
+                ? Text(l10n.projectDeleteAllToolsConfirmation, style: TextStyle(color: ColorTheme.primary))
+                : Text(l10n.projectDeleteToolConfirmation, style: TextStyle(color: ColorTheme.primary)),
         actions: [
           TextButton(
             onPressed: () {

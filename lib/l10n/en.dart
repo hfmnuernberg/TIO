@@ -64,9 +64,9 @@ class English extends AppLocalizations {
 
   String get piano => 'Piano';
 
-  String get projectDeleteAll => 'Delete all Tools';
-  String get projectDeleteAllConfirmation => 'Do you really want to delete all tools in this project?';
-  String get projectDeleteConfirmation => 'Do you really want to delete this tool?';
+  String get projectDeleteAllTools => 'Delete all Tools';
+  String get projectDeleteAllToolsConfirmation => 'Do you really want to delete all tools in this project?';
+  String get projectDeleteToolConfirmation => 'Do you really want to delete this tool?';
   String get projectEmpty => 'Choose Type of Tool';
   String get projectExport => 'Export Project';
   String get projectExportCancelled => 'Project export cancelled';

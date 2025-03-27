@@ -48,9 +48,9 @@ abstract class AppLocalizations {
 
   String get piano;
 
-  String get projectDeleteAll;
-  String get projectDeleteAllConfirmation;
-  String get projectDeleteConfirmation;
+  String get projectDeleteAllTools;
+  String get projectDeleteAllToolsConfirmation;
+  String get projectDeleteToolConfirmation;
   String get projectEmpty;
   String get projectExport;
   String get projectExportCancelled;
