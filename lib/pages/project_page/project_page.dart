@@ -129,7 +129,7 @@ class _ProjectPageState extends State<ProjectPage> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyChangeTitle,
-        context.l10n.tutorialAddProject,
+        context.l10n.tutorialEditProjectTitle,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
