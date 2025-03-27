@@ -308,10 +308,7 @@ Future<void> showNoCameraFoundDialog(BuildContext context) {
     builder:
         (context) => AlertDialog(
           title: Text(l10n.imageNoCameraFound, style: TextStyle(color: ColorTheme.primary)),
-          content: Text(
-            l10n.imageNoCameraFoundHint,
-            style: TextStyle(color: ColorTheme.primary),
-          ),
+          content: Text(l10n.imageNoCameraFoundHint, style: TextStyle(color: ColorTheme.primary)),
           actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
         ),
   );

@@ -98,32 +98,28 @@ class _ImageToolState extends State<ImageTool> {
 
   Future<bool?> _useAsProjectPicture() => showDialog<bool>(
     context: context,
-    builder:
-        (context) {
+    builder: (context) {
       final l10n = context.l10n;
       return AlertDialog(
-          title: Text(l10n.imageSetAsThumbnail, style: TextStyle(color: ColorTheme.primary)),
-          content: Text(
-            l10n.imageSetAsThumbnailQuestion,
-            style: TextStyle(color: ColorTheme.primary),
+        title: Text(l10n.imageSetAsThumbnail, style: TextStyle(color: ColorTheme.primary)),
+        content: Text(l10n.imageSetAsThumbnailQuestion, style: TextStyle(color: ColorTheme.primary)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Text(l10n.commonNo),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: Text(l10n.commonNo),
-            ),
-            TIOFlatButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              text: l10n.commonYes,
-              boldText: true,
-            ),
-          ],
-        );
-    }
+          TIOFlatButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            text: l10n.commonYes,
+            boldText: true,
+          ),
+        ],
+      );
+    },
   );
 
   Future _addImageDialog(BuildContext context) => showDialog(

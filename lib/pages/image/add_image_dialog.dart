@@ -24,10 +24,7 @@ class _AddImageDialogState extends State<AddImageDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            l10n.imageUploadHint,
-            style: TextStyle(color: ColorTheme.primary),
-          ),
+          Text(l10n.imageUploadHint, style: TextStyle(color: ColorTheme.primary)),
           const SizedBox(height: 10),
           TIOFlatButton(
             onPressed: () {

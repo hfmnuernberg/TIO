@@ -66,7 +66,8 @@ class English extends AppLocalizations {
   String get imageNoImage => 'No image in this tool.';
   String get imagePickImage => 'Pick an image';
   String get imageSetAsThumbnail => 'Set Project Thumbnail';
-  String get imageSetAsThumbnailQuestion => 'Do you want to use the image of this tool as your profile picture for this project?';
+  String get imageSetAsThumbnailQuestion =>
+      'Do you want to use the image of this tool as your profile picture for this project?';
   String get imageTakePhoto => 'Take a photo';
   String get imageUploadHint => 'Pick an image from your device or take a photo using the camera';
   String get imageUseAsThumbnailQuestion => 'Use image as project thumbnail';
