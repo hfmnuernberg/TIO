@@ -26,7 +26,9 @@ abstract class AppLocalizations {
   String get aboutPageTuner;
   String get aboutPageTunerExplanation;
 
+  String get commonCancel;
   String get commonDelete;
+  String get commonNext;
   String get commonNo;
   String get commonYes;
 

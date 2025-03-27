@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -140,12 +141,12 @@ class CustomTargetFocus {
               // NEXT
               CircleAvatar(
                 backgroundColor: ColorTheme.primary,
-                radius: TIOMusicParams.sizeBigButtons,
+                radius: 46,
                 child: TextButton(
                   onPressed: () {
                     controller.next();
                   },
-                  child: const Text('Next', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24)),
+                  child: Text(context.l10n.commonNext, style: TextStyle(color: ColorTheme.onPrimary, fontSize: 20)),
                 ),
               ),
               const SizedBox(height: 10),
@@ -154,7 +155,7 @@ class CustomTargetFocus {
                 onPressed: () {
                   controller.skip();
                 },
-                child: const Text('Cancel', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 16)),
+                child: Text(context.l10n.commonCancel, style: TextStyle(color: ColorTheme.onPrimary, fontSize: 16)),
               ),
             ],
           );

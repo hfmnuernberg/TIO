@@ -31,7 +31,9 @@ class English extends AppLocalizations {
   String get aboutPageTuner => 'Tuner';
   String get aboutPageTunerExplanation => 'You can tune your instruments to any concert pitch, play reference tones, save your individual configuration and combine the tuner with the metronome and media player.';
 
+  String get commonCancel => 'Cancel';
   String get commonDelete => 'Delete?';
+  String get commonNext => 'Next';
   String get commonNo => 'No';
   String get commonYes => 'Yes';
 

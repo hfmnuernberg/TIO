@@ -31,7 +31,9 @@ class German extends AppLocalizations {
   String get aboutPageTuner => 'Stimmgerät';
   String get aboutPageTunerExplanation => 'Du kannst deine Instrumente auf jede Konzerttonart stimmen, Referenztöne abspielen, deine individuelle Konfiguration speichern und das Stimmgerät mit dem Metronom und dem Media Player kombinieren.';
 
+  String get commonCancel => 'Abbrechen';
   String get commonDelete => 'Löschen?';
+  String get commonNext => 'Weiter';
   String get commonNo => 'Nein';
   String get commonYes => 'Ja';
 
