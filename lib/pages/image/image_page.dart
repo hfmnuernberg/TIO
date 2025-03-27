@@ -40,33 +40,45 @@ class _ImageToolState extends State<ImageTool> {
   void initState() {
     super.initState();
 
-    _shareMenuButton = MenuItemButton(
-      onPressed: _shareFilePressed,
-      child: const Text('Share image', style: TextStyle(color: ColorTheme.primary)),
-    );
-
-    _setAsThumbnailMenuButton = MenuItemButton(
-      onPressed: _setAsThumbnail,
-      child: const Text('Set as thumbnail', style: TextStyle(color: ColorTheme.primary)),
-    );
-
     _imageBlock = Provider.of<ProjectBlock>(context, listen: false) as ImageBlock;
     _imageBlock.timeLastModified = getCurrentDateTime();
     _imageBlock.setImage(_imageBlock.relativePath);
 
     _project = Provider.of<Project>(context, listen: false);
 
-    // only allow portrait mode for this tool
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     if (_imageBlock.relativePath.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _addImageDialog(context);
       });
-    } else {
-      _addOptionsToMenu();
     }
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _shareMenuButton = MenuItemButton(
+      onPressed: _shareFilePressed,
+      child: Text(context.l10n.imageShare, style: const TextStyle(color: ColorTheme.primary)),
+    );
+
+    _setAsThumbnailMenuButton = MenuItemButton(
+      onPressed: _setAsThumbnail,
+      child: Text(context.l10n.imageSetAsThumbnail, style: const TextStyle(color: ColorTheme.primary)),
+    );
+
+    if (_imageBlock.relativePath.isNotEmpty && _menuItems.isEmpty) {
+      setState(() {
+        _menuItems.addAll([
+          _shareMenuButton,
+          _setAsThumbnailMenuButton,
+        ]);
+      });
+    }
+  }
+
 
   void _addOptionsToMenu() {
     setState(() {
@@ -101,7 +113,7 @@ class _ImageToolState extends State<ImageTool> {
     builder: (context) {
       final l10n = context.l10n;
       return AlertDialog(
-        title: Text(l10n.imageSetAsThumbnail, style: TextStyle(color: ColorTheme.primary)),
+        title: Text(l10n.imageSetAsProjectThumbnail, style: TextStyle(color: ColorTheme.primary)),
         content: Text(l10n.imageSetAsThumbnailQuestion, style: TextStyle(color: ColorTheme.primary)),
         actions: [
           TextButton(
