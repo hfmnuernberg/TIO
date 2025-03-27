@@ -88,6 +88,8 @@ abstract class AppLocalizations {
   String get tutorialEditProjectTitle;
   String get tutorialHowToUseTio;
   String get tutorialIncludeMultipleTools;
+  String get tutorialIsland;
+  String get tutorialQuickToolSave;
   String get tutorialStart;
   String get tutorialStartUsingTool;
 }

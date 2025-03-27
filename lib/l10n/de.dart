@@ -102,10 +102,10 @@ class German extends AppLocalizations {
 
   String get tutorialAddProject => 'Tippe hier um ein neues Projekt zu erstellen';
   String get tutorialEditProjectTitle => 'Tippe hier um den Projekttitel zu bearbeiten';
-  String get tutorialHowToUseTio =>
-      'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
-  String get tutorialIncludeMultipleTools =>
-      'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Klaviereinstellungen, Media Player, Bild und Text),\nsogar mehrere Tools des gleichen Typs.';
+  String get tutorialHowToUseTio => 'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
+  String get tutorialIncludeMultipleTools => 'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Klaviereinstellungen, Media Player, Bild und Text),\nsogar mehrere Tools des gleichen Typs.';
+  String get tutorialIsland => 'Tippe hier um dein Tool mit einem Metronom, Stimmgerät oder Media Player zu kombinieren';
+  String get tutorialQuickToolSave => 'Tippe hier um das Tool in einem Projekt zu speichern';
   String get tutorialStart => 'Tutorial anzeigen';
   String get tutorialStartUsingTool => 'Tippe hier um ein Tool zu verwenden';
 
