@@ -33,7 +33,7 @@ dependencies:
     path: 1.9.1
     path_provider: 2.1.5
     permission_handler: 11.4.0
-    provider: 6.1.2
+    provider: 6.1.4
     rust_lib_tiomusic:
         path: rust_builder
     share_plus: 10.1.4
