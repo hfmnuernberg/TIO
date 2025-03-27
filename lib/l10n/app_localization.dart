@@ -29,6 +29,7 @@ abstract class AppLocalizations {
 
   String get commonCancel;
   String get commonDelete;
+  String get commonGotIt;
   String get commonNext;
   String get commonNo;
   String get commonSubmit;
@@ -42,6 +43,17 @@ abstract class AppLocalizations {
   String get home;
   String get homeAbout;
   String get homeFeedback;
+
+  String get imageDoLater;
+  String get imageNoCameraFound;
+  String get imageNoCameraFoundHint;
+  String get imageNoImage;
+  String get imagePickImage;
+  String get imageSetAsThumbnail;
+  String get imageSetAsThumbnailQuestion;
+  String get imageTakePhoto;
+  String get imageUploadHint;
+  String get imageUseAsThumbnailQuestion;
 
   String get mediaPlayer;
   String get mediaPlayerTutorialAdjust;

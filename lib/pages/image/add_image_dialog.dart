@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
@@ -17,13 +18,14 @@ class _AddImageDialogState extends State<AddImageDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return AlertDialog(
-      title: const Text('No image in this tool', style: TextStyle(color: ColorTheme.primary)),
+      title: Text(l10n.imageNoImage, style: TextStyle(color: ColorTheme.primary)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            'Pick an image from your device or take a photo using the camera',
+          Text(
+            l10n.imageUploadHint,
             style: TextStyle(color: ColorTheme.primary),
           ),
           const SizedBox(height: 10),
@@ -32,14 +34,14 @@ class _AddImageDialogState extends State<AddImageDialog> {
               widget.pickImageFunction(useImageAsProjectThumbnail);
               Navigator.pop(context);
             },
-            text: 'Pick an image',
+            text: l10n.imagePickImage,
           ),
           TIOFlatButton(
             onPressed: () {
               widget.takePhotoFunction(useImageAsProjectThumbnail);
               Navigator.pop(context);
             },
-            text: 'Take a photo',
+            text: l10n.imageTakePhoto,
           ),
           CheckboxListTile(
             value: useImageAsProjectThumbnail,
@@ -48,7 +50,7 @@ class _AddImageDialogState extends State<AddImageDialog> {
                 useImageAsProjectThumbnail = value!;
               });
             },
-            title: const Text('Use image as project thumbnail', style: TextStyle(color: ColorTheme.primary)),
+            title: Text(l10n.imageUseAsThumbnailQuestion, style: TextStyle(color: ColorTheme.primary)),
           ),
         ],
       ),
@@ -57,7 +59,7 @@ class _AddImageDialogState extends State<AddImageDialog> {
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text('Do it later'),
+          child: Text(l10n.imageDoLater),
         ),
       ],
     );

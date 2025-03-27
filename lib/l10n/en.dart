@@ -45,6 +45,7 @@ class English extends AppLocalizations {
 
   String get commonCancel => 'Cancel';
   String get commonDelete => 'Delete?';
+  String get commonGotIt => 'Got it';
   String get commonNext => 'Next';
   String get commonNo => 'No';
   String get commonSubmit => 'Submit';
@@ -58,6 +59,17 @@ class English extends AppLocalizations {
   String get home => 'Home';
   String get homeAbout => 'About';
   String get homeFeedback => 'Feedback';
+
+  String get imageDoLater => 'Do it later';
+  String get imageNoCameraFound => 'No camera found';
+  String get imageNoCameraFoundHint => 'There is no camera available on this device.';
+  String get imageNoImage => 'No image in this tool.';
+  String get imagePickImage => 'Pick an image';
+  String get imageSetAsThumbnail => 'Set Project Thumbnail';
+  String get imageSetAsThumbnailQuestion => 'Do you want to use the image of this tool as your profile picture for this project?';
+  String get imageTakePhoto => 'Take a photo';
+  String get imageUploadHint => 'Pick an image from your device or take a photo using the camera';
+  String get imageUseAsThumbnailQuestion => 'Use image as project thumbnail';
 
   String get mediaPlayer => 'Media Player';
   String get mediaPlayerTutorialAdjust => 'Tap here to adjust your sound file';

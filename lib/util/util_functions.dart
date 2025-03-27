@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
@@ -301,16 +302,17 @@ Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName
 // show a dialog to tell the user that no camera was found
 
 Future<void> showNoCameraFoundDialog(BuildContext context) {
+  final l10n = context.l10n;
   return showDialog<void>(
     context: context,
     builder:
         (context) => AlertDialog(
-          title: const Text('No camera found', style: TextStyle(color: ColorTheme.primary)),
-          content: const Text(
-            'There is no camera available on this device.',
+          title: Text(l10n.imageNoCameraFound, style: TextStyle(color: ColorTheme.primary)),
+          content: Text(
+            l10n.imageNoCameraFoundHint,
             style: TextStyle(color: ColorTheme.primary),
           ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
+          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
         ),
   );
 }
