@@ -4,42 +4,42 @@
 import 'package:tiomusic/l10n/app_localization.dart';
 
 class German extends AppLocalizations {
-  String get aboutPageAppVersion => 'App Version';
-  String get aboutPageAppVersionError => 'Konnte die App-Version nicht laden.';
-  String get aboutPageDataProtection => 'Datenschutz';
-  String get aboutPageDataProtectionExplanation =>
+  String get aboutAppVersion => 'App Version';
+  String get aboutAppVersionError => 'Konnte die App-Version nicht laden.';
+  String get aboutDataProtection => 'Datenschutz';
+  String get aboutDataProtectionExplanation =>
       'Wir erheben keine deiner Daten. Bitte beachte, dass deine Projekte nur lokal auf deinem Gerät gespeichert werden, d.h. sie werden nicht in der App oder in einem Cloud-Dienst o. Ä. gespeichert. Wenn du dich dazu entscheidest, einzelne Inhalte aus der App heraus zu teilen, ist dies über Drittanbieterdienste wie Messenger, etc. möglich. In solchen Fällen gelten ausschließlich die Datenschutzbestimmungen der verwendeten Drittanbieterdienste. Du selbst bist dafür verantwortlich, die geltenden Datenschutz- oder Urheberrechtsbestimmungen einzuhalten.';
-  String get aboutPageDeveloper => 'Entwickler: Studio Fluffy';
-  String get aboutPageEditor => 'Herausgeber: Hochschule für Musik Nürnberg';
-  String get aboutPageFeatures => 'Funktionen';
-  String get aboutPageFirstParagraph =>
+  String get aboutDeveloper => 'Entwickler: Studio Fluffy';
+  String get aboutEditor => 'Herausgeber: Hochschule für Musik Nürnberg';
+  String get aboutFeatures => 'Funktionen';
+  String get aboutFirstParagraph =>
       'TIO Music integriert zahlreiche Werkzeuge (Stimmgerät, Metronom, Media Player, Klavier, Bildnotizen und Textnotizen) in einer App und ermöglicht die kombinierte Nutzung der einzelnen Werkzeuge. Durch das Erstellen von Projekten ist es möglich, verschiedene Konfigurationen zu speichern und so das Üben und Musizieren zu erleichtern. Die Werkzeuge können auch einzeln verwendet werden, z.B. für schnelles Stimmen von Instrumenten oder zum Aufnehmen von Proben. TIO Music wurde von Musikern für Musiker aller Erfahrungsstufen, für Anfänger und Profis entwickelt. Die App ist und bleibt vollständig kostenlos und werbefrei.';
-  String get aboutPageImage => 'Bild';
-  String get aboutPageImageExplanation =>
+  String get aboutImage => 'Bild';
+  String get aboutImageExplanation =>
       'Du kannst Bilder oder Notenblätter über die Kamera deines Geräts in die App hochladen.';
-  String get aboutPageImprint => 'Impressum';
-  String get aboutPageMediaPlayer => 'Media Player';
-  String get aboutPageMediaPlayerExplanation =>
+  String get aboutImprint => 'Impressum';
+  String get aboutMediaPlayer => 'Media Player';
+  String get aboutMediaPlayerExplanation =>
       'Du kannst Audio-Dateien aufnehmen, laden und bearbeiten und Konfigurationen speichern. Dabei kannst du deine bevorzugte Lautstärke, Reichweite (Länge und Segment), Wiedergabegeschwindigkeit und Tonhöhe einstellen. Du kannst deine Projekte über externe Messenger-Dienste an andere weiterleiten.';
-  String get aboutPageMetronome => 'Metronom';
-  String get aboutPageMetronomeExplanation =>
+  String get aboutMetronome => 'Metronom';
+  String get aboutMetronomeExplanation =>
       'Das Metronom ermöglicht es dir, deine individuellen Konfigurationen (Tempo, Taktart, Polyrhythmen, zufälliges Stummschalten, Klänge) zu speichern und abzurufen. Du kannst das Metronom auch mit dem Stimmgerät und dem Media Player kombinieren.';
-  String get aboutPagePiano => 'Klavier';
-  String get aboutPagePianoExplanation =>
+  String get aboutPiano => 'Klavier';
+  String get aboutPianoExplanation =>
       'Du kannst das integrierte Klavier verwenden, verschiedene Klangmodi auswählen und deine individuellen Konfigurationen speichern.';
-  String get aboutPageProjects => 'Projekte';
-  String get aboutPageProjectsExplanation =>
+  String get aboutProjects => 'Projekte';
+  String get aboutProjectsExplanation =>
       'Du kannst Projekte erstellen und die benötigten Einstellungen dort speichern (Einstellungen für Instrumentenstimmung, Metronomeinstellungen, etc.), um sie jederzeit abrufen zu können.';
-  String get aboutPageSecondParagraph =>
+  String get aboutSecondParagraph =>
       'Wir möchten die App kontinuierlich für dich verbessern - daher freuen wir uns auf dein Feedback!';
-  String get aboutPageText => 'Text';
-  String get aboutPageTextExplanation =>
+  String get aboutText => 'Text';
+  String get aboutTextExplanation =>
       'Du kannst über dein Gerät Textnotizen erstellen, z.B. für Spielanweisungen, Hintergrundinformationen, Songtexte, etc.';
-  String get aboutPageThirdParagraph =>
+  String get aboutThirdParagraph =>
       'Diese App wurde im Rahmen des RE|LEVEL-Projekts an der Hochschule für Musik Nürnberg entwickelt. RE|LEVEL wird von der Stiftung Innovation in der Hochschullehre gefördert.';
-  String get aboutPageTitle => 'Über TIO Music';
-  String get aboutPageTuner => 'Stimmgerät';
-  String get aboutPageTunerExplanation =>
+  String get aboutTitle => 'Über TIO Music';
+  String get aboutTuner => 'Stimmgerät';
+  String get aboutTunerExplanation =>
       'Du kannst deine Instrumente auf jede Konzerttonart stimmen, Referenztöne abspielen, deine individuelle Konfiguration speichern und das Stimmgerät mit dem Metronom und dem Media Player kombinieren.';
 
   String get commonCancel => 'Abbrechen';
@@ -49,10 +49,10 @@ class German extends AppLocalizations {
   String get commonSubmit => 'Bestätigen';
   String get commonYes => 'Ja';
 
-  String get feedbackPageCta => 'Ausfüllen';
-  String get feedbackPageHint => '(Die Umfrage ist vorerst nur auf Deutsch verfügbar)';
-  String get feedbackPageQuestion => 'Gefällt dir TIO Music? Bitte nimm an dieser Umfrage teil!';
-  String get feedbackPageTitle => 'Feedback-Umfrage';
+  String get feedbackCta => 'Ausfüllen';
+  String get feedbackHint => '(Die Umfrage ist vorerst nur auf Deutsch verfügbar)';
+  String get feedbackQuestion => 'Gefällt dir TIO Music? Bitte nimm an dieser Umfrage teil!';
+  String get feedbackTitle => 'Feedback-Umfrage';
 
   String get home => 'Startseite';
   String get homeAbout => 'Über TIO Music';

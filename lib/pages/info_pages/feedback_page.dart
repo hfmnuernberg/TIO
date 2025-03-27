@@ -11,14 +11,14 @@ class FeedbackPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return InfoPage(
-      appBarTitle: l10n.feedbackPageTitle,
+      appBarTitle: l10n.feedbackTitle,
       textSections: [
-        TextSection(content: l10n.feedbackPageQuestion, sectionType: SectionType.headline3),
-        TextSection(content: l10n.feedbackPageHint),
+        TextSection(content: l10n.feedbackQuestion, sectionType: SectionType.headline3),
+        TextSection(content: l10n.feedbackHint),
         const SizedBox(height: 12),
         Center(
           child: TIOFlatButton(
-            text: l10n.feedbackPageCta,
+            text: l10n.feedbackCta,
             onPressed: () async {
               // open link in browser
               final Uri url = Uri.parse('https://cloud9.evasys.de/hfmn/online.php?p=Q2TYV');
