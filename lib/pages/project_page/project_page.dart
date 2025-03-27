@@ -141,36 +141,32 @@ class _ProjectPageState extends State<ProjectPage> {
 
   Future<bool?> _deleteBlock({bool deleteAll = false}) => showDialog<bool>(
     context: context,
-    builder:
-      (context) {
-        final l10n = context.l10n;
+    builder: (context) {
+      final l10n = context.l10n;
 
-        return AlertDialog(
-          title: Text(l10n.commonDelete, style: TextStyle(color: ColorTheme.primary)),
-          content:
-          deleteAll
-              ? Text(
-            l10n.projectDeleteAllConfirmation,
-            style: TextStyle(color: ColorTheme.primary),
-          )
-              : Text(l10n.projectDeleteConfirmation, style: TextStyle(color: ColorTheme.primary)),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: Text(l10n.commonNo),
-            ),
-            TIOFlatButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              text: l10n.commonYes,
-              boldText: true,
-            ),
-          ],
-        );
-    }
+      return AlertDialog(
+        title: Text(l10n.commonDelete, style: TextStyle(color: ColorTheme.primary)),
+        content:
+            deleteAll
+                ? Text(l10n.projectDeleteAllConfirmation, style: TextStyle(color: ColorTheme.primary))
+                : Text(l10n.projectDeleteConfirmation, style: TextStyle(color: ColorTheme.primary)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Text(l10n.commonNo),
+          ),
+          TIOFlatButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            text: l10n.commonYes,
+            boldText: true,
+          ),
+        ],
+      );
+    },
   );
 
   void _deleteThumbnailWhenNecessary(Project project, ProjectBlock block) {
@@ -212,7 +208,11 @@ class _ProjectPageState extends State<ProjectPage> {
       appBar: AppBar(
         title: GestureDetector(
           onTap: () async {
-            final newTitle = await showEditTextDialog(context: context, label: context.l10n.projectNew, value: _project.title);
+            final newTitle = await showEditTextDialog(
+              context: context,
+              label: context.l10n.projectNew,
+              value: _project.title,
+            );
             if (newTitle == null) return;
             _project.title = newTitle;
             if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());

@@ -13,10 +13,7 @@ class FeedbackPage extends StatelessWidget {
     return InfoPage(
       appBarTitle: l10n.feedbackPageTitle,
       textSections: [
-        TextSection(
-          content: l10n.feedbackPageQuestion,
-          sectionType: SectionType.headline3,
-        ),
+        TextSection(content: l10n.feedbackPageQuestion, sectionType: SectionType.headline3),
         TextSection(content: l10n.feedbackPageHint),
         const SizedBox(height: 12),
         Center(
