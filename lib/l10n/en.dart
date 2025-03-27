@@ -68,7 +68,8 @@ class English extends AppLocalizations {
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings';
   String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted';
-  String get metronomeTutorialRelocate => 'Hold and drag sideways to relocate,\nswipe upwards to delete\nor tap to edit';
+  String get metronomeTutorialRelocate =>
+      'Hold and drag sideways to relocate,\nswipe upwards to delete\nor tap to edit';
   String get metronomeTutorialStartStop => 'Tap here to start and stop the metronome';
 
   String get piano => 'Piano';
@@ -102,11 +103,12 @@ class English extends AppLocalizations {
 
   String get tutorialAddProject => 'Tap here to create a new project';
   String get tutorialEditProjectTitle => 'Tap here to edit the title of your project';
-  String get tutorialHowToUseTio => 'Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.';
-  String get tutorialIncludeMultipleTools => 'Projects can include multiple tools\n(tuner, metronome, piano setting, media player, image and text),\neven several tools of the same type.';
+  String get tutorialHowToUseTio =>
+      'Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.';
+  String get tutorialIncludeMultipleTools =>
+      'Projects can include multiple tools\n(tuner, metronome, piano setting, media player, image and text),\neven several tools of the same type.';
   String get tutorialIsland => 'Tap here to combine your tool with a metronome, tuner or media player';
   String get tutorialQuickToolSave => 'Tap here to save the tool to a project';
   String get tutorialStart => 'Show Tutorial';
   String get tutorialStartUsingTool => 'Tap here to start using a tool';
-
 }

@@ -62,18 +62,22 @@ class German extends AppLocalizations {
   String get mediaPlayer => 'Media Player';
   String get mediaPlayerTutorialAdjust => 'Tippe hier um deine Audiodatei anzupassen';
   String get mediaPlayerTutorialJumpTo => 'Tippe irgendwo um zu diesem Teil deiner Audiodatei zu springen';
-  String get mediaPlayerTutorialStartStop => 'Tippe hier um die Aufnahme zu starten und zu stoppen oder um eine Audiodatei abzuspielen';
+  String get mediaPlayerTutorialStartStop =>
+      'Tippe hier um die Aufnahme zu starten und zu stoppen oder um eine Audiodatei abzuspielen';
 
   String get metronome => 'Metronom';
   String get metronomeTutorialAddNew => 'Tippe hier um ein zweites Metronom hinzuzufügen';
   String get metronomeTutorialAdjust => 'Tippe hier um die Metronomeinstellungen anzupassen';
-  String get metronomeTutorialEditBeats => 'Tippe auf einen Schlag um zwischen akzentuiert, unakzentuiert und stumm zu wechseln';
-  String get metronomeTutorialRelocate => 'Halte und ziehe seitlich um zu verschieben,\nstreiche nach oben um zu löschen\noder tippe um zu bearbeiten';
+  String get metronomeTutorialEditBeats =>
+      'Tippe auf einen Schlag um zwischen akzentuiert, unakzentuiert und stumm zu wechseln';
+  String get metronomeTutorialRelocate =>
+      'Halte und ziehe seitlich um zu verschieben,\nstreiche nach oben um zu löschen\noder tippe um zu bearbeiten';
   String get metronomeTutorialStartStop => 'Tippe hier um das Metronom zu starten und zu stoppen';
 
   String get piano => 'Klavier';
   String get pianoTutorialAdjust => 'Tippe hier um Konzerttonhöhe, Lautstärke und Klang anzupassen';
-  String get pianoTutorialChangeKeyOrOctave => 'Tippe auf die Pfeile links oder rechts um pro Taste oder pro Oktave nach oben oder unten zu wechseln';
+  String get pianoTutorialChangeKeyOrOctave =>
+      'Tippe auf die Pfeile links oder rechts um pro Taste oder pro Oktave nach oben oder unten zu wechseln';
 
   String get projectDeleteAllTools => 'Alle Tools löschen';
   String get projectDeleteAllToolsConfirmation => 'Möchtest du wirklich alle Tools in diesem Projekt löschen?';
@@ -102,11 +106,13 @@ class German extends AppLocalizations {
 
   String get tutorialAddProject => 'Tippe hier um ein neues Projekt zu erstellen';
   String get tutorialEditProjectTitle => 'Tippe hier um den Projekttitel zu bearbeiten';
-  String get tutorialHowToUseTio => 'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
-  String get tutorialIncludeMultipleTools => 'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Klaviereinstellungen, Media Player, Bild und Text),\nsogar mehrere Tools des gleichen Typs.';
-  String get tutorialIsland => 'Tippe hier um dein Tool mit einem Metronom, Stimmgerät oder Media Player zu kombinieren';
+  String get tutorialHowToUseTio =>
+      'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
+  String get tutorialIncludeMultipleTools =>
+      'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Klaviereinstellungen, Media Player, Bild und Text),\nsogar mehrere Tools des gleichen Typs.';
+  String get tutorialIsland =>
+      'Tippe hier um dein Tool mit einem Metronom, Stimmgerät oder Media Player zu kombinieren';
   String get tutorialQuickToolSave => 'Tippe hier um das Tool in einem Projekt zu speichern';
   String get tutorialStart => 'Tutorial anzeigen';
   String get tutorialStartUsingTool => 'Tippe hier um ein Tool zu verwenden';
-
 }
