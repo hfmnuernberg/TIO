@@ -35,6 +35,11 @@ class English extends AppLocalizations {
   String get commonNo => 'No';
   String get commonYes => 'Yes';
 
+  String get feedbackPageCta => 'Fill out';
+  String get feedbackPageHint => '(For now the survey is only available in German)';
+  String get feedbackPageQuestion => 'Do you like TIO Music? Please take part in this survey!';
+  String get feedbackPageTitle => 'Feedback survey';
+
   String get home => 'Home';
   String get homeAbout => 'About';
   String get homeFeedback => 'Feedback';

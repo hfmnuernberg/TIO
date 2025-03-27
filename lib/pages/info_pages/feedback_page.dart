@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/info_page.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,18 +9,19 @@ class FeedbackPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return InfoPage(
-      appBarTitle: 'Feedback survey',
+      appBarTitle: l10n.feedbackPageTitle,
       textSections: [
-        const TextSection(
-          content: 'Do you like TIO Music? Please take part in this survey!',
+        TextSection(
+          content: l10n.feedbackPageQuestion,
           sectionType: SectionType.headline3,
         ),
-        const TextSection(content: '(For now the survey is only available in German)'),
+        TextSection(content: l10n.feedbackPageHint),
         const SizedBox(height: 12),
         Center(
           child: TIOFlatButton(
-            text: 'Fill out',
+            text: l10n.feedbackPageCta,
             onPressed: () async {
               // open link in browser
               final Uri url = Uri.parse('https://cloud9.evasys.de/hfmn/online.php?p=Q2TYV');

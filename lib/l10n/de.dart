@@ -35,6 +35,11 @@ class German extends AppLocalizations {
   String get commonNo => 'Nein';
   String get commonYes => 'Ja';
 
+  String get feedbackPageCta => 'Ausfüllen';
+  String get feedbackPageHint => '(Die Umfrage ist vorerst nur auf Deutsch verfügbar)';
+  String get feedbackPageQuestion => 'Gefällt dir TIO Music? Bitte nimm an dieser Umfrage teil!';
+  String get feedbackPageTitle => 'Feedback-Umfrage';
+
   String get home => 'Startseite';
   String get homeAbout => 'Über TIO Music';
   String get homeFeedback => 'Feedback';
@@ -53,7 +58,7 @@ class German extends AppLocalizations {
   String get projectsNoProjects => 'Bitte klicke auf das "+" um ein neues Projekt zu erstellen.';
 
   String get surveyCta => 'Ausfüllen';
-  String get surveyQuestion => 'Gefällt dir TIO Music? Bitte nimm an dieser Umfrage teil!';
+  String get surveyQuestion => 'Gefällt dir TIO Music? Bitte nimm an dieser Umfrage teil! (Die Umfrage ist vorerst nur auf Deutsch verfügbar)';
 
   String get tuner => 'Stimmgerät';
 

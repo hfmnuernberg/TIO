@@ -30,6 +30,11 @@ abstract class AppLocalizations {
   String get commonNo;
   String get commonYes;
 
+  String get feedbackPageCta;
+  String get feedbackPageHint;
+  String get feedbackPageQuestion;
+  String get feedbackPageTitle;
+
   String get home;
   String get homeAbout;
   String get homeFeedback;
