@@ -56,6 +56,8 @@ abstract class AppLocalizations {
   String get metronomeTutorialStartStop;
 
   String get piano;
+  String get pianoTutorialAdjust;
+  String get pianoTutorialChangeKeyOrOctave;
 
   String get projectDeleteAllTools;
   String get projectDeleteAllToolsConfirmation;

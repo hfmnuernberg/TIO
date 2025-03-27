@@ -72,6 +72,8 @@ class English extends AppLocalizations {
   String get metronomeTutorialStartStop => 'Tap here to start and stop the metronome';
 
   String get piano => 'Piano';
+  String get pianoTutorialAdjust => 'Tap here to adjust concert pitch, volume, and sound';
+  String get pianoTutorialChangeKeyOrOctave => 'Tap the left or right arrows to move up or down per key or per octave';
 
   String get projectDeleteAllTools => 'Delete all Tools';
   String get projectDeleteAllToolsConfirmation => 'Do you really want to delete all tools in this project?';

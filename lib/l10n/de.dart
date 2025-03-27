@@ -72,6 +72,8 @@ class German extends AppLocalizations {
   String get metronomeTutorialStartStop => 'Tippe hier um das Metronom zu starten und zu stoppen';
 
   String get piano => 'Klavier';
+  String get pianoTutorialAdjust => 'Tippe hier um Konzerttonhöhe, Lautstärke und Klang anzupassen';
+  String get pianoTutorialChangeKeyOrOctave => 'Tippe auf die Pfeile links oder rechts um pro Taste oder pro Oktave nach oben oder unten zu wechseln';
 
   String get projectDeleteAllTools => 'Alle Tools löschen';
   String get projectDeleteAllToolsConfirmation => 'Möchtest du wirklich alle Tools in diesem Projekt löschen?';
