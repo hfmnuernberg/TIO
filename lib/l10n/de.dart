@@ -9,7 +9,8 @@ class German extends AppLocalizations {
   String get aboutDataProtection => 'Datenschutz';
   String get aboutDataProtectionExplanation =>
       'Wir erheben keine deiner Daten. Bitte beachte, dass deine Projekte nur lokal auf deinem Gerät gespeichert werden, d.h. sie werden nicht in der App oder in einem Cloud-Dienst o. Ä. gespeichert. Wenn du dich dazu entscheidest, einzelne Inhalte aus der App heraus zu teilen, ist dies über Drittanbieterdienste wie Messenger, etc. möglich. In solchen Fällen gelten ausschließlich die Datenschutzbestimmungen der verwendeten Drittanbieterdienste. Du selbst bist dafür verantwortlich, die geltenden Datenschutz- oder Urheberrechtsbestimmungen einzuhalten.';
-  String get aboutDeveloper => 'Entwickler: Studio Fluffy';
+  String get aboutDeveloperOne => 'Entwickler: cultivate(software)';
+  String get aboutDeveloperTwo => 'Entwickler: Studio Fluffy';
   String get aboutEditor => 'Herausgeber: Hochschule für Musik Nürnberg';
   String get aboutFeatures => 'Funktionen';
   String get aboutFirstParagraph =>

@@ -9,7 +9,8 @@ class English extends AppLocalizations {
   String get aboutDataProtection => 'Data protection';
   String get aboutDataProtectionExplanation =>
       'We do not collect any of your data. Please note that your projects are only saved locally on your device, i.e. they are not saved in the app or in any cloud service or similar. If you decide to share individual content from within the app, this is possible via third-party services such as messenger etc. In such cases, only the data protection regulations of the third-party services used apply. You yourself are responsible for complying with applicable data protection or copyright regulations.';
-  String get aboutDeveloper => 'Developer: Studio Fluffy';
+  String get aboutDeveloperOne => 'Developer: cultivate(software)';
+  String get aboutDeveloperTwo => 'Developer: Studio Fluffy';
   String get aboutEditor => 'Editor: University of Music Nuremberg';
   String get aboutFeatures => 'Features';
   String get aboutFirstParagraph =>

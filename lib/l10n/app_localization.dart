@@ -3,7 +3,8 @@ abstract class AppLocalizations {
   String get aboutAppVersionError;
   String get aboutDataProtection;
   String get aboutDataProtectionExplanation;
-  String get aboutDeveloper;
+  String get aboutDeveloperOne;
+  String get aboutDeveloperTwo;
   String get aboutEditor;
   String get aboutFeatures;
   String get aboutFirstParagraph;

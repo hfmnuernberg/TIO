@@ -79,7 +79,16 @@ class _AboutPageState extends State<AboutPage> {
           },
         ),
         const SizedBox(height: spacing),
-        TextSection(content: l10n.aboutDeveloper, sectionType: SectionType.text),
+        TextSection(content: l10n.aboutDeveloperOne, sectionType: SectionType.text),
+        InkWell(
+          child: const Text('https://cultivate.software/', style: TextStyle(color: ColorTheme.tertiary)),
+          onTap: () async {
+            final Uri url = Uri.parse('https://cultivate.software/');
+            await launchUrl(url);
+          },
+        ),
+        const SizedBox(height: spacing),
+        TextSection(content: l10n.aboutDeveloperTwo, sectionType: SectionType.text),
         InkWell(
           child: const Text('https://studiofluffy.de/', style: TextStyle(color: ColorTheme.tertiary)),
           onTap: () async {
