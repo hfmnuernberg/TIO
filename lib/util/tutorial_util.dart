@@ -141,12 +141,12 @@ class CustomTargetFocus {
               // NEXT
               CircleAvatar(
                 backgroundColor: ColorTheme.primary,
-                radius: 46,
+                radius: 50,
                 child: TextButton(
                   onPressed: () {
                     controller.next();
                   },
-                  child: Text(context.l10n.commonNext, style: TextStyle(color: ColorTheme.onPrimary, fontSize: 20)),
+                  child: Text(context.l10n.commonNext, style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24)),
                 ),
               ),
               const SizedBox(height: 10),
