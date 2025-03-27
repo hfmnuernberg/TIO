@@ -81,6 +81,8 @@ abstract class AppLocalizations {
   String get projectsNoProjects;
 
   String get tuner;
+  String get tunerTutorialAdjust;
+  String get tunerTutorialStartStop;
 
   String get tutorialAddProject;
   String get tutorialEditProjectTitle;

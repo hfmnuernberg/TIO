@@ -97,6 +97,8 @@ class German extends AppLocalizations {
   String get projectsNoProjects => 'Bitte klicke auf das "+" um ein neues Projekt zu erstellen.';
 
   String get tuner => 'Stimmgerät';
+  String get tunerTutorialAdjust => 'Tippe hier um die Konzerttonhöhe anzupassen oder einen Referenzton abzuspielen';
+  String get tunerTutorialStartStop => 'Tippe hier um das Stimmgerät zu starten und zu stoppen';
 
   String get tutorialAddProject => 'Tippe hier um ein neues Projekt zu erstellen';
   String get tutorialEditProjectTitle => 'Tippe hier um den Projekttitel zu bearbeiten';

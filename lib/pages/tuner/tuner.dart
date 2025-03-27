@@ -5,6 +5,7 @@ import 'package:stats/stats.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -140,17 +141,16 @@ class _TunerState extends State<Tuner> {
   }
 
   void _createTutorial() {
-    // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyStartStop,
-        'Tap here to start and stop the tuner',
+        context.l10n.tunerTutorialStartStop,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
       ),
       CustomTargetFocus(
         _keySettings,
-        'Tap here to adjust the concert pitch or play a reference tone',
+        context.l10n.tunerTutorialAdjust,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,

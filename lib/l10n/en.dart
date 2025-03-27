@@ -97,6 +97,8 @@ class English extends AppLocalizations {
   String get projectsNoProjects => 'Please click on "+" to create a new project.';
 
   String get tuner => 'Tuner';
+  String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone';
+  String get tunerTutorialStartStop => 'Tap here to start and stop the tuner';
 
   String get tutorialAddProject => 'Tap here to create a new project';
   String get tutorialEditProjectTitle => 'Tap here to edit the title of your project';
