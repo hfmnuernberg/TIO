@@ -85,10 +85,6 @@ class English extends AppLocalizations {
   String get projectsNew => 'New Project';
   String get projectsNoProjects => 'Please click on "+" to create a new project.';
 
-  String get surveyCta => 'Fill out';
-  String get surveyQuestion =>
-      'Do you like TIO Music? Please take part in this survey! (For now the survey is only available in German)';
-
   String get tuner => 'Tuner';
 
   String get tutorialAddProject => 'Tap here to create a new project';

@@ -324,7 +324,7 @@ class _ProjectsListState extends State<ProjectsList> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(l10n.surveyQuestion, style: TextStyle(color: ColorTheme.surfaceTint)),
+              Text(l10n.feedbackQuestion, style: TextStyle(color: ColorTheme.surfaceTint)),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -339,7 +339,7 @@ class _ProjectsListState extends State<ProjectsList> {
                         setState(() {});
                       }
                     },
-                    child: Text(l10n.surveyCta),
+                    child: Text(l10n.feedbackCta),
                   ),
                   IconButton(
                     onPressed: () {

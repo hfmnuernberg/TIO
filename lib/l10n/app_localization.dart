@@ -69,9 +69,6 @@ abstract class AppLocalizations {
   String get projectsNew;
   String get projectsNoProjects;
 
-  String get surveyCta;
-  String get surveyQuestion;
-
   String get tuner;
 
   String get tutorialAddProject;
