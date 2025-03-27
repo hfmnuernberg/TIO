@@ -26,7 +26,7 @@ import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
@@ -68,7 +68,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   bool _processingButtonClick = false;
 
-  final Walkthrough _walkthrough = Walkthrough();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyStartStop = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
   final GlobalKey _keyWaveform = GlobalKey();
@@ -147,15 +147,15 @@ class _MediaPlayerState extends State<MediaPlayer> {
             !context.read<ProjectLibrary>().showToolTutorial &&
             !context.read<ProjectLibrary>().showQuickToolTutorial &&
             !context.read<ProjectLibrary>().showIslandTutorial) {
-          _createWalkthrough();
-          _walkthrough.show(context);
+          _createTutorial();
+          _tutorial.show(context);
         } else if (context.read<ProjectLibrary>().showWaveformTip &&
             _fileLoaded &&
             !context.read<ProjectLibrary>().showToolTutorial &&
             !context.read<ProjectLibrary>().showQuickToolTutorial &&
             !context.read<ProjectLibrary>().showIslandTutorial) {
-          _createWalkthroughWaveformTip();
-          _walkthrough.show(context);
+          _createTutorialWaveformTip();
+          _tutorial.show(context);
         }
       }
     });
@@ -170,7 +170,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     });
   }
 
-  void _createWalkthrough() {
+  void _createTutorial() {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyStartStop,
@@ -199,14 +199,14 @@ class _MediaPlayerState extends State<MediaPlayer> {
         ),
       );
     }
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
       if (_fileLoaded) context.read<ProjectLibrary>().showWaveformTip = false;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     }, context);
   }
 
-  void _createWalkthroughWaveformTip() {
+  void _createTutorialWaveformTip() {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyWaveform,
@@ -217,7 +217,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       ),
     ];
 
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showWaveformTip = false;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     }, context);
@@ -265,13 +265,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: _mediaPlayerBlock,
       menuItems: _menuItems,
-      onParentWalkthroughFinished: () {
+      onParentTutorialFinished: () {
         if (context.read<ProjectLibrary>().showMediaPlayerTutorial) {
-          _createWalkthrough();
-          _walkthrough.show(context);
+          _createTutorial();
+          _tutorial.show(context);
         } else if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
-          _createWalkthroughWaveformTip();
-          _walkthrough.show(context);
+          _createTutorialWaveformTip();
+          _tutorial.show(context);
         }
       },
       island: ParentIslandView(project: widget.isQuickTool ? null : _project, toolBlock: _mediaPlayerBlock),
@@ -340,8 +340,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
                   await _pickNewAudioFile();
                   if (!context.mounted) return;
                   if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
-                    _createWalkthroughWaveformTip();
-                    _walkthrough.show(context);
+                    _createTutorialWaveformTip();
+                    _tutorial.show(context);
                   }
                 },
                 text: _fileLoaded ? FileIO.getFileName(_mediaPlayerBlock.relativePath) : 'Load Audio File',
@@ -466,8 +466,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
         await _toggleRecording();
         if (!mounted) return;
         if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
-          _createWalkthroughWaveformTip();
-          _walkthrough.show(context);
+          _createTutorialWaveformTip();
+          _tutorial.show(context);
         }
       },
       buttonSize: buttonSize,

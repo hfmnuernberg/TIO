@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/file_references.dart';
@@ -56,11 +57,13 @@ Future<void> _addProjectToLibrary(BuildContext context, Project project) async {
 }
 
 Future<void> importProject(BuildContext context) async {
+  final l10n = context.l10n;
+
   try {
     final file = await _getFile();
 
     if (file == null) {
-      if (context.mounted) showSnackbar(context: context, message: 'No project file selected')();
+      if (context.mounted) showSnackbar(context: context, message: l10n.projectsImportNoFileSelected)();
       return;
     }
 
@@ -69,7 +72,7 @@ Future<void> importProject(BuildContext context) async {
     final project = await _extractArchive(context, file);
 
     if (project == null) {
-      if (context.mounted) showSnackbar(context: context, message: 'Error importing project')();
+      if (context.mounted) showSnackbar(context: context, message: l10n.projectsImportError)();
       return;
     }
 
@@ -79,8 +82,8 @@ Future<void> importProject(BuildContext context) async {
 
     await _addProjectToLibrary(context, project);
 
-    if (context.mounted) showSnackbar(context: context, message: 'Project imported successfully!')();
+    if (context.mounted) showSnackbar(context: context, message: l10n.projectsImportSuccess)();
   } catch (_) {
-    if (context.mounted) showSnackbar(context: context, message: 'Error importing project')();
+    if (context.mounted) showSnackbar(context: context, message: l10n.projectsImportError)();
   }
 }

@@ -32,7 +32,7 @@ import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -74,7 +74,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
 
-  final Walkthrough _walkthrough = Walkthrough();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyStartStop = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
   final GlobalKey _keyGroups = GlobalKey();
@@ -139,8 +139,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           !context.read<ProjectLibrary>().showToolTutorial &&
           !context.read<ProjectLibrary>().showQuickToolTutorial &&
           !context.read<ProjectLibrary>().showIslandTutorial) {
-        _createWalkthrough();
-        _walkthrough.show(context);
+        _createTutorial();
+        _tutorial.show(context);
       }
     });
   }
@@ -151,7 +151,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     });
   }
 
-  void _createWalkthrough() {
+  void _createTutorial() {
     // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
@@ -183,7 +183,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         pointingDirection: PointingDirection.right,
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showMetronomeTutorial = false;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     }, context);
@@ -615,10 +615,10 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: _metronomeBlock,
       menuItems: _menuItems,
-      onParentWalkthroughFinished: () {
+      onParentTutorialFinished: () {
         if (context.read<ProjectLibrary>().showMetronomeTutorial) {
-          _createWalkthrough();
-          _walkthrough.show(context);
+          _createTutorial();
+          _tutorial.show(context);
         }
       },
       island: ParentIslandView(

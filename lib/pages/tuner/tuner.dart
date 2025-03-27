@@ -23,7 +23,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -61,7 +61,7 @@ class _TunerState extends State<Tuner> {
 
   Timer? _timerPollFreq;
 
-  final Walkthrough _walkthrough = Walkthrough();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyStartStop = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
 
@@ -132,14 +132,14 @@ class _TunerState extends State<Tuner> {
             !context.read<ProjectLibrary>().showToolTutorial &&
             !context.read<ProjectLibrary>().showQuickToolTutorial &&
             !context.read<ProjectLibrary>().showIslandTutorial) {
-          _createWalkthrough();
-          _walkthrough.show(context);
+          _createTutorial();
+          _tutorial.show(context);
         }
       }
     });
   }
 
-  void _createWalkthrough() {
+  void _createTutorial() {
     // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
@@ -157,7 +157,7 @@ class _TunerState extends State<Tuner> {
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showTunerTutorial = false;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     }, context);
@@ -177,10 +177,10 @@ class _TunerState extends State<Tuner> {
       isQuickTool: widget.isQuickTool,
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: _tunerBlock,
-      onParentWalkthroughFinished: () {
+      onParentTutorialFinished: () {
         if (context.read<ProjectLibrary>().showTunerTutorial) {
-          _createWalkthrough();
-          _walkthrough.show(context);
+          _createTutorial();
+          _tutorial.show(context);
         }
       },
       island: ParentIslandView(

@@ -21,7 +21,7 @@ import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
@@ -41,68 +41,75 @@ class _ProjectsListState extends State<ProjectsList> {
 
   bool _showBanner = false;
 
-  final Walkthrough _walkthrough = Walkthrough();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyAddProjectButton = GlobalKey();
   final GlobalKey _keyNavigationBar = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _aboutPagePressed,
-        child: const Text('About', style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _feedbackPagePressed,
-        child: const Text('Feedback', style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: () => importProject(context),
-        child: const Text('Import Project', style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _deleteAllProjectsPressed,
-        child: const Text('Delete all Projects', style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _showTutorialAgainPressed,
-        child: const Text('Show Walkthrough', style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
-    if (context.read<ProjectLibrary>().showHomepageTutorial) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _createWalkthrough();
-        _walkthrough.show(context);
-      });
-    }
   }
 
-  void _createWalkthrough() {
-    // add the targets here
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_menuItems.isEmpty) {
+      final l10n = context.l10n;
+
+      _menuItems.addAll([
+        MenuItemButton(
+          onPressed: _aboutPagePressed,
+          child: Text(l10n.homeAbout, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: _feedbackPagePressed,
+          child: Text(l10n.homeFeedback, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: () => importProject(context),
+          child: Text(l10n.projectsImport, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: _deleteAllProjectsPressed,
+          child: Text(l10n.projectsDeleteAll, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: _showTutorialAgainPressed,
+          child: Text(l10n.tutorialStart, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+      ]);
+    }
+
+    _showTutorial();
+  }
+
+  void _showTutorial() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final projectLibrary = context.read<ProjectLibrary>();
+
+      if (projectLibrary.showHomepageTutorial) {
+        projectLibrary.showHomepageTutorial = false;
+        FileIO.saveProjectLibraryToJson(projectLibrary);
+        _createTutorial();
+        _tutorial.show(context);
+      }
+    });
+  }
+
+  void _createTutorial() {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyAddProjectButton,
-        'Tap here to create a new project',
+        context.l10n.tutorialAddProject,
         alignText: ContentAlign.right,
         pointingDirection: PointingDirection.left,
         pointerPosition: PointerPosition.left,
       ),
       CustomTargetFocus(
         _keyNavigationBar,
-        'Tap here to start using a tool',
+        context.l10n.tutorialStartUsingTool,
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
@@ -111,17 +118,17 @@ class _ProjectsListState extends State<ProjectsList> {
       CustomTargetFocus(
         null,
         context: context,
-        'Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.',
+        context.l10n.tutorialHowToUseTio,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
       CustomTargetFocus(
         null,
         context: context,
-        'Projects can include multiple tools\n(tuner, metronome, piano setting, media player, image and text),\neven several tools of the same type.',
+        context.l10n.tutorialIncludeMultipleTools,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showHomepageTutorial = false;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     }, context);
@@ -162,9 +169,9 @@ class _ProjectsListState extends State<ProjectsList> {
     context.read<ProjectLibrary>().resetAllTutorials();
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
-    _createWalkthrough();
+    _createTutorial();
     Future.delayed(Duration.zero, () {
-      if (mounted) _walkthrough.show(context);
+      if (mounted) _tutorial.show(context);
     });
   }
 
@@ -232,35 +239,32 @@ class _ProjectsListState extends State<ProjectsList> {
 
   Future<bool?> _deleteProject({bool deleteAll = false}) => showDialog<bool>(
     context: context,
-    builder:
-        (context) => AlertDialog(
-          title: const Text('Delete?', style: TextStyle(color: ColorTheme.primary)),
-          content:
-              deleteAll
-                  ? const Text(
-                    'Do you really want to delete all projects?',
-                    style: TextStyle(color: ColorTheme.primary),
-                  )
-                  : const Text(
-                    'Do you really want to delete this project?',
-                    style: TextStyle(color: ColorTheme.primary),
-                  ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: const Text('No'),
-            ),
-            TIOFlatButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              text: 'Yes',
-              boldText: true,
-            ),
-          ],
-        ),
+    builder: (context) {
+      final l10n = context.l10n;
+
+      return AlertDialog(
+        title: Text(l10n.commonDelete, style: const TextStyle(color: ColorTheme.primary)),
+        content:
+            deleteAll
+                ? Text(l10n.projectsDeleteAllConfirmation, style: TextStyle(color: ColorTheme.primary))
+                : Text(l10n.projectsDeleteConfirmation, style: TextStyle(color: ColorTheme.primary)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Text(l10n.commonNo),
+          ),
+          TIOFlatButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            text: l10n.commonYes,
+            boldText: true,
+          ),
+        ],
+      );
+    },
   );
 
   void _goToToolOverProjectPage(Project project, ProjectBlock tool, bool pianoAlreadyOn) {
@@ -303,6 +307,8 @@ class _ProjectsListState extends State<ProjectsList> {
   }
 
   Widget _getSurveyBanner() {
+    final l10n = context.l10n;
+
     return Positioned(
       left: 0,
       top: 0,
@@ -318,17 +324,13 @@ class _ProjectsListState extends State<ProjectsList> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Do you like TIO Music? Please take part in this survey! (For now the survey is only available in German)',
-                style: TextStyle(color: ColorTheme.surfaceTint),
-              ),
+              Text(l10n.feedbackQuestion, style: TextStyle(color: ColorTheme.surfaceTint)),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
                     onPressed: () async {
-                      // open link in browser
                       final Uri url = Uri.parse('https://cloud9.evasys.de/hfmn/online.php?p=Q2TYV');
                       if (await launchUrl(url) && mounted) {
                         _showBanner = false;
@@ -337,7 +339,7 @@ class _ProjectsListState extends State<ProjectsList> {
                         setState(() {});
                       }
                     },
-                    child: const Text('Fill out'),
+                    child: Text(l10n.feedbackCta),
                   ),
                   IconButton(
                     onPressed: () {
@@ -380,7 +382,7 @@ class _ProjectsListState extends State<ProjectsList> {
           onPressed: () async {
             final newTitle = await showEditTextDialog(
               context: context,
-              label: l10n.newProject,
+              label: l10n.projectsNew,
               value: getDateAndTimeNow(),
               isNew: true,
             );
@@ -429,11 +431,11 @@ class _ProjectsListState extends State<ProjectsList> {
                   builder:
                       (context, projectLibrary, child) =>
                           projectLibrary.projects.isEmpty
-                              ? const Padding(
-                                padding: EdgeInsets.all(40),
+                              ? Padding(
+                                padding: const EdgeInsets.all(40),
                                 child: Text(
-                                  "Please click on '+' to create a new project.",
-                                  style: TextStyle(color: Colors.white, fontSize: 42),
+                                  l10n.projectsNoProjects,
+                                  style: const TextStyle(color: Colors.white, fontSize: 42),
                                 ),
                               )
                               : Padding(
@@ -485,10 +487,14 @@ class _ProjectsListState extends State<ProjectsList> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _quickToolButton(blockTypeInfos[BlockType.metronome]!.icon, 'Metronome', BlockType.metronome),
+                        _quickToolButton(
+                          blockTypeInfos[BlockType.metronome]!.icon,
+                          l10n.metronome,
+                          BlockType.metronome,
+                        ),
                         _quickToolButton(
                           blockTypeInfos[BlockType.mediaPlayer]!.icon,
-                          'Media Player',
+                          l10n.mediaPlayer,
                           BlockType.mediaPlayer,
                         ),
                       ],
@@ -496,8 +502,8 @@ class _ProjectsListState extends State<ProjectsList> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _quickToolButton(blockTypeInfos[BlockType.tuner]!.icon, 'Tuner', BlockType.tuner),
-                        _quickToolButton(blockTypeInfos[BlockType.piano]!.icon, 'Piano', BlockType.piano),
+                        _quickToolButton(blockTypeInfos[BlockType.tuner]!.icon, l10n.tuner, BlockType.tuner),
+                        _quickToolButton(blockTypeInfos[BlockType.piano]!.icon, l10n.piano, BlockType.piano),
                       ],
                     ),
                   ],
