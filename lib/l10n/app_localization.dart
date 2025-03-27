@@ -48,6 +48,17 @@ abstract class AppLocalizations {
 
   String get piano;
 
+  String get projectDeleteAll;
+  String get projectDeleteAllConfirmation;
+  String get projectDeleteConfirmation;
+  String get projectEmpty;
+  String get projectExport;
+  String get projectExportCancelled;
+  String get projectExportError;
+  String get projectExportSuccess;
+  String get projectNew;
+  String get projectNewTool;
+
   String get projectsDeleteAll;
   String get projectsDeleteAllConfirmation;
   String get projectsDeleteConfirmation;
@@ -64,6 +75,7 @@ abstract class AppLocalizations {
   String get tuner;
 
   String get tutorialAddProject;
+  String get tutorialEditProjectTitle;
   String get tutorialHowToUseTio;
   String get tutorialIncludeMultipleTools;
   String get tutorialStart;

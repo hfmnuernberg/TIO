@@ -53,6 +53,17 @@ class German extends AppLocalizations {
 
   String get piano => 'Klavier';
 
+  String get projectDeleteAll => 'Alle Werkzeuge löschen';
+  String get projectDeleteAllConfirmation => 'Möchtest du wirklich alle Werkzeuge in diesem Projekt löschen?';
+  String get projectDeleteConfirmation => 'Möchtest du dieses Werkzeug wirklich löschen?';
+  String get projectEmpty => 'Wähle ein Werkzeug';
+  String get projectExport => 'Projekt exportieren';
+  String get projectExportCancelled => 'Projektexport abgebrochen';
+  String get projectExportError => 'Fehler beim Exportieren des Projekts';
+  String get projectExportSuccess => 'Projekt erfolgreich exportiert!';
+  String get projectNew => 'Projekttitel';
+  String get projectNewTool => 'Werkzeugtitel';
+
   String get projectsDeleteAll => 'Alle Projekte löschen';
   String get projectsDeleteAllConfirmation => 'Möchtest du wirklich alle Projekte löschen?';
   String get projectsDeleteConfirmation => 'Möchtest du dieses Projekt wirklich löschen?';
@@ -69,6 +80,7 @@ class German extends AppLocalizations {
   String get tuner => 'Stimmgerät';
 
   String get tutorialAddProject => 'Tippe hier um ein neues Projekt zu erstellen';
+  String get tutorialEditProjectTitle => 'Tippe hier um den Projekttitel zu bearbeiten';
   String get tutorialHowToUseTio =>
       'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Werkzeuge hinzu.\n2. Starte mit der Verwendung eines Werkzeugs und speichere deine spezifischen Einstellungen in einem Projekt.';
   String get tutorialIncludeMultipleTools =>

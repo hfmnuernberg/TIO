@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
@@ -101,12 +102,12 @@ Future<void> exportProject(BuildContext context, Project project) async {
     await archiveFile.delete();
 
     if (result.status == ShareResultStatus.dismissed) {
-      if (context.mounted) showSnackbar(context: context, message: 'Project export cancelled')();
+      if (context.mounted) showSnackbar(context: context, message: context.l10n.projectExportCancelled)();
       return;
     }
 
-    if (context.mounted) showSnackbar(context: context, message: 'Project exported successfully!')();
+    if (context.mounted) showSnackbar(context: context, message: context.l10n.projectExportSuccess)();
   } catch (_) {
-    if (context.mounted) showSnackbar(context: context, message: 'Error exporting project')();
+    if (context.mounted) showSnackbar(context: context, message: context.l10n.projectExportError)();
   }
 }
