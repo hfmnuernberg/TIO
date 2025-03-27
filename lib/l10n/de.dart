@@ -35,6 +35,7 @@ class German extends AppLocalizations {
   String get commonDelete => 'Löschen?';
   String get commonNext => 'Weiter';
   String get commonNo => 'Nein';
+  String get commonSubmit => 'Bestätigen';
   String get commonYes => 'Ja';
 
   String get feedbackPageCta => 'Ausfüllen';

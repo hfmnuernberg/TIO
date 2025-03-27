@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
@@ -78,7 +79,7 @@ class EditTextDialog extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            TextButton(onPressed: onCancel, child: const Text('Cancel')),
+            TextButton(onPressed: onCancel, child: Text(context.l10n.commonCancel)),
             ValueListenableBuilder<TextEditingValue>(
               valueListenable: controller,
               builder: (context, textValue, _) {
@@ -86,7 +87,7 @@ class EditTextDialog extends StatelessWidget {
                 final isDirty = textValue.text != value;
                 final isSubmitEnabled = isValid && (isNew || isDirty);
 
-                return TIOFlatButton(onPressed: isSubmitEnabled ? handleSubmit : null, text: 'Submit', boldText: true);
+                return TIOFlatButton(onPressed: isSubmitEnabled ? handleSubmit : null, text: context.l10n.commonSubmit, boldText: true);
               },
             ),
           ],

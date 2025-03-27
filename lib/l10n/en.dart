@@ -35,6 +35,7 @@ class English extends AppLocalizations {
   String get commonDelete => 'Delete?';
   String get commonNext => 'Next';
   String get commonNo => 'No';
+  String get commonSubmit => 'Submit';
   String get commonYes => 'Yes';
 
   String get feedbackPageCta => 'Fill out';

@@ -30,6 +30,7 @@ abstract class AppLocalizations {
   String get commonDelete;
   String get commonNext;
   String get commonNo;
+  String get commonSubmit;
   String get commonYes;
 
   String get feedbackPageCta;
