@@ -38,7 +38,6 @@ class ProjectsList extends StatefulWidget {
 
 class _ProjectsListState extends State<ProjectsList> {
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
-  bool _initializedMenuItems = false;
 
   bool _showBanner = false;
 
@@ -56,8 +55,7 @@ class _ProjectsListState extends State<ProjectsList> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    if (!_initializedMenuItems) {
-      _initializedMenuItems = true;
+    if (_menuItems.isEmpty) {
       final l10n = context.l10n;
 
       _menuItems.addAll([
