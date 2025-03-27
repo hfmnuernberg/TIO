@@ -1,4 +1,31 @@
 abstract class AppLocalizations {
+  String get aboutPageAppVersion;
+  String get aboutPageAppVersionError;
+  String get aboutPageDataProtection;
+  String get aboutPageDataProtectionExplanation;
+  String get aboutPageDeveloper;
+  String get aboutPageEditor;
+  String get aboutPageFeatures;
+  String get aboutPageFirstParagraph;
+  String get aboutPageImage;
+  String get aboutPageImageExplanation;
+  String get aboutPageImprint;
+  String get aboutPageMediaPlayer;
+  String get aboutPageMediaPlayerExplanation;
+  String get aboutPageMetronome;
+  String get aboutPageMetronomeExplanation;
+  String get aboutPagePiano;
+  String get aboutPagePianoExplanation;
+  String get aboutPageProjects;
+  String get aboutPageProjectsExplanation;
+  String get aboutPageSecondParagraph;
+  String get aboutPageText;
+  String get aboutPageTextExplanation;
+  String get aboutPageThirdParagraph;
+  String get aboutPageTitle;
+  String get aboutPageTuner;
+  String get aboutPageTunerExplanation;
+
   String get commonDelete;
   String get commonNo;
   String get commonYes;
