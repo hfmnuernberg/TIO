@@ -31,11 +31,11 @@ class English extends AppLocalizations {
 
   String get tuner => 'Tuner';
 
-  String get walkthroughAddProject => 'Tap here to create a new project';
-  String get walkthroughHowToUseTio =>
+  String get tutorialAddProject => 'Tap here to create a new project';
+  String get tutorialHowToUseTio =>
       'Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.';
-  String get walkthroughIncludeMultipleTools =>
+  String get tutorialIncludeMultipleTools =>
       'Projects can include multiple tools\n(tuner, metronome, piano setting, media player, image and text),\neven several tools of the same type.';
-  String get walkthroughStart => 'Show Walkthrough';
-  String get walkthroughStartUsingTool => 'Tap here to start using a tool';
+  String get tutorialStart => 'Show Tutorial';
+  String get tutorialStartUsingTool => 'Tap here to start using a tool';
 }

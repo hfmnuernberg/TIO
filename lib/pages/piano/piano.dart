@@ -20,7 +20,7 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/util_midi.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
@@ -55,7 +55,7 @@ class _PianoState extends State<Piano> {
   bool _showSavingPage = false;
   OverlayEntry? _entry;
 
-  final Walkthrough _walkthrough = Walkthrough();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyOctaveSwitch = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
 
@@ -91,8 +91,8 @@ class _PianoState extends State<Piano> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (context.read<ProjectLibrary>().showPianoTutorial) {
-        _createWalkthrough();
-        _walkthrough.show(context);
+        _createTutorial();
+        _tutorial.show(context);
       }
     });
   }
@@ -129,7 +129,7 @@ class _PianoState extends State<Piano> {
     }
   }
 
-  void _createWalkthrough() {
+  void _createTutorial() {
     // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
@@ -150,7 +150,7 @@ class _PianoState extends State<Piano> {
         buttonsPosition: ButtonsPosition.bottomright,
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showPianoTutorial = false;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     }, context);

@@ -10,7 +10,7 @@ import 'package:tiomusic/pages/project_page/export_project.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/big_icon_button.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
@@ -45,7 +45,7 @@ class _ProjectPageState extends State<ProjectPage> {
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
   final TextEditingController _titleController = TextEditingController();
 
-  final Walkthrough _walkthrough = Walkthrough();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyChangeTitle = GlobalKey();
 
   @override
@@ -103,13 +103,13 @@ class _ProjectPageState extends State<ProjectPage> {
 
     if (context.read<ProjectLibrary>().showProjectPageTutorial && !widget.goStraightToTool) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _createWalkthrough();
-        _walkthrough.show(context);
+        _createTutorial();
+        _tutorial.show(context);
       });
     }
   }
 
-  void _createWalkthrough() {
+  void _createTutorial() {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyChangeTitle,
@@ -119,7 +119,7 @@ class _ProjectPageState extends State<ProjectPage> {
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showProjectPageTutorial = false;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     }, context);

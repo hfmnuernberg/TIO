@@ -21,7 +21,7 @@ import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
@@ -41,7 +41,7 @@ class _ProjectsListState extends State<ProjectsList> {
 
   bool _showBanner = false;
 
-  final Walkthrough _walkthrough = Walkthrough();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyAddProjectButton = GlobalKey();
   final GlobalKey _keyNavigationBar = GlobalKey();
 
@@ -77,7 +77,7 @@ class _ProjectsListState extends State<ProjectsList> {
         ),
         MenuItemButton(
           onPressed: _showTutorialAgainPressed,
-          child: Text(l10n.walkthroughStart, style: const TextStyle(color: ColorTheme.primary)),
+          child: Text(l10n.tutorialStart, style: const TextStyle(color: ColorTheme.primary)),
         ),
       ]);
     }
@@ -92,24 +92,24 @@ class _ProjectsListState extends State<ProjectsList> {
       if (projectLibrary.showHomepageTutorial) {
         projectLibrary.showHomepageTutorial = false;
         FileIO.saveProjectLibraryToJson(projectLibrary);
-        _createWalkthrough();
-        _walkthrough.show(context);
+        _createTutorial();
+        _tutorial.show(context);
       }
     });
   }
 
-  void _createWalkthrough() {
+  void _createTutorial() {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyAddProjectButton,
-        context.l10n.walkthroughAddProject,
+        context.l10n.tutorialAddProject,
         alignText: ContentAlign.right,
         pointingDirection: PointingDirection.left,
         pointerPosition: PointerPosition.left,
       ),
       CustomTargetFocus(
         _keyNavigationBar,
-        context.l10n.walkthroughStartUsingTool,
+        context.l10n.tutorialStartUsingTool,
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
@@ -118,17 +118,17 @@ class _ProjectsListState extends State<ProjectsList> {
       CustomTargetFocus(
         null,
         context: context,
-        context.l10n.walkthroughHowToUseTio,
+        context.l10n.tutorialHowToUseTio,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
       CustomTargetFocus(
         null,
         context: context,
-        context.l10n.walkthroughIncludeMultipleTools,
+        context.l10n.tutorialIncludeMultipleTools,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showHomepageTutorial = false;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     }, context);
@@ -169,9 +169,9 @@ class _ProjectsListState extends State<ProjectsList> {
     context.read<ProjectLibrary>().resetAllTutorials();
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
-    _createWalkthrough();
+    _createTutorial();
     Future.delayed(Duration.zero, () {
-      if (mounted) _walkthrough.show(context);
+      if (mounted) _tutorial.show(context);
     });
   }
 

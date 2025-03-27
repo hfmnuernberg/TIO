@@ -24,7 +24,7 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:circular_widgets/circular_widgets.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tiomusic/widgets/small_num_input.dart';
@@ -73,7 +73,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   late Timer _beatDetection;
   final ActiveBeatsModel _activeBeatsModel = ActiveBeatsModel();
 
-  final Walkthrough _walkthrough = Walkthrough();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyToggleBeats = GlobalKey();
 
   @override
@@ -139,8 +139,8 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
       _numPolyBeatsInput.displayText.addListener(_onNumPolyBeatsChanged);
 
       if (context.read<ProjectLibrary>().showBeatToggleTip) {
-        _createWalkthrough();
-        _walkthrough.show(context);
+        _createTutorial();
+        _tutorial.show(context);
       }
     });
   }
@@ -168,7 +168,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     });
   }
 
-  void _createWalkthrough() {
+  void _createTutorial() {
     // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
@@ -178,7 +178,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
         pointingDirection: PointingDirection.up,
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showBeatToggleTip = false;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     }, context);

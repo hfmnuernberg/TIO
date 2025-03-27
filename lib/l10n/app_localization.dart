@@ -25,9 +25,9 @@ abstract class AppLocalizations {
 
   String get tuner;
 
-  String get walkthroughAddProject;
-  String get walkthroughHowToUseTio;
-  String get walkthroughIncludeMultipleTools;
-  String get walkthroughStart;
-  String get walkthroughStartUsingTool;
+  String get tutorialAddProject;
+  String get tutorialHowToUseTio;
+  String get tutorialIncludeMultipleTools;
+  String get tutorialStart;
+  String get tutorialStartUsingTool;
 }

@@ -8,7 +8,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
@@ -28,7 +28,7 @@ class ParentTool extends StatefulWidget {
   final Widget? floatingActionButton;
   final double? heightForCenterModule;
   final GlobalKey? keySettingsList;
-  final Function()? onParentWalkthroughFinished;
+  final Function()? onParentTutorialFinished;
   final bool deactivateScroll;
 
   const ParentTool({
@@ -44,7 +44,7 @@ class ParentTool extends StatefulWidget {
     this.floatingActionButton,
     this.heightForCenterModule,
     this.keySettingsList,
-    this.onParentWalkthroughFinished,
+    this.onParentTutorialFinished,
     this.project,
     this.deactivateScroll = false,
   });
@@ -58,12 +58,12 @@ class _ParentToolState extends State<ParentTool> {
   Color? _highlightColorOnSave;
   final TextEditingController _toolTitle = TextEditingController();
 
-  final Walkthrough _walkthroughQuickTool = Walkthrough();
-  final Walkthrough _walkthroughTool = Walkthrough();
+  final Tutorial _tutorialQuickTool = Tutorial();
+  final Tutorial _tutorialTool = Tutorial();
   final GlobalKey _keyBookmarkSave = GlobalKey();
   final GlobalKey _keyChangeTitle = GlobalKey();
 
-  final Walkthrough _walkthroughIsland = Walkthrough();
+  final Tutorial _tutorialIsland = Tutorial();
   final GlobalKey _keyIsland = GlobalKey();
 
   @override
@@ -82,43 +82,43 @@ class _ParentToolState extends State<ParentTool> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.isQuickTool) {
         if (context.read<ProjectLibrary>().showQuickToolTutorial) {
-          _createWalkthroughQuickTool();
+          _createTutorialQuickTool();
           Future.delayed(Duration.zero, () {
-            if (mounted) _walkthroughQuickTool.show(context);
+            if (mounted) _tutorialQuickTool.show(context);
           });
         } else if (context.read<ProjectLibrary>().showIslandTutorial &&
             checkIslandPossible(widget.project, widget.toolBlock)) {
-          _createWalkthroughIsland();
+          _createTutorialIsland();
           Future.delayed(Duration.zero, () {
-            if (mounted) _walkthroughIsland.show(context);
+            if (mounted) _tutorialIsland.show(context);
           });
         } else {
-          if (widget.onParentWalkthroughFinished != null) {
-            widget.onParentWalkthroughFinished!();
+          if (widget.onParentTutorialFinished != null) {
+            widget.onParentTutorialFinished!();
           }
         }
       } else {
         if (context.read<ProjectLibrary>().showToolTutorial) {
-          _createWalkthroughTool();
+          _createTutorialTool();
           Future.delayed(Duration.zero, () {
-            if (mounted) _walkthroughTool.show(context);
+            if (mounted) _tutorialTool.show(context);
           });
         } else if (context.read<ProjectLibrary>().showIslandTutorial &&
             checkIslandPossible(widget.project, widget.toolBlock)) {
-          _createWalkthroughIsland();
+          _createTutorialIsland();
           Future.delayed(Duration.zero, () {
-            if (mounted) _walkthroughIsland.show(context);
+            if (mounted) _tutorialIsland.show(context);
           });
         } else {
-          if (widget.onParentWalkthroughFinished != null) {
-            widget.onParentWalkthroughFinished!();
+          if (widget.onParentTutorialFinished != null) {
+            widget.onParentTutorialFinished!();
           }
         }
       }
     });
   }
 
-  void _createWalkthroughQuickTool() {
+  void _createTutorialQuickTool() {
     // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
@@ -128,23 +128,23 @@ class _ParentToolState extends State<ParentTool> {
         pointingDirection: PointingDirection.right,
       ),
     ];
-    _walkthroughQuickTool.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorialQuickTool.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showQuickToolTutorial = false;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
       // start island tutorial
       if (context.read<ProjectLibrary>().showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
-        _createWalkthroughIsland();
+        _createTutorialIsland();
         Future.delayed(Duration.zero, () {
-          if (mounted) _walkthroughIsland.show(context);
+          if (mounted) _tutorialIsland.show(context);
         });
-      } else if (widget.onParentWalkthroughFinished != null) {
-        widget.onParentWalkthroughFinished!();
+      } else if (widget.onParentTutorialFinished != null) {
+        widget.onParentTutorialFinished!();
       }
     }, context);
   }
 
-  void _createWalkthroughTool() {
+  void _createTutorialTool() {
     // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
@@ -161,23 +161,23 @@ class _ParentToolState extends State<ParentTool> {
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthroughTool.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorialTool.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showToolTutorial = false;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
       // start island tutorial
       if (context.read<ProjectLibrary>().showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
-        _createWalkthroughIsland();
+        _createTutorialIsland();
         Future.delayed(Duration.zero, () {
-          if (mounted) _walkthroughIsland.show(context);
+          if (mounted) _tutorialIsland.show(context);
         });
-      } else if (widget.onParentWalkthroughFinished != null) {
-        widget.onParentWalkthroughFinished!();
+      } else if (widget.onParentTutorialFinished != null) {
+        widget.onParentTutorialFinished!();
       }
     }, context);
   }
 
-  void _createWalkthroughIsland() {
+  void _createTutorialIsland() {
     // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
@@ -188,13 +188,13 @@ class _ParentToolState extends State<ParentTool> {
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthroughIsland.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorialIsland.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showIslandTutorial = false;
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
       // start specific tool tutorial
-      if (widget.onParentWalkthroughFinished != null) {
-        widget.onParentWalkthroughFinished!();
+      if (widget.onParentTutorialFinished != null) {
+        widget.onParentTutorialFinished!();
       }
     }, context);
   }

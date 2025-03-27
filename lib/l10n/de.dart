@@ -30,11 +30,11 @@ class German extends AppLocalizations {
 
   String get tuner => 'Stimmgerät';
 
-  String get walkthroughAddProject => 'Tippe hier um ein neues Projekt zu erstellen';
-  String get walkthroughHowToUseTio =>
+  String get tutorialAddProject => 'Tippe hier um ein neues Projekt zu erstellen';
+  String get tutorialHowToUseTio =>
       'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Werkzeuge hinzu.\n2. Starte mit der Verwendung eines Werkzeugs und speichere deine spezifischen Einstellungen in einem Projekt.';
-  String get walkthroughIncludeMultipleTools =>
+  String get tutorialIncludeMultipleTools =>
       'Projekte können mehrere Werkzeuge enthalten\n(Stimmgerät, Metronom, Klaviereinstellungen, Media Player, Bild und Text),\nsogar mehrere Werkzeuge des gleichen Typs.';
-  String get walkthroughStart => 'Tutorial anzeigen';
-  String get walkthroughStartUsingTool => 'Tippe hier um ein Werkzeug zu verwenden';
+  String get tutorialStart => 'Tutorial anzeigen';
+  String get tutorialStartUsingTool => 'Tippe hier um ein Werkzeug zu verwenden';
 }
