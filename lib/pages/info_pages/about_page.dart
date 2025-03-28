@@ -37,7 +37,7 @@ class _AboutPageState extends State<AboutPage> {
 
   _showAppVersion() {
     if (_isLoading) return const Center(child: CircularProgressIndicator());
-    if (_packageInfo == null) return TextSection(content: context.l10n.aboutAppVersionError);
+    if (_packageInfo == null) return TextSection(content: context.l10n.appAboutVersionError);
     return TextSection(content: '${_packageInfo!.version} (${_packageInfo!.buildNumber})');
   }
 
@@ -47,30 +47,30 @@ class _AboutPageState extends State<AboutPage> {
     final l10n = context.l10n;
 
     return InfoPage(
-      appBarTitle: l10n.aboutTitle,
+      appBarTitle: l10n.appAboutTitle,
       textSections: [
-        TextSection(content: l10n.aboutFirstParagraph),
-        TextSection(content: l10n.aboutFeatures, sectionType: SectionType.headline2),
-        TextSection(content: l10n.aboutProjects, sectionType: SectionType.headline3),
-        TextSection(content: l10n.aboutProjectsExplanation),
-        TextSection(content: l10n.aboutTuner, sectionType: SectionType.headline3),
-        TextSection(content: l10n.aboutTunerExplanation),
-        TextSection(content: l10n.aboutMetronome, sectionType: SectionType.headline3),
-        TextSection(content: l10n.aboutMetronomeExplanation),
-        TextSection(content: l10n.aboutMediaPlayer, sectionType: SectionType.headline3),
-        TextSection(content: l10n.aboutMediaPlayerExplanation),
-        TextSection(content: l10n.aboutPiano, sectionType: SectionType.headline3),
-        TextSection(content: l10n.aboutPianoExplanation),
-        TextSection(content: l10n.aboutImage, sectionType: SectionType.headline3),
-        TextSection(content: l10n.aboutImageExplanation),
-        TextSection(content: l10n.aboutText, sectionType: SectionType.headline3),
-        TextSection(content: l10n.aboutTextExplanation),
+        TextSection(content: l10n.appAboutParagraphOne),
+        TextSection(content: l10n.appAboutFeatures, sectionType: SectionType.headline2),
+        TextSection(content: l10n.projectsAbout, sectionType: SectionType.headline3),
+        TextSection(content: l10n.projectsAboutExplanation),
+        TextSection(content: l10n.tunerAbout, sectionType: SectionType.headline3),
+        TextSection(content: l10n.tunerAboutExplanation),
+        TextSection(content: l10n.metronomeAbout, sectionType: SectionType.headline3),
+        TextSection(content: l10n.metronomeAboutExplanation),
+        TextSection(content: l10n.mediaPlayerAbout, sectionType: SectionType.headline3),
+        TextSection(content: l10n.mediaPlayerAboutExplanation),
+        TextSection(content: l10n.pianoAbout, sectionType: SectionType.headline3),
+        TextSection(content: l10n.pianoAboutExplanation),
+        TextSection(content: l10n.imageAbout, sectionType: SectionType.headline3),
+        TextSection(content: l10n.imageAboutExplanation),
+        TextSection(content: l10n.textAbout, sectionType: SectionType.headline3),
+        TextSection(content: l10n.textAboutExplanation),
         const SizedBox(height: spacing),
-        TextSection(content: l10n.aboutSecondParagraph),
+        TextSection(content: l10n.appAboutParagraphTwo),
         const SizedBox(height: spacing),
-        TextSection(content: l10n.aboutThirdParagraph),
-        TextSection(content: l10n.aboutImprint, sectionType: SectionType.headline2),
-        TextSection(content: l10n.aboutEditor, sectionType: SectionType.text),
+        TextSection(content: l10n.appAboutParagraphThree),
+        TextSection(content: l10n.appAboutImprint, sectionType: SectionType.headline2),
+        TextSection(content: l10n.appAboutEditor, sectionType: SectionType.text),
         InkWell(
           child: const Text('https://www.hfm-nuernberg.de/', style: TextStyle(color: ColorTheme.tertiary)),
           onTap: () async {
@@ -79,7 +79,7 @@ class _AboutPageState extends State<AboutPage> {
           },
         ),
         const SizedBox(height: spacing),
-        TextSection(content: l10n.aboutDeveloperOne, sectionType: SectionType.text),
+        TextSection(content: l10n.appAboutDeveloperOne, sectionType: SectionType.text),
         InkWell(
           child: const Text('https://cultivate.software/', style: TextStyle(color: ColorTheme.tertiary)),
           onTap: () async {
@@ -88,7 +88,7 @@ class _AboutPageState extends State<AboutPage> {
           },
         ),
         const SizedBox(height: spacing),
-        TextSection(content: l10n.aboutDeveloperTwo, sectionType: SectionType.text),
+        TextSection(content: l10n.appAboutDeveloperTwo, sectionType: SectionType.text),
         InkWell(
           child: const Text('https://studiofluffy.de/', style: TextStyle(color: ColorTheme.tertiary)),
           onTap: () async {
@@ -96,9 +96,9 @@ class _AboutPageState extends State<AboutPage> {
             await launchUrl(url);
           },
         ),
-        TextSection(content: l10n.aboutDataProtection, sectionType: SectionType.headline2),
-        TextSection(content: l10n.aboutDataProtectionExplanation),
-        TextSection(content: l10n.aboutAppVersion, sectionType: SectionType.headline2),
+        TextSection(content: l10n.appAboutDataProtection, sectionType: SectionType.headline2),
+        TextSection(content: l10n.appAboutDataProtectionExplanation),
+        TextSection(content: l10n.appAboutVersion, sectionType: SectionType.headline2),
         _showAppVersion(),
       ],
     );
