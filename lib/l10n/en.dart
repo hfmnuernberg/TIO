@@ -47,6 +47,7 @@ class English extends AppLocalizations {
   String get imageAbout => 'Image';
   String get imageAboutExplanation =>
       'You can upload pictures or note sheets to the app using the camera on your device.';
+  String get imageDescription => 'take or load a picture';
   String get imageDoLater => 'Do it later';
   String get imageNoCameraFound => 'No camera found';
   String get imageNoCameraFoundHint => 'There is no camera available on this device.';
@@ -58,7 +59,6 @@ class English extends AppLocalizations {
       'Do you want to use the image of this tool as your profile picture for this project?';
   String get imageShare => 'Share image';
   String get imageTakePhoto => 'Take a photo';
-  String get imageToolDescription => 'take or load a picture';
   String get imageUploadHint => 'Pick an image from your device or take a photo using the camera';
   String get imageUseAsThumbnailQuestion => 'Use image as project thumbnail';
 
@@ -66,6 +66,7 @@ class English extends AppLocalizations {
   String get mediaPlayerAbout => 'Media player';
   String get mediaPlayerAboutExplanation =>
       'You can record, load and edit audio files and save configurations. In doing so, you can set your preferred volume, range (length and segment), playing speed and pitch. You can forward your projects to others using external messenger services.';
+  String get mediaPlayerDescription => 'record and play';
   String get mediaPlayerTutorialAdjust => 'Tap here to adjust your sound file';
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file';
@@ -74,6 +75,7 @@ class English extends AppLocalizations {
   String get metronomeAbout => 'Metronome';
   String get metronomeAboutExplanation =>
       'The metronome allows you to save and recall your individual configurations (tempo, time signature, polyrhythms, random mute, sounds). You can also combine the metronome with the tuner and the media player.';
+  String get metronomeDescription => 'create a rhythm';
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings';
   String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted';
@@ -85,6 +87,7 @@ class English extends AppLocalizations {
   String get pianoAbout => 'Piano';
   String get pianoAboutExplanation =>
       'You can use the built-in piano, select different sound modes and save your individual configurations.';
+  String get pianoDescription => 'become the next Herbie Hancock';
   String get pianoTutorialAdjust => 'Tap here to adjust concert pitch, volume, and sound';
   String get pianoTutorialChangeKeyOrOctave => 'Tap the left or right arrows to move up or down per key or per octave';
 
@@ -143,10 +146,10 @@ class English extends AppLocalizations {
       'You can tune your instruments to any concert pitch, play reference tones, save your individual configuration and combine the tuner with the metronome and media player.';
   String get tunerConcertPitch => 'Concert Pitch';
   String get tunerConcertPitchInHz => 'Concert Pitch in Hz';
+  String get tunerDescription => 'tune your instrument';
   String get tunerFrequency => 'Frequency';
   String get tunerPlayReference => 'Play Reference';
   String get tunerSetConcertPitch => 'Set Concert Pitch';
-  String get tunerToolDescription => 'tune your instrument';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner';
 }

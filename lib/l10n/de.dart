@@ -48,6 +48,7 @@ class German extends AppLocalizations {
   String get imageAbout => 'Bild';
   String get imageAboutExplanation =>
       'Du kannst Bilder oder Notenblätter über die Kamera deines Geräts in die App hochladen.';
+  String get imageDescription => 'lade ein Bild oder nimm ein neues Bild auf';
   String get imageDoLater => 'Später machen';
   String get imageNoCameraFound => 'Keine Kamera gefunden';
   String get imageNoCameraFoundHint => 'Es ist keine Kamera auf diesem Gerät verfügbar.';
@@ -58,7 +59,6 @@ class German extends AppLocalizations {
   String get imageSetAsThumbnailQuestion => 'Möchtest du das Bild als Projektbild verwenden?';
   String get imageShare => 'Bild teilen';
   String get imageTakePhoto => 'Foto aufnehmen';
-  String get imageToolDescription => 'lade ein Bild oder nimm ein neues Bild auf';
   String get imageUploadHint => 'Wähle ein Bild von deinem Gerät aus oder mache ein Foto mit der Kamera';
   String get imageUseAsThumbnailQuestion => 'Bild als Projektbild verwenden';
 
@@ -66,6 +66,7 @@ class German extends AppLocalizations {
   String get mediaPlayerAbout => 'Media Player';
   String get mediaPlayerAboutExplanation =>
       'Du kannst Audio-Dateien aufnehmen, laden und bearbeiten und Konfigurationen speichern. Dabei kannst du deine bevorzugte Lautstärke, Reichweite (Länge und Segment), Wiedergabegeschwindigkeit und Tonhöhe einstellen. Du kannst deine Projekte über externe Messenger-Dienste an andere weiterleiten.';
+  String get mediaPlayerDescription => 'nimm auf und spiele ab';
   String get mediaPlayerTutorialAdjust => 'Tippe hier um deine Audiodatei anzupassen';
   String get mediaPlayerTutorialJumpTo => 'Tippe irgendwo um zu diesem Teil deiner Audiodatei zu springen';
   String get mediaPlayerTutorialStartStop =>
@@ -75,6 +76,7 @@ class German extends AppLocalizations {
   String get metronomeAbout => 'Metronom';
   String get metronomeAboutExplanation =>
       'Das Metronom ermöglicht es dir, deine individuellen Konfigurationen (Tempo, Taktart, Polyrhythmen, zufälliges Stummschalten, Klänge) zu speichern und abzurufen. Du kannst das Metronom auch mit dem Stimmgerät und dem Media Player kombinieren.';
+  String get metronomeDescription => 'erstelle deinen Beat';
   String get metronomeTutorialAddNew => 'Tippe hier um ein zweites Metronom hinzuzufügen';
   String get metronomeTutorialAdjust => 'Tippe hier um die Metronomeinstellungen anzupassen';
   String get metronomeTutorialEditBeats =>
@@ -87,6 +89,7 @@ class German extends AppLocalizations {
   String get pianoAbout => 'Klavier';
   String get pianoAboutExplanation =>
       'Du kannst das integrierte Klavier verwenden, verschiedene Klangmodi auswählen und deine individuellen Konfigurationen speichern.';
+  String get pianoDescription => 'werde der nächste Herbie Hancock';
   String get pianoTutorialAdjust => 'Tippe hier um den Kammerton, die Lautstärke und den Klang anzupassen';
   String get pianoTutorialChangeKeyOrOctave =>
       'Tippe auf die Pfeile links oder rechts um pro Taste oder pro Oktave nach oben oder unten zu wechseln';
@@ -127,7 +130,7 @@ class German extends AppLocalizations {
   String get textAboutExplanation =>
       'Du kannst über dein Gerät Textnotizen erstellen, z.B. für Spielanweisungen, Hintergrundinformationen, Songtexte, etc.';
   String get textTitle => 'Text';
-  String get textDescription => 'schreibe deine Notizen nieder';
+  String get textDescription => 'schreibe deine Notizen auf';
 
   String get toolNew => 'Neues Tool';
   String get toolNewProjectTitle => 'Projekttitel';
@@ -146,10 +149,10 @@ class German extends AppLocalizations {
       'Du kannst deine Instrumente auf jede Konzerttonart stimmen, Referenztöne abspielen, deine individuelle Konfiguration speichern und das Stimmgerät mit dem Metronom und dem Media Player kombinieren.';
   String get tunerConcertPitch => 'Kammerton';
   String get tunerConcertPitchInHz => 'Kammerton in Hz';
+  String get tunerDescription => 'stimme dein Instrument';
   String get tunerFrequency => 'Frequenz';
   String get tunerPlayReference => 'Referenzton abspielen';
   String get tunerSetConcertPitch => 'Kammerton einstellen';
-  String get tunerToolDescription => 'stimme dein Instrument';
   String get tunerTutorialAdjust => 'Tippe hier um den Kammerton anzupassen oder einen Referenzton abzuspielen';
   String get tunerTutorialStartStop => 'Tippe hier um das Stimmgerät zu starten und zu stoppen';
 }

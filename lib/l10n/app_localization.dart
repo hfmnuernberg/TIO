@@ -37,6 +37,7 @@ abstract class AppLocalizations {
   String get image;
   String get imageAbout;
   String get imageAboutExplanation;
+  String get imageDescription;
   String get imageDoLater;
   String get imageNoCameraFound;
   String get imageNoCameraFoundHint;
@@ -47,13 +48,13 @@ abstract class AppLocalizations {
   String get imageSetAsThumbnailQuestion;
   String get imageShare;
   String get imageTakePhoto;
-  String get imageToolDescription;
   String get imageUploadHint;
   String get imageUseAsThumbnailQuestion;
 
   String get mediaPlayer;
   String get mediaPlayerAbout;
   String get mediaPlayerAboutExplanation;
+  String get mediaPlayerDescription;
   String get mediaPlayerTutorialAdjust;
   String get mediaPlayerTutorialJumpTo;
   String get mediaPlayerTutorialStartStop;
@@ -61,6 +62,7 @@ abstract class AppLocalizations {
   String get metronome;
   String get metronomeAbout;
   String get metronomeAboutExplanation;
+  String get metronomeDescription;
   String get metronomeTutorialAddNew;
   String get metronomeTutorialAdjust;
   String get metronomeTutorialEditBeats;
@@ -70,6 +72,7 @@ abstract class AppLocalizations {
   String get piano;
   String get pianoAbout;
   String get pianoAboutExplanation;
+  String get pianoDescription;
   String get pianoTutorialAdjust;
   String get pianoTutorialChangeKeyOrOctave;
 
@@ -123,10 +126,10 @@ abstract class AppLocalizations {
   String get tunerAboutExplanation;
   String get tunerConcertPitch;
   String get tunerConcertPitchInHz;
+  String get tunerDescription;
   String get tunerFrequency;
   String get tunerPlayReference;
   String get tunerSetConcertPitch;
-  String get tunerToolDescription;
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
 }
