@@ -58,20 +58,18 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
 
   @override
   Widget build(BuildContext context) {
-    final concertPitchInput = NumberInputDoubleWithSlider(
-      max: 600,
-      min: 200,
-      defaultValue: _defaultValue,
-      step: 1,
-      stepIntervalInMs: 200,
-      controller: _controller,
-      label: context.l10n.tunerConcertPitchInHz,
-      textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
-    );
-
     return ParentSettingPage(
       title: context.l10n.tunerSetConcertPitch,
-      numberInput: concertPitchInput,
+      numberInput: NumberInputDoubleWithSlider(
+        max: 600,
+        min: 200,
+        defaultValue: _defaultValue,
+        step: 1,
+        stepIntervalInMs: 200,
+        controller: _controller,
+        label: context.l10n.tunerConcertPitchInHz,
+        textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
+      ),
       confirm: _onConfirm,
       reset: _reset,
     );

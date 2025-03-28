@@ -126,16 +126,6 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   @override
   Widget build(BuildContext context) {
     int offset = (_octave - 1) * 12;
-
-    final octaveInput = NumberInputIntWithSlider(
-      max: 7,
-      min: 1,
-      defaultValue: _octave,
-      step: 1,
-      controller: _octaveController,
-      textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
-      label: context.l10n.commonOctave,
-    );
     return DismissKeyboard(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -148,7 +138,15 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            octaveInput,
+            NumberInputIntWithSlider(
+              max: 7,
+              min: 1,
+              defaultValue: _octave,
+              step: 1,
+              controller: _octaveController,
+              textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
+              label: context.l10n.commonOctave,
+            ),
             const SizedBox(height: 40),
 
             Text(
