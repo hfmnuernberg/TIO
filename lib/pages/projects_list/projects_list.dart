@@ -77,7 +77,7 @@ class _ProjectsListState extends State<ProjectsList> {
         ),
         MenuItemButton(
           onPressed: _showTutorialAgainPressed,
-          child: Text(l10n.tutorialStart, style: const TextStyle(color: ColorTheme.primary)),
+          child: Text(l10n.projectsTutorialStart, style: const TextStyle(color: ColorTheme.primary)),
         ),
       ]);
     }
@@ -102,14 +102,14 @@ class _ProjectsListState extends State<ProjectsList> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyAddProjectButton,
-        context.l10n.tutorialAddProject,
+        context.l10n.projectsTutorialAddProject,
         alignText: ContentAlign.right,
         pointingDirection: PointingDirection.left,
         pointerPosition: PointerPosition.left,
       ),
       CustomTargetFocus(
         _keyNavigationBar,
-        context.l10n.tutorialStartUsingTool,
+        context.l10n.projectsTutorialStartUsingTool,
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
@@ -118,13 +118,13 @@ class _ProjectsListState extends State<ProjectsList> {
       CustomTargetFocus(
         null,
         context: context,
-        context.l10n.tutorialHowToUseTio,
+        context.l10n.projectsTutorialHowToUseTio,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
       CustomTargetFocus(
         null,
         context: context,
-        context.l10n.tutorialIncludeMultipleTools,
+        context.l10n.projectsTutorialCanIncludeMultipleTools,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
     ];

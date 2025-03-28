@@ -1,31 +1,21 @@
 abstract class AppLocalizations {
-  String get aboutAppVersion;
-  String get aboutAppVersionError;
-  String get aboutDataProtection;
-  String get aboutDataProtectionExplanation;
-  String get aboutDeveloperOne;
-  String get aboutDeveloperTwo;
-  String get aboutEditor;
-  String get aboutFeatures;
-  String get aboutFirstParagraph;
-  String get aboutImage;
-  String get aboutImageExplanation;
-  String get aboutImprint;
-  String get aboutMediaPlayer;
-  String get aboutMediaPlayerExplanation;
-  String get aboutMetronome;
-  String get aboutMetronomeExplanation;
-  String get aboutPiano;
-  String get aboutPianoExplanation;
-  String get aboutProjects;
-  String get aboutProjectsExplanation;
-  String get aboutSecondParagraph;
-  String get aboutText;
-  String get aboutTextExplanation;
-  String get aboutThirdParagraph;
-  String get aboutTitle;
-  String get aboutTuner;
-  String get aboutTunerExplanation;
+  String get appAboutDataProtection;
+  String get appAboutDataProtectionExplanation;
+  String get appAboutDeveloperOne;
+  String get appAboutDeveloperTwo;
+  String get appAboutEditor;
+  String get appAboutFeatures;
+  String get appAboutImprint;
+  String get appAboutParagraphOne;
+  String get appAboutParagraphThree;
+  String get appAboutParagraphTwo;
+  String get appAboutTitle;
+  String get appAboutVersion;
+  String get appAboutVersionError;
+  String get appTutorialQuickToolSave;
+  String get appTutorialToolEditTitle;
+  String get appTutorialToolIsland;
+  String get appTutorialToolSave;
 
   String get commonCancel;
   String get commonDelete;
@@ -44,6 +34,8 @@ abstract class AppLocalizations {
   String get homeAbout;
   String get homeFeedback;
 
+  String get imageAbout;
+  String get imageAboutExplanation;
   String get imageDoLater;
   String get imageNoCameraFound;
   String get imageNoCameraFoundHint;
@@ -58,11 +50,15 @@ abstract class AppLocalizations {
   String get imageUseAsThumbnailQuestion;
 
   String get mediaPlayer;
+  String get mediaPlayerAbout;
+  String get mediaPlayerAboutExplanation;
   String get mediaPlayerTutorialAdjust;
   String get mediaPlayerTutorialJumpTo;
   String get mediaPlayerTutorialStartStop;
 
   String get metronome;
+  String get metronomeAbout;
+  String get metronomeAboutExplanation;
   String get metronomeTutorialAddNew;
   String get metronomeTutorialAdjust;
   String get metronomeTutorialEditBeats;
@@ -70,6 +66,8 @@ abstract class AppLocalizations {
   String get metronomeTutorialStartStop;
 
   String get piano;
+  String get pianoAbout;
+  String get pianoAboutExplanation;
   String get pianoTutorialAdjust;
   String get pianoTutorialChangeKeyOrOctave;
 
@@ -83,7 +81,10 @@ abstract class AppLocalizations {
   String get projectExportSuccess;
   String get projectNew;
   String get projectNewTool;
+  String get projectTutorialEditTitle;
 
+  String get projectsAbout;
+  String get projectsAboutExplanation;
   String get projectsDeleteAll;
   String get projectsDeleteAllConfirmation;
   String get projectsDeleteConfirmation;
@@ -93,17 +94,20 @@ abstract class AppLocalizations {
   String get projectsImportSuccess;
   String get projectsNew;
   String get projectsNoProjects;
+  String get projectsTutorialAddProject;
+  String get projectsTutorialCanIncludeMultipleTools;
+  String get projectsTutorialHowToUseTio;
+  String get projectsTutorialStart;
+  String get projectsTutorialStartUsingTool;
+
+  String get textAbout;
+  String get textAboutExplanation;
 
   String get tuner;
+  String get tunerAbout;
+  String get tunerAboutExplanation;
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
-
-  String get tutorialAddProject;
-  String get tutorialEditProjectTitle;
-  String get tutorialHowToUseTio;
-  String get tutorialIncludeMultipleTools;
-  String get tutorialIsland;
-  String get tutorialQuickToolSave;
-  String get tutorialStart;
-  String get tutorialStartUsingTool;
+  String get tunerTutorialAdjust;
+  String get tunerTutorialStartStop;
 }
