@@ -127,6 +127,11 @@ class English extends AppLocalizations {
   String get tunerAbout => 'Tuner';
   String get tunerAboutExplanation =>
       'You can tune your instruments to any concert pitch, play reference tones, save your individual configuration and combine the tuner with the metronome and media player.';
+  String get tunerConcertPitch => 'Concert Pitch';
+  String get tunerConcertPitchInHz => 'Concert Pitch in Hz';
+  String get tunerFrequency => 'Frequency';
+  String get tunerPlayReference => 'Play Reference';
+  String get tunerSetConcertPitch => 'Set Concert Pitch';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner';
 }

@@ -130,6 +130,11 @@ class German extends AppLocalizations {
   String get tunerAbout => 'Stimmgerät';
   String get tunerAboutExplanation =>
       'Du kannst deine Instrumente auf jede Konzerttonart stimmen, Referenztöne abspielen, deine individuelle Konfiguration speichern und das Stimmgerät mit dem Metronom und dem Media Player kombinieren.';
+  String get tunerConcertPitch => 'Konzerttonhöhe';
+  String get tunerConcertPitchInHz => 'Konzerttonhöhe in Hz';
+  String get tunerFrequency => 'Frequenz';
+  String get tunerPlayReference => 'Referenzton abspielen';
+  String get tunerSetConcertPitch => 'Konzerttonhöhe einstellen';
   String get tunerTutorialAdjust => 'Tippe hier um die Konzerttonhöhe anzupassen oder einen Referenzton abzuspielen';
   String get tunerTutorialStartStop => 'Tippe hier um das Stimmgerät zu starten und zu stoppen';
 }
