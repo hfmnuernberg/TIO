@@ -118,10 +118,6 @@ class English extends AppLocalizations {
   String get projectsTutorialStart => 'Show Tutorial';
   String get projectsTutorialStartUsingTool => 'Tap here to start using a tool';
 
-  String get quickToolTutorialSave => 'Tap here to save the tool to a project';
-  String get quickToolTutorialEditTitle => 'Tap here to edit the title of your tool';
-  String get quickToolUseBookmarkToSave => 'Use bookmark to save a tool';
-
   String get textAbout => 'Text';
   String get textAboutExplanation =>
       'You can use your device to create text notes, e.g. for playing instructions, background information, song lyrics etc.';
@@ -135,6 +131,9 @@ class English extends AppLocalizations {
   String get toolSaveCopy => 'Save copy in ...';
   String get toolSaveInNewProject => 'Save in new project';
   String get toolTitleCopy => 'copy';
+  String get toolTutorialEditTitle => 'Tap here to edit the title of your tool';
+  String get toolTutorialSave => 'Tap here to save the tool to a project';
+  String get toolUseBookmarkToSave => 'Use bookmark to save a tool';
 
   String get tuner => 'Tuner';
   String get tunerAbout => 'Tuner';

@@ -100,10 +100,6 @@ abstract class AppLocalizations {
   String get projectsTutorialStart;
   String get projectsTutorialStartUsingTool;
 
-  String get quickToolTutorialSave;
-  String get quickToolTutorialEditTitle;
-  String get quickToolUseBookmarkToSave;
-
   String get textAbout;
   String get textAboutExplanation;
   String get textTitle;
@@ -116,6 +112,9 @@ abstract class AppLocalizations {
   String get toolSaveCopy;
   String get toolSaveInNewProject;
   String get toolTitleCopy;
+  String get toolTutorialEditTitle;
+  String get toolTutorialSave;
+  String get toolUseBookmarkToSave;
 
   String get tuner;
   String get tunerAbout;

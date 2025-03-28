@@ -121,10 +121,6 @@ class German extends AppLocalizations {
   String get projectsTutorialStart => 'Tutorial anzeigen';
   String get projectsTutorialStartUsingTool => 'Tippe hier um ein Tool zu verwenden';
 
-  String get quickToolTutorialSave => 'Tippe hier um das Tool in einem Projekt zu speichern';
-  String get quickToolTutorialEditTitle => 'Tippe hier um den Titel deines Tools zu bearbeiten';
-  String get quickToolUseBookmarkToSave => 'Lesezeichen verwenden um ein Tool zu speichern';
-
   String get textAbout => 'Text';
   String get textAboutExplanation =>
       'Du kannst über dein Gerät Textnotizen erstellen, z.B. für Spielanweisungen, Hintergrundinformationen, Songtexte, etc.';
@@ -138,6 +134,9 @@ class German extends AppLocalizations {
   String get toolSaveCopy => 'Kopie speichern in ...';
   String get toolSaveInNewProject => 'In neuem Projekt speichern';
   String get toolTitleCopy => 'Kopie';
+  String get toolTutorialEditTitle => 'Tippe hier um den Titel deines Tools zu bearbeiten';
+  String get toolTutorialSave => 'Tippe hier um das Tool in einem Projekt zu speichern';
+  String get toolUseBookmarkToSave => 'Lesezeichen verwenden um ein Tool zu speichern';
 
   String get tuner => 'Stimmgerät';
   String get tunerAbout => 'Stimmgerät';

@@ -124,7 +124,7 @@ class _ParentToolState extends State<ParentTool> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyBookmarkSave,
-        context.l10n.quickToolTutorialSave,
+        context.l10n.toolTutorialSave,
         alignText: ContentAlign.left,
         pointingDirection: PointingDirection.right,
       ),
@@ -155,7 +155,7 @@ class _ParentToolState extends State<ParentTool> {
       ),
       CustomTargetFocus(
         _keyChangeTitle,
-        context.l10n.quickToolTutorialEditTitle,
+        context.l10n.toolTutorialEditTitle,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,

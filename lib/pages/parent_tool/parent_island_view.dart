@@ -129,7 +129,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       padding: const EdgeInsets.only(left: TIOMusicParams.edgeInset, right: TIOMusicParams.edgeInset),
       child: Align(
         alignment: widget.toolBlock.kind == 'piano' ? Alignment.centerRight : Alignment.center,
-        child: Text(context.l10n.quickToolUseBookmarkToSave, style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 16)),
+        child: Text(context.l10n.toolUseBookmarkToSave, style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 16)),
       ),
     );
   }
