@@ -32,6 +32,7 @@ abstract class AppLocalizations {
   String get commonGotIt;
   String get commonNext;
   String get commonNo;
+  String get commonOctave;
   String get commonSubmit;
   String get commonYes;
 

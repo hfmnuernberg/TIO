@@ -48,6 +48,7 @@ class German extends AppLocalizations {
   String get commonGotIt => 'Verstanden';
   String get commonNext => 'Weiter';
   String get commonNo => 'Nein';
+  String get commonOctave => 'Oktave';
   String get commonSubmit => 'Bestätigen';
   String get commonYes => 'Ja';
 

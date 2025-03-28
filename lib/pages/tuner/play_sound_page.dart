@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
@@ -25,9 +26,9 @@ class PlaySoundPage extends StatefulWidget {
 }
 
 class _PlaySoundPageState extends State<PlaySoundPage> {
+  final TextEditingController _octaveController = TextEditingController(text: '4');
   int _octave = 4;
   double _frequency = 0;
-  late NumberInputIntWithSlider _octaveInput;
 
   final ActiveReferenceSoundButton _buttonListener = ActiveReferenceSoundButton();
   bool _running = false;
@@ -38,20 +39,10 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   void initState() {
     super.initState();
 
-    _octaveInput = NumberInputIntWithSlider(
-      max: 7,
-      min: 1,
-      defaultValue: _octave,
-      step: 1,
-      controller: TextEditingController(),
-      textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
-      label: 'Octave',
-    );
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await TunerFunctions.stop();
 
-      _octaveInput.controller.addListener(_onOctaveChanged);
+      _octaveController.addListener(_onOctaveChanged);
 
       _buttonListener.addListener(_onButtonsChanged);
     });
@@ -68,12 +59,17 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   }
 
   void _onOctaveChanged() {
+    final newOctave = int.tryParse(_octaveController.text) ?? 4;
     double newFreq = _frequency;
-    if (int.parse(_octaveInput.controller.text) > _octave) newFreq = _frequency * 2;
-    if (int.parse(_octaveInput.controller.text) < _octave) newFreq = _frequency / 2;
+
+    if (newOctave > _octave) {
+      newFreq = _frequency * 2;
+    } else if (newOctave < _octave) {
+      newFreq = _frequency / 2;
+    }
 
     setState(() {
-      _octave = int.parse(_octaveInput.controller.text);
+      _octave = newOctave;
       _frequency = newFreq;
     });
   }
@@ -119,8 +115,27 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   }
 
   @override
+  void dispose() {
+    _octaveController.dispose();
+    _buttonListener.removeListener(_onButtonsChanged);
+    audioInterruptionListener?.cancel();
+    TunerFunctions.stopGenerator();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     int offset = (_octave - 1) * 12;
+
+    final octaveInput = NumberInputIntWithSlider(
+      max: 7,
+      min: 1,
+      defaultValue: _octave,
+      step: 1,
+      controller: _octaveController,
+      textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
+      label: context.l10n.commonOctave,
+    );
     return DismissKeyboard(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -133,7 +148,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _octaveInput,
+            octaveInput,
             const SizedBox(height: 40),
 
             Text('Frequency: ${_frequency.floorToDouble()} Hz', style: const TextStyle(color: ColorTheme.primary)),
