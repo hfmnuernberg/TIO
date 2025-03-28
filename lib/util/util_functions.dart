@@ -126,55 +126,58 @@ Future<List<String>?> editTwoTitles(BuildContext context, String currentProjectT
 
   return showDialog<List<String>>(
     context: context,
-    builder:
-        (context) => SimpleDialog(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
-              child: Column(
-                children: [
-                  TextField(
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      hintText: '',
-                      border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      label: Text('Project title:', style: TextStyle(color: ColorTheme.surfaceTint)),
+    builder: (context) {
+      final l10n = context.l10n;
+
+      return SimpleDialog(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
+            child: Column(
+              children: [
+                TextField(
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: '',
+                    border: const OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                    enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                    label: Text(l10n.toolNewProjectTitle, style: const TextStyle(color: ColorTheme.surfaceTint)),
+                  ),
+                  style: const TextStyle(color: ColorTheme.primary),
+                  controller: projectController,
+                  onSubmitted: (_) => focusSecondField.requestFocus(),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  focusNode: focusSecondField,
+                  decoration: InputDecoration(
+                    hintText: '',
+                    border: const OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                    enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                    label: Text(l10n.toolNewTitle, style: const TextStyle(color: ColorTheme.surfaceTint)),
+                  ),
+                  style: const TextStyle(color: ColorTheme.primary),
+                  controller: toolController,
+                  onSubmitted: (_) => _submitTitles(context, projectController, toolController),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.commonCancel)),
+                    TIOFlatButton(
+                      onPressed: () => _submitTitles(context, projectController, toolController),
+                      text: l10n.commonSubmit,
+                      boldText: true,
                     ),
-                    style: const TextStyle(color: ColorTheme.primary),
-                    controller: projectController,
-                    onSubmitted: (_) => focusSecondField.requestFocus(),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    focusNode: focusSecondField,
-                    decoration: const InputDecoration(
-                      hintText: '',
-                      border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      label: Text('Tool title:', style: TextStyle(color: ColorTheme.surfaceTint)),
-                    ),
-                    style: const TextStyle(color: ColorTheme.primary),
-                    controller: toolController,
-                    onSubmitted: (_) => _submitTitles(context, projectController, toolController),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
-                      TIOFlatButton(
-                        onPressed: () => _submitTitles(context, projectController, toolController),
-                        text: 'Submit',
-                        boldText: true,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
+      );
+    },
   );
 }
 

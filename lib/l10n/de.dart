@@ -124,6 +124,16 @@ class German extends AppLocalizations {
   String get textAbout => 'Text';
   String get textAboutExplanation =>
       'Du kannst über dein Gerät Textnotizen erstellen, z.B. für Spielanweisungen, Hintergrundinformationen, Songtexte, etc.';
+  String get textTitle => 'Text';
+  String get textDescription => 'schreibe deine Notizen nieder';
+
+  String get toolNew => 'Neues Tool';
+  String get toolNewProjectTitle => 'Projekttitel';
+  String get toolNewTitle => 'Tool-Titel';
+  String get toolSave => 'Speichern in ...';
+  String get toolSaveCopy => 'Kopie speichern in ...';
+  String get toolSaveInNewProject => 'In neuem Projekt speichern';
+  String get toolTitleCopy => 'Kopie';
 
   String get tuner => 'Stimmgerät';
   String get tunerAbout => 'Stimmgerät';

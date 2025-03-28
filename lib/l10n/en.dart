@@ -121,6 +121,16 @@ class English extends AppLocalizations {
   String get textAbout => 'Text';
   String get textAboutExplanation =>
       'You can use your device to create text notes, e.g. for playing instructions, background information, song lyrics etc.';
+  String get textTitle => 'Text';
+  String get textDescription => 'write down your notes';
+
+  String get toolNew => 'New tool';
+  String get toolNewProjectTitle => 'Project title';
+  String get toolNewTitle => 'Tool title';
+  String get toolSave => 'Save in ...';
+  String get toolSaveCopy => 'Save copy in ...';
+  String get toolSaveInNewProject => 'Save in new project';
+  String get toolTitleCopy => 'copy';
 
   String get tuner => 'Tuner';
   String get tunerAbout => 'Tuner';
