@@ -178,7 +178,6 @@ class _ParentToolState extends State<ParentTool> {
   }
 
   void _createTutorialIsland() {
-    // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyIsland,
@@ -264,7 +263,7 @@ class _ParentToolState extends State<ParentTool> {
         onTap: () async {
           final newTitle = await showEditTextDialog(
             context: context,
-            label: 'New tool:',
+            label: context.l10n.generalToolNew,
             value: widget.toolBlock.title,
           );
           if (newTitle == null) return;
@@ -285,6 +284,7 @@ class _ParentToolState extends State<ParentTool> {
 
   void _openBottomSheetAndSaveTool() {
     var projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
+    final l10n = context.l10n;
 
     ourModalBottomSheet(
       context,
@@ -304,8 +304,8 @@ class _ParentToolState extends State<ParentTool> {
             alignment: Alignment.centerLeft,
             child:
                 widget.isQuickTool
-                    ? const Text('Save in ...', style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
-                    : const Text('Save copy in ...', style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
+                    ? Text(l10n.generalToolSave, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
+                    : Text(l10n.generalToolSaveCopy, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
           ),
         ),
         Expanded(
@@ -342,7 +342,11 @@ class _ParentToolState extends State<ParentTool> {
         TIOFlatButton(
           // creating a new project to save the tool in it
           onPressed: () async {
-            final newTitles = await editTwoTitles(context, getDateAndTimeNow(), '${widget.toolBlock.title} - copy');
+            final newTitles = await editTwoTitles(
+              context,
+              getDateAndTimeNow(),
+              '${widget.toolBlock.title} - ${context.l10n.generalToolTitleCopy}',
+            );
             if (newTitles == null || newTitles.isEmpty) {
               if (mounted) {
                 // close the bottom up sheet
@@ -357,7 +361,7 @@ class _ParentToolState extends State<ParentTool> {
               saveToolInNewProject(context, widget.toolBlock, widget.isQuickTool, newTitles[0], newTitles[1]);
             }
           },
-          text: 'Save in a new project',
+          text: l10n.generalToolSaveInNewProject,
         ),
         const SizedBox(height: 16),
       ],
@@ -367,8 +371,8 @@ class _ParentToolState extends State<ParentTool> {
   void _onSaveInProjectTap(StateSetter setTileState, int index, ProjectBlock toolBlock) async {
     final newTitle = await showEditTextDialog(
       context: context,
-      label: 'Tool title:',
-      value: '${toolBlock.title} - copy',
+      label: context.l10n.generalToolNewTitle,
+      value: '${toolBlock.title} - ${context.l10n.generalToolTitleCopy}',
       isNew: true,
     );
     if (newTitle == null) {

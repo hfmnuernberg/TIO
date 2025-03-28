@@ -39,6 +39,14 @@ class English extends AppLocalizations {
   String get feedbackQuestion => 'Do you like TIO Music? Please take part in this survey!';
   String get feedbackTitle => 'Feedback survey';
 
+  String get generalToolNew => 'New tool';
+  String get generalToolNewProjectTitle => 'Project title';
+  String get generalToolNewTitle => 'Tool title';
+  String get generalToolSave => 'Save in ...';
+  String get generalToolSaveCopy => 'Save copy in ...';
+  String get generalToolSaveInNewProject => 'Save in new project';
+  String get generalToolTitleCopy => 'copy';
+
   String get home => 'Home';
   String get homeAbout => 'About';
   String get homeFeedback => 'Feedback';
