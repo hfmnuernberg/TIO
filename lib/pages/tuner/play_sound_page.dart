@@ -151,7 +151,10 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
             octaveInput,
             const SizedBox(height: 40),
 
-            Text('${context.l10n.tunerFrequency}: ${_frequency.floorToDouble()} Hz', style: const TextStyle(color: ColorTheme.primary)),
+            Text(
+              '${context.l10n.tunerFrequency}: ${_frequency.floorToDouble()} Hz',
+              style: const TextStyle(color: ColorTheme.primary),
+            ),
             const SizedBox(height: 40),
 
             Row(
