@@ -12,8 +12,6 @@ abstract class AppLocalizations {
   String get appAboutTitle;
   String get appAboutVersion;
   String get appAboutVersionError;
-  String get appTutorialQuickToolSave;
-  String get appTutorialToolEditTitle;
   String get appTutorialToolIsland;
   String get appTutorialToolSave;
 
@@ -22,6 +20,8 @@ abstract class AppLocalizations {
   String get commonGotIt;
   String get commonNext;
   String get commonNo;
+  String get commonOctave;
+  String get commonReset;
   String get commonSubmit;
   String get commonYes;
 
@@ -34,6 +34,7 @@ abstract class AppLocalizations {
   String get homeAbout;
   String get homeFeedback;
 
+  String get image;
   String get imageAbout;
   String get imageAboutExplanation;
   String get imageDoLater;
@@ -46,6 +47,7 @@ abstract class AppLocalizations {
   String get imageSetAsThumbnailQuestion;
   String get imageShare;
   String get imageTakePhoto;
+  String get imageToolDescription;
   String get imageUploadHint;
   String get imageUseAsThumbnailQuestion;
 
@@ -112,10 +114,19 @@ abstract class AppLocalizations {
   String get toolSaveCopy;
   String get toolSaveInNewProject;
   String get toolTitleCopy;
+  String get toolTutorialEditTitle;
+  String get toolTutorialSave;
+  String get toolUseBookmarkToSave;
 
   String get tuner;
   String get tunerAbout;
   String get tunerAboutExplanation;
+  String get tunerConcertPitch;
+  String get tunerConcertPitchInHz;
+  String get tunerFrequency;
+  String get tunerPlayReference;
+  String get tunerSetConcertPitch;
+  String get tunerToolDescription;
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
 }

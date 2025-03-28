@@ -21,8 +21,6 @@ class German extends AppLocalizations {
   String get appAboutTitle => 'Über TIO Music';
   String get appAboutVersion => 'App Version';
   String get appAboutVersionError => 'Konnte die App-Version nicht laden.';
-  String get appTutorialQuickToolSave => 'Tippe hier um das Tool in einem Projekt zu speichern';
-  String get appTutorialToolEditTitle => 'Tippe hier um den Titel deines Tools zu bearbeiten';
   String get appTutorialToolIsland =>
       'Tippe hier um dein Tool mit einem Metronom, Stimmgerät oder Media Player zu kombinieren';
   String get appTutorialToolSave => 'Tippe hier um dein Tool in ein anderes Projekt zu kopieren';
@@ -32,6 +30,8 @@ class German extends AppLocalizations {
   String get commonGotIt => 'Verstanden';
   String get commonNext => 'Weiter';
   String get commonNo => 'Nein';
+  String get commonOctave => 'Oktave';
+  String get commonReset => 'Zurücksetzen';
   String get commonSubmit => 'Bestätigen';
   String get commonYes => 'Ja';
 
@@ -44,6 +44,7 @@ class German extends AppLocalizations {
   String get homeAbout => 'Über TIO Music';
   String get homeFeedback => 'Feedback';
 
+  String get image => 'Bild';
   String get imageAbout => 'Bild';
   String get imageAboutExplanation =>
       'Du kannst Bilder oder Notenblätter über die Kamera deines Geräts in die App hochladen.';
@@ -57,6 +58,7 @@ class German extends AppLocalizations {
   String get imageSetAsThumbnailQuestion => 'Möchtest du das Bild als Projektbild verwenden?';
   String get imageShare => 'Bild teilen';
   String get imageTakePhoto => 'Foto aufnehmen';
+  String get imageToolDescription => 'lade ein Bild oder nimm ein neues Bild auf';
   String get imageUploadHint => 'Wähle ein Bild von deinem Gerät aus oder mache ein Foto mit der Kamera';
   String get imageUseAsThumbnailQuestion => 'Bild als Projektbild verwenden';
 
@@ -85,7 +87,7 @@ class German extends AppLocalizations {
   String get pianoAbout => 'Klavier';
   String get pianoAboutExplanation =>
       'Du kannst das integrierte Klavier verwenden, verschiedene Klangmodi auswählen und deine individuellen Konfigurationen speichern.';
-  String get pianoTutorialAdjust => 'Tippe hier um Konzerttonhöhe, Lautstärke und Klang anzupassen';
+  String get pianoTutorialAdjust => 'Tippe hier um den Kammerton, die Lautstärke und den Klang anzupassen';
   String get pianoTutorialChangeKeyOrOctave =>
       'Tippe auf die Pfeile links oder rechts um pro Taste oder pro Oktave nach oben oder unten zu wechseln';
 
@@ -134,11 +136,20 @@ class German extends AppLocalizations {
   String get toolSaveCopy => 'Kopie speichern in ...';
   String get toolSaveInNewProject => 'In neuem Projekt speichern';
   String get toolTitleCopy => 'Kopie';
+  String get toolTutorialEditTitle => 'Tippe hier um den Titel deines Tools zu bearbeiten';
+  String get toolTutorialSave => 'Tippe hier um das Tool in einem Projekt zu speichern';
+  String get toolUseBookmarkToSave => 'Verwende das Lesezeichen um das Tool zu speichern';
 
   String get tuner => 'Stimmgerät';
   String get tunerAbout => 'Stimmgerät';
   String get tunerAboutExplanation =>
       'Du kannst deine Instrumente auf jede Konzerttonart stimmen, Referenztöne abspielen, deine individuelle Konfiguration speichern und das Stimmgerät mit dem Metronom und dem Media Player kombinieren.';
-  String get tunerTutorialAdjust => 'Tippe hier um die Konzerttonhöhe anzupassen oder einen Referenzton abzuspielen';
+  String get tunerConcertPitch => 'Kammerton';
+  String get tunerConcertPitchInHz => 'Kammerton in Hz';
+  String get tunerFrequency => 'Frequenz';
+  String get tunerPlayReference => 'Referenzton abspielen';
+  String get tunerSetConcertPitch => 'Kammerton einstellen';
+  String get tunerToolDescription => 'stimme dein Instrument';
+  String get tunerTutorialAdjust => 'Tippe hier um den Kammerton anzupassen oder einen Referenzton abzuspielen';
   String get tunerTutorialStartStop => 'Tippe hier um das Stimmgerät zu starten und zu stoppen';
 }

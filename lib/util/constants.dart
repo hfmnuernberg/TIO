@@ -364,9 +364,9 @@ final blockTypeInfos = {
 
 Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
   BlockType.tuner: BlockTypeInfo(
-    TunerParams.displayName,
+    l10n.tuner,
     TunerParams.kind,
-    TunerParams.description,
+    l10n.tunerToolDescription,
     SvgPicture.asset(
       'assets/icons/Tuner.svg',
       colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
@@ -397,9 +397,9 @@ Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
     MediaPlayerBlock.fromJson,
   ),
   BlockType.image: BlockTypeInfo(
-    ImageParams.displayName,
+    l10n.image,
     ImageParams.kind,
-    ImageParams.description,
+    l10n.imageToolDescription,
     const Icon(Icons.image_outlined, color: ColorTheme.primary),
     ImageBlock.withDefaults,
     ImageBlock.withTitle,

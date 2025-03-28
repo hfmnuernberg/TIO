@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
@@ -77,14 +78,14 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
       children: [
         if (widget.displayResetAtTop) ...[
           const SizedBox(height: 20),
-          TIOTextButton(text: 'Reset', onTap: widget.reset),
+          TIOTextButton(text: context.l10n.commonReset, onTap: widget.reset),
           const SizedBox(height: 20),
         ],
         widget.numberInput ?? const SizedBox(),
         widget.customWidget ?? const SizedBox(),
         if (!widget.displayResetAtTop) ...[
           const SizedBox(height: 20),
-          TIOTextButton(text: 'Reset', onTap: widget.reset),
+          TIOTextButton(text: context.l10n.commonReset, onTap: widget.reset),
         ],
         const SizedBox(height: 160),
       ],
@@ -111,7 +112,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
           Positioned(
             right: padding + TIOMusicParams.sizeBigButtons * 4.7,
             bottom: padding + TIOMusicParams.sizeBigButtons / 1.5,
-            child: TIOTextButton(text: 'Reset', onTap: widget.reset),
+            child: TIOTextButton(text: context.l10n.commonReset, onTap: widget.reset),
           ),
         ],
       ),

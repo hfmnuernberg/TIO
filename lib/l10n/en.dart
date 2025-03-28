@@ -21,8 +21,6 @@ class English extends AppLocalizations {
   String get appAboutTitle => 'About';
   String get appAboutVersion => 'App Version';
   String get appAboutVersionError => 'Could not load app version.';
-  String get appTutorialQuickToolSave => 'Tap here to save the tool to a project';
-  String get appTutorialToolEditTitle => 'Tap here to edit the title of your tool';
   String get appTutorialToolIsland => 'Tap here to combine your tool with a metronome, tuner or media player';
   String get appTutorialToolSave => 'Tap here to copy your tool to another project';
 
@@ -31,6 +29,8 @@ class English extends AppLocalizations {
   String get commonGotIt => 'Got it';
   String get commonNext => 'Next';
   String get commonNo => 'No';
+  String get commonOctave => 'Octave';
+  String get commonReset => 'Reset';
   String get commonSubmit => 'Submit';
   String get commonYes => 'Yes';
 
@@ -43,6 +43,7 @@ class English extends AppLocalizations {
   String get homeAbout => 'About';
   String get homeFeedback => 'Feedback';
 
+  String get image => 'Image';
   String get imageAbout => 'Image';
   String get imageAboutExplanation =>
       'You can upload pictures or note sheets to the app using the camera on your device.';
@@ -57,6 +58,7 @@ class English extends AppLocalizations {
       'Do you want to use the image of this tool as your profile picture for this project?';
   String get imageShare => 'Share image';
   String get imageTakePhoto => 'Take a photo';
+  String get imageToolDescription => 'take or load a picture';
   String get imageUploadHint => 'Pick an image from your device or take a photo using the camera';
   String get imageUseAsThumbnailQuestion => 'Use image as project thumbnail';
 
@@ -131,11 +133,20 @@ class English extends AppLocalizations {
   String get toolSaveCopy => 'Save copy in ...';
   String get toolSaveInNewProject => 'Save in new project';
   String get toolTitleCopy => 'copy';
+  String get toolTutorialEditTitle => 'Tap here to edit the title of your tool';
+  String get toolTutorialSave => 'Tap here to save the tool to a project';
+  String get toolUseBookmarkToSave => 'Use bookmark to save a tool';
 
   String get tuner => 'Tuner';
   String get tunerAbout => 'Tuner';
   String get tunerAboutExplanation =>
       'You can tune your instruments to any concert pitch, play reference tones, save your individual configuration and combine the tuner with the metronome and media player.';
+  String get tunerConcertPitch => 'Concert Pitch';
+  String get tunerConcertPitchInHz => 'Concert Pitch in Hz';
+  String get tunerFrequency => 'Frequency';
+  String get tunerPlayReference => 'Play Reference';
+  String get tunerSetConcertPitch => 'Set Concert Pitch';
+  String get tunerToolDescription => 'tune your instrument';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner';
 }
