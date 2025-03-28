@@ -369,6 +369,7 @@ class _ProjectsListState extends State<ProjectsList> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final blockTypes = getBlockTypeInfos(context.l10n);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -488,12 +489,12 @@ class _ProjectsListState extends State<ProjectsList> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _quickToolButton(
-                          getBlockTypeInfos(context.l10n)[BlockType.metronome]!.icon,
+                          blockTypes[BlockType.metronome]!.icon,
                           l10n.metronome,
                           BlockType.metronome,
                         ),
                         _quickToolButton(
-                          getBlockTypeInfos(context.l10n)[BlockType.mediaPlayer]!.icon,
+                          blockTypes[BlockType.mediaPlayer]!.icon,
                           l10n.mediaPlayer,
                           BlockType.mediaPlayer,
                         ),
@@ -503,12 +504,12 @@ class _ProjectsListState extends State<ProjectsList> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _quickToolButton(
-                          getBlockTypeInfos(context.l10n)[BlockType.tuner]!.icon,
+                          blockTypes[BlockType.tuner]!.icon,
                           l10n.tuner,
                           BlockType.tuner,
                         ),
                         _quickToolButton(
-                          getBlockTypeInfos(context.l10n)[BlockType.piano]!.icon,
+                          blockTypes[BlockType.piano]!.icon,
                           l10n.piano,
                           BlockType.piano,
                         ),
