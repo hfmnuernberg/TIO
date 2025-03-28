@@ -364,9 +364,9 @@ final blockTypeInfos = {
 
 Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
   BlockType.tuner: BlockTypeInfo(
-    TunerParams.displayName,
+    l10n.tuner,
     TunerParams.kind,
-    TunerParams.description,
+    l10n.tunerToolDescription,
     SvgPicture.asset(
       'assets/icons/Tuner.svg',
       colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),

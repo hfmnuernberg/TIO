@@ -144,6 +144,7 @@ class English extends AppLocalizations {
   String get tunerFrequency => 'Frequency';
   String get tunerPlayReference => 'Play Reference';
   String get tunerSetConcertPitch => 'Set Concert Pitch';
+  String get tunerToolDescription => 'tune your instrument';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner';
 }
