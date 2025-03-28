@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
@@ -130,11 +131,10 @@ class _PianoState extends State<Piano> {
   }
 
   void _createTutorial() {
-    // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyOctaveSwitch,
-        'Tap the left or right arrows to move up or down per key or per octave',
+        context.l10n.pianoTutorialChangeKeyOrOctave,
         alignText: ContentAlign.right,
         pointingDirection: PointingDirection.left,
         shape: ShapeLightFocus.RRect,
@@ -143,7 +143,7 @@ class _PianoState extends State<Piano> {
       ),
       CustomTargetFocus(
         _keySettings,
-        'Tap here to adjust sound and volume',
+        context.l10n.pianoTutorialAdjust,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         shape: ShapeLightFocus.RRect,

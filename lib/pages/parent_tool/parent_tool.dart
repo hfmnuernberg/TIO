@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
@@ -123,7 +124,7 @@ class _ParentToolState extends State<ParentTool> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyBookmarkSave,
-        'Tap here to save the tool to a project',
+        context.l10n.appTutorialQuickToolSave,
         alignText: ContentAlign.left,
         pointingDirection: PointingDirection.right,
       ),
@@ -145,17 +146,16 @@ class _ParentToolState extends State<ParentTool> {
   }
 
   void _createTutorialTool() {
-    // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyBookmarkSave,
-        'Tap here to copy your tool to another project',
+        context.l10n.appTutorialToolSave,
         alignText: ContentAlign.left,
         pointingDirection: PointingDirection.right,
       ),
       CustomTargetFocus(
         _keyChangeTitle,
-        'Tap here to edit the title of your tool',
+        context.l10n.appTutorialToolEditTitle,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
@@ -182,7 +182,7 @@ class _ParentToolState extends State<ParentTool> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyIsland,
-        'Tap here to combine your tool with a metronome, tuner or media player',
+        context.l10n.appTutorialToolIsland,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,

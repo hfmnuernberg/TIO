@@ -4,6 +4,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -173,7 +174,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyToggleBeats,
-        'Tap a beat to switch between accented, unaccented and muted',
+        context.l10n.metronomeTutorialEditBeats,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
       ),

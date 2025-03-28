@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
@@ -171,16 +172,17 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   void _createTutorial() {
+    final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyStartStop,
-        'Tap here to start and stop recording or to play a sound file',
+        l10n.mediaPlayerTutorialStartStop,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
       ),
       CustomTargetFocus(
         _keySettings,
-        'Tap here to adjust your sound file',
+        l10n.mediaPlayerTutorialJumpTo,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,
@@ -192,7 +194,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       targets.add(
         CustomTargetFocus(
           _keyWaveform,
-          'Tap anywhere to jump to that part of your sound file',
+          l10n.mediaPlayerTutorialAdjust,
           alignText: ContentAlign.bottom,
           pointingDirection: PointingDirection.up,
           shape: ShapeLightFocus.RRect,
@@ -210,7 +212,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyWaveform,
-        'Tap anywhere to jump to that part of your sound file',
+        context.l10n.mediaPlayerTutorialJumpTo,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
