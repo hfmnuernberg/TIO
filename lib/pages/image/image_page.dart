@@ -71,14 +71,10 @@ class _ImageToolState extends State<ImageTool> {
 
     if (_imageBlock.relativePath.isNotEmpty && _menuItems.isEmpty) {
       setState(() {
-        _menuItems.addAll([
-          _shareMenuButton,
-          _setAsThumbnailMenuButton,
-        ]);
+        _menuItems.addAll([_shareMenuButton, _setAsThumbnailMenuButton]);
       });
     }
   }
-
 
   void _addOptionsToMenu() {
     setState(() {
