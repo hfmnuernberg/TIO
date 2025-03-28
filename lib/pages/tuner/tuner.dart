@@ -249,7 +249,7 @@ class _TunerState extends State<Tuner> {
       keySettingsList: _keySettings,
       settingTiles: [
         SettingsTile(
-          title: 'Concert Pitch',
+          title: context.l10n.tunerConcertPitch,
           subtitle: '${formatDoubleToString(_tunerBlock.chamberNoteHz)} Hz',
           leadingIcon: Icons.location_searching,
           settingPage: const SetConcertPitch(),
@@ -258,7 +258,7 @@ class _TunerState extends State<Tuner> {
           inactive: _isInStartUp,
         ),
         SettingsTile(
-          title: 'Play Reference',
+          title: context.l10n.tunerPlayReference,
           subtitle: '',
           leadingIcon: Icons.music_note,
           settingPage: const PlaySoundPage(),
