@@ -84,14 +84,16 @@ abstract class AppLocalizations {
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
 
-  String get tutorialAddProject;
-  String get tutorialEditProjectTitle;
-  String get tutorialGeneralToolEditTitle;
-  String get tutorialGeneralToolSave;
-  String get tutorialHowToUseTio;
-  String get tutorialIncludeMultipleTools;
-  String get tutorialIsland;
-  String get tutorialQuickToolSave;
-  String get tutorialStart;
-  String get tutorialStartUsingTool;
+  String get appTutorialQuickToolSave;
+  String get appTutorialToolEditTitle;
+  String get appTutorialToolIsland;
+  String get appTutorialToolSave;
+
+  String get projectsTutorialAddProject;
+  String get projectsTutorialCanIncludeMultipleTools;
+  String get projectsTutorialHowToUseTio;
+  String get projectsTutorialStart;
+  String get projectsTutorialStartUsingTool;
+
+  String get projectTutorialEditTitle;
 }

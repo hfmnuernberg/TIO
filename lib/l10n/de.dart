@@ -104,17 +104,16 @@ class German extends AppLocalizations {
   String get tunerTutorialAdjust => 'Tippe hier um die Konzerttonhöhe anzupassen oder einen Referenzton abzuspielen';
   String get tunerTutorialStartStop => 'Tippe hier um das Stimmgerät zu starten und zu stoppen';
 
-  String get tutorialAddProject => 'Tippe hier um ein neues Projekt zu erstellen';
-  String get tutorialEditProjectTitle => 'Tippe hier um den Projekttitel zu bearbeiten';
-  String get tutorialGeneralToolEditTitle => 'Tippe hier um den Titel deines Tools zu bearbeiten';
-  String get tutorialGeneralToolSave => 'Tippe hier um dein Tool in ein anderes Projekt zu kopieren';
-  String get tutorialHowToUseTio =>
-      'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
-  String get tutorialIncludeMultipleTools =>
-      'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Klaviereinstellungen, Media Player, Bild und Text),\nsogar mehrere Tools des gleichen Typs.';
-  String get tutorialIsland =>
-      'Tippe hier um dein Tool mit einem Metronom, Stimmgerät oder Media Player zu kombinieren';
-  String get tutorialQuickToolSave => 'Tippe hier um das Tool in einem Projekt zu speichern';
-  String get tutorialStart => 'Tutorial anzeigen';
-  String get tutorialStartUsingTool => 'Tippe hier um ein Tool zu verwenden';
+  String get appTutorialQuickToolSave => 'Tippe hier um das Tool in einem Projekt zu speichern';
+  String get appTutorialToolEditTitle => 'Tippe hier um den Titel deines Tools zu bearbeiten';
+  String get appTutorialToolIsland => 'Tippe hier um dein Tool mit einem Metronom, Stimmgerät oder Media Player zu kombinieren';
+  String get appTutorialToolSave => 'Tippe hier um dein Tool in ein anderes Projekt zu kopieren';
+
+  String get projectsTutorialAddProject => 'Tippe hier um ein neues Projekt zu erstellen';
+  String get projectsTutorialCanIncludeMultipleTools => 'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Klaviereinstellungen, Media Player, Bild und Text),\nsogar mehrere Tools des gleichen Typs.';
+  String get projectsTutorialHowToUseTio => 'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
+  String get projectsTutorialStart => 'Tutorial anzeigen';
+  String get projectsTutorialStartUsingTool => 'Tippe hier um ein Tool zu verwenden';
+
+  String get projectTutorialEditTitle => 'Tippe hier um den Projekttitel zu bearbeiten';
 }

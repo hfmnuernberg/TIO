@@ -101,16 +101,16 @@ class English extends AppLocalizations {
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner';
 
-  String get tutorialAddProject => 'Tap here to create a new project';
-  String get tutorialEditProjectTitle => 'Tap here to edit the title of your project';
-  String get tutorialGeneralToolEditTitle => 'Tap here to edit the title of your tool';
-  String get tutorialGeneralToolSave => 'Tap here to copy your tool to another project';
-  String get tutorialHowToUseTio =>
-      'Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.';
-  String get tutorialIncludeMultipleTools =>
-      'Projects can include multiple tools\n(tuner, metronome, piano setting, media player, image and text),\neven several tools of the same type.';
-  String get tutorialIsland => 'Tap here to combine your tool with a metronome, tuner or media player';
-  String get tutorialQuickToolSave => 'Tap here to save the tool to a project';
-  String get tutorialStart => 'Show Tutorial';
-  String get tutorialStartUsingTool => 'Tap here to start using a tool';
+  String get appTutorialQuickToolSave => 'Tap here to save the tool to a project';
+  String get appTutorialToolEditTitle => 'Tap here to edit the title of your tool';
+  String get appTutorialToolIsland => 'Tap here to combine your tool with a metronome, tuner or media player';
+  String get appTutorialToolSave => 'Tap here to copy your tool to another project';
+
+  String get projectsTutorialAddProject => 'Tap here to create a new project';
+  String get projectsTutorialCanIncludeMultipleTools => 'Projects can include multiple tools\n(tuner, metronome, piano setting, media player, image and text),\neven several tools of the same type.';
+  String get projectsTutorialHowToUseTio => 'Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.';
+  String get projectsTutorialStart => 'Show Tutorial';
+  String get projectsTutorialStartUsingTool => 'Tap here to start using a tool';
+
+  String get projectTutorialEditTitle => 'Tap here to edit the title of your project';
 }
