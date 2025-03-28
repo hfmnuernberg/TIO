@@ -85,7 +85,7 @@ class German extends AppLocalizations {
   String get pianoAbout => 'Klavier';
   String get pianoAboutExplanation =>
       'Du kannst das integrierte Klavier verwenden, verschiedene Klangmodi auswählen und deine individuellen Konfigurationen speichern.';
-  String get pianoTutorialAdjust => 'Tippe hier um Konzerttonhöhe, Lautstärke und Klang anzupassen';
+  String get pianoTutorialAdjust => 'Tippe hier um den Kammerton, die Lautstärke und den Klang anzupassen';
   String get pianoTutorialChangeKeyOrOctave =>
       'Tippe auf die Pfeile links oder rechts um pro Taste oder pro Oktave nach oben oder unten zu wechseln';
 
@@ -136,17 +136,17 @@ class German extends AppLocalizations {
   String get toolTitleCopy => 'Kopie';
   String get toolTutorialEditTitle => 'Tippe hier um den Titel deines Tools zu bearbeiten';
   String get toolTutorialSave => 'Tippe hier um das Tool in einem Projekt zu speichern';
-  String get toolUseBookmarkToSave => 'Lesezeichen verwenden um ein Tool zu speichern';
+  String get toolUseBookmarkToSave => 'Verwende das Lesezeichen um das Tool zu speichern';
 
   String get tuner => 'Stimmgerät';
   String get tunerAbout => 'Stimmgerät';
   String get tunerAboutExplanation =>
       'Du kannst deine Instrumente auf jede Konzerttonart stimmen, Referenztöne abspielen, deine individuelle Konfiguration speichern und das Stimmgerät mit dem Metronom und dem Media Player kombinieren.';
-  String get tunerConcertPitch => 'Konzerttonhöhe';
-  String get tunerConcertPitchInHz => 'Konzerttonhöhe in Hz';
+  String get tunerConcertPitch => 'Kammerton';
+  String get tunerConcertPitchInHz => 'Kammerton in Hz';
   String get tunerFrequency => 'Frequenz';
   String get tunerPlayReference => 'Referenzton abspielen';
-  String get tunerSetConcertPitch => 'Konzerttonhöhe einstellen';
-  String get tunerTutorialAdjust => 'Tippe hier um die Konzerttonhöhe anzupassen oder einen Referenzton abzuspielen';
+  String get tunerSetConcertPitch => 'Kammerton einstellen';
+  String get tunerTutorialAdjust => 'Tippe hier um den Kammerton anzupassen oder einen Referenzton abzuspielen';
   String get tunerTutorialStartStop => 'Tippe hier um das Stimmgerät zu starten und zu stoppen';
 }
