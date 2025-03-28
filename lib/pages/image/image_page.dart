@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
@@ -39,31 +40,39 @@ class _ImageToolState extends State<ImageTool> {
   void initState() {
     super.initState();
 
-    _shareMenuButton = MenuItemButton(
-      onPressed: _shareFilePressed,
-      child: const Text('Share image', style: TextStyle(color: ColorTheme.primary)),
-    );
-
-    _setAsThumbnailMenuButton = MenuItemButton(
-      onPressed: _setAsThumbnail,
-      child: const Text('Set as thumbnail', style: TextStyle(color: ColorTheme.primary)),
-    );
-
     _imageBlock = Provider.of<ProjectBlock>(context, listen: false) as ImageBlock;
     _imageBlock.timeLastModified = getCurrentDateTime();
     _imageBlock.setImage(_imageBlock.relativePath);
 
     _project = Provider.of<Project>(context, listen: false);
 
-    // only allow portrait mode for this tool
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     if (_imageBlock.relativePath.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _addImageDialog(context);
       });
-    } else {
-      _addOptionsToMenu();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _shareMenuButton = MenuItemButton(
+      onPressed: _shareFilePressed,
+      child: Text(context.l10n.imageShare, style: const TextStyle(color: ColorTheme.primary)),
+    );
+
+    _setAsThumbnailMenuButton = MenuItemButton(
+      onPressed: _setAsThumbnail,
+      child: Text(context.l10n.imageSetAsThumbnail, style: const TextStyle(color: ColorTheme.primary)),
+    );
+
+    if (_imageBlock.relativePath.isNotEmpty && _menuItems.isEmpty) {
+      setState(() {
+        _menuItems.addAll([_shareMenuButton, _setAsThumbnailMenuButton]);
+      });
     }
   }
 
@@ -97,29 +106,28 @@ class _ImageToolState extends State<ImageTool> {
 
   Future<bool?> _useAsProjectPicture() => showDialog<bool>(
     context: context,
-    builder:
-        (context) => AlertDialog(
-          title: const Text('Set Project Thumbnail', style: TextStyle(color: ColorTheme.primary)),
-          content: const Text(
-            'Do you want to use the image of this tool as your profile picture for this project?',
-            style: TextStyle(color: ColorTheme.primary),
+    builder: (context) {
+      final l10n = context.l10n;
+      return AlertDialog(
+        title: Text(l10n.imageSetAsProjectThumbnail, style: TextStyle(color: ColorTheme.primary)),
+        content: Text(l10n.imageSetAsThumbnailQuestion, style: TextStyle(color: ColorTheme.primary)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Text(l10n.commonNo),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: const Text('No'),
-            ),
-            TIOFlatButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              text: 'Yes',
-              boldText: true,
-            ),
-          ],
-        ),
+          TIOFlatButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            text: l10n.commonYes,
+            boldText: true,
+          ),
+        ],
+      );
+    },
   );
 
   Future _addImageDialog(BuildContext context) => showDialog(
@@ -215,7 +223,7 @@ class _ImageToolState extends State<ImageTool> {
               if (imageBlock.image != null) {
                 return Image(image: imageBlock.image!);
               } else {
-                return const Text('No image in this tool.', style: TextStyle(color: ColorTheme.primary));
+                return Text(context.l10n.imageNoImage, style: TextStyle(color: ColorTheme.primary));
               }
             },
           ),

@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 // A screen that allows users to take a picture using a given camera.
@@ -36,7 +37,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Take a photo'),
+        title: Text(context.l10n.imageTakePhoto),
         backgroundColor: ColorTheme.surfaceBright,
         foregroundColor: ColorTheme.surfaceTint,
       ),

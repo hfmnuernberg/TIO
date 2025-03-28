@@ -29,6 +29,7 @@ class German extends AppLocalizations {
 
   String get commonCancel => 'Abbrechen';
   String get commonDelete => 'Löschen?';
+  String get commonGotIt => 'Verstanden';
   String get commonNext => 'Weiter';
   String get commonNo => 'Nein';
   String get commonSubmit => 'Bestätigen';
@@ -46,6 +47,18 @@ class German extends AppLocalizations {
   String get imageAbout => 'Bild';
   String get imageAboutExplanation =>
       'Du kannst Bilder oder Notenblätter über die Kamera deines Geräts in die App hochladen.';
+  String get imageDoLater => 'Später machen';
+  String get imageNoCameraFound => 'Keine Kamera gefunden';
+  String get imageNoCameraFoundHint => 'Es ist keine Kamera auf diesem Gerät verfügbar.';
+  String get imageNoImage => 'Kein Bild in diesem Tool.';
+  String get imagePickImage => 'Bild auswählen';
+  String get imageSetAsProjectThumbnail => 'Projektbild festlegen';
+  String get imageSetAsThumbnail => 'Als Vorschaubild festlegen';
+  String get imageSetAsThumbnailQuestion => 'Möchtest du das Bild als Projektbild verwenden?';
+  String get imageShare => 'Bild teilen';
+  String get imageTakePhoto => 'Foto aufnehmen';
+  String get imageUploadHint => 'Wähle ein Bild von deinem Gerät aus oder mache ein Foto mit der Kamera';
+  String get imageUseAsThumbnailQuestion => 'Bild als Projektbild verwenden';
 
   String get mediaPlayer => 'Media Player';
   String get mediaPlayerAbout => 'Media Player';
