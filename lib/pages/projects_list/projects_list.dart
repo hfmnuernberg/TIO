@@ -488,12 +488,12 @@ class _ProjectsListState extends State<ProjectsList> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _quickToolButton(
-                          blockTypeInfos[BlockType.metronome]!.icon,
+                          getBlockTypeInfos(context.l10n)[BlockType.metronome]!.icon,
                           l10n.metronome,
                           BlockType.metronome,
                         ),
                         _quickToolButton(
-                          blockTypeInfos[BlockType.mediaPlayer]!.icon,
+                          getBlockTypeInfos(context.l10n)[BlockType.mediaPlayer]!.icon,
                           l10n.mediaPlayer,
                           BlockType.mediaPlayer,
                         ),
@@ -502,8 +502,16 @@ class _ProjectsListState extends State<ProjectsList> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _quickToolButton(blockTypeInfos[BlockType.tuner]!.icon, l10n.tuner, BlockType.tuner),
-                        _quickToolButton(blockTypeInfos[BlockType.piano]!.icon, l10n.piano, BlockType.piano),
+                        _quickToolButton(
+                          getBlockTypeInfos(context.l10n)[BlockType.tuner]!.icon,
+                          l10n.tuner,
+                          BlockType.tuner,
+                        ),
+                        _quickToolButton(
+                          getBlockTypeInfos(context.l10n)[BlockType.piano]!.icon,
+                          l10n.piano,
+                          BlockType.piano,
+                        ),
                       ],
                     ),
                   ],
