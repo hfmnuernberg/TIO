@@ -140,7 +140,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('Play Reference'),
+          title: Text(context.l10n.tunerPlayReference),
           backgroundColor: ColorTheme.surfaceBright,
           foregroundColor: ColorTheme.primary,
         ),
@@ -151,7 +151,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
             octaveInput,
             const SizedBox(height: 40),
 
-            Text('Frequency: ${_frequency.floorToDouble()} Hz', style: const TextStyle(color: ColorTheme.primary)),
+            Text('${context.l10n.tunerFrequency}: ${_frequency.floorToDouble()} Hz', style: const TextStyle(color: ColorTheme.primary)),
             const SizedBox(height: 40),
 
             Row(
