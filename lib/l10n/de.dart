@@ -117,8 +117,10 @@ class German extends AppLocalizations {
 
   String get tuner => 'Stimmgerät';
   String get tunerConcertPitch => 'Konzerttonhöhe';
+  String get tunerConcertPitchInHz => 'Konzerttonhöhe in Hz';
   String get tunerFrequency => 'Frequenz';
   String get tunerPlayReference => 'Referenzton abspielen';
+  String get tunerSetConcertPitch => 'Konzerttonhöhe einstellen';
   String get tunerTutorialAdjust => 'Tippe hier um die Konzerttonhöhe anzupassen oder einen Referenzton abzuspielen';
   String get tunerTutorialStartStop => 'Tippe hier um das Stimmgerät zu starten und zu stoppen';
 

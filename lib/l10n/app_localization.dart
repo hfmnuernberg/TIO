@@ -97,8 +97,10 @@ abstract class AppLocalizations {
 
   String get tuner;
   String get tunerConcertPitch;
+  String get tunerConcertPitchInHz;
   String get tunerFrequency;
   String get tunerPlayReference;
+  String get tunerSetConcertPitch;
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
 
