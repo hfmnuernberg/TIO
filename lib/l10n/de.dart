@@ -44,6 +44,7 @@ class German extends AppLocalizations {
   String get homeAbout => 'Über TIO Music';
   String get homeFeedback => 'Feedback';
 
+  String get image => 'Bild';
   String get imageAbout => 'Bild';
   String get imageAboutExplanation =>
       'Du kannst Bilder oder Notenblätter über die Kamera deines Geräts in die App hochladen.';
@@ -57,6 +58,7 @@ class German extends AppLocalizations {
   String get imageSetAsThumbnailQuestion => 'Möchtest du das Bild als Projektbild verwenden?';
   String get imageShare => 'Bild teilen';
   String get imageTakePhoto => 'Foto aufnehmen';
+  String get imageToolDescription => 'lade ein Bild oder nimm ein neues Bild auf';
   String get imageUploadHint => 'Wähle ein Bild von deinem Gerät aus oder mache ein Foto mit der Kamera';
   String get imageUseAsThumbnailQuestion => 'Bild als Projektbild verwenden';
 

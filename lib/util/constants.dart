@@ -397,9 +397,9 @@ Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
     MediaPlayerBlock.fromJson,
   ),
   BlockType.image: BlockTypeInfo(
-    ImageParams.displayName,
+    l10n.image,
     ImageParams.kind,
-    ImageParams.description,
+    l10n.imageToolDescription,
     const Icon(Icons.image_outlined, color: ColorTheme.primary),
     ImageBlock.withDefaults,
     ImageBlock.withTitle,

@@ -34,6 +34,7 @@ abstract class AppLocalizations {
   String get homeAbout;
   String get homeFeedback;
 
+  String get image;
   String get imageAbout;
   String get imageAboutExplanation;
   String get imageDoLater;
@@ -46,6 +47,7 @@ abstract class AppLocalizations {
   String get imageSetAsThumbnailQuestion;
   String get imageShare;
   String get imageTakePhoto;
+  String get imageToolDescription;
   String get imageUploadHint;
   String get imageUseAsThumbnailQuestion;
 

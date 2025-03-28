@@ -43,6 +43,7 @@ class English extends AppLocalizations {
   String get homeAbout => 'About';
   String get homeFeedback => 'Feedback';
 
+  String get image => 'Image';
   String get imageAbout => 'Image';
   String get imageAboutExplanation =>
       'You can upload pictures or note sheets to the app using the camera on your device.';
@@ -57,6 +58,7 @@ class English extends AppLocalizations {
       'Do you want to use the image of this tool as your profile picture for this project?';
   String get imageShare => 'Share image';
   String get imageTakePhoto => 'Take a photo';
+  String get imageToolDescription => 'take or load a picture';
   String get imageUploadHint => 'Pick an image from your device or take a photo using the camera';
   String get imageUseAsThumbnailQuestion => 'Use image as project thumbnail';
 
