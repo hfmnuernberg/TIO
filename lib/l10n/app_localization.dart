@@ -110,6 +110,8 @@ abstract class AppLocalizations {
 
   String get textAbout;
   String get textAboutExplanation;
+  String get textTitle;
+  String get textDescription;
 
   String get tuner;
   String get tunerAbout;

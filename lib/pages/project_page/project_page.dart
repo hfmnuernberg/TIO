@@ -342,7 +342,7 @@ class _ProjectPageState extends State<ProjectPage> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: BlockType.values.length,
               itemBuilder: (context, index) {
-                var info = blockTypeInfos[BlockType.values[index]]!;
+                var info = getBlockTypeInfos(context.l10n)[BlockType.values[index]]!;
                 return CardListTile(
                   title: info.name,
                   subtitle: info.description,

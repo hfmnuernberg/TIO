@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
@@ -297,6 +298,7 @@ class BlockTypeInfo {
   ProjectBlock Function(Map<String, dynamic>) createFromJson;
 }
 
+@Deprecated('Use getBlockTypeInfos instead')
 final blockTypeInfos = {
   BlockType.tuner: BlockTypeInfo(
     TunerParams.displayName,
@@ -353,6 +355,69 @@ final blockTypeInfos = {
     TextParams.displayName,
     TextParams.kind,
     TextParams.description,
+    const Icon(Icons.notes_rounded, color: ColorTheme.primary),
+    TextBlock.withDefaults,
+    TextBlock.withTitle,
+    TextBlock.fromJson,
+  ),
+};
+
+Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
+  BlockType.tuner: BlockTypeInfo(
+    TunerParams.displayName,
+    TunerParams.kind,
+    TunerParams.description,
+    SvgPicture.asset(
+      'assets/icons/Tuner.svg',
+      colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
+    ),
+    TunerBlock.withDefaults,
+    TunerBlock.withTitle,
+    TunerBlock.fromJson,
+  ),
+  BlockType.metronome: BlockTypeInfo(
+    MetronomeParams.displayName,
+    MetronomeParams.kind,
+    MetronomeParams.description,
+    SvgPicture.asset(
+      'assets/icons/Metronome.svg',
+      colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
+    ),
+    MetronomeBlock.withDefaults,
+    MetronomeBlock.withTitle,
+    MetronomeBlock.fromJson,
+  ),
+  BlockType.mediaPlayer: BlockTypeInfo(
+    MediaPlayerParams.displayName,
+    MediaPlayerParams.kind,
+    MediaPlayerParams.description,
+    const Icon(Icons.play_arrow, color: ColorTheme.primary),
+    MediaPlayerBlock.withDefaults,
+    MediaPlayerBlock.withTitle,
+    MediaPlayerBlock.fromJson,
+  ),
+  BlockType.image: BlockTypeInfo(
+    ImageParams.displayName,
+    ImageParams.kind,
+    ImageParams.description,
+    const Icon(Icons.image_outlined, color: ColorTheme.primary),
+    ImageBlock.withDefaults,
+    ImageBlock.withTitle,
+    ImageBlock.fromJson,
+  ),
+  BlockType.piano: BlockTypeInfo(
+    PianoParams.displayName,
+    PianoParams.kind,
+    PianoParams.description,
+    const Icon(Icons.piano, color: ColorTheme.primary),
+    PianoBlock.withDefaults,
+    PianoBlock.withTitle,
+    PianoBlock.fromJson,
+  ),
+  BlockType.text: BlockTypeInfo(
+    l10n.textTitle,
+    TextParams.kind,
+    l10n.textDescription,
     const Icon(Icons.notes_rounded, color: ColorTheme.primary),
     TextBlock.withDefaults,
     TextBlock.withTitle,
