@@ -146,17 +146,16 @@ class _ParentToolState extends State<ParentTool> {
   }
 
   void _createTutorialTool() {
-    // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyBookmarkSave,
-        'Tap here to copy your tool to another project',
+        context.l10n.tutorialGeneralToolSave,
         alignText: ContentAlign.left,
         pointingDirection: PointingDirection.right,
       ),
       CustomTargetFocus(
         _keyChangeTitle,
-        'Tap here to edit the title of your tool',
+        context.l10n.tutorialGeneralToolEditTitle,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,

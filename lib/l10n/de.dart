@@ -106,6 +106,8 @@ class German extends AppLocalizations {
 
   String get tutorialAddProject => 'Tippe hier um ein neues Projekt zu erstellen';
   String get tutorialEditProjectTitle => 'Tippe hier um den Projekttitel zu bearbeiten';
+  String get tutorialGeneralToolEditTitle => 'Tippe hier um den Titel deines Tools zu bearbeiten';
+  String get tutorialGeneralToolSave => 'Tippe hier um dein Tool in ein anderes Projekt zu kopieren';
   String get tutorialHowToUseTio =>
       'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
   String get tutorialIncludeMultipleTools =>
