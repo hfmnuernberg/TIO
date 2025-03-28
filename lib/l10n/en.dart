@@ -44,17 +44,18 @@ class English extends AppLocalizations {
   String get homeFeedback => 'Feedback';
 
   String get imageAbout => 'Image';
-  String get imageAboutExplanation => 'You can upload pictures or note sheets to the app using the camera on your device.';
+  String get imageAboutExplanation =>
+      'You can upload pictures or note sheets to the app using the camera on your device.';
   String get imageDoLater => 'Do it later';
   String get imageNoCameraFound => 'No camera found';
   String get imageNoCameraFoundHint => 'There is no camera available on this device.';
   String get imageNoImage => 'No image in this tool.';
   String get imagePickImage => 'Pick an image';
-  String get imageShare => 'Share image';
   String get imageSetAsProjectThumbnail => 'Set Project Thumbnail';
   String get imageSetAsThumbnail => 'Set as thumbnail';
   String get imageSetAsThumbnailQuestion =>
       'Do you want to use the image of this tool as your profile picture for this project?';
+  String get imageShare => 'Share image';
   String get imageTakePhoto => 'Take a photo';
   String get imageUploadHint => 'Pick an image from your device or take a photo using the camera';
   String get imageUseAsThumbnailQuestion => 'Use image as project thumbnail';
@@ -113,10 +114,6 @@ class English extends AppLocalizations {
   String get projectsTutorialCanIncludeMultipleTools =>
       'Projects can include multiple tools\n(tuner, metronome, piano setting, media player, image and text),\neven several tools of the same type.';
   String get projectsTutorialHowToUseTio =>
-
-  String get tutorialAddProject => 'Tap here to create a new project';
-  String get tutorialEditProjectTitle => 'Tap here to edit the title of your project';
-  String get tutorialHowToUseTio =>
       'Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.';
   String get projectsTutorialStart => 'Show Tutorial';
   String get projectsTutorialStartUsingTool => 'Tap here to start using a tool';

@@ -45,16 +45,17 @@ class German extends AppLocalizations {
   String get homeFeedback => 'Feedback';
 
   String get imageAbout => 'Bild';
-  String get imageAboutExplanation => 'Du kannst Bilder oder Notenblätter über die Kamera deines Geräts in die App hochladen.';
+  String get imageAboutExplanation =>
+      'Du kannst Bilder oder Notenblätter über die Kamera deines Geräts in die App hochladen.';
   String get imageDoLater => 'Später machen';
   String get imageNoCameraFound => 'Keine Kamera gefunden';
   String get imageNoCameraFoundHint => 'Es ist keine Kamera auf diesem Gerät verfügbar.';
   String get imageNoImage => 'Kein Bild in diesem Tool.';
   String get imagePickImage => 'Bild auswählen';
-  String get imageShare => 'Bild teilen';
   String get imageSetAsProjectThumbnail => 'Projektbild festlegen';
   String get imageSetAsThumbnail => 'Als Vorschaubild festlegen';
   String get imageSetAsThumbnailQuestion => 'Möchtest du das Bild als Projektbild verwenden?';
+  String get imageShare => 'Bild teilen';
   String get imageTakePhoto => 'Foto aufnehmen';
   String get imageUploadHint => 'Wähle ein Bild von deinem Gerät aus oder mache ein Foto mit der Kamera';
   String get imageUseAsThumbnailQuestion => 'Bild als Projektbild verwenden';
@@ -116,14 +117,6 @@ class German extends AppLocalizations {
   String get projectsTutorialCanIncludeMultipleTools =>
       'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Klaviereinstellungen, Media Player, Bild und Text),\nsogar mehrere Tools des gleichen Typs.';
   String get projectsTutorialHowToUseTio =>
-
-  String get tuner => 'Stimmgerät';
-  String get tunerTutorialAdjust => 'Tippe hier um die Konzerttonhöhe anzupassen oder einen Referenzton abzuspielen';
-  String get tunerTutorialStartStop => 'Tippe hier um das Stimmgerät zu starten und zu stoppen';
-
-  String get tutorialAddProject => 'Tippe hier um ein neues Projekt zu erstellen';
-  String get tutorialEditProjectTitle => 'Tippe hier um den Projekttitel zu bearbeiten';
-  String get tutorialHowToUseTio =>
       'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
   String get projectsTutorialStart => 'Tutorial anzeigen';
   String get projectsTutorialStartUsingTool => 'Tippe hier um ein Tool zu verwenden';
