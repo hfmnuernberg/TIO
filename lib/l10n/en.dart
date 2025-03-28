@@ -32,6 +32,7 @@ class English extends AppLocalizations {
   String get commonNext => 'Next';
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
+  String get commonReset => 'Reset';
   String get commonSubmit => 'Submit';
   String get commonYes => 'Yes';
 
