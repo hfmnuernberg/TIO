@@ -12,8 +12,6 @@ abstract class AppLocalizations {
   String get appAboutTitle;
   String get appAboutVersion;
   String get appAboutVersionError;
-  String get appTutorialQuickToolSave;
-  String get appTutorialToolEditTitle;
   String get appTutorialToolIsland;
   String get appTutorialToolSave;
 
@@ -101,6 +99,10 @@ abstract class AppLocalizations {
   String get projectsTutorialHowToUseTio;
   String get projectsTutorialStart;
   String get projectsTutorialStartUsingTool;
+
+  String get quickToolTutorialSave;
+  String get quickToolTutorialEditTitle;
+  String get quickToolUseBookmarkToSave;
 
   String get textAbout;
   String get textAboutExplanation;

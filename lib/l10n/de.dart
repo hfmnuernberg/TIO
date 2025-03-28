@@ -21,8 +21,6 @@ class German extends AppLocalizations {
   String get appAboutTitle => 'Über TIO Music';
   String get appAboutVersion => 'App Version';
   String get appAboutVersionError => 'Konnte die App-Version nicht laden.';
-  String get appTutorialQuickToolSave => 'Tippe hier um das Tool in einem Projekt zu speichern';
-  String get appTutorialToolEditTitle => 'Tippe hier um den Titel deines Tools zu bearbeiten';
   String get appTutorialToolIsland =>
       'Tippe hier um dein Tool mit einem Metronom, Stimmgerät oder Media Player zu kombinieren';
   String get appTutorialToolSave => 'Tippe hier um dein Tool in ein anderes Projekt zu kopieren';
@@ -122,6 +120,10 @@ class German extends AppLocalizations {
       'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
   String get projectsTutorialStart => 'Tutorial anzeigen';
   String get projectsTutorialStartUsingTool => 'Tippe hier um ein Tool zu verwenden';
+
+  String get quickToolTutorialSave => 'Tippe hier um das Tool in einem Projekt zu speichern';
+  String get quickToolTutorialEditTitle => 'Tippe hier um den Titel deines Tools zu bearbeiten';
+  String get quickToolUseBookmarkToSave => 'Lesezeichen verwenden um ein Tool zu speichern';
 
   String get textAbout => 'Text';
   String get textAboutExplanation =>

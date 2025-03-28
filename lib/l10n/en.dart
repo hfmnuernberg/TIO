@@ -21,8 +21,6 @@ class English extends AppLocalizations {
   String get appAboutTitle => 'About';
   String get appAboutVersion => 'App Version';
   String get appAboutVersionError => 'Could not load app version.';
-  String get appTutorialQuickToolSave => 'Tap here to save the tool to a project';
-  String get appTutorialToolEditTitle => 'Tap here to edit the title of your tool';
   String get appTutorialToolIsland => 'Tap here to combine your tool with a metronome, tuner or media player';
   String get appTutorialToolSave => 'Tap here to copy your tool to another project';
 
@@ -119,6 +117,10 @@ class English extends AppLocalizations {
       'Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.';
   String get projectsTutorialStart => 'Show Tutorial';
   String get projectsTutorialStartUsingTool => 'Tap here to start using a tool';
+
+  String get quickToolTutorialSave => 'Tap here to save the tool to a project';
+  String get quickToolTutorialEditTitle => 'Tap here to edit the title of your tool';
+  String get quickToolUseBookmarkToSave => 'Use bookmark to save a tool';
 
   String get textAbout => 'Text';
   String get textAboutExplanation =>

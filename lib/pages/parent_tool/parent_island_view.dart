@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/empty_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
@@ -128,7 +129,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       padding: const EdgeInsets.only(left: 8, right: 8),
       child: Align(
         alignment: widget.toolBlock.kind == 'piano' ? Alignment.centerRight : Alignment.center,
-        child: const Text('Use bookmark to save a tool', style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 16)),
+        child: Text(context.l10n.quickToolUseBookmarkToSave, style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 16)),
       ),
     );
   }
