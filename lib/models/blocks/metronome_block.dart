@@ -8,6 +8,7 @@ import 'package:tiomusic/util/util_functions.dart';
 part 'metronome_block.g.dart';
 
 // ignore_for_file: must_be_immutable // FIXME: fix these block issues
+// ignore_for_file: deprecated_member_use_from_same_package // FIXME: fix these block issues
 
 @JsonSerializable()
 class MetronomeBlock extends ProjectBlock {
