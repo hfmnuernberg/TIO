@@ -39,14 +39,6 @@ class English extends AppLocalizations {
   String get feedbackQuestion => 'Do you like TIO Music? Please take part in this survey!';
   String get feedbackTitle => 'Feedback survey';
 
-  String get generalToolNew => 'New tool';
-  String get generalToolNewProjectTitle => 'Project title';
-  String get generalToolNewTitle => 'Tool title';
-  String get generalToolSave => 'Save in ...';
-  String get generalToolSaveCopy => 'Save copy in ...';
-  String get generalToolSaveInNewProject => 'Save in new project';
-  String get generalToolTitleCopy => 'copy';
-
   String get home => 'Home';
   String get homeAbout => 'About';
   String get homeFeedback => 'Feedback';
@@ -131,6 +123,14 @@ class English extends AppLocalizations {
       'You can use your device to create text notes, e.g. for playing instructions, background information, song lyrics etc.';
   String get textTitle => 'Text';
   String get textDescription => 'write down your notes';
+
+  String get toolNew => 'New tool';
+  String get toolNewProjectTitle => 'Project title';
+  String get toolNewTitle => 'Tool title';
+  String get toolSave => 'Save in ...';
+  String get toolSaveCopy => 'Save copy in ...';
+  String get toolSaveInNewProject => 'Save in new project';
+  String get toolTitleCopy => 'copy';
 
   String get tuner => 'Tuner';
   String get tunerAbout => 'Tuner';

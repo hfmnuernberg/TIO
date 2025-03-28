@@ -40,14 +40,6 @@ class German extends AppLocalizations {
   String get feedbackQuestion => 'Gefällt dir TIO Music? Bitte nimm an dieser Umfrage teil!';
   String get feedbackTitle => 'Feedback-Umfrage';
 
-  String get generalToolNew => 'Neues Tool';
-  String get generalToolNewProjectTitle => 'Projekttitel';
-  String get generalToolNewTitle => 'Tool-Titel';
-  String get generalToolSave => 'Speichern in ...';
-  String get generalToolSaveCopy => 'Kopie speichern in ...';
-  String get generalToolSaveInNewProject => 'In neuem Projekt speichern';
-  String get generalToolTitleCopy => 'Kopie';
-
   String get home => 'Startseite';
   String get homeAbout => 'Über TIO Music';
   String get homeFeedback => 'Feedback';
@@ -134,6 +126,14 @@ class German extends AppLocalizations {
       'Du kannst über dein Gerät Textnotizen erstellen, z.B. für Spielanweisungen, Hintergrundinformationen, Songtexte, etc.';
   String get textTitle => 'Text';
   String get textDescription => 'schreibe deine Notizen nieder';
+
+  String get toolNew => 'Neues Tool';
+  String get toolNewProjectTitle => 'Projekttitel';
+  String get toolNewTitle => 'Tool-Titel';
+  String get toolSave => 'Speichern in ...';
+  String get toolSaveCopy => 'Kopie speichern in ...';
+  String get toolSaveInNewProject => 'In neuem Projekt speichern';
+  String get toolTitleCopy => 'Kopie';
 
   String get tuner => 'Stimmgerät';
   String get tunerAbout => 'Stimmgerät';

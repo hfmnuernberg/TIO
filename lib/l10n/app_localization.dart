@@ -30,14 +30,6 @@ abstract class AppLocalizations {
   String get feedbackQuestion;
   String get feedbackTitle;
 
-  String get generalToolNew;
-  String get generalToolNewProjectTitle;
-  String get generalToolNewTitle;
-  String get generalToolSave;
-  String get generalToolSaveCopy;
-  String get generalToolSaveInNewProject;
-  String get generalToolTitleCopy;
-
   String get home;
   String get homeAbout;
   String get homeFeedback;
@@ -112,6 +104,14 @@ abstract class AppLocalizations {
   String get textAboutExplanation;
   String get textTitle;
   String get textDescription;
+
+  String get toolNew;
+  String get toolNewProjectTitle;
+  String get toolNewTitle;
+  String get toolSave;
+  String get toolSaveCopy;
+  String get toolSaveInNewProject;
+  String get toolTitleCopy;
 
   String get tuner;
   String get tunerAbout;
