@@ -106,6 +106,16 @@ abstract class AppLocalizations {
 
   String get textAbout;
   String get textAboutExplanation;
+  String get textTitle;
+  String get textDescription;
+
+  String get toolNew;
+  String get toolNewProjectTitle;
+  String get toolNewTitle;
+  String get toolSave;
+  String get toolSaveCopy;
+  String get toolSaveInNewProject;
+  String get toolTitleCopy;
 
   String get tuner;
   String get tunerAbout;
