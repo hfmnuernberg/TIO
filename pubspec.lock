@@ -1313,10 +1313,10 @@ packages:
     dependency: "direct main"
     description:
       name: volume_controller
-      sha256: "4c2a873c242da6ce69ae1d17c256c5626e0c481be1824d6c5fc95e68c31f3b36"
+      sha256: e82fd689bb8e1fe8e64be3fa5946ff8699058f8cf9f4c1679acdba20cda7f5bd
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.2"
+    version: "3.3.3"
   wakelock_plus:
     dependency: "direct main"
     description:
