@@ -10,7 +10,7 @@ environment:
 
 dependencies:
     archive: 4.0.5
-    audio_session: 0.1.24
+    audio_session: 0.2.0
     audioplayers: 6.4.0
     camera: 0.11.1
     circular_widgets: 3.0.0
