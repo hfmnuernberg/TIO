@@ -41,7 +41,7 @@ dependencies:
     tonic: 0.2.5
     tutorial_coach_mark: 1.2.13
     url_launcher: 6.3.1
-    url_launcher_ios: 6.3.2
+    url_launcher_ios: 6.3.3
     uuid: 4.5.1
     volume_controller: 3.3.3
     wakelock_plus: 1.2.11
