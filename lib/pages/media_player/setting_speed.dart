@@ -168,9 +168,7 @@ class _SetSpeedState extends State<SetSpeed> {
     bpmController.value = bpmController.value.copyWith(
       text: getBpmForSpeed(MediaPlayerParams.defaultSpeedFactor, _mediaPlayerBlock.bpm).toString(),
     );
-    speedController.value = speedController.value.copyWith(
-      text: MediaPlayerParams.defaultSpeedFactor.toString(),
-    );
+    speedController.value = speedController.value.copyWith(text: MediaPlayerParams.defaultSpeedFactor.toString());
   }
 
   void _onCancel() async {
