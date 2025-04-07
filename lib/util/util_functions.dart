@@ -509,6 +509,10 @@ String formatDoubleToString(double value) {
   }
 }
 
+bool isSingularUnit(double number) {
+  return (number.abs() - 1.0).abs() < 0.001;
+}
+
 String pluralSDouble(double number) {
   return (number.abs() - 1.0).abs() < 0.001 ? '' : 's';
 }

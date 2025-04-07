@@ -24,6 +24,7 @@ class English extends AppLocalizations {
   String get appTutorialToolIsland => 'Tap here to combine your tool with a metronome, tuner or media player';
   String get appTutorialToolSave => 'Tap here to copy your tool to another project';
 
+  String get commonBpm => 'bpm';
   String get commonCancel => 'Cancel';
   String get commonDelete => 'Delete?';
   String get commonGotIt => 'Got it';
@@ -31,6 +32,7 @@ class English extends AppLocalizations {
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
   String get commonReset => 'Reset';
+  String get commonSecShort => 'sec';
   String get commonSubmit => 'Submit';
   String get commonYes => 'Yes';
 
@@ -66,10 +68,21 @@ class English extends AppLocalizations {
   String get mediaPlayerAbout => 'Media player';
   String get mediaPlayerAboutExplanation =>
       'You can record, load and edit audio files and save configurations. In doing so, you can set your preferred volume, range (length and segment), playing speed and pitch. You can forward your projects to others using external messenger services.';
+  String get mediaPlayerBasicBeat => 'Basic Beat';
   String get mediaPlayerDescription => 'record and play';
+  String get mediaPlayerLoadAudioFile => 'Load Audio File';
+  String get mediaPlayerMarkers => 'Markers';
+  String get mediaPlayerPitch => 'Pitch';
+  String get mediaPlayerQuickTool => 'Quick Tool';
+  String get mediaPlayerSemitone => 'semitone';
+  String get mediaPlayerSemitones => 'semitones';
+  String get mediaPlayerShareAudioFile => 'Share audio file';
+  String get mediaPlayerSpeed => 'Speed';
+  String get mediaPlayerTrim => 'Trim';
   String get mediaPlayerTutorialAdjust => 'Tap here to adjust your sound file';
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file';
+  String get mediaPlayerVolume => 'Volume';
 
   String get metronome => 'Metronome';
   String get metronomeAbout => 'Metronome';

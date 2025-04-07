@@ -25,6 +25,7 @@ class German extends AppLocalizations {
       'Tippe hier um dein Tool mit einem Metronom, Stimmgerät oder Media Player zu kombinieren';
   String get appTutorialToolSave => 'Tippe hier um dein Tool in ein anderes Projekt zu kopieren';
 
+  String get commonBpm => 'BPM';
   String get commonCancel => 'Abbrechen';
   String get commonDelete => 'Löschen?';
   String get commonGotIt => 'Verstanden';
@@ -32,6 +33,7 @@ class German extends AppLocalizations {
   String get commonNo => 'Nein';
   String get commonOctave => 'Oktave';
   String get commonReset => 'Zurücksetzen';
+  String get commonSecShort => 'Sek.';
   String get commonSubmit => 'Bestätigen';
   String get commonYes => 'Ja';
 
@@ -66,11 +68,22 @@ class German extends AppLocalizations {
   String get mediaPlayerAbout => 'Media Player';
   String get mediaPlayerAboutExplanation =>
       'Du kannst Audio-Dateien aufnehmen, laden und bearbeiten und Konfigurationen speichern. Dabei kannst du deine bevorzugte Lautstärke, Reichweite (Länge und Segment), Wiedergabegeschwindigkeit und Tonhöhe einstellen. Du kannst deine Projekte über externe Messenger-Dienste an andere weiterleiten.';
+  String get mediaPlayerBasicBeat => 'Basis-Beat';
   String get mediaPlayerDescription => 'nimm auf und spiele ab';
+  String get mediaPlayerLoadAudioFile => 'Audio-Datei laden';
+  String get mediaPlayerMarkers => 'Marker';
+  String get mediaPlayerPitch => 'Tonhöhe';
+  String get mediaPlayerQuickTool => 'Hilfswerkzeug';
+  String get mediaPlayerSemitone => 'Halbton';
+  String get mediaPlayerSemitones => 'Halbtöne';
+  String get mediaPlayerShareAudioFile => 'Audio-Datei teilen';
+  String get mediaPlayerSpeed => 'Wiedergabegeschwindigkeit';
+  String get mediaPlayerTrim => 'Trimmen';
   String get mediaPlayerTutorialAdjust => 'Tippe hier um deine Audiodatei anzupassen';
   String get mediaPlayerTutorialJumpTo => 'Tippe irgendwo um zu diesem Teil deiner Audiodatei zu springen';
   String get mediaPlayerTutorialStartStop =>
       'Tippe hier um die Aufnahme zu starten und zu stoppen oder um eine Audiodatei abzuspielen';
+  String get mediaPlayerVolume => 'Lautstärke';
 
   String get metronome => 'Metronom';
   String get metronomeAbout => 'Metronom';

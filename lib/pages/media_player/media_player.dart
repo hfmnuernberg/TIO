@@ -81,11 +81,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
   void initState() {
     super.initState();
 
-    _shareMenuButton = MenuItemButton(
-      onPressed: _shareFilePressed,
-      child: const Text('Share audio file', style: TextStyle(color: ColorTheme.primary)),
-    );
-
     _waveformVisualizer = WaveformVisualizer(0, 0, 1, _rmsValues, 0);
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
@@ -169,6 +164,22 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
       await _queryAndUpdateStateFromRust();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    _shareMenuButton = MenuItemButton(
+      onPressed: _shareFilePressed,
+      child: Text(context.l10n.mediaPlayerShareAudioFile, style: const TextStyle(color: ColorTheme.primary)),
+    );
+  }
+
+  void _addShareOptionToMenu() {
+    if (!_menuItems.contains(_shareMenuButton)) {
+      _menuItems.add(_shareMenuButton);
+    }
   }
 
   void _createTutorial() {
@@ -255,6 +266,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   @override
   Widget build(BuildContext context) {
     var waveformHeight = 200.0;
+    final l10n = context.l10n;
 
     return ParentTool(
       barTitle: _mediaPlayerBlock.title,
@@ -310,7 +322,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                TextButton(onPressed: () => _jump10Seconds(false), child: const Text('-10 sec')),
+                TextButton(onPressed: () => _jump10Seconds(false), child: Text('-10 ${l10n.commonSecShort}')),
                 IconButton(
                   onPressed: () {
                     setState(() {
@@ -324,7 +336,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                           ? const Icon(Icons.all_inclusive, color: ColorTheme.tertiary)
                           : const Icon(Icons.all_inclusive, color: ColorTheme.surfaceTint),
                 ),
-                TextButton(onPressed: () => _jump10Seconds(true), child: const Text('+10 sec')),
+                TextButton(onPressed: () => _jump10Seconds(true), child: Text('+10 ${l10n.commonSecShort}')),
               ],
             ),
             Row(
@@ -346,7 +358,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                     _tutorial.show(context);
                   }
                 },
-                text: _fileLoaded ? FileIO.getFileName(_mediaPlayerBlock.relativePath) : 'Load Audio File',
+                text: _fileLoaded ? FileIO.getFileName(_mediaPlayerBlock.relativePath) : l10n.mediaPlayerLoadAudioFile,
               ),
             ),
           ],
@@ -355,7 +367,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       keySettingsList: _keySettings,
       settingTiles: [
         SettingsTile(
-          title: 'Volume',
+          title: l10n.mediaPlayerVolume,
           subtitle: _mediaPlayerBlock.volume.toString(),
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
@@ -372,7 +384,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
-          title: 'Trim',
+          title: l10n.mediaPlayerTrim,
           subtitle: '${(_mediaPlayerBlock.rangeStart * 100).round()}% → ${(_mediaPlayerBlock.rangeEnd * 100).round()}%',
           leadingIcon: 'assets/icons/arrow_range.svg',
           settingPage: SetTrim(rmsValues: _rmsValues, fileDuration: _fileDuration),
@@ -381,17 +393,17 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
-          title: 'Basic Beat',
-          subtitle: '${_mediaPlayerBlock.bpm} bpm',
+          title: l10n.mediaPlayerBasicBeat,
+          subtitle: '${_mediaPlayerBlock.bpm} ${l10n.commonBpm}',
           leadingIcon: Icons.touch_app_outlined,
           settingPage: const SetBPM(),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
         ),
         SettingsTile(
-          title: 'Speed',
+          title: l10n.mediaPlayerSpeed,
           subtitle:
-              '${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} bpm',
+              '${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
           leadingIcon: Icons.speed,
           settingPage: const SetSpeed(),
           block: _mediaPlayerBlock,
@@ -399,9 +411,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
-          title: 'Pitch',
+          title: l10n.mediaPlayerPitch,
           subtitle:
-              "${_mediaPlayerBlock.pitchSemitones.abs() < 0.001 ? "" : (_mediaPlayerBlock.pitchSemitones > 0 ? "↑ " : "↓ ")}${formatDoubleToString(_mediaPlayerBlock.pitchSemitones.abs())} semitone${pluralSDouble(_mediaPlayerBlock.pitchSemitones)}",
+              "${_mediaPlayerBlock.pitchSemitones.abs() < 0.001 ? "" : (_mediaPlayerBlock.pitchSemitones > 0 ? "↑ " : "↓ ")}${formatDoubleToString(_mediaPlayerBlock.pitchSemitones.abs())} ${isSingularUnit(_mediaPlayerBlock.pitchSemitones) ? l10n.mediaPlayerSemitone : l10n.mediaPlayerSemitones}",
           leadingIcon: Icons.height,
           settingPage: const SetPitch(),
           block: _mediaPlayerBlock,
@@ -409,7 +421,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
-          title: 'Markers',
+          title: l10n.mediaPlayerMarkers,
           subtitle: _mediaPlayerBlock.markerPositions.length.toString(),
           leadingIcon: Icons.arrow_drop_down,
           settingPage: EditMarkersPage(
@@ -423,12 +435,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
         ),
       ],
     );
-  }
-
-  void _addShareOptionToMenu() {
-    if (!_menuItems.contains(_shareMenuButton)) {
-      _menuItems.add(_shareMenuButton);
-    }
   }
 
   void _shareFilePressed() async {
@@ -682,7 +688,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     if (success && mounted) {
       _resetRecordingTimer();
 
-      var projectTitle = widget.isQuickTool ? 'Quick Tool' : _project!.title;
+      var projectTitle = widget.isQuickTool ? context.l10n.mediaPlayerQuickTool : _project!.title;
       var newName = '$projectTitle-${_mediaPlayerBlock.title}';
 
       var newRelativePath = await MediaPlayerFunctions.writeRecordingToFile(
@@ -755,7 +761,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   Future _askForKeepRecordingOnExit() async {
     MediaPlayerFunctions.stopRecording().then((success) async {
       if (success && mounted) {
-        var projectTitle = widget.isQuickTool ? 'Quick Tool' : _project!.title;
+        var projectTitle = widget.isQuickTool ? context.l10n.mediaPlayerQuickTool : _project!.title;
         var newName = '$projectTitle-${_mediaPlayerBlock.title}';
 
         var newRelativePath = await MediaPlayerFunctions.writeRecordingToFile(
