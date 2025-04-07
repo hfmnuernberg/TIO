@@ -103,4 +103,3 @@ class _SetPitchState extends State<SetPitch> {
     }
   }
 }
-

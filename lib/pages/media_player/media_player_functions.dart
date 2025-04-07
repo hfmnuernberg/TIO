@@ -118,7 +118,10 @@ abstract class MediaPlayerFunctions {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('${context.l10n.mediaPlayerRecording}...', style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
+          Text(
+            '${context.l10n.mediaPlayerRecording}...',
+            style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10),
+          ),
           Text(getDurationFormated(duration), style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 6)),
         ],
       ),
