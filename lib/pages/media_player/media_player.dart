@@ -304,7 +304,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                       padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
                       child:
                           _isRecording
-                              ? MediaPlayerFunctions.displayRecordingTimer(_recordingDuration, waveformHeight)
+                              ? MediaPlayerFunctions.displayRecordingTimer(context, _recordingDuration, waveformHeight)
                               : GestureDetector(
                                 onTapDown: (details) => _fileLoaded ? _onWaveGesture(details.localPosition) : null,
                                 onHorizontalDragUpdate:

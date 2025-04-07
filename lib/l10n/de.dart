@@ -76,6 +76,7 @@ class German extends AppLocalizations {
   String get mediaPlayerMarkers => 'Marker';
   String get mediaPlayerPitch => 'Tonhöhe';
   String get mediaPlayerQuickTool => 'Hilfswerkzeug';
+  String get mediaPlayerRecording => 'Aufnahme läuft';
   String get mediaPlayerRemoveMarker => 'Marker entfernen';
   String get mediaPlayerSemitone => 'Halbton';
   String get mediaPlayerSemitones => 'Halbtöne';

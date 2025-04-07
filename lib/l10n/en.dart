@@ -76,6 +76,7 @@ class English extends AppLocalizations {
   String get mediaPlayerMarkers => 'Markers';
   String get mediaPlayerPitch => 'Pitch';
   String get mediaPlayerQuickTool => 'Quick Tool';
+  String get mediaPlayerRecording => 'Recording';
   String get mediaPlayerRemoveMarker => 'Remove Selected Marker';
   String get mediaPlayerSemitone => 'semitone';
   String get mediaPlayerSemitones => 'semitones';
