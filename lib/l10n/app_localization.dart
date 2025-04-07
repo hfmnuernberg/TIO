@@ -68,6 +68,7 @@ abstract class AppLocalizations {
   String get mediaPlayerRemoveMarker;
   String get mediaPlayerSemitone;
   String get mediaPlayerSemitones;
+  String get mediaPlayerSetBasicBeat;
   String get mediaPlayerShareAudioFile;
   String get mediaPlayerSpeed;
   String get mediaPlayerTrim;

@@ -80,6 +80,7 @@ class English extends AppLocalizations {
   String get mediaPlayerRemoveMarker => 'Remove Selected Marker';
   String get mediaPlayerSemitone => 'semitone';
   String get mediaPlayerSemitones => 'semitones';
+  String get mediaPlayerSetBasicBeat => 'Set Basic Beat';
   String get mediaPlayerShareAudioFile => 'Share audio file';
   String get mediaPlayerSpeed => 'Speed';
   String get mediaPlayerTrim => 'Trim';

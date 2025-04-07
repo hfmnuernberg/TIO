@@ -80,6 +80,7 @@ class German extends AppLocalizations {
   String get mediaPlayerRemoveMarker => 'Marker entfernen';
   String get mediaPlayerSemitone => 'Halbton';
   String get mediaPlayerSemitones => 'Halbtöne';
+  String get mediaPlayerSetBasicBeat => 'Basis-Beat einstellen';
   String get mediaPlayerShareAudioFile => 'Audio-Datei teilen';
   String get mediaPlayerSpeed => 'Wiedergabegeschwindigkeit';
   String get mediaPlayerTrim => 'Trimmen';
