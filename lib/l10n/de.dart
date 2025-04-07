@@ -85,6 +85,7 @@ class German extends AppLocalizations {
   String get mediaPlayerSetBasicBeat => 'Basis-Beat einstellen';
   String get mediaPlayerSetPitch => 'Tonhöhe einstellen';
   String get mediaPlayerSetSpeed => 'Wiedergabegeschwindigkeit einstellen';
+  String get mediaPlayerSetTrim => 'Trimmen';
   String get mediaPlayerShareAudioFile => 'Audio-Datei teilen';
   String get mediaPlayerSpeed => 'Wiedergabegeschwindigkeit';
   String get mediaPlayerTapToTempo => 'Tippe einen Takt';

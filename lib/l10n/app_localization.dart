@@ -73,6 +73,7 @@ abstract class AppLocalizations {
   String get mediaPlayerSetBasicBeat;
   String get mediaPlayerSetPitch;
   String get mediaPlayerSetSpeed;
+  String get mediaPlayerSetTrim;
   String get mediaPlayerShareAudioFile;
   String get mediaPlayerSpeed;
   String get mediaPlayerTapToTempo;
