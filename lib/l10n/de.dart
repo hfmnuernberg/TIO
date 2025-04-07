@@ -68,12 +68,15 @@ class German extends AppLocalizations {
   String get mediaPlayerAbout => 'Media Player';
   String get mediaPlayerAboutExplanation =>
       'Du kannst Audio-Dateien aufnehmen, laden und bearbeiten und Konfigurationen speichern. Dabei kannst du deine bevorzugte Lautstärke, Reichweite (Länge und Segment), Wiedergabegeschwindigkeit und Tonhöhe einstellen. Du kannst deine Projekte über externe Messenger-Dienste an andere weiterleiten.';
+  String get mediaPlayerAddMarker => 'Marker hinzufügen';
   String get mediaPlayerBasicBeat => 'Basis-Beat';
   String get mediaPlayerDescription => 'nimm auf und spiele ab';
+  String get mediaPlayerEditMarkers => 'Marker bearbeiten';
   String get mediaPlayerLoadAudioFile => 'Audio-Datei laden';
   String get mediaPlayerMarkers => 'Marker';
   String get mediaPlayerPitch => 'Tonhöhe';
   String get mediaPlayerQuickTool => 'Hilfswerkzeug';
+  String get mediaPlayerRemoveMarker => 'Marker entfernen';
   String get mediaPlayerSemitone => 'Halbton';
   String get mediaPlayerSemitones => 'Halbtöne';
   String get mediaPlayerShareAudioFile => 'Audio-Datei teilen';

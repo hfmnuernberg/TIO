@@ -56,12 +56,15 @@ abstract class AppLocalizations {
   String get mediaPlayer;
   String get mediaPlayerAbout;
   String get mediaPlayerAboutExplanation;
+  String get mediaPlayerAddMarker;
   String get mediaPlayerBasicBeat;
   String get mediaPlayerDescription;
+  String get mediaPlayerEditMarkers;
   String get mediaPlayerLoadAudioFile;
   String get mediaPlayerMarkers;
   String get mediaPlayerPitch;
   String get mediaPlayerQuickTool;
+  String get mediaPlayerRemoveMarker;
   String get mediaPlayerSemitone;
   String get mediaPlayerSemitones;
   String get mediaPlayerShareAudioFile;

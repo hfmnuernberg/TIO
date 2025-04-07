@@ -68,12 +68,15 @@ class English extends AppLocalizations {
   String get mediaPlayerAbout => 'Media player';
   String get mediaPlayerAboutExplanation =>
       'You can record, load and edit audio files and save configurations. In doing so, you can set your preferred volume, range (length and segment), playing speed and pitch. You can forward your projects to others using external messenger services.';
+  String get mediaPlayerAddMarker => 'Add Marker';
   String get mediaPlayerBasicBeat => 'Basic Beat';
   String get mediaPlayerDescription => 'record and play';
+  String get mediaPlayerEditMarkers => 'Edit Markers';
   String get mediaPlayerLoadAudioFile => 'Load Audio File';
   String get mediaPlayerMarkers => 'Markers';
   String get mediaPlayerPitch => 'Pitch';
   String get mediaPlayerQuickTool => 'Quick Tool';
+  String get mediaPlayerRemoveMarker => 'Remove Selected Marker';
   String get mediaPlayerSemitone => 'semitone';
   String get mediaPlayerSemitones => 'semitones';
   String get mediaPlayerShareAudioFile => 'Share audio file';
