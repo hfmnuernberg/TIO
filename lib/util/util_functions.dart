@@ -192,29 +192,29 @@ void _submitTitles(BuildContext context, TextEditingController controllerOne, Te
 
 Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => showDialog<bool>(
   context: context,
-  builder:
-      (context) => AlertDialog(
-        title: const Text('Overwrite?', style: TextStyle(color: ColorTheme.primary)),
-        content: const Text(
-          'Do you want to overwrite the current audio file and start recording?',
-          style: TextStyle(color: ColorTheme.primary),
+  builder: (context) {
+    final l10n = context.l10n;
+
+    return AlertDialog(
+      title: Text(l10n.mediaPlayerOverwriteSound, style: const TextStyle(color: ColorTheme.primary)),
+      content: Text(l10n.mediaPlayerOverwriteSoundQuestion, style: const TextStyle(color: ColorTheme.primary)),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(false);
+          },
+          child: Text(l10n.commonNo),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text('No'),
-          ),
-          TIOFlatButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            text: 'Yes',
-            boldText: true,
-          ),
-        ],
-      ),
+        TIOFlatButton(
+          onPressed: () {
+            Navigator.of(context).pop(true);
+          },
+          text: l10n.commonYes,
+          boldText: true,
+        ),
+      ],
+    );
+  },
 );
 
 // ---------------------------------------------------------------
