@@ -205,12 +205,11 @@ Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => show
           },
           child: Text(l10n.commonNo),
         ),
-        TIOFlatButton(
+        TextButton(
           onPressed: () {
-            Navigator.of(context).pop(true);
+            Navigator.of(context).pop(false);
           },
-          text: l10n.commonYes,
-          boldText: true,
+          child: Text(l10n.commonYes, style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
       ],
     );
@@ -222,25 +221,27 @@ Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => show
 
 Future<bool?> askForSavingQuickTool(BuildContext context) => showDialog<bool>(
   context: context,
-  builder:
-      (context) => AlertDialog(
-        title: const Text('Save Quick Tool?', style: TextStyle(color: ColorTheme.primary)),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text('No'),
-          ),
-          TIOFlatButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            text: 'Yes',
-            boldText: true,
-          ),
-        ],
-      ),
+  builder: (context) {
+    final l10n = context.l10n;
+
+    return AlertDialog(
+      title: Text(l10n.commonSaveQuickToolQuestion, style: TextStyle(color: ColorTheme.primary)),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(false);
+          },
+          child: Text(l10n.commonNo),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(false);
+          },
+          child: Text(l10n.commonYes, style: const TextStyle(fontWeight: FontWeight.bold)),
+        ),
+      ],
+    );
+  },
 );
 
 // ---------------------------------------------------------------
@@ -248,34 +249,38 @@ Future<bool?> askForSavingQuickTool(BuildContext context) => showDialog<bool>(
 
 Future<void> showFormatNotSupportedDialog(BuildContext context, String format) => showDialog<void>(
   context: context,
-  builder:
-      (context) => AlertDialog(
-        title: const Text('File format not supported', style: TextStyle(color: ColorTheme.primary)),
-        content: Text(
-          "The file format '$format' is not supported. Please choose a different file.",
-          style: const TextStyle(color: ColorTheme.primary),
-        ),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
+  builder: (context) {
+    final l10n = context.l10n;
+
+    return AlertDialog(
+      title: Text(l10n.mediaPlayerFileFormatError, style: TextStyle(color: ColorTheme.primary)),
+      content: Text(
+        l10n.mediaPlayerFileFormatErrorDescription(format),
+        style: const TextStyle(color: ColorTheme.primary),
       ),
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
+    );
+  },
 );
 
 // ---------------------------------------------------------------
 // show a dialog to tell the user that the file could not be opened
 
 Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) {
-  if (fileName != null && fileName == '') {
-    fileName = null;
-  }
+  final l10n = context.l10n;
+  fileName = (fileName ?? '').isEmpty ? null : fileName;
+  final fileInfoText = fileName != null ? '\n\n${context.l10n.mediaPlayerFile}: ${FileIO.getFileName(fileName)}' : '';
+
   return showDialog<void>(
     context: context,
     builder:
         (context) => AlertDialog(
-          title: const Text('File could not be opened.', style: TextStyle(color: ColorTheme.primary)),
+          title: Text(l10n.mediaPlayerFileOpenError, style: TextStyle(color: ColorTheme.primary)),
           content: Text(
-            "Something went wrong while trying to open the file. Please try again.${fileName != null ? "\n\nFile: ${FileIO.getFileName(fileName)}" : ""}",
+            l10n.mediaPlayerFileOpenErrorDescription(fileInfoText),
             style: const TextStyle(color: ColorTheme.primary),
           ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
+          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
         ),
   );
 }
@@ -284,19 +289,20 @@ Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) 
 // show a dialog to tell the user that the file is somehow not accessible
 
 Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName}) {
-  if (fileName != null && fileName == '') {
-    fileName = null;
-  }
+  final l10n = context.l10n;
+  fileName = (fileName ?? '').isEmpty ? null : fileName;
+  final fileInfoText = fileName != null ? '\n\n${context.l10n.mediaPlayerFile}: ${FileIO.getFileName(fileName)}' : '';
+
   return showDialog<void>(
     context: context,
     builder:
         (context) => AlertDialog(
-          title: const Text('File is not accessible.', style: TextStyle(color: ColorTheme.primary)),
+          title: Text(l10n.mediaPlayerFileAccessibleError, style: TextStyle(color: ColorTheme.primary)),
           content: Text(
-            "Maybe the file needs to be downloaded first if it doesn't exist locally on your phone.${fileName != null ? "\n\nFile: ${FileIO.getFileName(fileName)}" : ""}",
+            l10n.mediaPlayerFileAccessibleErrorDescription(fileInfoText),
             style: const TextStyle(color: ColorTheme.primary),
           ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
+          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
         ),
   );
 }

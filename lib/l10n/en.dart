@@ -32,6 +32,7 @@ class English extends AppLocalizations {
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
   String get commonReset => 'Reset';
+  String get commonSaveQuickToolQuestion => 'Save Quick Tool?';
   String get commonSecShort => 'sec';
   String get commonSubmit => 'Submit';
   String get commonYes => 'Yes';
@@ -74,6 +75,10 @@ class English extends AppLocalizations {
   String get mediaPlayerEditMarkers => 'Edit Markers';
   String get mediaPlayerFactor => 'Factor';
   String get mediaPlayerFactorAndBpm => 'Factor and BPM slider';
+  String get mediaPlayerFile => 'File';
+  String get mediaPlayerFileAccessibleError => 'File is not accessible.';
+  String get mediaPlayerFileFormatError => 'File format not supported';
+  String get mediaPlayerFileOpenError => 'File could not be opened.';
   String get mediaPlayerLoadAudioFile => 'Load Audio File';
   String get mediaPlayerMarkers => 'Markers';
   String get mediaPlayerOverwriteSound => 'Overwrite?';
@@ -97,6 +102,13 @@ class English extends AppLocalizations {
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file';
   String get mediaPlayerVolume => 'Volume';
+
+  String mediaPlayerFileAccessibleErrorDescription(String fileName) =>
+      "Maybe the file needs to be downloaded first if it doesn't exist locally on your phone.$fileName";
+  String mediaPlayerFileFormatErrorDescription(String format) =>
+      'The file format "$format" is not supported. Please choose a different file.';
+  String mediaPlayerFileOpenErrorDescription(String fileName) =>
+      'Something went wrong while trying to open the file. Please try again.$fileName';
 
   String get metronome => 'Metronome';
   String get metronomeAbout => 'Metronome';

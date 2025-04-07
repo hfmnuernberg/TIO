@@ -23,6 +23,7 @@ abstract class AppLocalizations {
   String get commonNo;
   String get commonOctave;
   String get commonReset;
+  String get commonSaveQuickToolQuestion;
   String get commonSecShort;
   String get commonSubmit;
   String get commonYes;
@@ -62,6 +63,10 @@ abstract class AppLocalizations {
   String get mediaPlayerEditMarkers;
   String get mediaPlayerFactor;
   String get mediaPlayerFactorAndBpm;
+  String get mediaPlayerFile;
+  String get mediaPlayerFileAccessibleError;
+  String get mediaPlayerFileFormatError;
+  String get mediaPlayerFileOpenError;
   String get mediaPlayerLoadAudioFile;
   String get mediaPlayerMarkers;
   String get mediaPlayerOverwriteSound;
@@ -84,6 +89,10 @@ abstract class AppLocalizations {
   String get mediaPlayerTutorialJumpTo;
   String get mediaPlayerTutorialStartStop;
   String get mediaPlayerVolume;
+
+  String mediaPlayerFileAccessibleErrorDescription(String format);
+  String mediaPlayerFileFormatErrorDescription(String format);
+  String mediaPlayerFileOpenErrorDescription(String fileName);
 
   String get metronome;
   String get metronomeAbout;

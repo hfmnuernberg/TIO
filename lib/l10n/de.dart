@@ -33,6 +33,7 @@ class German extends AppLocalizations {
   String get commonNo => 'Nein';
   String get commonOctave => 'Oktave';
   String get commonReset => 'Zurücksetzen';
+  String get commonSaveQuickToolQuestion => 'Möchtest du das Tool speichern?';
   String get commonSecShort => 'Sek.';
   String get commonSubmit => 'Bestätigen';
   String get commonYes => 'Ja';
@@ -74,6 +75,10 @@ class German extends AppLocalizations {
   String get mediaPlayerEditMarkers => 'Marker bearbeiten';
   String get mediaPlayerFactor => 'Faktor';
   String get mediaPlayerFactorAndBpm => 'Faktor und BPM Regler';
+  String get mediaPlayerFile => 'Datei';
+  String get mediaPlayerFileAccessibleError => 'Datei nicht zugänglich';
+  String get mediaPlayerFileFormatError => 'Dateiformat nicht unterstützt';
+  String get mediaPlayerFileOpenError => 'Die Datei konnte nicht geöffnet werden';
   String get mediaPlayerLoadAudioFile => 'Audio-Datei laden';
   String get mediaPlayerMarkers => 'Marker';
   String get mediaPlayerOverwriteSound => 'Audio-Datei überschreiben';
@@ -97,6 +102,13 @@ class German extends AppLocalizations {
   String get mediaPlayerTutorialStartStop =>
       'Tippe hier um die Aufnahme zu starten und zu stoppen oder um eine Audiodatei abzuspielen';
   String get mediaPlayerVolume => 'Lautstärke';
+
+  String mediaPlayerFileAccessibleErrorDescription(String fileName) =>
+      'Die Datei ist nicht zugänglich. Bitte überprüfe die Berechtigungen.$fileName';
+  String mediaPlayerFileFormatErrorDescription(String format) =>
+      'Das Dateiformat $format wird nicht unterstützt. Bitte wähle eine andere Datei.';
+  String mediaPlayerFileOpenErrorDescription(String fileName) =>
+      'Die Datei konnte nicht geöffnet werden. Bitte überprüfe die Berechtigungen oder wähle eine andere Datei.$fileName';
 
   String get metronome => 'Metronom';
   String get metronomeAbout => 'Metronom';
