@@ -72,6 +72,8 @@ class English extends AppLocalizations {
   String get mediaPlayerBasicBeat => 'Basic Beat';
   String get mediaPlayerDescription => 'record and play';
   String get mediaPlayerEditMarkers => 'Edit Markers';
+  String get mediaPlayerFactor => 'Factor';
+  String get mediaPlayerFactorAndBpm => 'Factor and BPM slider';
   String get mediaPlayerLoadAudioFile => 'Load Audio File';
   String get mediaPlayerMarkers => 'Markers';
   String get mediaPlayerPitch => 'Pitch';
@@ -82,6 +84,7 @@ class English extends AppLocalizations {
   String get mediaPlayerSemitones => 'semitones';
   String get mediaPlayerSetBasicBeat => 'Set Basic Beat';
   String get mediaPlayerSetPitch => 'Set Pitch';
+  String get mediaPlayerSetSpeed => 'Set Speed';
   String get mediaPlayerShareAudioFile => 'Share audio file';
   String get mediaPlayerSpeed => 'Speed';
   String get mediaPlayerTapToTempo => 'Tap to tempo';

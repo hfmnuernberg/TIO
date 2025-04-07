@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_block.dart';
@@ -29,9 +30,6 @@ class SetSpeed extends StatefulWidget {
 }
 
 class _SetSpeedState extends State<SetSpeed> {
-  late NumberInputInt _bpmInput;
-  late NumberInputDouble _speedInput;
-  late AppSliderDouble _customSliderDouble;
   late MediaPlayerBlock _mediaPlayerBlock;
   bool _isUpdating = false;
 
@@ -53,9 +51,9 @@ class _SetSpeedState extends State<SetSpeed> {
       if (_isUpdating) return;
       _isUpdating = true;
 
-      double? bpmValue = double.tryParse(bpmController.text);
+      final bpmValue = double.tryParse(bpmController.text);
       if (bpmValue != null) {
-        double newSpeed = getSpeedForBpm(bpmValue, _mediaPlayerBlock.bpm);
+        final newSpeed = getSpeedForBpm(bpmValue, _mediaPlayerBlock.bpm);
         speedController.text = newSpeed.toStringAsFixed(1);
       }
 
@@ -66,56 +64,25 @@ class _SetSpeedState extends State<SetSpeed> {
       if (_isUpdating) return;
       _isUpdating = true;
 
-      double? speedValue = double.tryParse(speedController.text);
+      final speedValue = double.tryParse(speedController.text);
       if (speedValue != null) {
-        int newBpm = getBpmForSpeed(speedValue, _mediaPlayerBlock.bpm);
+        final newBpm = getBpmForSpeed(speedValue, _mediaPlayerBlock.bpm);
         bpmController.text = newBpm.toString();
       }
 
       _isUpdating = false;
     });
 
-    _bpmInput = NumberInputInt(
-      max: getBpmForSpeed(maxSpeedFactor, _mediaPlayerBlock.bpm),
-      min: getBpmForSpeed(minSpeedFactor, _mediaPlayerBlock.bpm),
-      defaultValue: _mediaPlayerBlock.bpm,
-      step: getBpmForSpeed(step, _mediaPlayerBlock.bpm),
-      controller: bpmController,
-      label: 'BPM',
-      textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
-      buttonRadius: 20,
-      textFontSize: 32,
-    );
-
-    _speedInput = NumberInputDouble(
-      max: maxSpeedFactor,
-      min: minSpeedFactor,
-      defaultValue: _mediaPlayerBlock.speedFactor,
-      step: step,
-      stepIntervalInMs: 200,
-      controller: speedController,
-      label: 'Factor',
-      textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
-      buttonRadius: 20,
-      textFontSize: 32,
-    );
-
-    _customSliderDouble = AppSliderDouble(
-      min: minSpeedFactor,
-      max: maxSpeedFactor,
-      defaultValue: _mediaPlayerBlock.speedFactor,
-      step: step,
-      controller: speedController,
-      semanticLabel: 'Factor and BPM slider',
-    );
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _speedInput.controller.addListener(_onUserChangedSpeed);
+      speedController.addListener(_onUserChangedSpeed);
     });
   }
 
   @override
   void dispose() {
+    bpmController.removeListener(() {});
+    speedController.removeListener(() {});
+    speedController.removeListener(_onUserChangedSpeed);
     bpmController.dispose();
     speedController.dispose();
     super.dispose();
@@ -123,8 +90,10 @@ class _SetSpeedState extends State<SetSpeed> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return ParentSettingPage(
-      title: 'Set Speed',
+      title: l10n.mediaPlayerSetSpeed,
       displayResetAtTop: true,
       mustBeScrollable: true,
       confirm: _onConfirm,
@@ -132,13 +101,44 @@ class _SetSpeedState extends State<SetSpeed> {
       numberInput: Column(
         children: [
           SizedBox(height: TIOMusicParams.edgeInset),
-          _speedInput,
+          NumberInputDouble(
+            max: maxSpeedFactor,
+            min: minSpeedFactor,
+            defaultValue: _mediaPlayerBlock.speedFactor,
+            step: step,
+            stepIntervalInMs: 200,
+            controller: speedController,
+            label: l10n.mediaPlayerFactor,
+            textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
+            buttonRadius: 20,
+            textFontSize: 32,
+          ),
+
           SizedBox(height: TIOMusicParams.edgeInset * 2),
-          _customSliderDouble,
+          AppSliderDouble(
+            min: minSpeedFactor,
+            max: maxSpeedFactor,
+            defaultValue: _mediaPlayerBlock.speedFactor,
+            step: step,
+            controller: speedController,
+            semanticLabel: l10n.mediaPlayerFactorAndBpm,
+          ),
+
           SizedBox(height: TIOMusicParams.edgeInset * 2),
-          _bpmInput,
+          NumberInputInt(
+            max: getBpmForSpeed(maxSpeedFactor, _mediaPlayerBlock.bpm),
+            min: getBpmForSpeed(minSpeedFactor, _mediaPlayerBlock.bpm),
+            defaultValue: _mediaPlayerBlock.bpm,
+            step: getBpmForSpeed(step, _mediaPlayerBlock.bpm),
+            controller: bpmController,
+            label: l10n.commonBpm,
+            textFieldWidth: TIOMusicParams.textFieldWidth3Digits,
+            buttonRadius: 20,
+            textFontSize: 32,
+          ),
+
           SizedBox(height: TIOMusicParams.edgeInset * 2),
-          Tap2Tempo(bpmHandle: _bpmInput.controller),
+          Tap2Tempo(bpmHandle: bpmController),
         ],
       ),
       cancel: _onCancel,
@@ -146,51 +146,51 @@ class _SetSpeedState extends State<SetSpeed> {
   }
 
   void _onConfirm() async {
-    if (_speedInput.controller.value.text != '') {
-      double newSpeedFactor = double.parse(_speedInput.controller.value.text);
+    if (speedController.text.isNotEmpty) {
+      final newSpeedFactor = double.parse(speedController.text);
 
       _mediaPlayerBlock.speedFactor = newSpeedFactor;
 
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
-      mediaPlayerSetSpeedFactor(speedFactor: newSpeedFactor).then(
-        (success) => {
-          if (!success) {throw 'Setting speed factor in rust failed using this value: $newSpeedFactor'},
-        },
-      );
+      final success = await mediaPlayerSetSpeedFactor(speedFactor: newSpeedFactor);
+      if (!mounted) return;
+      if (!success) {
+        throw 'Setting speed factor in rust failed using value: $newSpeedFactor';
+      }
+    }
+
+    if (!mounted) return;
+    Navigator.pop(context);
+  }
+
+  void _reset() {
+    bpmController.value = bpmController.value.copyWith(
+      text: getBpmForSpeed(MediaPlayerParams.defaultSpeedFactor, _mediaPlayerBlock.bpm).toString(),
+    );
+    speedController.value = speedController.value.copyWith(
+      text: MediaPlayerParams.defaultSpeedFactor.toString(),
+    );
+  }
+
+  void _onCancel() async {
+    final success = await mediaPlayerSetSpeedFactor(speedFactor: _mediaPlayerBlock.speedFactor);
+    if (!mounted) return;
+    if (!success) {
+      throw 'Setting speed factor in rust failed using value: ${_mediaPlayerBlock.speedFactor}';
     }
 
     Navigator.pop(context);
   }
 
-  void _reset() {
-    _bpmInput.controller.value = _bpmInput.controller.value.copyWith(
-      text: getBpmForSpeed(MediaPlayerParams.defaultSpeedFactor, _mediaPlayerBlock.bpm).toString(),
-    );
-    _speedInput.controller.value = _speedInput.controller.value.copyWith(
-      text: MediaPlayerParams.defaultSpeedFactor.toString(),
-    );
-  }
-
-  void _onCancel() {
-    mediaPlayerSetSpeedFactor(speedFactor: _mediaPlayerBlock.speedFactor).then(
-      (success) => {
-        if (!success) {throw 'Setting speed factor in rust failed using this value: ${_mediaPlayerBlock.speedFactor}'},
-      },
-    );
-
-    Navigator.pop(context);
-  }
-
   void _onUserChangedSpeed() async {
-    if (_speedInput.controller.value.text != '') {
-      double newValue = double.parse(_speedInput.controller.value.text);
-
-      mediaPlayerSetSpeedFactor(speedFactor: newValue).then(
-        (success) => {
-          if (!success) {throw 'Setting speed factor in rust failed using this value: $newValue'},
-        },
-      );
+    if (speedController.text.isNotEmpty) {
+      final newValue = double.parse(speedController.text);
+      final success = await mediaPlayerSetSpeedFactor(speedFactor: newValue);
+      if (!mounted) return;
+      if (!success) {
+        throw 'Setting speed factor in rust failed using this value: $newValue';
+      }
     }
   }
 }

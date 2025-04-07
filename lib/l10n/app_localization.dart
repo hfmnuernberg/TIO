@@ -60,6 +60,8 @@ abstract class AppLocalizations {
   String get mediaPlayerBasicBeat;
   String get mediaPlayerDescription;
   String get mediaPlayerEditMarkers;
+  String get mediaPlayerFactor;
+  String get mediaPlayerFactorAndBpm;
   String get mediaPlayerLoadAudioFile;
   String get mediaPlayerMarkers;
   String get mediaPlayerPitch;
@@ -70,6 +72,7 @@ abstract class AppLocalizations {
   String get mediaPlayerSemitones;
   String get mediaPlayerSetBasicBeat;
   String get mediaPlayerSetPitch;
+  String get mediaPlayerSetSpeed;
   String get mediaPlayerShareAudioFile;
   String get mediaPlayerSpeed;
   String get mediaPlayerTapToTempo;

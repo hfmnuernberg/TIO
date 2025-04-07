@@ -72,6 +72,8 @@ class German extends AppLocalizations {
   String get mediaPlayerBasicBeat => 'Basis-Beat';
   String get mediaPlayerDescription => 'nimm auf und spiele ab';
   String get mediaPlayerEditMarkers => 'Marker bearbeiten';
+  String get mediaPlayerFactor => 'Faktor';
+  String get mediaPlayerFactorAndBpm => 'Faktor und BPM Regler';
   String get mediaPlayerLoadAudioFile => 'Audio-Datei laden';
   String get mediaPlayerMarkers => 'Marker';
   String get mediaPlayerPitch => 'Tonhöhe';
@@ -82,6 +84,7 @@ class German extends AppLocalizations {
   String get mediaPlayerSemitones => 'Halbtöne';
   String get mediaPlayerSetBasicBeat => 'Basis-Beat einstellen';
   String get mediaPlayerSetPitch => 'Tonhöhe einstellen';
+  String get mediaPlayerSetSpeed => 'Wiedergabegeschwindigkeit einstellen';
   String get mediaPlayerShareAudioFile => 'Audio-Datei teilen';
   String get mediaPlayerSpeed => 'Wiedergabegeschwindigkeit';
   String get mediaPlayerTapToTempo => 'Tippe einen Takt';
