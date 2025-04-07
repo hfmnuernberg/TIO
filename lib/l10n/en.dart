@@ -83,6 +83,7 @@ class English extends AppLocalizations {
   String get mediaPlayerSetBasicBeat => 'Set Basic Beat';
   String get mediaPlayerShareAudioFile => 'Share audio file';
   String get mediaPlayerSpeed => 'Speed';
+  String get mediaPlayerTapToTempo => 'Tap to tempo';
   String get mediaPlayerTrim => 'Trim';
   String get mediaPlayerTutorialAdjust => 'Tap here to adjust your sound file';
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file';
