@@ -34,6 +34,7 @@ class English extends AppLocalizations {
   String get commonReset => 'Reset';
   String get commonSaveQuickTool => 'Save Quick Tool?';
   String get commonSubmit => 'Submit';
+  String get commonVolume => 'Volume';
   String get commonYes => 'Yes';
 
   String get feedbackCta => 'Fill out';
@@ -104,23 +105,42 @@ class English extends AppLocalizations {
   String get mediaPlayerTutorialAdjust => 'Tap here to adjust your sound file';
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file';
-  String get mediaPlayerVolume => 'Volume';
 
   String mediaPlayerErrorFileFormatDescription(String format) =>
       'The file format "$format" is not supported. Please choose a different file.';
   String mediaPlayerSemitones(int value) => '$value semitone${value.abs() == 1 ? '' : 's'}';
 
   String get metronome => 'Metronome';
+  String get metronomePrimary => 'Metronome 1';
+  String get metronomeSecondary => 'Metronome 2';
   String get metronomeAbout => 'Metronome';
   String get metronomeAboutExplanation =>
       'The metronome allows you to save and recall your individual configurations (tempo, time signature, polyrhythms, random mute, sounds). You can also combine the metronome with the tuner and the media player.';
+  String get metronomeAccented => 'Accented';
+  String get metronomeBeatMain => 'Main Beat';
+  String get metronomeBeatPoly => 'Poly Beat';
+  String get metronomeClearAllRhythms => 'Clear all rhythms';
   String get metronomeDescription => 'create a rhythm';
+  String get metronomeNumberOfBeats => 'Number of Beats';
+  String get metronomeNumberOfPolyBeats => 'Number of Poly Beats';
+  String get metronomeRandomMute => 'Random Mute';
+  String get metronomeRandomMuteProbability => 'Probability in %';
+  String get metronomeSetBpm => 'Set BPM';
+  String get metronomeSetRandomMute => 'Set Random Mute';
+  String get metronomeSetSoundsPrimary => 'Set Metronome Sounds';
+  String get metronomeSetSoundsSecondary => 'Set 2nd Metronome Sounds';
+  String get metronomeSound => 'Sound';
+  String get metronomeSoundMain => 'Main';
+  String get metronomeSoundPoly => 'Poly';
+  String get metronomeSoundPrimary => 'Sound 1';
+  String get metronomeSoundSecondary => 'Sound 2';
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings';
   String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted';
   String get metronomeTutorialRelocate =>
       'Hold and drag sideways to relocate,\nswipe upwards to delete\nor tap to edit';
   String get metronomeTutorialStartStop => 'Tap here to start and stop the metronome';
+  String get metronomeUnaccented => 'Unaccented';
 
   String get piano => 'Piano';
   String get pianoAbout => 'Piano';

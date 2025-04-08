@@ -35,6 +35,7 @@ class German extends AppLocalizations {
   String get commonReset => 'Zurücksetzen';
   String get commonSaveQuickTool => 'Möchtest du das Tool speichern?';
   String get commonSubmit => 'Bestätigen';
+  String get commonVolume => 'Lautstärke';
   String get commonYes => 'Ja';
 
   String get feedbackCta => 'Ausfüllen';
@@ -104,17 +105,35 @@ class German extends AppLocalizations {
   String get mediaPlayerTutorialJumpTo => 'Tippe irgendwo um zu diesem Teil deiner Audiodatei zu springen';
   String get mediaPlayerTutorialStartStop =>
       'Tippe hier um die Aufnahme zu starten und zu stoppen oder um eine Audiodatei abzuspielen';
-  String get mediaPlayerVolume => 'Lautstärke';
 
   String mediaPlayerErrorFileFormatDescription(String format) =>
       'Das Dateiformat $format wird nicht unterstützt. Bitte wähle eine andere Datei.';
   String mediaPlayerSemitones(int value) => value.abs() == 1 ? '$value Halbton' : '$value Halbtöne';
 
   String get metronome => 'Metronom';
+  String get metronomePrimary => 'Metronom 1';
+  String get metronomeSecondary => 'Metronom 2';
   String get metronomeAbout => 'Metronom';
   String get metronomeAboutExplanation =>
       'Das Metronom ermöglicht es dir, deine individuellen Konfigurationen (Tempo, Taktart, Polyrhythmen, zufälliges Stummschalten, Klänge) zu speichern und abzurufen. Du kannst das Metronom auch mit dem Stimmgerät und dem Media Player kombinieren.';
+  String get metronomeAccented => 'Akzentuiert';
+  String get metronomeBeatMain => 'Haupt-Beat';
+  String get metronomeBeatPoly => 'Poly-Beat';
+  String get metronomeClearAllRhythms => 'Alle Rhythmen löschen';
   String get metronomeDescription => 'erstelle deinen Beat';
+  String get metronomeNumberOfBeats => 'Anzahl der Beats';
+  String get metronomeNumberOfPolyBeats => 'Anzahl der Poly-Beats';
+  String get metronomeRandomMute => 'Zufälliges Stummschalten';
+  String get metronomeRandomMuteProbability => 'Wahrscheinlichkeit in %';
+  String get metronomeSetBpm => 'BPM einstellen';
+  String get metronomeSetRandomMute => 'Zufälliges Stummschalten einstellen';
+  String get metronomeSetSoundsPrimary => 'Klänge einstellen';
+  String get metronomeSetSoundsSecondary => 'Klänge einstellen (Metronom 2)';
+  String get metronomeSound => 'Klang';
+  String get metronomeSoundMain => 'Hauptklang';
+  String get metronomeSoundPoly => 'Nebenklang';
+  String get metronomeSoundPrimary => 'Klang 1';
+  String get metronomeSoundSecondary => 'Klang 2';
   String get metronomeTutorialAddNew => 'Tippe hier um ein zweites Metronom hinzuzufügen';
   String get metronomeTutorialAdjust => 'Tippe hier um die Metronomeinstellungen anzupassen';
   String get metronomeTutorialEditBeats =>
@@ -122,6 +141,7 @@ class German extends AppLocalizations {
   String get metronomeTutorialRelocate =>
       'Halte und ziehe seitlich um zu verschieben,\nstreiche nach oben um zu löschen\noder tippe um zu bearbeiten';
   String get metronomeTutorialStartStop => 'Tippe hier um das Metronom zu starten und zu stoppen';
+  String get metronomeUnaccented => 'Unakzentuiert';
 
   String get piano => 'Klavier';
   String get pianoAbout => 'Klavier';

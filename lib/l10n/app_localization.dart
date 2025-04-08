@@ -25,6 +25,7 @@ abstract class AppLocalizations {
   String get commonReset;
   String get commonSaveQuickTool;
   String get commonSubmit;
+  String get commonVolume;
   String get commonYes;
 
   String get feedbackCta;
@@ -89,20 +90,39 @@ abstract class AppLocalizations {
   String get mediaPlayerTutorialAdjust;
   String get mediaPlayerTutorialJumpTo;
   String get mediaPlayerTutorialStartStop;
-  String get mediaPlayerVolume;
 
   String mediaPlayerErrorFileFormatDescription(String format);
   String mediaPlayerSemitones(int value);
 
   String get metronome;
+  String get metronomePrimary;
+  String get metronomeSecondary;
   String get metronomeAbout;
   String get metronomeAboutExplanation;
+  String get metronomeAccented;
+  String get metronomeBeatMain;
+  String get metronomeBeatPoly;
+  String get metronomeClearAllRhythms;
   String get metronomeDescription;
+  String get metronomeNumberOfBeats;
+  String get metronomeNumberOfPolyBeats;
+  String get metronomeRandomMute;
+  String get metronomeRandomMuteProbability;
+  String get metronomeSetBpm;
+  String get metronomeSetRandomMute;
+  String get metronomeSetSoundsPrimary;
+  String get metronomeSetSoundsSecondary;
+  String get metronomeSound;
+  String get metronomeSoundMain;
+  String get metronomeSoundPoly;
+  String get metronomeSoundPrimary;
+  String get metronomeSoundSecondary;
   String get metronomeTutorialAddNew;
   String get metronomeTutorialAdjust;
   String get metronomeTutorialEditBeats;
   String get metronomeTutorialRelocate;
   String get metronomeTutorialStartStop;
+  String get metronomeUnaccented;
 
   String get piano;
   String get pianoAbout;
