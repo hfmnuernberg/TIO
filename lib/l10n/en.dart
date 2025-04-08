@@ -88,8 +88,7 @@ class English extends AppLocalizations {
   String get mediaPlayerQuickTool => 'Quick Tool';
   String get mediaPlayerRecording => 'Recording...';
   String get mediaPlayerRemoveMarker => 'Remove Selected Marker';
-  String get mediaPlayerSemitone => 'semitone';
-  String get mediaPlayerSemitones => 'semitones';
+  String get mediaPlayerSemitonesLabel => 'semitones';
   String get mediaPlayerSetBasicBeat => 'Set Basic Beat';
   String get mediaPlayerSetPitch => 'Set Pitch';
   String get mediaPlayerSetSpeed => 'Set Speed';
@@ -103,12 +102,13 @@ class English extends AppLocalizations {
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file';
   String get mediaPlayerVolume => 'Volume';
 
-  String mediaPlayerFileAccessibleErrorDescription(String fileName) =>
+  String mediaPlayerErrorFileAccessibleDescription(String fileName) =>
       "Maybe the file needs to be downloaded first if it doesn't exist locally on your phone.$fileName";
-  String mediaPlayerFileFormatErrorDescription(String format) =>
+  String mediaPlayerErrorFileFormatDescription(String format) =>
       'The file format "$format" is not supported. Please choose a different file.';
-  String mediaPlayerFileOpenErrorDescription(String fileName) =>
+  String mediaPlayerErrorFileOpenDescription(String fileName) =>
       'Something went wrong while trying to open the file. Please try again.$fileName';
+  String mediaPlayerSemitones(int value) => '$value semitone${value.abs() == 1 ? '' : 's'}';
 
   String get metronome => 'Metronome';
   String get metronomeAbout => 'Metronome';

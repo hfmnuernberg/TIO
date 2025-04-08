@@ -416,8 +416,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
         ),
         SettingsTile(
           title: l10n.mediaPlayerPitch,
-          subtitle:
-              "${_mediaPlayerBlock.pitchSemitones.abs() < 0.001 ? "" : (_mediaPlayerBlock.pitchSemitones > 0 ? "↑ " : "↓ ")}${formatDoubleToString(_mediaPlayerBlock.pitchSemitones.abs())} ${isSingularUnit(_mediaPlayerBlock.pitchSemitones) ? l10n.mediaPlayerSemitone : l10n.mediaPlayerSemitones}",
+          subtitle: getPitchSemitonesString(
+            _mediaPlayerBlock.pitchSemitones,
+            l10n.mediaPlayerSemitones(_mediaPlayerBlock.pitchSemitones.round()),
+          ),
           leadingIcon: Icons.height,
           settingPage: const SetPitch(),
           block: _mediaPlayerBlock,
@@ -439,6 +441,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
         ),
       ],
     );
+  }
+
+  String getPitchSemitonesString(double semitones, String label) {
+    if (semitones.abs() < 0.001) return '';
+    return semitones > 0 ? '↑ $label' : '↓ $label';
   }
 
   void _shareFilePressed() async {

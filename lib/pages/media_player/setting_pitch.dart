@@ -54,7 +54,7 @@ class _SetPitchState extends State<SetPitch> {
         step: 0.1,
         stepIntervalInMs: 200,
         controller: _pitchController,
-        label: context.l10n.mediaPlayerSemitones,
+        label: context.l10n.mediaPlayerSemitonesLabel,
         textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
         allowNegativeNumbers: true,
       ),

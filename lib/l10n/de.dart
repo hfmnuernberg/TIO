@@ -87,8 +87,7 @@ class German extends AppLocalizations {
   String get mediaPlayerQuickTool => 'Hilfswerkzeug';
   String get mediaPlayerRecording => 'Aufnahme läuft...';
   String get mediaPlayerRemoveMarker => 'Marker entfernen';
-  String get mediaPlayerSemitone => 'Halbton';
-  String get mediaPlayerSemitones => 'Halbtöne';
+  String get mediaPlayerSemitonesLabel => 'Halbtöne';
   String get mediaPlayerSetBasicBeat => 'Basis-Beat einstellen';
   String get mediaPlayerSetPitch => 'Tonhöhe einstellen';
   String get mediaPlayerSetSpeed => 'Wiedergabegeschwindigkeit';
@@ -103,12 +102,13 @@ class German extends AppLocalizations {
       'Tippe hier um die Aufnahme zu starten und zu stoppen oder um eine Audiodatei abzuspielen';
   String get mediaPlayerVolume => 'Lautstärke';
 
-  String mediaPlayerFileAccessibleErrorDescription(String fileName) =>
+  String mediaPlayerErrorFileAccessibleDescription(String fileName) =>
       'Die Datei ist nicht zugänglich. Bitte überprüfe die Berechtigungen.$fileName';
-  String mediaPlayerFileFormatErrorDescription(String format) =>
+  String mediaPlayerErrorFileFormatDescription(String format) =>
       'Das Dateiformat $format wird nicht unterstützt. Bitte wähle eine andere Datei.';
-  String mediaPlayerFileOpenErrorDescription(String fileName) =>
+  String mediaPlayerErrorFileOpenDescription(String fileName) =>
       'Die Datei konnte nicht geöffnet werden. Bitte überprüfe die Berechtigungen oder wähle eine andere Datei.$fileName';
+  String mediaPlayerSemitones(int value) => value.abs() == 1 ? '$value Halbton' : '$value Halbtöne';
 
   String get metronome => 'Metronom';
   String get metronomeAbout => 'Metronom';

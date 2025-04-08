@@ -75,8 +75,7 @@ abstract class AppLocalizations {
   String get mediaPlayerQuickTool;
   String get mediaPlayerRecording;
   String get mediaPlayerRemoveMarker;
-  String get mediaPlayerSemitone;
-  String get mediaPlayerSemitones;
+  String get mediaPlayerSemitonesLabel;
   String get mediaPlayerSetBasicBeat;
   String get mediaPlayerSetPitch;
   String get mediaPlayerSetSpeed;
@@ -90,9 +89,10 @@ abstract class AppLocalizations {
   String get mediaPlayerTutorialStartStop;
   String get mediaPlayerVolume;
 
-  String mediaPlayerFileAccessibleErrorDescription(String fileName);
-  String mediaPlayerFileFormatErrorDescription(String format);
-  String mediaPlayerFileOpenErrorDescription(String fileName);
+  String mediaPlayerErrorFileAccessibleDescription(String fileName);
+  String mediaPlayerErrorFileFormatDescription(String format);
+  String mediaPlayerErrorFileOpenDescription(String fileName);
+  String mediaPlayerSemitones(int value);
 
   String get metronome;
   String get metronomeAbout;

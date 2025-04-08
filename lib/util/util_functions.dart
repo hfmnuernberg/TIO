@@ -255,7 +255,7 @@ Future<void> showFormatNotSupportedDialog(BuildContext context, String format) =
     return AlertDialog(
       title: Text(l10n.mediaPlayerErrorFileFormat, style: TextStyle(color: ColorTheme.primary)),
       content: Text(
-        l10n.mediaPlayerFileFormatErrorDescription(format),
+        l10n.mediaPlayerErrorFileFormatDescription(format),
         style: const TextStyle(color: ColorTheme.primary),
       ),
       actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
@@ -277,7 +277,7 @@ Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) 
         (context) => AlertDialog(
           title: Text(l10n.mediaPlayerErrorFileOpen, style: TextStyle(color: ColorTheme.primary)),
           content: Text(
-            l10n.mediaPlayerFileOpenErrorDescription(fileInfoText),
+            l10n.mediaPlayerErrorFileOpenDescription(fileInfoText),
             style: const TextStyle(color: ColorTheme.primary),
           ),
           actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
@@ -299,7 +299,7 @@ Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName
         (context) => AlertDialog(
           title: Text(l10n.mediaPlayerErrorFileAccessible, style: TextStyle(color: ColorTheme.primary)),
           content: Text(
-            l10n.mediaPlayerFileAccessibleErrorDescription(fileInfoText),
+            l10n.mediaPlayerErrorFileAccessibleDescription(fileInfoText),
             style: const TextStyle(color: ColorTheme.primary),
           ),
           actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
@@ -513,10 +513,6 @@ String formatDoubleToString(double value) {
   } else {
     return value.round().toString();
   }
-}
-
-bool isSingularUnit(double number) {
-  return (number.abs() - 1.0).abs() < 0.001;
 }
 
 String pluralSDouble(double number) {
