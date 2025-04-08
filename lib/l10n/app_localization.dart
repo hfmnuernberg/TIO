@@ -95,8 +95,8 @@ abstract class AppLocalizations {
   String mediaPlayerSemitones(int value);
 
   String get metronome;
-  String get metronome1;
-  String get metronome2;
+  String get metronomePrimary;
+  String get metronomeSecondary;
   String get metronomeAbout;
   String get metronomeAboutExplanation;
   String get metronomeAccented;
@@ -109,14 +109,14 @@ abstract class AppLocalizations {
   String get metronomeRandomMute;
   String get metronomeRandomMuteProbability;
   String get metronomeSetBpm;
-  String get metronomeSetMetronomeSounds;
-  String get metronomeSetMetronome2Sounds;
   String get metronomeSetRandomMute;
+  String get metronomeSetSoundsPrimary;
+  String get metronomeSetSoundsSecondary;
   String get metronomeSound;
-  String get metronomeSound1;
-  String get metronomeSound2;
   String get metronomeSoundMain;
   String get metronomeSoundPoly;
+  String get metronomeSoundPrimary;
+  String get metronomeSoundSecondary;
   String get metronomeTutorialAddNew;
   String get metronomeTutorialAdjust;
   String get metronomeTutorialEditBeats;

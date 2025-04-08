@@ -111,8 +111,8 @@ class English extends AppLocalizations {
   String mediaPlayerSemitones(int value) => '$value semitone${value.abs() == 1 ? '' : 's'}';
 
   String get metronome => 'Metronome';
-  String get metronome1 => 'Metronome 1';
-  String get metronome2 => 'Metronome 2';
+  String get metronomePrimary => 'Metronome 1';
+  String get metronomeSecondary => 'Metronome 2';
   String get metronomeAbout => 'Metronome';
   String get metronomeAboutExplanation =>
       'The metronome allows you to save and recall your individual configurations (tempo, time signature, polyrhythms, random mute, sounds). You can also combine the metronome with the tuner and the media player.';
@@ -126,14 +126,14 @@ class English extends AppLocalizations {
   String get metronomeRandomMute => 'Random Mute';
   String get metronomeRandomMuteProbability => 'Probability in %';
   String get metronomeSetBpm => 'Set BPM';
-  String get metronomeSetMetronomeSounds => 'Set Metronome Sounds';
-  String get metronomeSetMetronome2Sounds => 'Set 2. Metronome Sounds';
   String get metronomeSetRandomMute => 'Set Random Mute';
+  String get metronomeSetSoundsPrimary => 'Set Metronome Sounds';
+  String get metronomeSetSoundsSecondary => 'Set 2nd Metronome Sounds';
   String get metronomeSound => 'Sound';
-  String get metronomeSound1 => 'Sound 1';
-  String get metronomeSound2 => 'Sound 2';
   String get metronomeSoundMain => 'Main';
   String get metronomeSoundPoly => 'Poly';
+  String get metronomeSoundPrimary => 'Sound 1';
+  String get metronomeSoundSecondary => 'Sound 2';
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings';
   String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted';

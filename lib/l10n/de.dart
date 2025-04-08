@@ -111,29 +111,29 @@ class German extends AppLocalizations {
   String mediaPlayerSemitones(int value) => value.abs() == 1 ? '$value Halbton' : '$value Halbtöne';
 
   String get metronome => 'Metronom';
-  String get metronome1 => 'Metronom 1';
-  String get metronome2 => 'Metronom 2';
+  String get metronomePrimary => 'Metronom 1';
+  String get metronomeSecondary => 'Metronom 2';
   String get metronomeAbout => 'Metronom';
   String get metronomeAboutExplanation =>
       'Das Metronom ermöglicht es dir, deine individuellen Konfigurationen (Tempo, Taktart, Polyrhythmen, zufälliges Stummschalten, Klänge) zu speichern und abzurufen. Du kannst das Metronom auch mit dem Stimmgerät und dem Media Player kombinieren.';
   String get metronomeAccented => 'Akzentuiert';
   String get metronomeBeatMain => 'Haupt-Beat';
-  String get metronomeBeatPoly => 'Neben-Beat';
+  String get metronomeBeatPoly => 'Poly-Beat';
   String get metronomeClearAllRhythms => 'Alle Rhythmen löschen';
   String get metronomeDescription => 'erstelle deinen Beat';
   String get metronomeNumberOfBeats => 'Anzahl der Beats';
-  String get metronomeNumberOfPolyBeats => 'Anzahl der Neben-Beats';
+  String get metronomeNumberOfPolyBeats => 'Anzahl der Poly-Beats';
   String get metronomeRandomMute => 'Zufälliges Stummschalten';
   String get metronomeRandomMuteProbability => 'Wahrscheinlichkeit in %';
   String get metronomeSetBpm => 'BPM einstellen';
-  String get metronomeSetMetronomeSounds => 'Klänge einstellen';
-  String get metronomeSetMetronome2Sounds => 'Klänge einstellen (Metronom 2)';
   String get metronomeSetRandomMute => 'Zufälliges Stummschalten einstellen';
+  String get metronomeSetSoundsPrimary => 'Klänge einstellen';
+  String get metronomeSetSoundsSecondary => 'Klänge einstellen (Metronom 2)';
   String get metronomeSound => 'Klang';
-  String get metronomeSound1 => 'Klang 1';
-  String get metronomeSound2 => 'Klang 2';
   String get metronomeSoundMain => 'Hauptklang';
   String get metronomeSoundPoly => 'Nebenklang';
+  String get metronomeSoundPrimary => 'Klang 1';
+  String get metronomeSoundSecondary => 'Klang 2';
   String get metronomeTutorialAddNew => 'Tippe hier um ein zweites Metronom hinzuzufügen';
   String get metronomeTutorialAdjust => 'Tippe hier um die Metronomeinstellungen anzupassen';
   String get metronomeTutorialEditBeats =>

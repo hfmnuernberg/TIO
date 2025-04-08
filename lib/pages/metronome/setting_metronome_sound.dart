@@ -87,7 +87,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
     final l10n = context.l10n;
 
     return ParentSettingPage(
-      title: widget.forSecondMetronome ? l10n.metronomeSetMetronome2Sounds : l10n.metronomeSetMetronomeSounds,
+      title: widget.forSecondMetronome ? l10n.metronomeSetSoundsSecondary : l10n.metronomeSetSoundsPrimary,
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,

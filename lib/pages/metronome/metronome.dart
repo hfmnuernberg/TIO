@@ -576,7 +576,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  isSecondMetronome ? context.l10n.metronome2 : context.l10n.metronome1,
+                  isSecondMetronome ? context.l10n.metronomeSecondary : context.l10n.metronomePrimary,
                   style: const TextStyle(color: ColorTheme.primary),
                 ),
                 // add second metronome button
@@ -719,7 +719,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         ),
         // Sounds
         SettingsTile(
-          title: _metronomeBlock.rhythmGroups2.isEmpty ? l10n.metronomeSound : l10n.metronomeSound1,
+          title: _metronomeBlock.rhythmGroups2.isEmpty ? l10n.metronomeSound : l10n.metronomeSoundPrimary,
           subtitle:
               '${l10n.metronomeSoundMain}: ${_metronomeBlock.accSound}, ${_metronomeBlock.unaccSound}\n${l10n.metronomeSoundPoly}: ${_metronomeBlock.polyAccSound}, ${_metronomeBlock.polyUnaccSound}',
           leadingIcon: Icons.library_music_outlined,
@@ -731,7 +731,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           const SizedBox()
         else
           SettingsTile(
-            title: l10n.metronomeSound2,
+            title: l10n.metronomeSoundSecondary,
             subtitle:
                 '${l10n.metronomeSoundMain}: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\n${l10n.metronomeSoundPoly}: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}',
             leadingIcon: Icons.library_music_outlined,
