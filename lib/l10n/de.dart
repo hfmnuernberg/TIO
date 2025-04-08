@@ -94,10 +94,10 @@ class German extends AppLocalizations {
   String get mediaPlayerSemitonesLabel => 'Halbtöne';
   String get mediaPlayerSetBasicBeat => 'Grundbeat einstellen';
   String get mediaPlayerSetPitch => 'Tonhöhe einstellen';
-  String get mediaPlayerSetSpeed => 'Wiedergabegeschwindigkeit';
+  String get mediaPlayerSetSpeed => 'Geschwindigkeit einstellen';
   String get mediaPlayerSetTrim => 'Trimmen';
   String get mediaPlayerShareAudioFile => 'Audio-Datei teilen';
-  String get mediaPlayerSpeed => 'Wieder\u{00AD}gabe\u{00AD}geschwindigkeit';
+  String get mediaPlayerSpeed => 'Geschwindigkeit';
   String get mediaPlayerTapToTempo => 'Tippe einen Takt';
   String get mediaPlayerTrim => 'Trimmen';
   String get mediaPlayerTutorialAdjust => 'Tippe hier um deine Audiodatei anzupassen';
