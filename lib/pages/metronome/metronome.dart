@@ -1,5 +1,3 @@
-// Metronome User Interface
-
 import 'dart:async';
 import 'dart:ui';
 
@@ -73,8 +71,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   Color _listTileMaskColor = Colors.transparent;
 
-  final List<MenuItemButton> _menuItems = List.empty(growable: true);
-
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyStartStop = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
@@ -88,13 +84,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     super.initState();
 
     VolumeController.instance.addListener(handleVolumeChange);
-
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _clearAllRhythms,
-        child: const Text('Clear all rhythms', style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
 
     _metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
     _metronomeBlock.timeLastModified = getCurrentDateTime();
@@ -610,12 +599,19 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return ParentTool(
       barTitle: _metronomeBlock.title,
       isQuickTool: widget.isQuickTool,
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: _metronomeBlock,
-      menuItems: _menuItems,
+      menuItems: <MenuItemButton>[
+        MenuItemButton(
+          onPressed: _clearAllRhythms,
+          child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+      ],
       onParentTutorialFinished: () {
         if (context.read<ProjectLibrary>().showMetronomeTutorial) {
           _createTutorial();

@@ -114,6 +114,7 @@ class English extends AppLocalizations {
   String get metronomeAbout => 'Metronome';
   String get metronomeAboutExplanation =>
       'The metronome allows you to save and recall your individual configurations (tempo, time signature, polyrhythms, random mute, sounds). You can also combine the metronome with the tuner and the media player.';
+  String get metronomeClearAllRhythms => 'Clear all rhythms';
   String get metronomeDescription => 'create a rhythm';
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings';

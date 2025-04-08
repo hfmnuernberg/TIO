@@ -114,6 +114,7 @@ class German extends AppLocalizations {
   String get metronomeAbout => 'Metronom';
   String get metronomeAboutExplanation =>
       'Das Metronom ermöglicht es dir, deine individuellen Konfigurationen (Tempo, Taktart, Polyrhythmen, zufälliges Stummschalten, Klänge) zu speichern und abzurufen. Du kannst das Metronom auch mit dem Stimmgerät und dem Media Player kombinieren.';
+  String get metronomeClearAllRhythms => 'Alle Rhythmen löschen';
   String get metronomeDescription => 'erstelle deinen Beat';
   String get metronomeTutorialAddNew => 'Tippe hier um ein zweites Metronom hinzuzufügen';
   String get metronomeTutorialAdjust => 'Tippe hier um die Metronomeinstellungen anzupassen';
