@@ -33,7 +33,7 @@ class German extends AppLocalizations {
   String get commonNo => 'Nein';
   String get commonOctave => 'Oktave';
   String get commonReset => 'Zurücksetzen';
-  String get commonSaveQuickToolQuestion => 'Möchtest du das Tool speichern?';
+  String get commonSaveQuickTool => 'Möchtest du das Tool speichern?';
   String get commonSecShort => 'Sek.';
   String get commonSubmit => 'Bestätigen';
   String get commonYes => 'Ja';
@@ -73,12 +73,12 @@ class German extends AppLocalizations {
   String get mediaPlayerBasicBeat => 'Basis-Beat';
   String get mediaPlayerDescription => 'nimm auf und spiele ab';
   String get mediaPlayerEditMarkers => 'Marker bearbeiten';
+  String get mediaPlayerErrorFileAccessible => 'Datei nicht zugänglich';
+  String get mediaPlayerErrorFileFormat => 'Dateiformat nicht unterstützt';
+  String get mediaPlayerErrorFileOpen => 'Die Datei konnte nicht geöffnet werden';
   String get mediaPlayerFactor => 'Faktor';
   String get mediaPlayerFactorAndBpm => 'Faktor und BPM Regler';
   String get mediaPlayerFile => 'Datei';
-  String get mediaPlayerFileAccessibleError => 'Datei nicht zugänglich';
-  String get mediaPlayerFileFormatError => 'Dateiformat nicht unterstützt';
-  String get mediaPlayerFileOpenError => 'Die Datei konnte nicht geöffnet werden';
   String get mediaPlayerLoadAudioFile => 'Audio-Datei laden';
   String get mediaPlayerMarkers => 'Marker';
   String get mediaPlayerOverwriteSound => 'Audio-Datei überschreiben';

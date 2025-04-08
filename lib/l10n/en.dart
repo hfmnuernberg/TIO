@@ -32,7 +32,7 @@ class English extends AppLocalizations {
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
   String get commonReset => 'Reset';
-  String get commonSaveQuickToolQuestion => 'Save Quick Tool?';
+  String get commonSaveQuickTool => 'Save Quick Tool?';
   String get commonSecShort => 'sec';
   String get commonSubmit => 'Submit';
   String get commonYes => 'Yes';
@@ -73,12 +73,12 @@ class English extends AppLocalizations {
   String get mediaPlayerBasicBeat => 'Basic Beat';
   String get mediaPlayerDescription => 'record and play';
   String get mediaPlayerEditMarkers => 'Edit Markers';
+  String get mediaPlayerErrorFileAccessible => 'File is not accessible.';
+  String get mediaPlayerErrorFileFormat => 'File format not supported';
+  String get mediaPlayerErrorFileOpen => 'File could not be opened.';
   String get mediaPlayerFactor => 'Factor';
   String get mediaPlayerFactorAndBpm => 'Factor and BPM slider';
   String get mediaPlayerFile => 'File';
-  String get mediaPlayerFileAccessibleError => 'File is not accessible.';
-  String get mediaPlayerFileFormatError => 'File format not supported';
-  String get mediaPlayerFileOpenError => 'File could not be opened.';
   String get mediaPlayerLoadAudioFile => 'Load Audio File';
   String get mediaPlayerMarkers => 'Markers';
   String get mediaPlayerOverwriteSound => 'Overwrite?';

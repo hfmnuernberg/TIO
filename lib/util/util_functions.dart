@@ -225,7 +225,7 @@ Future<bool?> askForSavingQuickTool(BuildContext context) => showDialog<bool>(
     final l10n = context.l10n;
 
     return AlertDialog(
-      title: Text(l10n.commonSaveQuickToolQuestion, style: TextStyle(color: ColorTheme.primary)),
+      title: Text(l10n.commonSaveQuickTool, style: TextStyle(color: ColorTheme.primary)),
       actions: [
         TextButton(
           onPressed: () {
@@ -253,7 +253,7 @@ Future<void> showFormatNotSupportedDialog(BuildContext context, String format) =
     final l10n = context.l10n;
 
     return AlertDialog(
-      title: Text(l10n.mediaPlayerFileFormatError, style: TextStyle(color: ColorTheme.primary)),
+      title: Text(l10n.mediaPlayerErrorFileFormat, style: TextStyle(color: ColorTheme.primary)),
       content: Text(
         l10n.mediaPlayerFileFormatErrorDescription(format),
         style: const TextStyle(color: ColorTheme.primary),
@@ -275,7 +275,7 @@ Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) 
     context: context,
     builder:
         (context) => AlertDialog(
-          title: Text(l10n.mediaPlayerFileOpenError, style: TextStyle(color: ColorTheme.primary)),
+          title: Text(l10n.mediaPlayerErrorFileOpen, style: TextStyle(color: ColorTheme.primary)),
           content: Text(
             l10n.mediaPlayerFileOpenErrorDescription(fileInfoText),
             style: const TextStyle(color: ColorTheme.primary),
@@ -297,7 +297,7 @@ Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName
     context: context,
     builder:
         (context) => AlertDialog(
-          title: Text(l10n.mediaPlayerFileAccessibleError, style: TextStyle(color: ColorTheme.primary)),
+          title: Text(l10n.mediaPlayerErrorFileAccessible, style: TextStyle(color: ColorTheme.primary)),
           content: Text(
             l10n.mediaPlayerFileAccessibleErrorDescription(fileInfoText),
             style: const TextStyle(color: ColorTheme.primary),
