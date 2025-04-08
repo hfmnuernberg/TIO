@@ -188,7 +188,6 @@ class German extends AppLocalizations {
   String get textTitle => 'Text';
   String get textDescription => 'schreibe deine Notizen auf';
 
-  String get toolNew => 'Neues Tool';
   String get toolNewProjectTitle => 'Projekttitel';
   String get toolNewTitle => 'Tool-Titel';
   String get toolQuickTool => 'Hilfswerkzeug';

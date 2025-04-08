@@ -186,7 +186,6 @@ class English extends AppLocalizations {
   String get textTitle => 'Text';
   String get textDescription => 'write down your notes';
 
-  String get toolNew => 'New tool';
   String get toolNewProjectTitle => 'Project title';
   String get toolNewTitle => 'Tool title';
   String get toolQuickTool => 'Quick Tool';
