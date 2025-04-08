@@ -576,7 +576,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  isSecondMetronome ? 'Metronome 2' : 'Metronome 1',
+                  isSecondMetronome ? context.l10n.metronome2 : context.l10n.metronome1,
                   style: const TextStyle(color: ColorTheme.primary),
                 ),
                 // add second metronome button
@@ -691,7 +691,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       settingTiles: [
         // Volume
         SettingsTile(
-          title: 'Volume',
+          title: l10n.commonVolume,
           subtitle: _metronomeBlock.volume.toString(),
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
@@ -710,7 +710,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         ),
         // BPM
         SettingsTile(
-          title: 'BPM',
+          title: l10n.commonBpm,
           subtitle: '${_metronomeBlock.bpm}',
           leadingIcon: Icons.speed,
           settingPage: const SetBPM(),
@@ -719,9 +719,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         ),
         // Sounds
         SettingsTile(
-          title: _metronomeBlock.rhythmGroups2.isEmpty ? 'Sound' : 'Sound 1',
+          title: _metronomeBlock.rhythmGroups2.isEmpty ? l10n.metronomeSound : l10n.metronomeSound1,
           subtitle:
-              'Main: ${_metronomeBlock.accSound}, ${_metronomeBlock.unaccSound}\nPoly: ${_metronomeBlock.polyAccSound}, ${_metronomeBlock.polyUnaccSound}',
+              '${l10n.metronomeSoundMain}: ${_metronomeBlock.accSound}, ${_metronomeBlock.unaccSound}\n${l10n.metronomeSoundPoly}: ${_metronomeBlock.polyAccSound}, ${_metronomeBlock.polyUnaccSound}',
           leadingIcon: Icons.library_music_outlined,
           settingPage: SetMetronomeSound(running: _sound && _isStarted),
           block: _metronomeBlock,
@@ -731,9 +731,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           const SizedBox()
         else
           SettingsTile(
-            title: 'Sound 2',
+            title: l10n.metronomeSound2,
             subtitle:
-                'Main: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\nPoly: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}',
+                '${l10n.metronomeSoundMain}: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\n${l10n.metronomeSoundPoly}: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}',
             leadingIcon: Icons.library_music_outlined,
             settingPage: SetMetronomeSound(running: _sound && _isStarted, forSecondMetronome: true),
             block: _metronomeBlock,
@@ -741,7 +741,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           ),
         // Random mute
         SettingsTile(
-          title: 'Random Mute',
+          title: l10n.metronomeRandomMute,
           subtitle: '${_metronomeBlock.randomMute}%',
           leadingIcon: Icons.question_mark,
           settingPage: const SetRandomMute(),

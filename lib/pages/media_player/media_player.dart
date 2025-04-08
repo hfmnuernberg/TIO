@@ -371,7 +371,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       keySettingsList: _keySettings,
       settingTiles: [
         SettingsTile(
-          title: l10n.mediaPlayerVolume,
+          title: l10n.commonVolume,
           subtitle: _mediaPlayerBlock.volume.toString(),
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
