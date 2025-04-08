@@ -119,6 +119,7 @@ class German extends AppLocalizations {
   String get metronomeClearAllRhythms => 'Alle Rhythmen löschen';
   String get metronomeDescription => 'erstelle deinen Beat';
   String get metronomeRandomMute => 'Zufälliges Stummschalten';
+  String get metronomeSetBpm => 'BPM einstellen';
   String get metronomeSound => 'Klang';
   String get metronomeSound1 => 'Klang 1';
   String get metronomeSound2 => 'Klang 2';
