@@ -126,6 +126,7 @@ abstract class AppLocalizations {
   String get pianoAbout;
   String get pianoAboutExplanation;
   String get pianoDescription;
+  String get pianoSetSound;
   String get pianoTutorialAdjust;
   String get pianoTutorialChangeKeyOrOctave;
 

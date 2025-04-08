@@ -146,6 +146,7 @@ class German extends AppLocalizations {
   String get pianoAboutExplanation =>
       'Du kannst das integrierte Klavier verwenden, verschiedene Klangmodi auswählen und deine individuellen Konfigurationen speichern.';
   String get pianoDescription => 'werde der nächste Herbie Hancock';
+  String get pianoSetSound => 'Piano-Klang einstellen';
   String get pianoTutorialAdjust => 'Tippe hier um den Kammerton, die Lautstärke und den Klang anzupassen';
   String get pianoTutorialChangeKeyOrOctave =>
       'Tippe auf die Pfeile links oder rechts um pro Taste oder pro Oktave nach oben oder unten zu wechseln';

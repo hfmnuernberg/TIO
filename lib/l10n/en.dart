@@ -145,6 +145,7 @@ class English extends AppLocalizations {
   String get pianoAboutExplanation =>
       'You can use the built-in piano, select different sound modes and save your individual configurations.';
   String get pianoDescription => 'become the next Herbie Hancock';
+  String get pianoSetSound => 'Set Piano Sound';
   String get pianoTutorialAdjust => 'Tap here to adjust concert pitch, volume, and sound';
   String get pianoTutorialChangeKeyOrOctave => 'Tap the left or right arrows to move up or down per key or per octave';
 
