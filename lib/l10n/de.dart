@@ -34,7 +34,6 @@ class German extends AppLocalizations {
   String get commonOctave => 'Oktave';
   String get commonReset => 'Zurücksetzen';
   String get commonSaveQuickTool => 'Möchtest du das Tool speichern?';
-  String get commonSecShort => 'Sek.';
   String get commonSubmit => 'Bestätigen';
   String get commonYes => 'Ja';
 
@@ -70,7 +69,7 @@ class German extends AppLocalizations {
   String get mediaPlayerAboutExplanation =>
       'Du kannst Audio-Dateien aufnehmen, laden und bearbeiten und Konfigurationen speichern. Dabei kannst du deine bevorzugte Lautstärke, Reichweite (Länge und Segment), Wiedergabegeschwindigkeit und Tonhöhe einstellen. Du kannst deine Projekte über externe Messenger-Dienste an andere weiterleiten.';
   String get mediaPlayerAddMarker => 'Marker hinzufügen';
-  String get mediaPlayerBasicBeat => 'Basis-Beat';
+  String get mediaPlayerBasicBeat => 'Grundbeat';
   String get mediaPlayerDescription => 'nimm auf und spiele ab';
   String get mediaPlayerEditMarkers => 'Marker bearbeiten';
   String get mediaPlayerErrorFileAccessible => 'Datei nicht lesbar';
@@ -91,8 +90,9 @@ class German extends AppLocalizations {
   String get mediaPlayerQuickTool => 'Hilfswerkzeug';
   String get mediaPlayerRecording => 'Aufnahme läuft...';
   String get mediaPlayerRemoveMarker => 'Marker entfernen';
+  String get mediaPlayerSecShort => 'Sek.';
   String get mediaPlayerSemitonesLabel => 'Halbtöne';
-  String get mediaPlayerSetBasicBeat => 'Basis-Beat einstellen';
+  String get mediaPlayerSetBasicBeat => 'Grundbeat einstellen';
   String get mediaPlayerSetPitch => 'Tonhöhe einstellen';
   String get mediaPlayerSetSpeed => 'Wiedergabegeschwindigkeit';
   String get mediaPlayerSetTrim => 'Trimmen';

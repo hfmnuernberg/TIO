@@ -33,7 +33,6 @@ class English extends AppLocalizations {
   String get commonOctave => 'Octave';
   String get commonReset => 'Reset';
   String get commonSaveQuickTool => 'Save Quick Tool?';
-  String get commonSecShort => 'sec';
   String get commonSubmit => 'Submit';
   String get commonYes => 'Yes';
 
@@ -92,6 +91,7 @@ class English extends AppLocalizations {
   String get mediaPlayerQuickTool => 'Quick Tool';
   String get mediaPlayerRecording => 'Recording...';
   String get mediaPlayerRemoveMarker => 'Remove Selected Marker';
+  String get mediaPlayerSecShort => 'sec';
   String get mediaPlayerSemitonesLabel => 'semitones';
   String get mediaPlayerSetBasicBeat => 'Set Basic Beat';
   String get mediaPlayerSetPitch => 'Set Pitch';

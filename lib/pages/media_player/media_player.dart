@@ -326,7 +326,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                TextButton(onPressed: () => _jump10Seconds(false), child: Text('-10 ${l10n.commonSecShort}')),
+                TextButton(onPressed: () => _jump10Seconds(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
                 IconButton(
                   onPressed: () {
                     setState(() {
@@ -340,7 +340,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                           ? const Icon(Icons.all_inclusive, color: ColorTheme.tertiary)
                           : const Icon(Icons.all_inclusive, color: ColorTheme.surfaceTint),
                 ),
-                TextButton(onPressed: () => _jump10Seconds(true), child: Text('+10 ${l10n.commonSecShort}')),
+                TextButton(onPressed: () => _jump10Seconds(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
               ],
             ),
             Row(

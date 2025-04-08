@@ -24,7 +24,6 @@ abstract class AppLocalizations {
   String get commonOctave;
   String get commonReset;
   String get commonSaveQuickTool;
-  String get commonSecShort;
   String get commonSubmit;
   String get commonYes;
 
@@ -77,6 +76,7 @@ abstract class AppLocalizations {
   String get mediaPlayerQuickTool;
   String get mediaPlayerRecording;
   String get mediaPlayerRemoveMarker;
+  String get mediaPlayerSecShort;
   String get mediaPlayerSemitonesLabel;
   String get mediaPlayerSetBasicBeat;
   String get mediaPlayerSetPitch;
