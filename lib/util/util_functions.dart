@@ -207,7 +207,7 @@ Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => show
         ),
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop(false);
+            Navigator.of(context).pop(true);
           },
           child: Text(l10n.commonYes, style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
@@ -235,7 +235,7 @@ Future<bool?> askForSavingQuickTool(BuildContext context) => showDialog<bool>(
         ),
         TextButton(
           onPressed: () {
-            Navigator.of(context).pop(false);
+            Navigator.of(context).pop(true);
           },
           child: Text(l10n.commonYes, style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
