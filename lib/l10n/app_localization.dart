@@ -15,6 +15,7 @@ abstract class AppLocalizations {
   String get appTutorialToolIsland;
   String get appTutorialToolSave;
 
+  String get commonBpm;
   String get commonCancel;
   String get commonDelete;
   String get commonGotIt;
@@ -22,6 +23,7 @@ abstract class AppLocalizations {
   String get commonNo;
   String get commonOctave;
   String get commonReset;
+  String get commonSaveQuickTool;
   String get commonSubmit;
   String get commonYes;
 
@@ -37,6 +39,7 @@ abstract class AppLocalizations {
   String get image;
   String get imageAbout;
   String get imageAboutExplanation;
+  String get imageDescription;
   String get imageDoLater;
   String get imageNoCameraFound;
   String get imageNoCameraFoundHint;
@@ -47,20 +50,54 @@ abstract class AppLocalizations {
   String get imageSetAsThumbnailQuestion;
   String get imageShare;
   String get imageTakePhoto;
-  String get imageToolDescription;
   String get imageUploadHint;
   String get imageUseAsThumbnailQuestion;
 
   String get mediaPlayer;
   String get mediaPlayerAbout;
   String get mediaPlayerAboutExplanation;
+  String get mediaPlayerAddMarker;
+  String get mediaPlayerBasicBeat;
+  String get mediaPlayerDescription;
+  String get mediaPlayerEditMarkers;
+  String get mediaPlayerErrorFileAccessible;
+  String get mediaPlayerErrorFileAccessibleDescription;
+  String get mediaPlayerErrorFileFormat;
+  String get mediaPlayerErrorFileOpen;
+  String get mediaPlayerErrorFileOpenDescription;
+  String get mediaPlayerFactor;
+  String get mediaPlayerFactorAndBpm;
+  String get mediaPlayerFile;
+  String get mediaPlayerLoadAudioFile;
+  String get mediaPlayerMarkers;
+  String get mediaPlayerOverwriteSound;
+  String get mediaPlayerOverwriteSoundQuestion;
+  String get mediaPlayerPitch;
+  String get mediaPlayerQuickTool;
+  String get mediaPlayerRecording;
+  String get mediaPlayerRemoveMarker;
+  String get mediaPlayerSecShort;
+  String get mediaPlayerSemitonesLabel;
+  String get mediaPlayerSetBasicBeat;
+  String get mediaPlayerSetPitch;
+  String get mediaPlayerSetSpeed;
+  String get mediaPlayerSetTrim;
+  String get mediaPlayerShareAudioFile;
+  String get mediaPlayerSpeed;
+  String get mediaPlayerTapToTempo;
+  String get mediaPlayerTrim;
   String get mediaPlayerTutorialAdjust;
   String get mediaPlayerTutorialJumpTo;
   String get mediaPlayerTutorialStartStop;
+  String get mediaPlayerVolume;
+
+  String mediaPlayerErrorFileFormatDescription(String format);
+  String mediaPlayerSemitones(int value);
 
   String get metronome;
   String get metronomeAbout;
   String get metronomeAboutExplanation;
+  String get metronomeDescription;
   String get metronomeTutorialAddNew;
   String get metronomeTutorialAdjust;
   String get metronomeTutorialEditBeats;
@@ -70,6 +107,7 @@ abstract class AppLocalizations {
   String get piano;
   String get pianoAbout;
   String get pianoAboutExplanation;
+  String get pianoDescription;
   String get pianoTutorialAdjust;
   String get pianoTutorialChangeKeyOrOctave;
 
@@ -123,10 +161,10 @@ abstract class AppLocalizations {
   String get tunerAboutExplanation;
   String get tunerConcertPitch;
   String get tunerConcertPitchInHz;
+  String get tunerDescription;
   String get tunerFrequency;
   String get tunerPlayReference;
   String get tunerSetConcertPitch;
-  String get tunerToolDescription;
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
 }

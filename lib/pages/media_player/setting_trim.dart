@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/file_io.dart';
@@ -65,7 +66,7 @@ class _SetTrimState extends State<SetTrim> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: 'Set Trim',
+      title: context.l10n.mediaPlayerSetTrim,
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,

@@ -1,8 +1,7 @@
-//Tap to Tempo: Measures the difference of taps to calculate the corresponding BPM number
-
 import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
@@ -81,7 +80,7 @@ class _Tap2TempoState extends State<Tap2Tempo> {
   @override
   Widget build(BuildContext context) {
     return TIOTextButton(
-      text: 'Tap to tempo',
+      text: context.l10n.mediaPlayerTapToTempo,
       onTap: widget.enabled ? _tap2tempo : () {},
       backgroundColor: Color.lerp(ColorTheme.tertiary60, ColorTheme.surface, _t2tColorLerpValue / cooldownInMs),
       icon: const Icon(Icons.touch_app_outlined, size: 40),

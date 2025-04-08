@@ -366,7 +366,7 @@ Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
   BlockType.tuner: BlockTypeInfo(
     l10n.tuner,
     TunerParams.kind,
-    l10n.tunerToolDescription,
+    l10n.tunerDescription,
     SvgPicture.asset(
       'assets/icons/Tuner.svg',
       colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
@@ -376,9 +376,9 @@ Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
     TunerBlock.fromJson,
   ),
   BlockType.metronome: BlockTypeInfo(
-    MetronomeParams.displayName,
+    l10n.metronome,
     MetronomeParams.kind,
-    MetronomeParams.description,
+    l10n.metronomeDescription,
     SvgPicture.asset(
       'assets/icons/Metronome.svg',
       colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
@@ -388,9 +388,9 @@ Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
     MetronomeBlock.fromJson,
   ),
   BlockType.mediaPlayer: BlockTypeInfo(
-    MediaPlayerParams.displayName,
+    l10n.mediaPlayer,
     MediaPlayerParams.kind,
-    MediaPlayerParams.description,
+    l10n.mediaPlayerDescription,
     const Icon(Icons.play_arrow, color: ColorTheme.primary),
     MediaPlayerBlock.withDefaults,
     MediaPlayerBlock.withTitle,
@@ -399,16 +399,16 @@ Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
   BlockType.image: BlockTypeInfo(
     l10n.image,
     ImageParams.kind,
-    l10n.imageToolDescription,
+    l10n.imageDescription,
     const Icon(Icons.image_outlined, color: ColorTheme.primary),
     ImageBlock.withDefaults,
     ImageBlock.withTitle,
     ImageBlock.fromJson,
   ),
   BlockType.piano: BlockTypeInfo(
-    PianoParams.displayName,
+    l10n.piano,
     PianoParams.kind,
-    PianoParams.description,
+    l10n.pianoDescription,
     const Icon(Icons.piano, color: ColorTheme.primary),
     PianoBlock.withDefaults,
     PianoBlock.withTitle,

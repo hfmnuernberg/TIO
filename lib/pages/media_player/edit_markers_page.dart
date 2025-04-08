@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -64,8 +65,10 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return ParentSettingPage(
-      title: 'Edit Markers',
+      title: l10n.mediaPlayerEditMarkers,
       confirm: _onConfirm,
       reset: _removeAllMarkers,
       customWidget: Expanded(
@@ -119,8 +122,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               },
             ),
             const SizedBox(height: TIOMusicParams.edgeInset),
-            _listButtons(Icons.add, 'Add Marker', _addNewMarker),
-            _listButtons(Icons.delete_outlined, 'Remove Selected Marker', _removeSelectedMarker),
+            _listButtons(Icons.add, l10n.mediaPlayerAddMarker, _addNewMarker),
+            _listButtons(Icons.delete_outlined, l10n.mediaPlayerRemoveMarker, _removeSelectedMarker),
           ],
         ),
       ),

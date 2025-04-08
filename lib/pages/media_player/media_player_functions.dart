@@ -112,13 +112,12 @@ abstract class MediaPlayerFunctions {
     return _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }
 
-  // Functions for the Timer Display while recording
-  static Widget displayRecordingTimer(Duration duration, double height) {
+  static Widget displayRecordingTimer(String label, Duration duration, double height) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Recording...', style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
+          Text(label, style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
           Text(getDurationFormated(duration), style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 6)),
         ],
       ),
