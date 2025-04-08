@@ -121,6 +121,8 @@ class English extends AppLocalizations {
   String get metronomeBeatPoly => 'Poly Beat';
   String get metronomeClearAllRhythms => 'Clear all rhythms';
   String get metronomeDescription => 'create a rhythm';
+  String get metronomeNumberOfBeats => 'Number of Beats';
+  String get metronomeNumberOfPolyBeats => 'Number of Poly Beats';
   String get metronomeRandomMute => 'Random Mute';
   String get metronomeRandomMuteProbability => 'Probability in %';
   String get metronomeSetBpm => 'Set BPM';
