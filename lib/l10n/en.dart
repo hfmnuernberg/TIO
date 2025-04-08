@@ -74,8 +74,12 @@ class English extends AppLocalizations {
   String get mediaPlayerDescription => 'record and play';
   String get mediaPlayerEditMarkers => 'Edit Markers';
   String get mediaPlayerErrorFileAccessible => 'File is not accessible.';
+  String get mediaPlayerErrorFileAccessibleDescription =>
+      "Maybe the file needs to be downloaded first if it doesn't exist locally on your phone.";
   String get mediaPlayerErrorFileFormat => 'File format not supported';
   String get mediaPlayerErrorFileOpen => 'File could not be opened.';
+  String get mediaPlayerErrorFileOpenDescription =>
+      'Something went wrong while trying to open the file. Please try again.';
   String get mediaPlayerFactor => 'Factor';
   String get mediaPlayerFactorAndBpm => 'Factor and BPM slider';
   String get mediaPlayerFile => 'File';
@@ -102,12 +106,8 @@ class English extends AppLocalizations {
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file';
   String get mediaPlayerVolume => 'Volume';
 
-  String mediaPlayerErrorFileAccessibleDescription(String fileName) =>
-      "Maybe the file needs to be downloaded first if it doesn't exist locally on your phone.$fileName";
   String mediaPlayerErrorFileFormatDescription(String format) =>
       'The file format "$format" is not supported. Please choose a different file.';
-  String mediaPlayerErrorFileOpenDescription(String fileName) =>
-      'Something went wrong while trying to open the file. Please try again.$fileName';
   String mediaPlayerSemitones(int value) => '$value semitone${value.abs() == 1 ? '' : 's'}';
 
   String get metronome => 'Metronome';

@@ -269,16 +269,24 @@ Future<void> showFormatNotSupportedDialog(BuildContext context, String format) =
 Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) {
   final l10n = context.l10n;
   fileName = (fileName ?? '').isEmpty ? null : fileName;
-  final fileInfoText = fileName != null ? '\n\n${context.l10n.mediaPlayerFile}: ${FileIO.getFileName(fileName)}' : '';
 
   return showDialog<void>(
     context: context,
     builder:
         (context) => AlertDialog(
           title: Text(l10n.mediaPlayerErrorFileOpen, style: TextStyle(color: ColorTheme.primary)),
-          content: Text(
-            l10n.mediaPlayerErrorFileOpenDescription(fileInfoText),
-            style: const TextStyle(color: ColorTheme.primary),
+          content: Column(
+            children: [
+              Text(l10n.mediaPlayerErrorFileOpenDescription, style: const TextStyle(color: ColorTheme.primary)),
+              if (fileName != null)
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    '${context.l10n.mediaPlayerFile}: ${FileIO.getFileName(fileName)}',
+                    style: const TextStyle(color: ColorTheme.primary),
+                  ),
+                ),
+            ],
           ),
           actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
         ),
@@ -291,16 +299,24 @@ Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) 
 Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName}) {
   final l10n = context.l10n;
   fileName = (fileName ?? '').isEmpty ? null : fileName;
-  final fileInfoText = fileName != null ? '\n\n${context.l10n.mediaPlayerFile}: ${FileIO.getFileName(fileName)}' : '';
 
   return showDialog<void>(
     context: context,
     builder:
         (context) => AlertDialog(
           title: Text(l10n.mediaPlayerErrorFileAccessible, style: TextStyle(color: ColorTheme.primary)),
-          content: Text(
-            l10n.mediaPlayerErrorFileAccessibleDescription(fileInfoText),
-            style: const TextStyle(color: ColorTheme.primary),
+          content: Column(
+            children: [
+              Text(l10n.mediaPlayerErrorFileAccessibleDescription, style: const TextStyle(color: ColorTheme.primary)),
+              if (fileName != null)
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    '${context.l10n.mediaPlayerFile}: ${FileIO.getFileName(fileName)}',
+                    style: const TextStyle(color: ColorTheme.primary),
+                  ),
+                ),
+            ],
           ),
           actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
         ),
