@@ -116,10 +116,15 @@ class English extends AppLocalizations {
   String get metronomeAbout => 'Metronome';
   String get metronomeAboutExplanation =>
       'The metronome allows you to save and recall your individual configurations (tempo, time signature, polyrhythms, random mute, sounds). You can also combine the metronome with the tuner and the media player.';
+  String get metronomeAccented => 'Accented';
+  String get metronomeBeatMain => 'Main Beat';
+  String get metronomeBeatPoly => 'Poly Beat';
   String get metronomeClearAllRhythms => 'Clear all rhythms';
   String get metronomeDescription => 'create a rhythm';
   String get metronomeRandomMute => 'Random Mute';
   String get metronomeSetBpm => 'Set BPM';
+  String get metronomeSetMetronomeSounds => 'Set Metronome Sounds';
+  String get metronomeSetMetronome2Sounds => 'Set 2. Metronome Sounds';
   String get metronomeSound => 'Sound';
   String get metronomeSound1 => 'Sound 1';
   String get metronomeSound2 => 'Sound 2';
@@ -131,6 +136,7 @@ class English extends AppLocalizations {
   String get metronomeTutorialRelocate =>
       'Hold and drag sideways to relocate,\nswipe upwards to delete\nor tap to edit';
   String get metronomeTutorialStartStop => 'Tap here to start and stop the metronome';
+  String get metronomeUnaccented => 'Unaccented';
 
   String get piano => 'Piano';
   String get pianoAbout => 'Piano';

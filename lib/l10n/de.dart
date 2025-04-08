@@ -116,10 +116,15 @@ class German extends AppLocalizations {
   String get metronomeAbout => 'Metronom';
   String get metronomeAboutExplanation =>
       'Das Metronom ermöglicht es dir, deine individuellen Konfigurationen (Tempo, Taktart, Polyrhythmen, zufälliges Stummschalten, Klänge) zu speichern und abzurufen. Du kannst das Metronom auch mit dem Stimmgerät und dem Media Player kombinieren.';
+  String get metronomeAccented => 'Akzentuiert';
+  String get metronomeBeatMain => 'Haupt-Beat';
+  String get metronomeBeatPoly => 'Neben-Beat';
   String get metronomeClearAllRhythms => 'Alle Rhythmen löschen';
   String get metronomeDescription => 'erstelle deinen Beat';
   String get metronomeRandomMute => 'Zufälliges Stummschalten';
   String get metronomeSetBpm => 'BPM einstellen';
+  String get metronomeSetMetronomeSounds => 'Klänge einstellen';
+  String get metronomeSetMetronome2Sounds => 'Klänge einstellen (Metronom 2)';
   String get metronomeSound => 'Klang';
   String get metronomeSound1 => 'Klang 1';
   String get metronomeSound2 => 'Klang 2';
@@ -132,6 +137,7 @@ class German extends AppLocalizations {
   String get metronomeTutorialRelocate =>
       'Halte und ziehe seitlich um zu verschieben,\nstreiche nach oben um zu löschen\noder tippe um zu bearbeiten';
   String get metronomeTutorialStartStop => 'Tippe hier um das Metronom zu starten und zu stoppen';
+  String get metronomeUnaccented => 'Unakzentuiert';
 
   String get piano => 'Klavier';
   String get pianoAbout => 'Klavier';

@@ -99,10 +99,15 @@ abstract class AppLocalizations {
   String get metronome2;
   String get metronomeAbout;
   String get metronomeAboutExplanation;
+  String get metronomeAccented;
+  String get metronomeBeatMain;
+  String get metronomeBeatPoly;
   String get metronomeClearAllRhythms;
   String get metronomeDescription;
   String get metronomeRandomMute;
   String get metronomeSetBpm;
+  String get metronomeSetMetronomeSounds;
+  String get metronomeSetMetronome2Sounds;
   String get metronomeSound;
   String get metronomeSound1;
   String get metronomeSound2;
@@ -113,6 +118,7 @@ abstract class AppLocalizations {
   String get metronomeTutorialEditBeats;
   String get metronomeTutorialRelocate;
   String get metronomeTutorialStartStop;
+  String get metronomeUnaccented;
 
   String get piano;
   String get pianoAbout;

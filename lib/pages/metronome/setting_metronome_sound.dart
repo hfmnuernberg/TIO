@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
@@ -83,8 +84,10 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return ParentSettingPage(
-      title: widget.forSecondMetronome ? 'Set 2. Metronome Sounds' : 'Set Metronome Sounds',
+      title: widget.forSecondMetronome ? l10n.metronomeSetMetronome2Sounds : l10n.metronomeSetMetronomeSounds,
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,
@@ -96,20 +99,20 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Text('Main Beat', style: TextStyle(color: ColorTheme.primary)),
+                Text(l10n.metronomeBeatMain, style: TextStyle(color: ColorTheme.primary)),
                 const SizedBox(width: TIOMusicParams.edgeInset),
-                _buildToggleTable('Accented', _selectedAccSound, SoundType.accented),
-                _buildToggleTable('Unaccented', _selectedUnaccSound, SoundType.unaccented),
+                _buildToggleTable(l10n.metronomeAccented, _selectedAccSound, SoundType.accented),
+                _buildToggleTable(l10n.metronomeUnaccented, _selectedUnaccSound, SoundType.unaccented),
               ],
             ),
             const SizedBox(height: TIOMusicParams.edgeInset),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const Text('Poly Beat', style: TextStyle(color: ColorTheme.primary)),
+                Text(l10n.metronomeBeatPoly, style: TextStyle(color: ColorTheme.primary)),
                 const SizedBox(width: TIOMusicParams.edgeInset),
-                _buildToggleTable('Accented', _selectedPolyAccSound, SoundType.polyAccented),
-                _buildToggleTable('Unaccented', _selectedPolyUnaccSound, SoundType.polyUnaccented),
+                _buildToggleTable(l10n.metronomeAccented, _selectedPolyAccSound, SoundType.polyAccented),
+                _buildToggleTable(l10n.metronomeUnaccented, _selectedPolyUnaccSound, SoundType.polyUnaccented),
               ],
             ),
           ],
