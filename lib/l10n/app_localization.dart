@@ -23,7 +23,6 @@ abstract class AppLocalizations {
   String get commonNo;
   String get commonOctave;
   String get commonReset;
-  String get commonSaveQuickTool;
   String get commonSubmit;
   String get commonVolume;
   String get commonYes;
@@ -74,7 +73,6 @@ abstract class AppLocalizations {
   String get mediaPlayerOverwriteSound;
   String get mediaPlayerOverwriteSoundQuestion;
   String get mediaPlayerPitch;
-  String get mediaPlayerQuickTool;
   String get mediaPlayerRecording;
   String get mediaPlayerRemoveMarker;
   String get mediaPlayerSecShort;
@@ -168,6 +166,8 @@ abstract class AppLocalizations {
   String get toolNew;
   String get toolNewProjectTitle;
   String get toolNewTitle;
+  String get toolQuickTool;
+  String get toolQuickToolSave;
   String get toolSave;
   String get toolSaveCopy;
   String get toolSaveInNewProject;

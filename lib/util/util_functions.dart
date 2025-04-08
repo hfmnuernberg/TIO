@@ -225,7 +225,7 @@ Future<bool?> askForSavingQuickTool(BuildContext context) => showDialog<bool>(
     final l10n = context.l10n;
 
     return AlertDialog(
-      title: Text(l10n.commonSaveQuickTool, style: TextStyle(color: ColorTheme.primary)),
+      title: Text(l10n.toolQuickToolSave, style: TextStyle(color: ColorTheme.primary)),
       actions: [
         TextButton(
           onPressed: () {

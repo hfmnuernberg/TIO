@@ -33,7 +33,6 @@ class German extends AppLocalizations {
   String get commonNo => 'Nein';
   String get commonOctave => 'Oktave';
   String get commonReset => 'Zurücksetzen';
-  String get commonSaveQuickTool => 'Möchtest du das Tool speichern?';
   String get commonSubmit => 'Bestätigen';
   String get commonVolume => 'Lautstärke';
   String get commonYes => 'Ja';
@@ -88,7 +87,6 @@ class German extends AppLocalizations {
   String get mediaPlayerOverwriteSound => 'Audio-Datei überschreiben';
   String get mediaPlayerOverwriteSoundQuestion => 'Möchtest du die Audio-Datei überschreiben?';
   String get mediaPlayerPitch => 'Tonhöhe';
-  String get mediaPlayerQuickTool => 'Hilfswerkzeug';
   String get mediaPlayerRecording => 'Aufnahme läuft...';
   String get mediaPlayerRemoveMarker => 'Marker entfernen';
   String get mediaPlayerSecShort => 'Sek.';
@@ -193,6 +191,8 @@ class German extends AppLocalizations {
   String get toolNew => 'Neues Tool';
   String get toolNewProjectTitle => 'Projekttitel';
   String get toolNewTitle => 'Tool-Titel';
+  String get toolQuickTool => 'Hilfswerkzeug';
+  String get toolQuickToolSave => 'Möchtest du das Tool speichern?';
   String get toolSave => 'Speichern in ...';
   String get toolSaveCopy => 'Kopie speichern in ...';
   String get toolSaveInNewProject => 'In neuem Projekt speichern';

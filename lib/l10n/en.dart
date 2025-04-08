@@ -32,7 +32,6 @@ class English extends AppLocalizations {
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
   String get commonReset => 'Reset';
-  String get commonSaveQuickTool => 'Save Quick Tool?';
   String get commonSubmit => 'Submit';
   String get commonVolume => 'Volume';
   String get commonYes => 'Yes';
@@ -89,7 +88,6 @@ class English extends AppLocalizations {
   String get mediaPlayerOverwriteSoundQuestion =>
       'Do you want to overwrite the current audio file and start recording?';
   String get mediaPlayerPitch => 'Pitch';
-  String get mediaPlayerQuickTool => 'Quick Tool';
   String get mediaPlayerRecording => 'Recording...';
   String get mediaPlayerRemoveMarker => 'Remove Selected Marker';
   String get mediaPlayerSecShort => 'sec';
@@ -191,6 +189,8 @@ class English extends AppLocalizations {
   String get toolNew => 'New tool';
   String get toolNewProjectTitle => 'Project title';
   String get toolNewTitle => 'Tool title';
+  String get toolQuickTool => 'Quick Tool';
+  String get toolQuickToolSave => 'Save Quick Tool?';
   String get toolSave => 'Save in ...';
   String get toolSaveCopy => 'Save copy in ...';
   String get toolSaveInNewProject => 'Save in new project';
