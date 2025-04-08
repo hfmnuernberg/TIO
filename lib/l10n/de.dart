@@ -85,7 +85,7 @@ class German extends AppLocalizations {
   String get mediaPlayerOverwriteSoundQuestion => 'Möchtest du die Audio-Datei überschreiben?';
   String get mediaPlayerPitch => 'Tonhöhe';
   String get mediaPlayerQuickTool => 'Hilfswerkzeug';
-  String get mediaPlayerRecording => 'Aufnahme läuft';
+  String get mediaPlayerRecording => 'Aufnahme läuft...';
   String get mediaPlayerRemoveMarker => 'Marker entfernen';
   String get mediaPlayerSemitone => 'Halbton';
   String get mediaPlayerSemitones => 'Halbtöne';

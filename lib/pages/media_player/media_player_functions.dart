@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -113,15 +112,12 @@ abstract class MediaPlayerFunctions {
     return _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }
 
-  static Widget displayRecordingTimer(BuildContext context, Duration duration, double height) {
+  static Widget displayRecordingTimer(String label, Duration duration, double height) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            '${context.l10n.mediaPlayerRecording}...',
-            style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10),
-          ),
+          Text(label, style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
           Text(getDurationFormated(duration), style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 6)),
         ],
       ),

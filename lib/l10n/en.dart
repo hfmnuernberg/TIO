@@ -86,7 +86,7 @@ class English extends AppLocalizations {
       'Do you want to overwrite the current audio file and start recording?';
   String get mediaPlayerPitch => 'Pitch';
   String get mediaPlayerQuickTool => 'Quick Tool';
-  String get mediaPlayerRecording => 'Recording';
+  String get mediaPlayerRecording => 'Recording...';
   String get mediaPlayerRemoveMarker => 'Remove Selected Marker';
   String get mediaPlayerSemitone => 'semitone';
   String get mediaPlayerSemitones => 'semitones';
