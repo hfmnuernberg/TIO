@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -20,7 +21,7 @@ class SetRandomMute extends StatefulWidget {
 
 class _SetRandomMuteState extends State<SetRandomMute> {
   late MetronomeBlock _metronomeBlock;
-  late NumberInputIntWithSlider _randomMuteProbInput;
+  final TextEditingController _randomMuteController = TextEditingController();
 
   @override
   void initState() {
@@ -28,26 +29,16 @@ class _SetRandomMuteState extends State<SetRandomMute> {
 
     _metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
 
-    _randomMuteProbInput = NumberInputIntWithSlider(
-      max: 100,
-      min: 0,
-      defaultValue: _metronomeBlock.randomMute,
-      step: 1,
-      controller: TextEditingController(),
-      label: 'Probability in %',
-      buttonRadius: MetronomeParams.plusMinusButtonRadius,
-      textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
-      textFontSize: MetronomeParams.numInputTextFontSize,
-    );
+    _randomMuteController.text = MetronomeParams.defaultRandomMute.toString();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _randomMuteProbInput.controller.addListener(_onUserChangedRandomMute);
+      _randomMuteController.addListener(_onUserChangedRandomMute);
     });
   }
 
   void _onConfirm() async {
-    if (_randomMuteProbInput.controller.value.text != '') {
-      int newRandomMute = int.parse(_randomMuteProbInput.controller.value.text);
+    if (_randomMuteController.text != '') {
+      int newRandomMute = int.parse(_randomMuteController.text);
       _metronomeBlock.randomMute = newRandomMute;
       metronomeSetBeatMuteChance(muteChance: newRandomMute / 100.0).then((success) => null);
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
@@ -57,9 +48,7 @@ class _SetRandomMuteState extends State<SetRandomMute> {
   }
 
   void _reset() {
-    _randomMuteProbInput.controller.value = _randomMuteProbInput.controller.value.copyWith(
-      text: MetronomeParams.defaultRandomMute.toString(),
-    );
+    _randomMuteController.text = MetronomeParams.defaultRandomMute.toString();
   }
 
   void _onCancel() {
@@ -68,8 +57,8 @@ class _SetRandomMuteState extends State<SetRandomMute> {
   }
 
   void _onUserChangedRandomMute() async {
-    if (_randomMuteProbInput.controller.value.text != '') {
-      double newValue = double.parse(_randomMuteProbInput.controller.value.text);
+    if (_randomMuteController.text != '') {
+      double newValue = double.parse(_randomMuteController.text);
       metronomeSetBeatMuteChance(muteChance: newValue / 100.0).then((success) => null);
     }
   }
@@ -77,10 +66,20 @@ class _SetRandomMuteState extends State<SetRandomMute> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: 'Set Random Mute',
+      title: context.l10n.metronomeSetRandomMute,
       confirm: _onConfirm,
       reset: _reset,
-      numberInput: _randomMuteProbInput,
+      numberInput: NumberInputIntWithSlider(
+        max: 100,
+        min: 0,
+        defaultValue: _metronomeBlock.randomMute,
+        step: 1,
+        controller: _randomMuteController,
+        label: context.l10n.metronomeRandomMuteProbability,
+        buttonRadius: MetronomeParams.plusMinusButtonRadius,
+        textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
+        textFontSize: MetronomeParams.numInputTextFontSize,
+      ),
       cancel: _onCancel,
     );
   }

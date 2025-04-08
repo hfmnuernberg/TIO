@@ -122,9 +122,11 @@ class English extends AppLocalizations {
   String get metronomeClearAllRhythms => 'Clear all rhythms';
   String get metronomeDescription => 'create a rhythm';
   String get metronomeRandomMute => 'Random Mute';
+  String get metronomeRandomMuteProbability => 'Probability in %';
   String get metronomeSetBpm => 'Set BPM';
   String get metronomeSetMetronomeSounds => 'Set Metronome Sounds';
   String get metronomeSetMetronome2Sounds => 'Set 2. Metronome Sounds';
+  String get metronomeSetRandomMute => 'Set Random Mute';
   String get metronomeSound => 'Sound';
   String get metronomeSound1 => 'Sound 1';
   String get metronomeSound2 => 'Sound 2';

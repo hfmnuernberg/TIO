@@ -105,9 +105,11 @@ abstract class AppLocalizations {
   String get metronomeClearAllRhythms;
   String get metronomeDescription;
   String get metronomeRandomMute;
+  String get metronomeRandomMuteProbability;
   String get metronomeSetBpm;
   String get metronomeSetMetronomeSounds;
   String get metronomeSetMetronome2Sounds;
+  String get metronomeSetRandomMute;
   String get metronomeSound;
   String get metronomeSound1;
   String get metronomeSound2;
