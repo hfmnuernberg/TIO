@@ -29,10 +29,14 @@ class German extends AppLocalizations {
   String get commonCancel => 'Abbrechen';
   String get commonDelete => 'Löschen?';
   String get commonGotIt => 'Verstanden';
+  String get commonInput => 'Eingabefeld';
+  String get commonMinus => 'Minus-Knopf';
   String get commonNext => 'Weiter';
   String get commonNo => 'Nein';
   String get commonOctave => 'Oktave';
+  String get commonPlus => 'Plus-Knopf';
   String get commonReset => 'Zurücksetzen';
+  String get commonSlider => 'Schieberegler';
   String get commonSubmit => 'Bestätigen';
   String get commonVolume => 'Lautstärke';
   String get commonYes => 'Ja';

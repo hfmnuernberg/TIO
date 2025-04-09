@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/widgets/input/app_slider_double.dart';
 import 'package:tiomusic/widgets/input/number_input_double.dart';
 
@@ -7,9 +8,9 @@ class NumberInputDoubleWithSlider extends StatefulWidget {
   final double max;
   final double defaultValue;
   final double step;
+  final String label;
   final TextEditingController controller;
   final int? stepIntervalInMs;
-  final String? label;
   final double? buttonRadius;
   final double? buttonGap;
   final double? textFieldWidth;
@@ -23,9 +24,9 @@ class NumberInputDoubleWithSlider extends StatefulWidget {
     required this.max,
     required this.defaultValue,
     required this.step,
+    required this.label,
     required this.controller,
     this.stepIntervalInMs,
-    this.label,
     this.buttonRadius,
     this.buttonGap,
     this.textFieldWidth,
@@ -68,7 +69,7 @@ class _NumberInputDoubleWithSliderState extends State<NumberInputDoubleWithSlide
         Padding(
           padding: const EdgeInsets.only(top: 40),
           child: AppSliderDouble(
-            semanticLabel: '${widget.label} slider',
+            semanticLabel: '${widget.label} ${context.l10n.commonSlider}',
             min: widget.min,
             max: widget.max,
             defaultValue: widget.defaultValue,
