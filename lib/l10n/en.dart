@@ -64,8 +64,6 @@ class English extends AppLocalizations {
   String get imageUploadHint => 'Pick an image from your device or take a photo using the camera';
   String get imageUseAsThumbnailQuestion => 'Use image as project thumbnail';
 
-  String get mainSplashScreen => 'Splash Screen';
-
   String get mediaPlayer => 'Media Player';
   String get mediaPlayerAbout => 'Media player';
   String get mediaPlayerAboutExplanation =>

@@ -53,8 +53,6 @@ abstract class AppLocalizations {
   String get imageUploadHint;
   String get imageUseAsThumbnailQuestion;
 
-  String get mainSplashScreen;
-
   String get mediaPlayer;
   String get mediaPlayerAbout;
   String get mediaPlayerAboutExplanation;

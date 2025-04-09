@@ -64,8 +64,6 @@ class German extends AppLocalizations {
   String get imageUploadHint => 'Wähle ein Bild von deinem Gerät aus oder mache ein Foto mit der Kamera';
   String get imageUseAsThumbnailQuestion => 'Bild als Projektbild verwenden';
 
-  String get mainSplashScreen => 'Startseite';
-
   String get mediaPlayer => 'Media Player';
   String get mediaPlayerAbout => 'Media Player';
   String get mediaPlayerAboutExplanation =>
