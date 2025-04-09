@@ -168,6 +168,7 @@ abstract class AppLocalizations {
 
   String get toolNewProjectTitle;
   String get toolNewTitle;
+  String get toolNoOtherToolAvailable;
   String get toolQuickTool;
   String get toolQuickToolSave;
   String get toolSave;
@@ -177,6 +178,8 @@ abstract class AppLocalizations {
   String get toolTutorialEditTitle;
   String get toolTutorialSave;
   String get toolUseBookmarkToSave;
+
+  String toolHasNoIslandView(String? tool);
 
   String get tuner;
   String get tunerAbout;
