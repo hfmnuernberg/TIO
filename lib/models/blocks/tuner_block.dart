@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -80,10 +81,10 @@ class TunerBlock extends ProjectBlock {
     _islandToolID = islandToolID;
   }
 
-  TunerBlock.withDefaults() {
+  TunerBlock.withDefaults(AppLocalizations l10n) {
     _timeLastModified = DateTime.now();
     _chamberNoteHz = TunerParams.defaultConcertPitch;
-    _title = TunerParams.displayName;
+    _title = l10n.tuner;
     _islandToolID = null;
     _id = ProjectBlock.createNewId();
   }

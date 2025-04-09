@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -83,10 +84,10 @@ class TextBlock extends ProjectBlock {
     _islandToolID = islandToolID;
   }
 
-  TextBlock.withDefaults() {
+  TextBlock.withDefaults(AppLocalizations l10n) {
     _timeLastModified = DateTime.now();
     _content = TextParams.defaultContent;
-    _title = TextParams.displayName;
+    _title = l10n.text;
     _islandToolID = null;
     _id = ProjectBlock.createNewId();
   }

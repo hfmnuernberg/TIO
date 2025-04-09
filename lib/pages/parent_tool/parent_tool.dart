@@ -240,7 +240,7 @@ class _ParentToolState extends State<ParentTool> {
         }
 
         // if quick tool and values have been changed: ask for saving
-        if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(widget.toolBlock)) {
+        if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(widget.toolBlock, context.l10n)) {
           final save = await askForSavingQuickTool(context);
 
           // if user taps outside the dialog, we dont want to exit the quick tool and we dont want to save

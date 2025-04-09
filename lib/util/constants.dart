@@ -293,7 +293,7 @@ class BlockTypeInfo {
   String description;
 
   dynamic icon;
-  ProjectBlock Function() createWithDefaults;
+  ProjectBlock Function(AppLocalizations) createWithDefaults;
   ProjectBlock Function(String) createWithTitle;
   ProjectBlock Function(Map<String, dynamic>) createFromJson;
 }
@@ -415,7 +415,7 @@ Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
     PianoBlock.fromJson,
   ),
   BlockType.text: BlockTypeInfo(
-    l10n.textTitle,
+    l10n.text,
     TextParams.kind,
     l10n.textDescription,
     const Icon(Icons.notes_rounded, color: ColorTheme.primary),

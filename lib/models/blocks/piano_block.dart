@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -111,9 +112,9 @@ class PianoBlock extends ProjectBlock {
     _id = ProjectBlock.getIdOrCreateNewId(id);
   }
 
-  PianoBlock.withDefaults() {
+  PianoBlock.withDefaults(AppLocalizations l10n) {
     _timeLastModified = DateTime.now();
-    _title = PianoParams.displayName;
+    _title = l10n.piano;
     _volume = TIOMusicParams.defaultVolume;
     _keyboardPosition = PianoParams.defaultKeyboardPosition;
     _soundFontIndex = PianoParams.defaultSoundFontIndex;

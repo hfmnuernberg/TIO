@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
@@ -193,9 +194,9 @@ class MetronomeBlock extends ProjectBlock {
     _volume = volume;
   }
 
-  MetronomeBlock.withDefaults() {
+  MetronomeBlock.withDefaults(AppLocalizations l10n) {
     _timeLastModified = DateTime.now();
-    _title = MetronomeParams.displayName;
+    _title = l10n.metronome;
     _islandToolID = null;
     _volume = TIOMusicParams.defaultVolume;
     bpm = MetronomeParams.defaultBPM;

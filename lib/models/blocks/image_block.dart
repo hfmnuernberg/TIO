@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -109,9 +110,9 @@ class ImageBlock extends ProjectBlock {
     return imageBlock;
   }
 
-  factory ImageBlock.withDefaults() {
+  factory ImageBlock.withDefaults(AppLocalizations l10n) {
     return ImageBlock(
-      ImageParams.displayName,
+      l10n.image,
       ProjectBlock.createNewId(),
       null,
       ImageParams.defaultPath,
