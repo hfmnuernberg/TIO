@@ -68,8 +68,6 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
   }
 
   void _reset() {
-    _pitchController.value = _pitchController.value.copyWith(
-      text: defaultConcertPitch.toString(),
-    );
+    _pitchController.value = _pitchController.value.copyWith(text: defaultConcertPitch.toString());
   }
 }

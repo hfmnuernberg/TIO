@@ -601,10 +601,7 @@ class _PianoState extends State<Piano> {
                           alignment: Alignment.centerLeft,
                           child:
                               widget.isQuickTool
-                                  ? Text(
-                                    l10n.toolSave,
-                                    style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
-                                  )
+                                  ? Text(l10n.toolSave, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
                                   : Text(
                                     l10n.toolSaveCopy,
                                     style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
@@ -776,7 +773,11 @@ class _PianoState extends State<Piano> {
                     ),
 
                     TextButton(onPressed: () => _hideTwoTextInputOverlay(false), child: Text(l10n.commonCancel)),
-                    TIOFlatButton(onPressed: () => _hideTwoTextInputOverlay(true), text: l10n.commonSubmit, boldText: true),
+                    TIOFlatButton(
+                      onPressed: () => _hideTwoTextInputOverlay(true),
+                      text: l10n.commonSubmit,
+                      boldText: true,
+                    ),
                   ],
                 ),
               ),
