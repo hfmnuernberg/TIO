@@ -28,10 +28,14 @@ class English extends AppLocalizations {
   String get commonCancel => 'Cancel';
   String get commonDelete => 'Delete?';
   String get commonGotIt => 'Got it';
+  String get commonInput => 'input';
+  String get commonMinus => 'Minus button';
   String get commonNext => 'Next';
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
+  String get commonPlus => 'Plus button';
   String get commonReset => 'Reset';
+  String get commonSlider => 'slider';
   String get commonSubmit => 'Submit';
   String get commonVolume => 'Volume';
   String get commonYes => 'Yes';

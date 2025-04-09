@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/shapes.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
@@ -151,6 +152,8 @@ class _NumberInputIntState extends State<NumberInputInt> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Column(
       children: [
         Row(
@@ -160,7 +163,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
               onLongPress: _startDecreaseTimer,
               onLongPressUp: _endDecreaseTimer,
               child: TIOFlatButton(
-                semanticLabel: 'Minus button',
+                semanticLabel: l10n.commonMinus,
                 onPressed:
                     (_valueController.value.text == '') ? () {} : (_isMinusButtonActive ? _decreaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
@@ -176,7 +179,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
               width: widget.textFieldWidth,
               child: Focus(
                 child: Semantics(
-                  label: '${widget.label} input',
+                  label: '${widget.label} ${l10n.commonInput}',
                   child: TextFormField(
                     controller: _valueController,
                     keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers),
@@ -216,7 +219,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
               onLongPress: _startIncreaseTimer,
               onLongPressUp: _endIncreaseTimer,
               child: TIOFlatButton(
-                semanticLabel: 'Plus button',
+                semanticLabel: l10n.commonPlus,
                 onPressed: (_valueController.value.text == '') ? () {} : (_isPlusButtonActive ? _increaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,

@@ -19,10 +19,14 @@ abstract class AppLocalizations {
   String get commonCancel;
   String get commonDelete;
   String get commonGotIt;
+  String get commonInput;
+  String get commonMinus;
   String get commonNext;
   String get commonNo;
   String get commonOctave;
+  String get commonPlus;
   String get commonReset;
+  String get commonSlider;
   String get commonSubmit;
   String get commonVolume;
   String get commonYes;

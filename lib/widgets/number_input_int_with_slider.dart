@@ -1,3 +1,4 @@
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/widgets/input/app_slider_int.dart';
 import 'package:tiomusic/widgets/input/number_input_int.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +8,9 @@ class NumberInputIntWithSlider extends StatefulWidget {
   final int max;
   final int defaultValue;
   final int step;
+  final String label;
   final TextEditingController controller;
   final int? stepIntervalInMs;
-  final String? label;
   final double? buttonRadius;
   final double? buttonGap;
   final double? relIconSize;
@@ -23,9 +24,9 @@ class NumberInputIntWithSlider extends StatefulWidget {
     required this.max,
     required this.defaultValue,
     required this.step,
+    required this.label,
     required this.controller,
     this.stepIntervalInMs,
-    this.label,
     this.buttonRadius,
     this.buttonGap,
     this.relIconSize,
@@ -68,7 +69,7 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
         Padding(
           padding: const EdgeInsets.only(top: 40),
           child: AppSliderInt(
-            semanticLabel: '${widget.label} slider',
+            semanticLabel: '${widget.label} ${context.l10n.commonSlider}',
             max: widget.max,
             min: widget.min,
             defaultValue: widget.defaultValue,
