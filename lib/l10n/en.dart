@@ -191,6 +191,8 @@ class English extends AppLocalizations {
 
   String get toolNewProjectTitle => 'Project title';
   String get toolNewTitle => 'Tool title';
+  String get toolNoOtherToolAvailable =>
+      'There is no other tool in this project. Please save another tool first to use it as an island.';
   String get toolQuickTool => 'Quick Tool';
   String get toolQuickToolSave => 'Save Quick Tool?';
   String get toolSave => 'Save in ...';
@@ -200,6 +202,8 @@ class English extends AppLocalizations {
   String get toolTutorialEditTitle => 'Tap here to edit the title of your tool';
   String get toolTutorialSave => 'Tap here to save the tool to a project';
   String get toolUseBookmarkToSave => 'Use bookmark to save a tool';
+
+  String toolHasNoIslandView(String tool) => '$tool has no Island View!';
 
   String get tuner => 'Tuner';
   String get tunerAbout => 'Tuner';

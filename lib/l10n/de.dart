@@ -193,6 +193,8 @@ class German extends AppLocalizations {
 
   String get toolNewProjectTitle => 'Projekttitel';
   String get toolNewTitle => 'Tool-Titel';
+  String get toolNoOtherToolAvailable =>
+      'Kein anderes Tool im Projekt verfügbar. Bitte speichere zuerst ein anderes Tool um es als Miniaturansicht verwenden zu können.';
   String get toolQuickTool => 'Hilfswerkzeug';
   String get toolQuickToolSave => 'Möchtest du das Tool speichern?';
   String get toolSave => 'Speichern in ...';
@@ -202,6 +204,8 @@ class German extends AppLocalizations {
   String get toolTutorialEditTitle => 'Tippe hier um den Titel deines Tools zu bearbeiten';
   String get toolTutorialSave => 'Tippe hier um das Tool in einem Projekt zu speichern';
   String get toolUseBookmarkToSave => 'Verwende das Lesezeichen um das Tool zu speichern';
+
+  String toolHasNoIslandView(String tool) => '$tool hat keine Miniaturansicht!';
 
   String get tuner => 'Stimmgerät';
   String get tunerAbout => 'Stimmgerät';

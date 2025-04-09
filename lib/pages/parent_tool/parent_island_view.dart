@@ -148,7 +148,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     } else if (_loadedTool is EmptyBlock) {
       return EmptyIsland(callOnInit: _setChoosenIsland);
     } else {
-      return Text('$_loadedTool has no Island View!');
+      return Text(context.l10n.toolHasNoIslandView(_loadedTool.toString()));
     }
   }
 
@@ -173,11 +173,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
               itemCount: widget.project!.blocks.length,
               itemBuilder: (context, index) {
                 if (widget.project!.blocks.length < 2) {
-                  return const Card(
-                    child: Text(
-                      'There is no other tool in this project. Please save another tool first to use it as an island.',
-                    ),
-                  );
+                  return Card(child: Text(context.l10n.toolNoOtherToolAvailable));
                 } else {
                   // don't show tools of the same type that you are currently in and
                   // don't show the tool that is currently open
