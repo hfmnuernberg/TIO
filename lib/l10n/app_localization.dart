@@ -27,6 +27,8 @@ abstract class AppLocalizations {
   String get commonVolume;
   String get commonYes;
 
+  String commonSemanticSliderLabel(String label);
+
   String get feedbackCta;
   String get feedbackHint;
   String get feedbackQuestion;

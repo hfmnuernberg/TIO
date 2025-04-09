@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/widgets/input/app_slider_double.dart';
 import 'package:tiomusic/widgets/input/number_input_double.dart';
 
@@ -68,7 +69,7 @@ class _NumberInputDoubleWithSliderState extends State<NumberInputDoubleWithSlide
         Padding(
           padding: const EdgeInsets.only(top: 40),
           child: AppSliderDouble(
-            semanticLabel: '${widget.label} slider',
+            semanticLabel: context.l10n.commonSemanticSliderLabel(widget.label.toString()),
             min: widget.min,
             max: widget.max,
             defaultValue: widget.defaultValue,

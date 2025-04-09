@@ -37,6 +37,8 @@ class German extends AppLocalizations {
   String get commonVolume => 'Lautstärke';
   String get commonYes => 'Ja';
 
+  String commonSemanticSliderLabel(String label) => '$label Schieberegler';
+
   String get feedbackCta => 'Ausfüllen';
   String get feedbackHint => '(Die Umfrage ist vorerst nur auf Deutsch verfügbar)';
   String get feedbackQuestion => 'Gefällt dir TIO Music? Bitte nimm an dieser Umfrage teil!';

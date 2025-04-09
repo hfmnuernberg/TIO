@@ -1,3 +1,4 @@
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/widgets/input/app_slider_int.dart';
 import 'package:tiomusic/widgets/input/number_input_int.dart';
 import 'package:flutter/material.dart';
@@ -68,7 +69,7 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
         Padding(
           padding: const EdgeInsets.only(top: 40),
           child: AppSliderInt(
-            semanticLabel: '${widget.label} slider',
+            semanticLabel: context.l10n.commonSemanticSliderLabel(widget.label.toString()),
             max: widget.max,
             min: widget.min,
             defaultValue: widget.defaultValue,
