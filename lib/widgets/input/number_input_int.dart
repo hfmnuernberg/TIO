@@ -163,7 +163,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
               onLongPress: _startDecreaseTimer,
               onLongPressUp: _endDecreaseTimer,
               child: TIOFlatButton(
-                semanticLabel: l10n.commonSemanticLabelMinusButton,
+                semanticLabel: l10n.commonMinus,
                 onPressed:
                     (_valueController.value.text == '') ? () {} : (_isMinusButtonActive ? _decreaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
@@ -179,7 +179,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
               width: widget.textFieldWidth,
               child: Focus(
                 child: Semantics(
-                  label: l10n.commonSemanticLabelInput(widget.label),
+                  label: '${widget.label} ${l10n.commonInput}',
                   child: TextFormField(
                     controller: _valueController,
                     keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers),
@@ -219,7 +219,7 @@ class _NumberInputIntState extends State<NumberInputInt> {
               onLongPress: _startIncreaseTimer,
               onLongPressUp: _endIncreaseTimer,
               child: TIOFlatButton(
-                semanticLabel: l10n.commonSemanticLabelPlusButton,
+                semanticLabel: l10n.commonPlus,
                 onPressed: (_valueController.value.text == '') ? () {} : (_isPlusButtonActive ? _increaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,

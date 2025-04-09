@@ -28,18 +28,17 @@ class English extends AppLocalizations {
   String get commonCancel => 'Cancel';
   String get commonDelete => 'Delete?';
   String get commonGotIt => 'Got it';
+  String get commonInput => 'input';
+  String get commonMinus => 'Minus button';
   String get commonNext => 'Next';
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
+  String get commonPlus => 'Plus button';
   String get commonReset => 'Reset';
-  String get commonSemanticLabelMinusButton => 'Minus button';
-  String get commonSemanticLabelPlusButton => 'Plus button';
+  String get commonSlider => 'slider';
   String get commonSubmit => 'Submit';
   String get commonVolume => 'Volume';
   String get commonYes => 'Yes';
-
-  String commonSemanticLabelInput(String label) => '$label input';
-  String commonSemanticLabelSlider(String label) => '$label slider';
 
   String get feedbackCta => 'Fill out';
   String get feedbackHint => '(For now the survey is only available in German)';

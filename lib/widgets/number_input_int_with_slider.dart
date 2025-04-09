@@ -69,7 +69,7 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
         Padding(
           padding: const EdgeInsets.only(top: 40),
           child: AppSliderInt(
-            semanticLabel: context.l10n.commonSemanticLabelSlider(widget.label),
+            semanticLabel: '${widget.label} ${context.l10n.commonSlider}',
             max: widget.max,
             min: widget.min,
             defaultValue: widget.defaultValue,
