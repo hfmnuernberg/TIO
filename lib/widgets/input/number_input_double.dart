@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/shapes.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
@@ -178,6 +179,8 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Column(
       children: [
         Row(
@@ -187,7 +190,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
               onLongPress: _startDecreaseTimer,
               onLongPressUp: _endDecreaseTimer,
               child: TIOFlatButton(
-                semanticLabel: 'Minus button',
+                semanticLabel: l10n.commonSemanticLabelMinusButton,
                 onPressed:
                     (_valueController.value.text == '') ? () {} : (_isMinusButtonActive ? _decreaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
@@ -203,7 +206,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
               width: widget.textFieldWidth,
               child: Focus(
                 child: Semantics(
-                  label: '${widget.label} input',
+                  label: l10n.commonSemanticLabelInput(widget.label),
                   child: TextFormField(
                     controller: _valueController,
                     keyboardType: TextInputType.numberWithOptions(signed: widget.allowNegativeNumbers, decimal: true),
@@ -241,7 +244,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
               onLongPress: _startIncreaseTimer,
               onLongPressUp: _endIncreaseTimer,
               child: TIOFlatButton(
-                semanticLabel: 'Plus button',
+                semanticLabel: l10n.commonSemanticLabelPlusButton,
                 onPressed: (_valueController.value.text == '') ? () {} : (_isPlusButtonActive ? _increaseValue : () {}),
                 customStyle: ElevatedButton.styleFrom(
                   elevation: 0,

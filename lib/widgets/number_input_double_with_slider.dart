@@ -69,7 +69,7 @@ class _NumberInputDoubleWithSliderState extends State<NumberInputDoubleWithSlide
         Padding(
           padding: const EdgeInsets.only(top: 40),
           child: AppSliderDouble(
-            semanticLabel: context.l10n.commonSemanticSliderLabel(widget.label.toString()),
+            semanticLabel: context.l10n.commonSemanticLabelSlider(widget.label.toString()),
             min: widget.min,
             max: widget.max,
             defaultValue: widget.defaultValue,

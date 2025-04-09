@@ -32,11 +32,14 @@ class English extends AppLocalizations {
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
   String get commonReset => 'Reset';
+  String get commonSemanticLabelMinusButton => 'Minus button';
+  String get commonSemanticLabelPlusButton => 'Plus button';
   String get commonSubmit => 'Submit';
   String get commonVolume => 'Volume';
   String get commonYes => 'Yes';
 
-  String commonSemanticSliderLabel(String label) => '$label slider';
+  String commonSemanticLabelInput(String label) => '$label input';
+  String commonSemanticLabelSlider(String label) => '$label slider';
 
   String get feedbackCta => 'Fill out';
   String get feedbackHint => '(For now the survey is only available in German)';

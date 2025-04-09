@@ -23,11 +23,14 @@ abstract class AppLocalizations {
   String get commonNo;
   String get commonOctave;
   String get commonReset;
+  String get commonSemanticLabelMinusButton;
+  String get commonSemanticLabelPlusButton;
   String get commonSubmit;
   String get commonVolume;
   String get commonYes;
 
-  String commonSemanticSliderLabel(String label);
+  String commonSemanticLabelInput(String label);
+  String commonSemanticLabelSlider(String label);
 
   String get feedbackCta;
   String get feedbackHint;
