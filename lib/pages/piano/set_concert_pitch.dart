@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_block.dart';
@@ -18,8 +19,8 @@ class SetConcertPitch extends StatefulWidget {
 }
 
 class _SetConcertPitchState extends State<SetConcertPitch> {
-  late NumberInputDoubleWithSlider _concertPitchInput;
   late PianoBlock _pianoBlock;
+  final TextEditingController _pitchController = TextEditingController();
 
   @override
   void initState() {
@@ -27,31 +28,37 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
 
     _pianoBlock = Provider.of<ProjectBlock>(context, listen: false) as PianoBlock;
 
-    _concertPitchInput = NumberInputDoubleWithSlider(
-      max: 600,
-      min: 200,
-      defaultValue: _pianoBlock.concertPitch,
-      step: 1,
-      stepIntervalInMs: 200,
-      controller: TextEditingController(),
-      label: 'Concert Pitch in Hz',
-      textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
-    );
+    _pitchController.text = _pianoBlock.concertPitch.toString();
+  }
+
+  @override
+  void dispose() {
+    _pitchController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: 'Set Concert Pitch',
-      numberInput: _concertPitchInput,
+      title: context.l10n.pianoSetConcertPitch,
+      numberInput: NumberInputDoubleWithSlider(
+        max: 600,
+        min: 200,
+        defaultValue: _pianoBlock.concertPitch,
+        step: 1,
+        stepIntervalInMs: 200,
+        controller: _pitchController,
+        label: context.l10n.pianoConcertPitchInHz,
+        textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
+      ),
       confirm: _onConfirm,
       reset: _reset,
     );
   }
 
   void _onConfirm() async {
-    if (_concertPitchInput.controller.value.text != '') {
-      double newConcertPitch = double.parse(_concertPitchInput.controller.value.text);
+    if (_pitchController.text != '') {
+      double newConcertPitch = double.parse(_pitchController.text);
       _pianoBlock.concertPitch = newConcertPitch;
 
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
@@ -61,8 +68,6 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
   }
 
   void _reset() {
-    _concertPitchInput.controller.value = _concertPitchInput.controller.value.copyWith(
-      text: defaultConcertPitch.toString(),
-    );
+    _pitchController.value = _pitchController.value.copyWith(text: defaultConcertPitch.toString());
   }
 }

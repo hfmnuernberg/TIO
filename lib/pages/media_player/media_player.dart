@@ -699,7 +699,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     if (success && mounted) {
       _resetRecordingTimer();
 
-      var projectTitle = widget.isQuickTool ? context.l10n.mediaPlayerQuickTool : _project!.title;
+      var projectTitle = widget.isQuickTool ? context.l10n.toolQuickTool : _project!.title;
       var newName = '$projectTitle-${_mediaPlayerBlock.title}';
 
       var newRelativePath = await MediaPlayerFunctions.writeRecordingToFile(
@@ -772,7 +772,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   Future _askForKeepRecordingOnExit() async {
     MediaPlayerFunctions.stopRecording().then((success) async {
       if (success && mounted) {
-        var projectTitle = widget.isQuickTool ? context.l10n.mediaPlayerQuickTool : _project!.title;
+        var projectTitle = widget.isQuickTool ? context.l10n.toolQuickTool : _project!.title;
         var newName = '$projectTitle-${_mediaPlayerBlock.title}';
 
         var newRelativePath = await MediaPlayerFunctions.writeRecordingToFile(

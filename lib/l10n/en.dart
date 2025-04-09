@@ -32,7 +32,6 @@ class English extends AppLocalizations {
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
   String get commonReset => 'Reset';
-  String get commonSaveQuickTool => 'Save Quick Tool?';
   String get commonSubmit => 'Submit';
   String get commonVolume => 'Volume';
   String get commonYes => 'Yes';
@@ -89,7 +88,6 @@ class English extends AppLocalizations {
   String get mediaPlayerOverwriteSoundQuestion =>
       'Do you want to overwrite the current audio file and start recording?';
   String get mediaPlayerPitch => 'Pitch';
-  String get mediaPlayerQuickTool => 'Quick Tool';
   String get mediaPlayerRecording => 'Recording...';
   String get mediaPlayerRemoveMarker => 'Remove Selected Marker';
   String get mediaPlayerSecShort => 'sec';
@@ -146,7 +144,10 @@ class English extends AppLocalizations {
   String get pianoAbout => 'Piano';
   String get pianoAboutExplanation =>
       'You can use the built-in piano, select different sound modes and save your individual configurations.';
+  String get pianoConcertPitchInHz => 'Concert Pitch in Hz';
   String get pianoDescription => 'become the next Herbie Hancock';
+  String get pianoSetConcertPitch => 'Set Concert Pitch';
+  String get pianoSetSound => 'Set Piano Sound';
   String get pianoTutorialAdjust => 'Tap here to adjust concert pitch, volume, and sound';
   String get pianoTutorialChangeKeyOrOctave => 'Tap the left or right arrows to move up or down per key or per octave';
 
@@ -188,9 +189,10 @@ class English extends AppLocalizations {
   String get textTitle => 'Text';
   String get textDescription => 'write down your notes';
 
-  String get toolNew => 'New tool';
   String get toolNewProjectTitle => 'Project title';
   String get toolNewTitle => 'Tool title';
+  String get toolQuickTool => 'Quick Tool';
+  String get toolQuickToolSave => 'Save Quick Tool?';
   String get toolSave => 'Save in ...';
   String get toolSaveCopy => 'Save copy in ...';
   String get toolSaveInNewProject => 'Save in new project';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/file_io.dart';
@@ -41,7 +42,7 @@ class _ChooseSoundState extends State<ChooseSound> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: 'Set Piano Sound',
+      title: context.l10n.pianoSetSound,
       confirm: _onConfirm,
       reset: _reset,
       customWidget: ToggleButtons(

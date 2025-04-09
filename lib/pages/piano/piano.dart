@@ -558,6 +558,8 @@ class _PianoState extends State<Piano> {
 
   // this is to replace the bottom sheet like the other tools are using it for saving
   Widget _buildSavingPage() {
+    final l10n = context.l10n;
+
     return SafeArea(
       child: Consumer<ProjectLibrary>(
         builder: (context, projectLibrary, child) {
@@ -599,12 +601,9 @@ class _PianoState extends State<Piano> {
                           alignment: Alignment.centerLeft,
                           child:
                               widget.isQuickTool
-                                  ? const Text(
-                                    'Save in ...',
-                                    style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
-                                  )
-                                  : const Text(
-                                    'Save copy in ...',
+                                  ? Text(l10n.toolSave, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
+                                  : Text(
+                                    l10n.toolSaveCopy,
                                     style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
                                   ),
                         ),
@@ -639,7 +638,7 @@ class _PianoState extends State<Piano> {
                       TIOFlatButton(
                         // creating a new project to save the tool in it
                         onPressed: _buildTwoTextInputOverlay,
-                        text: 'Save in a new project',
+                        text: l10n.toolSaveInNewProject,
                       ),
                       const SizedBox(height: 4),
                     ],
@@ -654,9 +653,10 @@ class _PianoState extends State<Piano> {
   }
 
   void _buildTextInputOverlay(StateSetter setTileState, int index) {
+    final l10n = context.l10n;
     final overlay = Overlay.of(context);
 
-    _newToolTitle.text = '${_pianoBlock.title} - copy';
+    _newToolTitle.text = '${_pianoBlock.title} - ${context.l10n.toolTitleCopy}';
     _newToolTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newToolTitle.text.length);
 
     _entry = OverlayEntry(
@@ -676,11 +676,11 @@ class _PianoState extends State<Piano> {
                       child: TextField(
                         controller: _newToolTitle,
                         autofocus: true,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: '',
                           border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
                           enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          label: Text('Tool title:', style: TextStyle(color: ColorTheme.surfaceTint)),
+                          label: Text('${l10n.toolNewTitle}:', style: TextStyle(color: ColorTheme.surfaceTint)),
                         ),
                         style: const TextStyle(color: ColorTheme.primary),
                         onSubmitted: (newText) {
@@ -693,11 +693,11 @@ class _PianoState extends State<Piano> {
                     // close button
                     TextButton(
                       onPressed: () => _hideTextInputOverlay(false, setTileState, index),
-                      child: const Text('Cancel'),
+                      child: Text(l10n.commonCancel),
                     ),
                     TIOFlatButton(
                       onPressed: () => _hideTextInputOverlay(true, setTileState, index),
-                      text: 'Submit',
+                      text: l10n.commonSubmit,
                       boldText: true,
                     ),
                   ],
@@ -711,9 +711,10 @@ class _PianoState extends State<Piano> {
   }
 
   void _buildTwoTextInputOverlay() {
+    final l10n = context.l10n;
     final overlay = Overlay.of(context);
 
-    _newToolTitle.text = '${_pianoBlock.title} - copy';
+    _newToolTitle.text = '${_pianoBlock.title} - ${context.l10n.toolTitleCopy}';
     _newToolTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newToolTitle.text.length);
 
     _newProjectTitle.text = getDateAndTimeNow();
@@ -736,11 +737,11 @@ class _PianoState extends State<Piano> {
                       child: TextField(
                         controller: _newProjectTitle,
                         autofocus: true,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: '',
                           border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
                           enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          label: Text('Project title:', style: TextStyle(color: ColorTheme.surfaceTint)),
+                          label: Text('${l10n.toolNewProjectTitle}:', style: TextStyle(color: ColorTheme.surfaceTint)),
                         ),
                         style: const TextStyle(color: ColorTheme.primary),
                         onSubmitted: (newText) {
@@ -756,11 +757,11 @@ class _PianoState extends State<Piano> {
                       child: TextField(
                         controller: _newToolTitle,
                         focusNode: _toolTitleFieldFocus,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: '',
                           border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
                           enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          label: Text('Tool title:', style: TextStyle(color: ColorTheme.surfaceTint)),
+                          label: Text('${l10n.toolNewTitle}:', style: TextStyle(color: ColorTheme.surfaceTint)),
                         ),
                         style: const TextStyle(color: ColorTheme.primary),
                         onSubmitted: (newText) {
@@ -771,8 +772,12 @@ class _PianoState extends State<Piano> {
                       ),
                     ),
 
-                    TextButton(onPressed: () => _hideTwoTextInputOverlay(false), child: const Text('Cancel')),
-                    TIOFlatButton(onPressed: () => _hideTwoTextInputOverlay(true), text: 'Submit', boldText: true),
+                    TextButton(onPressed: () => _hideTwoTextInputOverlay(false), child: Text(l10n.commonCancel)),
+                    TIOFlatButton(
+                      onPressed: () => _hideTwoTextInputOverlay(true),
+                      text: l10n.commonSubmit,
+                      boldText: true,
+                    ),
                   ],
                 ),
               ),

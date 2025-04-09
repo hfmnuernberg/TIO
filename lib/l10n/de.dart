@@ -33,7 +33,6 @@ class German extends AppLocalizations {
   String get commonNo => 'Nein';
   String get commonOctave => 'Oktave';
   String get commonReset => 'Zurücksetzen';
-  String get commonSaveQuickTool => 'Möchtest du das Tool speichern?';
   String get commonSubmit => 'Bestätigen';
   String get commonVolume => 'Lautstärke';
   String get commonYes => 'Ja';
@@ -88,7 +87,6 @@ class German extends AppLocalizations {
   String get mediaPlayerOverwriteSound => 'Audio-Datei überschreiben';
   String get mediaPlayerOverwriteSoundQuestion => 'Möchtest du die Audio-Datei überschreiben?';
   String get mediaPlayerPitch => 'Tonhöhe';
-  String get mediaPlayerQuickTool => 'Hilfswerkzeug';
   String get mediaPlayerRecording => 'Aufnahme läuft...';
   String get mediaPlayerRemoveMarker => 'Marker entfernen';
   String get mediaPlayerSecShort => 'Sek.';
@@ -147,7 +145,10 @@ class German extends AppLocalizations {
   String get pianoAbout => 'Klavier';
   String get pianoAboutExplanation =>
       'Du kannst das integrierte Klavier verwenden, verschiedene Klangmodi auswählen und deine individuellen Konfigurationen speichern.';
+  String get pianoConcertPitchInHz => 'Kammerton in Hz';
   String get pianoDescription => 'werde der nächste Herbie Hancock';
+  String get pianoSetConcertPitch => 'Kammerton einstellen';
+  String get pianoSetSound => 'Piano-Klang einstellen';
   String get pianoTutorialAdjust => 'Tippe hier um den Kammerton, die Lautstärke und den Klang anzupassen';
   String get pianoTutorialChangeKeyOrOctave =>
       'Tippe auf die Pfeile links oder rechts um pro Taste oder pro Oktave nach oben oder unten zu wechseln';
@@ -190,9 +191,10 @@ class German extends AppLocalizations {
   String get textTitle => 'Text';
   String get textDescription => 'schreibe deine Notizen auf';
 
-  String get toolNew => 'Neues Tool';
   String get toolNewProjectTitle => 'Projekttitel';
   String get toolNewTitle => 'Tool-Titel';
+  String get toolQuickTool => 'Hilfswerkzeug';
+  String get toolQuickToolSave => 'Möchtest du das Tool speichern?';
   String get toolSave => 'Speichern in ...';
   String get toolSaveCopy => 'Kopie speichern in ...';
   String get toolSaveInNewProject => 'In neuem Projekt speichern';

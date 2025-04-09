@@ -263,7 +263,7 @@ class _ParentToolState extends State<ParentTool> {
         onTap: () async {
           final newTitle = await showEditTextDialog(
             context: context,
-            label: context.l10n.toolNew,
+            label: context.l10n.toolNewTitle,
             value: widget.toolBlock.title,
           );
           if (newTitle == null) return;
