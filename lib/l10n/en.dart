@@ -65,7 +65,7 @@ class English extends AppLocalizations {
   String get imageUseAsThumbnailQuestion => 'Use image as project thumbnail';
 
   String get mainErrorDataLoading => 'Could not load user data!';
-  String get mainOpenAnyway => 'Open anyway (All data is lost!)';
+  String get mainOpenAnyway => 'Open anyway (all data is lost!)';
   String get mainRetry => 'Retry';
   String get mainSplashScreen => 'Splash Screen';
 

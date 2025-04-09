@@ -65,9 +65,9 @@ class German extends AppLocalizations {
   String get imageUseAsThumbnailQuestion => 'Bild als Projektbild verwenden';
 
   String get mainErrorDataLoading => 'Benutzerdaten konnten nicht geladen werden!';
-  String get mainOpenAnyway => 'Trotzedm öffnen (Alle Daten gehen verloren!)';
+  String get mainOpenAnyway => 'Trotzdem öffnen (alle Daten gehen verloren!)';
   String get mainRetry => 'Erneut versuchen';
-  String get mainSplashScreen => 'Ladebildschrirm';
+  String get mainSplashScreen => 'Ladebildschirm';
 
   String get mediaPlayer => 'Media Player';
   String get mediaPlayerAbout => 'Media Player';
