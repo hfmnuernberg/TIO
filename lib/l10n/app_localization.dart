@@ -53,6 +53,8 @@ abstract class AppLocalizations {
   String get imageUploadHint;
   String get imageUseAsThumbnailQuestion;
 
+  String get mainSplashScreen;
+
   String get mediaPlayer;
   String get mediaPlayerAbout;
   String get mediaPlayerAboutExplanation;
@@ -179,7 +181,7 @@ abstract class AppLocalizations {
   String get toolTutorialSave;
   String get toolUseBookmarkToSave;
 
-  String toolHasNoIslandView(String? tool);
+  String toolHasNoIslandView(String tool);
 
   String get tuner;
   String get tunerAbout;

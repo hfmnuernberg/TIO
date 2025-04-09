@@ -148,7 +148,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     } else if (_loadedTool is EmptyBlock) {
       return EmptyIsland(callOnInit: _setChoosenIsland);
     } else {
-      return Text(context.l10n.toolHasNoIslandView(_loadedTool?.kind));
+      return Text(context.l10n.toolHasNoIslandView(_loadedTool.toString()));
     }
   }
 

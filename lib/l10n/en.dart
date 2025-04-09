@@ -64,6 +64,8 @@ class English extends AppLocalizations {
   String get imageUploadHint => 'Pick an image from your device or take a photo using the camera';
   String get imageUseAsThumbnailQuestion => 'Use image as project thumbnail';
 
+  String get mainSplashScreen => 'Splash Screen';
+
   String get mediaPlayer => 'Media Player';
   String get mediaPlayerAbout => 'Media player';
   String get mediaPlayerAboutExplanation =>
@@ -203,7 +205,7 @@ class English extends AppLocalizations {
   String get toolTutorialSave => 'Tap here to save the tool to a project';
   String get toolUseBookmarkToSave => 'Use bookmark to save a tool';
 
-  String toolHasNoIslandView(String? tool) => '${tool ?? 'Tool'} has no Island View!';
+  String toolHasNoIslandView(String tool) => '$tool has no Island View!';
 
   String get tuner => 'Tuner';
   String get tunerAbout => 'Tuner';

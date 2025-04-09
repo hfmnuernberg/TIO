@@ -64,6 +64,8 @@ class German extends AppLocalizations {
   String get imageUploadHint => 'Wähle ein Bild von deinem Gerät aus oder mache ein Foto mit der Kamera';
   String get imageUseAsThumbnailQuestion => 'Bild als Projektbild verwenden';
 
+  String get mainSplashScreen => 'Startseite';
+
   String get mediaPlayer => 'Media Player';
   String get mediaPlayerAbout => 'Media Player';
   String get mediaPlayerAboutExplanation =>
@@ -205,7 +207,7 @@ class German extends AppLocalizations {
   String get toolTutorialSave => 'Tippe hier um das Tool in einem Projekt zu speichern';
   String get toolUseBookmarkToSave => 'Verwende das Lesezeichen um das Tool zu speichern';
 
-  String toolHasNoIslandView(String? tool) => '${tool ?? 'Tool'} hat keine Miniaturansicht!';
+  String toolHasNoIslandView(String tool) => '$tool hat keine Miniaturansicht!';
 
   String get tuner => 'Stimmgerät';
   String get tunerAbout => 'Stimmgerät';
