@@ -8,9 +8,9 @@ class NumberInputDoubleWithSlider extends StatefulWidget {
   final double max;
   final double defaultValue;
   final double step;
+  final String label;
   final TextEditingController controller;
   final int? stepIntervalInMs;
-  final String? label;
   final double? buttonRadius;
   final double? buttonGap;
   final double? textFieldWidth;
@@ -24,9 +24,9 @@ class NumberInputDoubleWithSlider extends StatefulWidget {
     required this.max,
     required this.defaultValue,
     required this.step,
+    required this.label,
     required this.controller,
     this.stepIntervalInMs,
-    this.label,
     this.buttonRadius,
     this.buttonGap,
     this.textFieldWidth,
@@ -69,7 +69,7 @@ class _NumberInputDoubleWithSliderState extends State<NumberInputDoubleWithSlide
         Padding(
           padding: const EdgeInsets.only(top: 40),
           child: AppSliderDouble(
-            semanticLabel: context.l10n.commonSemanticLabelSlider(widget.label.toString()),
+            semanticLabel: context.l10n.commonSemanticLabelSlider(widget.label),
             min: widget.min,
             max: widget.max,
             defaultValue: widget.defaultValue,
