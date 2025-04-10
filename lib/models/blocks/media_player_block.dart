@@ -224,7 +224,7 @@ class MediaPlayerBlock extends ProjectBlock {
   }
 
   @override
-  Icon get icon => blockTypeInfos[BlockType.mediaPlayer]!.icon;
+  get icon => MediaPlayerParams.icon;
 
   factory MediaPlayerBlock.fromJson(Map<String, dynamic> json) => _$MediaPlayerBlockFromJson(json);
 

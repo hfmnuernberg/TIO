@@ -66,9 +66,10 @@ class TIOMusicParams {
 class ImageParams {
   static const String kind = 'image';
   static const String displayName = 'Image';
-  static const String description = 'take or load a picture';
 
   static const String defaultPath = '';
+
+  static const Icon icon = Icon(Icons.image_outlined, color: ColorTheme.primary);
 }
 
 //---------------------------------------------
@@ -78,7 +79,6 @@ class ImageParams {
 class MediaPlayerParams {
   static const String kind = 'media_player';
   static const String displayName = 'Media Player';
-  static const String description = 'record and play';
 
   static const double defaultPitchSemitones = 0;
   static const double defaultSpeedFactor = 1;
@@ -90,6 +90,8 @@ class MediaPlayerParams {
   static const double binWidth = 8;
 
   static const double markerIconSize = 36;
+
+  static const Icon icon = Icon(Icons.play_arrow, color: ColorTheme.primary);
 }
 
 //---------------------------------------------
@@ -112,7 +114,6 @@ class MetronomeParams {
 
   static const String kind = 'metronome';
   static const String displayName = 'Metronome';
-  static const String description = 'create a rhythm';
 
   static const String svgIconPath = 'assets/icons/Metronome.svg';
 
@@ -202,6 +203,11 @@ class MetronomeParams {
   static const double popupTextFontSize = 30;
 
   static const double heightRhythmGroups = 110;
+
+  static SvgPicture icon = SvgPicture.asset(
+    svgIconPath,
+    colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
+  );
 }
 
 //---------------------------------------------
@@ -211,7 +217,6 @@ class MetronomeParams {
 class PianoParams {
   static const String kind = 'piano';
   static const String displayName = 'Piano';
-  static const String description = 'become the next Herbie Hancock';
 
   static const int defaultKeyboardPosition = 60;
 
@@ -242,6 +247,8 @@ class PianoParams {
     'Pipe Organ',
     'Harpsichord',
   ];
+
+  static const Icon icon = Icon(Icons.piano, color: ColorTheme.primary);
 }
 
 //---------------------------------------------
@@ -251,12 +258,16 @@ class PianoParams {
 class TunerParams {
   static const String kind = 'tuner';
   static const String displayName = 'Tuner';
-  static const String description = 'tune your instrument';
 
   static const String svgIconPath = 'assets/icons/Tuner.svg';
 
   static const double defaultConcertPitch = 440;
   static const int freqPollMillis = 35;
+
+  static SvgPicture icon = SvgPicture.asset(
+    svgIconPath,
+    colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
+  );
 }
 
 //---------------------------------------------
@@ -266,9 +277,10 @@ class TunerParams {
 class TextParams {
   static const String kind = 'text';
   static const String displayName = 'Text';
-  static const String description = 'write down your notes';
 
   static const String defaultContent = '';
+
+  static const Icon icon = Icon(Icons.notes_rounded, color: ColorTheme.primary);
 }
 
 //---------------------------------------------
@@ -298,79 +310,12 @@ class BlockTypeInfo {
   ProjectBlock Function(Map<String, dynamic>) createFromJson;
 }
 
-@Deprecated('Use getBlockTypeInfos instead')
-final blockTypeInfos = {
-  BlockType.tuner: BlockTypeInfo(
-    TunerParams.displayName,
-    TunerParams.kind,
-    TunerParams.description,
-    SvgPicture.asset(
-      'assets/icons/Tuner.svg',
-      colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
-    ),
-    TunerBlock.withDefaults,
-    TunerBlock.withTitle,
-    TunerBlock.fromJson,
-  ),
-  BlockType.metronome: BlockTypeInfo(
-    MetronomeParams.displayName,
-    MetronomeParams.kind,
-    MetronomeParams.description,
-    SvgPicture.asset(
-      'assets/icons/Metronome.svg',
-      colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
-    ),
-    MetronomeBlock.withDefaults,
-    MetronomeBlock.withTitle,
-    MetronomeBlock.fromJson,
-  ),
-  BlockType.mediaPlayer: BlockTypeInfo(
-    MediaPlayerParams.displayName,
-    MediaPlayerParams.kind,
-    MediaPlayerParams.description,
-    const Icon(Icons.play_arrow, color: ColorTheme.primary),
-    MediaPlayerBlock.withDefaults,
-    MediaPlayerBlock.withTitle,
-    MediaPlayerBlock.fromJson,
-  ),
-  BlockType.image: BlockTypeInfo(
-    ImageParams.displayName,
-    ImageParams.kind,
-    ImageParams.description,
-    const Icon(Icons.image_outlined, color: ColorTheme.primary),
-    ImageBlock.withDefaults,
-    ImageBlock.withTitle,
-    ImageBlock.fromJson,
-  ),
-  BlockType.piano: BlockTypeInfo(
-    PianoParams.displayName,
-    PianoParams.kind,
-    PianoParams.description,
-    const Icon(Icons.piano, color: ColorTheme.primary),
-    PianoBlock.withDefaults,
-    PianoBlock.withTitle,
-    PianoBlock.fromJson,
-  ),
-  BlockType.text: BlockTypeInfo(
-    TextParams.displayName,
-    TextParams.kind,
-    TextParams.description,
-    const Icon(Icons.notes_rounded, color: ColorTheme.primary),
-    TextBlock.withDefaults,
-    TextBlock.withTitle,
-    TextBlock.fromJson,
-  ),
-};
-
 Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
   BlockType.tuner: BlockTypeInfo(
     l10n.tuner,
     TunerParams.kind,
     l10n.tunerDescription,
-    SvgPicture.asset(
-      'assets/icons/Tuner.svg',
-      colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
-    ),
+    TunerParams.icon,
     TunerBlock.withDefaults,
     TunerBlock.withTitle,
     TunerBlock.fromJson,
@@ -379,10 +324,7 @@ Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
     l10n.metronome,
     MetronomeParams.kind,
     l10n.metronomeDescription,
-    SvgPicture.asset(
-      'assets/icons/Metronome.svg',
-      colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
-    ),
+    MetronomeParams.icon,
     MetronomeBlock.withDefaults,
     MetronomeBlock.withTitle,
     MetronomeBlock.fromJson,
@@ -391,7 +333,7 @@ Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
     l10n.mediaPlayer,
     MediaPlayerParams.kind,
     l10n.mediaPlayerDescription,
-    const Icon(Icons.play_arrow, color: ColorTheme.primary),
+    MediaPlayerParams.icon,
     MediaPlayerBlock.withDefaults,
     MediaPlayerBlock.withTitle,
     MediaPlayerBlock.fromJson,
@@ -400,7 +342,7 @@ Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
     l10n.image,
     ImageParams.kind,
     l10n.imageDescription,
-    const Icon(Icons.image_outlined, color: ColorTheme.primary),
+    ImageParams.icon,
     ImageBlock.withDefaults,
     ImageBlock.withTitle,
     ImageBlock.fromJson,
@@ -409,7 +351,7 @@ Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
     l10n.piano,
     PianoParams.kind,
     l10n.pianoDescription,
-    const Icon(Icons.piano, color: ColorTheme.primary),
+    PianoParams.icon,
     PianoBlock.withDefaults,
     PianoBlock.withTitle,
     PianoBlock.fromJson,
@@ -418,7 +360,7 @@ Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
     l10n.text,
     TextParams.kind,
     l10n.textDescription,
-    const Icon(Icons.notes_rounded, color: ColorTheme.primary),
+    TextParams.icon,
     TextBlock.withDefaults,
     TextBlock.withTitle,
     TextBlock.fromJson,

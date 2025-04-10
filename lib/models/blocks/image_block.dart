@@ -133,7 +133,7 @@ class ImageBlock extends ProjectBlock {
   Map<String, dynamic> toJson() => _$ImageBlockToJson(this);
 
   @override
-  Icon get icon => blockTypeInfos[BlockType.image]!.icon;
+  get icon => ImageParams.icon;
 
   Future<void> pickImage(BuildContext context, ProjectLibrary projectLibrary) async {
     try {

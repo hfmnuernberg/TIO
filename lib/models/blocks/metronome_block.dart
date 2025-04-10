@@ -274,7 +274,7 @@ class MetronomeBlock extends ProjectBlock {
   }
 
   @override
-  get icon => blockTypeInfos[BlockType.metronome]!.icon;
+  get icon => MetronomeParams.icon;
 
   factory MetronomeBlock.fromJson(Map<String, dynamic> json) => _$MetronomeBlockFromJson(json);
 

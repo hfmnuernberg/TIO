@@ -98,7 +98,7 @@ class TunerBlock extends ProjectBlock {
   }
 
   @override
-  get icon => blockTypeInfos[BlockType.tuner]!.icon;
+  get icon => TunerParams.icon;
 
   factory TunerBlock.fromJson(Map<String, dynamic> json) => _$TunerBlockFromJson(json);
 
