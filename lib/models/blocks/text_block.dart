@@ -101,7 +101,7 @@ class TextBlock extends ProjectBlock {
   }
 
   @override
-  get icon => blockTypeInfos[BlockType.text]!.icon;
+  get icon => TextParams.icon;
 
   factory TextBlock.fromJson(Map<String, dynamic> json) => _$TextBlockFromJson(json);
 
