@@ -131,6 +131,7 @@ class German extends AppLocalizations {
   String get metronomeNumberOfBeats => 'Anzahl der Beats';
   String get metronomeNumberOfPolyBeats => 'Anzahl der Poly-Beats';
   String get metronomeRandomMute => 'Zufälliges Stummschalten';
+  String get metronomeRandomMuteChance => 'Aussetzen';
   String get metronomeRandomMuteProbability => 'Wahrscheinlichkeit in %';
   String get metronomeSetBpm => 'BPM einstellen';
   String get metronomeSetRandomMute => 'Zufälliges Stummschalten einstellen';
@@ -138,7 +139,8 @@ class German extends AppLocalizations {
   String get metronomeSetSoundsSecondary => 'Klänge einstellen (Metronom 2)';
   String get metronomeSound => 'Klang';
   String get metronomeSoundMain => 'Hauptklang';
-  String get metronomeSoundPoly => 'Nebenklang';
+  String get metronomeSoundPoly => 'Poly-Klang';
+  String get metronomeSoundPolyShort => 'Nebenklang';
   String get metronomeSoundPrimary => 'Klang 1';
   String get metronomeSoundSecondary => 'Klang 2';
   String get metronomeTutorialAddNew => 'Tippe hier um ein zweites Metronom hinzuzufügen';
@@ -149,6 +151,8 @@ class German extends AppLocalizations {
       'Halte und ziehe seitlich um zu verschieben,\nstreiche nach oben um zu löschen\noder tippe um zu bearbeiten';
   String get metronomeTutorialStartStop => 'Tippe hier um das Metronom zu starten und zu stoppen';
   String get metronomeUnaccented => 'Unakzentuiert';
+
+  String metronomeSegment(int value) => '$value Segment${value == 1 ? '' : 'e'}';
 
   String get piano => 'Klavier';
   String get pianoAbout => 'Klavier';
