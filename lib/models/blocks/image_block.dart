@@ -111,13 +111,7 @@ class ImageBlock extends ProjectBlock {
   }
 
   factory ImageBlock.withDefaults(AppLocalizations l10n) {
-    return ImageBlock(
-      l10n.image,
-      ProjectBlock.createNewId(),
-      null,
-      ImageParams.defaultPath,
-      DateTime.now(),
-    );
+    return ImageBlock(l10n.image, ProjectBlock.createNewId(), null, ImageParams.defaultPath, DateTime.now());
   }
 
   factory ImageBlock.withTitle(String title) {
