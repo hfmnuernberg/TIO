@@ -532,14 +532,6 @@ String formatDoubleToString(double value) {
   }
 }
 
-String pluralSDouble(double number) {
-  return (number.abs() - 1.0).abs() < 0.001 ? '' : 's';
-}
-
-String pluralSInt(int number) {
-  return (number - 1).abs() == 0 ? '' : 's';
-}
-
 bool checkIslandPossible(Project? project, ProjectBlock toolBlock) {
   if (project != null) {
     // if we are in a normal tool, check the following
