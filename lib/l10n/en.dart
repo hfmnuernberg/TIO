@@ -192,10 +192,10 @@ class English extends AppLocalizations {
   String get projectsTutorialStart => 'Show Tutorial';
   String get projectsTutorialStartUsingTool => 'Tap here to start using a tool';
 
+  String get text => 'Text';
   String get textAbout => 'Text';
   String get textAboutExplanation =>
       'You can use your device to create text notes, e.g. for playing instructions, background information, song lyrics etc.';
-  String get textTitle => 'Text';
   String get textDescription => 'write down your notes';
 
   String get toolNewProjectTitle => 'Project title';

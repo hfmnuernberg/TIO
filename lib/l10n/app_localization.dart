@@ -170,9 +170,9 @@ abstract class AppLocalizations {
   String get projectsTutorialStart;
   String get projectsTutorialStartUsingTool;
 
+  String get text;
   String get textAbout;
   String get textAboutExplanation;
-  String get textTitle;
   String get textDescription;
 
   String get toolNewProjectTitle;

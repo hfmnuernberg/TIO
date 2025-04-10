@@ -182,16 +182,16 @@ class _ProjectsListState extends State<ProjectsList> {
     Widget toolPage;
     switch (blockType) {
       case BlockType.metronome:
-        block = MetronomeBlock.withDefaults();
+        block = MetronomeBlock.withDefaults(context.l10n);
         toolPage = const Metronome(isQuickTool: true);
       case BlockType.tuner:
-        block = TunerBlock.withDefaults();
+        block = TunerBlock.withDefaults(context.l10n);
         toolPage = const Tuner(isQuickTool: true);
       case BlockType.mediaPlayer:
-        block = MediaPlayerBlock.withDefaults();
+        block = MediaPlayerBlock.withDefaults(context.l10n);
         toolPage = const MediaPlayer(isQuickTool: true);
       case BlockType.piano:
-        block = PianoBlock.withDefaults();
+        block = PianoBlock.withDefaults(context.l10n);
         toolPage = const Piano(isQuickTool: true);
       default:
         throw Exception('Wrong BlockType');

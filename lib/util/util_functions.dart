@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
@@ -598,15 +599,15 @@ void updateFileReferenceForFileOfBlock(
 }
 
 // compare block values to default values
-bool blockValuesSameAsDefaultBlock(ProjectBlock block) {
+bool blockValuesSameAsDefaultBlock(ProjectBlock block, AppLocalizations l10n) {
   if (block is MetronomeBlock) {
-    if (MetronomeBlock.withDefaults() == block) return true;
+    if (MetronomeBlock.withDefaults(l10n) == block) return true;
   } else if (block is MediaPlayerBlock) {
-    if (MediaPlayerBlock.withDefaults() == block) return true;
+    if (MediaPlayerBlock.withDefaults(l10n) == block) return true;
   } else if (block is TunerBlock) {
-    if (TunerBlock.withDefaults() == block) return true;
+    if (TunerBlock.withDefaults(l10n) == block) return true;
   } else if (block is PianoBlock) {
-    if (PianoBlock.withDefaults() == block) return true;
+    if (PianoBlock.withDefaults(l10n) == block) return true;
   }
   return false;
 }

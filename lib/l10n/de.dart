@@ -194,10 +194,10 @@ class German extends AppLocalizations {
   String get projectsTutorialStart => 'Tutorial anzeigen';
   String get projectsTutorialStartUsingTool => 'Tippe hier um ein Tool zu verwenden';
 
+  String get text => 'Text';
   String get textAbout => 'Text';
   String get textAboutExplanation =>
       'Du kannst über dein Gerät Textnotizen erstellen, z.B. für Spielanweisungen, Hintergrundinformationen, Songtexte, etc.';
-  String get textTitle => 'Text';
   String get textDescription => 'schreibe deine Notizen auf';
 
   String get toolNewProjectTitle => 'Projekttitel';

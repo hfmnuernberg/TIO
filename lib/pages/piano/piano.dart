@@ -205,7 +205,7 @@ class _PianoState extends State<Piano> {
               IconButton(
                 onPressed: () async {
                   // if quick tool and values have been changed: ask for saving
-                  if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock)) {
+                  if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock, context.l10n)) {
                     final save = await askForSavingQuickTool(context);
 
                     // if user taps outside the dialog, we dont want to exit the quick tool and we dont want to save
