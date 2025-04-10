@@ -92,6 +92,7 @@ class German extends AppLocalizations {
   String get mediaPlayerFactorAndBpm => 'Faktor und BPM Regler';
   String get mediaPlayerFile => 'Datei';
   String get mediaPlayerLoadAudioFile => 'Audio-Datei laden';
+  String get mediaPlayerLooping => 'Wiederholen';
   String get mediaPlayerMarkers => 'Marker';
   String get mediaPlayerOverwriteSound => 'Audio-Datei überschreiben';
   String get mediaPlayerOverwriteSoundQuestion => 'Möchtest du die Audio-Datei überschreiben?';

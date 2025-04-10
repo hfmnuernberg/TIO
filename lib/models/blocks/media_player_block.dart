@@ -145,20 +145,18 @@ class MediaPlayerBlock extends ProjectBlock {
       settings.add(FileIO.getFileName(_relativePath));
     }
     if (_pitchSemitones.abs() >= 0.01) {
-      settings.add(
-        "${_pitchSemitones > 0 ? "↑" : "↓"} ${_pitchSemitones.abs()} semitone${pluralSDouble(_pitchSemitones)}",
-      );
+      settings.add('${_pitchSemitones > 0 ? '↑' : '↓'} ${l10n.mediaPlayerSemitones(_pitchSemitones.round())}');
     }
     if (_speedFactor != 1) {
-      settings.add('${_speedFactor}x speed');
+      settings.add('${_speedFactor}x ${l10n.mediaPlayerSpeed}');
     }
     if (_rangeStart.abs() >= 0.001 || (_rangeEnd - 1.0).abs() >= 0.001) {
-      settings.add('Trim ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%');
+      settings.add('${l10n.mediaPlayerTrim} ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%');
     }
     if (_looping) {
-      settings.add('Looping');
+      settings.add(l10n.mediaPlayerLooping);
     }
-    settings.add('$bpm bpm');
+    settings.add('$bpm ${l10n.commonBpm}');
     return settings;
   }
 
