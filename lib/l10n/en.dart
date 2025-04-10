@@ -210,6 +210,7 @@ class English extends AppLocalizations {
       'You can use your device to create text notes, e.g. for playing instructions, background information, song lyrics etc.';
   String get textDescription => 'write down your notes';
 
+  String get toolEmpty => 'Empty';
   String get toolNewProjectTitle => 'Project title';
   String get toolNewTitle => 'Tool title';
   String get toolNoOtherToolAvailable =>

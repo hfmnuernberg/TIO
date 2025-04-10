@@ -212,6 +212,7 @@ class German extends AppLocalizations {
       'Du kannst über dein Gerät Textnotizen erstellen, z.B. für Spielanweisungen, Hintergrundinformationen, Songtexte, etc.';
   String get textDescription => 'schreibe deine Notizen auf';
 
+  String get toolEmpty => 'Leerer Block';
   String get toolNewProjectTitle => 'Projekttitel';
   String get toolNewTitle => 'Tool-Titel';
   String get toolNoOtherToolAvailable =>

@@ -187,6 +187,7 @@ abstract class AppLocalizations {
   String get textAboutExplanation;
   String get textDescription;
 
+  String get toolEmpty;
   String get toolNewProjectTitle;
   String get toolNewTitle;
   String get toolNoOtherToolAvailable;
