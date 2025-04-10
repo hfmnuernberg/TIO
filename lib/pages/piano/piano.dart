@@ -233,7 +233,7 @@ class _PianoState extends State<Piano> {
                   onTap: () async {
                     final newTitle = await showEditTextDialog(
                       context: context,
-                      label: PianoParams.displayName,
+                      label: context.l10n.piano,
                       value: _pianoBlock.title,
                     );
                     if (newTitle == null) return;

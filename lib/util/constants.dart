@@ -66,7 +66,6 @@ class TIOMusicParams {
 class ImageParams {
   static const String kind = 'image';
   static const String displayName = 'Image';
-  static const String description = 'take or load a picture';
 
   static const String defaultPath = '';
 
@@ -80,7 +79,6 @@ class ImageParams {
 class MediaPlayerParams {
   static const String kind = 'media_player';
   static const String displayName = 'Media Player';
-  static const String description = 'record and play';
 
   static const double defaultPitchSemitones = 0;
   static const double defaultSpeedFactor = 1;
@@ -116,7 +114,6 @@ class MetronomeParams {
 
   static const String kind = 'metronome';
   static const String displayName = 'Metronome';
-  static const String description = 'create a rhythm';
 
   static const String svgIconPath = 'assets/icons/Metronome.svg';
 
@@ -220,7 +217,6 @@ class MetronomeParams {
 class PianoParams {
   static const String kind = 'piano';
   static const String displayName = 'Piano';
-  static const String description = 'become the next Herbie Hancock';
 
   static const int defaultKeyboardPosition = 60;
 
@@ -262,7 +258,6 @@ class PianoParams {
 class TunerParams {
   static const String kind = 'tuner';
   static const String displayName = 'Tuner';
-  static const String description = 'tune your instrument';
 
   static const String svgIconPath = 'assets/icons/Tuner.svg';
 
@@ -282,7 +277,6 @@ class TunerParams {
 class TextParams {
   static const String kind = 'text';
   static const String displayName = 'Text';
-  static const String description = 'write down your notes';
 
   static const String defaultContent = '';
 
