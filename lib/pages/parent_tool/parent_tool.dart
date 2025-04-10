@@ -291,7 +291,7 @@ class _ParentToolState extends State<ParentTool> {
       [
         CardListTile(
           title: widget.barTitle,
-          subtitle: formatSettingValues(widget.toolBlock.getSettingsFormatted()),
+          subtitle: formatSettingValues(widget.toolBlock.getSettingsFormatted(context.l10n)),
           trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
           leadingPicture: circleToolIcon(widget.toolBlock.icon),
           onTapFunction: () {},

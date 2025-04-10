@@ -19,12 +19,7 @@ class ChooseSound extends StatefulWidget {
 class _ChooseSoundState extends State<ChooseSound> {
   late PianoBlock _pianoBlock;
 
-  final List<Widget> _sounds =
-      PianoParams.soundFontNames
-          .map((soundFontName) => Text(soundFontName, style: const TextStyle(color: ColorTheme.primary)))
-          .toList();
-
-  final List<bool> _selectedSounds = List<bool>.filled(PianoParams.soundFontNames.length, false);
+  final List<bool> _selectedSounds = List<bool>.filled(PianoParams.soundFontPaths.length, false);
 
   @override
   void initState() {
@@ -56,7 +51,15 @@ class _ChooseSoundState extends State<ChooseSound> {
         },
         constraints: const BoxConstraints(minHeight: 30, minWidth: 200),
         isSelected: _selectedSounds,
-        children: _sounds,
+        children:
+            PianoParams.soundFontPaths
+                .map(
+                  (soundFontPath) => Text(
+                    PianoParams.getSoundFontName(context.l10n, soundFontPath),
+                    style: const TextStyle(color: ColorTheme.primary),
+                  ),
+                )
+                .toList(),
       ),
     );
   }
@@ -68,7 +71,7 @@ class _ChooseSoundState extends State<ChooseSound> {
   }
 
   void _reset() {
-    _selectedSounds.fillRange(0, _sounds.length, false);
+    _selectedSounds.fillRange(0, PianoParams.soundFontPaths.length, false);
     _selectedSounds[PianoParams.defaultSoundFontIndex] = true;
     setState(() {});
   }

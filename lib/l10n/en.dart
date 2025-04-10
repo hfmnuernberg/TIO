@@ -155,6 +155,13 @@ class English extends AppLocalizations {
       'You can use the built-in piano, select different sound modes and save your individual configurations.';
   String get pianoConcertPitchInHz => 'Concert Pitch in Hz';
   String get pianoDescription => 'become the next Herbie Hancock';
+  String get pianoInstrumentElectricPiano1 => 'Electric Piano 1';
+  String get pianoInstrumentElectricPiano2 => 'Electric Piano 2';
+  String get pianoInstrumentGrandPiano1 => 'Grand Piano 1';
+  String get pianoInstrumentGrandPiano2 => 'Grand Piano 2';
+  String get pianoInstrumentHarpsichord => 'Harpsichord';
+  String get pianoInstrumentPipeOrgan => 'Pipe Organ';
+  String get pianoLowestKey => 'Lowest Key';
   String get pianoSetConcertPitch => 'Set Concert Pitch';
   String get pianoSetSound => 'Set Piano Sound';
   String get pianoTutorialAdjust => 'Tap here to adjust concert pitch, volume, and sound';

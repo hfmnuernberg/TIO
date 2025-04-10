@@ -156,6 +156,13 @@ class German extends AppLocalizations {
       'Du kannst das integrierte Klavier verwenden, verschiedene Klangmodi auswählen und deine individuellen Konfigurationen speichern.';
   String get pianoConcertPitchInHz => 'Kammerton in Hz';
   String get pianoDescription => 'werde der nächste Herbie Hancock';
+  String get pianoInstrumentElectricPiano1 => 'E-Piano 1';
+  String get pianoInstrumentElectricPiano2 => 'E-Piano 2';
+  String get pianoInstrumentGrandPiano1 => 'Konzertflügel 1';
+  String get pianoInstrumentGrandPiano2 => 'Konzertflügel 2';
+  String get pianoInstrumentHarpsichord => 'Cembalo';
+  String get pianoInstrumentPipeOrgan => 'Pfeifenorgel';
+  String get pianoLowestKey => 'Tiefste Taste';
   String get pianoSetConcertPitch => 'Kammerton einstellen';
   String get pianoSetSound => 'Piano-Klang einstellen';
   String get pianoTutorialAdjust => 'Tippe hier um den Kammerton, die Lautstärke und den Klang anzupassen';

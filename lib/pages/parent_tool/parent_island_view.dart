@@ -185,7 +185,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                       widget.project!.blocks[index].kind == 'media_player') {
                     return CardListTile(
                       title: widget.project!.blocks[index].title,
-                      subtitle: formatSettingValues(widget.project!.blocks[index].getSettingsFormatted()),
+                      subtitle: formatSettingValues(widget.project!.blocks[index].getSettingsFormatted(context.l10n)),
                       trailingIcon: IconButton(onPressed: () => _onToolTap(index), icon: const SizedBox()),
                       leadingPicture: circleToolIcon(widget.project!.blocks[index].icon),
                       onTapFunction: () => _onToolTap(index),

@@ -94,7 +94,7 @@ class ImageBlock extends ProjectBlock {
   }
 
   @override
-  List<String> getSettingsFormatted() {
+  List<String> getSettingsFormatted(AppLocalizations l10n) {
     return [FileIO.getFileName(_relativePath)];
   }
 

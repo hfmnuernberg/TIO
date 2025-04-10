@@ -136,6 +136,13 @@ abstract class AppLocalizations {
   String get pianoAboutExplanation;
   String get pianoConcertPitchInHz;
   String get pianoDescription;
+  String get pianoInstrumentElectricPiano1;
+  String get pianoInstrumentElectricPiano2;
+  String get pianoInstrumentGrandPiano1;
+  String get pianoInstrumentGrandPiano2;
+  String get pianoInstrumentHarpsichord;
+  String get pianoInstrumentPipeOrgan;
+  String get pianoLowestKey;
   String get pianoSetConcertPitch;
   String get pianoSetSound;
   String get pianoTutorialAdjust;

@@ -139,7 +139,7 @@ class MediaPlayerBlock extends ProjectBlock {
   List<double> get markerPositions => _markerPositions;
 
   @override
-  List<String> getSettingsFormatted() {
+  List<String> getSettingsFormatted(AppLocalizations l10n) {
     List<String> settings = [];
     if (_relativePath.isNotEmpty) {
       settings.add(FileIO.getFileName(_relativePath));
