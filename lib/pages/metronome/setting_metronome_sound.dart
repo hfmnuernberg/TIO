@@ -30,11 +30,12 @@ class SetMetronomeSound extends StatefulWidget {
 class _SetMetronomeSoundState extends State<SetMetronomeSound> {
   late MetronomeBlock _metronomeBlock;
 
-  final List<Widget> _sounds = List<Widget>.generate(
-    MetronomeParams.metronomeSounds.length,
-    (index) => Text(MetronomeParams.metronomeSounds[index], style: const TextStyle(color: ColorTheme.primary)),
-    growable: false,
-  );
+  // final List<Widget> _sounds = List<Widget>.generate(
+  //   MetronomeParams.metronomeSounds.length,
+  //   // (index) => Text(MetronomeParams.metronomeSounds[index], style: const TextStyle(color: ColorTheme.primary)),
+  //   (index) => Text(MetronomeParams.getSoundFontName(context.l10n, index), style: const TextStyle(color: ColorTheme.primary)),
+  //   growable: false,
+  // );
 
   final List<bool> _selectedAccSound = List<bool>.filled(MetronomeParams.metronomeSounds.length, false);
   final List<bool> _selectedUnaccSound = List<bool>.filled(MetronomeParams.metronomeSounds.length, false);
@@ -145,7 +146,12 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
           },
           constraints: const BoxConstraints(minHeight: 40, minWidth: 100),
           isSelected: selectedSound,
-          children: _sounds,
+          children: List<Widget>.generate(
+            MetronomeParams.metronomeSounds.length,
+            // (index) => Text(MetronomeParams.metronomeSounds[index], style: const TextStyle(color: ColorTheme.primary)),
+                (index) => Text(MetronomeParams.getSoundFontName(context.l10n, MetronomeParams.metronomeSounds[index]), style: const TextStyle(color: ColorTheme.primary)),
+            growable: false,
+          ),
         ),
       ],
     );
