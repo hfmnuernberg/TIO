@@ -92,6 +92,7 @@ class English extends AppLocalizations {
   String get mediaPlayerFactorAndBpm => 'Factor and BPM slider';
   String get mediaPlayerFile => 'File';
   String get mediaPlayerLoadAudioFile => 'Load Audio File';
+  String get mediaPlayerLooping => 'Looping';
   String get mediaPlayerMarkers => 'Markers';
   String get mediaPlayerOverwriteSound => 'Overwrite?';
   String get mediaPlayerOverwriteSoundQuestion =>
@@ -131,6 +132,7 @@ class English extends AppLocalizations {
   String get metronomeNumberOfBeats => 'Number of Beats';
   String get metronomeNumberOfPolyBeats => 'Number of Poly Beats';
   String get metronomeRandomMute => 'Random Mute';
+  String get metronomeRandomMuteChance => 'mute chance';
   String get metronomeRandomMuteProbability => 'Probability in %';
   String get metronomeSetBpm => 'Set BPM';
   String get metronomeSetRandomMute => 'Set Random Mute';
@@ -138,7 +140,8 @@ class English extends AppLocalizations {
   String get metronomeSetSoundsSecondary => 'Set 2nd Metronome Sounds';
   String get metronomeSound => 'Sound';
   String get metronomeSoundMain => 'Main';
-  String get metronomeSoundPoly => 'Poly';
+  String get metronomeSoundPoly => 'Poly-Sound';
+  String get metronomeSoundPolyShort => 'Poly';
   String get metronomeSoundPrimary => 'Sound 1';
   String get metronomeSoundSecondary => 'Sound 2';
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome';
@@ -148,6 +151,8 @@ class English extends AppLocalizations {
       'Hold and drag sideways to relocate,\nswipe upwards to delete\nor tap to edit';
   String get metronomeTutorialStartStop => 'Tap here to start and stop the metronome';
   String get metronomeUnaccented => 'Unaccented';
+
+  String metronomeSegment(int value) => '$value segment${value == 1 ? '' : 's'}';
 
   String get piano => 'Piano';
   String get pianoAbout => 'Piano';

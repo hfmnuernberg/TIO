@@ -143,24 +143,24 @@ class MetronomeBlock extends ProjectBlock {
     }
 
     settings.addAll([
-      '${_rhythmGroups.length} segment${pluralSInt(_rhythmGroups.length)}',
-      'Sound: $accSound/$unaccSound',
-      'Poly-Sound: $polyAccSound/$polyUnaccSound',
+      l10n.metronomeSegment(_rhythmGroups.length),
+      '${l10n.metronomeSound}: $accSound/$unaccSound',
+      '${l10n.metronomeSoundPoly}: $polyAccSound/$polyUnaccSound',
     ]);
 
     if (_rhythmGroups2.isNotEmpty) {
       settings.addAll([
         '_____ 2 _____',
-        '${_rhythmGroups2.length} segment${pluralSInt(_rhythmGroups2.length)}',
-        'Sound: $accSound2/$unaccSound2',
-        'Poly-Sound: $polyAccSound2/$polyUnaccSound2',
+        l10n.metronomeSegment(_rhythmGroups2.length),
+        '${l10n.metronomeSound}: $accSound2/$unaccSound2',
+        '${l10n.metronomeSoundPoly}: $polyAccSound2/$polyUnaccSound2',
       ]);
     }
 
-    settings.addAll(['$bpm bpm', '$randomMute % random mute']);
+    settings.addAll(['$bpm ${l10n.commonBpm}']);
 
     if (randomMute > 0) {
-      settings.add('$randomMute% mute chance');
+      settings.add('$randomMute% ${l10n.metronomeRandomMuteChance}');
     }
 
     return settings;

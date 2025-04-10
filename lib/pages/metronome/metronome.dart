@@ -721,7 +721,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         SettingsTile(
           title: _metronomeBlock.rhythmGroups2.isEmpty ? l10n.metronomeSound : l10n.metronomeSoundPrimary,
           subtitle:
-              '${l10n.metronomeSoundMain}: ${_metronomeBlock.accSound}, ${_metronomeBlock.unaccSound}\n${l10n.metronomeSoundPoly}: ${_metronomeBlock.polyAccSound}, ${_metronomeBlock.polyUnaccSound}',
+              '${l10n.metronomeSoundMain}: ${_metronomeBlock.accSound}, ${_metronomeBlock.unaccSound}\n${l10n.metronomeSoundPolyShort}: ${_metronomeBlock.polyAccSound}, ${_metronomeBlock.polyUnaccSound}',
           leadingIcon: Icons.library_music_outlined,
           settingPage: SetMetronomeSound(running: _sound && _isStarted),
           block: _metronomeBlock,
@@ -733,7 +733,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           SettingsTile(
             title: l10n.metronomeSoundSecondary,
             subtitle:
-                '${l10n.metronomeSoundMain}: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\n${l10n.metronomeSoundPoly}: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}',
+                '${l10n.metronomeSoundMain}: ${_metronomeBlock.accSound2}, ${_metronomeBlock.unaccSound2}\n${l10n.metronomeSoundPolyShort}: ${_metronomeBlock.polyAccSound2}, ${_metronomeBlock.polyUnaccSound2}',
             leadingIcon: Icons.library_music_outlined,
             settingPage: SetMetronomeSound(running: _sound && _isStarted, forSecondMetronome: true),
             block: _metronomeBlock,

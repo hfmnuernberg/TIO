@@ -78,6 +78,7 @@ abstract class AppLocalizations {
   String get mediaPlayerFactorAndBpm;
   String get mediaPlayerFile;
   String get mediaPlayerLoadAudioFile;
+  String get mediaPlayerLooping;
   String get mediaPlayerMarkers;
   String get mediaPlayerOverwriteSound;
   String get mediaPlayerOverwriteSoundQuestion;
@@ -114,6 +115,7 @@ abstract class AppLocalizations {
   String get metronomeNumberOfBeats;
   String get metronomeNumberOfPolyBeats;
   String get metronomeRandomMute;
+  String get metronomeRandomMuteChance;
   String get metronomeRandomMuteProbability;
   String get metronomeSetBpm;
   String get metronomeSetRandomMute;
@@ -122,6 +124,7 @@ abstract class AppLocalizations {
   String get metronomeSound;
   String get metronomeSoundMain;
   String get metronomeSoundPoly;
+  String get metronomeSoundPolyShort;
   String get metronomeSoundPrimary;
   String get metronomeSoundSecondary;
   String get metronomeTutorialAddNew;
@@ -130,6 +133,8 @@ abstract class AppLocalizations {
   String get metronomeTutorialRelocate;
   String get metronomeTutorialStartStop;
   String get metronomeUnaccented;
+
+  String metronomeSegment(int value);
 
   String get piano;
   String get pianoAbout;
