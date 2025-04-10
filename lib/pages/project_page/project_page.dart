@@ -260,7 +260,7 @@ class _ProjectPageState extends State<ProjectPage> {
                 } else {
                   return CardListTile(
                     title: _project.blocks[index].title,
-                    subtitle: formatSettingValues(_project.blocks[index].getSettingsFormatted()),
+                    subtitle: formatSettingValues(_project.blocks[index].getSettingsFormatted(context.l10n)),
                     leadingPicture: circleToolIcon(_project.blocks[index].icon),
                     trailingIcon: IconButton(
                       onPressed:

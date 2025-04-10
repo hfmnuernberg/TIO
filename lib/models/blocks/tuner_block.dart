@@ -69,7 +69,7 @@ class TunerBlock extends ProjectBlock {
   }
 
   @override
-  List<String> getSettingsFormatted() {
+  List<String> getSettingsFormatted(AppLocalizations l10n) {
     return ['${formatDoubleToString(_chamberNoteHz)} Hz'];
   }
 

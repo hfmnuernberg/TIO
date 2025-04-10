@@ -135,7 +135,7 @@ class MetronomeBlock extends ProjectBlock {
   }
 
   @override
-  List<String> getSettingsFormatted() {
+  List<String> getSettingsFormatted(AppLocalizations l10n) {
     List<String> settings = [];
 
     if (_rhythmGroups2.isNotEmpty) {

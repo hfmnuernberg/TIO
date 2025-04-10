@@ -42,7 +42,10 @@ class Piano extends StatefulWidget {
 class _PianoState extends State<Piano> {
   late PianoBlock _pianoBlock;
   late double _concertPitch = _pianoBlock.concertPitch;
-  late String _instrumentName = PianoParams.soundFontNames[_pianoBlock.soundFontIndex];
+  late String _instrumentName = PianoParams.getSoundFontName(
+    context.l10n,
+    PianoParams.soundFontPaths[_pianoBlock.soundFontIndex],
+  );
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
@@ -368,7 +371,13 @@ class _PianoState extends State<Piano> {
 
                               _initPiano(PianoParams.soundFontPaths[_pianoBlock.soundFontIndex]);
 
-                              setState(() => _instrumentName = PianoParams.soundFontNames[_pianoBlock.soundFontIndex]);
+                              setState(
+                                () =>
+                                    _instrumentName = PianoParams.getSoundFontName(
+                                      context.l10n,
+                                      PianoParams.soundFontPaths[_pianoBlock.soundFontIndex],
+                                    ),
+                              );
                             },
                             icon: const CircleAvatar(
                               backgroundColor: ColorTheme.primary50,
@@ -573,7 +582,7 @@ class _PianoState extends State<Piano> {
                       children: [
                         CardListTile(
                           title: _pianoBlock.title,
-                          subtitle: formatSettingValues(_pianoBlock.getSettingsFormatted()),
+                          subtitle: formatSettingValues(_pianoBlock.getSettingsFormatted(context.l10n)),
                           trailingIcon: IconButton(
                             onPressed: () {
                               setState(() {
