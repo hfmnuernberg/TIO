@@ -36,7 +36,6 @@ abstract class AppLocalizations {
   String get commonYes;
 
   String get feedbackCta;
-  String get feedbackHint;
   String get feedbackQuestion;
   String get feedbackTitle;
 

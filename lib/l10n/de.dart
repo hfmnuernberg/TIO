@@ -47,7 +47,6 @@ class German extends AppLocalizations {
   String get commonYes => 'Ja';
 
   String get feedbackCta => 'Ausfüllen';
-  String get feedbackHint => '(Die Umfrage ist vorerst nur auf Deutsch verfügbar)';
   String get feedbackQuestion => 'Gefällt dir TIO Music? Bitte mach mit bei unserer Umfrage!';
   String get feedbackTitle => 'Feedback-Umfrage';
 

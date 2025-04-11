@@ -14,7 +14,6 @@ class FeedbackPage extends StatelessWidget {
       appBarTitle: l10n.feedbackTitle,
       textSections: [
         TextSection(content: l10n.feedbackQuestion, sectionType: SectionType.headline3),
-        TextSection(content: l10n.feedbackHint),
         const SizedBox(height: 12),
         Center(
           child: TIOFlatButton(
