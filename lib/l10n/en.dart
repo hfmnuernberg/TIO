@@ -157,7 +157,7 @@ class English extends AppLocalizations {
   String get metronomeSoundTypeClock => 'clock';
   String get metronomeSoundTypeCowbell => 'cowbell';
   String get metronomeSoundTypeDigiClick => 'digi click';
-  String get metronomeSoundTypeHeart => 'heart';
+  String get metronomeSoundTypeHeart => 'heartbeat';
   String get metronomeSoundTypeKick => 'kick';
   String get metronomeSoundTypeNoise => 'noise';
   String get metronomeSoundTypePing => 'ping';

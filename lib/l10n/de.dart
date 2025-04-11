@@ -157,7 +157,7 @@ class German extends AppLocalizations {
   String get metronomeSoundTypeClock => 'Uhr';
   String get metronomeSoundTypeCowbell => 'Kuhglocke';
   String get metronomeSoundTypeDigiClick => 'Digi-Klick';
-  String get metronomeSoundTypeHeart => 'Herz';
+  String get metronomeSoundTypeHeart => 'Herzschlag';
   String get metronomeSoundTypeKick => 'Kick';
   String get metronomeSoundTypeNoise => 'Lärm';
   String get metronomeSoundTypePing => 'Ping';
