@@ -2,7 +2,9 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 
 import 'package:tiomusic/models/project_block.dart';
+import 'package:tiomusic/models/sound_font.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/sound_font_extension.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/util_midi.dart';
 
@@ -92,7 +94,7 @@ class PianoBlock extends ProjectBlock {
   List<String> getSettingsFormatted(AppLocalizations l10n) {
     return [
       '${l10n.pianoLowestKey}: ${midiToNameAndOctave(_keyboardPosition)}',
-      PianoParams.getSoundFontName(l10n, PianoParams.soundFontPaths[_soundFontIndex]),
+      SoundFont.values[_soundFontIndex].getLabel(l10n),
     ];
   }
 

@@ -265,33 +265,6 @@ class PianoParams {
 
   static const int defaultSoundFontIndex = 0;
 
-  static const String _soundFontPiano1 = 'assets/sound_fonts/piano_01.sf2';
-  static const String _soundFontPiano2 = 'assets/sound_fonts/piano_02.sf2';
-  static const String _soundFontElectricPiano1 = 'assets/sound_fonts/electric_piano_01.sf2';
-  static const String _soundFontElectricPiano2 = 'assets/sound_fonts/electric_piano_02.sf2';
-  static const String _soundFontPipeOrgan = 'assets/sound_fonts/pipe_organ.sf2';
-  static const String _soundFontHarpsicord = 'assets/sound_fonts/harpsichord.sf2';
-
-  // There is a problem if sound fonts are too big, they should be about 1 MB, not more
-  static const List<String> soundFontPaths = <String>[
-    _soundFontPiano1,
-    _soundFontPiano2,
-    _soundFontElectricPiano1,
-    _soundFontElectricPiano2,
-    _soundFontPipeOrgan,
-    _soundFontHarpsicord,
-  ];
-
-  static getSoundFontName(AppLocalizations l10n, String soundFontPath) => switch (soundFontPath) {
-    _soundFontPiano1 => l10n.pianoInstrumentGrandPiano1,
-    _soundFontPiano2 => l10n.pianoInstrumentGrandPiano2,
-    _soundFontElectricPiano1 => l10n.pianoInstrumentElectricPiano1,
-    _soundFontElectricPiano2 => l10n.pianoInstrumentElectricPiano2,
-    _soundFontPipeOrgan => l10n.pianoInstrumentPipeOrgan,
-    _soundFontHarpsicord => l10n.pianoInstrumentHarpsichord,
-    _ => '',
-  };
-
   static const Icon icon = Icon(Icons.piano, color: ColorTheme.primary);
 }
 
