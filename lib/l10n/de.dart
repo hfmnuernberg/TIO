@@ -36,9 +36,15 @@ class German extends AppLocalizations {
   String get commonOctave => 'Oktave';
   String get commonPlus => 'Plus-Knopf';
   String get commonReset => 'Zurücksetzen';
+  String get commonSetVolume => 'Lautstärke einstellen';
   String get commonSlider => 'Schieberegler';
   String get commonSubmit => 'Bestätigen';
   String get commonVolume => 'Lautstärke';
+  String get commonVolumeHintLow =>
+      'Die Lautstärke des Geräts ist niedrig. Wenn nötig, erhöhe die Lautstärke des Geräts zusätzlich zur Lautstärke des Tools.';
+  String get commonVolumeHintMid =>
+      'Wenn du das Tool in deiner aktuellen Umgebung nur schwer hören kannst, verbinde dein Gerät am besten mit einem externen Lautsprecher (z.B. per Bluetooth).';
+  String get commonVolumeHintMuted => 'Das Gerät ist stummgeschaltet. Aktiviere den Ton um das Tool hören zu können.';
   String get commonYes => 'Ja';
 
   String get feedbackCta => 'Ausfüllen';

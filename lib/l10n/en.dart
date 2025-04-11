@@ -35,9 +35,15 @@ class English extends AppLocalizations {
   String get commonOctave => 'Octave';
   String get commonPlus => 'Plus button';
   String get commonReset => 'Reset';
+  String get commonSetVolume => 'Set Volume';
   String get commonSlider => 'slider';
   String get commonSubmit => 'Submit';
   String get commonVolume => 'Volume';
+  String get commonVolumeHintLow =>
+      'The device volume is low. If necessary, increase the device volume in addition to the tool volume.';
+  String get commonVolumeHintMid =>
+      'If you struggle to hear the tool in your current environment, consider connecting your device to an external speaker (e.g., via Bluetooth).';
+  String get commonVolumeHintMuted => 'The device is muted. Unmute the device to hear the tool.';
   String get commonYes => 'Yes';
 
   String get feedbackCta => 'Fill out';
