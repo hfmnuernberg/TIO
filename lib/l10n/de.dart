@@ -144,6 +144,21 @@ class German extends AppLocalizations {
   String get metronomeSoundPolyShort => 'Nebenklang';
   String get metronomeSoundPrimary => 'Klang 1';
   String get metronomeSoundSecondary => 'Klang 2';
+  String get metronomeSoundTypeBlup => 'Blup';
+  String get metronomeSoundTypeBop => 'Bop';
+  String get metronomeSoundTypeClap => 'Klatschen';
+  String get metronomeSoundTypeClick => 'Klick';
+  String get metronomeSoundTypeClock => 'Uhr';
+  String get metronomeSoundTypeCowbell => 'Kuhglocke';
+  String get metronomeSoundTypeDigiClick => 'Digi-Klick';
+  String get metronomeSoundTypeHeart => 'Herz';
+  String get metronomeSoundTypeKick => 'Kick';
+  String get metronomeSoundTypeNoise => 'Lärm';
+  String get metronomeSoundTypePing => 'Ping';
+  String get metronomeSoundTypePling => 'Pling';
+  String get metronomeSoundTypeRim => 'Rand';
+  String get metronomeSoundTypeTick => 'Tick';
+  String get metronomeSoundTypeWood => 'Holz';
   String get metronomeTutorialAddNew => 'Tippe hier um ein zweites Metronom hinzuzufügen';
   String get metronomeTutorialAdjust => 'Tippe hier um die Metronomeinstellungen anzupassen';
   String get metronomeTutorialEditBeats =>
@@ -212,6 +227,7 @@ class German extends AppLocalizations {
       'Du kannst über dein Gerät Textnotizen erstellen, z.B. für Spielanweisungen, Hintergrundinformationen, Songtexte, etc.';
   String get textDescription => 'schreibe deine Notizen auf';
 
+  String get toolEmpty => 'Leerer Block';
   String get toolNewProjectTitle => 'Projekttitel';
   String get toolNewTitle => 'Tool-Titel';
   String get toolNoOtherToolAvailable =>

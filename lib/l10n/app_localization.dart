@@ -127,6 +127,21 @@ abstract class AppLocalizations {
   String get metronomeSoundPolyShort;
   String get metronomeSoundPrimary;
   String get metronomeSoundSecondary;
+  String get metronomeSoundTypeBlup;
+  String get metronomeSoundTypeBop;
+  String get metronomeSoundTypeClap;
+  String get metronomeSoundTypeClick;
+  String get metronomeSoundTypeClock;
+  String get metronomeSoundTypeCowbell;
+  String get metronomeSoundTypeDigiClick;
+  String get metronomeSoundTypeHeart;
+  String get metronomeSoundTypeKick;
+  String get metronomeSoundTypeNoise;
+  String get metronomeSoundTypePing;
+  String get metronomeSoundTypePling;
+  String get metronomeSoundTypeRim;
+  String get metronomeSoundTypeTick;
+  String get metronomeSoundTypeWood;
   String get metronomeTutorialAddNew;
   String get metronomeTutorialAdjust;
   String get metronomeTutorialEditBeats;
@@ -187,6 +202,7 @@ abstract class AppLocalizations {
   String get textAboutExplanation;
   String get textDescription;
 
+  String get toolEmpty;
   String get toolNewProjectTitle;
   String get toolNewTitle;
   String get toolNoOtherToolAvailable;

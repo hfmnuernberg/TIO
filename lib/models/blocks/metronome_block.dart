@@ -144,16 +144,16 @@ class MetronomeBlock extends ProjectBlock {
 
     settings.addAll([
       l10n.metronomeSegment(_rhythmGroups.length),
-      '${l10n.metronomeSound}: $accSound/$unaccSound',
-      '${l10n.metronomeSoundPoly}: $polyAccSound/$polyUnaccSound',
+      '${l10n.metronomeSound}: ${MetronomeParams.getSoundFontName(l10n, accSound)}/${MetronomeParams.getSoundFontName(l10n, unaccSound)}',
+      '${l10n.metronomeSoundPoly}: ${MetronomeParams.getSoundFontName(l10n, polyAccSound)}/${MetronomeParams.getSoundFontName(l10n, polyUnaccSound)}',
     ]);
 
     if (_rhythmGroups2.isNotEmpty) {
       settings.addAll([
         '_____ 2 _____',
         l10n.metronomeSegment(_rhythmGroups2.length),
-        '${l10n.metronomeSound}: $accSound2/$unaccSound2',
-        '${l10n.metronomeSoundPoly}: $polyAccSound2/$polyUnaccSound2',
+        '${l10n.metronomeSound}: ${MetronomeParams.getSoundFontName(l10n, accSound2)}/${MetronomeParams.getSoundFontName(l10n, unaccSound2)}',
+        '${l10n.metronomeSoundPoly}: ${MetronomeParams.getSoundFontName(l10n, polyAccSound2)}/${MetronomeParams.getSoundFontName(l10n, polyUnaccSound2)}',
       ]);
     }
 

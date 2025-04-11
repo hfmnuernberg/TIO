@@ -144,6 +144,21 @@ class English extends AppLocalizations {
   String get metronomeSoundPolyShort => 'Poly';
   String get metronomeSoundPrimary => 'Sound 1';
   String get metronomeSoundSecondary => 'Sound 2';
+  String get metronomeSoundTypeBlup => 'blup';
+  String get metronomeSoundTypeBop => 'bop';
+  String get metronomeSoundTypeClap => 'clap';
+  String get metronomeSoundTypeClick => 'click';
+  String get metronomeSoundTypeClock => 'clock';
+  String get metronomeSoundTypeCowbell => 'cowbell';
+  String get metronomeSoundTypeDigiClick => 'digi click';
+  String get metronomeSoundTypeHeart => 'heart';
+  String get metronomeSoundTypeKick => 'kick';
+  String get metronomeSoundTypeNoise => 'noise';
+  String get metronomeSoundTypePing => 'ping';
+  String get metronomeSoundTypePling => 'pling';
+  String get metronomeSoundTypeRim => 'rim';
+  String get metronomeSoundTypeTick => 'tick';
+  String get metronomeSoundTypeWood => 'wood';
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings';
   String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted';
@@ -210,6 +225,7 @@ class English extends AppLocalizations {
       'You can use your device to create text notes, e.g. for playing instructions, background information, song lyrics etc.';
   String get textDescription => 'write down your notes';
 
+  String get toolEmpty => 'Empty';
   String get toolNewProjectTitle => 'Project title';
   String get toolNewTitle => 'Tool title';
   String get toolNoOtherToolAvailable =>

@@ -33,7 +33,6 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   bool _possibleToolForIslandExists = false;
   ProjectBlock? _loadedTool;
 
-  final EmptyBlock _emptyBlock = EmptyBlock();
   int? _indexOfChoosenIsland;
 
   @override
@@ -206,7 +205,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     _indexOfChoosenIsland = index;
     // to force calling the initState of the new island, first open an empty island
     // and then in init of empty island open the new island
-    _loadedTool = _emptyBlock;
+    _loadedTool = EmptyBlock(context.l10n.toolEmpty);
     widget.toolBlock.islandToolID = 'empty';
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     _empty = false;
