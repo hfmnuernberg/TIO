@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
@@ -29,8 +30,8 @@ class SetVolume extends StatefulWidget {
 }
 
 class _SetVolumeState extends State<SetVolume> {
-  late NumberInputDoubleWithSlider _volumeInput;
   VolumeLevel _deviceVolumeLevel = VolumeLevel.normal;
+  final TextEditingController _volumeController = TextEditingController();
 
   @override
   void initState() {
@@ -38,20 +39,19 @@ class _SetVolumeState extends State<SetVolume> {
 
     VolumeController.instance.addListener(handleVolumeChange);
 
-    _volumeInput = NumberInputDoubleWithSlider(
-      max: 1,
-      min: 0,
-      defaultValue: widget.initialValue,
-      step: 0.1,
-      stepIntervalInMs: 200,
-      controller: TextEditingController(),
-      textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
-      label: 'Volume',
-    );
+    _volumeController.text = widget.initialValue.toString();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _volumeInput.controller.addListener(_onUserChangedVolume);
+      _volumeController.addListener(_onUserChangedVolume);
     });
+  }
+
+  @override
+  void dispose() {
+    VolumeController.instance.removeListener();
+    _volumeController.removeListener(_onUserChangedVolume);
+    _volumeController.dispose();
+    super.dispose();
   }
 
   void handleVolumeChange(double newVolume) => setState(() => _deviceVolumeLevel = getVolumeLevel(newVolume));
@@ -59,8 +59,17 @@ class _SetVolumeState extends State<SetVolume> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: 'Set Volume',
-      numberInput: _volumeInput,
+      title: context.l10n.commonSetVolume,
+      numberInput: NumberInputDoubleWithSlider(
+        max: 1,
+        min: 0,
+        defaultValue: widget.initialValue,
+        step: 0.1,
+        stepIntervalInMs: 200,
+        controller: _volumeController,
+        textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
+        label: context.l10n.commonVolume,
+      ),
       infoWidget: Padding(
         padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
         child: Row(
@@ -83,8 +92,8 @@ class _SetVolumeState extends State<SetVolume> {
   }
 
   void _onConfirm() async {
-    if (_volumeInput.controller.value.text != '') {
-      final newVolumeValue = double.parse(_volumeInput.controller.value.text);
+    if (_volumeController.text != '') {
+      final newVolumeValue = double.parse(_volumeController.text);
       widget.onConfirm(newVolumeValue.clamp(0.0, 1.0));
 
       FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
@@ -94,7 +103,7 @@ class _SetVolumeState extends State<SetVolume> {
   }
 
   void _reset() {
-    _volumeInput.controller.value = _volumeInput.controller.value.copyWith(
+    _volumeController.value = _volumeController.value.copyWith(
       text: TIOMusicParams.defaultVolume.toString(),
     );
   }
@@ -105,8 +114,8 @@ class _SetVolumeState extends State<SetVolume> {
   }
 
   void _onUserChangedVolume() async {
-    if (_volumeInput.controller.value.text != '') {
-      final newVolumeValue = double.parse(_volumeInput.controller.value.text);
+    if (_volumeController.text != '') {
+      final newVolumeValue = double.parse(_volumeController.text);
       widget.onUserChangedVolume(newVolumeValue.clamp(0.0, 1.0));
     }
   }

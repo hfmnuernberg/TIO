@@ -36,6 +36,7 @@ class German extends AppLocalizations {
   String get commonOctave => 'Oktave';
   String get commonPlus => 'Plus-Knopf';
   String get commonReset => 'Zurücksetzen';
+  String get commonSetVolume => 'Lautstärke einstellen';
   String get commonSlider => 'Schieberegler';
   String get commonSubmit => 'Bestätigen';
   String get commonVolume => 'Lautstärke';

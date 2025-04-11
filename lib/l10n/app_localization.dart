@@ -26,6 +26,7 @@ abstract class AppLocalizations {
   String get commonOctave;
   String get commonPlus;
   String get commonReset;
+  String get commonSetVolume;
   String get commonSlider;
   String get commonSubmit;
   String get commonVolume;
