@@ -141,8 +141,6 @@ class MetronomeParams {
   static const List<BeatTypePoly> defaultPolyBeats = [];
   static const String defaultNoteKey = NoteValues.quarter;
 
-  // Metronome Sound
-
   // Turn visual metronome on/off by default
   static const bool defaultVisualMetronome = false;
 
