@@ -5,9 +5,11 @@ import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/models/sound_font.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/sound_font_extension.dart';
 
 class ChooseSound extends StatefulWidget {
   const ChooseSound({super.key});
@@ -19,7 +21,7 @@ class ChooseSound extends StatefulWidget {
 class _ChooseSoundState extends State<ChooseSound> {
   late PianoBlock _pianoBlock;
 
-  final List<bool> _selectedSounds = List<bool>.filled(PianoParams.soundFontPaths.length, false);
+  final List<bool> _selectedSounds = List<bool>.filled(SoundFont.values.length, false);
 
   @override
   void initState() {
@@ -52,12 +54,10 @@ class _ChooseSoundState extends State<ChooseSound> {
         constraints: const BoxConstraints(minHeight: 30, minWidth: 200),
         isSelected: _selectedSounds,
         children:
-            PianoParams.soundFontPaths
+            SoundFont.values
                 .map(
-                  (soundFontPath) => Text(
-                    PianoParams.getSoundFontName(context.l10n, soundFontPath),
-                    style: const TextStyle(color: ColorTheme.primary),
-                  ),
+                  (soundFont) =>
+                      Text(soundFont.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)),
                 )
                 .toList(),
       ),
@@ -71,7 +71,7 @@ class _ChooseSoundState extends State<ChooseSound> {
   }
 
   void _reset() {
-    _selectedSounds.fillRange(0, PianoParams.soundFontPaths.length, false);
+    _selectedSounds.fillRange(0, SoundFont.values.length, false);
     _selectedSounds[PianoParams.defaultSoundFontIndex] = true;
     setState(() {});
   }

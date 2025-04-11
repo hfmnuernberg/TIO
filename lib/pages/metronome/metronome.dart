@@ -9,6 +9,8 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/main.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/file_io.dart';
+import 'package:tiomusic/models/metronome_sound.dart';
+import 'package:tiomusic/models/metronome_sound_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -721,7 +723,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         SettingsTile(
           title: _metronomeBlock.rhythmGroups2.isEmpty ? l10n.metronomeSound : l10n.metronomeSoundPrimary,
           subtitle:
-              '${l10n.metronomeSoundMain}: ${MetronomeParams.getSoundFontName(l10n, _metronomeBlock.accSound)}, ${MetronomeParams.getSoundFontName(l10n, _metronomeBlock.unaccSound)}\n${l10n.metronomeSoundPolyShort}: ${MetronomeParams.getSoundFontName(l10n, _metronomeBlock.polyAccSound)}, ${MetronomeParams.getSoundFontName(l10n, _metronomeBlock.polyUnaccSound)}',
+              '${l10n.metronomeSoundMain}: ${MetronomeSound.fromFilename(_metronomeBlock.accSound).getLabel(l10n)}, ${MetronomeSound.fromFilename(_metronomeBlock.unaccSound).getLabel(l10n)}\n${l10n.metronomeSoundPolyShort}: ${MetronomeSound.fromFilename(_metronomeBlock.polyAccSound).getLabel(l10n)}, ${MetronomeSound.fromFilename(_metronomeBlock.polyUnaccSound).getLabel(l10n)}',
           leadingIcon: Icons.library_music_outlined,
           settingPage: SetMetronomeSound(running: _sound && _isStarted),
           block: _metronomeBlock,
@@ -733,7 +735,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           SettingsTile(
             title: l10n.metronomeSoundSecondary,
             subtitle:
-                '${l10n.metronomeSoundMain}: ${MetronomeParams.getSoundFontName(l10n, _metronomeBlock.accSound2)}, ${MetronomeParams.getSoundFontName(l10n, _metronomeBlock.unaccSound2)}\n${l10n.metronomeSoundPolyShort}: ${MetronomeParams.getSoundFontName(l10n, _metronomeBlock.polyAccSound2)}, ${MetronomeParams.getSoundFontName(l10n, _metronomeBlock.polyUnaccSound2)}',
+                '${l10n.metronomeSoundMain}: ${MetronomeSound.fromFilename(_metronomeBlock.accSound2).getLabel(l10n)}, ${MetronomeSound.fromFilename(_metronomeBlock.unaccSound2).getLabel(l10n)}\n${l10n.metronomeSoundPolyShort}: ${MetronomeSound.fromFilename(_metronomeBlock.polyAccSound2).getLabel(l10n)}, ${MetronomeSound.fromFilename(_metronomeBlock.polyUnaccSound2).getLabel(l10n)}',
             leadingIcon: Icons.library_music_outlined,
             settingPage: SetMetronomeSound(running: _sound && _isStarted, forSecondMetronome: true),
             block: _metronomeBlock,

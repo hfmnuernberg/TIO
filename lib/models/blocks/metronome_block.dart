@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
+import 'package:tiomusic/models/metronome_sound.dart';
+import 'package:tiomusic/models/metronome_sound_extension.dart';
 
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
@@ -88,22 +90,22 @@ class MetronomeBlock extends ProjectBlock {
   @JsonKey(defaultValue: MetronomeParams.defaultRandomMute)
   late int randomMute;
 
-  @JsonKey(defaultValue: MetronomeParams.defaultAccSound)
+  @JsonKey(defaultValue: defaultMetronomeAccSound)
   late String accSound;
-  @JsonKey(defaultValue: MetronomeParams.defaultUnaccSound)
+  @JsonKey(defaultValue: defaultMetronomeUnaccSound)
   late String unaccSound;
-  @JsonKey(defaultValue: MetronomeParams.defaultPolyAccSound)
+  @JsonKey(defaultValue: defaultMetronomePolyAccSound)
   late String polyAccSound;
-  @JsonKey(defaultValue: MetronomeParams.defaultPolyUnaccSound)
+  @JsonKey(defaultValue: defaultMetronomePolyUnaccSound)
   late String polyUnaccSound;
 
-  @JsonKey(defaultValue: MetronomeParams.defaultAccSound2)
+  @JsonKey(defaultValue: defaultMetronomeAccSound2)
   late String accSound2;
-  @JsonKey(defaultValue: MetronomeParams.defaultUnaccSound2)
+  @JsonKey(defaultValue: defaultMetronomeUnaccSound2)
   late String unaccSound2;
-  @JsonKey(defaultValue: MetronomeParams.defaultPolyAccSound2)
+  @JsonKey(defaultValue: defaultMetronomePolyAccSound2)
   late String polyAccSound2;
-  @JsonKey(defaultValue: MetronomeParams.defaultPolyUnaccSound2)
+  @JsonKey(defaultValue: defaultMetronomePolyUnaccSound2)
   late String polyUnaccSound2;
 
   late List<RhythmGroup> _rhythmGroups;
@@ -144,16 +146,16 @@ class MetronomeBlock extends ProjectBlock {
 
     settings.addAll([
       l10n.metronomeSegment(_rhythmGroups.length),
-      '${l10n.metronomeSound}: ${MetronomeParams.getSoundFontName(l10n, accSound)}/${MetronomeParams.getSoundFontName(l10n, unaccSound)}',
-      '${l10n.metronomeSoundPoly}: ${MetronomeParams.getSoundFontName(l10n, polyAccSound)}/${MetronomeParams.getSoundFontName(l10n, polyUnaccSound)}',
+      '${l10n.metronomeSound}: ${MetronomeSound.fromFilename(accSound).getLabel(l10n)}/${MetronomeSound.fromFilename(unaccSound).getLabel(l10n)}',
+      '${l10n.metronomeSoundPoly}: ${MetronomeSound.fromFilename(polyAccSound).getLabel(l10n)}/${MetronomeSound.fromFilename(polyUnaccSound).getLabel(l10n)}',
     ]);
 
     if (_rhythmGroups2.isNotEmpty) {
       settings.addAll([
         '_____ 2 _____',
         l10n.metronomeSegment(_rhythmGroups2.length),
-        '${l10n.metronomeSound}: ${MetronomeParams.getSoundFontName(l10n, accSound2)}/${MetronomeParams.getSoundFontName(l10n, unaccSound2)}',
-        '${l10n.metronomeSoundPoly}: ${MetronomeParams.getSoundFontName(l10n, polyAccSound2)}/${MetronomeParams.getSoundFontName(l10n, polyUnaccSound2)}',
+        '${l10n.metronomeSound}: ${MetronomeSound.fromFilename(accSound2).getLabel(l10n)}/${MetronomeSound.fromFilename(unaccSound2).getLabel(l10n)}',
+        '${l10n.metronomeSoundPoly}: ${MetronomeSound.fromFilename(polyAccSound2).getLabel(l10n)}/${MetronomeSound.fromFilename(polyUnaccSound2).getLabel(l10n)}',
       ]);
     }
 
@@ -210,14 +212,14 @@ class MetronomeBlock extends ProjectBlock {
       ),
     ];
     _rhythmGroups2 = [];
-    accSound = MetronomeParams.defaultAccSound;
-    unaccSound = MetronomeParams.defaultUnaccSound;
-    polyAccSound = MetronomeParams.defaultPolyAccSound;
-    polyUnaccSound = MetronomeParams.defaultPolyUnaccSound;
-    accSound2 = MetronomeParams.defaultAccSound2;
-    unaccSound2 = MetronomeParams.defaultUnaccSound2;
-    polyAccSound2 = MetronomeParams.defaultPolyAccSound2;
-    polyUnaccSound2 = MetronomeParams.defaultPolyUnaccSound2;
+    accSound = defaultMetronomeAccSound;
+    unaccSound = defaultMetronomeUnaccSound;
+    polyAccSound = defaultMetronomePolyAccSound;
+    polyUnaccSound = defaultMetronomePolyUnaccSound;
+    accSound2 = defaultMetronomeAccSound2;
+    unaccSound2 = defaultMetronomeUnaccSound2;
+    polyAccSound2 = defaultMetronomePolyAccSound2;
+    polyUnaccSound2 = defaultMetronomePolyUnaccSound2;
     _id = ProjectBlock.createNewId();
   }
 
@@ -237,14 +239,14 @@ class MetronomeBlock extends ProjectBlock {
       ),
     ];
     _rhythmGroups2 = [];
-    accSound = MetronomeParams.defaultAccSound;
-    unaccSound = MetronomeParams.defaultUnaccSound;
-    polyAccSound = MetronomeParams.defaultPolyAccSound;
-    polyUnaccSound = MetronomeParams.defaultPolyUnaccSound;
-    accSound2 = MetronomeParams.defaultAccSound2;
-    unaccSound2 = MetronomeParams.defaultUnaccSound2;
-    polyAccSound2 = MetronomeParams.defaultPolyAccSound2;
-    polyUnaccSound2 = MetronomeParams.defaultPolyUnaccSound2;
+    accSound = defaultMetronomeAccSound;
+    unaccSound = defaultMetronomeUnaccSound;
+    polyAccSound = defaultMetronomePolyAccSound;
+    polyUnaccSound = defaultMetronomePolyUnaccSound;
+    accSound2 = defaultMetronomeAccSound2;
+    unaccSound2 = defaultMetronomeUnaccSound2;
+    polyAccSound2 = defaultMetronomePolyAccSound2;
+    polyUnaccSound2 = defaultMetronomePolyUnaccSound2;
     _id = ProjectBlock.createNewId();
   }
 

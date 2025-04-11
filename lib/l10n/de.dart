@@ -157,7 +157,7 @@ class German extends AppLocalizations {
   String get metronomeSoundTypeClock => 'Uhr';
   String get metronomeSoundTypeCowbell => 'Kuhglocke';
   String get metronomeSoundTypeDigiClick => 'Digi-Klick';
-  String get metronomeSoundTypeHeart => 'Herz';
+  String get metronomeSoundTypeHeart => 'Herzschlag';
   String get metronomeSoundTypeKick => 'Kick';
   String get metronomeSoundTypeNoise => 'Lärm';
   String get metronomeSoundTypePing => 'Ping';
@@ -174,7 +174,7 @@ class German extends AppLocalizations {
   String get metronomeTutorialStartStop => 'Tippe hier um das Metronom zu starten und zu stoppen';
   String get metronomeUnaccented => 'Unakzentuiert';
 
-  String metronomeSegment(int value) => '$value Segment${value == 1 ? '' : 'e'}';
+  String metronomeSegment(int value) => '$value ${value == 1 ? 'Segment' : 'Segmente'}';
 
   String get piano => 'Klavier';
   String get pianoAbout => 'Klavier';
