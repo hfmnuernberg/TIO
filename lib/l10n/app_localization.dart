@@ -30,6 +30,9 @@ abstract class AppLocalizations {
   String get commonSlider;
   String get commonSubmit;
   String get commonVolume;
+  String get commonVolumeHintLow;
+  String get commonVolumeHintMid;
+  String get commonVolumeHintMuted;
   String get commonYes;
 
   String get feedbackCta;

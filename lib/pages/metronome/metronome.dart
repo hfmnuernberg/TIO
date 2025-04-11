@@ -406,7 +406,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   Future<void> _startMetronome() async {
     if (_sound && [VolumeLevel.muted, VolumeLevel.low].contains(_deviceVolumeLevel)) {
-      showSnackbar(context: context, message: getVolumeInfoText(_deviceVolumeLevel))();
+      showSnackbar(context: context, message: getVolumeInfoText(_deviceVolumeLevel, context.l10n))();
     }
 
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
@@ -706,7 +706,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           block: _metronomeBlock,
           callOnReturn: (value) => setState(() {}),
           icon: getVolumeInfoIcon(_deviceVolumeLevel),
-          onIconPressed: showSnackbar(context: context, message: getVolumeInfoText(_deviceVolumeLevel)),
+          onIconPressed: showSnackbar(context: context, message: getVolumeInfoText(_deviceVolumeLevel, l10n)),
         ),
         // BPM
         SettingsTile(

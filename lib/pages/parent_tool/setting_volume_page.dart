@@ -78,7 +78,7 @@ class _SetVolumeState extends State<SetVolume> {
             const SizedBox(width: TIOMusicParams.edgeInset),
             Expanded(
               child: Text(
-                getVolumeInfoText(_deviceVolumeLevel),
+                getVolumeInfoText(_deviceVolumeLevel, context.l10n),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: ColorTheme.onSecondary),
               ),
             ),
@@ -103,9 +103,7 @@ class _SetVolumeState extends State<SetVolume> {
   }
 
   void _reset() {
-    _volumeController.value = _volumeController.value.copyWith(
-      text: TIOMusicParams.defaultVolume.toString(),
-    );
+    _volumeController.value = _volumeController.value.copyWith(text: TIOMusicParams.defaultVolume.toString());
   }
 
   void _onCancel() {
