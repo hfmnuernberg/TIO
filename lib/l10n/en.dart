@@ -173,7 +173,7 @@ class English extends AppLocalizations {
   String get metronomeTutorialStartStop => 'Tap here to start and stop the metronome';
   String get metronomeUnaccented => 'Unaccented';
 
-  String metronomeSegment(int value) => '$value segment${value == 1 ? '' : 's'}';
+  String metronomeSegment(int value) => '$value ${value == 1 ? 'segment' : 'segments'}';
 
   String get piano => 'Piano';
   String get pianoAbout => 'Piano';
