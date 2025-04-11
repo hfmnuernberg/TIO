@@ -193,7 +193,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       ),
       CustomTargetFocus(
         _keySettings,
-        l10n.mediaPlayerTutorialJumpTo,
+        l10n.mediaPlayerTutorialAdjust,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,
@@ -205,7 +205,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       targets.add(
         CustomTargetFocus(
           _keyWaveform,
-          l10n.mediaPlayerTutorialAdjust,
+          l10n.mediaPlayerTutorialJumpTo,
           alignText: ContentAlign.bottom,
           pointingDirection: PointingDirection.up,
           shape: ShapeLightFocus.RRect,
