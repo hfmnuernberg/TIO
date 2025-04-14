@@ -204,6 +204,10 @@ abstract class AppLocalizations {
   String get textAbout;
   String get textAboutExplanation;
   String get textDescription;
+  String get textImport;
+  String get textImportError;
+  String get textImportNoFileSelected;
+  String get textImportSuccess;
 
   String get toolEmpty;
   String get toolNewProjectTitle;

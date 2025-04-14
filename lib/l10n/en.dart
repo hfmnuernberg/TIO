@@ -230,6 +230,10 @@ class English extends AppLocalizations {
   String get textAboutExplanation =>
       'You can use your device to create text notes, e.g. for playing instructions, background information, song lyrics etc.';
   String get textDescription => 'Write down your notes.';
+  String get textImport => 'Import text file';
+  String get textImportError => 'Error importing text file';
+  String get textImportNoFileSelected => 'No text file selected';
+  String get textImportSuccess => 'Text imported successfully!';
 
   String get toolEmpty => 'Empty';
   String get toolNewProjectTitle => 'Project title';
