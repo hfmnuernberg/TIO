@@ -14,34 +14,43 @@ Future<File?> _getFile() async {
   return result == null || result.files.single.path == null ? null : File(result.files.single.path!);
 }
 
-Future<void> importText(BuildContext context) async {
+Future<void> _updateTextBlock(BuildContext context, String text) async {
+  final textBlock = Provider.of<ProjectBlock>(context, listen: false) as TextBlock;
+  textBlock.content = text;
+  textBlock.timeLastModified = getCurrentDateTime();
+}
+
+Future<String?> importText(BuildContext context) async {
   final l10n = context.l10n;
+  String? importedText;
 
   try {
     final file = await _getFile();
 
     if (file == null) {
       if (context.mounted) showSnackbar(context: context, message: l10n.textImportNoFileSelected)();
-      return;
+      return null;
     }
 
-    if (!context.mounted) return;
+    if (!context.mounted) return null;
 
     final text = await file.readAsString();
 
     if (text.isEmpty) {
       if (context.mounted) showSnackbar(context: context, message: l10n.textImportError)();
-      return;
+      return null;
     }
 
-    if (!context.mounted) return;
+    if (!context.mounted) return null;
 
-    final textBlock = Provider.of<ProjectBlock>(context, listen: false) as TextBlock;
-    textBlock.content = text;
-    textBlock.timeLastModified = getCurrentDateTime();
+    _updateTextBlock(context, text);
+
+    importedText = text;
 
     if (context.mounted) showSnackbar(context: context, message: l10n.textImportSuccess)();
   } catch (_) {
     if (context.mounted) showSnackbar(context: context, message: l10n.textImportError)();
   }
+
+  return importedText;
 }

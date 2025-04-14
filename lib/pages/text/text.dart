@@ -61,7 +61,12 @@ class _TextToolState extends State<TextTool> {
       toolBlock: _textBlock,
       menuItems: <MenuItemButton>[
         MenuItemButton(
-          onPressed: () => importText(context),
+          onPressed: () async {
+            final text = await importText(context);
+            if (text == null) return;
+
+            setState(() => _textController.text = text);
+          },
           child: Text(context.l10n.textImport, style: const TextStyle(color: ColorTheme.primary)),
         ),
       ],
