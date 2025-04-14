@@ -172,6 +172,8 @@ class _TunerState extends State<Tuner> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return ParentTool(
       barTitle: _tunerBlock.title,
       isQuickTool: widget.isQuickTool,
@@ -249,8 +251,8 @@ class _TunerState extends State<Tuner> {
       keySettingsList: _keySettings,
       settingTiles: [
         SettingsTile(
-          title: context.l10n.tunerConcertPitch,
-          subtitle: '${formatDoubleToString(_tunerBlock.chamberNoteHz)} Hz',
+          title: l10n.tunerConcertPitch,
+          subtitle: '${l10n.formatNumber(_tunerBlock.chamberNoteHz)} Hz',
           leadingIcon: Icons.location_searching,
           settingPage: const SetConcertPitch(),
           block: _tunerBlock,
@@ -258,7 +260,7 @@ class _TunerState extends State<Tuner> {
           inactive: _isInStartUp,
         ),
         SettingsTile(
-          title: context.l10n.tunerPlayReference,
+          title: l10n.tunerPlayReference,
           subtitle: '',
           leadingIcon: Icons.music_note,
           settingPage: const PlaySoundPage(),
@@ -299,7 +301,7 @@ class _TunerState extends State<Tuner> {
     var centOffset = ((midi - midi.round()) * 100.0).round();
 
     setState(() {
-      _freqText.text = '${freq.toStringAsFixed(1)} Hz';
+      _freqText.text = '${context.l10n.formatNumberAndRoundToOneDecimal(freq)} Hz';
       _midiText.text = midi.toString();
       _midiNameText.text = midiToName(midi.round());
       _centOffsetText.text = '$centOffset Cent';

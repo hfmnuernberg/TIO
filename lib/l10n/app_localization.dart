@@ -233,6 +233,10 @@ abstract class AppLocalizations {
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
 
+  String formatNumber(double num);
+
+  String formatNumberAndRoundToOneDecimal(double num);
+
   String formatDateAndTime(DateTime time);
 
   String formatDuration(Duration dur) {

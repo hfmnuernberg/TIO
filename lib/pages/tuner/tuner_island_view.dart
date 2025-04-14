@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:stats/stats.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
@@ -11,7 +12,6 @@ import 'package:tiomusic/src/rust/api/api.dart';
 
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/util_midi.dart';
 
 class TunerIslandView extends StatefulWidget {
@@ -96,7 +96,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     return ParentInnerIsland(
       onMainIconPressed: _startStop,
       mainIcon: _isRunning ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.tunerBlock.icon,
-      parameterText: '${formatDoubleToString(widget.tunerBlock.chamberNoteHz)} Hz',
+      parameterText: '${context.l10n.formatNumber(widget.tunerBlock.chamberNoteHz)} Hz',
       centerView: _pitchIslandViewVisualizer,
       textSpaceWidth: 60,
     );

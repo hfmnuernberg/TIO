@@ -372,7 +372,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       settingTiles: [
         SettingsTile(
           title: l10n.commonVolume,
-          subtitle: _mediaPlayerBlock.volume.toString(),
+          subtitle: l10n.formatNumber(_mediaPlayerBlock.volume),
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
             initialValue: _mediaPlayerBlock.volume,
@@ -407,7 +407,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         SettingsTile(
           title: l10n.mediaPlayerSpeed,
           subtitle:
-              '${formatDoubleToString(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
+              '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
           leadingIcon: Icons.speed,
           settingPage: const SetSpeed(),
           block: _mediaPlayerBlock,

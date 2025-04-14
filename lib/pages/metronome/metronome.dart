@@ -694,7 +694,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         // Volume
         SettingsTile(
           title: l10n.commonVolume,
-          subtitle: _metronomeBlock.volume.toString(),
+          subtitle: l10n.formatNumber(_metronomeBlock.volume),
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
             initialValue: _metronomeBlock.volume,
