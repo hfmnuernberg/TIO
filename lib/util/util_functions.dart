@@ -379,12 +379,12 @@ Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock blo
 // ---------------------------------------------------------------
 // get the current date and time
 
-String getDateAndTimeNow() {
-  return DateFormat('dd.MM.yyyy - HH:mm:ss').format(DateTime.now());
+String getDateAndTimeNow(AppLocalizations l10n) {
+  return DateFormat('${l10n.getDateFormat()} - HH:mm:ss').format(DateTime.now());
 }
 
-String getDateAndTimeFormatted(DateTime time) {
-  return DateFormat('dd.MM.yyyy - HH:mm:ss').format(time);
+String getDateAndTimeFormatted(AppLocalizations l10n, DateTime time) {
+  return DateFormat('${l10n.getDateFormat()} - HH:mm:ss').format(time);
 }
 
 DateTime getCurrentDateTime() {

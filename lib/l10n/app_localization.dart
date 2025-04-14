@@ -232,4 +232,6 @@ abstract class AppLocalizations {
   String get tunerSetConcertPitch;
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
+
+  String getDateFormat();
 }

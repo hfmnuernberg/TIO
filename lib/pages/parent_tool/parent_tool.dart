@@ -319,7 +319,7 @@ class _ParentToolState extends State<ParentTool> {
                   builder: (context, setTileState) {
                     return CardListTile(
                       title: projectLibrary.projects[index].title,
-                      subtitle: getDateAndTimeFormatted(projectLibrary.projects[index].timeLastModified),
+                      subtitle: getDateAndTimeFormatted(l10n, projectLibrary.projects[index].timeLastModified),
                       highlightColor: _highlightColorOnSave,
                       trailingIcon: IconButton(
                         onPressed: () {
@@ -344,8 +344,8 @@ class _ParentToolState extends State<ParentTool> {
           onPressed: () async {
             final newTitles = await editTwoTitles(
               context,
-              getDateAndTimeNow(),
-              '${widget.toolBlock.title} - ${context.l10n.toolTitleCopy}',
+              getDateAndTimeNow(l10n),
+              '${widget.toolBlock.title} - ${l10n.toolTitleCopy}',
             );
             if (newTitles == null || newTitles.isEmpty) {
               if (mounted) {

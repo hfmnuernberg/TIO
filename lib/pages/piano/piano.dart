@@ -580,7 +580,7 @@ class _PianoState extends State<Piano> {
                       children: [
                         CardListTile(
                           title: _pianoBlock.title,
-                          subtitle: formatSettingValues(_pianoBlock.getSettingsFormatted(context.l10n)),
+                          subtitle: formatSettingValues(_pianoBlock.getSettingsFormatted(l10n)),
                           trailingIcon: IconButton(
                             onPressed: () {
                               setState(() {
@@ -626,7 +626,10 @@ class _PianoState extends State<Piano> {
                                 builder: (context, setTileState) {
                                   return CardListTile(
                                     title: projectLibrary.projects[index].title,
-                                    subtitle: getDateAndTimeFormatted(projectLibrary.projects[index].timeLastModified),
+                                    subtitle: getDateAndTimeFormatted(
+                                      l10n,
+                                      projectLibrary.projects[index].timeLastModified,
+                                    ),
                                     highlightColor: _highlightColorOnSave,
                                     trailingIcon: IconButton(
                                       onPressed: () => _buildTextInputOverlay(setTileState, index),
@@ -721,10 +724,10 @@ class _PianoState extends State<Piano> {
     final l10n = context.l10n;
     final overlay = Overlay.of(context);
 
-    _newToolTitle.text = '${_pianoBlock.title} - ${context.l10n.toolTitleCopy}';
+    _newToolTitle.text = '${_pianoBlock.title} - ${l10n.toolTitleCopy}';
     _newToolTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newToolTitle.text.length);
 
-    _newProjectTitle.text = getDateAndTimeNow();
+    _newProjectTitle.text = getDateAndTimeNow(l10n);
     _newProjectTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newProjectTitle.text.length);
 
     _entry = OverlayEntry(
