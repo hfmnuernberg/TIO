@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -378,14 +377,6 @@ Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock blo
 
 // ---------------------------------------------------------------
 // get the current date and time
-
-String getDateAndTimeNow(AppLocalizations l10n) {
-  return DateFormat('${l10n.getDateFormat()} - HH:mm:ss').format(DateTime.now());
-}
-
-String getDateAndTimeFormatted(AppLocalizations l10n, DateTime time) {
-  return DateFormat('${l10n.getDateFormat()} - HH:mm:ss').format(time);
-}
 
 DateTime getCurrentDateTime() {
   return DateTime.now();

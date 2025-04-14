@@ -233,7 +233,7 @@ abstract class AppLocalizations {
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
 
-  String getDateFormat();
+  String formatDateAndTime(DateTime time);
 
   String formatDuration(Duration dur) {
     final hours = _padWithTwoZeros(dur.inHours.remainder(24));

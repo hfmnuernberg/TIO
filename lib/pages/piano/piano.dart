@@ -626,10 +626,7 @@ class _PianoState extends State<Piano> {
                                 builder: (context, setTileState) {
                                   return CardListTile(
                                     title: projectLibrary.projects[index].title,
-                                    subtitle: getDateAndTimeFormatted(
-                                      l10n,
-                                      projectLibrary.projects[index].timeLastModified,
-                                    ),
+                                    subtitle: l10n.formatDateAndTime(projectLibrary.projects[index].timeLastModified),
                                     highlightColor: _highlightColorOnSave,
                                     trailingIcon: IconButton(
                                       onPressed: () => _buildTextInputOverlay(setTileState, index),
@@ -727,7 +724,7 @@ class _PianoState extends State<Piano> {
     _newToolTitle.text = '${_pianoBlock.title} - ${l10n.toolTitleCopy}';
     _newToolTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newToolTitle.text.length);
 
-    _newProjectTitle.text = getDateAndTimeNow(l10n);
+    _newProjectTitle.text = context.l10n.formatDateAndTime(DateTime.now());
     _newProjectTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newProjectTitle.text.length);
 
     _entry = OverlayEntry(
