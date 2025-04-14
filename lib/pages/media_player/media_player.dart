@@ -306,7 +306,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                           _isRecording
                               ? MediaPlayerFunctions.displayRecordingTimer(
                                 context.l10n.mediaPlayerRecording,
-                                _recordingDuration,
+                                context.l10n.formatDuration(_recordingDuration),
                                 waveformHeight,
                               )
                               : GestureDetector(

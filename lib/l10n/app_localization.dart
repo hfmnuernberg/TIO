@@ -234,4 +234,21 @@ abstract class AppLocalizations {
   String get tunerTutorialStartStop;
 
   String getDateFormat();
+
+  String formatDuration(Duration dur) {
+    final hours = _padWithTwoZeros(dur.inHours.remainder(24));
+    final minutes = _padWithTwoZeros(dur.inMinutes.remainder(60));
+    final seconds = _padWithTwoZeros(dur.inSeconds.remainder(60));
+    return '$hours:$minutes:$seconds';
+  }
+
+  String formatDurationWithMillis(Duration dur) {
+    final minutes = _padWithTwoZeros(dur.inMinutes.remainder(60));
+    final seconds = _padWithTwoZeros(dur.inSeconds.remainder(60));
+    final milliSeconds = _padWithThreeZeros(dur.inMilliseconds.remainder(1000));
+    return '$minutes:$seconds:$milliSeconds';
+  }
+
+  String _padWithTwoZeros(int n) => n.toString().padLeft(2, '0');
+  String _padWithThreeZeros(int n) => n.toString().padLeft(3, '0');
 }

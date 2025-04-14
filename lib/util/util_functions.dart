@@ -391,23 +391,6 @@ DateTime getCurrentDateTime() {
   return DateTime.now();
 }
 
-String getDurationFormated(Duration dur) {
-  String strDigits(int n) => n.toString().padLeft(2, '0');
-  final hours = strDigits(dur.inHours.remainder(24));
-  final minutes = strDigits(dur.inMinutes.remainder(60));
-  final seconds = strDigits(dur.inSeconds.remainder(60));
-  return '$hours:$minutes:$seconds';
-}
-
-String getDurationFormatedWithMilliseconds(Duration dur) {
-  String strDigits(int n) => n.toString().padLeft(2, '0');
-  String threeDigits(int n) => n.toString().padLeft(3, '0');
-  final minutes = strDigits(dur.inMinutes.remainder(60));
-  final seconds = strDigits(dur.inSeconds.remainder(60));
-  final milliSeconds = threeDigits(dur.inMilliseconds.remainder(1000));
-  return '$minutes:$seconds:$milliSeconds';
-}
-
 // ---------------------------------------------------------------
 // save tool in existing project
 
