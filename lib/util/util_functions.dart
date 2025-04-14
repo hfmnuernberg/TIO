@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -379,33 +378,8 @@ Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock blo
 // ---------------------------------------------------------------
 // get the current date and time
 
-String getDateAndTimeNow() {
-  return DateFormat('dd.MM.yyyy - HH:mm:ss').format(DateTime.now());
-}
-
-String getDateAndTimeFormatted(DateTime time) {
-  return DateFormat('dd.MM.yyyy - HH:mm:ss').format(time);
-}
-
 DateTime getCurrentDateTime() {
   return DateTime.now();
-}
-
-String getDurationFormated(Duration dur) {
-  String strDigits(int n) => n.toString().padLeft(2, '0');
-  final hours = strDigits(dur.inHours.remainder(24));
-  final minutes = strDigits(dur.inMinutes.remainder(60));
-  final seconds = strDigits(dur.inSeconds.remainder(60));
-  return '$hours:$minutes:$seconds';
-}
-
-String getDurationFormatedWithMilliseconds(Duration dur) {
-  String strDigits(int n) => n.toString().padLeft(2, '0');
-  String threeDigits(int n) => n.toString().padLeft(3, '0');
-  final minutes = strDigits(dur.inMinutes.remainder(60));
-  final seconds = strDigits(dur.inSeconds.remainder(60));
-  final milliSeconds = threeDigits(dur.inMilliseconds.remainder(1000));
-  return '$minutes:$seconds:$milliSeconds';
 }
 
 // ---------------------------------------------------------------

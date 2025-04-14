@@ -157,7 +157,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       [
         CardListTile(
           title: widget.project!.title,
-          subtitle: getDateAndTimeFormatted(widget.project!.timeLastModified),
+          subtitle: context.l10n.formatDateAndTime(widget.project!.timeLastModified),
           trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
           leadingPicture: widget.project!.thumbnail,
           onTapFunction: () {},

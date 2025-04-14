@@ -369,7 +369,7 @@ class _ProjectsListState extends State<ProjectsList> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final blockTypes = getBlockTypeInfos(context.l10n);
+    final blockTypes = getBlockTypeInfos(l10n);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -384,7 +384,7 @@ class _ProjectsListState extends State<ProjectsList> {
             final newTitle = await showEditTextDialog(
               context: context,
               label: l10n.projectsNew,
-              value: getDateAndTimeNow(),
+              value: l10n.formatDateAndTime(DateTime.now()),
               isNew: true,
             );
             if (newTitle == null) return;
@@ -449,7 +449,7 @@ class _ProjectsListState extends State<ProjectsList> {
                                   itemBuilder: (context, idx) {
                                     return CardListTile(
                                       title: projectLibrary.projects[idx].title,
-                                      subtitle: getDateAndTimeFormatted(projectLibrary.projects[idx].timeLastModified),
+                                      subtitle: l10n.formatDateAndTime(projectLibrary.projects[idx].timeLastModified),
                                       trailingIcon: IconButton(
                                         onPressed: () {
                                           _goToProjectPage(projectLibrary.projects[idx], false);

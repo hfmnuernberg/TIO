@@ -14,7 +14,6 @@ import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/util_functions.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 abstract class MediaPlayerFunctions {
@@ -112,13 +111,13 @@ abstract class MediaPlayerFunctions {
     return _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }
 
-  static Widget displayRecordingTimer(String label, Duration duration, double height) {
+  static Widget displayRecordingTimer(String label, String duration, double height) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(label, style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
-          Text(getDurationFormated(duration), style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 6)),
+          Text(duration, style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 6)),
         ],
       ),
     );

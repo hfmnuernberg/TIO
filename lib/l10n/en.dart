@@ -1,6 +1,7 @@
 // overriding keys do not change something; ignored because soft warning
 // ignore_for_file: annotate_overrides
 
+import 'package:intl/intl.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 
 class English extends AppLocalizations {
@@ -259,4 +260,6 @@ class English extends AppLocalizations {
   String get tunerSetConcertPitch => 'Set concert pitch';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner.';
+
+  String formatDateAndTime(DateTime time) => DateFormat('dd/MM/yyyy - HH:mm:ss').format(time);
 }

@@ -10,7 +10,6 @@ import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/util_functions.dart';
 
 class EditMarkersPage extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;
@@ -100,7 +99,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               value: _sliderValue,
               inactiveColor: ColorTheme.primary80,
               divisions: 1000, // how many individual values, only showing labels when division is not null
-              label: getDurationFormatedWithMilliseconds(_positionDuration),
+              label: l10n.formatDurationWithMillis(_positionDuration),
               onChanged: (newValue) {
                 setState(() {
                   _sliderValue = newValue;
