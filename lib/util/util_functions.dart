@@ -498,14 +498,6 @@ Widget circleToolIcon(Widget icon) {
 
 // ---------------------------------------------------------------
 
-String formatDoubleToString(double value) {
-  if ((value % 1.0).abs() > 0.01) {
-    return value.toString();
-  } else {
-    return value.round().toString();
-  }
-}
-
 bool checkIslandPossible(Project? project, ProjectBlock toolBlock) {
   if (project != null) {
     // if we are in a normal tool, check the following
