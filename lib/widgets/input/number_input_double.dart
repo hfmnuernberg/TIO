@@ -7,6 +7,8 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/shapes.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
+Function(dynamic value) parseToFloatingDot = (value) => value.replaceAll(',', '.');
+
 class NumberInputDouble extends StatefulWidget {
   final double max;
   final double min;
@@ -62,13 +64,18 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   @override
   void initState() {
     super.initState();
-    _valueController = TextEditingController(
-      text: widget.controller.value.text.isEmpty ? widget.defaultValue.toString() : widget.controller.value.text,
-    );
 
     _calcMaxDigits();
 
     widget.controller.addListener(_onExternalChange);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _valueController = TextEditingController(
+      text: widget.controller.value.text.isEmpty ? context.l10n.formatDecimal(widget.defaultValue) : context.l10n.formatDecimal(double.parse(widget.controller.value.text)),
+    );
   }
 
   @override
@@ -100,7 +107,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   void _decreaseValue() {
     if (_valueController.value.text != '') {
       _valueController.value = _valueController.value.copyWith(
-        text: (double.parse(_valueController.value.text) - widget.step).toStringAsFixed(_maxDigitsRight),
+        text: (double.parse(parseToFloatingDot(_valueController.value.text)) - widget.step).toStringAsFixed(_maxDigitsRight),
       );
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
@@ -110,7 +117,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   void _increaseValue() {
     if (_valueController.value.text != '') {
       _valueController.value = _valueController.value.copyWith(
-        text: (double.parse(_valueController.value.text) + widget.step).toStringAsFixed(_maxDigitsRight),
+        text: (double.parse(parseToFloatingDot(_valueController.value.text)) + widget.step).toStringAsFixed(_maxDigitsRight),
       );
       _manageButtonActivity(_valueController.value.text);
       _validateInput(_valueController.value.text);
@@ -154,6 +161,8 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
   }
 
   void _validateInput(String input) {
+    input = parseToFloatingDot(input);
+
     if (input != '' && input != '-' && input != '.' && input != '-.') {
       if (input[0] == '.') {
         input = '0$input';
@@ -172,7 +181,7 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
     } else {
       input = widget.defaultValue.toString();
     }
-    _valueController.value = _valueController.value.copyWith(text: input);
+    _valueController.value = _valueController.value.copyWith(text: context.l10n.formatDecimal(double.parse(input)));
     widget.controller.value = widget.controller.value.copyWith(text: input);
     setState(() {});
   }
@@ -231,10 +240,10 @@ class _NumberInputDoubleState extends State<NumberInputDouble> {
                 onFocusChange: (hasFocus) {
                   if (hasFocus) {
                     _valueController.value = _valueController.value.copyWith(
-                      selection: TextSelection(baseOffset: 0, extentOffset: _valueController.value.text.length),
+                      selection: TextSelection(baseOffset: 0, extentOffset: parseToFloatingDot(_valueController.value.text).length),
                     );
                   } else {
-                    _validateInput(_valueController.value.text);
+                    _validateInput(parseToFloatingDot(_valueController.value.text));
                   }
                 },
               ),
