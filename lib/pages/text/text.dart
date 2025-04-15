@@ -8,6 +8,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/models/blocks/text_block.dart';
+import 'package:tiomusic/pages/text/confirm_dialog.dart';
 import 'package:tiomusic/pages/text/import_text.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -62,7 +63,14 @@ class _TextToolState extends State<TextTool> {
       menuItems: <MenuItemButton>[
         MenuItemButton(
           onPressed: () async {
+            if (_textController.text.isNotEmpty) {
+              final shouldOverwrite = await showConfirmDialog(context: context);
+              if (!shouldOverwrite) return;
+            }
+
+            if (!context.mounted) return;
             final text = await importText(context);
+
             if (text == null) return;
 
             setState(() => _textController.text = text);
