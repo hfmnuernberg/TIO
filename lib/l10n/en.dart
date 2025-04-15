@@ -263,9 +263,5 @@ class English extends AppLocalizations {
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner.';
 
-  String formatInteger(double num) => NumberFormat.decimalPattern(locale).format(num);
-
-  String formatDecimal(double num) => NumberFormat.decimalPattern(locale).format(double.parse(num.toStringAsFixed(1)));
-
   String formatDateAndTime(DateTime time) => DateFormat('dd/MM/yyyy - HH:mm:ss').format(time);
 }

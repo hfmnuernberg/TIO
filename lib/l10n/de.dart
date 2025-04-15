@@ -265,9 +265,5 @@ class German extends AppLocalizations {
   String get tunerTutorialAdjust => 'Tippe hier, um den Kammerton anzupassen oder einen Referenzton abzuspielen.';
   String get tunerTutorialStartStop => 'Tippe hier, um das Stimmgerät zu starten und zu stoppen.';
 
-  String formatInteger(double num) => NumberFormat.decimalPattern(locale).format(num);
-
-  String formatDecimal(double num) => NumberFormat.decimalPattern(locale).format(double.parse(num.toStringAsFixed(1)));
-
   String formatDateAndTime(DateTime time) => DateFormat('dd.MM.yyyy - HH:mm:ss').format(time);
 }
