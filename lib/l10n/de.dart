@@ -267,8 +267,7 @@ class German extends AppLocalizations {
 
   String formatInteger(double num) => NumberFormat.decimalPattern(locale).format(num);
 
-  String formatDecimal(double num) =>
-      NumberFormat.decimalPattern(locale).format(double.parse(num.toStringAsFixed(1)));
+  String formatDecimal(double num) => NumberFormat.decimalPattern(locale).format(double.parse(num.toStringAsFixed(1)));
 
   String formatDateAndTime(DateTime time) => DateFormat('dd.MM.yyyy - HH:mm:ss').format(time);
 }
