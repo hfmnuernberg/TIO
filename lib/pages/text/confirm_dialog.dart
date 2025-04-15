@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
@@ -22,14 +23,16 @@ class ConfirmDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return AlertDialog(
-      title: const Text('Import Text file', style: TextStyle(color: ColorTheme.primary)),
+      title: Text(l10n.textImportDialogTitle, style: TextStyle(color: ColorTheme.primary)),
       content: Transform.translate(
         offset: const Offset(0, 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: const [
-            Text('Would you like to import a text file?', style: TextStyle(color: ColorTheme.primary)),
+          children: [
+            Text(l10n.textImportDialogHint, style: TextStyle(color: ColorTheme.primary)),
             SizedBox(height: 10),
           ],
         ),
@@ -38,8 +41,8 @@ class ConfirmDialog extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            TextButton(onPressed: () => onDone(false), child: Text('Cancel')),
-            TIOFlatButton(onPressed: () => onDone(true), text: 'Import', boldText: true),
+            TextButton(onPressed: () => onDone(false), child: Text(l10n.commonCancel)),
+            TIOFlatButton(onPressed: () => onDone(true), text: l10n.textImportDialogConfirm, boldText: true),
           ],
         ),
       ],
