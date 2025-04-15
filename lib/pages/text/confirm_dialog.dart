@@ -7,10 +7,8 @@ Future<bool> showConfirmDialog({required BuildContext context}) async {
   final bool? result = await showDialog<bool>(
     context: context,
     builder: (context) {
-      return ConfirmDialog(
-          onDone: (res) => Navigator.of(context).pop(res),
-      );
-    }
+      return ConfirmDialog(onDone: (res) => Navigator.of(context).pop(res));
+    },
   );
 
   return result ?? false;
