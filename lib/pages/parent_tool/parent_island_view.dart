@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/empty_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
@@ -41,7 +42,6 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   bool _possibleToolForIslandExists = false;
   ProjectBlock? _loadedTool;
 
-  final EmptyBlock _emptyBlock = EmptyBlock();
   int? _indexOfChoosenIsland;
 
   @override
@@ -135,10 +135,10 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
   Widget _quickToolHintView() {
     return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 8),
+      padding: const EdgeInsets.only(left: TIOMusicParams.edgeInset, right: TIOMusicParams.edgeInset),
       child: Align(
         alignment: widget.toolBlock.kind == 'piano' ? Alignment.centerRight : Alignment.center,
-        child: const Text('Use bookmark to save a tool', style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 16)),
+        child: Text(context.l10n.toolUseBookmarkToSave, style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 16)),
       ),
     );
   }
@@ -149,15 +149,15 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
   Widget _getCorrectIslandView() {
     if (_loadedTool is TunerBlock) {
-      return TunerIslandView(tunerBlock: _loadedTool as TunerBlock);
+      return TunerIslandView(tunerBlock: _loadedTool! as TunerBlock);
     } else if (_loadedTool is MetronomeBlock) {
-      return MetronomeIslandView(metronomeBlock: _loadedTool as MetronomeBlock);
+      return MetronomeIslandView(metronomeBlock: _loadedTool! as MetronomeBlock);
     } else if (_loadedTool is MediaPlayerBlock) {
-      return MediaPlayerIslandView(mediaPlayerBlock: _loadedTool as MediaPlayerBlock);
+      return MediaPlayerIslandView(mediaPlayerBlock: _loadedTool! as MediaPlayerBlock);
     } else if (_loadedTool is EmptyBlock) {
       return EmptyIsland(callOnInit: _setChoosenIsland);
     } else {
-      return Text('$_loadedTool has no Island View!');
+      return Text(context.l10n.toolHasNoIslandView(_loadedTool.toString()));
     }
   }
 
@@ -167,7 +167,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       [
         CardListTile(
           title: widget.project!.title,
-          subtitle: getDateAndTimeFormatted(widget.project!.timeLastModified),
+          subtitle: context.l10n.formatDateAndTime(widget.project!.timeLastModified),
           trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
           leadingPicture:
               widget.project!.thumbnailPath.isEmpty
@@ -185,11 +185,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
               itemCount: widget.project!.blocks.length,
               itemBuilder: (context, index) {
                 if (widget.project!.blocks.length < 2) {
-                  return const Card(
-                    child: Text(
-                      'There is no other tool in this project. Please save another tool first to use it as an island.',
-                    ),
-                  );
+                  return Card(child: Text(context.l10n.toolNoOtherToolAvailable));
                 } else {
                   // don't show tools of the same type that you are currently in and
                   // don't show the tool that is currently open
@@ -201,7 +197,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                       widget.project!.blocks[index].kind == 'media_player') {
                     return CardListTile(
                       title: widget.project!.blocks[index].title,
-                      subtitle: formatSettingValues(widget.project!.blocks[index].getSettingsFormatted()),
+                      subtitle: formatSettingValues(widget.project!.blocks[index].getSettingsFormatted(context.l10n)),
                       trailingIcon: IconButton(onPressed: () => _onToolTap(index), icon: const SizedBox()),
                       leadingPicture: circleToolIcon(widget.project!.blocks[index].icon),
                       onTapFunction: () => _onToolTap(index),
@@ -222,7 +218,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     _indexOfChoosenIsland = index;
     // to force calling the initState of the new island, first open an empty island
     // and then in init of empty island open the new island
-    _loadedTool = _emptyBlock;
+    _loadedTool = EmptyBlock(context.l10n.toolEmpty);
     widget.toolBlock.islandToolID = 'empty';
     await _projectLibraryRepo.save(context.read<ProjectLibrary>());
     _empty = false;

@@ -55,9 +55,9 @@ PODS:
     - Flutter
   - rust_lib_tiomusic (0.0.1):
     - Flutter
-  - SDWebImage (5.20.1):
-    - SDWebImage/Core (= 5.20.1)
-  - SDWebImage/Core (5.20.1)
+  - SDWebImage (5.21.0):
+    - SDWebImage/Core (= 5.21.0)
+  - SDWebImage/Core (5.21.0)
   - share_plus (0.0.1):
     - Flutter
   - SwiftyGif (5.4.5)
@@ -128,7 +128,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/wakelock_plus/ios"
 
 SPEC CHECKSUMS:
-  audio_session: 32a33910dd5bb35d54297e4b50006481071f196b
+  audio_session: 19e9480dbdd4e5f6c4543826b2e8b0e4ab6145fe
   audioplayers_darwin: 877d9a4d06331c5c374595e46e16453ac7eafa40
   camera_avfoundation: dd002b0330f4981e1bbcb46ae9b62829237459a4
   DKImagePickerController: 946cec48c7873164274ecc4624d19e3da4c1ef3c
@@ -142,7 +142,7 @@ SPEC CHECKSUMS:
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   rust_lib_tiomusic: 64730a9bdf4e8580e689cb568aedbfa2b02a416b
-  SDWebImage: 33d0f23bddeb5d209ae959153883247be6703713
+  SDWebImage: f84b0feeb08d2d11e6a9b843cb06d75ebf5b8868
   share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
   SwiftyGif: 706c60cf65fa2bc5ee0313beece843c8eb8194d4
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe

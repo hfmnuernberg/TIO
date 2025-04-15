@@ -27,6 +27,7 @@ use crate::{
         piano::{
             piano_create_audio_stream, piano_load_and_setup, piano_set_amp,
             piano_trigger_destroy_stream, piano_trigger_note_off, piano_trigger_note_on,
+            piano_trigger_set_concert_pitch,
         },
         recorder::{
             recorder_create_stream, recorder_get_buffer_samples, recorder_trigger_destroy_stream,
@@ -158,6 +159,16 @@ pub fn generator_note_off() -> bool {
         false
     }
 }
+
+pub fn piano_set_concert_pitch(new_concert_pitch: f32) -> bool {
+    log::info!("piano set concert pitch");
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        piano_trigger_set_concert_pitch(new_concert_pitch)
+    } else {
+        false
+    }
+}
+
 
 // media player
 

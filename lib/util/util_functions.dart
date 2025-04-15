@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
@@ -126,55 +127,58 @@ Future<List<String>?> editTwoTitles(BuildContext context, String currentProjectT
 
   return showDialog<List<String>>(
     context: context,
-    builder:
-        (context) => SimpleDialog(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
-              child: Column(
-                children: [
-                  TextField(
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      hintText: '',
-                      border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      label: Text('Project title:', style: TextStyle(color: ColorTheme.surfaceTint)),
+    builder: (context) {
+      final l10n = context.l10n;
+
+      return SimpleDialog(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
+            child: Column(
+              children: [
+                TextField(
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: '',
+                    border: const OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                    enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                    label: Text(l10n.toolNewProjectTitle, style: const TextStyle(color: ColorTheme.surfaceTint)),
+                  ),
+                  style: const TextStyle(color: ColorTheme.primary),
+                  controller: projectController,
+                  onSubmitted: (_) => focusSecondField.requestFocus(),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  focusNode: focusSecondField,
+                  decoration: InputDecoration(
+                    hintText: '',
+                    border: const OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                    enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                    label: Text(l10n.toolNewTitle, style: const TextStyle(color: ColorTheme.surfaceTint)),
+                  ),
+                  style: const TextStyle(color: ColorTheme.primary),
+                  controller: toolController,
+                  onSubmitted: (_) => _submitTitles(context, projectController, toolController),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.commonCancel)),
+                    TIOFlatButton(
+                      onPressed: () => _submitTitles(context, projectController, toolController),
+                      text: l10n.commonSubmit,
+                      boldText: true,
                     ),
-                    style: const TextStyle(color: ColorTheme.primary),
-                    controller: projectController,
-                    onSubmitted: (_) => focusSecondField.requestFocus(),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    focusNode: focusSecondField,
-                    decoration: const InputDecoration(
-                      hintText: '',
-                      border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                      label: Text('Tool title:', style: TextStyle(color: ColorTheme.surfaceTint)),
-                    ),
-                    style: const TextStyle(color: ColorTheme.primary),
-                    controller: toolController,
-                    onSubmitted: (_) => _submitTitles(context, projectController, toolController),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
-                      TIOFlatButton(
-                        onPressed: () => _submitTitles(context, projectController, toolController),
-                        text: 'Submit',
-                        boldText: true,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
+      );
+    },
   );
 }
 
@@ -189,29 +193,28 @@ void _submitTitles(BuildContext context, TextEditingController controllerOne, Te
 
 Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => showDialog<bool>(
   context: context,
-  builder:
-      (context) => AlertDialog(
-        title: const Text('Overwrite?', style: TextStyle(color: ColorTheme.primary)),
-        content: const Text(
-          'Do you want to overwrite the current audio file and start recording?',
-          style: TextStyle(color: ColorTheme.primary),
+  builder: (context) {
+    final l10n = context.l10n;
+
+    return AlertDialog(
+      title: Text(l10n.mediaPlayerOverwriteSound, style: const TextStyle(color: ColorTheme.primary)),
+      content: Text(l10n.mediaPlayerOverwriteSoundQuestion, style: const TextStyle(color: ColorTheme.primary)),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(false);
+          },
+          child: Text(l10n.commonNo),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text('No'),
-          ),
-          TIOFlatButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            text: 'Yes',
-            boldText: true,
-          ),
-        ],
-      ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(true);
+          },
+          child: Text(l10n.commonYes, style: const TextStyle(fontWeight: FontWeight.bold)),
+        ),
+      ],
+    );
+  },
 );
 
 // ---------------------------------------------------------------
@@ -219,25 +222,27 @@ Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => show
 
 Future<bool?> askForSavingQuickTool(BuildContext context) => showDialog<bool>(
   context: context,
-  builder:
-      (context) => AlertDialog(
-        title: const Text('Save Quick Tool?', style: TextStyle(color: ColorTheme.primary)),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text('No'),
-          ),
-          TIOFlatButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            text: 'Yes',
-            boldText: true,
-          ),
-        ],
-      ),
+  builder: (context) {
+    final l10n = context.l10n;
+
+    return AlertDialog(
+      title: Text(l10n.toolQuickToolSave, style: TextStyle(color: ColorTheme.primary)),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(false);
+          },
+          child: Text(l10n.commonNo),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop(true);
+          },
+          child: Text(l10n.commonYes, style: const TextStyle(fontWeight: FontWeight.bold)),
+        ),
+      ],
+    );
+  },
 );
 
 // ---------------------------------------------------------------
@@ -245,34 +250,46 @@ Future<bool?> askForSavingQuickTool(BuildContext context) => showDialog<bool>(
 
 Future<void> showFormatNotSupportedDialog(BuildContext context, String? format) => showDialog<void>(
   context: context,
-  builder:
-      (context) => AlertDialog(
-        title: const Text('File format not supported', style: TextStyle(color: ColorTheme.primary)),
-        content: Text(
-          "The file format '$format' is not supported. Please choose a different file.",
-          style: const TextStyle(color: ColorTheme.primary),
-        ),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
+  builder: (context) {
+    final l10n = context.l10n;
+
+    return AlertDialog(
+      title: Text(l10n.mediaPlayerErrorFileFormat, style: TextStyle(color: ColorTheme.primary)),
+      content: Text(
+        l10n.mediaPlayerErrorFileFormatDescription(format ?? ''),
+        style: const TextStyle(color: ColorTheme.primary),
       ),
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
+    );
+  },
 );
 
 // ---------------------------------------------------------------
 // show a dialog to tell the user that the file could not be opened
 
 Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) {
-  if (fileName != null && fileName == '') {
-    fileName = null;
-  }
+  final l10n = context.l10n;
+  fileName = (fileName ?? '').isEmpty ? null : fileName;
+
   return showDialog<void>(
     context: context,
     builder:
         (context) => AlertDialog(
-          title: const Text('File could not be opened.', style: TextStyle(color: ColorTheme.primary)),
-          content: Text(
-            "Something went wrong while trying to open the file. Please try again.${fileName != null ? "\n\nFile: ${basename(fileName)}" : ""}",
-            style: const TextStyle(color: ColorTheme.primary),
+          title: Text(l10n.mediaPlayerErrorFileOpen, style: TextStyle(color: ColorTheme.primary)),
+          content: Column(
+            children: [
+              Text(l10n.mediaPlayerErrorFileOpenDescription, style: const TextStyle(color: ColorTheme.primary)),
+              if (fileName != null)
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
+                    style: const TextStyle(color: ColorTheme.primary),
+                  ),
+                ),
+            ],
           ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
+          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
         ),
   );
 }
@@ -281,19 +298,28 @@ Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) 
 // show a dialog to tell the user that the file is somehow not accessible
 
 Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName}) {
-  if (fileName != null && fileName == '') {
-    fileName = null;
-  }
+  final l10n = context.l10n;
+  fileName = (fileName ?? '').isEmpty ? null : fileName;
+
   return showDialog<void>(
     context: context,
     builder:
         (context) => AlertDialog(
-          title: const Text('File is not accessible.', style: TextStyle(color: ColorTheme.primary)),
-          content: Text(
-            "Maybe the file needs to be downloaded first if it doesn't exist locally on your phone.${fileName != null ? "\n\nFile: ${basename(fileName)}" : ""}",
-            style: const TextStyle(color: ColorTheme.primary),
+          title: Text(l10n.mediaPlayerErrorFileAccessible, style: TextStyle(color: ColorTheme.primary)),
+          content: Column(
+            children: [
+              Text(l10n.mediaPlayerErrorFileAccessibleDescription, style: const TextStyle(color: ColorTheme.primary)),
+              if (fileName != null)
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
+                    style: const TextStyle(color: ColorTheme.primary),
+                  ),
+                ),
+            ],
           ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
+          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
         ),
   );
 }
@@ -302,16 +328,14 @@ Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName
 // show a dialog to tell the user that no camera was found
 
 Future<void> showNoCameraFoundDialog(BuildContext context) {
+  final l10n = context.l10n;
   return showDialog<void>(
     context: context,
     builder:
         (context) => AlertDialog(
-          title: const Text('No camera found', style: TextStyle(color: ColorTheme.primary)),
-          content: const Text(
-            'There is no camera available on this device.',
-            style: TextStyle(color: ColorTheme.primary),
-          ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Got it'))],
+          title: Text(l10n.imageNoCameraFound, style: TextStyle(color: ColorTheme.primary)),
+          content: Text(l10n.imageNoCameraFoundHint, style: TextStyle(color: ColorTheme.primary)),
+          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
         ),
   );
 }
@@ -355,33 +379,8 @@ Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock blo
 // ---------------------------------------------------------------
 // get the current date and time
 
-String getDateAndTimeNow() {
-  return DateFormat('dd.MM.yyyy - HH:mm:ss').format(DateTime.now());
-}
-
-String getDateAndTimeFormatted(DateTime time) {
-  return DateFormat('dd.MM.yyyy - HH:mm:ss').format(time);
-}
-
 DateTime getCurrentDateTime() {
   return DateTime.now();
-}
-
-String getDurationFormated(Duration dur) {
-  String strDigits(int n) => n.toString().padLeft(2, '0');
-  final hours = strDigits(dur.inHours.remainder(24));
-  final minutes = strDigits(dur.inMinutes.remainder(60));
-  final seconds = strDigits(dur.inSeconds.remainder(60));
-  return '$hours:$minutes:$seconds';
-}
-
-String getDurationFormatedWithMilliseconds(Duration dur) {
-  String strDigits(int n) => n.toString().padLeft(2, '0');
-  String threeDigits(int n) => n.toString().padLeft(3, '0');
-  final minutes = strDigits(dur.inMinutes.remainder(60));
-  final seconds = strDigits(dur.inSeconds.remainder(60));
-  final milliSeconds = threeDigits(dur.inMilliseconds.remainder(1000));
-  return '$minutes:$seconds:$milliSeconds';
 }
 
 // ---------------------------------------------------------------
@@ -500,22 +499,6 @@ Widget circleToolIcon(Widget icon) {
 
 // ---------------------------------------------------------------
 
-String formatDoubleToString(double value) {
-  if ((value % 1.0).abs() > 0.01) {
-    return value.toString();
-  } else {
-    return value.round().toString();
-  }
-}
-
-String pluralSDouble(double number) {
-  return (number.abs() - 1.0).abs() < 0.001 ? '' : 's';
-}
-
-String pluralSInt(int number) {
-  return (number - 1).abs() == 0 ? '' : 's';
-}
-
 bool checkIslandPossible(Project? project, ProjectBlock toolBlock) {
   if (project != null) {
     // if we are in a normal tool, check the following
@@ -553,15 +536,15 @@ List<MetroBar> getRhythmAsMetroBar(List<RhythmGroup> rhythm) {
 enum IncreaseOrDecrease { increase, decrease }
 
 // compare block values to default values
-bool blockValuesSameAsDefaultBlock(ProjectBlock block) {
+bool blockValuesSameAsDefaultBlock(ProjectBlock block, AppLocalizations l10n) {
   if (block is MetronomeBlock) {
-    if (MetronomeBlock.withDefaults() == block) return true;
+    if (MetronomeBlock.withDefaults(l10n) == block) return true;
   } else if (block is MediaPlayerBlock) {
-    if (MediaPlayerBlock.withDefaults() == block) return true;
+    if (MediaPlayerBlock.withDefaults(l10n) == block) return true;
   } else if (block is TunerBlock) {
-    if (TunerBlock.withDefaults() == block) return true;
+    if (TunerBlock.withDefaults(l10n) == block) return true;
   } else if (block is PianoBlock) {
-    if (PianoBlock.withDefaults() == block) return true;
+    if (PianoBlock.withDefaults(l10n) == block) return true;
   }
   return false;
 }

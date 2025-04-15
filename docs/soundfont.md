@@ -12,7 +12,6 @@ The application utilizes SoundFont files to synthesize instrument sounds, specif
 - [Electrical Piano 2](https://musical-artifacts.com/artifacts/5896)
 - [Pipe Organ](https://www.polyphone.io/en/soundfonts/organs/733-pipe-organ-samples)
 - [Harpsichord](https://www.polyphone.io/en/soundfonts/harpsichords/114-german8-harpsichord)
-- [Rhodes](https://www.polyphone.io/en/soundfonts/pianos/122-crystal-rhodes-piano)
 
 *Note: All SoundFont files incorporated in this application are public domain and license-free.*
 

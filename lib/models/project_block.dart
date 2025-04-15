@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
@@ -40,7 +41,7 @@ abstract class ProjectBlock extends ChangeNotifier with EquatableMixin {
 
   ProjectBlock();
 
-  List<String> getSettingsFormatted() {
+  List<String> getSettingsFormatted(AppLocalizations l10n) {
     return List.empty();
   }
 

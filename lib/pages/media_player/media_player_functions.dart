@@ -14,7 +14,6 @@ import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
-import 'package:tiomusic/util/util_functions.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 abstract class MediaPlayerFunctions {
@@ -105,18 +104,17 @@ abstract class MediaPlayerFunctions {
     int numOfBins,
   ) async {
     var absolutePath = fs.toAbsoluteFilePath(block.relativePath);
-    if (!await File(absolutePath).exists()) return null;
+    if (!File(absolutePath).existsSync()) return null;
     return _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }
 
-  // Functions for the Timer Display while recording
-  static Widget displayRecordingTimer(Duration duration, double height) {
+  static Widget displayRecordingTimer(String label, String duration, double height) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Recording...', style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
-          Text(getDurationFormated(duration), style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 6)),
+          Text(label, style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
+          Text(duration, style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 6)),
         ],
       ),
     );

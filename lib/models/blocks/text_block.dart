@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -7,6 +8,7 @@ import 'package:tiomusic/util/util_functions.dart';
 part 'text_block.g.dart';
 
 // ignore_for_file: must_be_immutable // FIXME: fix these block issues
+// ignore_for_file: deprecated_member_use_from_same_package // FIXME: fix these block issues
 
 @JsonSerializable()
 class TextBlock extends ProjectBlock {
@@ -66,7 +68,7 @@ class TextBlock extends ProjectBlock {
   }
 
   @override
-  List<String> getSettingsFormatted() {
+  List<String> getSettingsFormatted(AppLocalizations l10n) {
     if (_content.characters.length < 50) {
       return [_content.trim()];
     } else {
@@ -82,10 +84,10 @@ class TextBlock extends ProjectBlock {
     _islandToolID = islandToolID;
   }
 
-  TextBlock.withDefaults() {
+  TextBlock.withDefaults(AppLocalizations l10n) {
     _timeLastModified = DateTime.now();
     _content = TextParams.defaultContent;
-    _title = TextParams.displayName;
+    _title = l10n.text;
     _islandToolID = null;
     _id = ProjectBlock.createNewId();
   }
@@ -99,7 +101,7 @@ class TextBlock extends ProjectBlock {
   }
 
   @override
-  get icon => blockTypeInfos[BlockType.text]!.icon;
+  get icon => TextParams.icon;
 
   factory TextBlock.fromJson(Map<String, dynamic> json) => _$TextBlockFromJson(json);
 

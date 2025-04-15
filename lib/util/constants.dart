@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
@@ -65,9 +66,10 @@ class TIOMusicParams {
 class ImageParams {
   static const String kind = 'image';
   static const String displayName = 'Image';
-  static const String description = 'take or load a picture';
 
   static const String defaultPath = '';
+
+  static const Icon icon = Icon(Icons.image_outlined, color: ColorTheme.primary);
 }
 
 //---------------------------------------------
@@ -77,7 +79,6 @@ class ImageParams {
 class MediaPlayerParams {
   static const String kind = 'media_player';
   static const String displayName = 'Media Player';
-  static const String description = 'record and play';
 
   static const double defaultPitchSemitones = 0;
   static const double defaultSpeedFactor = 1;
@@ -89,6 +90,8 @@ class MediaPlayerParams {
   static const double binWidth = 8;
 
   static const double markerIconSize = 36;
+
+  static const Icon icon = Icon(Icons.play_arrow, color: ColorTheme.primary);
 }
 
 //---------------------------------------------
@@ -111,11 +114,10 @@ class MetronomeParams {
 
   static const String kind = 'metronome';
   static const String displayName = 'Metronome';
-  static const String description = 'create a rhythm';
 
   static const String svgIconPath = 'assets/icons/Metronome.svg';
 
-  static const int beatDetectionDurationMillis = 15;
+  static const int beatDetectionDurationMillis = 10;
 
   // General parameters
 
@@ -139,39 +141,6 @@ class MetronomeParams {
   static const List<BeatTypePoly> defaultPolyBeats = [];
   static const String defaultNoteKey = NoteValues.quarter;
 
-  // Metronome Sound
-
-  // Path to sound files
-  static const String metronomeSoundsPath = 'assets/metronome_sounds';
-  // Sound names
-  static const List<String> metronomeSounds = [
-    'bop',
-    'click',
-    'clock',
-    'heart',
-    'ping',
-    'tick',
-    'wood',
-    'cowbell',
-    'clap',
-    'rim',
-    'blup',
-    'digi click',
-    'kick',
-    'noise',
-    'pling',
-  ];
-
-  static const String defaultAccSound = 'click';
-  static const String defaultUnaccSound = 'click';
-  static const String defaultPolyAccSound = 'ping';
-  static const String defaultPolyUnaccSound = 'ping';
-
-  static const String defaultAccSound2 = 'clock';
-  static const String defaultUnaccSound2 = 'clock';
-  static const String defaultPolyAccSound2 = 'cowbell';
-  static const String defaultPolyUnaccSound2 = 'cowbell';
-
   // Turn visual metronome on/off by default
   static const bool defaultVisualMetronome = false;
 
@@ -180,7 +149,7 @@ class MetronomeParams {
   // Minimum BPM value
   static const int minBPM = 10;
   // Duration of Blackscreen in ms when visual metronome is enabled
-  static const int blackScreenDurationMs = 100;
+  static const int flashDurationInMs = 100;
 
   // BPM input
 
@@ -201,6 +170,11 @@ class MetronomeParams {
   static const double popupTextFontSize = 30;
 
   static const double heightRhythmGroups = 110;
+
+  static SvgPicture icon = SvgPicture.asset(
+    svgIconPath,
+    colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
+  );
 }
 
 //---------------------------------------------
@@ -210,7 +184,6 @@ class MetronomeParams {
 class PianoParams {
   static const String kind = 'piano';
   static const String displayName = 'Piano';
-  static const String description = 'become the next Herbie Hancock';
 
   static const int defaultKeyboardPosition = 60;
 
@@ -222,29 +195,7 @@ class PianoParams {
 
   static const int defaultSoundFontIndex = 0;
 
-  // There is a problem if sound fonts are too big, they should be about 1 MB, not more
-  static const List<String> soundFontPaths = <String>[
-    'assets/sound_fonts/piano_01.sf2',
-    'assets/sound_fonts/piano_02.sf2',
-    'assets/sound_fonts/electric_piano_01.sf2',
-    'assets/sound_fonts/electric_piano_02.sf2',
-    'assets/sound_fonts/reverb_bell_piano.sf2',
-    'assets/sound_fonts/pipe_organ.sf2',
-    'assets/sound_fonts/harpsichord.sf2',
-    'assets/sound_fonts/rhodes.sf2',
-  ];
-
-  // this list must match the soundFontPaths list
-  static const List<String> soundFontNames = <String>[
-    'Grand Piano 1',
-    'Grand Piano 2',
-    'Electric Piano 1',
-    'Electric Piano 2',
-    'Reverb Bell Piano',
-    'Pipe Organ',
-    'Harpsichord',
-    'Rhodes',
-  ];
+  static const Icon icon = Icon(Icons.piano, color: ColorTheme.primary);
 }
 
 //---------------------------------------------
@@ -254,12 +205,16 @@ class PianoParams {
 class TunerParams {
   static const String kind = 'tuner';
   static const String displayName = 'Tuner';
-  static const String description = 'tune your instrument';
 
   static const String svgIconPath = 'assets/icons/Tuner.svg';
 
   static const double defaultConcertPitch = 440;
   static const int freqPollMillis = 35;
+
+  static SvgPicture icon = SvgPicture.asset(
+    svgIconPath,
+    colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
+  );
 }
 
 //---------------------------------------------
@@ -269,9 +224,10 @@ class TunerParams {
 class TextParams {
   static const String kind = 'text';
   static const String displayName = 'Text';
-  static const String description = 'write down your notes';
 
   static const String defaultContent = '';
+
+  static const Icon icon = Icon(Icons.notes_rounded, color: ColorTheme.primary);
 }
 
 //---------------------------------------------
@@ -296,68 +252,62 @@ class BlockTypeInfo {
   String description;
 
   dynamic icon;
-  ProjectBlock Function() createWithDefaults;
+  ProjectBlock Function(AppLocalizations) createWithDefaults;
   ProjectBlock Function(String) createWithTitle;
   ProjectBlock Function(Map<String, dynamic>) createFromJson;
 }
 
-final blockTypeInfos = {
+Map<BlockType, BlockTypeInfo> getBlockTypeInfos(AppLocalizations l10n) => {
   BlockType.tuner: BlockTypeInfo(
-    TunerParams.displayName,
+    l10n.tuner,
     TunerParams.kind,
-    TunerParams.description,
-    SvgPicture.asset(
-      'assets/icons/Tuner.svg',
-      colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
-    ),
+    l10n.tunerDescription,
+    TunerParams.icon,
     TunerBlock.withDefaults,
     TunerBlock.withTitle,
     TunerBlock.fromJson,
   ),
   BlockType.metronome: BlockTypeInfo(
-    MetronomeParams.displayName,
+    l10n.metronome,
     MetronomeParams.kind,
-    MetronomeParams.description,
-    SvgPicture.asset(
-      'assets/icons/Metronome.svg',
-      colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
-    ),
+    l10n.metronomeDescription,
+    MetronomeParams.icon,
     MetronomeBlock.withDefaults,
     MetronomeBlock.withTitle,
     MetronomeBlock.fromJson,
   ),
   BlockType.mediaPlayer: BlockTypeInfo(
-    MediaPlayerParams.displayName,
+    l10n.mediaPlayer,
     MediaPlayerParams.kind,
-    MediaPlayerParams.description,
-    const Icon(Icons.play_arrow, color: ColorTheme.primary),
+    l10n.mediaPlayerDescription,
+    MediaPlayerParams.icon,
     MediaPlayerBlock.withDefaults,
     MediaPlayerBlock.withTitle,
     MediaPlayerBlock.fromJson,
   ),
   BlockType.image: BlockTypeInfo(
-    ImageParams.displayName,
+    l10n.image,
     ImageParams.kind,
-    ImageParams.description,
-    const Icon(Icons.image_outlined, color: ColorTheme.primary),
+    l10n.imageDescription,
+    ImageParams.icon,
     ImageBlock.withDefaults,
     ImageBlock.withTitle,
     ImageBlock.fromJson,
   ),
   BlockType.piano: BlockTypeInfo(
-    PianoParams.displayName,
+    l10n.piano,
     PianoParams.kind,
-    PianoParams.description,
-    const Icon(Icons.piano, color: ColorTheme.primary),
+    l10n.pianoDescription,
+    PianoParams.icon,
     PianoBlock.withDefaults,
     PianoBlock.withTitle,
     PianoBlock.fromJson,
   ),
   BlockType.text: BlockTypeInfo(
-    TextParams.displayName,
+    l10n.text,
     TextParams.kind,
-    TextParams.description,
-    const Icon(Icons.notes_rounded, color: ColorTheme.primary),
+    l10n.textDescription,
+    TextParams.icon,
     TextBlock.withDefaults,
     TextBlock.withTitle,
     TextBlock.fromJson,

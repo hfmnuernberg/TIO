@@ -189,6 +189,48 @@ pub fn piano_trigger_note_on(note: i32) -> bool {
 }
 
 #[flutter_rust_bridge::frb(ignore)]
+pub fn piano_trigger_set_concert_pitch(concert_pitch: f32) -> bool {
+    let mut synth_option = SYNTHESIZER
+        .lock()
+        .expect("Could not lock mutex to SYNTHESIZER");
+
+    match synth_option.as_mut() {
+        Some(synth) => {
+            const CHANNEL: i32 = 0;
+            const SET_PITCH_BEND_COMMAND: i32 = 0xE0;
+
+            let bend = calc_bend_value(concert_pitch);
+            let low_7_bits = bend & 0x7F;
+            let high_7_bits = (bend >> 7) & 0x7F;
+
+            synth.process_midi_message(CHANNEL, SET_PITCH_BEND_COMMAND, low_7_bits, high_7_bits);
+
+            true
+        }
+        None => {
+            log::info!("Failed to set concert pitch - Synth is None");
+            false
+        }
+    }
+}
+
+fn calc_bend_value(concert_pitch: f32) -> i32 {
+    const STANDARD_CONCERT_PITCH: f32 = 440.0;
+    const SEMITONES: f32 = 12.0;
+    let ratio = concert_pitch / STANDARD_CONCERT_PITCH;
+    let semitones_diff = SEMITONES * ratio.log2();
+
+    const STEPS_PER_SEMITONES: f32 = 4096.0;
+    const CENTER: f32 = STEPS_PER_SEMITONES * 2.0;
+    let bend = CENTER + semitones_diff * STEPS_PER_SEMITONES;
+
+    const MIN_MIDI_RANGE: f32 = 0.0;
+    const MAX_MIDI_RANGE: f32 = CENTER * 2.0 - 1.0;
+    bend.clamp(MIN_MIDI_RANGE, MAX_MIDI_RANGE).round() as i32
+}
+
+
+#[flutter_rust_bridge::frb(ignore)]
 pub fn piano_trigger_note_off(note: i32) -> bool {
     let mut synth_option = SYNTHESIZER
         .lock()

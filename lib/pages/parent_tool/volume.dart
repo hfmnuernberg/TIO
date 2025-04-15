@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 enum VolumeLevel { muted, low, normal }
@@ -34,13 +35,8 @@ IconData getVolumeInfoIconData(VolumeLevel volumeLevel) {
 Icon getVolumeInfoIcon(VolumeLevel volumeLevel) =>
     Icon(getVolumeInfoIconData(volumeLevel), color: getVolumeInfoIconColor(volumeLevel));
 
-String getVolumeInfoText(VolumeLevel volumeLevel) {
-  switch (volumeLevel) {
-    case VolumeLevel.muted:
-      return 'The device is muted. Unmute the device to hear the metronome.';
-    case VolumeLevel.low:
-      return 'The device volume is low. If necessary, increase the device volume in addition to the metronome volume.';
-    case VolumeLevel.normal:
-      return 'If you struggle to hear the metronome in your current environment, consider connecting your device to an external speaker (e.g., via Bluetooth).';
-  }
-}
+String getVolumeInfoText(VolumeLevel volumeLevel, AppLocalizations l10n) => switch (volumeLevel) {
+  VolumeLevel.muted => l10n.commonVolumeHintMuted,
+  VolumeLevel.low => l10n.commonVolumeHintLow,
+  VolumeLevel.normal => l10n.commonVolumeHintMid,
+};

@@ -1,14 +1,17 @@
-import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 
 import 'package:tiomusic/models/project_block.dart';
+import 'package:tiomusic/models/sound_font.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/sound_font_extension.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/util_midi.dart';
 
 part 'piano_block.g.dart';
 
 // ignore_for_file: must_be_immutable // FIXME: fix these block issues
+// ignore_for_file: deprecated_member_use_from_same_package // FIXME: fix these block issues
 
 @JsonSerializable()
 class PianoBlock extends ProjectBlock {
@@ -85,9 +88,14 @@ class PianoBlock extends ProjectBlock {
     notifyListeners();
   }
 
+  double concertPitch = 440;
+
   @override
-  List<String> getSettingsFormatted() {
-    return ['Lowest Key: ${midiToNameAndOctave(_keyboardPosition)}', PianoParams.soundFontNames[_soundFontIndex]];
+  List<String> getSettingsFormatted(AppLocalizations l10n) {
+    return [
+      '${l10n.pianoLowestKey}: ${midiToNameAndOctave(_keyboardPosition)}',
+      SoundFont.values[_soundFontIndex].getLabel(l10n),
+    ];
   }
 
   PianoBlock(
@@ -108,9 +116,9 @@ class PianoBlock extends ProjectBlock {
     _id = ProjectBlock.getIdOrCreateNewId(id);
   }
 
-  PianoBlock.withDefaults() {
+  PianoBlock.withDefaults(AppLocalizations l10n) {
     _timeLastModified = DateTime.now();
-    _title = PianoParams.displayName;
+    _title = l10n.piano;
     _volume = TIOMusicParams.defaultVolume;
     _keyboardPosition = PianoParams.defaultKeyboardPosition;
     _soundFontIndex = PianoParams.defaultSoundFontIndex;
@@ -167,7 +175,7 @@ class PianoBlock extends ProjectBlock {
   }
 
   @override
-  Icon get icon => blockTypeInfos[BlockType.piano]!.icon;
+  get icon => PianoParams.icon;
 
   factory PianoBlock.fromJson(Map<String, dynamic> json) => _$PianoBlockFromJson(json);
 

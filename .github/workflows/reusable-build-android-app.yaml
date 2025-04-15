@@ -14,6 +14,7 @@ on:
 
 jobs:
   build-android-app:
+    name: Build Android App
     runs-on: ubuntu-latest
     timeout-minutes: 25
 
@@ -25,7 +26,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Java
-        uses: actions/setup-java@v4.7.0
+        uses: actions/setup-java@v4.7.1
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -70,7 +71,7 @@ jobs:
         run: scripts/app.sh generate:json
 
       - name: Setup ruby
-        uses: ruby/setup-ruby@v1.221.0
+        uses: ruby/setup-ruby@v1.230.0
         with:
           ruby-version: '3.3'
           working-directory: android
@@ -100,8 +101,9 @@ jobs:
           ANDROID_NDK_ROOT: ${{ steps.setup_ndk.outputs.ndk-path }}
 
       - name: Save bundle
-        uses: actions/upload-artifact@v4.6.1
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: ${{ inputs.artifactName }}
           path: build/app/outputs/bundle/release
           retention-days: 1
+          if-no-files-found: error

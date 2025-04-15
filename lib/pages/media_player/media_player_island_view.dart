@@ -66,7 +66,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       final fs = context.read<FileSystem>();
       var customPaintContext = globalKeyCustomPaint.currentContext;
       if (customPaintContext != null) {
-        final customPaintRenderBox = customPaintContext.findRenderObject() as RenderBox;
+        final customPaintRenderBox = customPaintContext.findRenderObject()! as RenderBox;
         numOfBins = (customPaintRenderBox.size.width / MediaPlayerParams.binWidth).floor();
       } else {
         throw "WARNING: couldn't set numOfBins because the custom painter context was null!";

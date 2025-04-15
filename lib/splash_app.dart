@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/main.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -24,7 +25,7 @@ class SplashApp extends StatefulWidget {
 }
 
 class _SplashAppState extends State<SplashApp> {
-  static final _logger = createPrefixLogger('NoteHandler');
+  static final _logger = createPrefixLogger('SplashApp');
 
   bool _hasError = false;
 
@@ -67,29 +68,29 @@ class _SplashAppState extends State<SplashApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Splash Screen',
+      title: context.l10n.mainSplashScreen,
       theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
       darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
-      home: Scaffold(resizeToAvoidBottomInset: false, backgroundColor: ColorTheme.primary92, body: _buildBody()),
+      home: Scaffold(resizeToAvoidBottomInset: false, backgroundColor: ColorTheme.primary92, body: _buildBody(context)),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     if (_hasError) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Could not load user data!', style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 24)),
+            Text(context.l10n.mainErrorDataLoading, style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 24)),
             const SizedBox(height: 24),
-            TIOFlatButton(onPressed: main, text: 'Retry'),
+            TIOFlatButton(onPressed: main, text: context.l10n.mainRetry),
             const SizedBox(height: 24),
             TIOFlatButton(
               onPressed: () async {
                 await context.read<ProjectLibraryRepository>().delete();
                 _returnLoadedData(ProjectLibrary.withDefaults(), null);
               },
-              text: 'Open anyway? (All user data will be lost!)',
+              text: context.l10n.mainOpenAnyway,
             ),
           ],
         ),

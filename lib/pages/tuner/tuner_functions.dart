@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
-
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/log.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';

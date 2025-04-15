@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path/path.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -8,6 +8,7 @@ import 'package:tiomusic/util/util_functions.dart';
 part 'media_player_block.g.dart';
 
 // ignore_for_file: must_be_immutable // FIXME: fix these block issues
+// ignore_for_file: deprecated_member_use_from_same_package // FIXME: fix these block issues
 
 @JsonSerializable()
 class MediaPlayerBlock extends ProjectBlock {
@@ -131,26 +132,24 @@ class MediaPlayerBlock extends ProjectBlock {
   List<double> get markerPositions => _markerPositions;
 
   @override
-  List<String> getSettingsFormatted() {
+  List<String> getSettingsFormatted(AppLocalizations l10n) {
     List<String> settings = [];
     if (_relativePath.isNotEmpty) {
       settings.add(basename(_relativePath));
     }
     if (_pitchSemitones.abs() >= 0.01) {
-      settings.add(
-        "${_pitchSemitones > 0 ? "↑" : "↓"} ${_pitchSemitones.abs()} semitone${pluralSDouble(_pitchSemitones)}",
-      );
+      settings.add('${_pitchSemitones > 0 ? '↑' : '↓'} ${l10n.mediaPlayerSemitones(_pitchSemitones.round())}');
     }
     if (_speedFactor != 1) {
-      settings.add('${_speedFactor}x speed');
+      settings.add('${l10n.formatInteger(_speedFactor)}x ${l10n.mediaPlayerSpeed}');
     }
     if (_rangeStart.abs() >= 0.001 || (_rangeEnd - 1.0).abs() >= 0.001) {
-      settings.add('Trim ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%');
+      settings.add('${l10n.mediaPlayerTrim} ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%');
     }
     if (_looping) {
-      settings.add('Looping');
+      settings.add(l10n.mediaPlayerLooping);
     }
-    settings.add('$bpm bpm');
+    settings.add('$bpm ${l10n.commonBpm}');
     return settings;
   }
 
@@ -183,9 +182,9 @@ class MediaPlayerBlock extends ProjectBlock {
     _markerPositions = markerPositions;
   }
 
-  MediaPlayerBlock.withDefaults() {
+  MediaPlayerBlock.withDefaults(AppLocalizations l10n) {
     _timeLastModified = DateTime.now();
-    _title = MediaPlayerParams.displayName;
+    _title = l10n.mediaPlayer;
     _islandToolID = null;
     _id = ProjectBlock.createNewId();
     bpm = 80;
@@ -216,7 +215,7 @@ class MediaPlayerBlock extends ProjectBlock {
   }
 
   @override
-  Icon get icon => blockTypeInfos[BlockType.mediaPlayer]!.icon;
+  get icon => MediaPlayerParams.icon;
 
   factory MediaPlayerBlock.fromJson(Map<String, dynamic> json) => _$MediaPlayerBlockFromJson(json);
 

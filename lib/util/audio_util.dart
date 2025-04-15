@@ -1,5 +1,4 @@
 import 'package:audio_session/audio_session.dart';
-import 'package:flutter/foundation.dart';
 import 'package:tiomusic/util/log.dart';
 
 /* These functions are used for microphone capture on ios via rust (cpal) */

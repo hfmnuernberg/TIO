@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Create GitHub release
+        id: semantic_release
+        uses: cycjimmy/semantic-release-action@v4.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Assert new release published
+        if: steps.semantic_release.outputs.new_release_published == 'false'
+        run: |
+          echo "❌ No new released published! See workflow logs for details." >> $GITHUB_STEP_SUMMARY
+          exit 1
+
+      - name: Create summary
+        if: steps.semantic_release.outputs.new_release_published == 'true'
+        run: echo "Released ${{ steps.new.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY

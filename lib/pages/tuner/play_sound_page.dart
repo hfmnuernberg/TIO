@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
@@ -25,8 +26,9 @@ class PlaySoundPage extends StatefulWidget {
 }
 
 class _PlaySoundPageState extends State<PlaySoundPage> {
+  final TextEditingController _octaveController = TextEditingController(text: '4');
   int _octave = 4;
-  late NumberInputIntWithSlider _octaveInput;
+  double _frequency = 0;
 
   final ActiveReferenceSoundButton _buttonListener = ActiveReferenceSoundButton();
   bool _running = false;
@@ -37,28 +39,38 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   void initState() {
     super.initState();
 
-    _octaveInput = NumberInputIntWithSlider(
-      max: 7,
-      min: 1,
-      defaultValue: _octave,
-      step: 1,
-      controller: TextEditingController(),
-      textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
-      label: 'Octave',
-    );
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await TunerFunctions.stop();
 
-      _octaveInput.controller.addListener(_onOctaveChanged);
+      _octaveController.addListener(_onOctaveChanged);
 
       _buttonListener.addListener(_onButtonsChanged);
     });
   }
 
+  List<Widget> _buildSoundButtons(List<int> midiNumbers, int startIdx, int offset) {
+    return List.generate(midiNumbers.length, (index) {
+      return SoundButton(
+        midiNumber: midiNumbers[index] + offset,
+        idx: startIdx + index,
+        buttonListener: _buttonListener,
+      );
+    });
+  }
+
   void _onOctaveChanged() {
+    final newOctave = int.tryParse(_octaveController.text) ?? 4;
+    double newFreq = _frequency;
+
+    if (newOctave > _octave) {
+      newFreq = _frequency * 2;
+    } else if (newOctave < _octave) {
+      newFreq = _frequency / 2;
+    }
+
     setState(() {
-      _octave = int.parse(_octaveInput.controller.text);
+      _octave = newOctave;
+      _frequency = newFreq;
     });
   }
 
@@ -81,9 +93,17 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
       if (_running) {
         generatorNoteOn(newFreq: _buttonListener.freq);
+
+        setState(() {
+          _frequency = _buttonListener.freq;
+        });
       }
     } else {
       generatorNoteOff();
+
+      setState(() {
+        _frequency = 0;
+      });
     }
   }
 
@@ -95,13 +115,22 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   }
 
   @override
+  void dispose() {
+    _octaveController.dispose();
+    _buttonListener.removeListener(_onButtonsChanged);
+    audioInterruptionListener?.cancel();
+    TunerFunctions.stopGenerator();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    int offset = _octave * 12;
+    int offset = (_octave - 1) * 12;
     return DismissKeyboard(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('Play Reference'),
+          title: Text(context.l10n.tunerPlayReference),
           backgroundColor: ColorTheme.surfaceBright,
           foregroundColor: ColorTheme.primary,
         ),
@@ -109,30 +138,34 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _octaveInput,
+            NumberInputIntWithSlider(
+              max: 7,
+              min: 1,
+              defaultValue: _octave,
+              step: 1,
+              controller: _octaveController,
+              textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
+              label: context.l10n.commonOctave,
+            ),
             const SizedBox(height: 40),
+
+            Text(
+              '${context.l10n.tunerFrequency}: ${_frequency.floorToDouble()} Hz',
+              style: const TextStyle(color: ColorTheme.primary),
+            ),
+            const SizedBox(height: 40),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SoundButton(midiNumber: 25 + offset, idx: 0, buttonListener: _buttonListener),
-                SoundButton(midiNumber: 27 + offset, idx: 1, buttonListener: _buttonListener),
-                const SizedBox(width: buttonWidth + buttonPadding * 2),
-                SoundButton(midiNumber: 30 + offset, idx: 2, buttonListener: _buttonListener),
-                SoundButton(midiNumber: 32 + offset, idx: 3, buttonListener: _buttonListener),
-                SoundButton(midiNumber: 34 + offset, idx: 4, buttonListener: _buttonListener),
+                ..._buildSoundButtons([25, 27], 0, offset),
+                SizedBox(width: buttonWidth + buttonPadding * 2),
+                ..._buildSoundButtons([30, 32, 34], 2, offset),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SoundButton(midiNumber: 24 + offset, idx: 5, buttonListener: _buttonListener),
-                SoundButton(midiNumber: 26 + offset, idx: 6, buttonListener: _buttonListener),
-                SoundButton(midiNumber: 28 + offset, idx: 7, buttonListener: _buttonListener),
-                SoundButton(midiNumber: 29 + offset, idx: 8, buttonListener: _buttonListener),
-                SoundButton(midiNumber: 31 + offset, idx: 9, buttonListener: _buttonListener),
-                SoundButton(midiNumber: 33 + offset, idx: 10, buttonListener: _buttonListener),
-                SoundButton(midiNumber: 35 + offset, idx: 11, buttonListener: _buttonListener),
-              ],
+              children: _buildSoundButtons([24, 26, 28, 29, 31, 33, 35], 5, offset),
             ),
           ],
         ),
@@ -163,10 +196,6 @@ class _SoundButtonState extends State<SoundButton> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.buttonListener.buttonOn) {
-      generatorNoteOn(newFreq: midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
-    }
-
     return ListenableBuilder(
       listenable: widget.buttonListener,
       builder: (context, child) {

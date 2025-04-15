@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -11,7 +12,6 @@ import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/util_functions.dart';
 
 class SetTrim extends StatefulWidget {
   final Float32List rmsValues;
@@ -64,8 +64,10 @@ class _SetTrimState extends State<SetTrim> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return ParentSettingPage(
-      title: 'Set Trim',
+      title: l10n.mediaPlayerSetTrim,
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,
@@ -85,8 +87,8 @@ class _SetTrimState extends State<SetTrim> {
                   inactiveColor: ColorTheme.primary80,
                   divisions: 1000, // how many individual values, only showing labels when division is not null
                   labels: RangeLabels(
-                    getDurationFormatedWithMilliseconds(_rangeStartDuration),
-                    getDurationFormatedWithMilliseconds(_rangeEndDuration),
+                    l10n.formatDurationWithMillis(_rangeStartDuration),
+                    l10n.formatDurationWithMillis(_rangeEndDuration),
                   ),
                   onChanged: (values) {
                     setState(() {

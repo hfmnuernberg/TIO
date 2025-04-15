@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/project_page/export_project_dialog.dart';
+import 'package:tiomusic/pages/project_page/export_project.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/big_icon_button.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
@@ -50,27 +51,15 @@ class _ProjectPageState extends State<ProjectPage> {
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
   final TextEditingController _titleController = TextEditingController();
 
-  final Walkthrough _walkthrough = Walkthrough();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyChangeTitle = GlobalKey();
 
   @override
   void initState() {
     super.initState();
+
     _projectLibraryRepo = context.read<ProjectLibraryRepository>();
     _fileReferences = context.read<FileReferences>();
-
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: () => showExportProjectDialog(context: context, project: _project),
-        child: const Text('Export Project', style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _handleDeleteAllBlocks,
-        child: const Text('Delete all Tools', style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
 
     _withoutProject = widget.withoutRealProject;
 
@@ -99,25 +88,54 @@ class _ProjectPageState extends State<ProjectPage> {
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     }
 
-    if (context.read<ProjectLibrary>().showProjectPageTutorial && !widget.goStraightToTool) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _createWalkthrough();
-        _walkthrough.show(context);
-      });
-    }
+    _showTutorial();
   }
 
-  void _createWalkthrough() {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_menuItems.isEmpty) {
+      _menuItems.addAll([
+        MenuItemButton(
+          onPressed: () => exportProject(context, _project),
+          child: Text(context.l10n.projectExport, style: TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: _handleDeleteAllBlocks,
+          child: Text(context.l10n.projectDeleteAllTools, style: TextStyle(color: ColorTheme.primary)),
+        ),
+      ]);
+    }
+
+    _showTutorial();
+  }
+
+  void _showTutorial() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final projectLibrary = context.read<ProjectLibrary>();
+
+      if (projectLibrary.showHomepageTutorial) {
+        projectLibrary.showHomepageTutorial = false;
+        await _projectLibraryRepo.save(projectLibrary);
+        _createTutorial();
+        if (!mounted) return;
+        _tutorial.show(context);
+      }
+    });
+  }
+
+  void _createTutorial() {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyChangeTitle,
-        'Tap here to edit the title of your project',
+        context.l10n.projectTutorialEditTitle,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () async {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showProjectPageTutorial = false;
       await _projectLibraryRepo.save(context.read<ProjectLibrary>());
     }, context);
@@ -125,32 +143,32 @@ class _ProjectPageState extends State<ProjectPage> {
 
   Future<bool?> _confirmDeleteBlock({bool deleteAll = false}) => showDialog<bool>(
     context: context,
-    builder:
-        (context) => AlertDialog(
-          title: const Text('Delete?', style: TextStyle(color: ColorTheme.primary)),
-          content:
-              deleteAll
-                  ? const Text(
-                    'Do you really want to delete all tools in this project?',
-                    style: TextStyle(color: ColorTheme.primary),
-                  )
-                  : const Text('Do you really want to delete this tool?', style: TextStyle(color: ColorTheme.primary)),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: const Text('No'),
-            ),
-            TIOFlatButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              text: 'Yes',
-              boldText: true,
-            ),
-          ],
-        ),
+    builder: (context) {
+      final l10n = context.l10n;
+
+      return AlertDialog(
+        title: Text(l10n.commonDelete, style: TextStyle(color: ColorTheme.primary)),
+        content:
+            deleteAll
+                ? Text(l10n.projectDeleteAllToolsConfirmation, style: TextStyle(color: ColorTheme.primary))
+                : Text(l10n.projectDeleteToolConfirmation, style: TextStyle(color: ColorTheme.primary)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Text(l10n.commonNo),
+          ),
+          TIOFlatButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            text: l10n.commonYes,
+            boldText: true,
+          ),
+        ],
+      );
+    },
   );
 
   void _createBlockAndGoToTool(BlockTypeInfo info, String blockTitle) async {
@@ -229,7 +247,11 @@ class _ProjectPageState extends State<ProjectPage> {
       appBar: AppBar(
         title: GestureDetector(
           onTap: () async {
-            final newTitle = await showEditTextDialog(context: context, label: 'Project title', value: _project.title);
+            final newTitle = await showEditTextDialog(
+              context: context,
+              label: context.l10n.projectNew,
+              value: _project.title,
+            );
             if (newTitle == null) return;
             _project.title = newTitle;
             if (context.mounted) await _projectLibraryRepo.save(context.read<ProjectLibrary>());
@@ -250,7 +272,7 @@ class _ProjectPageState extends State<ProjectPage> {
                   controller.isOpen ? controller.close() : controller.open();
                 },
                 icon: const Icon(Icons.more_vert),
-                tooltip: 'Project menu',
+                tooltip: context.l10n.projectMenu,
               );
             },
             style: const MenuStyle(
@@ -276,7 +298,7 @@ class _ProjectPageState extends State<ProjectPage> {
                 } else {
                   return CardListTile(
                     title: _project.blocks[index].title,
-                    subtitle: formatSettingValues(_project.blocks[index].getSettingsFormatted()),
+                    subtitle: formatSettingValues(_project.blocks[index].getSettingsFormatted(context.l10n)),
                     leadingPicture: circleToolIcon(_project.blocks[index].icon),
                     trailingIcon: IconButton(
                       onPressed:
@@ -321,7 +343,7 @@ class _ProjectPageState extends State<ProjectPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Choose Type of Tool'),
+        title: Text(context.l10n.projectEmpty),
         backgroundColor: ColorTheme.surfaceBright,
         foregroundColor: ColorTheme.primary,
         leading: IconButton(
@@ -348,7 +370,7 @@ class _ProjectPageState extends State<ProjectPage> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: BlockType.values.length,
               itemBuilder: (context, index) {
-                var info = blockTypeInfos[BlockType.values[index]]!;
+                var info = getBlockTypeInfos(context.l10n)[BlockType.values[index]]!;
                 return CardListTile(
                   title: info.name,
                   subtitle: info.description,
@@ -375,7 +397,7 @@ class _ProjectPageState extends State<ProjectPage> {
   void _onNewToolTilePressed(BlockTypeInfo info) async {
     final newTitle = await showEditTextDialog(
       context: context,
-      label: 'Tool title',
+      label: context.l10n.projectNewTool,
       value: '${info.name} ${_project.toolCounter[info.kind]! + 1}',
       isNew: true,
     );

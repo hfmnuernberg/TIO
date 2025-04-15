@@ -6,22 +6,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/models/sound_font.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
+import 'package:tiomusic/pages/piano/set_concert_pitch.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/sound_font_extension.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/util_midi.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
@@ -44,6 +48,8 @@ class _PianoState extends State<Piano> {
   late ProjectLibraryRepository _projectLibraryRepo;
 
   late PianoBlock _pianoBlock;
+  late double _concertPitch = _pianoBlock.concertPitch;
+  late String _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n);
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
@@ -57,7 +63,7 @@ class _PianoState extends State<Piano> {
   bool _showSavingPage = false;
   OverlayEntry? _entry;
 
-  final Walkthrough _walkthrough = Walkthrough();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyOctaveSwitch = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
 
@@ -96,8 +102,8 @@ class _PianoState extends State<Piano> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (context.read<ProjectLibrary>().showPianoTutorial) {
-        _createWalkthrough();
-        _walkthrough.show(context);
+        _createTutorial();
+        _tutorial.show(context);
       }
     });
   }
@@ -108,9 +114,12 @@ class _PianoState extends State<Piano> {
       if (event.type == AudioInterruptionType.unknown) _pianoStop();
     });
 
-    bool initSuccess = await _initPiano(PianoParams.soundFontPaths[_pianoBlock.soundFontIndex]);
+    bool initSuccess = await _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
     await configureAudioSession(AudioSessionType.playback);
     if (!initSuccess) return;
+
+    _pianoSetConcertPitch(_pianoBlock.concertPitch);
+
     bool success = await pianoStart();
     _isPlaying = success;
   }
@@ -123,12 +132,19 @@ class _PianoState extends State<Piano> {
     _isPlaying = false;
   }
 
-  void _createWalkthrough() {
-    // add the targets here
+  Future<void> _pianoSetConcertPitch(double concertPitch) async {
+    bool success = await pianoSetConcertPitch(newConcertPitch: concertPitch);
+
+    if (!success) {
+      throw 'Rust library failed to update new concert pitch: $concertPitch';
+    }
+  }
+
+  void _createTutorial() {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyOctaveSwitch,
-        'Tap the left or right arrows to move up or down per key or per octave',
+        context.l10n.pianoTutorialChangeKeyOrOctave,
         alignText: ContentAlign.right,
         pointingDirection: PointingDirection.left,
         shape: ShapeLightFocus.RRect,
@@ -137,14 +153,14 @@ class _PianoState extends State<Piano> {
       ),
       CustomTargetFocus(
         _keySettings,
-        'Tap here to adjust sound and volume',
+        context.l10n.pianoTutorialAdjust,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         shape: ShapeLightFocus.RRect,
         buttonsPosition: ButtonsPosition.bottomright,
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () async {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showPianoTutorial = false;
       await _projectLibraryRepo.save(context.read<ProjectLibrary>());
     }, context);
@@ -186,6 +202,7 @@ class _PianoState extends State<Piano> {
   }
 
   Widget _buildPianoMainPage(BuildContext context) {
+    final l10n = context.l10n;
     final islandWidth = MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width / 1.9);
 
     return SafeArea(
@@ -199,7 +216,7 @@ class _PianoState extends State<Piano> {
               IconButton(
                 onPressed: () async {
                   // if quick tool and values have been changed: ask for saving
-                  if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock)) {
+                  if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock, l10n)) {
                     final save = await askForSavingQuickTool(context);
 
                     // if user taps outside the dialog, we dont want to exit the quick tool and we dont want to save
@@ -227,7 +244,7 @@ class _PianoState extends State<Piano> {
                   onTap: () async {
                     final newTitle = await showEditTextDialog(
                       context: context,
-                      label: PianoParams.displayName,
+                      label: l10n.piano,
                       value: _pianoBlock.title,
                     );
                     if (newTitle == null) return;
@@ -301,23 +318,41 @@ class _PianoState extends State<Piano> {
                           ),
                         ],
                       ),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(right: TIOMusicParams.edgeInset),
+                          child: Text(
+                            l10n.formatInteger(_concertPitch),
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(color: ColorTheme.onPrimary),
+                          ),
+                        ),
+                      ),
                       Row(
                         key: _keySettings,
                         children: [
-                          // sound button
                           IconButton(
                             onPressed: () async {
-                              await openSettingPage(const ChooseSound(), context, _pianoBlock);
+                              await openSettingPage(
+                                SetConcertPitch(),
+                                callbackOnReturn: (value) async {
+                                  await _pianoSetConcertPitch(_pianoBlock.concertPitch);
+                                },
+                                context,
+                                _pianoBlock,
+                              );
 
-                              _initPiano(PianoParams.soundFontPaths[_pianoBlock.soundFontIndex]);
+                              setState(() => _concertPitch = _pianoBlock.concertPitch);
                             },
                             icon: const CircleAvatar(
                               backgroundColor: ColorTheme.primary50,
-                              child: Icon(Icons.library_music_outlined, color: ColorTheme.onPrimary),
+                              child: Text(
+                                'Hz',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: ColorTheme.onPrimary, fontSize: 20),
+                              ),
                             ),
                           ),
-
-                          // volume button
                           IconButton(
                             onPressed: () async {
                               await openSettingPage(
@@ -340,7 +375,32 @@ class _PianoState extends State<Piano> {
                               child: Icon(Icons.volume_up, color: ColorTheme.onPrimary),
                             ),
                           ),
+                          IconButton(
+                            onPressed: () async {
+                              await openSettingPage(const ChooseSound(), context, _pianoBlock);
+
+                              _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
+
+                              setState(
+                                () => _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(l10n),
+                              );
+                            },
+                            icon: const CircleAvatar(
+                              backgroundColor: ColorTheme.primary50,
+                              child: Icon(Icons.library_music_outlined, color: ColorTheme.onPrimary),
+                            ),
+                          ),
                         ],
+                      ),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(left: TIOMusicParams.edgeInset),
+                          child: Text(
+                            _instrumentName,
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(color: ColorTheme.onPrimary),
+                          ),
+                        ),
                       ),
                       Row(
                         children: [
@@ -513,6 +573,8 @@ class _PianoState extends State<Piano> {
 
   // this is to replace the bottom sheet like the other tools are using it for saving
   Widget _buildSavingPage() {
+    final l10n = context.l10n;
+
     return SafeArea(
       child: Consumer<ProjectLibrary>(
         builder: (context, projectLibrary, child) {
@@ -526,7 +588,7 @@ class _PianoState extends State<Piano> {
                       children: [
                         CardListTile(
                           title: _pianoBlock.title,
-                          subtitle: formatSettingValues(_pianoBlock.getSettingsFormatted()),
+                          subtitle: formatSettingValues(_pianoBlock.getSettingsFormatted(l10n)),
                           trailingIcon: IconButton(
                             onPressed: () {
                               setState(() {
@@ -554,12 +616,9 @@ class _PianoState extends State<Piano> {
                           alignment: Alignment.centerLeft,
                           child:
                               widget.isQuickTool
-                                  ? const Text(
-                                    'Save in ...',
-                                    style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
-                                  )
-                                  : const Text(
-                                    'Save copy in ...',
+                                  ? Text(l10n.toolSave, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
+                                  : Text(
+                                    l10n.toolSaveCopy,
                                     style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
                                   ),
                         ),
@@ -575,7 +634,7 @@ class _PianoState extends State<Piano> {
                                 builder: (context, setTileState) {
                                   return CardListTile(
                                     title: projectLibrary.projects[index].title,
-                                    subtitle: getDateAndTimeFormatted(projectLibrary.projects[index].timeLastModified),
+                                    subtitle: l10n.formatDateAndTime(projectLibrary.projects[index].timeLastModified),
                                     highlightColor: _highlightColorOnSave,
                                     trailingIcon: IconButton(
                                       onPressed: () => _buildTextInputOverlay(setTileState, index),
@@ -596,7 +655,7 @@ class _PianoState extends State<Piano> {
                       TIOFlatButton(
                         // creating a new project to save the tool in it
                         onPressed: _buildTwoTextInputOverlay,
-                        text: 'Save in a new project',
+                        text: l10n.toolSaveInNewProject,
                       ),
                       const SizedBox(height: 4),
                     ],
@@ -611,9 +670,10 @@ class _PianoState extends State<Piano> {
   }
 
   void _buildTextInputOverlay(StateSetter setTileState, int index) {
+    final l10n = context.l10n;
     final overlay = Overlay.of(context);
 
-    _newToolTitle.text = '${_pianoBlock.title} - copy';
+    _newToolTitle.text = '${_pianoBlock.title} - ${l10n.toolTitleCopy}';
     _newToolTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newToolTitle.text.length);
 
     _entry = OverlayEntry(
@@ -633,11 +693,11 @@ class _PianoState extends State<Piano> {
                       child: TextField(
                         controller: _newToolTitle,
                         autofocus: true,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: '',
                           border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
                           enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          label: Text('Tool title:', style: TextStyle(color: ColorTheme.surfaceTint)),
+                          label: Text('${l10n.toolNewTitle}:', style: TextStyle(color: ColorTheme.surfaceTint)),
                         ),
                         style: const TextStyle(color: ColorTheme.primary),
                         onSubmitted: (newText) {
@@ -650,11 +710,11 @@ class _PianoState extends State<Piano> {
                     // close button
                     TextButton(
                       onPressed: () => _hideTextInputOverlay(false, setTileState, index),
-                      child: const Text('Cancel'),
+                      child: Text(l10n.commonCancel),
                     ),
                     TIOFlatButton(
                       onPressed: () => _hideTextInputOverlay(true, setTileState, index),
-                      text: 'Submit',
+                      text: l10n.commonSubmit,
                       boldText: true,
                     ),
                   ],
@@ -668,12 +728,13 @@ class _PianoState extends State<Piano> {
   }
 
   void _buildTwoTextInputOverlay() {
+    final l10n = context.l10n;
     final overlay = Overlay.of(context);
 
-    _newToolTitle.text = '${_pianoBlock.title} - copy';
+    _newToolTitle.text = '${_pianoBlock.title} - ${l10n.toolTitleCopy}';
     _newToolTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newToolTitle.text.length);
 
-    _newProjectTitle.text = getDateAndTimeNow();
+    _newProjectTitle.text = l10n.formatDateAndTime(DateTime.now());
     _newProjectTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newProjectTitle.text.length);
 
     _entry = OverlayEntry(
@@ -693,11 +754,11 @@ class _PianoState extends State<Piano> {
                       child: TextField(
                         controller: _newProjectTitle,
                         autofocus: true,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: '',
                           border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
                           enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          label: Text('Project title:', style: TextStyle(color: ColorTheme.surfaceTint)),
+                          label: Text('${l10n.toolNewProjectTitle}:', style: TextStyle(color: ColorTheme.surfaceTint)),
                         ),
                         style: const TextStyle(color: ColorTheme.primary),
                         onSubmitted: (newText) {
@@ -713,11 +774,11 @@ class _PianoState extends State<Piano> {
                       child: TextField(
                         controller: _newToolTitle,
                         focusNode: _toolTitleFieldFocus,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: '',
                           border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
                           enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          label: Text('Tool title:', style: TextStyle(color: ColorTheme.surfaceTint)),
+                          label: Text('${l10n.toolNewTitle}:', style: TextStyle(color: ColorTheme.surfaceTint)),
                         ),
                         style: const TextStyle(color: ColorTheme.primary),
                         onSubmitted: (newText) {
@@ -728,8 +789,12 @@ class _PianoState extends State<Piano> {
                       ),
                     ),
 
-                    TextButton(onPressed: () => _hideTwoTextInputOverlay(false), child: const Text('Cancel')),
-                    TIOFlatButton(onPressed: () => _hideTwoTextInputOverlay(true), text: 'Submit', boldText: true),
+                    TextButton(onPressed: () => _hideTwoTextInputOverlay(false), child: Text(l10n.commonCancel)),
+                    TIOFlatButton(
+                      onPressed: () => _hideTwoTextInputOverlay(true),
+                      text: l10n.commonSubmit,
+                      boldText: true,
+                    ),
                   ],
                 ),
               ),

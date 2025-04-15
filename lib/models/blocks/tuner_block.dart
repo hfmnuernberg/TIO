@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -7,6 +8,7 @@ import 'package:tiomusic/util/util_functions.dart';
 part 'tuner_block.g.dart';
 
 // ignore_for_file: must_be_immutable // FIXME: fix these block issues
+// ignore_for_file: deprecated_member_use_from_same_package // FIXME: fix these block issues
 
 @JsonSerializable()
 class TunerBlock extends ProjectBlock {
@@ -67,8 +69,8 @@ class TunerBlock extends ProjectBlock {
   }
 
   @override
-  List<String> getSettingsFormatted() {
-    return ['${formatDoubleToString(_chamberNoteHz)} Hz'];
+  List<String> getSettingsFormatted(AppLocalizations l10n) {
+    return ['${l10n.formatDecimal(_chamberNoteHz)} Hz'];
   }
 
   TunerBlock(String title, String id, String? islandToolID, double chamberNoteHz, DateTime timeLastModified) {
@@ -79,10 +81,10 @@ class TunerBlock extends ProjectBlock {
     _islandToolID = islandToolID;
   }
 
-  TunerBlock.withDefaults() {
+  TunerBlock.withDefaults(AppLocalizations l10n) {
     _timeLastModified = DateTime.now();
     _chamberNoteHz = TunerParams.defaultConcertPitch;
-    _title = TunerParams.displayName;
+    _title = l10n.tuner;
     _islandToolID = null;
     _id = ProjectBlock.createNewId();
   }
@@ -96,7 +98,7 @@ class TunerBlock extends ProjectBlock {
   }
 
   @override
-  get icon => blockTypeInfos[BlockType.tuner]!.icon;
+  get icon => TunerParams.icon;
 
   factory TunerBlock.fromJson(Map<String, dynamic> json) => _$TunerBlockFromJson(json);
 

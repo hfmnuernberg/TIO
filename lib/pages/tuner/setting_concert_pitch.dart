@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -16,51 +17,61 @@ class SetConcertPitch extends StatefulWidget {
 }
 
 class _SetConcertPitchState extends State<SetConcertPitch> {
-  late NumberInputDoubleWithSlider _concertPitchInput;
+  final TextEditingController _controller = TextEditingController();
   late TunerBlock _tunerBlock;
+
+  double _defaultValue = 0;
 
   @override
   void initState() {
     super.initState();
 
     _tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
+    _defaultValue = _tunerBlock.chamberNoteHz;
 
-    _concertPitchInput = NumberInputDoubleWithSlider(
-      max: 600,
-      min: 200,
-      defaultValue: _tunerBlock.chamberNoteHz,
-      step: 1,
-      stepIntervalInMs: 200,
-      controller: TextEditingController(),
-      label: 'Concert Pitch in Hz',
-      textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ParentSettingPage(
-      title: 'Set Concert Pitch',
-      numberInput: _concertPitchInput,
-      confirm: _onConfirm,
-      reset: _reset,
-    );
+    _controller.text = _defaultValue.toString();
   }
 
   void _onConfirm() async {
-    if (_concertPitchInput.controller.value.text != '') {
-      double newConcertPitch = double.parse(_concertPitchInput.controller.value.text);
-      _tunerBlock.chamberNoteHz = newConcertPitch;
+    final text = _controller.text;
 
-      context.read<ProjectLibraryRepository>().save(context.read<ProjectLibrary>());
+    if (text.isNotEmpty) {
+      final newConcertPitch = double.tryParse(text);
+      if (newConcertPitch != null) {
+        _tunerBlock.chamberNoteHz = newConcertPitch;
+        context.read<ProjectLibraryRepository>().save(context.read<ProjectLibrary>());
+      }
     }
 
     Navigator.pop(context);
   }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   void _reset() {
-    _concertPitchInput.controller.value = _concertPitchInput.controller.value.copyWith(
-      text: TunerParams.defaultConcertPitch.toString(),
+    _controller.text = TunerParams.defaultConcertPitch.toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ParentSettingPage(
+      title: context.l10n.tunerSetConcertPitch,
+      numberInput: NumberInputDoubleWithSlider(
+        max: 600,
+        min: 200,
+        defaultValue: _defaultValue,
+        step: 1,
+        stepIntervalInMs: 200,
+        controller: _controller,
+        label: context.l10n.tunerConcertPitchInHz,
+        textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
+      ),
+      confirm: _onConfirm,
+      reset: _reset,
     );
   }
 }

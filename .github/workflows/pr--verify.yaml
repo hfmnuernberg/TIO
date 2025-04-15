@@ -3,6 +3,10 @@ name: PR - Verify
 on:
   pull_request:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   verify:
     name: Verify
@@ -11,9 +15,9 @@ jobs:
     with:
       ref: ${{ github.sha }}
 
-  # see docs/dependabot.md
   auto-merge:
-    needs: verify
+    name: Auto-merge
+    needs: [verify]
     runs-on: ubuntu-latest
     permissions:
       statuses: write
@@ -22,13 +26,26 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: Authenticate GitHub CLI
         run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
 
-      - name: Enable auto-merge for Dependabot PRs
-        if: github.actor == 'dependabot[bot]'
+      - name: Load semver from PR title
+        id: semver
+        run: |
+          source scripts/load-semver-from-pr-title.sh "${{ github.event.pull_request.title }}"
+          echo "BUMP_TYPE=$BUMP_TYPE" >> "$GITHUB_OUTPUT"
+
+      - name: Print actor and bump type
+        run: |
+          echo "actor: '${{ github.actor }}'"
+          echo "bump type: '${{ steps.semver.outputs.BUMP_TYPE }}'"
+
+      - name: Auto-merge if actor is Dependabot and bump is minor or patch
+        if: >
+          github.actor == 'dependabot[bot]' &&
+          (steps.semver.outputs.BUMP_TYPE == 'minor' || steps.semver.outputs.BUMP_TYPE == 'patch')
         run: gh pr merge --auto --squash "$PR_URL"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

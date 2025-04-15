@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -7,22 +8,22 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-class Walkthrough {
+class Tutorial {
   TutorialCoachMark? _tutorialCoachMark;
 
-  Walkthrough();
+  Tutorial();
 
   static const backgroundColor = ColorTheme.primary50;
   static const backgroundOpacity = 0.8;
 
   void show(BuildContext context) {
-    // showing walkthrough delayed to avoid misplaced tooltips when new page is animated in from the side
+    // showing tutorial delayed to avoid misplaced tooltips when new page is animated in from the side
     Future.delayed(const Duration(milliseconds: 400), () {
       if (context.mounted) _tutorialCoachMark?.show(context: context);
     });
   }
 
-  // onSkip will cancel all walkthroughs
+  // onSkip will cancel all tutorials
   void create(List<TargetFocus> targets, Function() onFinish, BuildContext context) {
     _tutorialCoachMark = TutorialCoachMark(
       targets: targets,
@@ -104,7 +105,7 @@ class CustomTargetFocus {
             bottom: 0,
           ), // this covers the whole screen
           padding: EdgeInsets.zero,
-          child: ColoredBox(color: Walkthrough.backgroundColor.withValues(alpha: Walkthrough.backgroundOpacity)),
+          child: ColoredBox(color: Tutorial.backgroundColor.withValues(alpha: Tutorial.backgroundOpacity)),
         ),
       );
     }
@@ -141,12 +142,12 @@ class CustomTargetFocus {
               // NEXT
               CircleAvatar(
                 backgroundColor: ColorTheme.primary,
-                radius: TIOMusicParams.sizeBigButtons,
+                radius: 50,
                 child: TextButton(
                   onPressed: () {
                     controller.next();
                   },
-                  child: const Text('Next', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24)),
+                  child: Text(context.l10n.commonNext, style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24)),
                 ),
               ),
               const SizedBox(height: 10),
@@ -155,7 +156,7 @@ class CustomTargetFocus {
                 onPressed: () {
                   controller.skip();
                 },
-                child: const Text('Cancel', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 16)),
+                child: Text(context.l10n.commonCancel, style: TextStyle(color: ColorTheme.onPrimary, fontSize: 16)),
               ),
             ],
           );

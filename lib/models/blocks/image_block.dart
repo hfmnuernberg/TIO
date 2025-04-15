@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path/path.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -8,6 +8,7 @@ import 'package:tiomusic/util/util_functions.dart';
 part 'image_block.g.dart';
 
 // ignore_for_file: must_be_immutable // FIXME: fix these block issues
+// ignore_for_file: deprecated_member_use_from_same_package // FIXME: fix these block issues
 
 @JsonSerializable()
 class ImageBlock extends ProjectBlock {
@@ -67,16 +68,10 @@ class ImageBlock extends ProjectBlock {
   }
 
   @override
-  List<String> getSettingsFormatted() => [basename(_relativePath)];
+  List<String> getSettingsFormatted(AppLocalizations l10n) => [basename(_relativePath)];
 
-  factory ImageBlock.withDefaults() {
-    return ImageBlock(
-      ImageParams.displayName,
-      ProjectBlock.createNewId(),
-      null,
-      ImageParams.defaultPath,
-      DateTime.now(),
-    );
+  factory ImageBlock.withDefaults(AppLocalizations l10n) {
+    return ImageBlock(l10n.image, ProjectBlock.createNewId(), null, ImageParams.defaultPath, DateTime.now());
   }
 
   factory ImageBlock.withTitle(String title) {
@@ -98,5 +93,5 @@ class ImageBlock extends ProjectBlock {
   Map<String, dynamic> toJson() => _$ImageBlockToJson(this);
 
   @override
-  Icon get icon => blockTypeInfos[BlockType.image]!.icon;
+  get icon => ImageParams.icon;
 }

@@ -18,6 +18,7 @@ on:
 
 jobs:
   build-ios-app:
+    name: Build iOS App
     runs-on: macos-latest
     timeout-minutes: 20
     env:
@@ -32,11 +33,22 @@ jobs:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
 
+      - name: Setup Xcode
+        uses: maxim-lobanov/setup-xcode@v1.6.0
+        with:
+          xcode-version: 16.2.0
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Show available iOS SDKs
+        run: xcodebuild -showsdks
+
       - name: Setup flutter
         uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
 
       - name: Install key for fastlane repo
-        uses: webfactory/ssh-agent@v0.9.0
+        uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: |
             ${{ secrets.FASTLANE_GITHUB_DEPLOY_PRIVATE_KEY }}
@@ -66,7 +78,7 @@ jobs:
         run: scripts/app.sh generate:json
 
       - name: Setup ruby
-        uses: ruby/setup-ruby@v1.221.0
+        uses: ruby/setup-ruby@v1.230.0
         with:
           ruby-version: '3.3'
           working-directory: ios
@@ -85,8 +97,9 @@ jobs:
         run: scripts/app.sh build ios release
 
       - name: Save bundle
-        uses: actions/upload-artifact@v4.6.1
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: ${{ inputs.artifactName }}
           path: build/ios/ipa
           retention-days: 1
+          if-no-files-found: error

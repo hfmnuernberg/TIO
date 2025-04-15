@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/pages/metronome/beat_button.dart';
@@ -84,7 +85,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
         });
       });
 
-      Timer(Duration(milliseconds: event.millisecondsBeforeStart + MetronomeParams.blackScreenDurationMs), () {
+      Timer(Duration(milliseconds: event.millisecondsBeforeStart + MetronomeParams.flashDurationInMs), () {
         if (!mounted) return;
         setState(() {
           _activeBeatsModel.setBeatOnOff(false, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
@@ -131,7 +132,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
       onMainIconPressed: _onMetronomeToggleButtonClicked,
       mainIcon:
           _isStarted ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.metronomeBlock.icon,
-      parameterText: '${widget.metronomeBlock.bpm} bpm',
+      parameterText: '${widget.metronomeBlock.bpm} ${context.l10n.commonBpm}',
       centerView: _centerView(),
       textSpaceWidth: 60,
     );

@@ -58,6 +58,7 @@ For more information on this project check out the (german) [Homepage](https://w
 - [App Script – a helper script for regularly used commands](docs/app-script.md)
 - [Upgrade Flutter & Dart](docs/upgrade-flutter-dart.md)
 - [Upgrade Fastlane](docs/upgrade-fastlane.md)
+- [Upgrade iOS and Android SDKs](docs/upgrade-ios-android-sdks.md)
 - [Publish apps to app store](docs/publish-apps-to-app-stores.md)
 - [Unpublish apps from app stores](docs/unpublish-apps-from-app-stores.md)
 - [Troubleshooting](docs/troubleshooting.md)
