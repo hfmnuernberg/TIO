@@ -102,3 +102,4 @@ jobs:
           name: ${{ inputs.artifactName }}
           path: build/ios/ipa
           retention-days: 1
+          if-no-files-found: error

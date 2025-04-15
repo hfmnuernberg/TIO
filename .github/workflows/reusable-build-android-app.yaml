@@ -106,3 +106,4 @@ jobs:
           name: ${{ inputs.artifactName }}
           path: build/app/outputs/bundle/release
           retention-days: 1
+          if-no-files-found: error
