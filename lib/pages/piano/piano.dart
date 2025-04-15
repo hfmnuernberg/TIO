@@ -194,6 +194,7 @@ class _PianoState extends State<Piano> {
   }
 
   Widget _buildPianoMainPage(BuildContext context) {
+    final l10n = context.l10n;
     final islandWidth = MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width / 1.9);
 
     return SafeArea(
@@ -207,7 +208,7 @@ class _PianoState extends State<Piano> {
               IconButton(
                 onPressed: () async {
                   // if quick tool and values have been changed: ask for saving
-                  if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock, context.l10n)) {
+                  if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock, l10n)) {
                     final save = await askForSavingQuickTool(context);
 
                     // if user taps outside the dialog, we dont want to exit the quick tool and we dont want to save
@@ -235,7 +236,7 @@ class _PianoState extends State<Piano> {
                   onTap: () async {
                     final newTitle = await showEditTextDialog(
                       context: context,
-                      label: context.l10n.piano,
+                      label: l10n.piano,
                       value: _pianoBlock.title,
                     );
                     if (newTitle == null) return;
@@ -311,7 +312,7 @@ class _PianoState extends State<Piano> {
                         child: Container(
                           margin: EdgeInsets.only(right: TIOMusicParams.edgeInset),
                           child: Text(
-                            '$_concertPitch',
+                            l10n.formatInteger(_concertPitch),
                             textAlign: TextAlign.end,
                             style: const TextStyle(color: ColorTheme.onPrimary),
                           ),
@@ -371,10 +372,7 @@ class _PianoState extends State<Piano> {
                               _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
 
                               setState(
-                                () =>
-                                    _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(
-                                      context.l10n,
-                                    ),
+                                () => _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(l10n),
                               );
                             },
                             icon: const CircleAvatar(
@@ -663,7 +661,7 @@ class _PianoState extends State<Piano> {
     final l10n = context.l10n;
     final overlay = Overlay.of(context);
 
-    _newToolTitle.text = '${_pianoBlock.title} - ${context.l10n.toolTitleCopy}';
+    _newToolTitle.text = '${_pianoBlock.title} - ${l10n.toolTitleCopy}';
     _newToolTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newToolTitle.text.length);
 
     _entry = OverlayEntry(
@@ -724,7 +722,7 @@ class _PianoState extends State<Piano> {
     _newToolTitle.text = '${_pianoBlock.title} - ${l10n.toolTitleCopy}';
     _newToolTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newToolTitle.text.length);
 
-    _newProjectTitle.text = context.l10n.formatDateAndTime(DateTime.now());
+    _newProjectTitle.text = l10n.formatDateAndTime(DateTime.now());
     _newProjectTitle.selection = TextSelection(baseOffset: 0, extentOffset: _newProjectTitle.text.length);
 
     _entry = OverlayEntry(

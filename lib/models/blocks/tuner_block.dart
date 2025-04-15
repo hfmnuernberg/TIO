@@ -70,7 +70,7 @@ class TunerBlock extends ProjectBlock {
 
   @override
   List<String> getSettingsFormatted(AppLocalizations l10n) {
-    return ['${formatDoubleToString(_chamberNoteHz)} Hz'];
+    return ['${l10n.formatDecimal(_chamberNoteHz)} Hz'];
   }
 
   TunerBlock(String title, String id, String? islandToolID, double chamberNoteHz, DateTime timeLastModified) {

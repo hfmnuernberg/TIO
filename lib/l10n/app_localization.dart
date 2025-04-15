@@ -1,4 +1,8 @@
+import 'package:intl/intl.dart';
+
 abstract class AppLocalizations {
+  String get locale;
+
   String get appAboutDataProtection;
   String get appAboutDataProtectionExplanation;
   String get appAboutDeveloperOne;
@@ -236,6 +240,10 @@ abstract class AppLocalizations {
   String get tunerSetConcertPitch;
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
+
+  String formatInteger(double num) => NumberFormat.decimalPattern(locale).format(num);
+
+  String formatDecimal(double num) => NumberFormat.decimalPattern(locale).format(double.parse(num.toStringAsFixed(1)));
 
   String formatDateAndTime(DateTime time);
 

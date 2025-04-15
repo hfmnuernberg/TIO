@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 
 class German extends AppLocalizations {
+  String get locale => 'de';
+
   String get appAboutDataProtection => 'Datenschutz';
   String get appAboutDataProtectionExplanation =>
       'Wir erheben keine deiner Daten. Wir weisen darauf hin, dass deine Projekte ausschließlich lokal auf deinem Endgerät, also nicht in der App und auch nicht in einem Cloudservice o.ä. gespeichert werden. Falls du einzelne Inhalte aus der App heraus teilen möchtest, ist das über Drittanbieter-Dienste wie z.B. Messenger etc. möglich. Dabei gelten ausschließlich die Datenschutzbestimmungen der jeweils genutzten Drittanbieter-Dienste. Du bist selbst dafür verantwortlich, geltende Datenschutz- oder Copyright-Regelungen einzuhalten.';
