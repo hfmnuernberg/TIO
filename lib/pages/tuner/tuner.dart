@@ -252,7 +252,7 @@ class _TunerState extends State<Tuner> {
       settingTiles: [
         SettingsTile(
           title: l10n.tunerConcertPitch,
-          subtitle: '${l10n.formatNumber(_tunerBlock.chamberNoteHz)} Hz',
+          subtitle: '${l10n.formatInteger(_tunerBlock.chamberNoteHz)} Hz',
           leadingIcon: Icons.location_searching,
           settingPage: const SetConcertPitch(),
           block: _tunerBlock,
@@ -301,7 +301,7 @@ class _TunerState extends State<Tuner> {
     var centOffset = ((midi - midi.round()) * 100.0).round();
 
     setState(() {
-      _freqText.text = '${context.l10n.formatNumberAndRoundToOneDecimal(freq)} Hz';
+      _freqText.text = '${context.l10n.formatDecimal(freq)} Hz';
       _midiText.text = midi.toString();
       _midiNameText.text = midiToName(midi.round());
       _centOffsetText.text = '$centOffset Cent';

@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 
 class English extends AppLocalizations {
+  String get locale => 'en';
+
   String get appAboutDataProtection => 'Data protection';
   String get appAboutDataProtectionExplanation =>
       'We do not collect any of your data. Please note that your projects are only saved locally on your device, i.e. they are not saved in the app or in any cloud service or similar. If you decide to share individual content from within the app, this is possible via third-party services such as messenger etc. In such cases, only the data protection regulations of the third-party services used apply. You yourself are responsible for complying with applicable data protection or copyright regulations.';
@@ -261,10 +263,9 @@ class English extends AppLocalizations {
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner.';
 
-  String formatNumber(double num) => NumberFormat.decimalPattern('en').format(num);
+  String formatInteger(double num) => NumberFormat.decimalPattern(locale).format(num);
 
-  String formatNumberAndRoundToOneDecimal(double num) =>
-      NumberFormat.decimalPattern('en').format(double.parse(num.toStringAsFixed(1)));
+  String formatDecimal(double num) => NumberFormat.decimalPattern(locale).format(double.parse(num.toStringAsFixed(1)));
 
   String formatDateAndTime(DateTime time) => DateFormat('dd/MM/yyyy - HH:mm:ss').format(time);
 }

@@ -312,7 +312,7 @@ class _PianoState extends State<Piano> {
                         child: Container(
                           margin: EdgeInsets.only(right: TIOMusicParams.edgeInset),
                           child: Text(
-                            l10n.formatNumber(_concertPitch),
+                            l10n.formatInteger(_concertPitch),
                             textAlign: TextAlign.end,
                             style: const TextStyle(color: ColorTheme.onPrimary),
                           ),

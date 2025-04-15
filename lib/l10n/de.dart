@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 
 class German extends AppLocalizations {
+  String get locale => 'de';
+
   String get appAboutDataProtection => 'Datenschutz';
   String get appAboutDataProtectionExplanation =>
       'Wir erheben keine deiner Daten. Wir weisen darauf hin, dass deine Projekte ausschließlich lokal auf deinem Endgerät, also nicht in der App und auch nicht in einem Cloudservice o.ä. gespeichert werden. Falls du einzelne Inhalte aus der App heraus teilen möchtest, ist das über Drittanbieter-Dienste wie z.B. Messenger etc. möglich. Dabei gelten ausschließlich die Datenschutzbestimmungen der jeweils genutzten Drittanbieter-Dienste. Du bist selbst dafür verantwortlich, geltende Datenschutz- oder Copyright-Regelungen einzuhalten.';
@@ -263,10 +265,10 @@ class German extends AppLocalizations {
   String get tunerTutorialAdjust => 'Tippe hier, um den Kammerton anzupassen oder einen Referenzton abzuspielen.';
   String get tunerTutorialStartStop => 'Tippe hier, um das Stimmgerät zu starten und zu stoppen.';
 
-  String formatNumber(double num) => NumberFormat.decimalPattern('de').format(num);
+  String formatInteger(double num) => NumberFormat.decimalPattern(locale).format(num);
 
-  String formatNumberAndRoundToOneDecimal(double num) =>
-      NumberFormat.decimalPattern('de').format(double.parse(num.toStringAsFixed(1)));
+  String formatDecimal(double num) =>
+      NumberFormat.decimalPattern(locale).format(double.parse(num.toStringAsFixed(1)));
 
   String formatDateAndTime(DateTime time) => DateFormat('dd.MM.yyyy - HH:mm:ss').format(time);
 }

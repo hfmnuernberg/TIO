@@ -1,4 +1,6 @@
 abstract class AppLocalizations {
+  String get locale;
+
   String get appAboutDataProtection;
   String get appAboutDataProtectionExplanation;
   String get appAboutDeveloperOne;
@@ -233,9 +235,9 @@ abstract class AppLocalizations {
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
 
-  String formatNumber(double num);
+  String formatInteger(double num);
 
-  String formatNumberAndRoundToOneDecimal(double num);
+  String formatDecimal(double num);
 
   String formatDateAndTime(DateTime time);
 
