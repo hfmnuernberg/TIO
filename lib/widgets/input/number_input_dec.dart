@@ -67,6 +67,16 @@ class _NumberInputDecState extends State<NumberInputDec> {
   }
 
   @override
+  void didUpdateWidget(covariant NumberInputDec oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.value != widget.value) {
+      _valueController.text = _formatNumber(widget.value);
+    }
+  }
+
+
+  @override
   void dispose() {
     _decreaseTimer?.cancel();
     _increaseTimer?.cancel();

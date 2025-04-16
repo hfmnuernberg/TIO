@@ -380,7 +380,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
               _mediaPlayerBlock.volume = vol;
               mediaPlayerSetVolume(volume: vol);
             },
-            onUserChangedVolume: (vol) => mediaPlayerSetVolume(volume: vol),
+            onChange: (vol) => mediaPlayerSetVolume(volume: vol),
             onCancel: () => mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume),
           ),
           block: _mediaPlayerBlock,

@@ -7,21 +7,21 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/pages/parent_tool/volume.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/number_input_double_with_slider.dart';
+import 'package:tiomusic/widgets/input/number_input_and_slider_dec.dart';
 import 'package:volume_controller/volume_controller.dart';
 
 class SetVolume extends StatefulWidget {
+  final double initialValue;
   final Function(double) onConfirm;
-  final Function(double) onUserChangedVolume;
+  final Function(double) onChange;
   final Function() onCancel;
 
-  final double initialValue;
 
   const SetVolume({
     super.key,
     required this.initialValue,
     required this.onConfirm,
-    required this.onUserChangedVolume,
+    required this.onChange,
     required this.onCancel,
   });
 
@@ -30,43 +30,54 @@ class SetVolume extends StatefulWidget {
 }
 
 class _SetVolumeState extends State<SetVolume> {
-  VolumeLevel _deviceVolumeLevel = VolumeLevel.normal;
-  final TextEditingController _volumeController = TextEditingController();
+  late double value;
+  VolumeLevel deviceVolumeLevel = VolumeLevel.normal;
 
   @override
   void initState() {
     super.initState();
-
-    VolumeController.instance.addListener(handleVolumeChange);
-
-    _volumeController.text = widget.initialValue.toString();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _volumeController.addListener(_onUserChangedVolume);
-    });
+    VolumeController.instance.addListener(_handleDeviceVolumeChange);
+    value = widget.initialValue;
   }
 
   @override
   void dispose() {
     VolumeController.instance.removeListener();
-    _volumeController.removeListener(_onUserChangedVolume);
-    _volumeController.dispose();
     super.dispose();
   }
 
-  void handleVolumeChange(double newVolume) => setState(() => _deviceVolumeLevel = getVolumeLevel(newVolume));
+  void _handleChange(double newVolume) {
+    setState(() => value = newVolume);
+    widget.onChange(newVolume);
+  }
+
+  void _handleReset() => _handleChange(widget.initialValue);
+
+  void _handleConfirm() async {
+    widget.onConfirm(value);
+    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    Navigator.pop(context);
+  }
+
+  void _handleCancel() {
+    widget.onCancel();
+    Navigator.pop(context);
+  }
+
+  void _handleDeviceVolumeChange(double newVolume) => setState(() => deviceVolumeLevel = getVolumeLevel(newVolume));
 
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
       title: context.l10n.commonSetVolume,
-      numberInput: NumberInputDoubleWithSlider(
+      numberInput: NumberInputAndSliderDec(
+        value: value,
+        onChanged: _handleChange,
         max: 1,
         min: 0,
         defaultValue: widget.initialValue,
         step: 0.1,
         stepIntervalInMs: 200,
-        controller: _volumeController,
         textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
         label: context.l10n.commonVolume,
       ),
@@ -74,47 +85,20 @@ class _SetVolumeState extends State<SetVolume> {
         padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
         child: Row(
           children: [
-            Icon(getVolumeInfoIconData(_deviceVolumeLevel), color: ColorTheme.onSecondary),
+            Icon(getVolumeInfoIconData(deviceVolumeLevel), color: ColorTheme.onSecondary),
             const SizedBox(width: TIOMusicParams.edgeInset),
             Expanded(
               child: Text(
-                getVolumeInfoText(_deviceVolumeLevel, context.l10n),
+                getVolumeInfoText(deviceVolumeLevel, context.l10n),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: ColorTheme.onSecondary),
               ),
             ),
           ],
         ),
       ),
-      confirm: _onConfirm,
-      reset: _reset,
-      cancel: _onCancel,
+      confirm: _handleConfirm,
+      reset: _handleReset,
+      cancel: _handleCancel,
     );
-  }
-
-  void _onConfirm() async {
-    if (_volumeController.text != '') {
-      final newVolumeValue = double.parse(_volumeController.text);
-      widget.onConfirm(newVolumeValue.clamp(0.0, 1.0));
-
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-    }
-
-    Navigator.pop(context);
-  }
-
-  void _reset() {
-    _volumeController.value = _volumeController.value.copyWith(text: TIOMusicParams.defaultVolume.toString());
-  }
-
-  void _onCancel() {
-    widget.onCancel();
-    Navigator.pop(context);
-  }
-
-  void _onUserChangedVolume() async {
-    if (_volumeController.text != '') {
-      final newVolumeValue = double.parse(_volumeController.text);
-      widget.onUserChangedVolume(newVolumeValue.clamp(0.0, 1.0));
-    }
   }
 }

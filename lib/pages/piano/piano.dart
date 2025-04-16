@@ -352,7 +352,7 @@ class _PianoState extends State<Piano> {
                                     _pianoBlock.volume = vol;
                                     pianoSetVolume(volume: vol);
                                   },
-                                  onUserChangedVolume: (vol) => pianoSetVolume(volume: vol),
+                                  onChange: (vol) => pianoSetVolume(volume: vol),
                                   onCancel: () => pianoSetVolume(volume: _pianoBlock.volume),
                                 ),
                                 callbackOnReturn: (value) => setState(() {}),
