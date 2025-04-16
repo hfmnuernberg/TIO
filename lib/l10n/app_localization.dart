@@ -244,9 +244,9 @@ abstract class AppLocalizations {
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
 
-  String formatInteger(double num) => NumberFormat.decimalPattern(locale).format(num);
+  String formatNumber(double number) => NumberFormat.decimalPattern(locale).format(number);
 
-  String formatDecimal(double num) => NumberFormat.decimalPattern(locale).format(double.parse(num.toStringAsFixed(1)));
+  double parseNumber(String number) => NumberFormat.decimalPattern(locale).parse(number).toDouble();
 
   String formatDateAndTime(DateTime time);
 

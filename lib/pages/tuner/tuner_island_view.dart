@@ -96,7 +96,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     return ParentInnerIsland(
       onMainIconPressed: _startStop,
       mainIcon: _isRunning ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.tunerBlock.icon,
-      parameterText: '${context.l10n.formatInteger(widget.tunerBlock.chamberNoteHz)} Hz',
+      parameterText: '${context.l10n.formatNumber(widget.tunerBlock.chamberNoteHz)} Hz',
       centerView: _pitchIslandViewVisualizer,
       textSpaceWidth: 60,
     );
