@@ -23,14 +23,14 @@ class NumberInput extends StatelessWidget {
     this.min = 0,
     this.max = 100,
     this.defaultValue = 1,
-    this.step = 1,
-    this.stepIntervalInMs = 100,
-    this.label = '',
-    this.buttonRadius = 25,
-    this.buttonGap = 10,
-    this.textFieldWidth = 100,
-    this.textFontSize = 40,
-    this.relIconSize = 0.4,
+    this.step,
+    this.stepIntervalInMs,
+    this.label,
+    this.buttonRadius,
+    this.buttonGap,
+    this.textFieldWidth,
+    this.textFontSize,
+    this.relIconSize,
   });
 
   @override
