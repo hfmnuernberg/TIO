@@ -1,6 +1,6 @@
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/widgets/input/app_slider_int.dart';
-import 'package:tiomusic/widgets/input/number_input_int.dart';
+import 'package:tiomusic/widgets/input/number_input.dart';
 import 'package:flutter/material.dart';
 
 class NumberInputIntWithSlider extends StatefulWidget {
@@ -51,12 +51,13 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        NumberInputInt(
-          defaultValue: widget.defaultValue,
+        NumberInput(
+          value: int.parse(widget.controller.text),
+          onChanged: (value) => widget.controller.value = widget.controller.value.copyWith(text: value.toString()),
           max: widget.max,
           min: widget.min,
+          defaultValue: widget.defaultValue,
           step: widget.step,
-          controller: widget.controller,
           stepIntervalInMs: widget.stepIntervalInMs,
           label: widget.label,
           buttonRadius: widget.buttonRadius,
@@ -64,7 +65,6 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
           relIconSize: widget.relIconSize,
           textFieldWidth: widget.textFieldWidth,
           textFontSize: widget.textFontSize,
-          allowNegativeNumbers: widget.allowNegativeNumbers,
         ),
         Padding(
           padding: const EdgeInsets.only(top: 40),
