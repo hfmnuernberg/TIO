@@ -1,6 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -10,11 +13,9 @@ import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/blocks/text_block.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
-import 'package:tiomusic/models/file_references.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/image/image_page.dart';
 import 'package:tiomusic/pages/media_player/media_player.dart';
@@ -22,10 +23,10 @@ import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/text/text.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
+import 'package:tiomusic/services/file_references.dart';
+import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
 // ---------------------------------------------------------------
@@ -247,7 +248,7 @@ Future<bool?> askForSavingQuickTool(BuildContext context) => showDialog<bool>(
 // ---------------------------------------------------------------
 // show a dialog to tell the user that the file format is not supported
 
-Future<void> showFormatNotSupportedDialog(BuildContext context, String format) => showDialog<void>(
+Future<void> showFormatNotSupportedDialog(BuildContext context, String? format) => showDialog<void>(
   context: context,
   builder: (context) {
     final l10n = context.l10n;
@@ -255,7 +256,7 @@ Future<void> showFormatNotSupportedDialog(BuildContext context, String format) =
     return AlertDialog(
       title: Text(l10n.mediaPlayerErrorFileFormat, style: TextStyle(color: ColorTheme.primary)),
       content: Text(
-        l10n.mediaPlayerErrorFileFormatDescription(format),
+        l10n.mediaPlayerErrorFileFormatDescription(format ?? ''),
         style: const TextStyle(color: ColorTheme.primary),
       ),
       actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
@@ -282,7 +283,7 @@ Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) 
                 Container(
                   margin: const EdgeInsets.only(top: 8),
                   child: Text(
-                    '${context.l10n.mediaPlayerFile}: ${FileIO.getFileName(fileName)}',
+                    '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
                     style: const TextStyle(color: ColorTheme.primary),
                   ),
                 ),
@@ -312,7 +313,7 @@ Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName
                 Container(
                   margin: const EdgeInsets.only(top: 8),
                   child: Text(
-                    '${context.l10n.mediaPlayerFile}: ${FileIO.getFileName(fileName)}',
+                    '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
                     style: const TextStyle(color: ColorTheme.primary),
                   ),
                 ),
@@ -385,23 +386,23 @@ DateTime getCurrentDateTime() {
 // ---------------------------------------------------------------
 // save tool in existing project
 
-void saveToolInProject(
+Future<void> saveToolInProject(
   BuildContext context,
   int index,
   ProjectBlock tool,
   bool isQuickTool,
   String newTitle, {
   bool pianoAlreadyOn = false,
-}) {
+}) async {
   ProjectLibrary projectLibrary = context.read<ProjectLibrary>();
   ProjectBlock newBlock = projectLibrary.projects[index].copyTool(tool, newTitle);
 
   if (!isQuickTool) {
-    // only need to increase file reference on copy tool, not necessary on saving quick tool
-    updateFileReferenceForFileOfBlock(newBlock, IncreaseOrDecrease.increase, projectLibrary);
+    if (newBlock is ImageBlock) context.read<FileReferences>().inc(newBlock.relativePath);
+    if (newBlock is MediaPlayerBlock) context.read<FileReferences>().inc(newBlock.relativePath);
   }
 
-  FileIO.saveProjectLibraryToJson(projectLibrary);
+  await context.read<ProjectLibraryRepository>().save(projectLibrary);
 
   if (context.mounted) {
     // if we save a tool, that already belongs to a project
@@ -437,11 +438,11 @@ void saveToolInNewProject(
   ProjectBlock newBlock = newProject.copyTool(tool, toolTitle);
 
   if (!isQuickTool) {
-    // only need to increase file reference on copy tool, not necessary on saving quick tool
-    updateFileReferenceForFileOfBlock(newBlock, IncreaseOrDecrease.increase, projectLibrary);
+    if (newBlock is ImageBlock) context.read<FileReferences>().inc(newBlock.relativePath);
+    if (newBlock is MediaPlayerBlock) context.read<FileReferences>().inc(newBlock.relativePath);
   }
 
-  FileIO.saveProjectLibraryToJson(projectLibrary);
+  context.read<ProjectLibraryRepository>().save(projectLibrary);
 
   if (context.mounted) {
     // if we save a tool, that already belongs to a project
@@ -533,28 +534,6 @@ List<MetroBar> getRhythmAsMetroBar(List<RhythmGroup> rhythm) {
 }
 
 enum IncreaseOrDecrease { increase, decrease }
-
-void updateFileReferenceForFileOfBlock(
-  ProjectBlock block,
-  IncreaseOrDecrease increaseOrDecrease,
-  ProjectLibrary projectLibrary,
-) {
-  if (block is MediaPlayerBlock && block.relativePath != '') {
-    switch (increaseOrDecrease) {
-      case IncreaseOrDecrease.increase:
-        FileReferences.increaseFileReference(block.relativePath);
-      case IncreaseOrDecrease.decrease:
-        FileReferences.decreaseFileReference(block.relativePath, projectLibrary);
-    }
-  } else if (block is ImageBlock && block.relativePath != '') {
-    switch (increaseOrDecrease) {
-      case IncreaseOrDecrease.increase:
-        FileReferences.increaseFileReference(block.relativePath);
-      case IncreaseOrDecrease.decrease:
-        FileReferences.decreaseFileReference(block.relativePath, projectLibrary);
-    }
-  }
-}
 
 // compare block values to default values
 bool blockValuesSameAsDefaultBlock(ProjectBlock block, AppLocalizations l10n) {

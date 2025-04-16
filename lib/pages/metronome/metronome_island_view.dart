@@ -13,6 +13,7 @@ import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 
 class MetronomeIslandView extends StatefulWidget {
@@ -25,6 +26,8 @@ class MetronomeIslandView extends StatefulWidget {
 }
 
 class _MetronomeIslandViewState extends State<MetronomeIslandView> {
+  static final _logger = createPrefixLogger('MetronomeIslandView');
+
   bool _isStarted = false;
   late Timer _beatDetection;
 
@@ -111,7 +114,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
     });
     final success = await MetronomeFunctions.start();
     if (!success) {
-      debugPrint('failed to start metronome');
+      _logger.e('Unable to start metronome.');
       return;
     }
     _isStarted = true;

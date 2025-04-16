@@ -4,8 +4,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:tiomusic/models/project.dart';
-import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/util/util_functions.dart';
 
 part 'project_library.g.dart';
 
@@ -150,19 +148,11 @@ class ProjectLibrary extends ChangeNotifier {
   }
 
   void removeProject(Project project) {
-    for (ProjectBlock block in project.blocks) {
-      updateFileReferenceForFileOfBlock(block, IncreaseOrDecrease.decrease, this);
-    }
     _projects.remove(project);
     notifyListeners();
   }
 
   void clearProjects() {
-    for (Project project in _projects) {
-      for (ProjectBlock block in project.blocks) {
-        updateFileReferenceForFileOfBlock(block, IncreaseOrDecrease.decrease, this);
-      }
-    }
     _projects.clear();
     notifyListeners();
   }

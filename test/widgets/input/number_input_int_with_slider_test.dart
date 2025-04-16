@@ -1,7 +1,9 @@
-import '../../utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
+
+import '../../utils/action_utils.dart';
+import '../../utils/render_utils.dart';
 
 extension WidgetTesterPumpExtension on WidgetTester {
   Future<void> tapAtCenterAndSettle(FinderBase<Element> finder) async {

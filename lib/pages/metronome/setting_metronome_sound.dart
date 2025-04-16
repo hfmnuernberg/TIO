@@ -13,10 +13,9 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-
-import 'package:tiomusic/models/file_io.dart';
 
 enum SoundType { accented, unaccented, polyAccented, polyUnaccented }
 
@@ -190,7 +189,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
       _metronomeBlock.polyUnaccSound = MetronomeSound.values[_selectedPolyUnaccSound.indexOf(true)].filename;
     }
 
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    context.read<ProjectLibraryRepository>().save(context.read<ProjectLibrary>());
     MetronomeUtils.loadSounds(_metronomeBlock);
 
     Navigator.pop(context);

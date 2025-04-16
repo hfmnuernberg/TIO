@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:archive/archive_io.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
+import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
+import 'package:tiomusic/util/log.dart';
 
 const String mediaFolder = 'media';
 
@@ -19,50 +19,35 @@ String _sanitizeString(String value) =>
 
 String _getMediaFileName(String value) => value.substring('$mediaFolder/'.length);
 
-Future<File> _writeProjectToFile(Project project, File tmpProjectFile) async {
+Future<void> _writeProjectToFile(Project project, File tmpProjectFile) async {
   String jsonString = jsonEncode(project.toJson());
-  return tmpProjectFile.writeAsString(jsonString);
+  await tmpProjectFile.writeAsString(jsonString);
 }
 
-Future<File> _createTmpProjectFile(Project project) async {
-  final tmpDirectory = await getTemporaryDirectory();
-  final tmpProjectFile = File('${tmpDirectory.path}/tio-music-project.json');
-
-  return _writeProjectToFile(project, tmpProjectFile);
+Future<File> _createTmpProjectFile(FileSystem fs, Project project) async {
+  final tmpProjectFile = File('${fs.tmpFolderPath}/tio-music-project.json');
+  await _writeProjectToFile(project, tmpProjectFile);
+  return tmpProjectFile;
 }
 
-Future<File> _copyMediaToFile(String relativePath) async {
-  final directory = await getApplicationDocumentsDirectory();
-  final tmpDirectory = await getTemporaryDirectory();
-
-  final sourceFile = File('${directory.path}/$relativePath');
-  final destPath = '${tmpDirectory.path}/${_getMediaFileName(relativePath)}';
-
+Future<File> _copyMediaToFile(FileSystem fs, String relativePath) {
+  final sourceFile = File('${fs.appFolderPath}/$relativePath');
+  final destPath = '${fs.tmpFolderPath}/${_getMediaFileName(relativePath)}';
   return sourceFile.copy(destPath);
 }
 
-Future<List<File>> _createTmpImageFiles(Project project) async {
+Future<List<File>> _createTmpImageFiles(FileSystem fs, Project project) async {
   final imageFiles = await Future.wait(
-    project.blocks
-        .whereType<ImageBlock>()
-        .map((block) => block.relativePath)
-        .whereNot((relativePath) => relativePath == '')
-        .map(_copyMediaToFile),
+    project.blocks.whereType<ImageBlock>().map((block) => _copyMediaToFile(fs, block.relativePath)),
   );
-
   final mediaPlayerFiles = await Future.wait(
-    project.blocks
-        .whereType<MediaPlayerBlock>()
-        .map((block) => block.relativePath)
-        .whereNot((relativePath) => relativePath == '')
-        .map(_copyMediaToFile),
+    project.blocks.whereType<MediaPlayerBlock>().map((block) => _copyMediaToFile(fs, block.relativePath)),
   );
   return [...imageFiles, ...mediaPlayerFiles];
 }
 
-Future<File> _writeFilesToArchive(List<File> files, Project project) async {
-  final tmpDirectory = await getTemporaryDirectory();
-  final archivePath = '${tmpDirectory.path}/tio-music-${_sanitizeString(project.title)}.zip';
+Future<File> _writeFilesToArchive(FileSystem fs, List<File> files, Project project) async {
+  final archivePath = '${fs.tmpFolderPath}/tio-music-${_sanitizeString(project.title)}.zip';
 
   final archive = Archive();
 
@@ -82,12 +67,12 @@ Future<void> _deleteTmpFiles(List<File> files) async {
   await Future.wait(files.map<Future<FileSystemEntity>>((file) => file.delete()).toList());
 }
 
-Future<File> _archiveProject(Project project) async {
-  final projectFile = await _createTmpProjectFile(project);
-  final imageFiles = await _createTmpImageFiles(project);
+Future<File> _archiveProject(FileSystem fs, Project project) async {
+  final projectFile = await _createTmpProjectFile(fs, project);
+  final imageFiles = await _createTmpImageFiles(fs, project);
   final files = [projectFile, ...imageFiles];
 
-  final archive = await _writeFilesToArchive(files, project);
+  final archive = await _writeFilesToArchive(fs, files, project);
 
   _deleteTmpFiles(files);
 
@@ -95,19 +80,23 @@ Future<File> _archiveProject(Project project) async {
 }
 
 Future<void> exportProject(BuildContext context, Project project) async {
+  final fs = context.read<FileSystem>();
   try {
-    final archiveFile = await _archiveProject(project);
+    final archiveFile = await _archiveProject(fs, project);
 
-    final result = await Share.shareXFiles([XFile(archiveFile.path)]);
+    if (!context.mounted) return;
+    final success = await fs.shareFile(archiveFile.path);
     await archiveFile.delete();
 
-    if (result.status == ShareResultStatus.dismissed) {
+    if (!success) {
       if (context.mounted) showSnackbar(context: context, message: context.l10n.projectExportCancelled)();
       return;
     }
 
     if (context.mounted) showSnackbar(context: context, message: context.l10n.projectExportSuccess)();
-  } catch (_) {
+  } catch (e) {
+    final logger = createPrefixLogger('ExportProject');
+    logger.e('Unable to export project.', error: e);
     if (context.mounted) showSnackbar(context: context, message: context.l10n.projectExportError)();
   }
 }

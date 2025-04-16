@@ -197,14 +197,17 @@ class German extends AppLocalizations {
   String get pianoTutorialChangeKeyOrOctave =>
       'Tippe auf die Pfeile links oder rechts, um die Tastatur um eine Taste oder um eine Oktave nach oben oder unten zu verschieben.';
 
+  String get projectDelete => 'Project löschen';
   String get projectDeleteAllTools => 'Alle Tools löschen';
   String get projectDeleteAllToolsConfirmation => 'Möchtest du wirklich alle Tools in diesem Projekt löschen?';
   String get projectDeleteToolConfirmation => 'Möchtest du dieses Tool wirklich löschen?';
+  String get projectDetails => 'Projektdetails';
   String get projectEmpty => 'Wähle ein Tool.';
   String get projectExport => 'Projekt exportieren';
   String get projectExportCancelled => 'Projektexport abgebrochen';
   String get projectExportError => 'Fehler beim Exportieren des Projekts';
   String get projectExportSuccess => 'Projekt erfolgreich exportiert!';
+  String get projectMenu => 'Projektmenü';
   String get projectNew => 'Projekttitel';
   String get projectNewTool => 'Tool-Titel';
   String get projectTutorialEditTitle => 'Tippe hier, um den Projekttitel zu bearbeiten.';

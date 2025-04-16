@@ -175,14 +175,17 @@ abstract class AppLocalizations {
   String get pianoTutorialAdjust;
   String get pianoTutorialChangeKeyOrOctave;
 
+  String get projectDelete;
   String get projectDeleteAllTools;
   String get projectDeleteAllToolsConfirmation;
   String get projectDeleteToolConfirmation;
+  String get projectDetails;
   String get projectEmpty;
   String get projectExport;
   String get projectExportCancelled;
   String get projectExportError;
   String get projectExportSuccess;
+  String get projectMenu;
   String get projectNew;
   String get projectNewTool;
   String get projectTutorialEditTitle;
