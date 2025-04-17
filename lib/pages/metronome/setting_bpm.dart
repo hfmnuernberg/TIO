@@ -25,11 +25,8 @@ class _SetBPMState extends State<SetBPM> {
   @override
   void initState() {
     super.initState();
-
     _metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
-
     value = _metronomeBlock.bpm;
-
   }
 
   void _handleChange(int newBpm) {
