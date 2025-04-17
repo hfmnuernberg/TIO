@@ -9,8 +9,8 @@ import 'package:tiomusic/widgets/confirm_setting_button.dart';
 class NumberInputDec extends StatefulWidget {
   final double value;
   final Function(double) onChanged;
-  final double max;
   final double min;
+  final double max;
   final double defaultValue;
   final int decimalDigits;
   final double step;

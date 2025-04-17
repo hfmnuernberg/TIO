@@ -1,7 +1,5 @@
-import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:tiomusic/widgets/input/number_input_int.dart';
-import 'package:tiomusic/widgets/input/slider_int.dart';
+import 'package:tiomusic/widgets/input/number_input_and_slider_dec.dart';
 
 class NumberInputAndSliderInt extends StatelessWidget {
   final int value;
@@ -37,36 +35,20 @@ class NumberInputAndSliderInt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        NumberInputInt(
-          value: value,
-          onChanged: onChanged,
-          max: max,
-          min: min,
-          defaultValue: defaultValue,
-          step: step,
-          stepIntervalInMs: stepIntervalInMs,
-          label: label,
-          buttonRadius: buttonRadius,
-          buttonGap: buttonGap,
-          relIconSize: relIconSize,
-          textFieldWidth: textFieldWidth,
-          textFontSize: textFontSize,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 40),
-          child: SliderInt(
-            value: value,
-            onChanged: onChanged,
-            max: max,
-            min: min,
-            step: step,
-            semanticLabel: '$label ${context.l10n.commonSlider}',
-          ),
-        ),
-      ],
+    return NumberInputAndSliderDec(
+      value: value.toDouble(),
+      onChanged: (val) => onChanged(val.toInt()),
+      min: min?.toDouble(),
+      max: max?.toDouble(),
+      defaultValue: defaultValue?.toDouble(),
+      step: step?.toDouble(),
+      stepIntervalInMs: stepIntervalInMs,
+      label: label,
+      buttonRadius: buttonRadius,
+      buttonGap: buttonGap,
+      textFieldWidth: textFieldWidth,
+      textFontSize: textFontSize,
+      relIconSize: relIconSize,
     );
   }
 }

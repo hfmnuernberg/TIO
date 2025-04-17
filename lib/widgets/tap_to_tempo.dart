@@ -13,12 +13,7 @@ class Tap2Tempo extends StatefulWidget {
   final Function(int) onChanged;
   final bool enabled;
 
-  const Tap2Tempo({
-    super.key,
-    required this.value,
-    required this.onChanged,
-    this.enabled = true,
-  });
+  const Tap2Tempo({super.key, required this.value, required this.onChanged, this.enabled = true});
 
   @override
   State<Tap2Tempo> createState() => _Tap2TempoState();
