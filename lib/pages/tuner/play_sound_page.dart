@@ -11,10 +11,13 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
-import 'package:tiomusic/widgets/old_number_input_int_with_slider.dart';
+import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
 
 const double buttonWidth = 40;
 const double buttonPadding = 4;
+const defaultOctave = 4;
+const minOctave = 1;
+const maxOctave = 7;
 
 class PlaySoundPage extends StatefulWidget {
   const PlaySoundPage({super.key});
@@ -24,11 +27,9 @@ class PlaySoundPage extends StatefulWidget {
 }
 
 class _PlaySoundPageState extends State<PlaySoundPage> {
-  final TextEditingController _octaveController = TextEditingController(text: '4');
-  int _octave = 4;
-  double _frequency = 0;
-
   final ActiveReferenceSoundButton _buttonListener = ActiveReferenceSoundButton();
+  int _octave = defaultOctave;
+  double _frequency = 0;
   bool _running = false;
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
@@ -39,11 +40,23 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await TunerFunctions.stop();
-
-      _octaveController.addListener(_onOctaveChanged);
-
       _buttonListener.addListener(_onButtonsChanged);
     });
+  }
+
+  @override
+  void dispose() {
+    _buttonListener.removeListener(_onButtonsChanged);
+    audioInterruptionListener?.cancel();
+    TunerFunctions.stopGenerator();
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    audioInterruptionListener?.cancel();
+    TunerFunctions.stopGenerator();
   }
 
   List<Widget> _buildSoundButtons(List<int> midiNumbers, int startIdx, int offset) {
@@ -53,22 +66,6 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         idx: startIdx + index,
         buttonListener: _buttonListener,
       );
-    });
-  }
-
-  void _onOctaveChanged() {
-    final newOctave = int.tryParse(_octaveController.text) ?? 4;
-    double newFreq = _frequency;
-
-    if (newOctave > _octave) {
-      newFreq = _frequency * 2;
-    } else if (newOctave < _octave) {
-      newFreq = _frequency / 2;
-    }
-
-    setState(() {
-      _octave = newOctave;
-      _frequency = newFreq;
     });
   }
 
@@ -91,34 +88,22 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
       if (_running) {
         generatorNoteOn(newFreq: _buttonListener.freq);
-
-        setState(() {
-          _frequency = _buttonListener.freq;
-        });
+        setState(() => _frequency = _buttonListener.freq);
       }
     } else {
       generatorNoteOff();
-
-      setState(() {
-        _frequency = 0;
-      });
+      setState(() => _frequency = 0);
     }
   }
 
-  @override
-  void deactivate() {
-    super.deactivate();
-    audioInterruptionListener?.cancel();
-    TunerFunctions.stopGenerator();
-  }
+  void _handleChange(newOctave) {
+    if (newOctave > _octave) {
+      setState(() => _frequency = _frequency * 2);
+    } else if (newOctave < _octave) {
+      setState(() => _frequency = _frequency / 2);
+    }
 
-  @override
-  void dispose() {
-    _octaveController.dispose();
-    _buttonListener.removeListener(_onButtonsChanged);
-    audioInterruptionListener?.cancel();
-    TunerFunctions.stopGenerator();
-    super.dispose();
+    setState(() => _octave = newOctave);
   }
 
   @override
@@ -136,14 +121,15 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            OldNumberInputIntWithSlider(
-              max: 7,
-              min: 1,
-              defaultValue: _octave,
+            NumberInputAndSliderInt(
+              value: _octave,
+              onChanged: _handleChange,
+              min: minOctave,
+              max: maxOctave,
+              defaultValue: defaultOctave,
               step: 1,
-              controller: _octaveController,
-              textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
               label: context.l10n.commonOctave,
+              textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
             ),
             const SizedBox(height: 40),
 
