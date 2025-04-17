@@ -234,7 +234,11 @@ class German extends AppLocalizations {
   String get textAboutExplanation =>
       'Über dein Endgerät kannst du Notizen in Textform erstellen, z. B. für Spielanweisungen, Hintergrundinformationen, Songtexte etc.';
   String get textDescription => 'Schreibe deine Notizen auf.';
-  String get textImport => 'Importiere Text-Datei';
+  String get textImport => 'Text importieren';
+  String get textImportDialogConfirm => 'Importieren';
+  String get textImportDialogHint =>
+      'ACHTUNG: Wenn du einen Text importierst, wird der aktuelle Inhalt des Text-Tools überschrieben.';
+  String get textImportDialogTitle => 'Text importieren?';
   String get textImportError => 'Fehler beim Importieren der Text-Datei';
   String get textImportNoFileSelected => 'Keine Text-Datei ausgewählt';
   String get textImportSuccess => 'Text erfolgreich importiert!';
