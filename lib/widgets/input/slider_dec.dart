@@ -8,7 +8,7 @@ class SliderDec extends StatelessWidget {
   final double min;
   final double max;
   final double step;
-  final String? semanticLabel;
+  final String semanticLabel;
 
   const SliderDec({
     super.key,

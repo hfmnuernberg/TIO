@@ -16,7 +16,6 @@ class SetVolume extends StatefulWidget {
   final Function(double) onChange;
   final Function() onCancel;
 
-
   const SetVolume({
     super.key,
     required this.initialValue,

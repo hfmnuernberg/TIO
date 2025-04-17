@@ -75,7 +75,6 @@ class _NumberInputDecState extends State<NumberInputDec> {
     }
   }
 
-
   @override
   void dispose() {
     _decreaseTimer?.cancel();
