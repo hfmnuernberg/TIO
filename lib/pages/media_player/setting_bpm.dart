@@ -7,7 +7,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/widgets/old_number_input_int_with_slider.dart';
-import 'package:tiomusic/widgets/tap_to_tempo.dart';
+import 'package:tiomusic/widgets/old_tap_to_tempo.dart';
 
 const defaultBpm = 80;
 const minBpm = 10;
@@ -73,7 +73,7 @@ class _SetBPMState extends State<SetBPM> {
         textFieldWidth: 100,
         textFontSize: 32,
       ),
-      customWidget: Tap2Tempo(bpmHandle: _bpmController),
+      customWidget: OldTap2Tempo(bpmHandle: _bpmController),
     );
   }
 }

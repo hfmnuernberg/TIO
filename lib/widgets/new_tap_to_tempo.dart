@@ -9,10 +9,16 @@ const int cooldownInMs = 3000;
 const int lerpFrameLengthInMs = 50;
 
 class Tap2Tempo extends StatefulWidget {
-  final TextEditingController bpmHandle;
+  final int value;
+  final Function(int) onChanged;
   final bool enabled;
 
-  const Tap2Tempo({super.key, required this.bpmHandle, this.enabled = true});
+  const Tap2Tempo({
+    super.key,
+    required this.value,
+    required this.onChanged,
+    this.enabled = true,
+  });
 
   @override
   State<Tap2Tempo> createState() => _Tap2TempoState();
@@ -38,24 +44,24 @@ class _Tap2TempoState extends State<Tap2Tempo> {
     super.dispose();
   }
 
-  // Measure time between taps
-  void _tap2tempo() {
-    _time2 = DateTime.now();
-    _tap2tempoColorLerpTimer();
+  void _handleChange() {
     var bpm = _ms2BPM(_time2.difference(_time1).inMilliseconds);
+
     if (_firstTap) {
-      widget.bpmHandle.value = widget.bpmHandle.value.copyWith(
-        text: '',
-        selection: const TextSelection(baseOffset: 0, extentOffset: 0),
-      );
       _bpmList = List.empty(growable: true);
       _firstTap = false;
     } else {
       _bpmList.add(bpm);
-      widget.bpmHandle.value = widget.bpmHandle.value.copyWith(text: _bpmList.average.round().toString());
+      widget.onChanged(_bpmList.average.round());
     }
-    _time1 = _time2;
-    setState(() {});
+  }
+
+  // Measure time between taps
+  void _tap2tempo() {
+    _time2 = DateTime.now();
+    _tap2tempoColorLerpTimer();
+    _handleChange();
+    setState(() => _time1 = _time2);
   }
 
   // Update screen to lerp background color of the Tap2Tempo button

@@ -11,7 +11,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/old_app_slider_double.dart';
 import 'package:tiomusic/widgets/input/old_number_input_double.dart';
 import 'package:tiomusic/widgets/input/old_number_input_int.dart';
-import 'package:tiomusic/widgets/tap_to_tempo.dart';
+import 'package:tiomusic/widgets/old_tap_to_tempo.dart';
 
 const minSpeedFactor = 0.1;
 const maxSpeedFactor = 10.0;
@@ -138,7 +138,7 @@ class _SetSpeedState extends State<SetSpeed> {
           ),
 
           SizedBox(height: TIOMusicParams.edgeInset * 2),
-          Tap2Tempo(bpmHandle: bpmController),
+          OldTap2Tempo(bpmHandle: bpmController),
         ],
       ),
       cancel: _onCancel,
