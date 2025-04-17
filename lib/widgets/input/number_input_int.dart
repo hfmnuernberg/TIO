@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/widgets/input/number_input_dec.dart';
 
-class NumberInput extends StatelessWidget {
+class NumberInputInt extends StatelessWidget {
   final int value;
   final ValueChanged<int> onChanged;
   final int? min;
@@ -16,7 +16,7 @@ class NumberInput extends StatelessWidget {
   final double? textFontSize;
   final double? relIconSize;
 
-  const NumberInput({
+  const NumberInputInt({
     super.key,
     required this.value,
     required this.onChanged,
