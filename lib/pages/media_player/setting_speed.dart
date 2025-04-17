@@ -8,7 +8,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/input/app_slider_double.dart';
+import 'package:tiomusic/widgets/input/old_app_slider_double.dart';
 import 'package:tiomusic/widgets/input/old_number_input_double.dart';
 import 'package:tiomusic/widgets/input/old_number_input_int.dart';
 import 'package:tiomusic/widgets/tap_to_tempo.dart';
@@ -115,7 +115,7 @@ class _SetSpeedState extends State<SetSpeed> {
           ),
 
           SizedBox(height: TIOMusicParams.edgeInset * 2),
-          AppSliderDouble(
+          OldAppSliderDouble(
             min: minSpeedFactor,
             max: maxSpeedFactor,
             defaultValue: _mediaPlayerBlock.speedFactor,

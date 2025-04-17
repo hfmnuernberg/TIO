@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
-class AppSliderDouble extends StatefulWidget {
+class OldAppSliderDouble extends StatefulWidget {
   final double min;
   final double max;
   final double defaultValue;
@@ -9,7 +9,7 @@ class AppSliderDouble extends StatefulWidget {
   final TextEditingController controller;
   final String? semanticLabel;
 
-  const AppSliderDouble({
+  const OldAppSliderDouble({
     super.key,
     required this.min,
     required this.max,
@@ -20,10 +20,10 @@ class AppSliderDouble extends StatefulWidget {
   });
 
   @override
-  State<AppSliderDouble> createState() => _AppSliderDoubleState();
+  State<OldAppSliderDouble> createState() => _OldAppSliderDoubleState();
 }
 
-class _AppSliderDoubleState extends State<AppSliderDouble> {
+class _OldAppSliderDoubleState extends State<OldAppSliderDouble> {
   late int _sliderDivisions;
   late double _sliderValue;
 

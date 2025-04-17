@@ -1,7 +1,7 @@
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/widgets/input/app_slider_int.dart';
 import 'package:flutter/material.dart';
 import 'package:tiomusic/widgets/input/number_input_int.dart';
+import 'package:tiomusic/widgets/input/old_app_slider_int.dart';
 
 class NumberInputIntWithSlider extends StatefulWidget {
   final int min;
@@ -68,7 +68,7 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 40),
-          child: AppSliderInt(
+          child: OldAppSliderInt(
             semanticLabel: '${widget.label} ${context.l10n.commonSlider}',
             max: widget.max,
             min: widget.min,
