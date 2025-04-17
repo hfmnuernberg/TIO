@@ -10,7 +10,7 @@ import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/app_slider_double.dart';
 import 'package:tiomusic/widgets/input/number_input_double.dart';
-import 'package:tiomusic/widgets/input/number_input_int.dart';
+import 'package:tiomusic/widgets/input/number_input_int_old.dart';
 import 'package:tiomusic/widgets/tap_to_tempo.dart';
 
 const minSpeedFactor = 0.1;
@@ -125,7 +125,7 @@ class _SetSpeedState extends State<SetSpeed> {
           ),
 
           SizedBox(height: TIOMusicParams.edgeInset * 2),
-          NumberInputInt(
+          NumberInputIntOld(
             max: getBpmForSpeed(maxSpeedFactor, _mediaPlayerBlock.bpm),
             min: getBpmForSpeed(minSpeedFactor, _mediaPlayerBlock.bpm),
             defaultValue: _mediaPlayerBlock.bpm,
