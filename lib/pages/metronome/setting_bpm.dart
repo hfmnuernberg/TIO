@@ -9,7 +9,7 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
-import 'package:tiomusic/widgets/new_tap_to_tempo.dart';
+import 'package:tiomusic/widgets/tap_to_tempo.dart';
 
 class SetBPM extends StatefulWidget {
   const SetBPM({super.key});
@@ -71,7 +71,6 @@ class _SetBPMState extends State<SetBPM> {
         textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
         textFontSize: MetronomeParams.numInputTextFontSize,
       ),
-      // customWidget: Tap2Tempo(bpmHandle: _bpmController),
       customWidget: Tap2Tempo(value: value, onChanged: _handleChange),
     );
   }
