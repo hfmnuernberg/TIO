@@ -234,7 +234,8 @@ class English extends AppLocalizations {
   String get textDescription => 'Write down your notes.';
   String get textImport => 'Import text';
   String get textImportDialogConfirm => 'Import';
-  String get textImportDialogHint => 'ATTENTION: When importing a text, the current content of the text tool will be overwritten.';
+  String get textImportDialogHint =>
+      'ATTENTION: When importing a text, the current content of the text tool will be overwritten.';
   String get textImportDialogTitle => 'Import text?';
   String get textImportError => 'Error importing text file';
   String get textImportNoFileSelected => 'No text file selected';
