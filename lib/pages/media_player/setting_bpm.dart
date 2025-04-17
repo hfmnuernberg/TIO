@@ -6,7 +6,7 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
-import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
+import 'package:tiomusic/widgets/old_number_input_int_with_slider.dart';
 import 'package:tiomusic/widgets/tap_to_tempo.dart';
 
 const defaultBpm = 80;
@@ -62,7 +62,7 @@ class _SetBPMState extends State<SetBPM> {
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,
-      numberInput: NumberInputIntWithSlider(
+      numberInput: OldNumberInputIntWithSlider(
         max: maxBpm,
         min: minBpm,
         defaultValue: _mediaPlayerBlock.bpm,

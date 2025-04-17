@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,12 +7,11 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
-
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
-import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
+import 'package:tiomusic/widgets/old_number_input_int_with_slider.dart';
 
 const double buttonWidth = 40;
 const double buttonPadding = 4;
@@ -138,7 +136,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            NumberInputIntWithSlider(
+            OldNumberInputIntWithSlider(
               max: 7,
               min: 1,
               defaultValue: _octave,

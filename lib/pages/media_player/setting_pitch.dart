@@ -8,7 +8,7 @@ import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/number_input_double_with_slider.dart';
+import 'package:tiomusic/widgets/old_number_input_double_with_slider.dart';
 
 class SetPitch extends StatefulWidget {
   const SetPitch({super.key});
@@ -47,7 +47,7 @@ class _SetPitchState extends State<SetPitch> {
       title: context.l10n.mediaPlayerSetPitch,
       confirm: _onConfirm,
       reset: _reset,
-      numberInput: NumberInputDoubleWithSlider(
+      numberInput: OldNumberInputDoubleWithSlider(
         max: 24,
         min: -24,
         defaultValue: _mediaPlayerBlock.pitchSemitones,

@@ -1,7 +1,7 @@
 import '../../utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
+import 'package:tiomusic/widgets/old_number_input_int_with_slider.dart';
 
 extension WidgetTesterPumpExtension on WidgetTester {
   Future<void> tapAtCenterAndSettle(FinderBase<Element> finder) async {
@@ -40,7 +40,7 @@ class TestWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NumberInputIntWithSlider(
+    return OldNumberInputIntWithSlider(
       min: min,
       max: max,
       defaultValue: defaultValue,

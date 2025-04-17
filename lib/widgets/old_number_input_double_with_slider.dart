@@ -1,24 +1,24 @@
-import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:tiomusic/widgets/input/number_input_int.dart';
-import 'package:tiomusic/widgets/input/old_app_slider_int.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/widgets/input/number_input_dec.dart';
+import 'package:tiomusic/widgets/input/old_app_slider_double.dart';
 
-class NumberInputIntWithSlider extends StatefulWidget {
-  final int min;
-  final int max;
-  final int defaultValue;
-  final int step;
+class OldNumberInputDoubleWithSlider extends StatefulWidget {
+  final double min;
+  final double max;
+  final double defaultValue;
+  final double step;
   final String label;
   final TextEditingController controller;
   final int? stepIntervalInMs;
   final double? buttonRadius;
   final double? buttonGap;
-  final double? relIconSize;
   final double? textFieldWidth;
   final double? textFontSize;
+  final double? relIconSize;
   final bool? allowNegativeNumbers;
 
-  const NumberInputIntWithSlider({
+  const OldNumberInputDoubleWithSlider({
     super.key,
     required this.min,
     required this.max,
@@ -29,17 +29,17 @@ class NumberInputIntWithSlider extends StatefulWidget {
     this.stepIntervalInMs,
     this.buttonRadius,
     this.buttonGap,
-    this.relIconSize,
     this.textFieldWidth,
     this.textFontSize,
+    this.relIconSize,
     this.allowNegativeNumbers,
   });
 
   @override
-  State<NumberInputIntWithSlider> createState() => _NumberInputIntWithSliderState();
+  State<OldNumberInputDoubleWithSlider> createState() => _OldNumberInputDoubleWithSliderState();
 }
 
-class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
+class _OldNumberInputDoubleWithSliderState extends State<OldNumberInputDoubleWithSlider> {
   @override
   void initState() {
     super.initState();
@@ -51,8 +51,8 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        NumberInputInt(
-          value: int.parse(widget.controller.text),
+        NumberInputDec(
+          value: double.parse(widget.controller.text),
           onChanged: (value) => widget.controller.value = widget.controller.value.copyWith(text: value.toString()),
           max: widget.max,
           min: widget.min,
@@ -62,16 +62,16 @@ class _NumberInputIntWithSliderState extends State<NumberInputIntWithSlider> {
           label: widget.label,
           buttonRadius: widget.buttonRadius,
           buttonGap: widget.buttonGap,
-          relIconSize: widget.relIconSize,
           textFieldWidth: widget.textFieldWidth,
           textFontSize: widget.textFontSize,
+          relIconSize: widget.relIconSize,
         ),
         Padding(
           padding: const EdgeInsets.only(top: 40),
-          child: OldAppSliderInt(
+          child: OldAppSliderDouble(
             semanticLabel: '${widget.label} ${context.l10n.commonSlider}',
-            max: widget.max,
             min: widget.min,
+            max: widget.max,
             defaultValue: widget.defaultValue,
             step: widget.step,
             controller: widget.controller,
