@@ -40,9 +40,9 @@ class _SplashAppState extends State<SplashApp> {
 
       await fs.init();
       await mediaRepo.init();
+      await NoteHandler.createNoteBeatLengthMap();
       final ProjectLibrary projectLibrary = await _initProjectLibrary();
       await fileReferences.init(projectLibrary);
-      await NoteHandler.createNoteBeatLengthMap();
 
       return _returnLoadedData(projectLibrary, null);
     });

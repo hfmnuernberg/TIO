@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:archive/archive_io.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
@@ -38,10 +39,16 @@ Future<File> _copyMediaToFile(FileSystem fs, String relativePath) {
 
 Future<List<File>> _createTmpImageFiles(FileSystem fs, Project project) async {
   final imageFiles = await Future.wait(
-    project.blocks.whereType<ImageBlock>().map((block) => _copyMediaToFile(fs, block.relativePath)),
+    project.blocks
+        .whereType<ImageBlock>()
+        .whereNot((block) => block.relativePath.isEmpty)
+        .map((block) => _copyMediaToFile(fs, block.relativePath)),
   );
   final mediaPlayerFiles = await Future.wait(
-    project.blocks.whereType<MediaPlayerBlock>().map((block) => _copyMediaToFile(fs, block.relativePath)),
+    project.blocks
+        .whereType<MediaPlayerBlock>()
+        .whereNot((block) => block.relativePath.isEmpty)
+        .map((block) => _copyMediaToFile(fs, block.relativePath)),
   );
   return [...imageFiles, ...mediaPlayerFiles];
 }
