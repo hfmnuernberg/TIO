@@ -212,6 +212,9 @@ abstract class AppLocalizations {
   String get textAboutExplanation;
   String get textDescription;
   String get textImport;
+  String get textImportDialogConfirm;
+  String get textImportDialogHint;
+  String get textImportDialogTitle;
   String get textImportError;
   String get textImportNoFileSelected;
   String get textImportSuccess;
