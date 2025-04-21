@@ -35,147 +35,103 @@ class FileSystemLogDecorator implements FileSystem {
   }
 
   @override
-  Future<void> createFolder(String absoluteFolderPath) {
-    // TODO: implement createFolder
-    throw UnimplementedError();
+  Future<void> createFolder(String absoluteFolderPath) async {
+    _logger.t('createFolder($absoluteFolderPath)');
+    return _fs.createFolder(absoluteFolderPath);
   }
 
   @override
-  Future<void> deleteFile(String absoluteFilePath) {
-    // TODO: implement deleteFile
-    throw UnimplementedError();
+  Future<void> deleteFile(String absoluteFilePath) async {
+    _logger.t('deleteFile($absoluteFilePath)');
+    return _fs.deleteFile(absoluteFilePath);
   }
 
   @override
   bool existsFile(String absoluteFilePath) {
-    // TODO: implement existsFile
-    throw UnimplementedError();
+    final result = _fs.existsFile(absoluteFilePath);
+    _logger.t('existsFile($absoluteFilePath): $result');
+    return result;
   }
 
   @override
-  Future<bool> existsFileAfterGracePeriod(String absoluteFilePath) {
-    // TODO: implement existsFileAfterGracePeriod
-    throw UnimplementedError();
+  Future<bool> existsFileAfterGracePeriod(String absoluteFilePath) async {
+    final result = await _fs.existsFileAfterGracePeriod(absoluteFilePath);
+    _logger.t('existsFileAfterGracePeriod($absoluteFilePath): $result');
+    return result;
   }
 
   @override
-  Future<List<String>> listFiles(String absoluteFolderPath) {
-    // TODO: implement listFiles
-    throw UnimplementedError();
+  Future<List<String>> listFiles(String absoluteFolderPath) async {
+    final files = await _fs.listFiles(absoluteFolderPath);
+    _logger.t('listFiles($absoluteFolderPath): ${files.length} files');
+    return files;
   }
 
   @override
-  Future<List<int>> loadFileAsBytes(String absoluteFilePath) {
-    // TODO: implement loadFileAsBytes
-    throw UnimplementedError();
+  Future<List<int>> loadFileAsBytes(String absoluteFilePath) async {
+    final bytes = await _fs.loadFileAsBytes(absoluteFilePath);
+    _logger.t('loadFileAsBytes($absoluteFilePath): ${bytes.length} bytes');
+    return bytes;
   }
 
   @override
-  Future<String> loadFileAsString(String absoluteFilePath) {
-    // TODO: implement loadFileAsString
-    throw UnimplementedError();
+  Future<String> loadFileAsString(String absoluteFilePath) async {
+    final content = await _fs.loadFileAsString(absoluteFilePath);
+    _logger.t('loadFileAsString($absoluteFilePath): ${content.length} chars');
+    return content;
   }
 
   @override
-  Future<String?> pickAudio() {
-    // TODO: implement pickAudio
-    throw UnimplementedError();
+  Future<String?> pickAudio() async {
+    final path = await _fs.pickAudio();
+    _logger.t('pickAudio(): $path');
+    return path;
   }
 
   @override
-  Future<String?> pickImage() {
-    // TODO: implement pickImage
-    throw UnimplementedError();
+  Future<String?> pickImage() async {
+    final path = await _fs.pickImage();
+    _logger.t('pickImage(): $path');
+    return path;
   }
 
   @override
-  Future<void> saveFileAsBytes(String absoluteFilePath, List<int> data) {
-    // TODO: implement saveFileAsBytes
-    throw UnimplementedError();
+  Future<void> saveFileAsBytes(String absoluteFilePath, List<int> data) async {
+    _logger.t('saveFileAsBytes($absoluteFilePath, ${data.length} bytes)');
+    return _fs.saveFileAsBytes(absoluteFilePath, data);
   }
 
   @override
-  Future<void> saveFileAsString(String absoluteFilePath, String data) {
-    // TODO: implement saveFileAsString
-    throw UnimplementedError();
+  Future<void> saveFileAsString(String absoluteFilePath, String data) async {
+    _logger.t('saveFileAsString($absoluteFilePath, ${data.length} chars)');
+    return _fs.saveFileAsString(absoluteFilePath, data);
   }
 
   @override
-  Future<bool> shareFile(String absoluteFilePath) {
-    // TODO: implement shareFile
-    throw UnimplementedError();
+  Future<bool> shareFile(String absoluteFilePath) async {
+    final result = await _fs.shareFile(absoluteFilePath);
+    _logger.t('shareFile($absoluteFilePath): $result');
+    return result;
   }
 
   @override
   String toBasename(String filePath) {
-    // TODO: implement toBasename
-    throw UnimplementedError();
+    final basename = _fs.toBasename(filePath);
+    _logger.t('toBasename($filePath): $basename');
+    return basename;
   }
 
   @override
   String? toExtension(String filePath) {
-    // TODO: implement toExtension
-    throw UnimplementedError();
+    final ext = _fs.toExtension(filePath);
+    _logger.t('toExtension($filePath): $ext');
+    return ext;
   }
 
   @override
   String toFilename(String filePath) {
-    // TODO: implement toFilename
-    throw UnimplementedError();
+    final filename = _fs.toFilename(filePath);
+    _logger.t('toFilename($filePath): $filename');
+    return filename;
   }
-
-  // @override
-  // String toFilename(String filePath) => basename(filePath);
-  //
-  // @override
-  // String toBasename(String filePath) => basenameWithoutExtension(filePath);
-  //
-  // @override
-  // String? toExtension(String filePath) => filePath.isEmpty ? null : filePath.split('.').lastOrNull;
-  //
-  // @override
-  // bool existsFile(String absoluteFilePath) => File(absoluteFilePath).existsSync();
-  //
-  // @override
-  // Future<bool> existsFileAfterGracePeriod(String absoluteFilePath) async {
-  //   const maxAttempts = 5;
-  //   const waitTimeInMs = 100;
-  //   for (int attempts = 0; attempts < maxAttempts; attempts++) {
-  //     if (existsFile(absoluteFilePath)) return true;
-  //     await Future.delayed(const Duration(milliseconds: waitTimeInMs));
-  //   }
-  //   return false;
-  // }
-  //
-  // @override
-  // Future<List<String>> listFiles(String absoluteFolderPath) =>
-  //     Directory(absoluteFolderPath).list().map((event) => event.path).toList();
-  //
-  // @override
-  // Future<String> loadFileAsString(String absoluteFilePath) => File(absoluteFilePath).readAsString();
-  //
-  // @override
-  // Future<List<int>> loadFileAsBytes(String absoluteFilePath) => File(absoluteFilePath).readAsBytes();
-  //
-  // @override
-  // Future<void> saveFileAsString(String absoluteFilePath, String data) => File(absoluteFilePath).writeAsString(data);
-  //
-  // @override
-  // Future<void> saveFileAsBytes(String absoluteFilePath, List<int> data) => File(absoluteFilePath).writeAsBytes(data);
-  //
-  // @override
-  // Future<void> deleteFile(String absoluteFilePath) => File(absoluteFilePath).delete();
-  //
-  // @override
-  // Future<void> createFolder(String absoluteFolderPath) => Directory(absoluteFolderPath).create(recursive: true);
-  //
-  // @override
-  // Future<String?> pickAudio() async => (await _filePicker.pickFiles(type: fp.FileType.audio))?.files.single.path;
-  //
-  // @override
-  // Future<String?> pickImage() async => (await _imagePicker.pickImage())?.path;
-  //
-  // @override
-  // Future<bool> shareFile(String absoluteFilePath) async =>
-  //     (await _sharePlus.shareXFiles([XFile(absoluteFilePath)])).status != ShareResultStatus.success;
 }
