@@ -12,6 +12,7 @@ import 'package:tiomusic/services/impl/file_based_project_library_repository.dar
 import 'package:tiomusic/services/impl/file_picker_delegate.dart';
 import 'package:tiomusic/services/impl/file_references_impl.dart';
 import 'package:tiomusic/services/impl/file_system_impl.dart';
+import 'package:tiomusic/services/impl/file_system_log_decorator.dart';
 import 'package:tiomusic/services/impl/image_picker_delegate.dart';
 import 'package:tiomusic/services/impl/path_provider_delegate.dart';
 import 'package:tiomusic/services/impl/share_plus_delegate.dart';
@@ -43,12 +44,13 @@ List<SingleChildWidget> getProviders() {
   final imagePicker = ImagePickerDelegate();
 
   final fileSystem = FileSystemImpl(pathProvider, filePicker, imagePicker, sharePlus);
-  final projectLibraryRepo = FileBasedProjectLibraryRepository(fileSystem);
-  final mediaRepo = FileBasedMediaRepository(fileSystem);
+  final fileSystemWithLogging = FileSystemLogDecorator(fileSystem);
+  final projectLibraryRepo = FileBasedProjectLibraryRepository(fileSystemWithLogging);
+  final mediaRepo = FileBasedMediaRepository(fileSystemWithLogging);
   final fileReferences = FileReferencesImpl(mediaRepo);
 
   return [
-    Provider<FileSystem>(create: (_) => fileSystem),
+    Provider<FileSystem>(create: (_) => fileSystemWithLogging),
     Provider<ProjectLibraryRepository>(create: (_) => projectLibraryRepo),
     Provider<MediaRepository>(create: (_) => mediaRepo),
     Provider<FileReferences>(create: (_) => fileReferences),

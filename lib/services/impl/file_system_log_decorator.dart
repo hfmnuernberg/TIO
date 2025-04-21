@@ -15,69 +15,69 @@ class FileSystemLogDecorator implements FileSystem {
   }
 
   @override
-  late final String appFolderPath;
+  late final String appFolderPath = _fs.appFolderPath;
 
   @override
-  late final String tmpFolderPath;
+  late final String tmpFolderPath = _fs.tmpFolderPath;
 
   @override
   String toAbsoluteFilePath(String relativeFilePath) {
     final absoluteFilePath = _fs.toAbsoluteFilePath(relativeFilePath);
-    _logger.t('toAbsoluteFilePath($relativeFilePath): $absoluteFilePath');
+    _logger.t('toAbsoluteFilePath($relativeFilePath): ${_shortenPath(absoluteFilePath)}');
     return absoluteFilePath;
   }
 
   @override
   String toRelativeFilePath(String absoluteFilePath) {
-    final relativeFilePath = _fs.toAbsoluteFilePath(absoluteFilePath);
-    _logger.t('toRelativeFilePath($absoluteFilePath): $relativeFilePath');
+    final relativeFilePath = _fs.toRelativeFilePath(absoluteFilePath);
+    _logger.t('toRelativeFilePath(${_shortenPath(absoluteFilePath)}): $relativeFilePath');
     return relativeFilePath;
   }
 
   @override
   Future<void> createFolder(String absoluteFolderPath) async {
-    _logger.t('createFolder($absoluteFolderPath)');
+    _logger.t('createFolder(${_shortenPath(absoluteFolderPath)})');
     return _fs.createFolder(absoluteFolderPath);
   }
 
   @override
   Future<void> deleteFile(String absoluteFilePath) async {
-    _logger.t('deleteFile($absoluteFilePath)');
+    _logger.t('deleteFile(${_shortenPath(absoluteFilePath)})');
     return _fs.deleteFile(absoluteFilePath);
   }
 
   @override
   bool existsFile(String absoluteFilePath) {
     final result = _fs.existsFile(absoluteFilePath);
-    _logger.t('existsFile($absoluteFilePath): $result');
+    _logger.t('existsFile(${_shortenPath(absoluteFilePath)}): $result');
     return result;
   }
 
   @override
   Future<bool> existsFileAfterGracePeriod(String absoluteFilePath) async {
     final result = await _fs.existsFileAfterGracePeriod(absoluteFilePath);
-    _logger.t('existsFileAfterGracePeriod($absoluteFilePath): $result');
+    _logger.t('existsFileAfterGracePeriod(${_shortenPath(absoluteFilePath)}): $result');
     return result;
   }
 
   @override
   Future<List<String>> listFiles(String absoluteFolderPath) async {
     final files = await _fs.listFiles(absoluteFolderPath);
-    _logger.t('listFiles($absoluteFolderPath): ${files.length} files');
+    _logger.t('listFiles(${_shortenPath(absoluteFolderPath)}): ${files.length} files');
     return files;
   }
 
   @override
   Future<List<int>> loadFileAsBytes(String absoluteFilePath) async {
     final bytes = await _fs.loadFileAsBytes(absoluteFilePath);
-    _logger.t('loadFileAsBytes($absoluteFilePath): ${bytes.length} bytes');
+    _logger.t('loadFileAsBytes(${_shortenPath(absoluteFilePath)}): ${bytes.length} bytes');
     return bytes;
   }
 
   @override
   Future<String> loadFileAsString(String absoluteFilePath) async {
     final content = await _fs.loadFileAsString(absoluteFilePath);
-    _logger.t('loadFileAsString($absoluteFilePath): ${content.length} chars');
+    _logger.t('loadFileAsString(${_shortenPath(absoluteFilePath)}): ${content.length} chars');
     return content;
   }
 
@@ -97,20 +97,20 @@ class FileSystemLogDecorator implements FileSystem {
 
   @override
   Future<void> saveFileAsBytes(String absoluteFilePath, List<int> data) async {
-    _logger.t('saveFileAsBytes($absoluteFilePath, ${data.length} bytes)');
+    _logger.t('saveFileAsBytes(${_shortenPath(absoluteFilePath)}, ${data.length} bytes)');
     return _fs.saveFileAsBytes(absoluteFilePath, data);
   }
 
   @override
   Future<void> saveFileAsString(String absoluteFilePath, String data) async {
-    _logger.t('saveFileAsString($absoluteFilePath, ${data.length} chars)');
+    _logger.t('saveFileAsString(${_shortenPath(absoluteFilePath)}, ${data.length} chars)');
     return _fs.saveFileAsString(absoluteFilePath, data);
   }
 
   @override
   Future<bool> shareFile(String absoluteFilePath) async {
     final result = await _fs.shareFile(absoluteFilePath);
-    _logger.t('shareFile($absoluteFilePath): $result');
+    _logger.t('shareFile(${_shortenPath(absoluteFilePath)}): $result');
     return result;
   }
 
@@ -133,5 +133,12 @@ class FileSystemLogDecorator implements FileSystem {
     final filename = _fs.toFilename(filePath);
     _logger.t('toFilename($filePath): $filename');
     return filename;
+  }
+
+  String _shortenPath(String path, {int segmentCount = 1}) {
+    final parts = path.split('/');
+    if (parts.length <= segmentCount + 1) return path;
+    final shortened = parts.sublist(parts.length - (segmentCount + 1)).join('/');
+    return '.../$shortened';
   }
 }
