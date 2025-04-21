@@ -140,12 +140,6 @@ If not done automatically, manually exclude the following folders from the proje
 - Ensure that the device is connected to your machine, and the device is trusted.
 - run the following command from the app script or manually:
 
-### iOS
 ```shell
-app run ios
-```
-
-### Android
-```shell
-app run android
+app run
 ```
