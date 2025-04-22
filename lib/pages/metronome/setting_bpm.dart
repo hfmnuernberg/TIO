@@ -61,7 +61,6 @@ class _SetBPMState extends State<SetBPM> {
       title: context.l10n.metronomeSetBpm,
       numberInput: NumberInputAndSliderInt(
         value: bpm,
-        onChanged: _handleChange,
         max: MetronomeParams.maxBPM,
         min: MetronomeParams.minBPM,
         defaultValue: _metronomeBlock.bpm,
@@ -70,6 +69,7 @@ class _SetBPMState extends State<SetBPM> {
         buttonRadius: MetronomeParams.plusMinusButtonRadius,
         textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
         textFontSize: MetronomeParams.numInputTextFontSize,
+        onChanged: _handleChange,
       ),
       customWidget: Tap2Tempo(value: bpm, onChanged: _handleChange),
       confirm: _handleConfirm,
