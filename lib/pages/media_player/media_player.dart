@@ -756,7 +756,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       var newName = '$projectTitle-${_mediaPlayerBlock.title}';
 
       final samples = await mediaPlayerGetRecordingSamples();
-      final newRelativePath = await _mediaRepo.saveSamplesToWaveFile(samples: samples, basename: newName);
+      final newRelativePath = await _mediaRepo.saveSamplesToWaveFile(newName, samples);
 
       if (newRelativePath == null) {
         _logger.e('Unable to save recording.');
@@ -832,7 +832,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         final newName = '$projectTitle-${_mediaPlayerBlock.title}';
 
         final samples = await mediaPlayerGetRecordingSamples();
-        final newRelativePath = await _mediaRepo.saveSamplesToWaveFile(samples: samples, basename: newName);
+        final newRelativePath = await _mediaRepo.saveSamplesToWaveFile(newName, samples);
 
         if (newRelativePath == null) return;
 
