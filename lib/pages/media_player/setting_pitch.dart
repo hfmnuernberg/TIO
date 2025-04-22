@@ -43,16 +43,17 @@ class _SetPitchState extends State<SetPitch> {
     await _updatePitch(pitch);
   }
 
-  void _handleConfirm() async {
+  void _handleConfirm() {
     _mediaPlayerBlock.pitchSemitones = pitch;
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     Navigator.pop(context);
   }
 
-  void _handleReset() => _handleChange(MediaPlayerParams.defaultPitchSemitones);
+  Future<void> _handleReset() async => _handleChange(MediaPlayerParams.defaultPitchSemitones);
 
   void _handleCancel() async {
-    _handleChange(_mediaPlayerBlock.pitchSemitones);
+    await _handleChange(_mediaPlayerBlock.pitchSemitones);
+    if (!mounted) return;
     Navigator.pop(context);
   }
 
