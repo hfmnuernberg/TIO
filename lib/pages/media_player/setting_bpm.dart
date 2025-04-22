@@ -47,9 +47,6 @@ class _SetBPMState extends State<SetBPM> {
   Widget build(BuildContext context) {
     return ParentSettingPage(
       title: context.l10n.mediaPlayerSetBasicBeat,
-      confirm: _handleConfirm,
-      reset: _handleReset,
-      cancel: _handleCancel,
       numberInput: NumberInputAndSliderInt(
         value: value,
         onChanged: _handleChange,
@@ -63,6 +60,9 @@ class _SetBPMState extends State<SetBPM> {
         textFontSize: 32,
       ),
       customWidget: Tap2Tempo(value: value, onChanged: _handleChange),
+      confirm: _handleConfirm,
+      reset: _handleReset,
+      cancel: _handleCancel,
     );
   }
 }
