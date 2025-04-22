@@ -43,15 +43,15 @@ class _SetPitchState extends State<SetPitch> {
     await _updatePitch(pitch);
   }
 
+  Future<void> _handleReset() async => _handleChange(MediaPlayerParams.defaultPitchSemitones);
+
   void _handleConfirm() {
     _mediaPlayerBlock.pitchSemitones = pitch;
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     Navigator.pop(context);
   }
 
-  Future<void> _handleReset() async => _handleChange(MediaPlayerParams.defaultPitchSemitones);
-
-  void _handleCancel() async {
+  Future<void> _handleCancel() async {
     await _handleChange(_mediaPlayerBlock.pitchSemitones);
     if (!mounted) return;
     Navigator.pop(context);
@@ -63,8 +63,8 @@ class _SetPitchState extends State<SetPitch> {
       title: context.l10n.mediaPlayerSetPitch,
       numberInput: NumberInputAndSliderDec(
         value: pitch,
-        max: maxPitch,
         min: minPitch,
+        max: maxPitch,
         defaultValue: _mediaPlayerBlock.pitchSemitones,
         step: 0.1,
         stepIntervalInMs: 200,

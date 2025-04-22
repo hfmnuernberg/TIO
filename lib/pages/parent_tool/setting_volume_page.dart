@@ -10,6 +10,9 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_dec.dart';
 import 'package:volume_controller/volume_controller.dart';
 
+const maxVolume = 1.0;
+const minVolume = 0.0;
+
 class SetVolume extends StatefulWidget {
   final double initialValue;
   final Function(double) onConfirm;
@@ -29,14 +32,14 @@ class SetVolume extends StatefulWidget {
 }
 
 class _SetVolumeState extends State<SetVolume> {
-  late double value;
+  late double volume;
   VolumeLevel deviceVolumeLevel = VolumeLevel.normal;
 
   @override
   void initState() {
     super.initState();
     VolumeController.instance.addListener(_handleDeviceVolumeChange);
-    value = widget.initialValue;
+    volume = widget.initialValue;
   }
 
   @override
@@ -45,15 +48,17 @@ class _SetVolumeState extends State<SetVolume> {
     super.dispose();
   }
 
+  void _handleDeviceVolumeChange(double newVolume) => setState(() => deviceVolumeLevel = getVolumeLevel(newVolume));
+
   void _handleChange(double newVolume) {
-    setState(() => value = newVolume);
-    widget.onChange(newVolume);
+    setState(() => volume = newVolume.clamp(minVolume, maxVolume));
+    widget.onChange(volume);
   }
 
   void _handleReset() => _handleChange(widget.initialValue);
 
   void _handleConfirm() async {
-    widget.onConfirm(value);
+    widget.onConfirm(volume);
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     Navigator.pop(context);
   }
@@ -63,17 +68,15 @@ class _SetVolumeState extends State<SetVolume> {
     Navigator.pop(context);
   }
 
-  void _handleDeviceVolumeChange(double newVolume) => setState(() => deviceVolumeLevel = getVolumeLevel(newVolume));
-
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
       title: context.l10n.commonSetVolume,
       numberInput: NumberInputAndSliderDec(
-        value: value,
+        value: volume,
         onChanged: _handleChange,
-        max: 1,
-        min: 0,
+        min: minVolume,
+        max: maxVolume,
         defaultValue: widget.initialValue,
         step: 0.1,
         stepIntervalInMs: 200,

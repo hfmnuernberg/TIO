@@ -41,8 +41,6 @@ class _SetBPMState extends State<SetBPM> {
     Navigator.pop(context);
   }
 
-  void _handleCancel() => Navigator.pop(context);
-
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
@@ -62,7 +60,6 @@ class _SetBPMState extends State<SetBPM> {
       customWidget: Tap2Tempo(value: value, onChanged: _handleChange),
       confirm: _handleConfirm,
       reset: _handleReset,
-      cancel: _handleCancel,
     );
   }
 }

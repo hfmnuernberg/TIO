@@ -19,33 +19,39 @@ class SetBPM extends StatefulWidget {
 }
 
 class _SetBPMState extends State<SetBPM> {
-  late int value;
+  late int bpm;
   late MetronomeBlock _metronomeBlock;
 
   @override
   void initState() {
     super.initState();
     _metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
-    value = _metronomeBlock.bpm;
+    bpm = _metronomeBlock.bpm;
   }
 
-  void _handleChange(int newBpm) {
-    setState(() => value = newBpm);
-    if (newBpm >= MetronomeParams.minBPM && newBpm <= MetronomeParams.maxBPM) {
-      metronomeSetBpm(bpm: newBpm.toDouble());
+  Future<void> _updateBpm(newPitch) async {
+    final success = await metronomeSetBpm(bpm: bpm.toDouble());
+    if (!success) {
+      throw 'Setting bpm in rust failed using value: $bpm';
     }
   }
 
-  void _handleReset() => _handleChange(MetronomeParams.defaultBPM);
+  Future<void> _handleChange(int newBpm) async {
+    setState(() => bpm = newBpm.clamp(MetronomeParams.minBPM, MetronomeParams.maxBPM));
+    await _updateBpm(bpm);
+  }
 
-  void _handleConfirm() async {
-    _metronomeBlock.bpm = value;
+  Future<void> _handleReset() async => _handleChange(MetronomeParams.defaultBPM);
+
+  void _handleConfirm() {
+    _metronomeBlock.bpm = bpm;
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     Navigator.pop(context);
   }
 
-  void _handleCancel() {
-    metronomeSetBpm(bpm: _metronomeBlock.bpm.toDouble());
+  Future<void> _handleCancel() async {
+    await _handleChange(_metronomeBlock.bpm);
+    if (!mounted) return;
     Navigator.pop(context);
   }
 
@@ -54,7 +60,7 @@ class _SetBPMState extends State<SetBPM> {
     return ParentSettingPage(
       title: context.l10n.metronomeSetBpm,
       numberInput: NumberInputAndSliderInt(
-        value: value,
+        value: bpm,
         onChanged: _handleChange,
         max: MetronomeParams.maxBPM,
         min: MetronomeParams.minBPM,
@@ -65,7 +71,7 @@ class _SetBPMState extends State<SetBPM> {
         textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
         textFontSize: MetronomeParams.numInputTextFontSize,
       ),
-      customWidget: Tap2Tempo(value: value, onChanged: _handleChange),
+      customWidget: Tap2Tempo(value: bpm, onChanged: _handleChange),
       confirm: _handleConfirm,
       reset: _handleReset,
       cancel: _handleCancel,
