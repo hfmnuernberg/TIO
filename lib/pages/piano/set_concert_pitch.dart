@@ -7,8 +7,10 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/old_number_input_double_with_slider.dart';
+import 'package:tiomusic/widgets/input/number_input_and_slider_dec.dart';
 
+const maxConcertPitch = 600.0;
+const minConcertPitch = 200.0;
 const double defaultConcertPitch = 440;
 
 class SetConcertPitch extends StatefulWidget {
@@ -19,55 +21,44 @@ class SetConcertPitch extends StatefulWidget {
 }
 
 class _SetConcertPitchState extends State<SetConcertPitch> {
+  late double _concertPitch;
   late PianoBlock _pianoBlock;
-  final TextEditingController _pitchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
     _pianoBlock = Provider.of<ProjectBlock>(context, listen: false) as PianoBlock;
-
-    _pitchController.text = _pianoBlock.concertPitch.toString();
+    _concertPitch = _pianoBlock.concertPitch;
   }
 
-  @override
-  void dispose() {
-    _pitchController.dispose();
-    super.dispose();
+  void _handleChange(double newPitch) =>
+      setState(() => _concertPitch = newPitch.clamp(minConcertPitch, maxConcertPitch));
+
+  void _handleReset() => _handleChange(defaultConcertPitch);
+
+  void _handleConfirm() async {
+    _pianoBlock.concertPitch = _concertPitch;
+    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
       title: context.l10n.pianoSetConcertPitch,
-      numberInput: OldNumberInputDoubleWithSlider(
-        max: 600,
-        min: 200,
+      numberInput: NumberInputAndSliderDec(
+        value: _concertPitch,
+        max: maxConcertPitch,
+        min: minConcertPitch,
         defaultValue: _pianoBlock.concertPitch,
         step: 1,
         stepIntervalInMs: 200,
-        controller: _pitchController,
         label: context.l10n.pianoConcertPitchInHz,
         textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
+        onChanged: _handleChange,
       ),
-      confirm: _onConfirm,
-      reset: _reset,
+      confirm: _handleConfirm,
+      reset: _handleReset,
     );
-  }
-
-  void _onConfirm() async {
-    if (_pitchController.text != '') {
-      double newConcertPitch = double.parse(_pitchController.text);
-      _pianoBlock.concertPitch = newConcertPitch;
-
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-    }
-
-    Navigator.pop(context);
-  }
-
-  void _reset() {
-    _pitchController.value = _pitchController.value.copyWith(text: defaultConcertPitch.toString());
   }
 }
