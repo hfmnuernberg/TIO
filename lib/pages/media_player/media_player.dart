@@ -607,6 +607,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     final projectLibrary = context.read<ProjectLibrary>();
 
+    _fileReferences.dec(_mediaPlayerBlock.relativePath, projectLibrary);
+    _mediaPlayerBlock.relativePath = newRelativePath;
+    _fileReferences.inc(newRelativePath);
+
     await _projectLibraryRepo.save(projectLibrary);
 
     _fileLoaded = false;
