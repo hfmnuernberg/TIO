@@ -11,7 +11,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/number_input_dec.dart';
 import 'package:tiomusic/widgets/input/number_input_int.dart';
 import 'package:tiomusic/widgets/input/slider_dec.dart';
-import 'package:tiomusic/widgets/tap_to_tempo.dart';
+import 'package:tiomusic/widgets/input/tap_to_tempo.dart';
 
 const minSpeedFactor = 0.1;
 const maxSpeedFactor = 10.0;

@@ -7,7 +7,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
-import 'package:tiomusic/widgets/tap_to_tempo.dart';
+import 'package:tiomusic/widgets/input/tap_to_tempo.dart';
 
 const defaultBpm = 80;
 const minBpm = 10;
