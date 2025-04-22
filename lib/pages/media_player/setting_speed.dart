@@ -17,7 +17,8 @@ const minSpeedFactor = 0.1;
 const maxSpeedFactor = 10.0;
 const step = 0.1;
 
-double getSpeedForBpm(bpm, baseBpm) => (bpm / baseBpm).clamp(minSpeedFactor, maxSpeedFactor);
+double getSpeedForBpm(bpm, baseBpm) =>
+    ((bpm / baseBpm).clamp(minSpeedFactor, maxSpeedFactor) * 10).roundToDouble() / 10;
 
 int getBpmForSpeed(double speedFactor, int baseBpm) =>
     (speedFactor * baseBpm).clamp(minSpeedFactor * baseBpm, maxSpeedFactor * baseBpm).toInt();
@@ -30,7 +31,6 @@ class SetSpeed extends StatefulWidget {
 }
 
 class _SetSpeedState extends State<SetSpeed> {
-  late int bpm;
   late double speed;
   late MediaPlayerBlock _mediaPlayerBlock;
 
@@ -39,8 +39,6 @@ class _SetSpeedState extends State<SetSpeed> {
     super.initState();
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
-
-    bpm = _mediaPlayerBlock.bpm;
     speed = _mediaPlayerBlock.speedFactor;
   }
 
@@ -53,18 +51,12 @@ class _SetSpeedState extends State<SetSpeed> {
   }
 
   Future<void> _handleBpmChange(int newBpm) async {
-    setState(() {
-      bpm = newBpm;
-      speed = getSpeedForBpm(newBpm, _mediaPlayerBlock.bpm);
-    });
+    setState(() => speed = getSpeedForBpm(newBpm, _mediaPlayerBlock.bpm));
     await _updateSpeed(speed);
   }
 
   Future<void> _handleSpeedChange(double newSpeed) async {
-    setState(() {
-      speed = newSpeed;
-      bpm = getBpmForSpeed(newSpeed, _mediaPlayerBlock.bpm);
-    });
+    setState(() => speed = newSpeed);
     await _updateSpeed(speed);
   }
 
@@ -75,10 +67,7 @@ class _SetSpeedState extends State<SetSpeed> {
   }
 
   Future<void> _handleReset() async {
-    setState(() {
-      bpm = getBpmForSpeed(MediaPlayerParams.defaultSpeedFactor, _mediaPlayerBlock.bpm);
-      speed = MediaPlayerParams.defaultSpeedFactor;
-    });
+    setState(() => speed = MediaPlayerParams.defaultSpeedFactor);
     await _updateSpeed(_mediaPlayerBlock.speedFactor);
   }
 
@@ -125,7 +114,7 @@ class _SetSpeedState extends State<SetSpeed> {
 
           SizedBox(height: TIOMusicParams.edgeInset * 2),
           NumberInputInt(
-            value: bpm,
+            value: getBpmForSpeed(speed, _mediaPlayerBlock.bpm),
             onChanged: _handleBpmChange,
             min: getBpmForSpeed(minSpeedFactor, _mediaPlayerBlock.bpm),
             max: getBpmForSpeed(maxSpeedFactor, _mediaPlayerBlock.bpm),
@@ -138,7 +127,7 @@ class _SetSpeedState extends State<SetSpeed> {
           ),
 
           SizedBox(height: TIOMusicParams.edgeInset * 2),
-          Tap2Tempo(value: bpm, onChanged: _handleBpmChange)
+          Tap2Tempo(value: getBpmForSpeed(speed, _mediaPlayerBlock.bpm), onChanged: _handleBpmChange),
         ],
       ),
       confirm: _handleConfirm,
