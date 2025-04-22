@@ -37,7 +37,6 @@ class _SetSpeedState extends State<SetSpeed> {
   @override
   void initState() {
     super.initState();
-
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
     speed = _mediaPlayerBlock.speedFactor;
   }
@@ -56,23 +55,20 @@ class _SetSpeedState extends State<SetSpeed> {
   }
 
   Future<void> _handleSpeedChange(double newSpeed) async {
-    setState(() => speed = newSpeed);
+    setState(() => speed = newSpeed.clamp(minSpeedFactor, maxSpeedFactor));
     await _updateSpeed(speed);
   }
 
-  void _handleConfirm() async {
+  void _handleConfirm() {
     _mediaPlayerBlock.speedFactor = speed;
     FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     Navigator.pop(context);
   }
 
-  Future<void> _handleReset() async {
-    setState(() => speed = MediaPlayerParams.defaultSpeedFactor);
-    await _updateSpeed(_mediaPlayerBlock.speedFactor);
-  }
+  Future<void> _handleReset() async => _handleSpeedChange(MediaPlayerParams.defaultSpeedFactor);
 
-  void _handleCancel() async {
-    await _updateSpeed(_mediaPlayerBlock.speedFactor);
+  Future<void> _handleCancel() async {
+    await _handleSpeedChange(_mediaPlayerBlock.speedFactor);
     if (!mounted) return;
     Navigator.pop(context);
   }
