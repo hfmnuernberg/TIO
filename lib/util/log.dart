@@ -1,6 +1,6 @@
 import 'package:logger/logger.dart';
 
-const level = Level.trace;
+const level = Level.warning;
 
 final logger = Logger(level: level, printer: SimplePrinter(colors: false));
 
