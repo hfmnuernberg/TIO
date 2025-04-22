@@ -48,6 +48,7 @@ class NumberInputAndSliderDec extends StatelessWidget {
           min: min,
           max: max,
           defaultValue: defaultValue,
+          decimalDigits: decimalDigits,
           step: step,
           stepIntervalInMs: stepIntervalInMs,
           label: label,
