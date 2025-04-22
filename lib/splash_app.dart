@@ -10,6 +10,8 @@ import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/src/rust/api/simple.dart';
+import 'package:tiomusic/src/rust/frb_generated.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/color_schemes.g.dart';
 import 'package:tiomusic/util/log.dart';
@@ -38,6 +40,8 @@ class _SplashAppState extends State<SplashApp> {
       final mediaRepo = context.read<MediaRepository>();
       final fileReferences = context.read<FileReferences>();
 
+      await RustLib.init();
+      await initRustDefaultsManually();
       await fs.init();
       await mediaRepo.init();
       await NoteHandler.createNoteBeatLengthMap();

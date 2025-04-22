@@ -19,12 +19,8 @@ import 'package:tiomusic/services/impl/share_plus_delegate.dart';
 import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/services/project_library_repository.dart';
 import 'package:tiomusic/splash_app.dart';
-import 'package:tiomusic/src/rust/api/simple.dart';
-import 'package:tiomusic/src/rust/frb_generated.dart';
 
 Future<void> main() async {
-  await RustLib.init(); // TODO: consider moving this to SplashApp
-  await initRustDefaultsManually(); // TODO: consider moving this to SplashApp
   runApp(
     MultiProvider(
       providers: getProviders(),
