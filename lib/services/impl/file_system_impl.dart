@@ -88,5 +88,5 @@ class FileSystemImpl implements FileSystem {
 
   @override
   Future<bool> shareFile(String absoluteFilePath) async =>
-      (await _sharePlus.shareXFiles([XFile(absoluteFilePath)])).status != ShareResultStatus.success;
+      (await _sharePlus.shareXFiles([XFile(absoluteFilePath)])).status == ShareResultStatus.success;
 }
