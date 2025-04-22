@@ -59,6 +59,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
   var _fileLoaded = false;
   var _isLoading = false;
 
+  var _playbackPositionFactor = 0.0;
+
   Timer? _timerPollPlaybackPosition;
 
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
@@ -255,8 +257,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
   Future<void> _queryAndUpdateStateFromRust() async {
     var mediaPlayerStateRust = await mediaPlayerGetState();
     if (!mounted || mediaPlayerStateRust == null) return;
+    if (_isPlaying == mediaPlayerStateRust.playing && _playbackPositionFactor == mediaPlayerStateRust.playbackPositionFactor) return;
     setState(() {
       _isPlaying = mediaPlayerStateRust.playing;
+      _playbackPositionFactor = mediaPlayerStateRust.playbackPositionFactor;
       _waveformVisualizer = WaveformVisualizer(
         mediaPlayerStateRust.playbackPositionFactor,
         _mediaPlayerBlock.rangeStart,
