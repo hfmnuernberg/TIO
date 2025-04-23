@@ -140,6 +140,19 @@ void main() {
         expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20');
       });
 
+      testWidgets('changes input value to max when entering value higher than max twice', (tester) async {
+        await tester.renderWidget(TestWrapper(value: 10, max: 20, onChanged: (_) {}));
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '10');
+
+        await tester.enterTextAndSettle(find.bySemanticsLabel('Test input'), '30');
+        await tester.unfocusAndSettle();
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20');
+
+        await tester.enterTextAndSettle(find.bySemanticsLabel('Test input'), '30');
+        await tester.unfocusAndSettle();
+        expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20');
+      });
+
       testWidgets('changes input value to min when entering too low value', (tester) async {
         await tester.renderWidget(TestWrapper(value: 20, min: 10, onChanged: (_) {}));
         expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20');

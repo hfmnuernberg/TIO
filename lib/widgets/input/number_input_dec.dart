@@ -109,9 +109,8 @@ class _NumberInputDecState extends State<NumberInputDec> {
   void _endIncreaseTimer() => _increaseTimer?.cancel();
 
   void _updateValue(double value) {
-    if (value == widget.value) return;
     _valueController.text = _formatNumber(value);
-    widget.onChanged(value);
+    if (value != widget.value) widget.onChanged(value);
   }
 
   void _handleUpdate(String input) => _updateValue(_parseInput(input));
