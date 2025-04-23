@@ -148,7 +148,7 @@ class _NumberInputDecState extends State<NumberInputDec> {
                     controller: _valueController,
                     keyboardType: TextInputType.numberWithOptions(signed: widget.min < 0, decimal: true),
                     inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(RegExp('^-?\\d*[.,]?\\d*\$')),
+                      FilteringTextInputFormatter.allow(RegExp(r'^-?\d*[.,]?\d*$')),
                       DeleteLeadingZeros(),
                     ],
                     decoration: const InputDecoration(
