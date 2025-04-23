@@ -90,7 +90,7 @@ class German extends AppLocalizations {
   String get mediaPlayerEditMarkers => 'Marker bearbeiten';
   String get mediaPlayerErrorFileAccessible => 'Datei nicht lesbar';
   String get mediaPlayerErrorFileAccessibleDescription =>
-      'Die Datei ist nicht lesbar. Bitte überprüfe die Berechtigungen.';
+      'Die Datei konnte nicht geladen werden. Bitte überprüfe die App-Berechtigungen auf deinem Gerät. Möglicherweise muss die Datei zuerst heruntergeladen werden, wenn sie nicht lokal auf deinem Telefon vorhanden ist.';
   String get mediaPlayerErrorFileFormat => 'Dateiformat nicht unterstützt';
   String get mediaPlayerErrorFileOpen => 'Die Datei konnte nicht geöffnet werden';
   String get mediaPlayerErrorFileOpenDescription =>
