@@ -77,7 +77,6 @@ class _SetVolumeState extends State<SetVolume> {
         onChanged: _handleChange,
         min: minVolume,
         max: maxVolume,
-        defaultValue: widget.initialValue,
         step: 0.1,
         stepIntervalInMs: 200,
         textFieldWidth: TIOMusicParams.textFieldWidth2Digits,

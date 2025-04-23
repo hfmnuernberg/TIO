@@ -56,7 +56,6 @@ class _SetRandomMuteState extends State<SetRandomMute> {
         onChanged: _handleChange,
         max: 100,
         min: 0,
-        defaultValue: _metronomeBlock.randomMute,
         step: 1,
         label: context.l10n.metronomeRandomMuteProbability,
         buttonRadius: MetronomeParams.plusMinusButtonRadius,

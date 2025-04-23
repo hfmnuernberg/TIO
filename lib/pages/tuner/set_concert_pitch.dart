@@ -49,7 +49,6 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
         value: _concertPitch,
         min: minConcertPitch,
         max: maxConcertPitch,
-        defaultValue: TunerParams.defaultConcertPitch,
         step: 1,
         stepIntervalInMs: 200,
         label: context.l10n.tunerConcertPitchInHz,

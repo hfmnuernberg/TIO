@@ -63,7 +63,6 @@ class _SetBPMState extends State<SetBPM> {
         value: bpm,
         max: MetronomeParams.maxBPM,
         min: MetronomeParams.minBPM,
-        defaultValue: _metronomeBlock.bpm,
         step: 1,
         label: context.l10n.commonBpm,
         buttonRadius: MetronomeParams.plusMinusButtonRadius,

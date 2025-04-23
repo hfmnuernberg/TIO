@@ -126,7 +126,6 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
               onChanged: _handleChange,
               min: minOctave,
               max: maxOctave,
-              defaultValue: defaultOctave,
               step: 1,
               label: context.l10n.commonOctave,
               textFieldWidth: TIOMusicParams.textFieldWidth1Digit,

@@ -50,7 +50,6 @@ class _SetBPMState extends State<SetBPM> {
         onChanged: _handleChange,
         min: minBpm,
         max: maxBpm,
-        defaultValue: _mediaPlayerBlock.bpm,
         step: 1,
         label: context.l10n.mediaPlayerBasicBeat,
         buttonRadius: 20,

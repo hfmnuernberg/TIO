@@ -6,7 +6,6 @@ class NumberInputInt extends StatelessWidget {
   final ValueChanged<int> onChanged;
   final int? min;
   final int? max;
-  final int? defaultValue;
   final int? step;
   final int? stepIntervalInMs;
   final String? label;
@@ -22,7 +21,6 @@ class NumberInputInt extends StatelessWidget {
     required this.onChanged,
     this.min = 0,
     this.max = 100,
-    this.defaultValue = 1,
     this.step,
     this.stepIntervalInMs,
     this.label,
@@ -40,7 +38,6 @@ class NumberInputInt extends StatelessWidget {
       onChanged: (val) => onChanged(val.toInt()),
       min: min?.toDouble(),
       max: max?.toDouble(),
-      defaultValue: defaultValue?.toDouble(),
       step: step?.toDouble(),
       stepIntervalInMs: stepIntervalInMs,
       label: label,

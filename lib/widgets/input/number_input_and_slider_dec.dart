@@ -8,7 +8,6 @@ class NumberInputAndSliderDec extends StatelessWidget {
   final Function(double) onChanged;
   final double? max;
   final double? min;
-  final double? defaultValue;
   final int? decimalDigits;
   final double? step;
   final int? stepIntervalInMs;
@@ -25,7 +24,6 @@ class NumberInputAndSliderDec extends StatelessWidget {
     required this.onChanged,
     this.min,
     this.max,
-    this.defaultValue,
     this.decimalDigits,
     this.step,
     this.stepIntervalInMs,
@@ -47,7 +45,6 @@ class NumberInputAndSliderDec extends StatelessWidget {
           onChanged: onChanged,
           min: min,
           max: max,
-          defaultValue: defaultValue,
           decimalDigits: decimalDigits,
           step: step,
           stepIntervalInMs: stepIntervalInMs,

@@ -11,7 +11,6 @@ class NumberInputDec extends StatefulWidget {
   final Function(double) onChanged;
   final double min;
   final double max;
-  final double defaultValue;
   final int decimalDigits;
   final double step;
   final int stepIntervalInMs;
@@ -28,7 +27,6 @@ class NumberInputDec extends StatefulWidget {
     required this.onChanged,
     double? min,
     double? max,
-    double? defaultValue,
     int? decimalDigits,
     double? step,
     int? stepIntervalInMs,
@@ -40,7 +38,6 @@ class NumberInputDec extends StatefulWidget {
     double? relIconSize,
   }) : min = min ?? double.negativeInfinity,
        max = max ?? double.infinity,
-       defaultValue = defaultValue ?? 0,
        decimalDigits = decimalDigits ?? 1,
        step = step ?? 1,
        stepIntervalInMs = stepIntervalInMs ?? 100,

@@ -6,7 +6,6 @@ class NumberInputAndSliderInt extends StatelessWidget {
   final Function(int) onChanged;
   final int? min;
   final int? max;
-  final int? defaultValue;
   final int? step;
   final int? stepIntervalInMs;
   final String? label;
@@ -22,7 +21,6 @@ class NumberInputAndSliderInt extends StatelessWidget {
     required this.onChanged,
     this.min,
     this.max,
-    this.defaultValue,
     this.step,
     this.stepIntervalInMs,
     this.label,
@@ -40,7 +38,6 @@ class NumberInputAndSliderInt extends StatelessWidget {
       onChanged: (val) => onChanged(val.toInt()),
       min: min?.toDouble(),
       max: max?.toDouble(),
-      defaultValue: defaultValue?.toDouble(),
       step: step?.toDouble(),
       stepIntervalInMs: stepIntervalInMs,
       label: label,

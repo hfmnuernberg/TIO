@@ -50,7 +50,6 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
         value: _concertPitch,
         max: maxConcertPitch,
         min: minConcertPitch,
-        defaultValue: _pianoBlock.concertPitch,
         step: 1,
         stepIntervalInMs: 200,
         label: context.l10n.pianoConcertPitchInHz,

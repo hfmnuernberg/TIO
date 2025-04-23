@@ -65,7 +65,6 @@ class _SetPitchState extends State<SetPitch> {
         value: pitch,
         min: minPitch,
         max: maxPitch,
-        defaultValue: _mediaPlayerBlock.pitchSemitones,
         step: 0.1,
         stepIntervalInMs: 200,
         label: context.l10n.mediaPlayerSemitonesLabel,
