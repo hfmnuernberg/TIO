@@ -8,8 +8,8 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
-import 'package:tiomusic/widgets/tap_to_tempo.dart';
+import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
+import 'package:tiomusic/widgets/input/tap_to_tempo.dart';
 
 class SetBPM extends StatefulWidget {
   const SetBPM({super.key});
@@ -19,79 +19,61 @@ class SetBPM extends StatefulWidget {
 }
 
 class _SetBPMState extends State<SetBPM> {
+  late int bpm;
   late MetronomeBlock _metronomeBlock;
-  final TextEditingController _bpmController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
     _metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
-
-    _bpmController.text = _metronomeBlock.bpm.toString();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _bpmController.addListener(_onUserChangedBpm);
-    });
+    bpm = _metronomeBlock.bpm;
   }
 
-  @override
-  void dispose() {
-    _bpmController.removeListener(_onUserChangedBpm);
-    _bpmController.dispose();
-    super.dispose();
-  }
-
-  void _onConfirm() async {
-    if (_bpmController.text != '') {
-      int newBpm = int.parse(_bpmController.text);
-      if (newBpm >= MetronomeParams.minBPM && newBpm <= MetronomeParams.maxBPM) {
-        metronomeSetBpm(bpm: newBpm.toDouble());
-      }
-      _metronomeBlock.bpm = newBpm;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+  Future<void> _updateBpm(newPitch) async {
+    final success = await metronomeSetBpm(bpm: bpm.toDouble());
+    if (!success) {
+      throw 'Setting bpm in rust failed using value: $bpm';
     }
+  }
 
+  Future<void> _handleChange(int newBpm) async {
+    setState(() => bpm = newBpm.clamp(MetronomeParams.minBPM, MetronomeParams.maxBPM));
+    await _updateBpm(bpm);
+  }
+
+  Future<void> _handleReset() async => _handleChange(MetronomeParams.defaultBPM);
+
+  void _handleConfirm() {
+    _metronomeBlock.bpm = bpm;
+    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
     Navigator.pop(context);
   }
 
-  void _reset() {
-    _bpmController.text = MetronomeParams.defaultBPM.toString();
-  }
-
-  void _onCancel() {
-    metronomeSetBpm(bpm: _metronomeBlock.bpm.toDouble());
+  Future<void> _handleCancel() async {
+    await _handleChange(_metronomeBlock.bpm);
+    if (!mounted) return;
     Navigator.pop(context);
-  }
-
-  void _onUserChangedBpm() async {
-    if (_bpmController.text != '') {
-      int newBpm = int.parse(_bpmController.text);
-      if (newBpm >= MetronomeParams.minBPM && newBpm <= MetronomeParams.maxBPM) {
-        metronomeSetBpm(bpm: newBpm.toDouble());
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
       title: context.l10n.metronomeSetBpm,
-      confirm: _onConfirm,
-      reset: _reset,
-      cancel: _onCancel,
-      numberInput: NumberInputIntWithSlider(
+      numberInput: NumberInputAndSliderInt(
+        value: bpm,
         max: MetronomeParams.maxBPM,
         min: MetronomeParams.minBPM,
-        defaultValue: _metronomeBlock.bpm,
         step: 1,
-        controller: _bpmController,
         label: context.l10n.commonBpm,
         buttonRadius: MetronomeParams.plusMinusButtonRadius,
         textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
         textFontSize: MetronomeParams.numInputTextFontSize,
+        onChange: _handleChange,
       ),
-      customWidget: Tap2Tempo(bpmHandle: _bpmController),
+      customWidget: Tap2Tempo(value: bpm, onChange: _handleChange),
+      confirm: _handleConfirm,
+      reset: _handleReset,
+      cancel: _handleCancel,
     );
   }
 }
