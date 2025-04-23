@@ -41,10 +41,7 @@ class _TestWrapperState extends State<TestWrapper> {
     value = widget.value;
   }
 
-  void onChanged(int newValue) => {
-    setState(() => value = newValue),
-    widget.onChanged(newValue),
-  };
+  void onChanged(int newValue) => {setState(() => value = newValue), widget.onChanged(newValue)};
 
   @override
   Widget build(BuildContext context) {

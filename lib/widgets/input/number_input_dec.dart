@@ -95,9 +95,10 @@ class _NumberInputDecState extends State<NumberInputDec> {
     return _parseNumber(input).clamp(widget.min, widget.max);
   }
 
-  void _decreaseValue() => _updateValue((_parseInput(_valueController.text) - widget.step).clamp(widget.min, widget.max));
-  void _increaseValue() => _updateValue((_parseInput(_valueController.text) + widget.step).clamp(widget.min, widget.max));
-
+  void _decreaseValue() =>
+      _updateValue((_parseInput(_valueController.text) - widget.step).clamp(widget.min, widget.max));
+  void _increaseValue() =>
+      _updateValue((_parseInput(_valueController.text) + widget.step).clamp(widget.min, widget.max));
 
   void _startDecreaseTimer() =>
       _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.stepIntervalInMs), (_) => _decreaseValue());

@@ -53,10 +53,7 @@ class _TestWrapperState extends State<TestWrapper> {
     value = widget.value;
   }
 
-  void onChanged(double newValue) => {
-    setState(() => value = newValue),
-    widget.onChanged(newValue),
-  };
+  void onChanged(double newValue) => {setState(() => value = newValue), widget.onChanged(newValue)};
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +104,7 @@ void main() {
       });
 
       testWidgets('decreases input value based on given step when tapping minus button', (tester) async {
-        await tester.renderWidget(TestWrapper(value: 10.5, step: 2, onChanged: (_) {},));
+        await tester.renderWidget(TestWrapper(value: 10.5, step: 2, onChanged: (_) {}));
         expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '10.5');
 
         await tester.tapAndSettle(find.bySemanticsLabel('Minus button'));
@@ -123,7 +120,6 @@ void main() {
 
         expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '1');
       });
-
 
       testWidgets('changes input value when entering new value', (tester) async {
         await tester.renderWidget(TestWrapper(value: 10, onChanged: (_) {}));
