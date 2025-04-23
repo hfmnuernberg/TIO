@@ -3,7 +3,7 @@ import 'package:tiomusic/widgets/input/slider_dec.dart';
 
 class SliderInt extends StatelessWidget {
   final int value;
-  final Function(int) onChanged;
+  final Function(int) onChange;
   final int? min;
   final int? max;
   final int? step;
@@ -12,7 +12,7 @@ class SliderInt extends StatelessWidget {
   const SliderInt({
     super.key,
     required this.value,
-    required this.onChanged,
+    required this.onChange,
     this.min = 0,
     this.max = 100,
     this.step,
@@ -27,7 +27,7 @@ class SliderInt extends StatelessWidget {
       max: max?.toDouble(),
       step: step?.toDouble(),
       semanticLabel: semanticLabel,
-      onChanged: (val) => onChanged(val.round()),
+      onChange: (val) => onChange(val.round()),
     );
   }
 }

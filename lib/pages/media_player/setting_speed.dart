@@ -86,7 +86,7 @@ class _SetSpeedState extends State<SetSpeed> {
           SizedBox(height: TIOMusicParams.edgeInset),
           NumberInputDec(
             value: speed,
-            onChanged: _handleSpeedChange,
+            onChange: _handleSpeedChange,
             min: minSpeedFactor,
             max: maxSpeedFactor,
             step: step,
@@ -100,7 +100,7 @@ class _SetSpeedState extends State<SetSpeed> {
           SizedBox(height: TIOMusicParams.edgeInset * 2),
           SliderDec(
             value: speed,
-            onChanged: _handleSpeedChange,
+            onChange: _handleSpeedChange,
             min: minSpeedFactor,
             max: maxSpeedFactor,
             step: step,
@@ -110,7 +110,7 @@ class _SetSpeedState extends State<SetSpeed> {
           SizedBox(height: TIOMusicParams.edgeInset * 2),
           NumberInputInt(
             value: getBpmForSpeed(speed, _mediaPlayerBlock.bpm),
-            onChanged: _handleBpmChange,
+            onChange: _handleBpmChange,
             min: getBpmForSpeed(minSpeedFactor, _mediaPlayerBlock.bpm),
             max: getBpmForSpeed(maxSpeedFactor, _mediaPlayerBlock.bpm),
             step: getBpmForSpeed(step, _mediaPlayerBlock.bpm),
@@ -121,7 +121,7 @@ class _SetSpeedState extends State<SetSpeed> {
           ),
 
           SizedBox(height: TIOMusicParams.edgeInset * 2),
-          Tap2Tempo(value: getBpmForSpeed(speed, _mediaPlayerBlock.bpm), onChanged: _handleBpmChange),
+          Tap2Tempo(value: getBpmForSpeed(speed, _mediaPlayerBlock.bpm), onChange: _handleBpmChange),
         ],
       ),
       confirm: _handleConfirm,

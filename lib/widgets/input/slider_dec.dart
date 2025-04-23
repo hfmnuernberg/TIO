@@ -4,7 +4,7 @@ import 'package:tiomusic/util/color_constants.dart';
 
 class SliderDec extends StatelessWidget {
   final double value;
-  final Function(double) onChanged;
+  final Function(double) onChange;
   final double min;
   final double max;
   final double step;
@@ -13,7 +13,7 @@ class SliderDec extends StatelessWidget {
   const SliderDec({
     super.key,
     required this.value,
-    required this.onChanged,
+    required this.onChange,
     double? min,
     double? max,
     double? step,
@@ -35,7 +35,7 @@ class SliderDec extends StatelessWidget {
         max: max,
         divisions: (max - min) ~/ step,
         label: context.l10n.formatNumber(value),
-        onChanged: onChanged,
+        onChanged: onChange,
       ),
     );
   }

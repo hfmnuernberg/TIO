@@ -74,7 +74,7 @@ class _SetVolumeState extends State<SetVolume> {
       title: context.l10n.commonSetVolume,
       numberInput: NumberInputAndSliderDec(
         value: volume,
-        onChanged: _handleChange,
+        onChange: _handleChange,
         min: minVolume,
         max: maxVolume,
         step: 0.1,

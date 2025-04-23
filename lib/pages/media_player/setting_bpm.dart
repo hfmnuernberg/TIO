@@ -47,7 +47,7 @@ class _SetBPMState extends State<SetBPM> {
       title: context.l10n.mediaPlayerSetBasicBeat,
       numberInput: NumberInputAndSliderInt(
         value: value,
-        onChanged: _handleChange,
+        onChange: _handleChange,
         min: minBpm,
         max: maxBpm,
         step: 1,
@@ -56,7 +56,7 @@ class _SetBPMState extends State<SetBPM> {
         textFieldWidth: 100,
         textFontSize: 32,
       ),
-      customWidget: Tap2Tempo(value: value, onChanged: _handleChange),
+      customWidget: Tap2Tempo(value: value, onChange: _handleChange),
       confirm: _handleConfirm,
       reset: _handleReset,
     );

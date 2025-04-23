@@ -123,7 +123,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
           children: [
             NumberInputAndSliderInt(
               value: _octave,
-              onChanged: _handleChange,
+              onChange: _handleChange,
               min: minOctave,
               max: maxOctave,
               step: 1,

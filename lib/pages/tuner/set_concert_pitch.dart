@@ -53,7 +53,7 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
         stepIntervalInMs: 200,
         label: context.l10n.tunerConcertPitchInHz,
         textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
-        onChanged: _handleChange,
+        onChange: _handleChange,
       ),
       confirm: _handleConfirm,
       reset: _handleReset,

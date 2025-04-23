@@ -53,7 +53,7 @@ class _SetRandomMuteState extends State<SetRandomMute> {
       title: context.l10n.metronomeSetRandomMute,
       numberInput: NumberInputAndSliderInt(
         value: value,
-        onChanged: _handleChange,
+        onChange: _handleChange,
         max: 100,
         min: 0,
         step: 1,

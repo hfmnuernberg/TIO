@@ -10,10 +10,10 @@ const int gradiantFrameLengthInMs = 50;
 
 class Tap2Tempo extends StatefulWidget {
   final int value;
-  final Function(int) onChanged;
+  final Function(int) onChange;
   final bool enabled;
 
-  const Tap2Tempo({super.key, required this.value, required this.onChanged, this.enabled = true});
+  const Tap2Tempo({super.key, required this.value, required this.onChange, this.enabled = true});
 
   @override
   State<Tap2Tempo> createState() => _Tap2TempoState();
@@ -49,7 +49,7 @@ class _Tap2TempoState extends State<Tap2Tempo> {
       setState(() => _firstTap = false);
     } else {
       _bpmList.add(bpm);
-      widget.onChanged(_bpmList.average.round());
+      widget.onChange(_bpmList.average.round());
     }
   }
 

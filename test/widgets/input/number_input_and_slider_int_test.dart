@@ -12,7 +12,7 @@ extension WidgetTesterPumpExtension on WidgetTester {
 
 class TestWrapper extends StatefulWidget {
   final int value;
-  final Function(int) onChanged;
+  final Function(int) onChange;
   final int min;
   final int max;
   final int step;
@@ -21,7 +21,7 @@ class TestWrapper extends StatefulWidget {
   const TestWrapper({
     super.key,
     required this.value,
-    required this.onChanged,
+    required this.onChange,
     this.min = 0,
     this.max = 100,
     this.step = 1,
@@ -41,13 +41,13 @@ class _TestWrapperState extends State<TestWrapper> {
     value = widget.value;
   }
 
-  void onChanged(int newValue) => {setState(() => value = newValue), widget.onChanged(newValue)};
+  void onChange(int newValue) => {setState(() => value = newValue), widget.onChange(newValue)};
 
   @override
   Widget build(BuildContext context) {
     return NumberInputAndSliderInt(
       value: value,
-      onChanged: onChanged,
+      onChange: onChange,
       min: widget.min,
       max: widget.max,
       step: widget.step,
@@ -64,7 +64,7 @@ void main() {
       int callbackCalls = 0;
       int mockCallback(int _) => callbackCalls++;
 
-      await tester.renderWidget(TestWrapper(value: 1, onChanged: mockCallback));
+      await tester.renderWidget(TestWrapper(value: 1, onChange: mockCallback));
       expect(callbackCalls, equals(0));
 
       await tester.tapAndSettle(find.bySemanticsLabel('Plus button'));
@@ -73,7 +73,7 @@ void main() {
     });
 
     testWidgets('change input value to integer when entering new value with decimal', (tester) async {
-      await tester.renderWidget(TestWrapper(value: 10, onChanged: (_) {}));
+      await tester.renderWidget(TestWrapper(value: 10, onChange: (_) {}));
       expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '10');
 
       await tester.enterTextAndSettle(find.bySemanticsLabel('Test input'), '20.5');

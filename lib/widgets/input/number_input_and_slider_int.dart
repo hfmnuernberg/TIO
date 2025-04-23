@@ -3,7 +3,7 @@ import 'package:tiomusic/widgets/input/number_input_and_slider_dec.dart';
 
 class NumberInputAndSliderInt extends StatelessWidget {
   final int value;
-  final Function(int) onChanged;
+  final Function(int) onChange;
   final int? min;
   final int? max;
   final int? step;
@@ -18,7 +18,7 @@ class NumberInputAndSliderInt extends StatelessWidget {
   const NumberInputAndSliderInt({
     super.key,
     required this.value,
-    required this.onChanged,
+    required this.onChange,
     this.min,
     this.max,
     this.step,
@@ -35,7 +35,7 @@ class NumberInputAndSliderInt extends StatelessWidget {
   Widget build(BuildContext context) {
     return NumberInputAndSliderDec(
       value: value.toDouble(),
-      onChanged: (val) => onChanged(val.round()),
+      onChange: (val) => onChange(val.round()),
       min: min?.toDouble(),
       max: max?.toDouble(),
       step: step?.toDouble(),

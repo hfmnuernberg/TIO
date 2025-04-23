@@ -24,7 +24,7 @@ extension WidgetTesterPumpExtension on WidgetTester {
 
 class TestWrapper extends StatefulWidget {
   final double value;
-  final Function(double)? onChanged;
+  final Function(double)? onChange;
   final double min;
   final double max;
   final double step;
@@ -33,7 +33,7 @@ class TestWrapper extends StatefulWidget {
   const TestWrapper({
     super.key,
     required this.value,
-    this.onChanged,
+    this.onChange,
     this.min = 0.0,
     this.max = 100.0,
     this.step = 1.0,
@@ -53,16 +53,16 @@ class _TestWrapperState extends State<TestWrapper> {
     value = widget.value;
   }
 
-  void onChanged(double newValue) {
+  void onChange(double newValue) {
     setState(() => value = newValue);
-    widget.onChanged?.call(newValue);
+    widget.onChange?.call(newValue);
   }
 
   @override
   Widget build(BuildContext context) {
     return NumberInputAndSliderDec(
       value: value,
-      onChanged: onChanged,
+      onChange: onChange,
       min: widget.min,
       max: widget.max,
       step: widget.step,
@@ -79,7 +79,7 @@ void main() {
       double callbackCalls = 0;
       double mockCallback(double _) => callbackCalls++;
 
-      await tester.renderWidget(TestWrapper(value: 1, onChanged: mockCallback));
+      await tester.renderWidget(TestWrapper(value: 1, onChange: mockCallback));
       expect(callbackCalls, equals(0));
 
       await tester.tapAndSettle(find.bySemanticsLabel('Plus button'));
