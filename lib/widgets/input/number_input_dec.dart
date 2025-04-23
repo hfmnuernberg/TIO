@@ -81,7 +81,10 @@ class _NumberInputDecState extends State<NumberInputDec> {
   double _parseNumber(String number) => context.l10n.parseNumber(number);
 
   double _parseInput(String input) {
-    if (['', '-', '.', ',', '-.', '-,'].contains(input)) return widget.defaultValue;
+    if (['', '-', '.', ',', '-.', '-,'].contains(input)) {
+      setState(() => _valueController.text = _formatNumber(widget.value));
+      return widget.value;
+    }
 
     if (input[0] == '.') {
       input = '0$input';
@@ -89,15 +92,12 @@ class _NumberInputDecState extends State<NumberInputDec> {
       input = '-0${input.substring(1)}';
     }
 
-    final number = _parseNumber(input);
-    if (number < widget.min) return widget.min;
-    if (number > widget.max) return widget.max;
-
-    return number;
+    return _parseNumber(input).clamp(widget.min, widget.max);
   }
 
-  void _decreaseValue() => _updateValue(_parseNumber(_valueController.text) - widget.step);
-  void _increaseValue() => _updateValue(_parseNumber(_valueController.text) + widget.step);
+  void _decreaseValue() => _updateValue((_parseInput(_valueController.text) - widget.step).clamp(widget.min, widget.max));
+  void _increaseValue() => _updateValue((_parseInput(_valueController.text) + widget.step).clamp(widget.min, widget.max));
+
 
   void _startDecreaseTimer() =>
       _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.stepIntervalInMs), (_) => _decreaseValue());
