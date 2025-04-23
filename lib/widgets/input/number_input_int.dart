@@ -35,7 +35,7 @@ class NumberInputInt extends StatelessWidget {
   Widget build(BuildContext context) {
     return NumberInputDec(
       value: value.toDouble(),
-      onChanged: (val) => onChanged(val.toInt()),
+      onChanged: (val) => onChanged(val.round()),
       min: min?.toDouble(),
       max: max?.toDouble(),
       step: step?.toDouble(),

@@ -79,7 +79,7 @@ void main() {
       await tester.enterTextAndSettle(find.bySemanticsLabel('Test input'), '20.5');
       await tester.unfocusAndSettle();
 
-      expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '20');
+      expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '21');
     });
   });
 }

@@ -27,7 +27,7 @@ class SliderInt extends StatelessWidget {
       max: max?.toDouble(),
       step: step?.toDouble(),
       semanticLabel: semanticLabel,
-      onChanged: (val) => onChanged(val.toInt()),
+      onChanged: (val) => onChanged(val.round()),
     );
   }
 }
