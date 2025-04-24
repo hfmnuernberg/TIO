@@ -10,8 +10,8 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/project_page/export_project.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/big_icon_button.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
@@ -195,6 +195,22 @@ class _ProjectPageState extends State<ProjectPage> {
     goToTool(context, _project, newBlock).then((_) => setState(() {}));
   }
 
+  void _onReorder(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) newIndex--;
+
+      final mutableBlocks = _project.blocks.toList();
+
+      final block = mutableBlocks.removeAt(oldIndex);
+      mutableBlocks.insert(newIndex, block);
+
+      _project.blocks = mutableBlocks;
+
+      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     if (_showBlocks) {
@@ -252,19 +268,23 @@ class _ProjectPageState extends State<ProjectPage> {
           FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
           Padding(
             padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
-            child: ListView.builder(
-              itemCount: _project.blocks.length + 1,
+            child: ReorderableListView.builder(
+              padding: const EdgeInsets.only(bottom: 120),
+              onReorder: _onReorder,
+              itemCount: _project.blocks.length,
               itemBuilder: (context, index) {
-                if (index >= _project.blocks.length) {
-                  return const SizedBox(height: 120);
-                } else {
-                  return CardListTile(
-                    title: _project.blocks[index].title,
-                    subtitle: formatSettingValues(_project.blocks[index].getSettingsFormatted(context.l10n)),
-                    leadingPicture: circleToolIcon(_project.blocks[index].icon),
+                final block = _project.blocks[index];
+
+                return ReorderableDragStartListener(
+                  key: ValueKey(block.id),
+                  index: index,
+                  child: CardListTile(
+                    title: block.title,
+                    subtitle: formatSettingValues(block.getSettingsFormatted(context.l10n)),
+                    leadingPicture: circleToolIcon(block.icon),
                     trailingIcon: IconButton(
                       onPressed:
-                          () => {goToTool(context, _project, _project.blocks[index]).then((_) => setState(() {}))},
+                          () => {goToTool(context, _project, block).then((_) => setState(() {}))},
                       icon: const Icon(Icons.arrow_forward),
                       color: ColorTheme.primaryFixedDim,
                     ),
@@ -273,8 +293,8 @@ class _ProjectPageState extends State<ProjectPage> {
                         bool? deleteBlock = await _deleteBlock();
                         if (deleteBlock != null && deleteBlock) {
                           if (context.mounted) {
-                            _deleteThumbnailWhenNecessary(_project, _project.blocks[index]);
-                            _project.removeBlock(_project.blocks[index], context.read<ProjectLibrary>());
+                            _deleteThumbnailWhenNecessary(_project, block);
+                            _project.removeBlock(block, context.read<ProjectLibrary>());
                             await FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
                           }
                           setState(() {});
@@ -284,10 +304,10 @@ class _ProjectPageState extends State<ProjectPage> {
                       color: ColorTheme.surfaceTint,
                     ),
                     onTapFunction: () {
-                      goToTool(context, _project, _project.blocks[index]).then((_) => setState(() {}));
+                      goToTool(context, _project, block).then((_) => setState(() {}));
                     },
-                  );
-                }
+                  ),
+                );
               },
             ),
           ),

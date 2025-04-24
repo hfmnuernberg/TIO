@@ -77,7 +77,14 @@ class Project extends ChangeNotifier {
 
   @JsonKey(includeFromJson: true, includeToJson: true, defaultValue: [])
   late List<ProjectBlock> _blocks;
+
   UnmodifiableListView<ProjectBlock> get blocks => UnmodifiableListView(_blocks);
+
+  set blocks(List<ProjectBlock> newOrder) {
+    _blocks = newOrder;
+    notifyListeners();
+  }
+
 
   late DateTime timeLastModified;
 
