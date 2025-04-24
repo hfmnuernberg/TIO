@@ -118,8 +118,8 @@ class _ProjectPageState extends State<ProjectPage> {
 
   Future<bool?> _handleDeleteBlock(ProjectBlock block) async {
     final projectLibrary = context.read<ProjectLibrary>();
-
     bool? delete = await _deleteBlock();
+
     if (delete ?? false) {
       if (!context.mounted) return false;
 
@@ -134,8 +134,8 @@ class _ProjectPageState extends State<ProjectPage> {
 
   Future<void> _handleDeleteAllBlocks() async {
     final projectLibrary = context.read<ProjectLibrary>();
-
     bool? delete = await _deleteBlock(deleteAll: true);
+
     if (delete ?? false) {
       if (!mounted) return;
 
