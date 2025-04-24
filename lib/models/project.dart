@@ -85,7 +85,6 @@ class Project extends ChangeNotifier {
     notifyListeners();
   }
 
-
   late DateTime timeLastModified;
 
   Project(String title, this._blocks, String thumbnailPath, this.timeLastModified, Map<String, int> toolCounter) {

@@ -210,7 +210,6 @@ class _ProjectPageState extends State<ProjectPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     if (_showBlocks) {
@@ -283,8 +282,7 @@ class _ProjectPageState extends State<ProjectPage> {
                     subtitle: formatSettingValues(block.getSettingsFormatted(context.l10n)),
                     leadingPicture: circleToolIcon(block.icon),
                     trailingIcon: IconButton(
-                      onPressed:
-                          () => {goToTool(context, _project, block).then((_) => setState(() {}))},
+                      onPressed: () => {goToTool(context, _project, block).then((_) => setState(() {}))},
                       icon: const Icon(Icons.arrow_forward),
                       color: ColorTheme.primaryFixedDim,
                     ),
