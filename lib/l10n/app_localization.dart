@@ -178,6 +178,8 @@ abstract class AppLocalizations {
   String get projectDeleteAllTools;
   String get projectDeleteAllToolsConfirmation;
   String get projectDeleteToolConfirmation;
+  String get projectEditingDone;
+  String get projectEditTools;
   String get projectEmpty;
   String get projectExport;
   String get projectExportCancelled;

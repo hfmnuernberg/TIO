@@ -198,6 +198,8 @@ class English extends AppLocalizations {
   String get projectDeleteAllTools => 'Delete all tools';
   String get projectDeleteAllToolsConfirmation => 'Do you really want to delete all tools in this project?';
   String get projectDeleteToolConfirmation => 'Do you really want to delete this tool?';
+  String get projectEditingDone => 'Finish editing';
+  String get projectEditTools => 'Edit tools';
   String get projectEmpty => 'Choose type of tool';
   String get projectExport => 'Export project';
   String get projectExportCancelled => 'Project export cancelled';

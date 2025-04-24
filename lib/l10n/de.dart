@@ -201,6 +201,8 @@ class German extends AppLocalizations {
   String get projectDeleteAllTools => 'Alle Tools löschen';
   String get projectDeleteAllToolsConfirmation => 'Möchtest du wirklich alle Tools in diesem Projekt löschen?';
   String get projectDeleteToolConfirmation => 'Möchtest du dieses Tool wirklich löschen?';
+  String get projectEditingDone => 'Editieren beenden';
+  String get projectEditTools => 'Tools editieren';
   String get projectEmpty => 'Wähle ein Tool.';
   String get projectExport => 'Projekt exportieren';
   String get projectExportCancelled => 'Projektexport abgebrochen';
