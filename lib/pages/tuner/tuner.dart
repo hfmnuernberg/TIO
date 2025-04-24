@@ -1,30 +1,28 @@
 import 'dart:async';
 import 'package:audio_session/audio_session.dart';
-import 'package:flutter/services.dart';
-import 'package:stats/stats.dart';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:stats/stats.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
+import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
-import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/pages/tuner/play_sound_page.dart';
-import 'package:tiomusic/pages/tuner/setting_concert_pitch.dart';
-import 'package:tiomusic/pages/tuner/tuner_functions.dart';
-
 import 'package:tiomusic/pages/tuner/pitch_visualizer.dart';
+import 'package:tiomusic/pages/tuner/play_sound_page.dart';
+import 'package:tiomusic/pages/tuner/set_concert_pitch.dart';
+import 'package:tiomusic/pages/tuner/tuner_functions.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/util_midi.dart';
-import 'package:tiomusic/models/blocks/tuner_block.dart';
-import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -252,7 +250,7 @@ class _TunerState extends State<Tuner> {
       settingTiles: [
         SettingsTile(
           title: l10n.tunerConcertPitch,
-          subtitle: '${l10n.formatInteger(_tunerBlock.chamberNoteHz)} Hz',
+          subtitle: '${l10n.formatNumber(_tunerBlock.chamberNoteHz)} Hz',
           leadingIcon: Icons.location_searching,
           settingPage: const SetConcertPitch(),
           block: _tunerBlock,
@@ -301,7 +299,7 @@ class _TunerState extends State<Tuner> {
     var centOffset = ((midi - midi.round()) * 100.0).round();
 
     setState(() {
-      _freqText.text = '${context.l10n.formatDecimal(freq)} Hz';
+      _freqText.text = '${context.l10n.formatNumber(double.parse(freq.toStringAsFixed(1)))} Hz';
       _midiText.text = midi.toString();
       _midiNameText.text = midiToName(midi.round());
       _centOffsetText.text = '$centOffset Cent';
