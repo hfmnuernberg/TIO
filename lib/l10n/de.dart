@@ -201,6 +201,8 @@ class German extends AppLocalizations {
   String get projectDeleteAllTools => 'Alle Tools löschen';
   String get projectDeleteAllToolsConfirmation => 'Möchtest du wirklich alle Tools in diesem Projekt löschen?';
   String get projectDeleteToolConfirmation => 'Möchtest du dieses Tool wirklich löschen?';
+  String get projectEditTools => 'Tools editieren';
+  String get projectEditToolsDone => 'Editieren beenden';
   String get projectEmpty => 'Wähle ein Tool.';
   String get projectExport => 'Projekt exportieren';
   String get projectExportCancelled => 'Projektexport abgebrochen';
@@ -244,6 +246,7 @@ class German extends AppLocalizations {
   String get textImportNoFileSelected => 'Keine Text-Datei ausgewählt';
   String get textImportSuccess => 'Text erfolgreich importiert!';
 
+  String get toolAddNew => 'Tool hinzufügen';
   String get toolEmpty => 'Leerer Block';
   String get toolNewProjectTitle => 'Projekttitel';
   String get toolNewTitle => 'Tool-Titel';

@@ -198,6 +198,8 @@ class English extends AppLocalizations {
   String get projectDeleteAllTools => 'Delete all tools';
   String get projectDeleteAllToolsConfirmation => 'Do you really want to delete all tools in this project?';
   String get projectDeleteToolConfirmation => 'Do you really want to delete this tool?';
+  String get projectEditTools => 'Edit tools';
+  String get projectEditToolsDone => 'Finish editing';
   String get projectEmpty => 'Choose type of tool';
   String get projectExport => 'Export project';
   String get projectExportCancelled => 'Project export cancelled';
@@ -241,6 +243,7 @@ class English extends AppLocalizations {
   String get textImportNoFileSelected => 'No text file selected';
   String get textImportSuccess => 'Text imported successfully!';
 
+  String get toolAddNew => 'Add new tool';
   String get toolEmpty => 'Empty';
   String get toolNewProjectTitle => 'Project title';
   String get toolNewTitle => 'Tool title';

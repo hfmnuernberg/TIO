@@ -178,6 +178,8 @@ abstract class AppLocalizations {
   String get projectDeleteAllTools;
   String get projectDeleteAllToolsConfirmation;
   String get projectDeleteToolConfirmation;
+  String get projectEditTools;
+  String get projectEditToolsDone;
   String get projectEmpty;
   String get projectExport;
   String get projectExportCancelled;
@@ -216,6 +218,7 @@ abstract class AppLocalizations {
   String get textImportNoFileSelected;
   String get textImportSuccess;
 
+  String get toolAddNew;
   String get toolEmpty;
   String get toolNewProjectTitle;
   String get toolNewTitle;
