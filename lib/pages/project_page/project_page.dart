@@ -204,18 +204,16 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   void _onReorder(int oldIndex, int newIndex) {
-    setState(() {
-      if (newIndex > oldIndex) newIndex--;
+    if (newIndex > oldIndex) newIndex--;
 
-      final mutableBlocks = _project.blocks.toList();
+    final mutableBlocks = _project.blocks.toList();
+    final block = mutableBlocks.removeAt(oldIndex);
+    mutableBlocks.insert(newIndex, block);
+    _project.blocks = mutableBlocks;
 
-      final block = mutableBlocks.removeAt(oldIndex);
-      mutableBlocks.insert(newIndex, block);
+    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
 
-      _project.blocks = mutableBlocks;
-
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-    });
+    setState(() {});
   }
 
   @override
