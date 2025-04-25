@@ -6,12 +6,12 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 
-class ProjectReorderableList extends StatelessWidget {
+class EditableProjectList extends StatelessWidget {
   final Project project;
   final void Function(int oldIndex, int newIndex) onReorder;
   final Future<bool?> Function(ProjectBlock block) onDeleteBlock;
 
-  const ProjectReorderableList({
+  const EditableProjectList({
     super.key,
     required this.project,
     required this.onReorder,

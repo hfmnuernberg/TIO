@@ -6,12 +6,12 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 
-class ProjectStandardList extends StatelessWidget {
+class ProjectList extends StatelessWidget {
   final Project project;
   final void Function(ProjectBlock block) onOpenTool;
   final Future<bool?> Function(ProjectBlock block) onDeleteBlock;
 
-  const ProjectStandardList({super.key, required this.project, required this.onOpenTool, required this.onDeleteBlock});
+  const ProjectList({super.key, required this.project, required this.onOpenTool, required this.onDeleteBlock});
 
   @override
   Widget build(BuildContext context) {
