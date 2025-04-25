@@ -14,13 +14,13 @@ TAG=$(git tag --list 'b*' --sort=-creatordate | head -n 1)
 set -e
 
 if [ -z "$TAG" ]; then
-  echo "⚠️️ No Git tag found!"
-  exit 2
+  echo "⚠️️ No Git tag found! Assuming build number 1."
+  BUILD_NUMBER=1
 else
   BUILD_NUMBER=$(echo "$TAG" | sed -E 's/^b([0-9]+).*/\1/')
   if [ "$BUILD_NUMBER" = "$TAG" ]; then
-    echo "⚠️️ No build number found!"
-    exit 3
+    echo "⚠️️ No build number found! Assuming build number 1."
+    BUILD_NUMBER=1
   fi
 fi
 

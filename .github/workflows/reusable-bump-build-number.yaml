@@ -1,16 +1,18 @@
 name: Bump Build Number
 
 on:
-  push:
-    branches:
-    - main
-    paths-ignore:
-    - docs/**
-    - README.md
-  workflow_run:
-    workflows: ["Release"]
-    types: [completed]
   workflow_dispatch:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release to verify
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release to verify
 
 permissions:
   contents: write
@@ -25,7 +27,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4.2.2
       with:
-        ref: main
+        ref: ${{ inputs.ref }}
         fetch-depth: 0
 
     - name: Configure Git user
@@ -43,7 +45,7 @@ jobs:
         echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
     - name: Bump build number
-      run: ./scripts/bump-build-number-and-tag.sh
+      run: ./scripts/bump-build-number-and-tag.sh ${{ steps.old.outputs.BUILD_NUMBER }}
 
     - name: Load updated build number
       id: new
