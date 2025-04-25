@@ -33,14 +33,14 @@ jobs:
         echo "actor: '${{ github.actor }}'"
         echo "bump type: '${{ steps.semver.outputs.BUMP_TYPE }}'"
 
-    - name: Auto-approve if actor is Dependabot and version bump is minor or patch
-      if: >
-        github.actor == 'dependabot[bot]' &&
-        (steps.semver.outputs.BUMP_TYPE == 'minor' || steps.semver.outputs.BUMP_TYPE == 'patch')
-      run: |
-        gh pr review --approve "${{ github.event.pull_request.number }}"
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Auto-approve if actor is Dependabot and version bump is minor or patch
+    #   if: >
+    #     github.actor == 'dependabot[bot]' &&
+    #     (steps.semver.outputs.BUMP_TYPE == 'minor' || steps.semver.outputs.BUMP_TYPE == 'patch')
+    #   run: |
+    #     gh pr review --approve "${{ github.event.pull_request.number }}"
+    #   env:
+    #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Auto-merge if actor is Dependabot and version bump is minor or patch
       if: >
