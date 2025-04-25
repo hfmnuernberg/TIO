@@ -246,6 +246,7 @@ class German extends AppLocalizations {
   String get textImportNoFileSelected => 'Keine Text-Datei ausgewählt';
   String get textImportSuccess => 'Text erfolgreich importiert!';
 
+  String get toolAddNew => 'Tool hinzufügen';
   String get toolEmpty => 'Leerer Block';
   String get toolNewProjectTitle => 'Projekttitel';
   String get toolNewTitle => 'Tool-Titel';

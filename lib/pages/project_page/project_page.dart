@@ -268,8 +268,11 @@ class _ProjectPageState extends State<ProjectPage> {
                 child: Text(context.l10n.projectExport, style: TextStyle(color: ColorTheme.primary)),
               ),
               MenuItemButton(
-                onPressed: _handleDeleteAllBlocks,
-                child: Text(context.l10n.projectDeleteAllTools, style: TextStyle(color: ColorTheme.primary)),
+                onPressed: () => setState(() {
+                  _showBlocks = false;
+                  _isEditing = false;
+                }),
+                child: Text(context.l10n.toolAddNew, style: TextStyle(color: ColorTheme.primary)),
               ),
               MenuItemButton(
                 onPressed: _toggleEditingMode,
@@ -277,6 +280,10 @@ class _ProjectPageState extends State<ProjectPage> {
                   _isEditing ? context.l10n.projectEditToolsDone : context.l10n.projectEditTools,
                   style: TextStyle(color: ColorTheme.primary),
                 ),
+              ),
+              MenuItemButton(
+                onPressed: _handleDeleteAllBlocks,
+                child: Text(context.l10n.projectDeleteAllTools, style: TextStyle(color: ColorTheme.primary)),
               ),
             ],
           ),

@@ -243,6 +243,7 @@ class English extends AppLocalizations {
   String get textImportNoFileSelected => 'No text file selected';
   String get textImportSuccess => 'Text imported successfully!';
 
+  String get toolAddNew => 'Add new tool';
   String get toolEmpty => 'Empty';
   String get toolNewProjectTitle => 'Project title';
   String get toolNewTitle => 'Tool title';
