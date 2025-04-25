@@ -6,12 +6,11 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 
-class ProjectList extends StatelessWidget {
+class ToolList extends StatelessWidget {
   final Project project;
   final void Function(ProjectBlock block) onOpenTool;
-  final Future<bool?> Function(ProjectBlock block) onDeleteBlock;
 
-  const ProjectList({super.key, required this.project, required this.onOpenTool, required this.onDeleteBlock});
+  const ToolList({super.key, required this.project, required this.onOpenTool});
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +27,6 @@ class ProjectList extends StatelessWidget {
             onPressed: () => onOpenTool(block),
             icon: const Icon(Icons.arrow_forward),
             color: ColorTheme.primaryFixedDim,
-          ),
-          menuIconOne: IconButton(
-            onPressed: () => onDeleteBlock(block),
-            icon: const Icon(Icons.delete_outlined),
-            color: ColorTheme.surfaceTint,
           ),
           onTapFunction: () => onOpenTool(block),
         );

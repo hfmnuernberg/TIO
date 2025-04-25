@@ -6,12 +6,12 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 
-class EditableProjectList extends StatelessWidget {
+class EditableToolList extends StatelessWidget {
   final Project project;
   final void Function(int oldIndex, int newIndex) onReorder;
   final Future<bool?> Function(ProjectBlock block) onDeleteBlock;
 
-  const EditableProjectList({
+  const EditableToolList({
     super.key,
     required this.project,
     required this.onReorder,
@@ -37,12 +37,12 @@ class EditableProjectList extends StatelessWidget {
             trailingIcon: IconButton(
               onPressed: () {},
               icon: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
-              color: ColorTheme.surfaceTint,
+              color: ColorTheme.primaryFixedDim,
             ),
             menuIconOne: IconButton(
               onPressed: () => onDeleteBlock(block),
               icon: const Icon(Icons.delete_outlined),
-              color: ColorTheme.surfaceTint,
+              color: ColorTheme.tertiary,
             ),
             onTapFunction: () {},
           ),

@@ -7,9 +7,9 @@ import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/project_page/editable_project_list.dart';
+import 'package:tiomusic/pages/project_page/editable_tool_list.dart';
 import 'package:tiomusic/pages/project_page/export_project.dart';
-import 'package:tiomusic/pages/project_page/project_list.dart';
+import 'package:tiomusic/pages/project_page/tool_list.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
@@ -291,15 +291,17 @@ class _ProjectPageState extends State<ProjectPage> {
             padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
             child:
                 _isEditing
-                    ? EditableProjectList(
+                    ? EditableToolList(
                       project: _project,
                       onReorder: _onReorder,
                       onDeleteBlock: _handleDeleteBlock,
                     )
-                    : ProjectList(
+                    : ToolList(
                       project: _project,
-                      onOpenTool: (block) => goToTool(context, _project, block).then((_) => setState(() {})),
-                      onDeleteBlock: _handleDeleteBlock,
+                      onOpenTool: (block) async {
+                        await goToTool(context, _project, block);
+                        setState(() {});
+                      },
                     ),
           ),
           Column(
