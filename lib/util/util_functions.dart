@@ -375,6 +375,40 @@ Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock blo
   );
 }
 
+Future<dynamic> goToNextTool(BuildContext context, Project project, ProjectBlock block, {bool pianoAleadyOn = false}) {
+  return Navigator.of(context).pushReplacement(
+    MaterialPageRoute(
+      builder: (context) {
+        return MultiProvider(
+          providers: [
+            ChangeNotifierProvider<Project>.value(value: project),
+            ChangeNotifierProvider<ProjectBlock>.value(value: block),
+          ],
+          builder: (context, child) {
+            if (block is TunerBlock) {
+              return const Tuner(isQuickTool: false);
+            } else if (block is MetronomeBlock) {
+              return const Metronome(isQuickTool: false);
+            } else if (block is MediaPlayerBlock) {
+              return const MediaPlayer(isQuickTool: false);
+            } else if (block is ImageBlock) {
+              return const ImageTool(isQuickTool: false);
+            } else if (block is PianoBlock) {
+              WidgetsFlutterBinding.ensureInitialized();
+              return Piano(isQuickTool: false, withoutInitAndStart: pianoAleadyOn);
+            } else if (block is TextBlock) {
+              return const TextTool(isQuickTool: false);
+            } else {
+              throw 'ERROR: The block type of $block is unknown.';
+            }
+          },
+        );
+      },
+    ),
+  );
+}
+
+
 // ---------------------------------------------------------------
 // get the current date and time
 

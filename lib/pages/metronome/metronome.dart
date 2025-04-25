@@ -81,9 +81,18 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
 
+  late final Project? _project;
+
+  List<MetronomeBlock> get _allMetronomes {
+    if (_project == null) return [];
+    return _project.blocks.whereType<MetronomeBlock>().toList();
+  }
+
   @override
   void initState() {
     super.initState();
+
+    _project = widget.isQuickTool ? null : Provider.of<Project>(context, listen: false);
 
     VolumeController.instance.addListener(handleVolumeChange);
 
@@ -137,11 +146,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     });
   }
 
-  void handleVolumeChange(double newVolume) {
-    setState(() {
-      _deviceVolumeLevel = getVolumeLevel(newVolume);
-    });
-  }
+  void handleVolumeChange(double newVolume) => setState(() => _deviceVolumeLevel = getVolumeLevel(newVolume));
 
   void _createTutorial() {
     final l10n = context.l10n;
@@ -599,6 +604,34 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     );
   }
 
+  Widget _bottomMetronomeBar() {
+    final metronomes = _allMetronomes;
+    if (metronomes.length <= 1 || _project == null) return const SizedBox();
+
+    return BottomAppBar(
+      color: ColorTheme.surfaceBright,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(metronomes.length, (index) {
+            final block = metronomes[index];
+
+            return IconButton(
+              tooltip: block.title,
+              icon: Icon(Icons.arrow_circle_right, color: ColorTheme.primary),
+              onPressed: () {
+                if (block == _metronomeBlock) return;
+                goToNextTool(context, _project, block);
+              },
+            );
+          }),
+        ),
+      ),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -750,7 +783,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           block: _metronomeBlock,
           callOnReturn: (value) => setState(() {}),
         ),
+        const SizedBox(height: 80),
       ],
+      floatingActionButton: _bottomMetronomeBar(),
     );
   }
 }
