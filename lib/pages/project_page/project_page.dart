@@ -268,10 +268,11 @@ class _ProjectPageState extends State<ProjectPage> {
                 child: Text(context.l10n.projectExport, style: TextStyle(color: ColorTheme.primary)),
               ),
               MenuItemButton(
-                onPressed: () => setState(() {
-                  _showBlocks = false;
-                  _isEditing = false;
-                }),
+                onPressed:
+                    () => setState(() {
+                      _showBlocks = false;
+                      _isEditing = false;
+                    }),
                 child: Text(context.l10n.toolAddNew, style: TextStyle(color: ColorTheme.primary)),
               ),
               MenuItemButton(
@@ -298,11 +299,7 @@ class _ProjectPageState extends State<ProjectPage> {
             padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
             child:
                 _isEditing
-                    ? EditableToolList(
-                      project: _project,
-                      onReorder: _onReorder,
-                      onDeleteBlock: _handleDeleteBlock,
-                    )
+                    ? EditableToolList(project: _project, onReorder: _onReorder, onDeleteBlock: _handleDeleteBlock)
                     : ToolList(
                       project: _project,
                       onOpenTool: (block) async {

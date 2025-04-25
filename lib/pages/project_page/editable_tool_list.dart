@@ -11,12 +11,7 @@ class EditableToolList extends StatelessWidget {
   final void Function(int oldIndex, int newIndex) onReorder;
   final Future<bool?> Function(ProjectBlock block) onDeleteBlock;
 
-  const EditableToolList({
-    super.key,
-    required this.project,
-    required this.onReorder,
-    required this.onDeleteBlock,
-  });
+  const EditableToolList({super.key, required this.project, required this.onReorder, required this.onDeleteBlock});
 
   @override
   Widget build(BuildContext context) {
