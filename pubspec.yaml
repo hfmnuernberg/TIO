@@ -23,7 +23,7 @@ dependencies:
     flutter_localizations:
         sdk: flutter
     flutter_rust_bridge: 2.9.0
-    flutter_svg: 2.0.17
+    flutter_svg: 2.1.0
     frontend_server_client: 4.0.0
     image_picker: 1.1.2
     intl: 0.19.0 # TODO: upgrade as soon as flutter_localizations supports it
