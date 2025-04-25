@@ -274,7 +274,7 @@ class _ProjectPageState extends State<ProjectPage> {
               MenuItemButton(
                 onPressed: _toggleEditingMode,
                 child: Text(
-                  _isEditing ? context.l10n.projectEditingDone : context.l10n.projectEditTools,
+                  _isEditing ? context.l10n.projectEditToolsDone : context.l10n.projectEditTools,
                   style: TextStyle(color: ColorTheme.primary),
                 ),
               ),
