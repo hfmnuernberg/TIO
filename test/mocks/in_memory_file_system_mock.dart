@@ -66,6 +66,13 @@ class InMemoryFileSystemMock implements FileSystem {
   }
 
   @override
+  Future<void> copyFile(String absoluteSourceFilePath, String absoluteDestinationFilePath) async {
+    if (!existsFile(absoluteSourceFilePath)) throw Exception('Source file not found: $absoluteSourceFilePath');
+    _files[absoluteDestinationFilePath] = _files[absoluteSourceFilePath]!;
+    _ensureFolderExistsForFile(absoluteDestinationFilePath);
+  }
+
+  @override
   Future<void> deleteFile(String absoluteFilePath) async {
     _files.remove(absoluteFilePath);
     _folders[_parentFolder(absoluteFilePath)]?.remove(absoluteFilePath);
@@ -75,15 +82,6 @@ class InMemoryFileSystemMock implements FileSystem {
   Future<void> createFolder(String absoluteFolderPath) async {
     _folders.putIfAbsent(absoluteFolderPath, () => []);
   }
-
-  @override
-  Future<String?> pickAudio() async => throw UnimplementedError();
-
-  @override
-  Future<String?> pickImage() async => throw UnimplementedError();
-
-  @override
-  Future<bool> shareFile(String absoluteFilePath) async => throw UnimplementedError();
 
   void _ensureFolderExistsForFile(String filePath) {
     final folder = _parentFolder(filePath);

@@ -21,12 +21,9 @@ mixin FileSystem {
   Future<void> saveFileAsString(String absoluteFilePath, String data);
   Future<void> saveFileAsBytes(String absoluteFilePath, List<int> data);
 
+  Future<void> copyFile(String absoluteSourceFilePath, String absoluteDestinationFilePath);
+
   Future<void> deleteFile(String absoluteFilePath);
 
   Future<void> createFolder(String absoluteFolderPath);
-
-  Future<String?> pickAudio();
-  Future<String?> pickImage();
-
-  Future<bool> shareFile(String absoluteFilePath);
 }

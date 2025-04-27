@@ -32,6 +32,18 @@ class MediaRepositoryLogDecorator implements MediaRepository {
   }
 
   @override
+  Future<void> export(String relativeSourceFilePath, String absoluteTargetFilePath) async {
+    _logger.t('export($relativeSourceFilePath, ${shortenPath(absoluteTargetFilePath)})');
+    await _repo.export(relativeSourceFilePath, absoluteTargetFilePath);
+  }
+
+  @override
+  Future<void> save(String filename, List<int> bytes) async {
+    _logger.t('save($filename, ${bytes.length} bytes)');
+    return _repo.save(filename, bytes);
+  }
+
+  @override
   Future<String?> saveSamplesToWaveFile(String basename, Float64List samples) async {
     final relativePath = await _repo.saveSamplesToWaveFile(basename, samples);
     _logger.t('saveSamplesToWaveFile($basename, ${samples.length} samples): $relativePath');

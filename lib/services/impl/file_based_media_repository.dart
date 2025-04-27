@@ -29,10 +29,18 @@ class FileBasedMediaRepository implements MediaRepository {
     final relativePath = '$_mediaFolderName/$filename';
     final absolutePath = '$_mediaFolderPath/$filename';
 
-    await _fs.saveFileAsBytes(absolutePath, await _fs.loadFileAsBytes(absoluteSourceFilePath));
+    await _fs.copyFile(absoluteSourceFilePath, absolutePath);
 
     return relativePath;
   }
+
+  @override
+  Future<void> export(String relativeSourceFilePath, String absoluteTargetFilePath) async =>
+      _fs.copyFile('${_fs.appFolderPath}/$relativeSourceFilePath', absoluteTargetFilePath);
+
+  @override
+  Future<void> save(String filename, List<int> bytes) async =>
+      _fs.saveFileAsBytes('$_mediaFolderPath/$filename', bytes);
 
   @override
   Future<String?> saveSamplesToWaveFile(String basename, Float64List samples) async {

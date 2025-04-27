@@ -16,7 +16,7 @@ import 'package:tiomusic/pages/tuner/play_sound_page.dart';
 import 'package:tiomusic/pages/tuner/setting_concert_pitch.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
 import 'package:tiomusic/pages/tuner/pitch_visualizer.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -158,7 +158,7 @@ class _TunerState extends State<Tuner> {
     ];
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
       context.read<ProjectLibrary>().showTunerTutorial = false;
-      context.read<ProjectLibraryRepository>().save(context.read<ProjectLibrary>());
+      context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 

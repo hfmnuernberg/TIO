@@ -9,7 +9,7 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -60,7 +60,7 @@ class ParentTool extends StatefulWidget {
 
 class _ParentToolState extends State<ParentTool> {
   late FileSystem _fs;
-  late ProjectLibraryRepository _projectLibraryRepo;
+  late ProjectRepository _projectRepo;
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
@@ -79,14 +79,14 @@ class _ParentToolState extends State<ParentTool> {
     super.initState();
 
     _fs = context.read<FileSystem>();
-    _projectLibraryRepo = context.read<ProjectLibraryRepository>();
+    _projectRepo = context.read<ProjectRepository>();
 
     _toolTitle.text = widget.barTitle;
 
     var projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
     projectLibrary.visitedToolsCounter++;
 
-    unawaited(_projectLibraryRepo.save(projectLibrary));
+    unawaited(_projectRepo.saveLibrary(projectLibrary));
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
@@ -142,7 +142,7 @@ class _ParentToolState extends State<ParentTool> {
     _tutorialQuickTool.create(targets.map((e) => e.targetFocus).toList(), () async {
       final projectLibrary = context.read<ProjectLibrary>();
       projectLibrary.showQuickToolTutorial = false;
-      await _projectLibraryRepo.save(projectLibrary);
+      await _projectRepo.saveLibrary(projectLibrary);
 
       // start island tutorial
       if (projectLibrary.showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
@@ -175,7 +175,7 @@ class _ParentToolState extends State<ParentTool> {
     _tutorialTool.create(targets.map((e) => e.targetFocus).toList(), () async {
       final projectLibrary = context.read<ProjectLibrary>();
       projectLibrary.showToolTutorial = false;
-      await _projectLibraryRepo.save(projectLibrary);
+      await _projectRepo.saveLibrary(projectLibrary);
 
       // start island tutorial
       if (projectLibrary.showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
@@ -201,7 +201,7 @@ class _ParentToolState extends State<ParentTool> {
     ];
     _tutorialIsland.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showIslandTutorial = false;
-      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
       // start specific tool tutorial
       if (widget.onParentTutorialFinished != null) {
@@ -280,7 +280,7 @@ class _ParentToolState extends State<ParentTool> {
           );
           if (newTitle == null) return;
           widget.toolBlock.title = newTitle;
-          if (context.mounted) await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+          if (context.mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
           setState(() {});
         },
         child: Text(

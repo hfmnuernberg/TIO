@@ -22,7 +22,7 @@ import 'package:tiomusic/pages/projects_list/import_project.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -44,7 +44,7 @@ class ProjectsList extends StatefulWidget {
 class _ProjectsListState extends State<ProjectsList> {
   late FileSystem _fs;
   late FileReferences _fileReferences;
-  late ProjectLibraryRepository _projectLibraryRepo;
+  late ProjectRepository _projectRepo;
 
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
 
@@ -60,7 +60,7 @@ class _ProjectsListState extends State<ProjectsList> {
 
     _fs = context.read<FileSystem>();
     _fileReferences = context.read<FileReferences>();
-    _projectLibraryRepo = context.read<ProjectLibraryRepository>();
+    _projectRepo = context.read<ProjectRepository>();
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   }
@@ -105,7 +105,7 @@ class _ProjectsListState extends State<ProjectsList> {
 
       if (projectLibrary.showHomepageTutorial) {
         projectLibrary.showHomepageTutorial = false;
-        context.read<ProjectLibraryRepository>().save(projectLibrary);
+        context.read<ProjectRepository>().saveLibrary(projectLibrary);
         _createTutorial();
         _tutorial.show(context);
       }
@@ -144,7 +144,7 @@ class _ProjectsListState extends State<ProjectsList> {
     ];
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showHomepageTutorial = false;
-      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -170,7 +170,7 @@ class _ProjectsListState extends State<ProjectsList> {
 
   void _showTutorialAgainPressed() async {
     context.read<ProjectLibrary>().resetAllTutorials();
-    await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
     _createTutorial();
     Future.delayed(Duration.zero, () {
@@ -285,7 +285,7 @@ class _ProjectsListState extends State<ProjectsList> {
 
     projectLibrary.removeProject(projectLibrary.projects[index]);
 
-    await _projectLibraryRepo.save(projectLibrary);
+    await _projectRepo.saveLibrary(projectLibrary);
   }
 
   void _handleDeleteAllProjects() async {
@@ -304,7 +304,7 @@ class _ProjectsListState extends State<ProjectsList> {
 
     projectLibrary.clearProjects();
 
-    await _projectLibraryRepo.save(projectLibrary);
+    await _projectRepo.saveLibrary(projectLibrary);
   }
 
   void _goToToolOverProjectPage(Project project, ProjectBlock tool, bool pianoAlreadyOn) {
@@ -371,7 +371,7 @@ class _ProjectsListState extends State<ProjectsList> {
                       if (await launchUrl(url) && mounted) {
                         _showBanner = false;
                         context.read<ProjectLibrary>().neverShowSurveyAgain = true;
-                        await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+                        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
                         setState(() {});
                       }
                     },
@@ -387,7 +387,7 @@ class _ProjectsListState extends State<ProjectsList> {
                       if (projectLibrary.idxCheckShowSurvey >= projectLibrary.showSurveyAtVisits.length) {
                         projectLibrary.neverShowSurveyAgain = true;
                       }
-                      await _projectLibraryRepo.save(projectLibrary);
+                      await _projectRepo.saveLibrary(projectLibrary);
 
                       setState(() {});
                     },
@@ -427,7 +427,7 @@ class _ProjectsListState extends State<ProjectsList> {
 
             final newProject = Project.defaultPicture(newTitle);
             if (context.mounted) {
-              await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+              await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
             }
 
             _goToProjectPage(newProject, true);

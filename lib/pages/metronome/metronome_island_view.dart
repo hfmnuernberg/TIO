@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/note_handler.dart';
@@ -9,6 +10,7 @@ import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm_segment.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
+import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -28,6 +30,8 @@ class MetronomeIslandView extends StatefulWidget {
 class _MetronomeIslandViewState extends State<MetronomeIslandView> {
   static final _logger = createPrefixLogger('MetronomeIslandView');
 
+  late FileSystem _fs;
+
   bool _isStarted = false;
   late Timer _beatDetection;
 
@@ -41,6 +45,8 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
   void initState() {
     super.initState();
 
+    _fs = context.read<FileSystem>();
+
     metronomeSetVolume(volume: widget.metronomeBlock.volume);
     metronomeSetRhythm(
       bars: getRhythmAsMetroBar(widget.metronomeBlock.rhythmGroups),
@@ -50,7 +56,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
     metronomeSetBeatMuteChance(muteChance: widget.metronomeBlock.randomMute.toDouble() / 100.0);
     metronomeSetMuted(muted: false);
 
-    MetronomeUtils.loadSounds(widget.metronomeBlock);
+    MetronomeUtils.loadSounds(_fs, widget.metronomeBlock);
 
     // Start beat detection timer
     _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (t) {

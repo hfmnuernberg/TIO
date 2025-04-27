@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
@@ -17,7 +16,7 @@ import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
 import 'package:tiomusic/pages/piano/set_concert_pitch.dart';
 import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -45,7 +44,7 @@ class Piano extends StatefulWidget {
 
 class _PianoState extends State<Piano> {
   late FileSystem _fs;
-  late ProjectLibraryRepository _projectLibraryRepo;
+  late ProjectRepository _projectRepo;
 
   late PianoBlock _pianoBlock;
   late double _concertPitch = _pianoBlock.concertPitch;
@@ -77,7 +76,7 @@ class _PianoState extends State<Piano> {
     super.initState();
 
     _fs = context.read<FileSystem>();
-    _projectLibraryRepo = context.read<ProjectLibraryRepository>();
+    _projectRepo = context.read<ProjectRepository>();
 
     // lock screen to only use landscape
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
@@ -92,7 +91,7 @@ class _PianoState extends State<Piano> {
     var projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
     projectLibrary.visitedToolsCounter++;
 
-    unawaited(_projectLibraryRepo.save(projectLibrary));
+    unawaited(_projectRepo.saveLibrary(projectLibrary));
 
     if (widget.withoutInitAndStart) {
       _isPlaying = true;
@@ -162,7 +161,7 @@ class _PianoState extends State<Piano> {
     ];
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showPianoTutorial = false;
-      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -182,13 +181,11 @@ class _PianoState extends State<Piano> {
   }
 
   Future<bool> _initPiano(String soundFontPath) async {
-    Directory tempDir = await getTemporaryDirectory();
-    String tempSoundFontPath = '${tempDir.path}/sound_font.sf2';
     // rust cannot access asset files which are not really files on disk, so we need to copy to a temp file
+    final tempSoundFontPath = '${_fs.tmpFolderPath}/sound_font.sf2';
     final byteData = await rootBundle.load(soundFontPath);
-    final file = File(tempSoundFontPath);
-    await file.create(recursive: true);
-    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    final bytes = byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
+    await _fs.saveFileAsBytes(tempSoundFontPath, bytes);
     return pianoSetup(soundFontPath: tempSoundFontPath);
   }
 
@@ -250,7 +247,7 @@ class _PianoState extends State<Piano> {
                     if (newTitle == null) return;
                     _pianoBlock.title = newTitle;
                     if (context.mounted) {
-                      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+                      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
                     }
                     setState(() {});
                   },

@@ -9,7 +9,7 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/project_page/export_project.dart';
 import 'package:tiomusic/services/file_references.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -40,7 +40,7 @@ class ProjectPage extends StatefulWidget {
 }
 
 class _ProjectPageState extends State<ProjectPage> {
-  late ProjectLibraryRepository _projectLibraryRepo;
+  late ProjectRepository _projectRepo;
   late FileReferences _fileReferences;
 
   late bool _showBlocks;
@@ -58,7 +58,7 @@ class _ProjectPageState extends State<ProjectPage> {
   void initState() {
     super.initState();
 
-    _projectLibraryRepo = context.read<ProjectLibraryRepository>();
+    _projectRepo = context.read<ProjectRepository>();
     _fileReferences = context.read<FileReferences>();
 
     _withoutProject = widget.withoutRealProject;
@@ -117,7 +117,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
       if (projectLibrary.showHomepageTutorial) {
         projectLibrary.showHomepageTutorial = false;
-        await _projectLibraryRepo.save(projectLibrary);
+        await _projectRepo.saveLibrary(projectLibrary);
         _createTutorial();
         if (!mounted) return;
         _tutorial.show(context);
@@ -137,7 +137,7 @@ class _ProjectPageState extends State<ProjectPage> {
     ];
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showProjectPageTutorial = false;
-      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -181,7 +181,7 @@ class _ProjectPageState extends State<ProjectPage> {
     final newBlock = info.createWithTitle(blockTitle);
 
     _project.addBlock(newBlock);
-    await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
     setState(() {
       _showBlocks = true;
@@ -206,7 +206,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
     _project.removeBlock(block, projectLibrary);
 
-    await _projectLibraryRepo.save(projectLibrary);
+    await _projectRepo.saveLibrary(projectLibrary);
 
     setState(() {});
   }
@@ -227,7 +227,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
     _project.clearBlocks(projectLibrary);
 
-    await _projectLibraryRepo.save(projectLibrary);
+    await _projectRepo.saveLibrary(projectLibrary);
 
     setState(() {});
   }
@@ -254,7 +254,7 @@ class _ProjectPageState extends State<ProjectPage> {
             );
             if (newTitle == null) return;
             _project.title = newTitle;
-            if (context.mounted) await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+            if (context.mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
             setState(() {});
           },
           child: Text(
@@ -405,7 +405,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
     _project.increaseCounter(info.kind);
     if (mounted) {
-      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }
 
     _createBlockAndGoToTool(info, newTitle);

@@ -7,7 +7,7 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 
@@ -242,7 +242,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       widget.mediaPlayerBlock.markerPositions.add(pos);
     }
 
-    context.read<ProjectLibraryRepository>().save(context.read<ProjectLibrary>());
+    context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     Navigator.pop(context);
   }
 }

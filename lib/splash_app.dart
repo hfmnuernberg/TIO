@@ -6,10 +6,11 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/main.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/services/archiver.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/media_repository.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/simple.dart';
 import 'package:tiomusic/src/rust/frb_generated.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -39,6 +40,7 @@ class _SplashAppState extends State<SplashApp> {
       final fs = context.read<FileSystem>();
       final mediaRepo = context.read<MediaRepository>();
       final fileReferences = context.read<FileReferences>();
+      final archiver = context.read<Archiver>();
 
       await RustLib.init();
       await initRustDefaultsManually();
@@ -47,6 +49,7 @@ class _SplashAppState extends State<SplashApp> {
       await NoteHandler.createNoteBeatLengthMap();
       final ProjectLibrary projectLibrary = await _initProjectLibrary();
       await fileReferences.init(projectLibrary);
+      await archiver.init();
 
       return _returnLoadedData(projectLibrary, null);
     });
@@ -54,8 +57,8 @@ class _SplashAppState extends State<SplashApp> {
 
   Future<ProjectLibrary> _initProjectLibrary() async {
     try {
-      final projectLibraryRepo = context.read<ProjectLibraryRepository>();
-      return projectLibraryRepo.exists() ? projectLibraryRepo.load() : ProjectLibrary.withDefaults();
+      final projectRepo = context.read<ProjectRepository>();
+      return projectRepo.existsLibrary() ? projectRepo.loadLibrary() : ProjectLibrary.withDefaults();
     } catch (e) {
       _logger.e('Unable to load project library.', error: e);
       _hasError = true;
@@ -91,7 +94,7 @@ class _SplashAppState extends State<SplashApp> {
             const SizedBox(height: 24),
             TIOFlatButton(
               onPressed: () async {
-                await context.read<ProjectLibraryRepository>().delete();
+                await context.read<ProjectRepository>().deleteLibrary();
                 _returnLoadedData(ProjectLibrary.withDefaults(), null);
               },
               text: context.l10n.mainOpenAnyway,

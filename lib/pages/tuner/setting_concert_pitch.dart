@@ -5,7 +5,7 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/number_input_double_with_slider.dart';
 
@@ -39,7 +39,7 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
       final newConcertPitch = double.tryParse(text);
       if (newConcertPitch != null) {
         _tunerBlock.chamberNoteHz = newConcertPitch;
-        context.read<ProjectLibraryRepository>().save(context.read<ProjectLibrary>());
+        context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
       }
     }
 

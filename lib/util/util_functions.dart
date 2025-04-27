@@ -1,9 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -24,7 +21,8 @@ import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/text/text.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/services/file_references.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
@@ -32,12 +30,12 @@ import 'package:tiomusic/widgets/confirm_setting_button.dart';
 // ---------------------------------------------------------------
 // copy an asset to a temporary file
 
-Future<String> copyAssetToTemp(String assetPath) async {
-  final String targetPath = (await getTemporaryDirectory()).path;
-  File tempFile = File('$targetPath/${assetPath.split('/').last}');
-  final assetData = await rootBundle.load(assetPath);
-  await tempFile.writeAsBytes(assetData.buffer.asUint8List(assetData.offsetInBytes, assetData.lengthInBytes));
-  return tempFile.path;
+Future<String> copyAssetToTemp(FileSystem fs, String assetPath) async {
+  final tempAssetPath = '${fs.tmpFolderPath}/${assetPath.split('/').last}';
+  final byteData = await rootBundle.load(assetPath);
+  final bytes = byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
+  await fs.saveFileAsBytes(tempAssetPath, bytes);
+  return tempAssetPath;
 }
 
 // ---------------------------------------------------------------
@@ -402,7 +400,7 @@ Future<void> saveToolInProject(
     if (newBlock is MediaPlayerBlock) context.read<FileReferences>().inc(newBlock.relativePath);
   }
 
-  await context.read<ProjectLibraryRepository>().save(projectLibrary);
+  await context.read<ProjectRepository>().saveLibrary(projectLibrary);
 
   if (context.mounted) {
     // if we save a tool, that already belongs to a project
@@ -442,7 +440,7 @@ void saveToolInNewProject(
     if (newBlock is MediaPlayerBlock) context.read<FileReferences>().inc(newBlock.relativePath);
   }
 
-  context.read<ProjectLibraryRepository>().save(projectLibrary);
+  context.read<ProjectRepository>().saveLibrary(projectLibrary);
 
   if (context.mounted) {
     // if we save a tool, that already belongs to a project

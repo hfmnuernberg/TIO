@@ -83,20 +83,6 @@ class FileSystemLogDecorator implements FileSystem {
   }
 
   @override
-  Future<String?> pickAudio() async {
-    final path = await _fs.pickAudio();
-    _logger.t('pickAudio(): $path');
-    return path;
-  }
-
-  @override
-  Future<String?> pickImage() async {
-    final path = await _fs.pickImage();
-    _logger.t('pickImage(): $path');
-    return path;
-  }
-
-  @override
   Future<void> saveFileAsBytes(String absoluteFilePath, List<int> data) async {
     _logger.t('saveFileAsBytes(${shortenPath(absoluteFilePath)}, ${data.length} bytes)');
     return _fs.saveFileAsBytes(absoluteFilePath, data);
@@ -109,10 +95,9 @@ class FileSystemLogDecorator implements FileSystem {
   }
 
   @override
-  Future<bool> shareFile(String absoluteFilePath) async {
-    final result = await _fs.shareFile(absoluteFilePath);
-    _logger.t('shareFile(${shortenPath(absoluteFilePath)}): $result');
-    return result;
+  Future<void> copyFile(String absoluteSourceFilePath, String absoluteDestinationFilePath) async {
+    _logger.t('copyFile(${shortenPath(absoluteSourceFilePath)}, ${shortenPath(absoluteDestinationFilePath)})');
+    return _fs.copyFile(absoluteSourceFilePath, absoluteDestinationFilePath);
   }
 
   @override

@@ -15,7 +15,7 @@ import 'package:tiomusic/pages/metronome/metronome_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/empty_island.dart';
 import 'package:tiomusic/pages/tuner/tuner_island_view.dart';
 import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
@@ -36,7 +36,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   static final _logger = createPrefixLogger('ParentIslandView');
 
   late FileSystem _fs;
-  late ProjectLibraryRepository _projectLibraryRepo;
+  late ProjectRepository _projectRepo;
 
   bool _empty = true;
   bool _possibleToolForIslandExists = false;
@@ -49,7 +49,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     super.initState();
 
     _fs = context.read<FileSystem>();
-    _projectLibraryRepo = context.read<ProjectLibraryRepository>();
+    _projectRepo = context.read<ProjectRepository>();
 
     // if project is null (if we are in a quick tool), there is no possible tool to open
     _possibleToolForIslandExists = checkIslandPossible(widget.project, widget.toolBlock);
@@ -220,7 +220,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     // and then in init of empty island open the new island
     _loadedTool = EmptyBlock(context.l10n.toolEmpty);
     widget.toolBlock.islandToolID = 'empty';
-    await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     _empty = false;
 
     if (!mounted) return;
@@ -233,7 +233,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     if (_indexOfChoosenIsland != null) {
       _loadedTool = widget.project!.blocks[_indexOfChoosenIsland!];
       widget.toolBlock.islandToolID = widget.project!.blocks[_indexOfChoosenIsland!].id;
-      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
       setState(() {});
     }

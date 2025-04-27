@@ -5,7 +5,7 @@ import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 
 import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
@@ -40,7 +40,7 @@ class _SetRandomMuteState extends State<SetRandomMute> {
       int newRandomMute = int.parse(_randomMuteController.text);
       _metronomeBlock.randomMute = newRandomMute;
       metronomeSetBeatMuteChance(muteChance: newRandomMute / 100.0).then((success) => null);
-      context.read<ProjectLibraryRepository>().save(context.read<ProjectLibrary>());
+      context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     }
 
     Navigator.pop(context);

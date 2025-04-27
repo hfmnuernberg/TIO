@@ -1,5 +1,8 @@
-import 'package:file_picker/file_picker.dart';
-
 mixin FilePicker {
-  Future<FilePickerResult?> pickFiles({FileType type});
+  Future<String?> pickAudio();
+  Future<String?> pickArchive();
+  Future<String?> pickImage();
+  Future<String?> pickTextFile();
+
+  Future<bool> shareFile(String absoluteFilePath);
 }

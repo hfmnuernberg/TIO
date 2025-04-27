@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/projects_list/projects_list.dart';
 import 'package:tiomusic/services/decorators/file_references_log_decorator.dart';
+import 'package:tiomusic/services/decorators/file_system_log_decorator.dart';
 import 'package:tiomusic/services/decorators/media_repository_log_decorator.dart';
-import 'package:tiomusic/services/decorators/project_library_repository_log_decorator.dart';
+import 'package:tiomusic/services/decorators/project_repository_log_decorator.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/impl/file_based_media_repository.dart';
-import 'package:tiomusic/services/impl/file_based_project_library_repository.dart';
+import 'package:tiomusic/services/impl/file_based_project_repository.dart';
 import 'package:tiomusic/services/impl/file_references_impl.dart';
-import 'package:tiomusic/services/decorators/file_system_log_decorator.dart';
 import 'package:tiomusic/services/media_repository.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 
 import '../../mocks/in_memory_file_system_mock.dart';
 import '../../utils/action_utils.dart';
@@ -30,21 +29,21 @@ void main() {
   setUp(() async {
     final fileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
     final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(fileSystem));
-    final projectLibraryRepo = ProjectLibraryRepositoryLogDecorator(FileBasedProjectLibraryRepository(fileSystem));
+    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(fileSystem));
     final fileReferences = FileReferencesLogDecorator(FileReferencesImpl(mediaRepo));
 
     await fileSystem.init();
     await mediaRepo.init();
     final projectLibrary =
-        projectLibraryRepo.exists() ? await projectLibraryRepo.load() : ProjectLibrary.withDefaults()
+        projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults()
           ..dismissAllTutorials();
-    await projectLibraryRepo.save(projectLibrary);
+    await projectRepo.saveLibrary(projectLibrary);
     await fileReferences.init(projectLibrary);
 
     providers = [
       Provider<FileSystem>(create: (_) => fileSystem),
       Provider<MediaRepository>(create: (_) => mediaRepo),
-      Provider<ProjectLibraryRepository>(create: (_) => projectLibraryRepo),
+      Provider<ProjectRepository>(create: (_) => projectRepo),
       Provider<FileReferences>(create: (_) => fileReferences),
       ChangeNotifierProvider<ProjectLibrary>.value(value: projectLibrary),
     ];

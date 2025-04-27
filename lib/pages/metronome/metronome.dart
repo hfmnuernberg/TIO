@@ -26,7 +26,8 @@ import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
 import 'package:tiomusic/pages/parent_tool/volume.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
@@ -56,7 +57,8 @@ class Metronome extends StatefulWidget {
 class _MetronomeState extends State<Metronome> with RouteAware {
   static final _logger = createPrefixLogger('Metronome');
 
-  late ProjectLibraryRepository _projectLibraryRepo;
+  late FileSystem _fs;
+  late ProjectRepository _projectRepo;
 
   int _lastStateChange = DateTime.now().millisecondsSinceEpoch;
   final List<int> _lastRenderTimes = List.empty(growable: true);
@@ -91,7 +93,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   void initState() {
     super.initState();
 
-    _projectLibraryRepo = context.read<ProjectLibraryRepository>();
+    _fs = context.read<FileSystem>();
+    _projectRepo = context.read<ProjectRepository>();
 
     VolumeController.instance.addListener(handleVolumeChange);
 
@@ -110,7 +113,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     metronomeSetBeatMuteChance(muteChance: _metronomeBlock.randomMute.toDouble() / 100.0);
 
     _muteMetronome(!_sound);
-    MetronomeUtils.loadSounds(_metronomeBlock);
+    MetronomeUtils.loadSounds(_fs, _metronomeBlock);
 
     // Build rhythm list
     _clearAndRebuildRhythmSegments(false);
@@ -185,7 +188,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     ];
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showMetronomeTutorial = false;
-      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -310,7 +313,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
       );
       if (mounted) {
-        await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
         setState(() {});
       }
     });
@@ -331,7 +334,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
       bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
     );
-    await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     setState(() {});
   }
 
@@ -366,7 +369,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
     );
     if (mounted) {
-      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       setState(() {});
     }
   }

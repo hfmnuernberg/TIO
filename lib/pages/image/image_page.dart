@@ -13,10 +13,11 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/image/add_image_dialog.dart';
 import 'package:tiomusic/pages/image/take_picture_screen.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
+import 'package:tiomusic/services/file_picker.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/media_repository.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
@@ -36,9 +37,10 @@ class _ImageToolState extends State<ImageTool> {
   static final _logger = createPrefixLogger('ImageTool');
 
   late FileSystem _fs;
+  late FilePicker _filePicker;
   late FileReferences _fileReferences;
   late MediaRepository _mediaRepo;
-  late ProjectLibraryRepository _projectLibraryRepo;
+  late ProjectRepository _projectRepo;
 
   late ImageBlock _imageBlock;
   late Project _project;
@@ -52,9 +54,10 @@ class _ImageToolState extends State<ImageTool> {
     super.initState();
 
     _fs = context.read<FileSystem>();
+    _filePicker = context.read<FilePicker>();
     _fileReferences = context.read<FileReferences>();
     _mediaRepo = context.read<MediaRepository>();
-    _projectLibraryRepo = context.read<ProjectLibraryRepository>();
+    _projectRepo = context.read<ProjectRepository>();
 
     _imageBlock = Provider.of<ProjectBlock>(context, listen: false) as ImageBlock;
     _imageBlock.timeLastModified = getCurrentDateTime();
@@ -114,7 +117,7 @@ class _ImageToolState extends State<ImageTool> {
     if (useAsProfilePicture != null && useAsProfilePicture) {
       _project.setThumbnail(_imageBlock.relativePath);
       if (mounted) {
-        await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       }
     }
   }
@@ -156,7 +159,7 @@ class _ImageToolState extends State<ImageTool> {
 
   Future<void> _pickImageAndSave(bool useAsThumbnail) async {
     try {
-      final imagePath = await _fs.pickImage();
+      final imagePath = await _filePicker.pickImage();
       if (imagePath == null) return;
 
       if (!await _fs.existsFileAfterGracePeriod(imagePath)) {
@@ -177,7 +180,7 @@ class _ImageToolState extends State<ImageTool> {
       _imageBlock.relativePath = newRelativePath;
       _fileReferences.inc(newRelativePath);
 
-      await _projectLibraryRepo.save(projectLibrary);
+      await _projectRepo.saveLibrary(projectLibrary);
 
       _addOptionsToMenu();
     } on PlatformException catch (e) {
@@ -218,7 +221,7 @@ class _ImageToolState extends State<ImageTool> {
     _imageBlock.relativePath = newRelativePath;
     _fileReferences.inc(newRelativePath);
 
-    await _projectLibraryRepo.save(projectLibrary);
+    await _projectRepo.saveLibrary(projectLibrary);
 
     _addOptionsToMenu();
   }

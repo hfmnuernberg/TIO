@@ -22,10 +22,11 @@ import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
+import 'package:tiomusic/services/file_picker.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/media_repository.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -50,9 +51,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
   static final _logger = createPrefixLogger('MediaPlayer');
 
   late FileSystem _fs;
+  late FilePicker _filePicker;
   late FileReferences _fileReferences;
   late MediaRepository _mediaRepo;
-  late ProjectLibraryRepository _projectLibraryRepo;
+  late ProjectRepository _projectRepo;
 
   var _isPlaying = false;
   var _isRecording = false;
@@ -95,9 +97,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
     super.initState();
 
     _fs = context.read<FileSystem>();
+    _filePicker = context.read<FilePicker>();
     _fileReferences = context.read<FileReferences>();
     _mediaRepo = context.read<MediaRepository>();
-    _projectLibraryRepo = context.read<ProjectLibraryRepository>();
+    _projectRepo = context.read<ProjectRepository>();
 
     _waveformVisualizer = WaveformVisualizer(0, 0, 1, _rmsValues, 0);
 
@@ -233,7 +236,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
       if (_fileLoaded) context.read<ProjectLibrary>().showWaveformTip = false;
-      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -250,7 +253,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showWaveformTip = false;
-      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -258,8 +261,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
     var mediaPlayerStateRust = await mediaPlayerGetState();
     if (!mounted || mediaPlayerStateRust == null) return;
     if (_isPlaying == mediaPlayerStateRust.playing &&
-        _playbackPositionFactor == mediaPlayerStateRust.playbackPositionFactor)
+        _playbackPositionFactor == mediaPlayerStateRust.playbackPositionFactor) {
       return;
+    }
     setState(() {
       _isPlaying = mediaPlayerStateRust.playing;
       _playbackPositionFactor = mediaPlayerStateRust.playbackPositionFactor;
@@ -354,7 +358,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                     setState(() {
                       _mediaPlayerBlock.looping = !_mediaPlayerBlock.looping;
                     });
-                    await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+                    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
                     mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
                   },
                   icon:
@@ -617,7 +621,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     _mediaPlayerBlock.relativePath = newRelativePath;
     _fileReferences.inc(newRelativePath);
 
-    await _projectLibraryRepo.save(projectLibrary);
+    await _projectRepo.saveLibrary(projectLibrary);
 
     _fileLoaded = false;
     _rmsValues = Float32List(0);
@@ -651,7 +655,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _addShareOptionToMenu();
       _mediaPlayerBlock.markerPositions.clear();
       if (mounted) {
-        await _projectLibraryRepo.save(projectLibrary);
+        await _projectRepo.saveLibrary(projectLibrary);
       }
     }
     setState(() {
@@ -663,7 +667,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   Future<String?> _pickAudioFile(BuildContext context, ProjectLibrary projectLibrary) async {
     try {
-      return await _fs.pickAudio();
+      return await _filePicker.pickAudio();
     } on PlatformException catch (e) {
       _logger.e('Failed to pick audio.', error: e);
       return null;
@@ -773,7 +777,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       }
       _mediaPlayerBlock.relativePath = newRelativePath;
 
-      await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       setState(() => _isLoading = true);
 
       final fileExtension = _fs.toExtension(_mediaPlayerBlock.relativePath);
@@ -798,7 +802,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _setFileDuration();
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
-        if (mounted) await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+        if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       }
       setState(() => _isLoading = false);
     }
@@ -820,7 +824,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _setFileDuration();
       _addShareOptionToMenu();
       _mediaPlayerBlock.markerPositions.clear();
-      if (mounted) await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+      if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }
     setState(() {
       _isLoading = false;
@@ -846,7 +850,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         }
         _mediaPlayerBlock.relativePath = newRelativePath;
 
-        await _projectLibraryRepo.save(context.read<ProjectLibrary>());
+        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       }
     });
   }

@@ -5,7 +5,7 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
-import 'package:tiomusic/services/project_library_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/app_slider_double.dart';
@@ -151,7 +151,7 @@ class _SetSpeedState extends State<SetSpeed> {
 
       _mediaPlayerBlock.speedFactor = newSpeedFactor;
 
-      context.read<ProjectLibraryRepository>().save(context.read<ProjectLibrary>());
+      context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
 
       final success = await mediaPlayerSetSpeedFactor(speedFactor: newSpeedFactor);
       if (!mounted) return;
