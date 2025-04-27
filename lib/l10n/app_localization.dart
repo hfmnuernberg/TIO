@@ -180,6 +180,8 @@ abstract class AppLocalizations {
   String get projectDeleteAllToolsConfirmation;
   String get projectDeleteToolConfirmation;
   String get projectDetails;
+  String get projectEditTools;
+  String get projectEditToolsDone;
   String get projectEmpty;
   String get projectExport;
   String get projectExportCancelled;
@@ -220,6 +222,7 @@ abstract class AppLocalizations {
   String get textImportNoFileSelected;
   String get textImportSuccess;
 
+  String get toolAddNew;
   String get toolEmpty;
   String get toolNewProjectTitle;
   String get toolNewTitle;
@@ -248,9 +251,9 @@ abstract class AppLocalizations {
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
 
-  String formatInteger(double num) => NumberFormat.decimalPattern(locale).format(num);
+  String formatNumber(double number) => NumberFormat.decimalPattern(locale).format(number);
 
-  String formatDecimal(double num) => NumberFormat.decimalPattern(locale).format(double.parse(num.toStringAsFixed(1)));
+  double parseNumber(String number) => NumberFormat.decimalPattern(locale).parse(number).toDouble();
 
   String formatDateAndTime(DateTime time);
 

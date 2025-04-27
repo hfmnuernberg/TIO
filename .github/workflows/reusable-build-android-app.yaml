@@ -44,7 +44,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libasound2-dev
 
       - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1.11.0
+        uses: actions-rust-lang/setup-rust-toolchain@v1.12.0
 
       - name: Install cargo-ndk
         run: cargo install cargo-ndk
@@ -71,7 +71,7 @@ jobs:
         run: scripts/app.sh generate:json
 
       - name: Setup ruby
-        uses: ruby/setup-ruby@v1.233.0
+        uses: ruby/setup-ruby@v1.234.0
         with:
           ruby-version: '3.3'
           working-directory: android

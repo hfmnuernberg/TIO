@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tiomusic/widgets/input/number_input_dec.dart';
+import 'package:tiomusic/widgets/input/number_input_and_slider_dec.dart';
 
-class NumberInputInt extends StatelessWidget {
+class NumberInputAndSliderInt extends StatelessWidget {
   final int value;
-  final ValueChanged<int> onChange;
+  final Function(int) onChange;
   final int? min;
   final int? max;
   final int? step;
@@ -15,12 +15,12 @@ class NumberInputInt extends StatelessWidget {
   final double? textFontSize;
   final double? relIconSize;
 
-  const NumberInputInt({
+  const NumberInputAndSliderInt({
     super.key,
     required this.value,
     required this.onChange,
-    this.min = 0,
-    this.max = 100,
+    this.min,
+    this.max,
     this.step,
     this.stepIntervalInMs,
     this.label,
@@ -33,7 +33,7 @@ class NumberInputInt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NumberInputDec(
+    return NumberInputAndSliderDec(
       value: value.toDouble(),
       onChange: (val) => onChange(val.round()),
       min: min?.toDouble(),

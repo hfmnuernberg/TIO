@@ -7,13 +7,15 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/pages/project_page/editable_tool_list.dart';
 import 'package:tiomusic/pages/project_page/export_project.dart';
+import 'package:tiomusic/pages/project_page/tool_list.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/big_icon_button.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
@@ -44,11 +46,11 @@ class _ProjectPageState extends State<ProjectPage> {
   late FileReferences _fileReferences;
 
   late bool _showBlocks;
+  bool _isEditing = false;
 
   late Project _project;
   bool _withoutProject = false;
 
-  final List<MenuItemButton> _menuItems = List.empty(growable: true);
   final TextEditingController _titleController = TextEditingController();
 
   final Tutorial _tutorial = Tutorial();
@@ -91,25 +93,7 @@ class _ProjectPageState extends State<ProjectPage> {
     _showTutorial();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (_menuItems.isEmpty) {
-      _menuItems.addAll([
-        MenuItemButton(
-          onPressed: () => exportProject(context, _project),
-          child: Text(context.l10n.projectExport, style: TextStyle(color: ColorTheme.primary)),
-        ),
-        MenuItemButton(
-          onPressed: _handleDeleteAllBlocks,
-          child: Text(context.l10n.projectDeleteAllTools, style: TextStyle(color: ColorTheme.primary)),
-        ),
-      ]);
-    }
-
-    _showTutorial();
-  }
+  void _toggleEditingMode() => setState(() => _isEditing = !_isEditing);
 
   void _showTutorial() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -139,6 +123,46 @@ class _ProjectPageState extends State<ProjectPage> {
       context.read<ProjectLibrary>().showProjectPageTutorial = false;
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
+  }
+
+  Future<void> _handleDeleteBlock(int index) async {
+    bool? isConfirmed = await _confirmDeleteBlock();
+    if (isConfirmed != true) return;
+
+    if (!mounted) return;
+    final projectLibrary = context.read<ProjectLibrary>();
+    final block = _project.blocks[index];
+
+    if (block is ImageBlock && _project.thumbnailPath == block.relativePath) _project.setDefaultThumbnail();
+    if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+    if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+
+    _project.removeBlock(block, projectLibrary);
+
+    await _projectRepo.saveLibrary(projectLibrary);
+
+    setState(() {});
+  }
+
+  Future<void> _handleDeleteAllBlocks() async {
+    bool? isConfirmed = await _confirmDeleteBlock(deleteAll: true);
+    if (isConfirmed != true) return;
+
+    if (!mounted) return;
+    final projectLibrary = context.read<ProjectLibrary>();
+    final blocks = _project.blocks;
+
+    for (final block in blocks) {
+      if (block is ImageBlock && _project.thumbnailPath == block.relativePath) _project.setDefaultThumbnail();
+      if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+      if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+    }
+
+    _project.clearBlocks(projectLibrary);
+
+    await _projectRepo.saveLibrary(projectLibrary);
+
+    setState(() {});
   }
 
   Future<bool?> _confirmDeleteBlock({bool deleteAll = false}) => showDialog<bool>(
@@ -171,7 +195,7 @@ class _ProjectPageState extends State<ProjectPage> {
     },
   );
 
-  void _createBlockAndGoToTool(BlockTypeInfo info, String blockTitle) async {
+  Future<void> _createBlockAndGoToTool(BlockTypeInfo info, String blockTitle) async {
     if (_withoutProject) {
       final projectLibrary = context.read<ProjectLibrary>();
       projectLibrary.addProject(_project);
@@ -192,42 +216,15 @@ class _ProjectPageState extends State<ProjectPage> {
     goToTool(context, _project, newBlock).then((_) => setState(() {}));
   }
 
-  void _handleDeleteBlock(int index) async {
-    bool? isConfirmed = await _confirmDeleteBlock();
-    if (isConfirmed != true) return;
+  Future<void> _onReorder(int oldIndex, int newIndex) async {
+    if (newIndex > oldIndex) newIndex--;
 
-    if (!mounted) return;
-    final projectLibrary = context.read<ProjectLibrary>();
-    final block = _project.blocks[index];
+    final mutableBlocks = _project.blocks.toList();
+    final block = mutableBlocks.removeAt(oldIndex);
+    mutableBlocks.insert(newIndex, block);
+    _project.blocks = mutableBlocks;
 
-    if (block is ImageBlock && _project.thumbnailPath == block.relativePath) _project.setDefaultThumbnail();
-    if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
-    if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
-
-    _project.removeBlock(block, projectLibrary);
-
-    await _projectRepo.saveLibrary(projectLibrary);
-
-    setState(() {});
-  }
-
-  void _handleDeleteAllBlocks() async {
-    bool? isConfirmed = await _confirmDeleteBlock(deleteAll: true);
-    if (isConfirmed != true) return;
-
-    if (!mounted) return;
-    final projectLibrary = context.read<ProjectLibrary>();
-    final blocks = _project.blocks;
-
-    for (final block in blocks) {
-      if (block is ImageBlock && _project.thumbnailPath == block.relativePath) _project.setDefaultThumbnail();
-      if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
-      if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
-    }
-
-    _project.clearBlocks(projectLibrary);
-
-    await _projectRepo.saveLibrary(projectLibrary);
+    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
     setState(() {});
   }
@@ -279,7 +276,31 @@ class _ProjectPageState extends State<ProjectPage> {
               backgroundColor: WidgetStatePropertyAll(ColorTheme.surface),
               elevation: WidgetStatePropertyAll(0),
             ),
-            menuChildren: _menuItems,
+            menuChildren: [
+              MenuItemButton(
+                onPressed: () => exportProject(context, _project),
+                child: Text(context.l10n.projectExport, style: TextStyle(color: ColorTheme.primary)),
+              ),
+              MenuItemButton(
+                onPressed:
+                    () => setState(() {
+                      _showBlocks = false;
+                      _isEditing = false;
+                    }),
+                child: Text(context.l10n.toolAddNew, style: TextStyle(color: ColorTheme.primary)),
+              ),
+              MenuItemButton(
+                onPressed: _toggleEditingMode,
+                child: Text(
+                  _isEditing ? context.l10n.projectEditToolsDone : context.l10n.projectEditTools,
+                  style: TextStyle(color: ColorTheme.primary),
+                ),
+              ),
+              MenuItemButton(
+                onPressed: _handleDeleteAllBlocks,
+                child: Text(context.l10n.projectDeleteAllTools, style: TextStyle(color: ColorTheme.primary)),
+              ),
+            ],
           ),
         ],
       ),
@@ -290,46 +311,23 @@ class _ProjectPageState extends State<ProjectPage> {
           FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
           Padding(
             padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
-            child: ListView.builder(
-              itemCount: _project.blocks.length + 1,
-              itemBuilder: (context, index) {
-                if (index >= _project.blocks.length) {
-                  return const SizedBox(height: 120);
-                } else {
-                  return CardListTile(
-                    title: _project.blocks[index].title,
-                    subtitle: formatSettingValues(_project.blocks[index].getSettingsFormatted(context.l10n)),
-                    leadingPicture: circleToolIcon(_project.blocks[index].icon),
-                    trailingIcon: IconButton(
-                      onPressed:
-                          () => {goToTool(context, _project, _project.blocks[index]).then((_) => setState(() {}))},
-                      icon: const Icon(Icons.arrow_forward),
-                      color: ColorTheme.primaryFixedDim,
+            child:
+                _isEditing
+                    ? EditableToolList(project: _project, onReorder: _onReorder, onDeleteBlock: _handleDeleteBlock)
+                    : ToolList(
+                      project: _project,
+                      onOpenTool: (block) async {
+                        await goToTool(context, _project, block);
+                        setState(() {});
+                      },
                     ),
-                    menuIconOne: IconButton(
-                      onPressed: () => _handleDeleteBlock(index),
-                      icon: const Icon(Icons.delete_outlined),
-                      color: ColorTheme.surfaceTint,
-                    ),
-                    onTapFunction: () {
-                      goToTool(context, _project, _project.blocks[index]).then((_) => setState(() {}));
-                    },
-                  );
-                }
-              },
-            ),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // button to add a new tool
               BigIconButton(
-                icon: Icons.add,
-                onPressed: () {
-                  setState(() {
-                    _showBlocks = false;
-                  });
-                },
+                icon: _isEditing ? Icons.check : Icons.add,
+                onPressed: () => _isEditing ? _toggleEditingMode() : setState(() => _showBlocks = false),
               ),
               const SizedBox(height: TIOMusicParams.spaceBetweenPlusButtonAndBottom),
             ],
@@ -394,7 +392,7 @@ class _ProjectPageState extends State<ProjectPage> {
     );
   }
 
-  void _onNewToolTilePressed(BlockTypeInfo info) async {
+  Future<void> _onNewToolTilePressed(BlockTypeInfo info) async {
     final newTitle = await showEditTextDialog(
       context: context,
       label: context.l10n.projectNewTool,

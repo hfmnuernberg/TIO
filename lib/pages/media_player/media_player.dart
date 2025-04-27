@@ -398,7 +398,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       settingTiles: [
         SettingsTile(
           title: l10n.commonVolume,
-          subtitle: l10n.formatInteger(_mediaPlayerBlock.volume),
+          subtitle: l10n.formatNumber(_mediaPlayerBlock.volume),
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
             initialValue: _mediaPlayerBlock.volume,
@@ -406,7 +406,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
               _mediaPlayerBlock.volume = vol;
               mediaPlayerSetVolume(volume: vol);
             },
-            onUserChangedVolume: (vol) => mediaPlayerSetVolume(volume: vol),
+            onChange: (vol) => mediaPlayerSetVolume(volume: vol),
             onCancel: () => mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume),
           ),
           block: _mediaPlayerBlock,
@@ -433,7 +433,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         SettingsTile(
           title: l10n.mediaPlayerSpeed,
           subtitle:
-              '${l10n.formatInteger(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
+              '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
           leadingIcon: Icons.speed,
           settingPage: const SetSpeed(),
           block: _mediaPlayerBlock,

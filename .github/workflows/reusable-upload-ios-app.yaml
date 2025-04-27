@@ -44,13 +44,13 @@ jobs:
           fetch-depth: 0
 
       - name: Restore bundle
-        uses: actions/download-artifact@v4.2.1
+        uses: actions/download-artifact@v4.3.0
         with:
           name: ${{ inputs.artifactName }}
           path: build/ios/ipa
 
       - name: Setup ruby
-        uses: ruby/setup-ruby@v1.233.0
+        uses: ruby/setup-ruby@v1.234.0
         with:
           ruby-version: '3.3'
           working-directory: ios
