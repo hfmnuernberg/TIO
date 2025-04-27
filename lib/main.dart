@@ -9,19 +9,18 @@ import 'package:tiomusic/services/archiver.dart';
 import 'package:tiomusic/services/decorators/archiver_log_decorator.dart';
 import 'package:tiomusic/services/decorators/file_picker_log_decorator.dart';
 import 'package:tiomusic/services/decorators/file_references_log_decorator.dart';
+import 'package:tiomusic/services/decorators/file_system_log_decorator.dart';
 import 'package:tiomusic/services/decorators/media_repository_log_decorator.dart';
 import 'package:tiomusic/services/decorators/project_repository_log_decorator.dart';
 import 'package:tiomusic/services/file_picker.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/services/impl/file_based_media_repository.dart';
 import 'package:tiomusic/services/impl/file_based_archiver.dart';
+import 'package:tiomusic/services/impl/file_based_media_repository.dart';
 import 'package:tiomusic/services/impl/file_based_project_repository.dart';
 import 'package:tiomusic/services/impl/file_picker_impl.dart';
 import 'package:tiomusic/services/impl/file_references_impl.dart';
 import 'package:tiomusic/services/impl/file_system_impl.dart';
-import 'package:tiomusic/services/decorators/file_system_log_decorator.dart';
-import 'package:tiomusic/services/delegates/path_provider_delegate.dart';
 import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/splash_app.dart';
@@ -40,9 +39,8 @@ void runMainApp(ProjectLibrary projectLibrary, ThemeData? theme) {
 }
 
 List<SingleChildWidget> _getProviders() {
-  final pathProvider = PathProviderDelegate();
   final filePicker = FilePickerLogDecorator(FilePickerImpl());
-  final fileSystem = FileSystemLogDecorator(FileSystemImpl(pathProvider));
+  final fileSystem = FileSystemLogDecorator(FileSystemImpl());
   final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(fileSystem));
   final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(fileSystem));
   final fileReferences = FileReferencesLogDecorator(FileReferencesImpl(mediaRepo));

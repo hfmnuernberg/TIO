@@ -1,18 +1,14 @@
 import 'dart:io';
 
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/services/path_provider.dart';
 
 class FileSystemImpl implements FileSystem {
-  final PathProvider _pathProvider;
-
-  FileSystemImpl(this._pathProvider);
-
   @override
   Future<void> init() async {
-    appFolderPath = (await _pathProvider.getApplicationDocumentsDirectory()).path;
-    tmpFolderPath = (await _pathProvider.getTemporaryDirectory()).path;
+    appFolderPath = (await getApplicationDocumentsDirectory()).path;
+    tmpFolderPath = (await getTemporaryDirectory()).path;
   }
 
   @override
