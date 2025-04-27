@@ -106,8 +106,7 @@ class _ImageToolState extends State<ImageTool> {
   }
 
   void _shareFilePressed() async {
-    XFile file = XFile(context.read<FileSystem>().toAbsoluteFilePath(_imageBlock.relativePath));
-    await Share.shareXFiles([file]);
+    await _filePicker.shareFile(context.read<FileSystem>().toAbsoluteFilePath(_imageBlock.relativePath));
   }
 
   void _setAsThumbnail() async {

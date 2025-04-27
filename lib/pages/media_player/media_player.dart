@@ -5,7 +5,6 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
@@ -475,8 +474,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   void _shareFilePressed() async {
-    XFile file = XFile(_fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath));
-    await Share.shareXFiles([file]);
+    await _filePicker.shareFile(_fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath));
   }
 
   Widget _switchMainButton(Key key) {
