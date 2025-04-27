@@ -13,10 +13,10 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-
-import 'package:tiomusic/models/file_io.dart';
 
 enum SoundType { accented, unaccented, polyAccented, polyUnaccented }
 
@@ -30,6 +30,8 @@ class SetMetronomeSound extends StatefulWidget {
 }
 
 class _SetMetronomeSoundState extends State<SetMetronomeSound> {
+  late FileSystem _fs;
+
   late MetronomeBlock _metronomeBlock;
 
   final List<bool> _selectedAccSound = List<bool>.filled(MetronomeSound.values.length, false);
@@ -40,6 +42,8 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
   @override
   void initState() {
     super.initState();
+
+    _fs = context.read<FileSystem>();
 
     _metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
 
@@ -158,7 +162,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
                 _playSound(soundType);
               } else {
                 String file = MetronomeSound.values[index].file;
-                MetronomeUtils.loadSound(widget.forSecondMetronome, soundType, file);
+                MetronomeUtils.loadSound(_fs, widget.forSecondMetronome, soundType, file);
               }
             });
           },
@@ -177,7 +181,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
     );
   }
 
-  void _onConfirm() {
+  Future<void> _onConfirm() async {
     if (widget.forSecondMetronome) {
       _metronomeBlock.accSound2 = MetronomeSound.values[_selectedAccSound.indexOf(true)].filename;
       _metronomeBlock.unaccSound2 = MetronomeSound.values[_selectedUnaccSound.indexOf(true)].filename;
@@ -190,9 +194,10 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
       _metronomeBlock.polyUnaccSound = MetronomeSound.values[_selectedPolyUnaccSound.indexOf(true)].filename;
     }
 
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-    MetronomeUtils.loadSounds(_metronomeBlock);
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    MetronomeUtils.loadSounds(_fs, _metronomeBlock);
 
+    if (!mounted) return;
     Navigator.pop(context);
   }
 
@@ -240,16 +245,16 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
           true;
     }
 
-    MetronomeUtils.loadSound(widget.forSecondMetronome, SoundType.accented, defaultMetronomeAccSound);
-    MetronomeUtils.loadSound(widget.forSecondMetronome, SoundType.unaccented, defaultMetronomeUnaccSound);
-    MetronomeUtils.loadSound(widget.forSecondMetronome, SoundType.polyAccented, defaultMetronomePolyAccSound);
-    MetronomeUtils.loadSound(widget.forSecondMetronome, SoundType.polyUnaccented, defaultMetronomePolyUnaccSound);
+    MetronomeUtils.loadSound(_fs, widget.forSecondMetronome, SoundType.accented, defaultMetronomeAccSound);
+    MetronomeUtils.loadSound(_fs, widget.forSecondMetronome, SoundType.unaccented, defaultMetronomeUnaccSound);
+    MetronomeUtils.loadSound(_fs, widget.forSecondMetronome, SoundType.polyAccented, defaultMetronomePolyAccSound);
+    MetronomeUtils.loadSound(_fs, widget.forSecondMetronome, SoundType.polyUnaccented, defaultMetronomePolyUnaccSound);
 
     setState(() {});
   }
 
   void _onCancel() {
-    MetronomeUtils.loadSounds(_metronomeBlock);
+    MetronomeUtils.loadSounds(_fs, _metronomeBlock);
     Navigator.pop(context);
   }
 }

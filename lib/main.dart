@@ -1,189 +1,57 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/l10n/delegate.dart';
-import 'package:tiomusic/models/file_references.dart';
-import 'package:tiomusic/models/note_handler.dart';
+import 'package:provider/single_child_widget.dart';
+import 'package:tiomusic/app.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/projects_list/projects_list.dart';
-
-import 'package:tiomusic/models/file_io.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
-import 'package:tiomusic/src/rust/api/simple.dart';
-import 'package:tiomusic/src/rust/frb_generated.dart';
-import 'package:tiomusic/util/audio_util.dart';
-import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/color_schemes.g.dart';
-import 'package:tiomusic/widgets/confirm_setting_button.dart';
-
-final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+import 'package:tiomusic/services/archiver.dart';
+import 'package:tiomusic/services/decorators/archiver_log_decorator.dart';
+import 'package:tiomusic/services/decorators/file_picker_log_decorator.dart';
+import 'package:tiomusic/services/decorators/file_references_log_decorator.dart';
+import 'package:tiomusic/services/decorators/file_system_log_decorator.dart';
+import 'package:tiomusic/services/decorators/media_repository_log_decorator.dart';
+import 'package:tiomusic/services/decorators/project_repository_log_decorator.dart';
+import 'package:tiomusic/services/file_picker.dart';
+import 'package:tiomusic/services/file_references.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/impl/file_based_archiver.dart';
+import 'package:tiomusic/services/impl/file_based_media_repository.dart';
+import 'package:tiomusic/services/impl/file_based_project_repository.dart';
+import 'package:tiomusic/services/impl/file_picker_impl.dart';
+import 'package:tiomusic/services/impl/file_references_impl.dart';
+import 'package:tiomusic/services/impl/file_system_impl.dart';
+import 'package:tiomusic/services/media_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
+import 'package:tiomusic/splash_app.dart';
 
 Future<void> main() async {
-  await RustLib.init();
-  await initRustDefaultsManually();
-  // first running loading screen app to load the data from json
-  runApp(SplashApp(key: UniqueKey(), returnProjectLibraryAndTheme: runMainApp));
+  runApp(
+    MultiProvider(
+      providers: _getProviders(),
+      child: SplashApp(key: UniqueKey(), returnProjectLibraryAndTheme: runMainApp),
+    ),
+  );
 }
 
-// and then running the main app
 void runMainApp(ProjectLibrary projectLibrary, ThemeData? theme) {
-  runApp(TIOMusicApp(projectLibrary: projectLibrary, ourTheme: theme));
+  runApp(MultiProvider(providers: _getProviders(), child: App(projectLibrary: projectLibrary, ourTheme: theme)));
 }
 
-class TIOMusicApp extends StatelessWidget {
-  const TIOMusicApp({super.key, required this.projectLibrary, this.ourTheme});
+List<SingleChildWidget> _getProviders() {
+  final filePicker = FilePickerLogDecorator(FilePickerImpl());
+  final fileSystem = FileSystemLogDecorator(FileSystemImpl());
+  final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(fileSystem));
+  final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(fileSystem));
+  final fileReferences = FileReferencesLogDecorator(FileReferencesImpl(mediaRepo));
+  final archiver = ArchiverLogDecorator(FileBasedArchiver(fileSystem, mediaRepo));
 
-  final ProjectLibrary projectLibrary;
-  final ThemeData? ourTheme;
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ProjectLibrary>.value(
-      value: projectLibrary,
-      child: MaterialApp(
-        navigatorObservers: [routeObserver],
-        debugShowCheckedModeBanner: false,
-        localizationsDelegates: [...GlobalMaterialLocalizations.delegates, AppLocalizationsDelegate()],
-        supportedLocales: const [Locale('en', 'US'), Locale('de', 'DE')],
-        title: 'TIO Music',
-        theme: ourTheme ?? ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
-        home: const TIOMusicHomePage(),
-      ),
-    );
-  }
-}
-
-class TIOMusicHomePage extends StatefulWidget {
-  const TIOMusicHomePage({super.key});
-
-  @override
-  State<TIOMusicHomePage> createState() => _TIOMusicHomePageState();
-}
-
-class _TIOMusicHomePageState extends State<TIOMusicHomePage> {
-  @override
-  void initState() {
-    super.initState();
-
-    if (Platform.isIOS) {
-      startAudioSession()
-          .then((_) async => configureAudioSession(AudioSessionType.playback))
-          .then((_) async => Future.delayed(const Duration(milliseconds: 500)))
-          .then((_) => initAudio());
-    } else {
-      initAudio();
-    }
-
-    // if (kDebugMode) {
-    //   Timer.periodic(const Duration(milliseconds: 3), (Timer t) {
-    //     pollDebugLogMessage().then((message) {
-    //       if (message != null && message.isNotEmpty) debugPrint(message);
-    //     });
-    //   });
-    // }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(resizeToAvoidBottomInset: false, body: ProjectsList());
-  }
-}
-
-// app for the loading screen and for loading the data
-class SplashApp extends StatefulWidget {
-  final Function(ProjectLibrary, ThemeData?) returnProjectLibraryAndTheme;
-
-  const SplashApp({super.key, required this.returnProjectLibraryAndTheme});
-
-  @override
-  State<SplashApp> createState() => _SplashAppState();
-}
-
-class _SplashAppState extends State<SplashApp> {
-  bool _hasError = false;
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await FileIO.createMediaDirectory();
-
-      await NoteHandler.createNoteBeatLengthMap();
-
-      final ProjectLibrary projectLibrary = await _initializeProjectLibrary();
-
-      FileReferences.init(projectLibrary).then((_) => _returnLoadedData(projectLibrary, null));
-    });
-  }
-
-  Future<ProjectLibrary> _initializeProjectLibrary() async {
-    if (!await FileIO.existsLocalJsonFile()) {
-      return ProjectLibrary.withDefaults();
-    }
-
-    String? jsonString = await FileIO.readJsonDataFromSave();
-
-    if (jsonString == null || jsonString.isEmpty) {
-      await FileIO.deleteLocalJsonFile();
-      return ProjectLibrary.withDefaults();
-    }
-
-    try {
-      Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-      return ProjectLibrary.fromJson(jsonMap);
-    } catch (e) {
-      debugPrint('failed to parse json to library: $e');
-      _hasError = true;
-      setState(() {});
-
-      await FileIO.deleteLocalJsonFile();
-      return ProjectLibrary.withDefaults();
-    }
-  }
-
-  void _returnLoadedData(ProjectLibrary projectLibrary, ThemeData? theme) {
-    widget.returnProjectLibraryAndTheme(projectLibrary, theme);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: context.l10n.mainSplashScreen,
-      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
-      darkTheme: ThemeData(useMaterial3: true, colorScheme: darkColorScheme),
-      home: Scaffold(resizeToAvoidBottomInset: false, backgroundColor: ColorTheme.primary92, body: _buildBody()),
-    );
-  }
-
-  Widget _buildBody() {
-    if (_hasError) {
-      final l10n = context.l10n;
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(l10n.mainErrorDataLoading, style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 24)),
-            const SizedBox(height: 24),
-            TIOFlatButton(onPressed: main, text: l10n.mainRetry),
-            const SizedBox(height: 24),
-            TIOFlatButton(
-              onPressed: () {
-                FileIO.deleteLocalJsonFile();
-                _returnLoadedData(ProjectLibrary.withDefaults(), null);
-              },
-              text: l10n.mainOpenAnyway,
-            ),
-          ],
-        ),
-      );
-    }
-    return const Center(child: CircularProgressIndicator());
-  }
+  return [
+    Provider<FilePicker>(create: (_) => filePicker),
+    Provider<FileSystem>(create: (_) => fileSystem),
+    Provider<ProjectRepository>(create: (_) => projectRepo),
+    Provider<MediaRepository>(create: (_) => mediaRepo),
+    Provider<FileReferences>(create: (_) => fileReferences),
+    Provider<Archiver>(create: (_) => archiver),
+  ];
 }

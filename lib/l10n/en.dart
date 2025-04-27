@@ -195,9 +195,11 @@ class English extends AppLocalizations {
   String get pianoTutorialAdjust => 'Tap here to adjust concert pitch, volume, and sound.';
   String get pianoTutorialChangeKeyOrOctave => 'Tap the left or right arrows to move up or down per key or per octave.';
 
+  String get projectDelete => 'Delete project';
   String get projectDeleteAllTools => 'Delete all tools';
   String get projectDeleteAllToolsConfirmation => 'Do you really want to delete all tools in this project?';
   String get projectDeleteToolConfirmation => 'Do you really want to delete this tool?';
+  String get projectDetails => 'Project details';
   String get projectEditTools => 'Edit tools';
   String get projectEditToolsDone => 'Finish editing';
   String get projectEmpty => 'Choose type of tool';
@@ -205,6 +207,7 @@ class English extends AppLocalizations {
   String get projectExportCancelled => 'Project export cancelled';
   String get projectExportError => 'Error exporting project';
   String get projectExportSuccess => 'Project exported successfully!';
+  String get projectMenu => 'Project menu';
   String get projectNew => 'Project title';
   String get projectNewTool => 'Tool title';
   String get projectTutorialEditTitle => 'Tap here to edit the title of your project.';
@@ -219,6 +222,7 @@ class English extends AppLocalizations {
   String get projectsImportError => 'Error importing project';
   String get projectsImportNoFileSelected => 'No project file selected';
   String get projectsImportSuccess => 'Project imported successfully!';
+  String get projectsMenu => 'Projects menu';
   String get projectsNew => 'New project';
   String get projectsNoProjects => 'Please click on "+" to create a new project.';
   String get projectsTutorialAddProject => 'Tap here to create a new project.';

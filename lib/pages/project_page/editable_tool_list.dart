@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project.dart';
-import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 
 class EditableToolList extends StatelessWidget {
   final Project project;
-  final void Function(int oldIndex, int newIndex) onReorder;
-  final Future<bool?> Function(ProjectBlock block) onDeleteBlock;
+  final Future<void> Function(int oldIndex, int newIndex) onReorder;
+  final Future<void> Function(int index) onDeleteBlock;
 
   const EditableToolList({super.key, required this.project, required this.onReorder, required this.onDeleteBlock});
 
@@ -35,7 +34,7 @@ class EditableToolList extends StatelessWidget {
               color: ColorTheme.primaryFixedDim,
             ),
             menuIconOne: IconButton(
-              onPressed: () => onDeleteBlock(block),
+              onPressed: () => onDeleteBlock(index),
               icon: const Icon(Icons.delete_outlined),
               color: ColorTheme.tertiary,
             ),

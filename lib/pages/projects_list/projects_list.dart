@@ -1,12 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -18,6 +20,9 @@ import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
 import 'package:tiomusic/pages/projects_list/import_project.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
+import 'package:tiomusic/services/file_references.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -37,6 +42,10 @@ class ProjectsList extends StatefulWidget {
 }
 
 class _ProjectsListState extends State<ProjectsList> {
+  late FileSystem _fs;
+  late FileReferences _fileReferences;
+  late ProjectRepository _projectRepo;
+
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
 
   bool _showBanner = false;
@@ -48,6 +57,11 @@ class _ProjectsListState extends State<ProjectsList> {
   @override
   void initState() {
     super.initState();
+
+    _fs = context.read<FileSystem>();
+    _fileReferences = context.read<FileReferences>();
+    _projectRepo = context.read<ProjectRepository>();
+
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   }
 
@@ -72,7 +86,7 @@ class _ProjectsListState extends State<ProjectsList> {
           child: Text(l10n.projectsImport, style: const TextStyle(color: ColorTheme.primary)),
         ),
         MenuItemButton(
-          onPressed: _deleteAllProjectsPressed,
+          onPressed: _handleDeleteAllProjects,
           child: Text(l10n.projectsDeleteAll, style: const TextStyle(color: ColorTheme.primary)),
         ),
         MenuItemButton(
@@ -86,13 +100,14 @@ class _ProjectsListState extends State<ProjectsList> {
   }
 
   void _showTutorial() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final projectLibrary = context.read<ProjectLibrary>();
 
       if (projectLibrary.showHomepageTutorial) {
         projectLibrary.showHomepageTutorial = false;
-        FileIO.saveProjectLibraryToJson(projectLibrary);
+        await context.read<ProjectRepository>().saveLibrary(projectLibrary);
         _createTutorial();
+        if (!mounted) return;
         _tutorial.show(context);
       }
     });
@@ -128,9 +143,9 @@ class _ProjectsListState extends State<ProjectsList> {
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
     ];
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showHomepageTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -154,20 +169,9 @@ class _ProjectsListState extends State<ProjectsList> {
     );
   }
 
-  void _deleteAllProjectsPressed() async {
-    bool? deleteProject = await _deleteProject(deleteAll: true);
-    if (deleteProject != null && deleteProject) {
-      if (mounted) {
-        final projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
-        projectLibrary.clearProjects();
-        FileIO.saveProjectLibraryToJson(projectLibrary);
-      }
-    }
-  }
-
-  void _showTutorialAgainPressed() {
+  void _showTutorialAgainPressed() async {
     context.read<ProjectLibrary>().resetAllTutorials();
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
     _createTutorial();
     Future.delayed(Duration.zero, () {
@@ -237,7 +241,7 @@ class _ProjectsListState extends State<ProjectsList> {
     }
   }
 
-  Future<bool?> _deleteProject({bool deleteAll = false}) => showDialog<bool>(
+  Future<bool?> _confirmDeleteProject({bool deleteAll = false}) => showDialog<bool>(
     context: context,
     builder: (context) {
       final l10n = context.l10n;
@@ -267,6 +271,43 @@ class _ProjectsListState extends State<ProjectsList> {
     },
   );
 
+  void _handleDeleteProject(int index) async {
+    bool? isConfirmed = await _confirmDeleteProject();
+    if (isConfirmed != true) return;
+
+    if (!mounted) return;
+    final projectLibrary = context.read<ProjectLibrary>();
+    final project = projectLibrary.projects[index];
+
+    for (final block in project.blocks) {
+      if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+      if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+    }
+
+    projectLibrary.removeProject(projectLibrary.projects[index]);
+
+    await _projectRepo.saveLibrary(projectLibrary);
+  }
+
+  void _handleDeleteAllProjects() async {
+    bool? isConfirmed = await _confirmDeleteProject();
+    if (isConfirmed != true) return;
+
+    if (!mounted) return;
+    final projectLibrary = context.read<ProjectLibrary>();
+
+    for (final project in projectLibrary.projects) {
+      for (final block in project.blocks) {
+        if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+        if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+      }
+    }
+
+    projectLibrary.clearProjects();
+
+    await _projectRepo.saveLibrary(projectLibrary);
+  }
+
   void _goToToolOverProjectPage(Project project, ProjectBlock tool, bool pianoAlreadyOn) {
     Navigator.of(context)
         .push(
@@ -289,21 +330,17 @@ class _ProjectsListState extends State<ProjectsList> {
         .then(doActionOnReturn);
   }
 
-  void _goToProjectPage(Project project, bool withoutRealProject) {
-    Navigator.of(context)
-        .push(
-          MaterialPageRoute(
-            builder: (context) {
-              return ChangeNotifierProvider<Project>.value(
-                value: project,
-                builder: (context, child) {
-                  return ProjectPage(goStraightToTool: false, withoutRealProject: withoutRealProject);
-                },
-              );
-            },
-          ),
-        )
-        .then(doActionOnReturn);
+  Future<void> _goToProjectPage(Project project, bool withoutRealProject) async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder:
+            (context) => ChangeNotifierProvider<Project>.value(
+              value: project,
+              child: ProjectPage(goStraightToTool: false, withoutRealProject: withoutRealProject),
+            ),
+      ),
+    );
+    doActionOnReturn(result);
   }
 
   Widget _getSurveyBanner() {
@@ -335,14 +372,14 @@ class _ProjectsListState extends State<ProjectsList> {
                       if (await launchUrl(url) && mounted) {
                         _showBanner = false;
                         context.read<ProjectLibrary>().neverShowSurveyAgain = true;
-                        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+                        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
                         setState(() {});
                       }
                     },
                     child: Text(l10n.feedbackCta),
                   ),
                   IconButton(
-                    onPressed: () {
+                    onPressed: () async {
                       _showBanner = false;
 
                       // show banner a second and third time and then never again
@@ -351,7 +388,7 @@ class _ProjectsListState extends State<ProjectsList> {
                       if (projectLibrary.idxCheckShowSurvey >= projectLibrary.showSurveyAtVisits.length) {
                         projectLibrary.neverShowSurveyAgain = true;
                       }
-                      FileIO.saveProjectLibraryToJson(projectLibrary);
+                      await _projectRepo.saveLibrary(projectLibrary);
 
                       setState(() {});
                     },
@@ -391,12 +428,13 @@ class _ProjectsListState extends State<ProjectsList> {
 
             final newProject = Project.defaultPicture(newTitle);
             if (context.mounted) {
-              FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+              await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
             }
 
             _goToProjectPage(newProject, true);
           },
           icon: const Icon(Icons.add),
+          tooltip: l10n.projectsNew,
         ),
         actions: [
           MenuAnchor(
@@ -406,6 +444,7 @@ class _ProjectsListState extends State<ProjectsList> {
                   controller.isOpen ? controller.close() : controller.open();
                 },
                 icon: const Icon(Icons.more_vert),
+                tooltip: context.l10n.projectsMenu,
               );
             },
             style: const MenuStyle(
@@ -420,15 +459,12 @@ class _ProjectsListState extends State<ProjectsList> {
         alignment: Alignment.bottomCenter,
         fit: StackFit.expand,
         children: [
-          // background image
           FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
 
           Column(
             children: [
               Expanded(
-                child:
-                // list
-                Consumer<ProjectLibrary>(
+                child: Consumer<ProjectLibrary>(
                   builder:
                       (context, projectLibrary, child) =>
                           projectLibrary.projects.isEmpty
@@ -451,24 +487,27 @@ class _ProjectsListState extends State<ProjectsList> {
                                       title: projectLibrary.projects[idx].title,
                                       subtitle: l10n.formatDateAndTime(projectLibrary.projects[idx].timeLastModified),
                                       trailingIcon: IconButton(
+                                        tooltip: l10n.projectDetails,
+                                        icon: const Icon(Icons.arrow_forward),
+                                        color: ColorTheme.primaryFixedDim,
                                         onPressed: () {
                                           _goToProjectPage(projectLibrary.projects[idx], false);
                                         },
-                                        icon: const Icon(Icons.arrow_forward),
-                                        color: ColorTheme.primaryFixedDim,
                                       ),
                                       menuIconOne: IconButton(
-                                        onPressed: () async {
-                                          bool? deleteProject = await _deleteProject();
-                                          if (deleteProject != null && deleteProject) {
-                                            projectLibrary.removeProject(projectLibrary.projects[idx]);
-                                            FileIO.saveProjectLibraryToJson(projectLibrary);
-                                          }
-                                        },
+                                        tooltip: l10n.projectDelete,
                                         icon: const Icon(Icons.delete_outlined),
                                         color: ColorTheme.surfaceTint,
+                                        onPressed: () => _handleDeleteProject(idx),
                                       ),
-                                      leadingPicture: projectLibrary.projects[idx].thumbnail,
+                                      leadingPicture:
+                                          projectLibrary.projects[idx].thumbnailPath.isEmpty
+                                              ? const AssetImage(TIOMusicParams.tiomusicIconPath)
+                                              : FileImage(
+                                                File(
+                                                  _fs.toAbsoluteFilePath(projectLibrary.projects[idx].thumbnailPath),
+                                                ),
+                                              ),
                                       onTapFunction: () {
                                         _goToProjectPage(projectLibrary.projects[idx], false);
                                       },
@@ -508,7 +547,6 @@ class _ProjectsListState extends State<ProjectsList> {
               ),
             ],
           ),
-          // survey banner
           if (_showBanner) _getSurveyBanner() else const SizedBox(),
         ],
       ),

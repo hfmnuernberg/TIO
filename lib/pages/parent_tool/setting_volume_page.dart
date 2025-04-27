@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/pages/parent_tool/volume.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_dec.dart';
@@ -59,7 +59,8 @@ class _SetVolumeState extends State<SetVolume> {
 
   void _handleConfirm() async {
     widget.onConfirm(volume);
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 
