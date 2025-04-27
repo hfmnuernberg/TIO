@@ -67,7 +67,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             final image = await _controller.takePicture();
 
             if (context.mounted) {
-              Navigator.pop(context, image);
+              Navigator.pop(context, image.path);
             }
           } catch (e) {
             _logger.e('Unable to take picture.', error: e);

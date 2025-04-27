@@ -4,7 +4,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/project.dart';
@@ -200,14 +199,14 @@ class _ImageToolState extends State<ImageTool> {
 
     if (!mounted) return;
 
-    XFile? image = await Navigator.of(
+    String? imagePath = await Navigator.of(
       context,
     ).push(MaterialPageRoute(builder: (context) => TakePictureScreen(camera: firstCamera)));
-    if (image == null) return;
+    if (imagePath == null) return;
 
     var newFileName = '${_project.title}-${_imageBlock.title}';
 
-    final newRelativePath = await _mediaRepo.import(image.path, newFileName);
+    final newRelativePath = await _mediaRepo.import(imagePath, newFileName);
     if (newRelativePath == null) return;
 
     if (!mounted) return;
