@@ -107,7 +107,7 @@ class _TextToolState extends State<TextTool> {
     _textBlock.content = _textController.text;
   }
 
-  void _saveText() {
-    context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+  Future<void> _saveText() async {
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
   }
 }

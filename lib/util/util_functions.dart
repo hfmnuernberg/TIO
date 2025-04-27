@@ -429,7 +429,7 @@ void saveToolInNewProject(
   String projectTitle,
   String toolTitle, {
   bool pianoAlreadyOn = false,
-}) {
+}) async {
   ProjectLibrary projectLibrary = context.read<ProjectLibrary>();
   Project newProject = Project.defaultPicture(projectTitle);
   projectLibrary.addProject(newProject);
@@ -440,7 +440,7 @@ void saveToolInNewProject(
     if (newBlock is MediaPlayerBlock) context.read<FileReferences>().inc(newBlock.relativePath);
   }
 
-  context.read<ProjectRepository>().saveLibrary(projectLibrary);
+  await context.read<ProjectRepository>().saveLibrary(projectLibrary);
 
   if (context.mounted) {
     // if we save a tool, that already belongs to a project

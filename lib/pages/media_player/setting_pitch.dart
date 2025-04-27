@@ -45,9 +45,10 @@ class _SetPitchState extends State<SetPitch> {
 
   Future<void> _handleReset() async => _handleChange(MediaPlayerParams.defaultPitchSemitones);
 
-  void _handleConfirm() {
+  Future<void> _handleConfirm() async {
     _mediaPlayerBlock.pitchSemitones = pitch;
-    context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 

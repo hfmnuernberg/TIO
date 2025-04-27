@@ -174,9 +174,9 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
         pointingDirection: PointingDirection.up,
       ),
     ];
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showBeatToggleTip = false;
-      context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+      await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -370,7 +370,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     );
   }
 
-  void _onConfirm() {
+  Future<void> _onConfirm() async {
     _stopBeat();
 
     if (widget.isAddingNewBar) {
@@ -390,7 +390,8 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
     MetronomeUtils.loadSounds(_fs, widget.metronomeBlock);
 
-    context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.of(context).pop(true);
   }
 

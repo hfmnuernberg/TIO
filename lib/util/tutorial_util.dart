@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -36,7 +38,7 @@ class Tutorial {
       onSkip: () {
         final projectLibrary = context.read<ProjectLibrary>();
         projectLibrary.dismissAllTutorials();
-        context.read<ProjectRepository>().saveLibrary(projectLibrary);
+        unawaited(context.read<ProjectRepository>().saveLibrary(projectLibrary));
         return true;
       },
     );

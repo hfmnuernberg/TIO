@@ -35,9 +35,10 @@ class _SetBPMState extends State<SetBPM> {
 
   void _handleReset() => _handleChange(defaultBpm);
 
-  void _handleConfirm() {
+  Future<void> _handleConfirm() async {
     _mediaPlayerBlock.bpm = value;
-    context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 

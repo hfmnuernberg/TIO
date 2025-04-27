@@ -155,9 +155,9 @@ class _TunerState extends State<Tuner> {
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showTunerTutorial = false;
-      context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+      await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 

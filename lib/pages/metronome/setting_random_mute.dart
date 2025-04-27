@@ -38,7 +38,8 @@ class _SetRandomMuteState extends State<SetRandomMute> {
   void _handleConfirm() async {
     _metronomeBlock.randomMute = value;
     metronomeSetBeatMuteChance(muteChance: value / 100.0).then((success) => null);
-    context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 

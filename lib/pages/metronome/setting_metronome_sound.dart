@@ -181,7 +181,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
     );
   }
 
-  void _onConfirm() {
+  Future<void> _onConfirm() async {
     if (widget.forSecondMetronome) {
       _metronomeBlock.accSound2 = MetronomeSound.values[_selectedAccSound.indexOf(true)].filename;
       _metronomeBlock.unaccSound2 = MetronomeSound.values[_selectedUnaccSound.indexOf(true)].filename;
@@ -194,9 +194,10 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
       _metronomeBlock.polyUnaccSound = MetronomeSound.values[_selectedPolyUnaccSound.indexOf(true)].filename;
     }
 
-    context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     MetronomeUtils.loadSounds(_fs, _metronomeBlock);
 
+    if (!mounted) return;
     Navigator.pop(context);
   }
 

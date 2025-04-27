@@ -43,9 +43,10 @@ class _SetBPMState extends State<SetBPM> {
 
   Future<void> _handleReset() async => _handleChange(MetronomeParams.defaultBPM);
 
-  void _handleConfirm() {
+  Future<void> _handleConfirm() async {
     _metronomeBlock.bpm = bpm;
-    context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 

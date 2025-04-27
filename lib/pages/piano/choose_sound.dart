@@ -64,9 +64,10 @@ class _ChooseSoundState extends State<ChooseSound> {
     );
   }
 
-  void _onConfirm() {
+  Future<void> _onConfirm() async {
     _pianoBlock.soundFontIndex = _selectedSounds.indexWhere((element) => element);
-    context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 

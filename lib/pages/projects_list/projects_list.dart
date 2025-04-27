@@ -100,13 +100,14 @@ class _ProjectsListState extends State<ProjectsList> {
   }
 
   void _showTutorial() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final projectLibrary = context.read<ProjectLibrary>();
 
       if (projectLibrary.showHomepageTutorial) {
         projectLibrary.showHomepageTutorial = false;
-        context.read<ProjectRepository>().saveLibrary(projectLibrary);
+        await context.read<ProjectRepository>().saveLibrary(projectLibrary);
         _createTutorial();
+        if (!mounted) return;
         _tutorial.show(context);
       }
     });

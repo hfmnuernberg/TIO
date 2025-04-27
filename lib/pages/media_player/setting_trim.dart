@@ -126,10 +126,10 @@ class _SetTrimState extends State<SetTrim> {
     );
   }
 
-  void _onConfirm() async {
+  Future<void> _onConfirm() async {
     _mediaPlayerBlock.rangeStart = _rangeValues.start;
     _mediaPlayerBlock.rangeEnd = _rangeValues.end;
-    context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
 
     await mediaPlayerSetTrim(startFactor: _mediaPlayerBlock.rangeStart, endFactor: _mediaPlayerBlock.rangeEnd);
 

@@ -236,13 +236,14 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     setState(() {});
   }
 
-  void _onConfirm() {
+  Future<void> _onConfirm() async {
     widget.mediaPlayerBlock.markerPositions.clear();
     for (var pos in _markerPositions) {
       widget.mediaPlayerBlock.markerPositions.add(pos);
     }
 
-    context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 }

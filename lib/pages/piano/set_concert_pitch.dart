@@ -38,7 +38,8 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
 
   void _handleConfirm() async {
     _pianoBlock.concertPitch = _concertPitch;
-    context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 

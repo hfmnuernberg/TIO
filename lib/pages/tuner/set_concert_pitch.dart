@@ -35,9 +35,10 @@ class _SetConcertPitchState extends State<SetConcertPitch> {
 
   void _handleReset() => _handleChange(TunerParams.defaultConcertPitch);
 
-  void _handleConfirm() {
+  Future<void> _handleConfirm() async {
     _tunerBlock.chamberNoteHz = _concertPitch;
-    context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 
