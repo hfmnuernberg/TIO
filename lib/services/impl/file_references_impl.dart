@@ -3,11 +3,8 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/media_repository.dart';
-import 'package:tiomusic/util/log.dart';
 
 class FileReferencesImpl implements FileReferences {
-  static final _logger = createPrefixLogger('FileReferences');
-
   final MediaRepository _mediaRepo;
   final Map<String, int> _refs = {};
 
@@ -28,18 +25,19 @@ class FileReferencesImpl implements FileReferences {
   }
 
   @override
+  int count(String path) => _refs[path] ?? 0;
+
+  @override
   Future<void> inc(String path) async {
-    _logger.t("Incrementing ref count for '$path' (current: ${_refs[path]}).");
     if (path == '') return;
-    _refs[path] = _refs.containsKey(path) ? _refs[path]! + 1 : 1;
+    _refs[path] = _refs.containsKey(path) ? count(path) + 1 : 1;
   }
 
   @override
   Future<void> dec(String path, ProjectLibrary projectLibrary) async {
-    _logger.t("Decrementing ref count for '$path' (current: ${_refs[path]}).");
     if (path == '') return;
     if (_refs.containsKey(path)) {
-      _refs[path] = _refs[path]! - 1;
+      _refs[path] = count(path) - 1;
       if (_refs[path]! <= 0) {
         _refs.remove(path);
         _mediaRepo.delete(path);

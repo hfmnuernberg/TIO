@@ -8,4 +8,8 @@ mixin ProjectLibraryRepository {
   Future<void> save(ProjectLibrary projectLibrary);
 
   Future<void> delete();
+
+  Future<void> export();
+
+  Future<void> import();
 }

@@ -257,7 +257,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
   Future<void> _queryAndUpdateStateFromRust() async {
     var mediaPlayerStateRust = await mediaPlayerGetState();
     if (!mounted || mediaPlayerStateRust == null) return;
-    if (_isPlaying == mediaPlayerStateRust.playing && _playbackPositionFactor == mediaPlayerStateRust.playbackPositionFactor) return;
+    if (_isPlaying == mediaPlayerStateRust.playing &&
+        _playbackPositionFactor == mediaPlayerStateRust.playbackPositionFactor)
+      return;
     setState(() {
       _isPlaying = mediaPlayerStateRust.playing;
       _playbackPositionFactor = mediaPlayerStateRust.playbackPositionFactor;

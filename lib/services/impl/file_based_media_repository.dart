@@ -4,15 +4,12 @@ import 'dart:typed_data';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
-import 'package:tiomusic/util/log.dart';
 import 'package:wav/wav_file.dart';
 import 'package:wav/wav_format.dart';
 
 const _mediaFolderName = 'media';
 
 class FileBasedMediaRepository implements MediaRepository {
-  static final _logger = createPrefixLogger('MediaRepository');
-
   final FileSystem _fs;
 
   const FileBasedMediaRepository(this._fs);
@@ -32,8 +29,6 @@ class FileBasedMediaRepository implements MediaRepository {
     final relativePath = '$_mediaFolderName/$filename';
     final absolutePath = '$_mediaFolderPath/$filename';
 
-    _logger.t("Importing '$absoluteSourceFilePath' to '$relativePath'.");
-
     await _fs.saveFileAsBytes(absolutePath, await _fs.loadFileAsBytes(absoluteSourceFilePath));
 
     return relativePath;
@@ -45,8 +40,6 @@ class FileBasedMediaRepository implements MediaRepository {
     final relativePath = '$_mediaFolderName/$filename';
     final absolutePath = '$_mediaFolderPath/$filename';
 
-    _logger.t("Saving samples to '$relativePath'.");
-
     final wavFile = Wav([samples], await getSampleRate(), WavFormat.float32);
     await wavFile.writeFile(absolutePath);
 
@@ -55,7 +48,6 @@ class FileBasedMediaRepository implements MediaRepository {
 
   @override
   Future<void> delete(String relativePath) async {
-    _logger.t("Deleting '$relativePath'.");
     final absolutePath = '${_fs.appFolderPath}/$relativePath';
     if (_fs.existsFile(absolutePath)) await _fs.deleteFile(absolutePath);
   }

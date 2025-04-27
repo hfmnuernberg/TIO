@@ -220,6 +220,7 @@ class English extends AppLocalizations {
   String get projectsImportError => 'Error importing project';
   String get projectsImportNoFileSelected => 'No project file selected';
   String get projectsImportSuccess => 'Project imported successfully!';
+  String get projectsMenu => 'Projects menu';
   String get projectsNew => 'New project';
   String get projectsNoProjects => 'Please click on "+" to create a new project.';
   String get projectsTutorialAddProject => 'Tap here to create a new project.';

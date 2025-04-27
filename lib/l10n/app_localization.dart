@@ -199,6 +199,7 @@ abstract class AppLocalizations {
   String get projectsImportError;
   String get projectsImportNoFileSelected;
   String get projectsImportSuccess;
+  String get projectsMenu;
   String get projectsNew;
   String get projectsNoProjects;
   String get projectsTutorialAddProject;

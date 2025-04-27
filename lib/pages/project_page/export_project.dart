@@ -21,13 +21,19 @@ String _sanitizeString(String value) =>
 String _getMediaFileName(String value) => value.substring('$mediaFolder/'.length);
 
 Future<void> _writeProjectToFile(Project project, File tmpProjectFile) async {
+  print('====== _writeProjectToFile 1');
   String jsonString = jsonEncode(project.toJson());
+  print('====== _writeProjectToFile 2');
   await tmpProjectFile.writeAsString(jsonString);
+  print('====== _writeProjectToFile 3');
 }
 
 Future<File> _createTmpProjectFile(FileSystem fs, Project project) async {
+  print('===== _createTmpProjectFile 1');
   final tmpProjectFile = File('${fs.tmpFolderPath}/tio-music-project.json');
+  print('===== _createTmpProjectFile 2');
   await _writeProjectToFile(project, tmpProjectFile);
+  print('===== _createTmpProjectFile 3');
   return tmpProjectFile;
 }
 
@@ -38,18 +44,21 @@ Future<File> _copyMediaToFile(FileSystem fs, String relativePath) {
 }
 
 Future<List<File>> _createTmpImageFiles(FileSystem fs, Project project) async {
+  print('===== _createTmpImageFiles 1');
   final imageFiles = await Future.wait(
     project.blocks
         .whereType<ImageBlock>()
         .whereNot((block) => block.relativePath.isEmpty)
         .map((block) => _copyMediaToFile(fs, block.relativePath)),
   );
+  print('===== _createTmpImageFiles 2');
   final mediaPlayerFiles = await Future.wait(
     project.blocks
         .whereType<MediaPlayerBlock>()
         .whereNot((block) => block.relativePath.isEmpty)
         .map((block) => _copyMediaToFile(fs, block.relativePath)),
   );
+  print('===== _createTmpImageFiles 3');
   return [...imageFiles, ...mediaPlayerFiles];
 }
 
@@ -75,7 +84,9 @@ Future<void> _deleteTmpFiles(List<File> files) async {
 }
 
 Future<File> _archiveProject(FileSystem fs, Project project) async {
+  print('==== _archiveProject 1');
   final projectFile = await _createTmpProjectFile(fs, project);
+  print('==== _archiveProject 2');
   final imageFiles = await _createTmpImageFiles(fs, project);
   final files = [projectFile, ...imageFiles];
 
@@ -87,21 +98,29 @@ Future<File> _archiveProject(FileSystem fs, Project project) async {
 }
 
 Future<void> exportProject(BuildContext context, Project project) async {
+  print('=== exportProject 1');
   final fs = context.read<FileSystem>();
   try {
     final archiveFile = await _archiveProject(fs, project);
-
+    print('=== exportProject 2');
     if (!context.mounted) return;
+    print('=== exportProject 3');
     final success = await fs.shareFile(archiveFile.path);
+    print('=== exportProject 4');
     await archiveFile.delete();
+    print('=== exportProject 5');
 
     if (!success) {
+      print('=== exportProject 6.a.1');
       if (context.mounted) showSnackbar(context: context, message: context.l10n.projectExportCancelled)();
+      print('=== exportProject 6.a.2');
       return;
     }
-
+    print('=== exportProject 6.b');
     if (context.mounted) showSnackbar(context: context, message: context.l10n.projectExportSuccess)();
+    print('=== exportProject 7');
   } catch (e) {
+    print('=== exportProject error');
     final logger = createPrefixLogger('ExportProject');
     logger.e('Unable to export project.', error: e);
     if (context.mounted) showSnackbar(context: context, message: context.l10n.projectExportError)();

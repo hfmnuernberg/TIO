@@ -10,6 +10,7 @@ import 'package:tiomusic/services/path_provider.dart';
 import 'package:tiomusic/services/share_plus.dart';
 
 class FileSystemImpl implements FileSystem {
+  // TODO consider separating these dependencies into their own classes
   final PathProvider _pathProvider;
   final FilePicker _filePicker;
   final ImagePicker _imagePicker;

@@ -222,6 +222,7 @@ class German extends AppLocalizations {
   String get projectsImportError => 'Fehler beim Importieren des Projekts';
   String get projectsImportNoFileSelected => 'Keine Projektdatei ausgewählt';
   String get projectsImportSuccess => 'Projekt erfolgreich importiert!';
+  String get projectsMenu => 'Projekte-Menü';
   String get projectsNew => 'Neues Projekt';
   String get projectsNoProjects => 'Bitte klicke auf das "+", um ein neues Projekt zu erstellen.';
   String get projectsTutorialAddProject => 'Tippe hier, um ein neues Projekt zu erstellen.';

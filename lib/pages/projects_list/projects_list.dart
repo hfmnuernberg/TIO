@@ -329,21 +329,17 @@ class _ProjectsListState extends State<ProjectsList> {
         .then(doActionOnReturn);
   }
 
-  void _goToProjectPage(Project project, bool withoutRealProject) {
-    Navigator.of(context)
-        .push(
-          MaterialPageRoute(
-            builder: (context) {
-              return ChangeNotifierProvider<Project>.value(
-                value: project,
-                builder: (context, child) {
-                  return ProjectPage(goStraightToTool: false, withoutRealProject: withoutRealProject);
-                },
-              );
-            },
-          ),
-        )
-        .then(doActionOnReturn);
+  Future<void> _goToProjectPage(Project project, bool withoutRealProject) async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder:
+            (context) => ChangeNotifierProvider<Project>.value(
+              value: project,
+              child: ProjectPage(goStraightToTool: false, withoutRealProject: withoutRealProject),
+            ),
+      ),
+    );
+    doActionOnReturn(result);
   }
 
   Widget _getSurveyBanner() {
@@ -447,6 +443,7 @@ class _ProjectsListState extends State<ProjectsList> {
                   controller.isOpen ? controller.close() : controller.open();
                 },
                 icon: const Icon(Icons.more_vert),
+                tooltip: context.l10n.projectsMenu,
               );
             },
             style: const MenuStyle(
