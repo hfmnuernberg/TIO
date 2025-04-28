@@ -38,7 +38,7 @@ jobs:
     with:
       ref: ${{ github.sha }}
       version: ${{ needs.bump-build-number.outputs.version }}
-      buildNumber: ${{ needs.bump-build-number.outputs.build_number }}
+      buildNumber: ${{ needs.bump-build-number.outputs.buildNumber }}
       appIdentifier: 6477820301
 
   build-android-app:
@@ -49,7 +49,7 @@ jobs:
     with:
       ref: ${{ github.sha }}
       version: ${{ needs.bump-build-number.outputs.version }}
-      buildNumber: ${{ needs.bump-build-number.outputs.build_number }}
+      buildNumber: ${{ needs.bump-build-number.outputs.buildNumber }}
 
   upload-ios-app:
     needs: [verify, build-ios-app]
@@ -63,7 +63,7 @@ jobs:
     with:
       ref: ${{ github.sha }}
       version: ${{ needs.bump-build-number.outputs.version }}
-      buildNumber: ${{ needs.bump-build-number.outputs.build_number }}
+      buildNumber: ${{ needs.bump-build-number.outputs.buildNumber }}
       appIdentifier: 6477820301
 
   upload-android-app:
@@ -78,5 +78,5 @@ jobs:
     with:
       ref: ${{ github.sha }}
       version: ${{ needs.bump-build-number.outputs.version }}
-      buildNumber: ${{ needs.bump-build-number.outputs.build_number }}
+      buildNumber: ${{ needs.bump-build-number.outputs.buildNumber }}
       googlePlayStoreUrl: 'https://play.google.com/apps/test/com.studiofluffy.tonica/'
