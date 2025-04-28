@@ -341,7 +341,13 @@ Future<void> showNoCameraFoundDialog(BuildContext context) {
 // ---------------------------------------------------------------
 // navigate to a new tool page and provide the correct providers
 
-Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock block, {bool pianoAlreadyOn = false, bool isNextToolOfSameType = false}) {
+Future<dynamic> goToTool(
+  BuildContext context,
+  Project project,
+  ProjectBlock block, {
+  bool pianoAlreadyOn = false,
+  bool isNextToolOfSameType = false,
+}) {
   final route = MaterialPageRoute(
     builder: (context) {
       return MultiProvider(
