@@ -611,32 +611,45 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   Widget _bottomMetronomeBar() {
-    final metronomes = _projectRepo.blocks.whereType<MetronomeBlock>().toList();
-    if (metronomes.length <= 1 || _projectRepo == null) return const SizedBox();
+    final project = context.read<Project?>();
+
+    if (project == null) {
+      return const SizedBox();
+    }
+
+    final metronomes = project.blocks.whereType<MetronomeBlock>().toList();
+
+    if (metronomes.length <= 1) return const SizedBox();
+
+    final currentIndex = metronomes.indexOf(_metronomeBlock);
 
     return BottomAppBar(
       color: ColorTheme.surfaceBright,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: List.generate(metronomes.length, (index) {
-            final block = metronomes[index];
-
-            return IconButton(
-              tooltip: block.title,
-              icon: Icon(Icons.arrow_circle_right, color: ColorTheme.primary),
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: ColorTheme.primary),
               onPressed: () {
-                if (block == _metronomeBlock) return;
-                goToNextTool(context, _projectRepo, block);
+                final prevIndex = (currentIndex - 1 + metronomes.length) % metronomes.length;
+                goToTool(context, project, metronomes[prevIndex], isNextToolOfSameType: true);
               },
-            );
-          }),
+            ),
+            Text('${currentIndex + 1} / ${metronomes.length}', style: const TextStyle(color: ColorTheme.primary)),
+            IconButton(
+              icon: const Icon(Icons.arrow_forward_ios, color: ColorTheme.primary),
+              onPressed: () {
+                final nextIndex = (currentIndex + 1) % metronomes.length;
+                goToTool(context, project, metronomes[nextIndex], isNextToolOfSameType: true);
+              },
+            ),
+          ],
         ),
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {

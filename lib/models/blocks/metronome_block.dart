@@ -19,6 +19,7 @@ class MetronomeBlock extends ProjectBlock {
   // for now this check is only used to compare quick tools to the default settings, so some properties are left out here
   @override
   List<Object> get props => [
+    _id,
     bpm,
     randomMute,
     _rhythmGroups,
