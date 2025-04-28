@@ -13,6 +13,13 @@ on:
         required: true
         type: string
         description: The commit SHA, tag or release to verify
+    outputs:
+      version:
+        description: 'The current version'
+        value: ${{ jobs.bump-build-number.outputs.version }}
+      build_number:
+        description: 'The new build number'
+        value: ${{ jobs.bump-build-number.outputs.build_number }}
 
 permissions:
   contents: write
@@ -22,6 +29,9 @@ jobs:
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     name: Bump Build Number
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      build_number: ${{ steps.new.outputs.build_number }}
 
     steps:
     - name: Checkout repository
@@ -52,6 +62,12 @@ jobs:
       run: |
         source ./scripts/load-build-number-from-latest-tag.sh
         echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+
+    - name: Load current version
+      id: version
+      run: |
+        source ./scripts/load-version-from-latest-tag.sh
+        echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
 
     - name: Create summary
       run: echo "Bumped build number from ${{ steps.old.outputs.BUILD_NUMBER }} to ${{ steps.new.outputs.BUILD_NUMBER }}" >> $GITHUB_STEP_SUMMARY
