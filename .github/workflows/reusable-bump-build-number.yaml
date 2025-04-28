@@ -17,9 +17,9 @@ on:
       version:
         description: 'The current version'
         value: ${{ jobs.bump-build-number.outputs.version }}
-      build_number:
+      buildNumber:
         description: 'The new build number'
-        value: ${{ jobs.bump-build-number.outputs.build_number }}
+        value: ${{ jobs.bump-build-number.outputs.buildNumber }}
 
 permissions:
   contents: write
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
-      build_number: ${{ steps.new.outputs.build_number }}
+      buildNumber: ${{ steps.new.outputs.buildNumber }}
 
     steps:
     - name: Checkout repository
@@ -52,22 +52,25 @@ jobs:
       id: old
       run: |
         source ./scripts/load-build-number-from-latest-tag.sh
-        echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+        echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
     - name: Bump build number
-      run: ./scripts/bump-build-number-and-tag.sh ${{ steps.old.outputs.BUILD_NUMBER }}
+      run: ./scripts/bump-build-number-and-tag.sh ${{ steps.old.outputs.buildNumber }}
 
     - name: Load updated build number
       id: new
       run: |
         source ./scripts/load-build-number-from-latest-tag.sh
-        echo "BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+        echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
     - name: Load current version
       id: version
       run: |
         source ./scripts/load-version-from-latest-tag.sh
-        echo "VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
     - name: Create summary
-      run: echo "Bumped build number from ${{ steps.old.outputs.BUILD_NUMBER }} to ${{ steps.new.outputs.BUILD_NUMBER }}" >> $GITHUB_STEP_SUMMARY
+      run: |
+        echo "Version: **${{ steps.version.outputs.version }}**" >> $GITHUB_STEP_SUMMARY
+        echo "Build #: **${{ steps.new.outputs.buildNumber }}**" >> $GITHUB_STEP_SUMMARY
+        echo "_Previous Build #: ${{ steps.old.outputs.buildNumber }}_" >> $GITHUB_STEP_SUMMARY

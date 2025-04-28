@@ -32,4 +32,4 @@ jobs:
 
       - name: Create summary
         if: steps.semantic_release.outputs.new_release_published == 'true'
-        run: echo "Released ${{ steps.new.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
+        run: echo "Released ${{ steps.new.outputs.version }}" >> $GITHUB_STEP_SUMMARY
