@@ -46,31 +46,32 @@ jobs:
         git config --global user.name "GitHub Actions"
 
     - name: Make scripts executable
-      run: chmod +x ./scripts/*.sh
+      run: chmod +x scripts/*.sh
 
     - name: Load current build number
       id: old
       run: |
-        source ./scripts/load-build-number-from-latest-tag.sh
+        source scripts/load-build-number-from-latest-tag.sh
         echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
     - name: Bump build number
-      run: ./scripts/bump-build-number-and-tag.sh ${{ steps.old.outputs.buildNumber }}
+      run: scripts/bump-build-number-and-tag.sh ${{ steps.old.outputs.buildNumber }}
 
     - name: Load updated build number
       id: new
       run: |
-        source ./scripts/load-build-number-from-latest-tag.sh
+        source scripts/load-build-number-from-latest-tag.sh
         echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
     - name: Load current version
       id: version
       run: |
-        source ./scripts/load-version-from-latest-tag.sh
+        source scripts/load-version-from-latest-tag.sh
         echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
     - name: Create summary
       run: |
         echo "Version: **${{ steps.version.outputs.version }}**" >> $GITHUB_STEP_SUMMARY
-        echo "Build #: **${{ steps.new.outputs.buildNumber }}**" >> $GITHUB_STEP_SUMMARY
-        echo "_Previous Build #: ${{ steps.old.outputs.buildNumber }}_" >> $GITHUB_STEP_SUMMARY
+        echo "New Build Number: **${{ steps.new.outputs.buildNumber }}**" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "_Previous Build Number: ${{ steps.old.outputs.buildNumber }}_" >> $GITHUB_STEP_SUMMARY
