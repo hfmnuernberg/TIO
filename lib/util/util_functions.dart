@@ -341,7 +341,7 @@ Future<void> showNoCameraFoundDialog(BuildContext context) {
 // ---------------------------------------------------------------
 // navigate to a new tool page and provide the correct providers
 
-Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock block, {bool pianoAleadyOn = false, bool isNextToolOfSameType = false}) {
+Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock block, {bool pianoAlreadyOn = false, bool isNextToolOfSameType = false}) {
   final route = MaterialPageRoute(
     builder: (context) {
       return MultiProvider(
@@ -360,7 +360,7 @@ Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock blo
             return const ImageTool(isQuickTool: false);
           } else if (block is PianoBlock) {
             WidgetsFlutterBinding.ensureInitialized();
-            return Piano(isQuickTool: false, withoutInitAndStart: pianoAleadyOn);
+            return Piano(isQuickTool: false, withoutInitAndStart: pianoAlreadyOn);
           } else if (block is TextBlock) {
             return const TextTool(isQuickTool: false);
           } else {

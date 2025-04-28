@@ -83,7 +83,7 @@ class _ProjectPageState extends State<ProjectPage> {
           context,
           _project,
           widget.toolToOpenDirectly!,
-          pianoAleadyOn: widget.pianoAlreadyOn,
+          pianoAlreadyOn: widget.pianoAlreadyOn,
         ).then((_) => setState(() {}));
       });
     } else {
