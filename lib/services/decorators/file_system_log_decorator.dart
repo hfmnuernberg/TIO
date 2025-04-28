@@ -103,21 +103,21 @@ class FileSystemLogDecorator implements FileSystem {
   @override
   String toBasename(String filePath) {
     final basename = _fs.toBasename(filePath);
-    _logger.t('toBasename($filePath): $basename');
+    _logger.t('toBasename(${shortenPath(filePath)}): $basename');
     return basename;
   }
 
   @override
   String? toExtension(String filePath) {
     final ext = _fs.toExtension(filePath);
-    _logger.t('toExtension($filePath): $ext');
+    _logger.t('toExtension(${shortenPath(filePath)}): $ext');
     return ext;
   }
 
   @override
   String toFilename(String filePath) {
     final filename = _fs.toFilename(filePath);
-    _logger.t('toFilename($filePath): $filename');
+    _logger.t('toFilename(${shortenPath(filePath)}): $filename');
     return filename;
   }
 }

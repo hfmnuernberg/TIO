@@ -2,7 +2,7 @@
 
 set -e
 
-echo "⚙️ Loading version from latest git tag..."
+echo "⚙️ Loading release version from latest git tag..."
 
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   echo "❌  Not inside a Git repository" >&2
@@ -10,7 +10,7 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 set +e
-TAG=$(git tag --list 'v*' --sort=-creatordate | head -n1)
+TAG=$(git tag --list 'v*' --sort=-creatordate | grep -v '\-dev' | head -n1)
 set -e
 
 if [ -z "$TAG" ]; then
@@ -27,4 +27,4 @@ fi
 export VERSION
 
 echo "VERSION=$VERSION"
-echo "✅️ Loaded version from latest git tag."
+echo "✅️ Loaded release version from latest git tag."
