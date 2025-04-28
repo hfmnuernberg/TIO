@@ -52,7 +52,7 @@ jobs:
       buildNumber: ${{ needs.bump-build-number.outputs.buildNumber }}
 
   upload-ios-app:
-    needs: [verify, build-ios-app]
+    needs: [verify, bump-build-number, build-ios-app]
     name: Upload iOS App
     uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-ios-app.yaml@main
     secrets: inherit
@@ -67,7 +67,7 @@ jobs:
       appIdentifier: 6477820301
 
   upload-android-app:
-    needs: [verify, build-android-app]
+    needs: [verify, bump-build-number, build-android-app]
     name: Upload Android App
     uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-android-app.yaml@main
     secrets: inherit
