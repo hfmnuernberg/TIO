@@ -6,11 +6,15 @@ on:
       ref:
         required: true
         type: string
-        description: The commit SHA, tag or release to verify
-      artifactName:
+        description: The commit SHA, tag or release to build
+      version:
         required: true
         type: string
-        description: The name of the artifact to build
+        description: The version to build
+      buildNumber:
+        required: true
+        type: string
+        description: The build number to build
       appIdentifier:
         required: true
         type: string
@@ -28,10 +32,9 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           ref: ${{ inputs.ref }}
-          fetch-depth: 0
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
@@ -91,7 +94,7 @@ jobs:
           subdirectory: ios
 
       - name: Prepare version
-        run: scripts/update-version-and-build-number-in-pubspec-with-latest-tag.sh
+        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }} ${{ inputs.buildNumber }}
 
       - name: Build bundle
         run: scripts/app.sh build ios release
@@ -99,7 +102,7 @@ jobs:
       - name: Save bundle
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: ${{ inputs.artifactName }}
+          name: ios-${{ inputs.version }}+${{ inputs.buildNumber }}
           path: build/ios/ipa
           retention-days: 1
           if-no-files-found: error
