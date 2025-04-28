@@ -18,6 +18,9 @@ jobs:
           ref: main
           fetch-depth: 0
 
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
       - name: Create GitHub release
         id: semantic_release
         uses: cycjimmy/semantic-release-action@v4.2.0
