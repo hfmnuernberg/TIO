@@ -6,9 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/main.dart';
+import 'package:tiomusic/app.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/metronome_sound.dart';
 import 'package:tiomusic/models/metronome_sound_extension.dart';
 import 'package:tiomusic/models/project.dart';
@@ -27,11 +26,14 @@ import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
 import 'package:tiomusic/pages/parent_tool/volume.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
@@ -53,9 +55,15 @@ class Metronome extends StatefulWidget {
 }
 
 class _MetronomeState extends State<Metronome> with RouteAware {
+  static final _logger = createPrefixLogger('Metronome');
+
+  late FileSystem _fs;
+  late ProjectRepository _projectRepo;
+
   int _lastStateChange = DateTime.now().millisecondsSinceEpoch;
   final List<int> _lastRenderTimes = List.empty(growable: true);
   int _avgRenderTimeInMs = 0;
+
   bool _isStarted = false;
   bool _sound = true;
   bool _blink = MetronomeParams.defaultVisualMetronome;
@@ -81,18 +89,12 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
 
-  late final Project? _project;
-
-  List<MetronomeBlock> get _allMetronomes {
-    if (_project == null) return [];
-    return _project.blocks.whereType<MetronomeBlock>().toList();
-  }
-
   @override
   void initState() {
     super.initState();
 
-    _project = widget.isQuickTool ? null : Provider.of<Project>(context, listen: false);
+    _fs = context.read<FileSystem>();
+    _projectRepo = context.read<ProjectRepository>();
 
     VolumeController.instance.addListener(handleVolumeChange);
 
@@ -111,7 +113,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     metronomeSetBeatMuteChance(muteChance: _metronomeBlock.randomMute.toDouble() / 100.0);
 
     _muteMetronome(!_sound);
-    MetronomeUtils.loadSounds(_metronomeBlock);
+    MetronomeUtils.loadSounds(_fs, _metronomeBlock);
 
     // Build rhythm list
     _clearAndRebuildRhythmSegments(false);
@@ -146,7 +148,11 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     });
   }
 
-  void handleVolumeChange(double newVolume) => setState(() => _deviceVolumeLevel = getVolumeLevel(newVolume));
+  void handleVolumeChange(double newVolume) {
+    setState(() {
+      _deviceVolumeLevel = getVolumeLevel(newVolume);
+    });
+  }
 
   void _createTutorial() {
     final l10n = context.l10n;
@@ -180,9 +186,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         pointingDirection: PointingDirection.right,
       ),
     ];
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showMetronomeTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -297,7 +303,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   void _deleteRhythmSegment(int index, bool isSecond) async {
-    _stopMetronome().then((value) {
+    _stopMetronome().then((value) async {
       isSecond ? _metronomeBlock.rhythmGroups2.removeAt(index) : _metronomeBlock.rhythmGroups.removeAt(index);
 
       _clearAndRebuildRhythmSegments(isSecond);
@@ -307,13 +313,13 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
       );
       if (mounted) {
-        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
         setState(() {});
       }
     });
   }
 
-  void _reorderRythmSegments(int oldIndex, int newIndex, bool isSecond) {
+  void _reorderRythmSegments(int oldIndex, int newIndex, bool isSecond) async {
     _stopMetronome();
 
     _metronomeBlock.changeRhythmOrder(
@@ -328,7 +334,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
       bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
     );
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     setState(() {});
   }
 
@@ -363,7 +369,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
     );
     if (mounted) {
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       setState(() {});
     }
   }
@@ -423,7 +429,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     await MetronomeFunctions.stop();
     final success = await MetronomeFunctions.start();
     if (!success) {
-      debugPrint('failed to start metronome');
+      _logger.e('Unable to start metronome.');
       return;
     }
     _isStarted = true;
@@ -432,7 +438,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   Future<void> _stopMetronome() async {
     await audioInterruptionListener?.cancel();
     bool success = await metronomeStop();
-    if (!success) debugPrint('failed to stop metronome');
+    if (!success) _logger.e('Unable to stop metronome.');
     _isStarted = false;
   }
 
@@ -605,8 +611,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   Widget _bottomMetronomeBar() {
-    final metronomes = _allMetronomes;
-    if (metronomes.length <= 1 || _project == null) return const SizedBox();
+    final metronomes = _projectRepo.blocks.whereType<MetronomeBlock>().toList();
+    if (metronomes.length <= 1 || _projectRepo == null) return const SizedBox();
 
     return BottomAppBar(
       color: ColorTheme.surfaceBright,
@@ -622,7 +628,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
               icon: Icon(Icons.arrow_circle_right, color: ColorTheme.primary),
               onPressed: () {
                 if (block == _metronomeBlock) return;
-                goToNextTool(context, _project, block);
+                goToNextTool(context, _projectRepo, block);
               },
             );
           }),

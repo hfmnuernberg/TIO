@@ -14,6 +14,8 @@ import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm_segment.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
@@ -21,9 +23,8 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/pages/metronome/rhythm_generator_setting_list_item.dart';
 import 'package:provider/provider.dart';
-
-import 'package:tiomusic/models/file_io.dart';
 import 'package:circular_widgets/circular_widgets.dart';
+import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
@@ -58,6 +59,10 @@ class SetRhythmParameters extends StatefulWidget {
 }
 
 class _SetRhythmParametersState extends State<SetRhythmParameters> {
+  static final _logger = createPrefixLogger('SetRhythmParameters');
+
+  late FileSystem _fs;
+
   final int _minNumberOfBeats = 1;
   final int _minNumberOfPolyBeats = 0;
 
@@ -81,10 +86,12 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   void initState() {
     super.initState();
 
+    _fs = context.read<FileSystem>();
+
     // we need to use the first metronome, because the first metronome cannot have no beats
     // so if we edit a beat of the second metronome, we just load the sounds of the second metronome into the first metronome
     if (widget.isSecondMetronome) {
-      MetronomeUtils.loadMetro2SoundsIntoMetro1(widget.metronomeBlock);
+      MetronomeUtils.loadMetro2SoundsIntoMetro1(_fs, widget.metronomeBlock);
     }
 
     _beats.addAll(widget.currentBeats);
@@ -167,9 +174,9 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
         pointingDirection: PointingDirection.up,
       ),
     ];
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showBeatToggleTip = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -363,7 +370,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     );
   }
 
-  void _onConfirm() {
+  Future<void> _onConfirm() async {
     _stopBeat();
 
     if (widget.isAddingNewBar) {
@@ -381,9 +388,10 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
       widget.rhythmGroups[widget.barIndex!].beatLen = NoteHandler.getBeatLength(_noteKey);
     }
 
-    MetronomeUtils.loadSounds(widget.metronomeBlock);
+    MetronomeUtils.loadSounds(_fs, widget.metronomeBlock);
 
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.of(context).pop(true);
   }
 
@@ -402,7 +410,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   void _onCancel() {
     _stopBeat();
-    MetronomeUtils.loadSounds(widget.metronomeBlock);
+    MetronomeUtils.loadSounds(_fs, widget.metronomeBlock);
     Navigator.pop(context);
   }
 
@@ -496,7 +504,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     await MetronomeFunctions.stop();
     final success = await MetronomeFunctions.start();
     if (!success) {
-      debugPrint('failed to start metronome');
+      _logger.e('Unable to start metronome.');
       return;
     }
     _isPlaying = true;

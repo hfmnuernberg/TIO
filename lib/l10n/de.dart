@@ -198,14 +198,19 @@ class German extends AppLocalizations {
   String get pianoTutorialChangeKeyOrOctave =>
       'Tippe auf die Pfeile links oder rechts, um die Tastatur um eine Taste oder um eine Oktave nach oben oder unten zu verschieben.';
 
+  String get projectDelete => 'Project löschen';
   String get projectDeleteAllTools => 'Alle Tools löschen';
   String get projectDeleteAllToolsConfirmation => 'Möchtest du wirklich alle Tools in diesem Projekt löschen?';
   String get projectDeleteToolConfirmation => 'Möchtest du dieses Tool wirklich löschen?';
+  String get projectDetails => 'Projektdetails';
+  String get projectEditTools => 'Tools editieren';
+  String get projectEditToolsDone => 'Editieren beenden';
   String get projectEmpty => 'Wähle ein Tool.';
   String get projectExport => 'Projekt exportieren';
   String get projectExportCancelled => 'Projektexport abgebrochen';
   String get projectExportError => 'Fehler beim Exportieren des Projekts';
   String get projectExportSuccess => 'Projekt erfolgreich exportiert!';
+  String get projectMenu => 'Projektmenü';
   String get projectNew => 'Projekttitel';
   String get projectNewTool => 'Tool-Titel';
   String get projectTutorialEditTitle => 'Tippe hier, um den Projekttitel zu bearbeiten.';
@@ -220,6 +225,7 @@ class German extends AppLocalizations {
   String get projectsImportError => 'Fehler beim Importieren des Projekts';
   String get projectsImportNoFileSelected => 'Keine Projektdatei ausgewählt';
   String get projectsImportSuccess => 'Projekt erfolgreich importiert!';
+  String get projectsMenu => 'Projekte-Menü';
   String get projectsNew => 'Neues Projekt';
   String get projectsNoProjects => 'Bitte klicke auf das "+", um ein neues Projekt zu erstellen.';
   String get projectsTutorialAddProject => 'Tippe hier, um ein neues Projekt zu erstellen.';
@@ -244,6 +250,7 @@ class German extends AppLocalizations {
   String get textImportNoFileSelected => 'Keine Text-Datei ausgewählt';
   String get textImportSuccess => 'Text erfolgreich importiert!';
 
+  String get toolAddNew => 'Tool hinzufügen';
   String get toolEmpty => 'Leerer Block';
   String get toolNewProjectTitle => 'Projekttitel';
   String get toolNewTitle => 'Tool-Titel';

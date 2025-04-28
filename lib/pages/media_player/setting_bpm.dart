@@ -4,10 +4,10 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
 import 'package:tiomusic/widgets/input/tap_to_tempo.dart';
+import 'package:tiomusic/services/project_repository.dart';
 
 const defaultBpm = 80;
 const minBpm = 10;
@@ -35,9 +35,10 @@ class _SetBPMState extends State<SetBPM> {
 
   void _handleReset() => _handleChange(defaultBpm);
 
-  void _handleConfirm() {
+  Future<void> _handleConfirm() async {
     _mediaPlayerBlock.bpm = value;
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 

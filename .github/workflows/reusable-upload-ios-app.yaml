@@ -7,17 +7,21 @@ on:
         required: true
         type: string
         description: The commit SHA, tag or release to verify
-      artifactName:
+      version:
         required: true
         type: string
-        description: The name of the artifact to upload
+        description: The version to build
+      buildNumber:
+        required: true
+        type: string
+        description: The build number to build
       appIdentifier:
         required: true
         type: string
         description: The ID of the app to build
 
 concurrency:
-  group: ${{ inputs.artifactName }}
+  group: ios-${{ inputs.version }}+${{ inputs.buildNumber }}
   cancel-in-progress: true
 
 jobs:
@@ -38,19 +42,18 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           ref: ${{ inputs.ref }}
-          fetch-depth: 0
 
       - name: Restore bundle
-        uses: actions/download-artifact@v4.2.1
+        uses: actions/download-artifact@v4.3.0
         with:
-          name: ${{ inputs.artifactName }}
+          name: ios-${{ inputs.version }}+${{ inputs.buildNumber }}
           path: build/ios/ipa
 
       - name: Setup ruby
-        uses: ruby/setup-ruby@v1.233.0
+        uses: ruby/setup-ruby@v1.235.0
         with:
           ruby-version: '3.3'
           working-directory: ios
@@ -65,7 +68,7 @@ jobs:
           environment: production
 
       - name: Prepare version
-        run: scripts/update-version-and-build-number-in-pubspec-with-latest-tag.sh
+        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }} ${{ inputs.buildNumber }}
 
       - name: Upload bundle
         uses: maierj/fastlane-action@v3.1.0

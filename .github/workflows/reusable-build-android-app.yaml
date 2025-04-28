@@ -7,10 +7,14 @@ on:
         required: true
         type: string
         description: The commit SHA, tag or release to verify
-      artifactName:
+      version:
         required: true
         type: string
-        description: The name of the artifact to build
+        description: The version to build
+      buildNumber:
+        required: true
+        type: string
+        description: The build number to build
 
 jobs:
   build-android-app:
@@ -23,7 +27,6 @@ jobs:
         uses: actions/checkout@v4.2.2
         with:
           ref: ${{ inputs.ref }}
-          fetch-depth: 0
 
       - name: Setup Java
         uses: actions/setup-java@v4.7.1
@@ -71,7 +74,7 @@ jobs:
         run: scripts/app.sh generate:json
 
       - name: Setup ruby
-        uses: ruby/setup-ruby@v1.233.0
+        uses: ruby/setup-ruby@v1.235.0
         with:
           ruby-version: '3.3'
           working-directory: android
@@ -92,7 +95,7 @@ jobs:
           encodedString: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_JKS }}
 
       - name: Prepare version
-        run: scripts/update-version-and-build-number-in-pubspec-with-latest-tag.sh
+        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }} ${{ inputs.buildNumber }}
 
       - name: Build bundle
         run: scripts/app.sh build android release
@@ -103,7 +106,7 @@ jobs:
       - name: Save bundle
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: ${{ inputs.artifactName }}
+          name: android-${{ inputs.version }}+${{ inputs.buildNumber }}
           path: build/app/outputs/bundle/release
           retention-days: 1
           if-no-files-found: error

@@ -1,0 +1,76 @@
+name: Bump Build Number
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release to verify
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release to verify
+    outputs:
+      version:
+        description: 'The current version'
+        value: ${{ jobs.bump-build-number.outputs.version }}
+      buildNumber:
+        description: 'The new build number'
+        value: ${{ jobs.bump-build-number.outputs.buildNumber }}
+
+permissions:
+  contents: write
+
+jobs:
+  bump-build-number:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    name: Bump Build Number
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      buildNumber: ${{ steps.new.outputs.buildNumber }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.2.2
+      with:
+        ref: ${{ inputs.ref }}
+        fetch-depth: 0
+
+    - name: Configure Git user
+      run: |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "GitHub Actions"
+
+    - name: Make scripts executable
+      run: chmod +x ./scripts/*.sh
+
+    - name: Load current build number
+      id: old
+      run: |
+        source ./scripts/load-build-number-from-latest-tag.sh
+        echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+
+    - name: Bump build number
+      run: ./scripts/bump-build-number-and-tag.sh ${{ steps.old.outputs.buildNumber }}
+
+    - name: Load updated build number
+      id: new
+      run: |
+        source ./scripts/load-build-number-from-latest-tag.sh
+        echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+
+    - name: Load current version
+      id: version
+      run: |
+        source ./scripts/load-version-from-latest-tag.sh
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+    - name: Create summary
+      run: |
+        echo "Version: **${{ steps.version.outputs.version }}**" >> $GITHUB_STEP_SUMMARY
+        echo "Build #: **${{ steps.new.outputs.buildNumber }}**" >> $GITHUB_STEP_SUMMARY
+        echo "_Previous Build #: ${{ steps.old.outputs.buildNumber }}_" >> $GITHUB_STEP_SUMMARY

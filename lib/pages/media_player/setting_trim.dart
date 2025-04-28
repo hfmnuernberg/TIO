@@ -5,10 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -126,10 +126,10 @@ class _SetTrimState extends State<SetTrim> {
     );
   }
 
-  void _onConfirm() async {
+  Future<void> _onConfirm() async {
     _mediaPlayerBlock.rangeStart = _rangeValues.start;
     _mediaPlayerBlock.rangeEnd = _rangeValues.end;
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
 
     await mediaPlayerSetTrim(startFactor: _mediaPlayerBlock.rangeStart, endFactor: _mediaPlayerBlock.rangeEnd);
 

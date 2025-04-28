@@ -175,14 +175,19 @@ abstract class AppLocalizations {
   String get pianoTutorialAdjust;
   String get pianoTutorialChangeKeyOrOctave;
 
+  String get projectDelete;
   String get projectDeleteAllTools;
   String get projectDeleteAllToolsConfirmation;
   String get projectDeleteToolConfirmation;
+  String get projectDetails;
+  String get projectEditTools;
+  String get projectEditToolsDone;
   String get projectEmpty;
   String get projectExport;
   String get projectExportCancelled;
   String get projectExportError;
   String get projectExportSuccess;
+  String get projectMenu;
   String get projectNew;
   String get projectNewTool;
   String get projectTutorialEditTitle;
@@ -196,6 +201,7 @@ abstract class AppLocalizations {
   String get projectsImportError;
   String get projectsImportNoFileSelected;
   String get projectsImportSuccess;
+  String get projectsMenu;
   String get projectsNew;
   String get projectsNoProjects;
   String get projectsTutorialAddProject;
@@ -216,6 +222,7 @@ abstract class AppLocalizations {
   String get textImportNoFileSelected;
   String get textImportSuccess;
 
+  String get toolAddNew;
   String get toolEmpty;
   String get toolNewProjectTitle;
   String get toolNewTitle;

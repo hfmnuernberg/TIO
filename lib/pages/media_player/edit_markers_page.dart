@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 
@@ -236,13 +236,14 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     setState(() {});
   }
 
-  void _onConfirm() {
+  Future<void> _onConfirm() async {
     widget.mediaPlayerBlock.markerPositions.clear();
     for (var pos in _markerPositions) {
       widget.mediaPlayerBlock.markerPositions.add(pos);
     }
 
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 }

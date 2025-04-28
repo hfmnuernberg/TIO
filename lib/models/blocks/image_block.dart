@@ -1,12 +1,7 @@
-import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:path/path.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/models/file_io.dart';
-import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 
@@ -72,43 +67,8 @@ class ImageBlock extends ProjectBlock {
     notifyListeners();
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  ImageProvider? _image;
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  ImageProvider? get image => _image;
-
-  Future<void> setImage(String newRelativePath) async {
-    if (newRelativePath.isEmpty) return;
-
-    var absolutePath = await FileIO.getAbsoluteFilePath(newRelativePath);
-
-    if (!File(absolutePath).existsSync()) {
-      debugPrint('Image could not be set in image block, because no file exists at path: $newRelativePath');
-      return;
-    }
-
-    _image = FileImage(File(absolutePath));
-    _relativePath = newRelativePath;
-
-    notifyListeners();
-  }
-
   @override
-  List<String> getSettingsFormatted(AppLocalizations l10n) {
-    return [FileIO.getFileName(_relativePath)];
-  }
-
-  static Future<ImageBlock> create(
-    String title,
-    String id,
-    String? islandToolID,
-    String relativePath,
-    DateTime timeLastModified,
-  ) async {
-    final imageBlock = ImageBlock(title, id, islandToolID, relativePath, timeLastModified);
-    await imageBlock.setImage(relativePath);
-    return imageBlock;
-  }
+  List<String> getSettingsFormatted(AppLocalizations l10n) => [basename(_relativePath)];
 
   factory ImageBlock.withDefaults(AppLocalizations l10n) {
     return ImageBlock(l10n.image, ProjectBlock.createNewId(), null, ImageParams.defaultPath, DateTime.now());
@@ -134,30 +94,4 @@ class ImageBlock extends ProjectBlock {
 
   @override
   get icon => ImageParams.icon;
-
-  Future<void> pickImage(BuildContext context, ProjectLibrary projectLibrary) async {
-    try {
-      final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
-
-      if (pickedImage == null) return;
-
-      if (!context.mounted) return;
-
-      final newRelativePath = await FileIO.saveFileToAppStorage(
-        context,
-        File(pickedImage.path),
-        FileIO.getFileNameWithoutExtension(pickedImage.path),
-        _relativePath.isEmpty ? null : _relativePath,
-        projectLibrary,
-      );
-
-      if (newRelativePath == null) return;
-
-      await setImage(newRelativePath);
-
-      notifyListeners();
-    } on PlatformException catch (e) {
-      debugPrint('Failed to pick image: $e');
-    }
-  }
 }
