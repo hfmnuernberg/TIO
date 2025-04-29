@@ -268,7 +268,7 @@ class _ImageToolState extends State<ImageTool> {
                 ),
               ],
             ),
-            SizedBox(height: 100)
+            SizedBox(height: 100),
           ],
         ),
       ),

@@ -456,7 +456,6 @@ class _ParentToolState extends State<ParentTool> {
     final toolsOfSameType = tools.where((block) => block.kind == widget.toolBlock.kind).toList();
     final indexOfSameType = toolsOfSameType.indexOf(widget.toolBlock);
 
-    // TODO: move image buttons
     return ToolNavigationBar(
       toolIndex: index,
       toolCount: tools.length,
@@ -466,13 +465,13 @@ class _ParentToolState extends State<ParentTool> {
       onPrevTool: index == 0 ? null : () => goToTool(context, project, tools[(index - 1)], replace: true),
       onNextTool: index < tools.length - 1 ? () => goToTool(context, project, tools[(index + 1)], replace: true) : null,
       onPrevToolOfNextType:
-      indexOfSameType == 0
-          ? null
-          : () => goToTool(context, project, toolsOfSameType[(indexOfSameType - 1)], replace: true),
+          indexOfSameType == 0
+              ? null
+              : () => goToTool(context, project, toolsOfSameType[(indexOfSameType - 1)], replace: true),
       onNextToolOfSameType:
-      indexOfSameType < toolsOfSameType.length - 1
-          ? () => goToTool(context, project, toolsOfSameType[(indexOfSameType + 1)], replace: true)
-          : null,
+          indexOfSameType < toolsOfSameType.length - 1
+              ? () => goToTool(context, project, toolsOfSameType[(indexOfSameType + 1)], replace: true)
+              : null,
     );
   }
 
