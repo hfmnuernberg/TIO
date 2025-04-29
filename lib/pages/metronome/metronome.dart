@@ -610,47 +610,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     );
   }
 
-  Widget _bottomMetronomeBar() {
-    final project = context.read<Project?>();
-
-    if (project == null) {
-      return const SizedBox();
-    }
-
-    final metronomes = project.blocks.whereType<MetronomeBlock>().toList();
-
-    if (metronomes.length <= 1) return const SizedBox();
-
-    final currentIndex = metronomes.indexOf(_metronomeBlock);
-
-    return BottomAppBar(
-      color: ColorTheme.surfaceBright,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: ColorTheme.primary),
-              onPressed: () {
-                final prevIndex = (currentIndex - 1 + metronomes.length) % metronomes.length;
-                goToTool(context, project, metronomes[prevIndex], isNextToolOfSameType: true);
-              },
-            ),
-            Text('${currentIndex + 1} / ${metronomes.length}', style: const TextStyle(color: ColorTheme.primary)),
-            IconButton(
-              icon: const Icon(Icons.arrow_forward_ios, color: ColorTheme.primary),
-              onPressed: () {
-                final nextIndex = (currentIndex + 1) % metronomes.length;
-                goToTool(context, project, metronomes[nextIndex], isNextToolOfSameType: true);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -804,7 +763,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         ),
         const SizedBox(height: 80),
       ],
-      floatingActionButton: _bottomMetronomeBar(),
+      enableToolNavigation: true,
+      navigationBlockType: MetronomeBlock,
     );
   }
 }

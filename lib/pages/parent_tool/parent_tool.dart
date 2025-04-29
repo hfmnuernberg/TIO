@@ -18,6 +18,7 @@ import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
+import 'package:tiomusic/widgets/tool_navigation_bar.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ParentTool extends StatefulWidget {
@@ -35,6 +36,8 @@ class ParentTool extends StatefulWidget {
   final GlobalKey? keySettingsList;
   final Function()? onParentTutorialFinished;
   final bool deactivateScroll;
+  final bool enableToolNavigation;
+  final Type? navigationBlockType;
 
   const ParentTool({
     super.key,
@@ -52,6 +55,8 @@ class ParentTool extends StatefulWidget {
     this.onParentTutorialFinished,
     this.project,
     this.deactivateScroll = false,
+    this.enableToolNavigation = false,
+    this.navigationBlockType,
   });
 
   @override
@@ -440,6 +445,36 @@ class _ParentToolState extends State<ParentTool> {
       body: widget.deactivateScroll ? _body() : SingleChildScrollView(child: _body()),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: widget.floatingActionButton,
+      bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  Widget _buildBottomNavigationBar() {
+    if (!widget.enableToolNavigation || widget.navigationBlockType == null) {
+      return const SizedBox();
+    }
+
+    final project = context.read<Project?>();
+    if (project == null) return const SizedBox();
+
+    final blocks = project.blocks.where((block) => block.runtimeType == widget.navigationBlockType).toList();
+    if (blocks.length <= 1) return const SizedBox();
+
+    final currentIndex = blocks.indexOf(widget.toolBlock);
+
+    if (currentIndex == -1) return const SizedBox();
+
+    return ToolNavigationBar(
+      currentIndex: currentIndex,
+      totalCount: blocks.length,
+      onPreviousPressed: () {
+        final prevIndex = (currentIndex - 1 + blocks.length) % blocks.length;
+        goToTool(context, project, blocks[prevIndex], isNextToolOfSameType: true);
+      },
+      onNextPressed: () {
+        final nextIndex = (currentIndex + 1) % blocks.length;
+        goToTool(context, project, blocks[nextIndex], isNextToolOfSameType: true);
+      },
     );
   }
 
