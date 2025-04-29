@@ -431,6 +431,8 @@ class _ParentToolState extends State<ParentTool> {
 
   @override
   Widget build(BuildContext context) {
+    final project = context.read<Project?>();
+
     return Scaffold(
       extendBody: true,
       resizeToAvoidBottomInset: false,
@@ -442,37 +444,7 @@ class _ParentToolState extends State<ParentTool> {
       body: widget.deactivateScroll ? _body() : SingleChildScrollView(child: _body()),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: widget.floatingActionButton,
-      bottomNavigationBar: _buildBottomNavigationBar(),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    final project = context.read<Project?>();
-    if (project == null || project.blocks.length == 1) return const SizedBox();
-
-    final tools = project.blocks;
-    final index = tools.indexOf(widget.toolBlock);
-
-    final toolsOfSameType = tools.where((block) => block.kind == widget.toolBlock.kind).toList();
-    final indexOfSameType = toolsOfSameType.indexOf(widget.toolBlock);
-
-    return ToolNavigationBar(
-      toolIndex: index,
-      toolCount: tools.length,
-      prevToolIcon: index == 0 ? null : tools[(index - 1)].icon,
-      nextToolIcon: index < tools.length - 1 ? tools[(index + 1)].icon : null,
-      toolOfSameTypeIcon: widget.toolBlock.icon,
-      onPrevTool:
-          index == 0 ? null : () => goToTool(context, project, tools[(index - 1)], replace: true, reverse: true),
-      onNextTool: index < tools.length - 1 ? () => goToTool(context, project, tools[(index + 1)], replace: true) : null,
-      onPrevToolOfNextType:
-          indexOfSameType == 0
-              ? null
-              : () => goToTool(context, project, toolsOfSameType[(indexOfSameType - 1)], replace: true, reverse: true),
-      onNextToolOfSameType:
-          indexOfSameType < toolsOfSameType.length - 1
-              ? () => goToTool(context, project, toolsOfSameType[(indexOfSameType + 1)], replace: true)
-              : null,
+      bottomNavigationBar: project == null ? null : ToolNavigationBar(project: project, toolBlock: widget.toolBlock),
     );
   }
 

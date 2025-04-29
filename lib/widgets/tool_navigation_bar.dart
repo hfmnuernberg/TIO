@@ -1,8 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/models/project.dart';
+import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/small_icon_button.dart';
 
 class ToolNavigationBar extends StatelessWidget {
+  final Project project;
+  final ProjectBlock toolBlock;
+
+  const ToolNavigationBar({super.key, required this.project, required this.toolBlock});
+
+  @override
+  Widget build(BuildContext context) {
+    if (project.blocks.length == 1) return const SizedBox();
+
+    final tools = project.blocks;
+    final index = tools.indexOf(toolBlock);
+
+    final sameTools = tools.where((block) => block.kind == toolBlock.kind).toList();
+    final sameToolsIndex = sameTools.indexOf(toolBlock);
+
+    replaceTool(ProjectBlock tool, {bool ltr = false}) =>
+        goToTool(context, project, tool, replace: true, transitionLeftToRight: ltr);
+
+    return _ToolNavigationBar(
+      toolIndex: index,
+      toolCount: tools.length,
+      prevToolIcon: index == 0 ? null : tools[(index - 1)].icon,
+      nextToolIcon: index < tools.length - 1 ? tools[(index + 1)].icon : null,
+      toolOfSameTypeIcon: toolBlock.icon,
+      onPrevTool: index == 0 ? null : () => replaceTool(tools[(index - 1)], ltr: true),
+      onNextTool: index < tools.length - 1 ? () => replaceTool(tools[(index + 1)]) : null,
+      onPrevToolOfNextType: sameToolsIndex == 0 ? null : () => replaceTool(sameTools[(sameToolsIndex - 1)], ltr: true),
+      onNextToolOfSameType:
+          sameToolsIndex < sameTools.length - 1 ? () => replaceTool(sameTools[(sameToolsIndex + 1)]) : null,
+    );
+  }
+}
+
+class _ToolNavigationBar extends StatelessWidget {
   final int toolIndex;
   final int toolCount;
   final Widget? prevToolIcon;
@@ -13,8 +50,7 @@ class ToolNavigationBar extends StatelessWidget {
   final VoidCallback? onPrevToolOfNextType;
   final VoidCallback? onNextToolOfSameType;
 
-  const ToolNavigationBar({
-    super.key,
+  const _ToolNavigationBar({
     required this.toolIndex,
     required this.toolCount,
     this.prevToolIcon,
