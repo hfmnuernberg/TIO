@@ -67,12 +67,14 @@ class English extends AppLocalizations {
   String get imageNoCameraFoundHint => 'There is no camera available on this device.';
   String get imageNoImage => 'Please select an image or take a photo.';
   String get imagePickImage => 'Pick an image';
+  String get imagePickNewImage => 'Pick new image';
   String get imageSetAsProjectThumbnail => 'Set project thumbnail';
   String get imageSetAsThumbnail => 'Set as thumbnail';
   String get imageSetAsThumbnailQuestion =>
       'Do you want to use the image of this tool as your profile picture for this project?';
   String get imageShare => 'Share image';
   String get imageTakePhoto => 'Take a photo';
+  String get imageTakeNewPhoto => 'Take new photo';
   String get imageUploadHint => 'Pick an image from your device or take a photo using the camera.';
   String get imageUseAsThumbnailQuestion => 'Use image as project thumbnail.';
 

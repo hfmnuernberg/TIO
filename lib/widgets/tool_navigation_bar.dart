@@ -95,18 +95,18 @@ class _ToolNavigationBar extends StatelessWidget {
                     onTap: onPrevTool,
                     child: Icon(
                       Icons.arrow_back,
-                      color: onPrevTool == null ? ColorTheme.secondaryContainer : ColorTheme.primary80,
+                      color: onPrevTool == null ? ColorTheme.primary80 : ColorTheme.primary,
                       size: 20,
                     ),
                   ),
                   SizedBox(width: 10),
-                  Text('${toolIndex + 1} / $toolCount', style: TextStyle(color: ColorTheme.primary80, fontSize: 16)),
+                  Text('${toolIndex + 1} / $toolCount', style: TextStyle(color: ColorTheme.primary, fontSize: 16)),
                   SizedBox(width: 10),
                   InkWell(
                     onTap: onNextTool,
                     child: Icon(
                       Icons.arrow_forward,
-                      color: onNextTool == null ? ColorTheme.secondaryContainer : ColorTheme.primary80,
+                      color: onNextTool == null ? ColorTheme.primary80 : ColorTheme.primary,
                       size: 20,
                     ),
                   ),

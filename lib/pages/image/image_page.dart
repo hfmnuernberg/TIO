@@ -209,11 +209,11 @@ class _ImageToolState extends State<ImageTool> {
                 ),
                 MenuItemButton(
                   onPressed: () => _pickImageAndSave(false),
-                  child: Text(context.l10n.imagePickImage, style: const TextStyle(color: ColorTheme.primary)),
+                  child: Text(context.l10n.imagePickNewImage, style: const TextStyle(color: ColorTheme.primary)),
                 ),
                 MenuItemButton(
                   onPressed: () => _takePhotoAndSave(false),
-                  child: Text(context.l10n.imageTakePhoto, style: const TextStyle(color: ColorTheme.primary)),
+                  child: Text(context.l10n.imageTakeNewPhoto, style: const TextStyle(color: ColorTheme.primary)),
                 ),
               ]
               : null,
