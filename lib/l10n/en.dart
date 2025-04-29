@@ -65,7 +65,7 @@ class English extends AppLocalizations {
   String get imageDoLater => 'Do it later';
   String get imageNoCameraFound => 'No camera found';
   String get imageNoCameraFoundHint => 'There is no camera available on this device.';
-  String get imageNoImage => 'No image in this tool';
+  String get imageNoImage => 'Please select an image or take a photo.';
   String get imagePickImage => 'Pick an image';
   String get imageSetAsProjectThumbnail => 'Set project thumbnail';
   String get imageSetAsThumbnail => 'Set as thumbnail';
