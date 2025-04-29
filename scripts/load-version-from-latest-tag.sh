@@ -13,8 +13,8 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 set +e
-SEMVER_TAG=$(git tag --list '[0-9]*.[0-9]*.[0-9]**' --sort=-creatordate | head -n1)
-BUILD_NUMBER_TAG=$(git tag --list '[0-9]*.[0-9]*.[0-9]*+*' --sort=-creatordate | head -n1)
+SEMVER_TAG=$(git tag --list '[0-9]*.[0-9]*.[0-9]**' | sort -V | tail -n1)
+BUILD_NUMBER_TAG=$(git tag --list '[0-9]*.[0-9]*.[0-9]*+*' | sort -V | tail -n1)
 set -e
 
 if [ -z "$SEMVER_TAG" ]; then
