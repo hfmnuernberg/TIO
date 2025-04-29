@@ -1,89 +1,39 @@
-import 'dart:convert';
-import 'dart:io';
-import 'package:archive/archive.dart';
-import 'package:archive/archive_io.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/models/blocks/image_block.dart';
-import 'package:tiomusic/models/file_io.dart';
-import 'package:tiomusic/models/file_references.dart';
-import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/services/archiver.dart';
+import 'package:tiomusic/services/file_picker.dart';
+import 'package:tiomusic/services/file_references.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
-
-Future<File?> _getFile() async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['zip']);
-
-  return result == null || result.files.single.path == null ? null : File(result.files.single.path!);
-}
-
-Future<Project> _readProjectFromArchiveFile(ArchiveFile archiveFile) async {
-  final jsonString = utf8.decode(archiveFile.content as List<int>);
-  final Map<String, dynamic> jsonData = jsonDecode(jsonString);
-  return Project.fromJson(jsonData);
-}
-
-Future<void> _writeMediaFileFromArchiveFile(ArchiveFile archiveFile, Directory directory) async {
-  final mediaFile = File('${directory.path}/media/${archiveFile.name}');
-  await mediaFile.writeAsBytes(archiveFile.content as List<int>);
-}
-
-Future<Project?> _extractArchive(BuildContext context, File archiveFile) async {
-  final directory = await getApplicationDocumentsDirectory();
-  final bytes = await archiveFile.readAsBytes();
-  final archive = ZipDecoder().decodeBytes(bytes);
-
-  Project? project;
-
-  for (final file in archive) {
-    if (file.name.endsWith('.json')) {
-      project = await _readProjectFromArchiveFile(file);
-    } else {
-      await _writeMediaFileFromArchiveFile(file, directory);
-    }
-  }
-
-  return project;
-}
-
-Future<void> _addProjectToLibrary(BuildContext context, Project project) async {
-  final projectLibrary = context.read<ProjectLibrary>();
-  projectLibrary.addProject(project);
-  await FileIO.saveProjectLibraryToJson(projectLibrary);
-  await FileReferences.init(projectLibrary);
-}
+import 'package:tiomusic/util/log.dart';
 
 Future<void> importProject(BuildContext context) async {
-  final l10n = context.l10n;
-
   try {
-    final file = await _getFile();
+    final filePicker = context.read<FilePicker>();
+    final archiver = context.read<Archiver>();
+    final projectRepo = context.read<ProjectRepository>();
+    final fileReferences = context.read<FileReferences>();
+    final projectLibrary = context.read<ProjectLibrary>();
 
-    if (file == null) {
-      if (context.mounted) showSnackbar(context: context, message: l10n.projectsImportNoFileSelected)();
+    final archivePath = await filePicker.pickArchive();
+    if (archivePath == null) {
+      if (!context.mounted) return;
+      showSnackbar(context: context, message: context.l10n.projectsImportNoFileSelected)();
       return;
     }
 
+    final project = await archiver.extractProject(archivePath);
     if (!context.mounted) return;
 
-    final project = await _extractArchive(context, file);
+    projectLibrary.addProject(project);
+    await projectRepo.saveLibrary(projectLibrary);
+    await fileReferences.init(projectLibrary);
 
-    if (project == null) {
-      if (context.mounted) showSnackbar(context: context, message: l10n.projectsImportError)();
-      return;
-    }
-
-    await Future.wait(project.blocks.whereType<ImageBlock>().map((block) => block.setImage(block.relativePath)));
-
-    if (!context.mounted) return;
-
-    await _addProjectToLibrary(context, project);
-
-    if (context.mounted) showSnackbar(context: context, message: l10n.projectsImportSuccess)();
-  } catch (_) {
-    if (context.mounted) showSnackbar(context: context, message: l10n.projectsImportError)();
+    if (context.mounted) showSnackbar(context: context, message: context.l10n.projectsImportSuccess)();
+  } catch (e) {
+    createPrefixLogger('importProject').e('Unable to import project.', error: e);
+    if (context.mounted) showSnackbar(context: context, message: context.l10n.projectsImportError)();
   }
 }

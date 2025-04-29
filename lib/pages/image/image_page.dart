@@ -4,18 +4,22 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/pages/image/take_picture_screen.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/image/add_image_dialog.dart';
+import 'package:tiomusic/pages/image/take_picture_screen.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
+import 'package:tiomusic/services/file_picker.dart';
+import 'package:tiomusic/services/file_references.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/media_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
@@ -29,6 +33,14 @@ class ImageTool extends StatefulWidget {
 }
 
 class _ImageToolState extends State<ImageTool> {
+  static final _logger = createPrefixLogger('ImageTool');
+
+  late FileSystem _fs;
+  late FilePicker _filePicker;
+  late FileReferences _fileReferences;
+  late MediaRepository _mediaRepo;
+  late ProjectRepository _projectRepo;
+
   late ImageBlock _imageBlock;
   late Project _project;
 
@@ -40,9 +52,14 @@ class _ImageToolState extends State<ImageTool> {
   void initState() {
     super.initState();
 
+    _fs = context.read<FileSystem>();
+    _filePicker = context.read<FilePicker>();
+    _fileReferences = context.read<FileReferences>();
+    _mediaRepo = context.read<MediaRepository>();
+    _projectRepo = context.read<ProjectRepository>();
+
     _imageBlock = Provider.of<ProjectBlock>(context, listen: false) as ImageBlock;
     _imageBlock.timeLastModified = getCurrentDateTime();
-    _imageBlock.setImage(_imageBlock.relativePath);
 
     _project = Provider.of<Project>(context, listen: false);
 
@@ -88,18 +105,17 @@ class _ImageToolState extends State<ImageTool> {
   }
 
   void _shareFilePressed() async {
-    XFile file = XFile(await FileIO.getAbsoluteFilePath(_imageBlock.relativePath));
-    await Share.shareXFiles([file]);
+    await _filePicker.shareFile(context.read<FileSystem>().toAbsoluteFilePath(_imageBlock.relativePath));
   }
 
   void _setAsThumbnail() async {
-    if (_imageBlock.image != null) {
-      bool? useAsProfilePicture = await _useAsProjectPicture();
-      if (useAsProfilePicture != null && useAsProfilePicture) {
-        _project.setThumbnail(_imageBlock.relativePath);
-        if (mounted) {
-          await FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-        }
+    if (_imageBlock.relativePath.isEmpty) return;
+
+    bool? useAsProfilePicture = await _useAsProjectPicture();
+    if (useAsProfilePicture != null && useAsProfilePicture) {
+      _project.setThumbnail(_imageBlock.relativePath);
+      if (mounted) {
+        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       }
     }
   }
@@ -140,19 +156,34 @@ class _ImageToolState extends State<ImageTool> {
   );
 
   Future<void> _pickImageAndSave(bool useAsThumbnail) async {
-    await _imageBlock.pickImage(context, context.read<ProjectLibrary>());
+    try {
+      final imagePath = await _filePicker.pickImage();
+      if (imagePath == null) return;
 
-    if (_imageBlock.image != null) {
+      if (!await _fs.existsFileAfterGracePeriod(imagePath)) {
+        if (mounted) await showFileNotAccessibleDialog(context, fileName: imagePath);
+        return;
+      }
+
+      final newRelativePath = await _mediaRepo.import(imagePath, _fs.toBasename(imagePath));
+      if (newRelativePath == null) return;
+
+      if (!mounted) return;
+
+      if (useAsThumbnail) Provider.of<Project>(context, listen: false).setThumbnail(newRelativePath);
+
+      final projectLibrary = context.read<ProjectLibrary>();
+
+      _fileReferences.dec(_imageBlock.relativePath, projectLibrary);
+      _imageBlock.relativePath = newRelativePath;
+      _fileReferences.inc(newRelativePath);
+
+      await _projectRepo.saveLibrary(projectLibrary);
+
       _addOptionsToMenu();
+    } on PlatformException catch (e) {
+      _logger.e('Unable to pick image.', error: e);
     }
-
-    if (!mounted) return;
-
-    if (useAsThumbnail) {
-      Provider.of<Project>(context, listen: false).setThumbnail(_imageBlock.relativePath);
-    }
-
-    await FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
   }
 
   Future<void> _takePhotoAndSave(bool useAsThumbnail) async {
@@ -166,44 +197,31 @@ class _ImageToolState extends State<ImageTool> {
 
     final firstCamera = cameras.first;
 
-    if (mounted) {
-      XFile? image = await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) {
-            return TakePictureScreen(camera: firstCamera);
-          },
-        ),
-      );
+    if (!mounted) return;
 
-      if (image == null) return;
+    String? imagePath = await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => TakePictureScreen(camera: firstCamera)));
+    if (imagePath == null) return;
 
-      var newFileName = '${_project.title}-${_imageBlock.title}';
+    var newFileName = '${_project.title}-${_imageBlock.title}';
 
-      if (mounted) {
-        var projectLib = context.read<ProjectLibrary>();
+    final newRelativePath = await _mediaRepo.import(imagePath, newFileName);
+    if (newRelativePath == null) return;
 
-        final newRelativePath = await FileIO.saveFileToAppStorage(
-          context,
-          File(image.path),
-          newFileName,
-          _imageBlock.relativePath == '' ? null : _imageBlock.relativePath,
-          projectLib,
-        );
+    if (!mounted) return;
 
-        if (newRelativePath == null) return;
+    if (useAsThumbnail) Provider.of<Project>(context, listen: false).setThumbnail(newRelativePath);
 
-        if (mounted) {
-          if (useAsThumbnail) {
-            Provider.of<Project>(context, listen: false).setThumbnail(newRelativePath);
-          }
+    final projectLibrary = context.read<ProjectLibrary>();
 
-          await _imageBlock.setImage(newRelativePath);
-          FileIO.saveProjectLibraryToJson(projectLib);
+    _fileReferences.dec(_imageBlock.relativePath, projectLibrary);
+    _imageBlock.relativePath = newRelativePath;
+    _fileReferences.inc(newRelativePath);
 
-          _addOptionsToMenu();
-        }
-      }
-    }
+    await _projectRepo.saveLibrary(projectLibrary);
+
+    _addOptionsToMenu();
   }
 
   @override
@@ -220,8 +238,8 @@ class _ImageToolState extends State<ImageTool> {
           child: Consumer<ProjectBlock>(
             builder: (context, projectBlock, child) {
               var imageBlock = projectBlock as ImageBlock;
-              if (imageBlock.image != null) {
-                return Image(image: imageBlock.image!);
+              if (imageBlock.relativePath.isNotEmpty) {
+                return Image(image: FileImage(File(_fs.toAbsoluteFilePath(imageBlock.relativePath))));
               } else {
                 return Text(context.l10n.imageNoImage, style: TextStyle(color: ColorTheme.primary));
               }

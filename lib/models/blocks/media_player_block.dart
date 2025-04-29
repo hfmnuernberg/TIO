@@ -1,14 +1,7 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:path/path.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
-import 'package:tiomusic/models/file_io.dart';
-
 import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 
@@ -142,13 +135,13 @@ class MediaPlayerBlock extends ProjectBlock {
   List<String> getSettingsFormatted(AppLocalizations l10n) {
     List<String> settings = [];
     if (_relativePath.isNotEmpty) {
-      settings.add(FileIO.getFileName(_relativePath));
+      settings.add(basename(_relativePath));
     }
     if (_pitchSemitones.abs() >= 0.01) {
       settings.add('${_pitchSemitones > 0 ? '↑' : '↓'} ${l10n.mediaPlayerSemitones(_pitchSemitones.round())}');
     }
     if (_speedFactor != 1) {
-      settings.add('${l10n.formatInteger(_speedFactor)}x ${l10n.mediaPlayerSpeed}');
+      settings.add('${l10n.formatNumber(_speedFactor)}x ${l10n.mediaPlayerSpeed}');
     }
     if (_rangeStart.abs() >= 0.001 || (_rangeEnd - 1.0).abs() >= 0.001) {
       settings.add('${l10n.mediaPlayerTrim} ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%');
@@ -228,42 +221,4 @@ class MediaPlayerBlock extends ProjectBlock {
 
   @override
   Map<String, dynamic> toJson() => _$MediaPlayerBlockToJson(this);
-
-  Future<bool> pickAudio(BuildContext context, ProjectLibrary projectLibrary) async {
-    try {
-      final result = await FilePicker.platform.pickFiles(type: FileType.audio);
-
-      if (result?.files.isEmpty ?? true) return false;
-
-      final pickedAudioFile = File(result!.files.single.path!);
-
-      if (context.mounted) {
-        final newRelativePath = await FileIO.saveFileToAppStorage(
-          context,
-          pickedAudioFile,
-          FileIO.getFileNameWithoutExtension(pickedAudioFile.path),
-          _relativePath == '' ? null : _relativePath,
-          projectLibrary,
-          acceptedFormats: TIOMusicParams.audioFormats,
-        );
-
-        if (newRelativePath == null) return false;
-
-        _relativePath = newRelativePath;
-
-        notifyListeners();
-      }
-    } on PlatformException catch (e) {
-      debugPrint('Failed to pick audio: $e');
-      return false;
-    }
-    return true;
-  }
-
-  String? getFileExtension() {
-    if (relativePath.isEmpty) return null;
-    var split = relativePath.split('.');
-    if (split.isEmpty) return null;
-    return '.${split.last}';
-  }
 }

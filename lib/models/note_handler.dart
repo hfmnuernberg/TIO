@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:tiomusic/models/file_io.dart';
+import 'package:path/path.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/log.dart';
 
 abstract class NoteHandler {
+  static final _logger = createPrefixLogger('NoteHandler');
+
   static final Map<String, SvgNote> _noteValues = <String, SvgNote>{};
 
   // reads the files in assets/notes and creates a map with the note values
@@ -14,9 +17,9 @@ abstract class NoteHandler {
     noteFiles = noteFiles.map((path) => path.replaceAll('assets/notes/', '')).toList();
 
     for (var fileName in noteFiles) {
-      debugPrint(fileName);
+      _logger.t(fileName);
 
-      var key = FileIO.getFileNameWithoutExtension(fileName);
+      var key = basenameWithoutExtension(fileName);
       double beatLength = double.parse(key.split('_').last);
       key = key.substring(0, key.length - (key.split('_').last.length + 1));
 

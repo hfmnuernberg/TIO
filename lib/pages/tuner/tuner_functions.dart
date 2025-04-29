@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
-
 import 'package:tiomusic/util/audio_util.dart';
+import 'package:tiomusic/util/log.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 abstract class TunerFunctions {
+  static final _logger = createPrefixLogger('TunerFunctions');
+
   static Future<bool> start() async {
     if (await Permission.microphone.request().isGranted) {
       await configureAudioSession(AudioSessionType.record);
@@ -15,7 +16,7 @@ abstract class TunerFunctions {
       }
       return success;
     } else {
-      debugPrint('failed to get mic permissions');
+      _logger.w('Unable to get microphone permissions.');
       return false;
     }
   }

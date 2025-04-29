@@ -1,5 +1,5 @@
 import 'package:audio_session/audio_session.dart';
-import 'package:flutter/foundation.dart';
+import 'package:tiomusic/util/log.dart';
 
 /* These functions are used for microphone capture on ios via rust (cpal) */
 /* An audio session has to be started before cpal can detect the built in microphone on ios */
@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 Future<void> startAudioSession() async {
   final session = await AudioSession.instance;
   final success = await session.setActive(true);
-  if (!success) debugPrint('AudioSession could not be activated');
+  if (!success) logger.e('Unable to start audio session.');
 }
 
 enum AudioSessionType { playback, record }

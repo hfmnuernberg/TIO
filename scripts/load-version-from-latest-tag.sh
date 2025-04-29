@@ -2,7 +2,7 @@
 
 set -e
 
-echo "⚙️ Loading version from last git tag..."
+echo "⚙️ Loading version from latest git tag..."
 
 if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   echo "❌  Not inside a Git repository" >&2
@@ -10,17 +10,21 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 set +e
-TAG=$(git tag --list 'v*' --sort=-creatordate | head -n 1)
+TAG=$(git tag --list 'v*' --sort=-creatordate | head -n1)
 set -e
 
 if [ -z "$TAG" ]; then
-  echo "⚠️️ No Git tag found!"
-  exit 2
+  echo "⚠️️ No Git tag found! Assuming version 0.0.1."
+  VERSION="0.0.1"
 else
   VERSION=$(echo "$TAG" | sed -E 's/^v([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+  if [ "$VERSION" = "$TAG" ]; then
+    echo "⚠️️ No valid version found in tag! Assuming version 0.0.1."
+    VERSION="0.0.1"
+  fi
 fi
 
 export VERSION
 
 echo "VERSION=$VERSION"
-echo "✅️ Loaded version from last git tag."
+echo "✅️ Loaded version from latest git tag."

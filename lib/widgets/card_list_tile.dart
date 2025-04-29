@@ -38,23 +38,26 @@ class CardListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: highlightColor ?? ColorTheme.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-      margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 8),
-      elevation: 0,
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: ListTile(
-        enabled: !disableTap,
-        title: Text(title, style: TextStyle(color: textColor, fontWeight: FontWeight.w500)),
-        subtitle: Text(subtitle ?? '', style: TextStyle(color: textColor)),
-        leading: _showPicture(leadingPicture),
-        titleAlignment: ListTileTitleAlignment.titleHeight,
-        trailing: Wrap(
-          spacing: 2, // space between two icons
-          children: <Widget>[menuIconTwo ?? const SizedBox(), menuIconOne ?? const SizedBox(), trailingIcon],
+    return Semantics(
+      label: title,
+      child: Card(
+        color: highlightColor ?? ColorTheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
+        margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 8),
+        elevation: 0,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        child: ListTile(
+          enabled: !disableTap,
+          title: Text(title, style: TextStyle(color: textColor, fontWeight: FontWeight.w500)),
+          subtitle: Text(subtitle ?? '', style: TextStyle(color: textColor)),
+          leading: _showPicture(leadingPicture),
+          titleAlignment: ListTileTitleAlignment.titleHeight,
+          trailing: Wrap(
+            spacing: 2, // space between two icons
+            children: <Widget>[menuIconTwo ?? const SizedBox(), menuIconOne ?? const SizedBox(), trailingIcon],
+          ),
+          onTap: onTapFunction,
         ),
-        onTap: onTapFunction,
       ),
     );
   }
