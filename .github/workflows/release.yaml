@@ -27,30 +27,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Assert new release published
+      - name: Assert new release created
         if: steps.semantic_release.outputs.new_release_published == 'false'
         run: |
-          echo "❌ No new release published! See workflow logs for details." >> $GITHUB_STEP_SUMMARY
+          echo "❌ No new release created! See workflow logs for details." >> $GITHUB_STEP_SUMMARY
           exit 1
 
-      - name: Load current release version
+      - name: Load current build number
+        if: steps.semantic_release.outputs.new_release_published == 'true'
         id: old
         run: |
-          source scripts/load-release-version-from-latest-tag.sh
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          source scripts/load-version-from-latest-tag.sh
+          echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
-      - name: Bump to next dev version
+      - name: Bump version
         if: steps.semantic_release.outputs.new_release_published == 'true'
-        run: scripts/bump-dev-version-and-tag.sh ${{ steps.old.outputs.version }}
-
-      - name: Load updated version
         id: new
         run: |
-          source scripts/load-version-from-latest-tag.sh
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          source scripts/bump-version-and-tag.sh ${{ steps.semantic_release.outputs.new_release_version }} ${{ steps.old.outputs.buildNumber }}
+          echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Create summary
+        if: steps.semantic_release.outputs.new_release_published == 'true'
         run: |
-          echo "Released version: **${{ steps.semantic_release.outputs.new_release_version }}**" >> $GITHUB_STEP_SUMMARY
+          echo "New Release: **${{ steps.semantic_release.outputs.new_release_version }}**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "_Prepared new dev version: ${{ steps.new.outputs.version }}_" >> $GITHUB_STEP_SUMMARY
+          echo "Next Version: **${{ steps.new.outputs.version }}**" >> $GITHUB_STEP_SUMMARY
