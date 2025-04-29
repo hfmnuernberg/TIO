@@ -36,8 +36,6 @@ class ParentTool extends StatefulWidget {
   final GlobalKey? keySettingsList;
   final Function()? onParentTutorialFinished;
   final bool deactivateScroll;
-  final bool enableToolNavigation;
-  final Type? navigationBlockType;
 
   const ParentTool({
     super.key,
@@ -55,8 +53,6 @@ class ParentTool extends StatefulWidget {
     this.onParentTutorialFinished,
     this.project,
     this.deactivateScroll = false,
-    this.enableToolNavigation = false,
-    this.navigationBlockType,
   });
 
   @override
@@ -436,6 +432,7 @@ class _ParentToolState extends State<ParentTool> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(ParentToolParams.appBarHeight),
@@ -450,31 +447,32 @@ class _ParentToolState extends State<ParentTool> {
   }
 
   Widget _buildBottomNavigationBar() {
-    if (!widget.enableToolNavigation || widget.navigationBlockType == null) {
-      return const SizedBox();
-    }
-
     final project = context.read<Project?>();
-    if (project == null) return const SizedBox();
+    if (project == null || project.blocks.length == 1) return const SizedBox();
 
-    final blocks = project.blocks.where((block) => block.runtimeType == widget.navigationBlockType).toList();
-    if (blocks.length <= 1) return const SizedBox();
+    final tools = project.blocks;
+    final index = tools.indexOf(widget.toolBlock);
 
-    final currentIndex = blocks.indexOf(widget.toolBlock);
+    final toolsOfSameType = tools.where((block) => block.kind == widget.toolBlock.kind).toList();
+    final indexOfSameType = toolsOfSameType.indexOf(widget.toolBlock);
 
-    if (currentIndex == -1) return const SizedBox();
-
+    // TODO: move image buttons
     return ToolNavigationBar(
-      currentIndex: currentIndex,
-      totalCount: blocks.length,
-      onPreviousPressed: () {
-        final prevIndex = (currentIndex - 1 + blocks.length) % blocks.length;
-        goToTool(context, project, blocks[prevIndex], isNextToolOfSameType: true);
-      },
-      onNextPressed: () {
-        final nextIndex = (currentIndex + 1) % blocks.length;
-        goToTool(context, project, blocks[nextIndex], isNextToolOfSameType: true);
-      },
+      toolIndex: index,
+      toolCount: tools.length,
+      prevToolIcon: index == 0 ? null : tools[(index - 1)].icon,
+      nextToolIcon: index < tools.length - 1 ? tools[(index + 1)].icon : null,
+      toolOfSameTypeIcon: widget.toolBlock.icon,
+      onPrevTool: index == 0 ? null : () => goToTool(context, project, tools[(index - 1)], replace: true),
+      onNextTool: index < tools.length - 1 ? () => goToTool(context, project, tools[(index + 1)], replace: true) : null,
+      onPrevToolOfNextType:
+      indexOfSameType == 0
+          ? null
+          : () => goToTool(context, project, toolsOfSameType[(indexOfSameType - 1)], replace: true),
+      onNextToolOfSameType:
+      indexOfSameType < toolsOfSameType.length - 1
+          ? () => goToTool(context, project, toolsOfSameType[(indexOfSameType + 1)], replace: true)
+          : null,
     );
   }
 

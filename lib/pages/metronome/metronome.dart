@@ -763,8 +763,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         ),
         const SizedBox(height: 80),
       ],
-      enableToolNavigation: true,
-      navigationBlockType: MetronomeBlock,
     );
   }
 }

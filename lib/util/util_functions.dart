@@ -346,7 +346,7 @@ Future<dynamic> goToTool(
   Project project,
   ProjectBlock block, {
   bool pianoAlreadyOn = false,
-  bool isNextToolOfSameType = false,
+  bool replace = false,
 }) {
   final route = MaterialPageRoute(
     builder: (context) {
@@ -377,7 +377,8 @@ Future<dynamic> goToTool(
     },
   );
 
-  return isNextToolOfSameType ? Navigator.of(context).pushReplacement(route) : Navigator.of(context).push(route);
+  // TODO: fix animation when replacing (e.g., use animation like when using the back button)
+  return replace ? Navigator.of(context).pushReplacement(route) : Navigator.of(context).push(route);
 }
 
 // ---------------------------------------------------------------
