@@ -15,11 +15,8 @@ on:
         description: The commit SHA, tag or release
     outputs:
       version:
-        description: 'The current version'
+        description: 'The new version (e.g., 1.2.3+42)'
         value: ${{ jobs.bump-build-number.outputs.version }}
-      buildNumber:
-        description: 'The new build number'
-        value: ${{ jobs.bump-build-number.outputs.buildNumber }}
 
 permissions:
   contents: write
@@ -29,8 +26,7 @@ jobs:
     name: Bump Build Number
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.version.outputs.version }}
-      buildNumber: ${{ steps.new.outputs.buildNumber }}
+      version: ${{ steps.new.outputs.version }}
 
     steps:
     - name: Checkout repository

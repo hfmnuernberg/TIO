@@ -11,10 +11,6 @@ on:
         required: true
         type: string
         description: The version
-      buildNumber:
-        required: true
-        type: string
-        description: The build number
 
 jobs:
   build-android-app:
@@ -95,7 +91,7 @@ jobs:
           encodedString: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_JKS }}
 
       - name: Prepare version
-        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }} ${{ inputs.buildNumber }}
+        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }}
 
       - name: Build bundle
         run: scripts/app.sh build android release
@@ -106,7 +102,7 @@ jobs:
       - name: Save bundle
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: android-${{ inputs.version }}+${{ inputs.buildNumber }}
+          name: android-${{ inputs.version }}
           path: build/app/outputs/bundle/release
           retention-days: 1
           if-no-files-found: error
