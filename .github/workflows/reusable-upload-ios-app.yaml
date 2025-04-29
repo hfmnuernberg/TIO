@@ -11,17 +11,13 @@ on:
         required: true
         type: string
         description: The version
-      buildNumber:
-        required: true
-        type: string
-        description: The build number
       appIdentifier:
         required: true
         type: string
         description: The ID of the app
 
 concurrency:
-  group: ios-${{ inputs.version }}+${{ inputs.buildNumber }}
+  group: ios-${{ inputs.version }}
   cancel-in-progress: true
 
 jobs:
@@ -49,7 +45,7 @@ jobs:
       - name: Restore bundle
         uses: actions/download-artifact@v4.3.0
         with:
-          name: ios-${{ inputs.version }}+${{ inputs.buildNumber }}
+          name: ios-${{ inputs.version }}
           path: build/ios/ipa
 
       - name: Setup ruby
@@ -68,7 +64,7 @@ jobs:
           environment: production
 
       - name: Prepare version
-        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }} ${{ inputs.buildNumber }}
+        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }}
 
       - name: Upload bundle
         uses: maierj/fastlane-action@v3.1.0

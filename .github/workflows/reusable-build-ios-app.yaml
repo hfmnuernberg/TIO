@@ -11,10 +11,6 @@ on:
         required: true
         type: string
         description: The version
-      buildNumber:
-        required: true
-        type: string
-        description: The build number
       appIdentifier:
         required: true
         type: string
@@ -94,7 +90,7 @@ jobs:
           subdirectory: ios
 
       - name: Prepare version
-        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }} ${{ inputs.buildNumber }}
+        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }}
 
       - name: Build bundle
         run: scripts/app.sh build ios release
@@ -102,7 +98,7 @@ jobs:
       - name: Save bundle
         uses: actions/upload-artifact@v4.6.2
         with:
-          name: ios-${{ inputs.version }}+${{ inputs.buildNumber }}
+          name: ios-${{ inputs.version }}
           path: build/ios/ipa
           retention-days: 1
           if-no-files-found: error

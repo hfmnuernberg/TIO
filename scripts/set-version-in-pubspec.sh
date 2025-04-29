@@ -4,16 +4,13 @@ set -e
 
 PUBSPEC_FILE=pubspec.yaml
 
-if [ "$#" -ne 2 ]; then
-  echo "📖 Usage: $0 <semantic_version> <build_number>"
-  echo 'semantic_version  - the semantic version to set (e.g., 1.2.3)'
-  echo 'build_number      - the build number to set (e.g., 42)'
+if [ "$#" -ne 1 ]; then
+  echo "📖 Usage: $0 <version>"
+  echo 'version  - the semantic version to set (e.g., 1.2.3+42)'
   exit 1
 fi
 
-SEMVER=$1
-BUILD_NUMBER=$2
-VERSION="$SEMVER+$BUILD_NUMBER"
+VERSION=$1
 
 echo "⚙️ Setting version in $PUBSPEC_FILE to: $VERSION..."
 

@@ -11,17 +11,13 @@ on:
         required: true
         type: string
         description: The version
-      buildNumber:
-        required: true
-        type: string
-        description: The build number
       googlePlayStoreUrl:
         required: true
         type: string
         description: The google play store URL
 
 concurrency:
-  group: android-${{ inputs.version }}+${{ inputs.buildNumber }}
+  group: android-${{ inputs.version }}
   cancel-in-progress: true
 
 jobs:
@@ -46,7 +42,7 @@ jobs:
       - name: Restore bundle
         uses: actions/download-artifact@v4.3.0
         with:
-          name: android-${{ inputs.version }}+${{ inputs.buildNumber }}
+          name: android-${{ inputs.version }}
           path: build/app/outputs/bundle/release
 
       - name: Setup ruby
@@ -72,7 +68,7 @@ jobs:
           encodedString: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
 
       - name: Prepare version
-        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }} ${{ inputs.buildNumber }}
+        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }}
 
       - name: Upload bundle
         uses: maierj/fastlane-action@v3.1.0
