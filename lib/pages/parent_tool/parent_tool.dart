@@ -462,12 +462,13 @@ class _ParentToolState extends State<ParentTool> {
       prevToolIcon: index == 0 ? null : tools[(index - 1)].icon,
       nextToolIcon: index < tools.length - 1 ? tools[(index + 1)].icon : null,
       toolOfSameTypeIcon: widget.toolBlock.icon,
-      onPrevTool: index == 0 ? null : () => goToTool(context, project, tools[(index - 1)], replace: true),
+      onPrevTool:
+          index == 0 ? null : () => goToTool(context, project, tools[(index - 1)], replace: true, reverse: true),
       onNextTool: index < tools.length - 1 ? () => goToTool(context, project, tools[(index + 1)], replace: true) : null,
       onPrevToolOfNextType:
           indexOfSameType == 0
               ? null
-              : () => goToTool(context, project, toolsOfSameType[(indexOfSameType - 1)], replace: true),
+              : () => goToTool(context, project, toolsOfSameType[(indexOfSameType - 1)], replace: true, reverse: true),
       onNextToolOfSameType:
           indexOfSameType < toolsOfSameType.length - 1
               ? () => goToTool(context, project, toolsOfSameType[(indexOfSameType + 1)], replace: true)
