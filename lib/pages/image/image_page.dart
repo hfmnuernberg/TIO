@@ -249,21 +249,26 @@ class _ImageToolState extends State<ImageTool> {
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            FloatingActionButton(
-              onPressed: () => _pickImageAndSave(false),
-              heroTag: null,
-              backgroundColor: ColorTheme.surface,
-              child: const Icon(Icons.image_outlined, color: ColorTheme.primary),
+        child: Stack(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                FloatingActionButton(
+                  onPressed: () => _pickImageAndSave(false),
+                  heroTag: null,
+                  backgroundColor: ColorTheme.surface,
+                  child: const Icon(Icons.image_outlined, color: ColorTheme.primary),
+                ),
+                FloatingActionButton(
+                  onPressed: () => _takePhotoAndSave(false),
+                  heroTag: null,
+                  backgroundColor: ColorTheme.surface,
+                  child: const Icon(Icons.camera_alt_outlined, color: ColorTheme.primary),
+                ),
+              ],
             ),
-            FloatingActionButton(
-              onPressed: () => _takePhotoAndSave(false),
-              heroTag: null,
-              backgroundColor: ColorTheme.surface,
-              child: const Icon(Icons.camera_alt_outlined, color: ColorTheme.primary),
-            ),
+            SizedBox(height: 100)
           ],
         ),
       ),
