@@ -16,6 +16,5 @@ PageRouteBuilder<T> directionalPageRoute<T>({required Widget page, required bool
   return PageRouteBuilder<T>(
     pageBuilder: (context, animation, secondaryAnimation) => page,
     transitionsBuilder: buildTransition,
-    transitionDuration: const Duration(milliseconds: 200),
   );
 }
