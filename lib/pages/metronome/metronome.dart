@@ -761,7 +761,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           block: _metronomeBlock,
           callOnReturn: (value) => setState(() {}),
         ),
-        const SizedBox(height: 80),
       ],
     );
   }
