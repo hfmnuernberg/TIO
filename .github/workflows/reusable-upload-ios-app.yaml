@@ -6,19 +6,19 @@ on:
       ref:
         required: true
         type: string
-        description: The commit SHA, tag or release to verify
+        description: The commit SHA, tag or release
       version:
         required: true
         type: string
-        description: The version to build
+        description: The version
       buildNumber:
         required: true
         type: string
-        description: The build number to build
+        description: The build number
       appIdentifier:
         required: true
         type: string
-        description: The ID of the app to build
+        description: The ID of the app
 
 concurrency:
   group: ios-${{ inputs.version }}+${{ inputs.buildNumber }}

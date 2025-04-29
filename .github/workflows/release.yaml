@@ -18,6 +18,9 @@ jobs:
           ref: main
           fetch-depth: 0
 
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
       - name: Create GitHub release
         id: semantic_release
         uses: cycjimmy/semantic-release-action@v4.2.0
@@ -27,9 +30,27 @@ jobs:
       - name: Assert new release published
         if: steps.semantic_release.outputs.new_release_published == 'false'
         run: |
-          echo "❌ No new released published! See workflow logs for details." >> $GITHUB_STEP_SUMMARY
+          echo "❌ No new release published! See workflow logs for details." >> $GITHUB_STEP_SUMMARY
           exit 1
 
-      - name: Create summary
+      - name: Load current release version
+        id: old
+        run: |
+          source scripts/load-release-version-from-latest-tag.sh
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Bump to next dev version
         if: steps.semantic_release.outputs.new_release_published == 'true'
-        run: echo "Released ${{ steps.new.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+        run: scripts/bump-dev-version-and-tag.sh ${{ steps.old.outputs.version }}
+
+      - name: Load updated version
+        id: new
+        run: |
+          source scripts/load-version-from-latest-tag.sh
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create summary
+        run: |
+          echo "Released version: **${{ steps.semantic_release.outputs.new_release_version }}**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "_Prepared new dev version: ${{ steps.new.outputs.version }}_" >> $GITHUB_STEP_SUMMARY
