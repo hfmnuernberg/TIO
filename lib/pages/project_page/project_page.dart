@@ -7,6 +7,7 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/pages/project_page/edit_project_bar.dart';
 import 'package:tiomusic/pages/project_page/editable_tool_list.dart';
 import 'package:tiomusic/pages/project_page/export_project.dart';
 import 'package:tiomusic/pages/project_page/tool_list.dart';
@@ -20,7 +21,6 @@ import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
-import 'package:tiomusic/widgets/small_icon_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProjectPage extends StatefulWidget {
@@ -322,27 +322,12 @@ class _ProjectPageState extends State<ProjectPage> {
                       },
                     ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: TIOMusicParams.spaceBetweenPlusButtonAndBottom,
-              horizontal: TIOMusicParams.edgeInset,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                SmallIconButton(
-                  icon: Icon(Icons.add, color: ColorTheme.tertiary),
-                  onPressed: () => setState(() => _showBlocks = false),
-                ),
-                Expanded(child: SizedBox()),
-                SmallIconButton(
-                  icon: Icon(_isEditing ? Icons.check : Icons.edit, color: ColorTheme.tertiary),
-                  onPressed: _toggleEditingMode,
-                ),
-              ],
-            ),
-          ),
         ],
+      ),
+      bottomNavigationBar: EditProjectBar(
+        onAddTool: () => setState(() => _showBlocks = false),
+        onToggleEditing: _toggleEditingMode,
+        isEditing: _isEditing,
       ),
     );
   }
