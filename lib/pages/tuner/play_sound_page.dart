@@ -109,11 +109,13 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   @override
   Widget build(BuildContext context) {
     int offset = (_octave - 1) * 12;
+    final l10n = context.l10n;
+
     return DismissKeyboard(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: Text(context.l10n.tunerPlayReference),
+          title: Text(l10n.tunerPlayReference),
           backgroundColor: ColorTheme.surfaceBright,
           foregroundColor: ColorTheme.primary,
         ),
@@ -127,13 +129,13 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
               min: minOctave,
               max: maxOctave,
               step: 1,
-              label: context.l10n.commonOctave,
+              label: l10n.commonOctave,
               textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
             ),
             const SizedBox(height: 40),
 
             Text(
-              '${context.l10n.tunerFrequency}: ${_frequency.floorToDouble()} Hz',
+              '${l10n.tunerFrequency}: ${l10n.formatNumber(double.parse(_frequency.toStringAsFixed(1)))} Hz',
               style: const TextStyle(color: ColorTheme.primary),
             ),
             const SizedBox(height: 40),
