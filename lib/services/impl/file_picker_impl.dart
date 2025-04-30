@@ -20,5 +20,6 @@ class FilePickerImpl implements tio.FilePicker {
 
   @override
   Future<bool> shareFile(String absoluteFilePath) async =>
-      (await Share.shareXFiles([XFile(absoluteFilePath)])).status == ShareResultStatus.success;
+      (await SharePlus.instance.share(ShareParams(files: [XFile(absoluteFilePath)]))).status ==
+      ShareResultStatus.success;
 }
