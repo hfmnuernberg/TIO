@@ -331,12 +331,12 @@ class _ProjectPageState extends State<ProjectPage> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 SmallIconButton(
-                  icon: Icon(Icons.add, color: ColorTheme.primary),
+                  icon: Icon(Icons.add, color: ColorTheme.tertiary),
                   onPressed: () => setState(() => _showBlocks = false),
                 ),
                 Expanded(child: SizedBox()),
                 SmallIconButton(
-                  icon: Icon(_isEditing ? Icons.check : Icons.edit, color: ColorTheme.primary),
+                  icon: Icon(_isEditing ? Icons.check : Icons.edit, color: ColorTheme.tertiary),
                   onPressed: _toggleEditingMode,
                 ),
               ],
