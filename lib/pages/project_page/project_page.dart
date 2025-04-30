@@ -16,11 +16,11 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/widgets/big_icon_button.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
+import 'package:tiomusic/widgets/small_icon_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProjectPage extends StatefulWidget {
@@ -322,15 +322,25 @@ class _ProjectPageState extends State<ProjectPage> {
                       },
                     ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              BigIconButton(
-                icon: _isEditing ? Icons.check : Icons.add,
-                onPressed: () => _isEditing ? _toggleEditingMode() : setState(() => _showBlocks = false),
-              ),
-              const SizedBox(height: TIOMusicParams.spaceBetweenPlusButtonAndBottom),
-            ],
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: TIOMusicParams.spaceBetweenPlusButtonAndBottom,
+              horizontal: TIOMusicParams.edgeInset,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                SmallIconButton(
+                  icon: Icon(Icons.add, color: ColorTheme.primary),
+                  onPressed: () => setState(() => _showBlocks = false),
+                ),
+                Expanded(child: SizedBox()),
+                SmallIconButton(
+                  icon: Icon(_isEditing ? Icons.check : Icons.edit, color: ColorTheme.primary),
+                  onPressed: _toggleEditingMode,
+                ),
+              ],
+            ),
           ),
         ],
       ),
