@@ -29,6 +29,7 @@ import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
+import 'package:tiomusic/widgets/small_icon_button.dart';
 import 'package:tiomusic/widgets/small_num_input.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -72,6 +73,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   bool _isPlaying = false;
   bool _processingButtonClick = false;
+  late bool _isSimpleModeOn = false;
 
   late Timer _beatDetection;
   final ActiveBeatsModel _activeBeatsModel = ActiveBeatsModel();
@@ -147,6 +149,8 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     _beatDetection.cancel();
     super.deactivate();
   }
+
+  void _toggleSimpleMode() => setState(() => _isSimpleModeOn = !_isSimpleModeOn);
 
   // React to beat signal
   void _onBeatHappened(BeatHappenedEvent event) {
@@ -320,6 +324,17 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
             Stack(
               alignment: AlignmentDirectional.center,
               children: [
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: SmallIconButton(
+                    icon: Icon(
+                      _isSimpleModeOn ? Icons.music_note : Icons.music_note_outlined,
+                      color: ColorTheme.tertiary,
+                    ),
+                    onPressed: _toggleSimpleMode,
+                  ),
+                ),
                 _beatCircle(
                   MediaQuery.of(context).size.width / 3,
                   TIOMusicParams.beatButtonSizeBig,
@@ -363,7 +378,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
             ),
 
             // Show all note values
-            _getNoteTable(),
+            if (!_isSimpleModeOn) _getNoteTable(),
           ],
         ),
       ),
