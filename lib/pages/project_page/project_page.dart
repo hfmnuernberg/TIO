@@ -7,6 +7,7 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/pages/project_page/edit_project_bar.dart';
 import 'package:tiomusic/pages/project_page/editable_tool_list.dart';
 import 'package:tiomusic/pages/project_page/export_project.dart';
 import 'package:tiomusic/pages/project_page/tool_list.dart';
@@ -16,7 +17,6 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/widgets/big_icon_button.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
@@ -322,17 +322,12 @@ class _ProjectPageState extends State<ProjectPage> {
                       },
                     ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              BigIconButton(
-                icon: _isEditing ? Icons.check : Icons.add,
-                onPressed: () => _isEditing ? _toggleEditingMode() : setState(() => _showBlocks = false),
-              ),
-              const SizedBox(height: TIOMusicParams.spaceBetweenPlusButtonAndBottom),
-            ],
-          ),
         ],
+      ),
+      bottomNavigationBar: EditProjectBar(
+        onAddTool: () => setState(() => _showBlocks = false),
+        onToggleEditing: _toggleEditingMode,
+        isEditing: _isEditing,
       ),
     );
   }
