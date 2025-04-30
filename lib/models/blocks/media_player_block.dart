@@ -14,6 +14,7 @@ part 'media_player_block.g.dart';
 class MediaPlayerBlock extends ProjectBlock {
   @override
   List<Object> get props => [
+    _id,
     bpm,
     _volume,
     _pitchSemitones,

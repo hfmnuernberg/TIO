@@ -14,7 +14,7 @@ part 'text_block.g.dart';
 class TextBlock extends ProjectBlock {
   // this check is only used for quick tools at the moment
   @override
-  List<Object> get props => [];
+  List<Object> get props => [_id];
 
   @override
   @JsonKey(defaultValue: TextParams.kind, includeFromJson: false, includeToJson: true)
