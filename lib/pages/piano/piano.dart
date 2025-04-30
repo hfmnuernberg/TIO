@@ -638,9 +638,14 @@ class _PianoState extends State<Piano> {
                                       icon: _bookmarkIcon,
                                       color: ColorTheme.surfaceTint,
                                     ),
-                                    leadingPicture: FileImage(
-                                      File(_fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath)),
-                                    ),
+                                    leadingPicture:
+                                        projectLibrary.projects[index].thumbnailPath.isEmpty
+                                            ? const AssetImage(TIOMusicParams.tiomusicIconPath)
+                                            : FileImage(
+                                              File(
+                                                _fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath),
+                                              ),
+                                            ),
                                     onTapFunction: () => _buildTextInputOverlay(setTileState, index),
                                   );
                                 },
