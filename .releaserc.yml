@@ -1,7 +1,8 @@
 branches:
-- main
+- name: main
+  prerelease: false
 preset: angular
-tag_format: v${version}
+tagFormat: ${version}
 plugins:
 -
   - '@semantic-release/commit-analyzer'

@@ -22,6 +22,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
+import 'package:tiomusic/widgets/small_icon_button.dart';
 
 class ImageTool extends StatefulWidget {
   final bool isQuickTool;
@@ -43,10 +44,6 @@ class _ImageToolState extends State<ImageTool> {
 
   late ImageBlock _imageBlock;
   late Project _project;
-
-  final List<MenuItemButton> _menuItems = List.empty(growable: true);
-  late MenuItemButton _shareMenuButton;
-  late MenuItemButton _setAsThumbnailMenuButton;
 
   @override
   void initState() {
@@ -70,38 +67,6 @@ class _ImageToolState extends State<ImageTool> {
         await _addImageDialog(context);
       });
     }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    _shareMenuButton = MenuItemButton(
-      onPressed: _shareFilePressed,
-      child: Text(context.l10n.imageShare, style: const TextStyle(color: ColorTheme.primary)),
-    );
-
-    _setAsThumbnailMenuButton = MenuItemButton(
-      onPressed: _setAsThumbnail,
-      child: Text(context.l10n.imageSetAsThumbnail, style: const TextStyle(color: ColorTheme.primary)),
-    );
-
-    if (_imageBlock.relativePath.isNotEmpty && _menuItems.isEmpty) {
-      setState(() {
-        _menuItems.addAll([_shareMenuButton, _setAsThumbnailMenuButton]);
-      });
-    }
-  }
-
-  void _addOptionsToMenu() {
-    setState(() {
-      if (!_menuItems.contains(_shareMenuButton)) {
-        _menuItems.add(_shareMenuButton);
-      }
-      if (!_menuItems.contains(_setAsThumbnailMenuButton)) {
-        _menuItems.add(_setAsThumbnailMenuButton);
-      }
-    });
   }
 
   void _shareFilePressed() async {
@@ -180,7 +145,7 @@ class _ImageToolState extends State<ImageTool> {
 
       await _projectRepo.saveLibrary(projectLibrary);
 
-      _addOptionsToMenu();
+      setState(() {});
     } on PlatformException catch (e) {
       _logger.e('Unable to pick image.', error: e);
     }
@@ -221,7 +186,7 @@ class _ImageToolState extends State<ImageTool> {
 
     await _projectRepo.saveLibrary(projectLibrary);
 
-    _addOptionsToMenu();
+    setState(() {});
   }
 
   @override
@@ -231,7 +196,27 @@ class _ImageToolState extends State<ImageTool> {
       isQuickTool: widget.isQuickTool,
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: _imageBlock,
-      menuItems: _menuItems,
+      menuItems:
+          _imageBlock.relativePath.isNotEmpty
+              ? [
+                MenuItemButton(
+                  onPressed: _shareFilePressed,
+                  child: Text(context.l10n.imageShare, style: const TextStyle(color: ColorTheme.primary)),
+                ),
+                MenuItemButton(
+                  onPressed: _setAsThumbnail,
+                  child: Text(context.l10n.imageSetAsThumbnail, style: const TextStyle(color: ColorTheme.primary)),
+                ),
+                MenuItemButton(
+                  onPressed: () => _pickImageAndSave(false),
+                  child: Text(context.l10n.imagePickNewImage, style: const TextStyle(color: ColorTheme.primary)),
+                ),
+                MenuItemButton(
+                  onPressed: () => _takePhotoAndSave(false),
+                  child: Text(context.l10n.imageTakeNewPhoto, style: const TextStyle(color: ColorTheme.primary)),
+                ),
+              ]
+              : null,
       centerModule: Padding(
         padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
         child: Center(
@@ -241,30 +226,38 @@ class _ImageToolState extends State<ImageTool> {
               if (imageBlock.relativePath.isNotEmpty) {
                 return Image(image: FileImage(File(_fs.toAbsoluteFilePath(imageBlock.relativePath))));
               } else {
-                return Text(context.l10n.imageNoImage, style: TextStyle(color: ColorTheme.primary));
+                return Stack(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SmallIconButton(
+                          icon: const Icon(Icons.image_outlined, color: ColorTheme.primary),
+                          onPressed: () => _pickImageAndSave(false),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                            child: Text(
+                              context.l10n.imageNoImage,
+                              style: const TextStyle(color: ColorTheme.primary),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SmallIconButton(
+                          icon: const Icon(Icons.camera_alt_outlined, color: ColorTheme.primary),
+                          onPressed: () => _takePhotoAndSave(false),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
               }
             },
           ),
-        ),
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            FloatingActionButton(
-              onPressed: () => _pickImageAndSave(false),
-              heroTag: null,
-              backgroundColor: ColorTheme.surface,
-              child: const Icon(Icons.image_outlined, color: ColorTheme.primary),
-            ),
-            FloatingActionButton(
-              onPressed: () => _takePhotoAndSave(false),
-              heroTag: null,
-              backgroundColor: ColorTheme.surface,
-              child: const Icon(Icons.camera_alt_outlined, color: ColorTheme.primary),
-            ),
-          ],
         ),
       ),
       settingTiles: const [],

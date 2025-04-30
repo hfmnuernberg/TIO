@@ -15,23 +15,18 @@ on:
         description: The commit SHA, tag or release
     outputs:
       version:
-        description: 'The current version'
+        description: 'The new version (e.g., 1.2.3+42)'
         value: ${{ jobs.bump-build-number.outputs.version }}
-      buildNumber:
-        description: 'The new build number'
-        value: ${{ jobs.bump-build-number.outputs.buildNumber }}
 
 permissions:
   contents: write
 
 jobs:
   bump-build-number:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     name: Bump Build Number
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.version.outputs.version }}
-      buildNumber: ${{ steps.new.outputs.buildNumber }}
+      version: ${{ steps.new.outputs.version }}
 
     steps:
     - name: Checkout repository
@@ -48,30 +43,22 @@ jobs:
     - name: Make scripts executable
       run: chmod +x scripts/*.sh
 
-    - name: Load current build number
+    - name: Load current version
       id: old
       run: |
-        source scripts/load-build-number-from-latest-tag.sh
+        source scripts/load-version-from-latest-tag.sh
+        echo "semver=$SEMVER" >> "$GITHUB_OUTPUT"
         echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
     - name: Bump build number
-      run: scripts/bump-build-number-and-tag.sh ${{ steps.old.outputs.buildNumber }}
-
-    - name: Load updated build number
       id: new
       run: |
-        source scripts/load-build-number-from-latest-tag.sh
-        echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-
-    - name: Load current version
-      id: version
-      run: |
-        source scripts/load-version-from-latest-tag.sh
-        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        source scripts/bump-build-number-and-tag.sh ${{ steps.old.outputs.semver }} ${{ steps.old.outputs.buildNumber }}
+        echo "buildNumber=$NEW_BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+        echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
     - name: Create summary
       run: |
-        echo "Version: **${{ steps.version.outputs.version }}**" >> $GITHUB_STEP_SUMMARY
-        echo "New Build Number: **${{ steps.new.outputs.buildNumber }}**" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "_Previous Build Number: ${{ steps.old.outputs.buildNumber }}_" >> $GITHUB_STEP_SUMMARY
+        echo "Semantic Version: **${{ steps.old.outputs.semver }}**" >> $GITHUB_STEP_SUMMARY
+        echo "Build Number: **${{ steps.old.outputs.buildNumber }} -> ${{ steps.new.outputs.buildNumber }}**" >> $GITHUB_STEP_SUMMARY
+        echo "New Version:      **${{ steps.new.outputs.version }}**" >> $GITHUB_STEP_SUMMARY

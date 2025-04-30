@@ -25,6 +25,7 @@ import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/directional_page_route.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
 // ---------------------------------------------------------------
@@ -341,37 +342,34 @@ Future<void> showNoCameraFoundDialog(BuildContext context) {
 // ---------------------------------------------------------------
 // navigate to a new tool page and provide the correct providers
 
-Future<dynamic> goToTool(BuildContext context, Project project, ProjectBlock block, {bool pianoAleadyOn = false}) {
-  return Navigator.of(context).push(
-    MaterialPageRoute(
-      builder: (context) {
-        return MultiProvider(
-          providers: [
-            ChangeNotifierProvider<Project>.value(value: project),
-            ChangeNotifierProvider<ProjectBlock>.value(value: block),
-          ],
-          builder: (context, child) {
-            if (block is TunerBlock) {
-              return const Tuner(isQuickTool: false);
-            } else if (block is MetronomeBlock) {
-              return const Metronome(isQuickTool: false);
-            } else if (block is MediaPlayerBlock) {
-              return const MediaPlayer(isQuickTool: false);
-            } else if (block is ImageBlock) {
-              return const ImageTool(isQuickTool: false);
-            } else if (block is PianoBlock) {
-              WidgetsFlutterBinding.ensureInitialized();
-              return Piano(isQuickTool: false, withoutInitAndStart: pianoAleadyOn);
-            } else if (block is TextBlock) {
-              return const TextTool(isQuickTool: false);
-            } else {
-              throw 'ERROR: The block type of $block is unknown.';
-            }
-          },
-        );
-      },
-    ),
+Future<dynamic> goToTool(
+  BuildContext context,
+  Project project,
+  ProjectBlock block, {
+  bool pianoAlreadyOn = false,
+  bool replace = false,
+  bool transitionLeftToRight = false,
+}) {
+  final page = MultiProvider(
+    providers: [
+      ChangeNotifierProvider<Project>.value(value: project),
+      ChangeNotifierProvider<ProjectBlock>.value(value: block),
+    ],
+
+    builder: (context, child) {
+      if (block is TunerBlock) return const Tuner(isQuickTool: false);
+      if (block is MetronomeBlock) return const Metronome(isQuickTool: false);
+      if (block is MediaPlayerBlock) return const MediaPlayer(isQuickTool: false);
+      if (block is ImageBlock) return const ImageTool(isQuickTool: false);
+      if (block is PianoBlock) return Piano(isQuickTool: false, withoutInitAndStart: pianoAlreadyOn);
+      if (block is TextBlock) return const TextTool(isQuickTool: false);
+      throw 'ERROR: Unknown block type $block';
+    },
   );
+
+  final route = directionalPageRoute(page: page, transitionLeftToRight: transitionLeftToRight);
+
+  return replace ? Navigator.of(context).pushReplacement(route) : Navigator.of(context).push(route);
 }
 
 // ---------------------------------------------------------------

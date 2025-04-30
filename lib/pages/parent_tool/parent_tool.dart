@@ -18,6 +18,7 @@ import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
+import 'package:tiomusic/widgets/tool_navigation_bar.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ParentTool extends StatefulWidget {
@@ -430,7 +431,10 @@ class _ParentToolState extends State<ParentTool> {
 
   @override
   Widget build(BuildContext context) {
+    final project = context.read<Project?>();
+
     return Scaffold(
+      extendBody: true,
       resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(ParentToolParams.appBarHeight),
@@ -440,6 +444,7 @@ class _ParentToolState extends State<ParentTool> {
       body: widget.deactivateScroll ? _body() : SingleChildScrollView(child: _body()),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: widget.floatingActionButton,
+      bottomNavigationBar: project == null ? null : ToolNavigationBar(project: project, toolBlock: widget.toolBlock),
     );
   }
 
