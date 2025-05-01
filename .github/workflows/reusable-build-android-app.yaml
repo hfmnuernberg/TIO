@@ -70,7 +70,7 @@ jobs:
         run: scripts/app.sh generate:json
 
       - name: Setup ruby
-        uses: ruby/setup-ruby@v1.235.0
+        uses: ruby/setup-ruby@v1.236.0
         with:
           ruby-version: '3.3'
           working-directory: android
