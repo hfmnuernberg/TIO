@@ -84,7 +84,6 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   final TextEditingController _numBeatsController = TextEditingController();
   final TextEditingController _numPolyBeatsController = TextEditingController();
-  final TextEditingController _simpleNumPolyBeatsController = TextEditingController();
 
   @override
   void initState() {
@@ -124,7 +123,6 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _numBeatsController.addListener(_onNumBeatsChanged);
       _numPolyBeatsController.addListener(_onNumPolyBeatsChanged);
-      _simpleNumPolyBeatsController.addListener(_onSimpleNumPolyBeatsChanged);
 
       if (context.read<ProjectLibrary>().showBeatToggleTip) {
         _createTutorial();
@@ -140,7 +138,6 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
     _numBeatsController.removeListener(_onNumBeatsChanged);
     _numPolyBeatsController.removeListener(_onNumPolyBeatsChanged);
-    _simpleNumPolyBeatsController.removeListener(_onSimpleNumPolyBeatsChanged);
     _numBeatsController.dispose();
     _numPolyBeatsController.dispose();
 
@@ -200,6 +197,14 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   // Handle beat changes
   void _onNumBeatsChanged() {
+    if (_isSimpleModeOn) {
+      _onNumBeatsChangedSimple();
+    } else {
+      _onNumBeatsChangedComplex();
+    }
+  }
+
+  void _onNumBeatsChangedSimple() {
     setState(() {
       if (_numBeatsController.text != '') {
         int newNumberOfBeats = int.parse(_numBeatsController.text);
@@ -211,9 +216,27 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
           }
 
           final validValues = getValidSimplePolyBeatValues(newNumberOfBeats);
-          final currentSimplePolyBeats = int.tryParse(_simpleNumPolyBeatsController.text);
+          final currentSimplePolyBeats = int.tryParse(_numPolyBeatsController.text);
           if (currentSimplePolyBeats == null || !validValues.contains(currentSimplePolyBeats)) {
-            _simpleNumPolyBeatsController.text = validValues.first.toString();
+            _numPolyBeatsController.text = validValues.first.toString();
+          }
+
+          var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
+          metronomeSetRhythm(bars: bars, bars2: []);
+        }
+      }
+    });
+  }
+
+  void _onNumBeatsChangedComplex() {
+    setState(() {
+      if (_numBeatsController.text != '') {
+        int newNumberOfBeats = int.parse(_numBeatsController.text);
+        if (newNumberOfBeats >= _minNumberOfBeats && newNumberOfBeats <= MetronomeParams.maxNumBeats) {
+          if (newNumberOfBeats > _beats.length) {
+            _beats.addAll(List.filled(newNumberOfBeats - _beats.length, BeatType.Unaccented));
+          } else if (newNumberOfBeats < _beats.length) {
+            _beats.removeRange(newNumberOfBeats, _beats.length);
           }
 
           var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
@@ -224,28 +247,18 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   }
 
   void _onNumPolyBeatsChanged() {
-    setState(() {
-      if (_numPolyBeatsController.text != '') {
-        int newNumberOfBeats = int.parse(_numPolyBeatsController.text);
-        if (newNumberOfBeats >= _minNumberOfPolyBeats && newNumberOfBeats <= MetronomeParams.maxNumBeats) {
-          if (newNumberOfBeats > _polyBeats.length) {
-            _polyBeats.addAll(List.filled(newNumberOfBeats - _polyBeats.length, BeatTypePoly.Unaccented));
-          } else if (newNumberOfBeats < _polyBeats.length) {
-            _polyBeats.removeRange(newNumberOfBeats, _polyBeats.length);
-          }
-
-          var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
-          metronomeSetRhythm(bars: bars, bars2: []);
-        }
-      }
-    });
+    if (_isSimpleModeOn) {
+      _onNumPolyBeatsChangedSimple();
+    } else {
+      _onNumPolyBeatsChangedComplex();
+    }
   }
 
-  void _onSimpleNumPolyBeatsChanged() {
+  void _onNumPolyBeatsChangedSimple() {
     setState(() {
-      if (_simpleNumPolyBeatsController.text != '') {
+      if (_numPolyBeatsController.text != '') {
         final currentBeats = int.tryParse(_numBeatsController.text);
-        final newNumberOfBeats = int.tryParse(_simpleNumPolyBeatsController.text);
+        final newNumberOfBeats = int.tryParse(_numPolyBeatsController.text);
 
         if (currentBeats != null && newNumberOfBeats != null) {
           final validValues = getValidSimplePolyBeatValues(currentBeats);
@@ -259,6 +272,26 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
             var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
             metronomeSetRhythm(bars: bars, bars2: []);
           }
+        }
+      }
+    });
+  }
+
+
+
+  void _onNumPolyBeatsChangedComplex() {
+    setState(() {
+      if (_numPolyBeatsController.text != '') {
+        int newNumberOfBeats = int.parse(_numPolyBeatsController.text);
+        if (newNumberOfBeats >= _minNumberOfPolyBeats && newNumberOfBeats <= MetronomeParams.maxNumBeats) {
+          if (newNumberOfBeats > _polyBeats.length) {
+            _polyBeats.addAll(List.filled(newNumberOfBeats - _polyBeats.length, BeatTypePoly.Unaccented));
+          } else if (newNumberOfBeats < _polyBeats.length) {
+            _polyBeats.removeRange(newNumberOfBeats, _polyBeats.length);
+          }
+
+          var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
+          metronomeSetRhythm(bars: bars, bars2: []);
         }
       }
     });
@@ -413,7 +446,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                     minValue: 1,
                     defaultValue: 1,
                     countingValue: 1,
-                    displayText: _simpleNumPolyBeatsController,
+                    displayText: _numPolyBeatsController,
                     validValues: getValidSimplePolyBeatValues(int.tryParse(_numBeatsController.text) ?? 1),
                     descriptionText: l10n.metronomeNumberOfPolyBeats,
                     buttonRadius: MetronomeParams.popupButtonRadius,
