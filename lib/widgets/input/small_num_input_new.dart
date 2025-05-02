@@ -39,9 +39,9 @@ class SmallNumInputNew extends StatefulWidget {
 }
 
 class _SmallNumInputNewState extends State<SmallNumInputNew> {
+  late TextEditingController _valueController;
   bool _isPlusButtonActive = true;
   bool _isMinusButtonActive = true;
-  late TextEditingController _valueController;
   Timer? _decreaseTimer;
   Timer? _increaseTimer;
 
@@ -56,14 +56,12 @@ class _SmallNumInputNewState extends State<SmallNumInputNew> {
 
   @override
   void dispose() {
+    super.dispose();
     _decreaseTimer?.cancel();
     _increaseTimer?.cancel();
-    super.dispose();
   }
 
-  void _onExternalChange() {
-    _validateInput(widget.displayText.value.text);
-  }
+  void _onExternalChange() => _validateInput(widget.displayText.value.text);
 
   void _updateControllers(int newValue) {
     final valueStr = newValue.toString();
@@ -79,7 +77,7 @@ class _SmallNumInputNewState extends State<SmallNumInputNew> {
 
     if (values != null && values.isNotEmpty) {
       final reversed = values.reversed.toList();
-      final index = reversed.indexWhere((v) => v < current);
+      final index = reversed.indexWhere((value) => value < current);
       if (index != -1) {
         final prev = reversed[index];
         _updateControllers(prev);
@@ -97,7 +95,7 @@ class _SmallNumInputNewState extends State<SmallNumInputNew> {
     final values = widget.validValues;
 
     if (values != null && values.isNotEmpty) {
-      final index = values.indexWhere((v) => v > current);
+      final index = values.indexWhere((value) => value > current);
       if (index != -1) {
         final next = values[index];
         _updateControllers(next);
@@ -110,25 +108,19 @@ class _SmallNumInputNewState extends State<SmallNumInputNew> {
     }
   }
 
-  void _startDecreaseTimer() {
-    _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
-      _decreaseValue();
-    });
-  }
+  void _startDecreaseTimer() =>
+      _decreaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
+        _decreaseValue();
+      });
 
-  void _startIncreaseTimer() {
-    _increaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
-      _increaseValue();
-    });
-  }
+  void _startIncreaseTimer() =>
+      _increaseTimer = Timer.periodic(Duration(milliseconds: widget.countingIntervalMs), (timer) {
+        _increaseValue();
+      });
 
-  void _endDecreaseTimer() {
-    _decreaseTimer?.cancel();
-  }
+  void _endDecreaseTimer() => _decreaseTimer?.cancel();
 
-  void _endIncreaseTimer() {
-    _increaseTimer?.cancel();
-  }
+  void _endIncreaseTimer() => _increaseTimer?.cancel();
 
   void _manageButtonActivity(String input) {
     if (input != '' && input != '-') {
@@ -147,18 +139,18 @@ class _SmallNumInputNewState extends State<SmallNumInputNew> {
   }
 
   void _validateInput(String input) {
-    int val = int.tryParse(input) ?? widget.defaultValue;
+    int value = int.tryParse(input) ?? widget.defaultValue;
 
     if (widget.validValues != null && widget.validValues!.isNotEmpty) {
-      if (!widget.validValues!.contains(val)) {
-        val = widget.validValues!.first;
+      if (!widget.validValues!.contains(value)) {
+        value = widget.validValues!.first;
       }
     } else {
-      if (val < widget.minValue) val = widget.minValue;
-      if (val > widget.maxValue) val = widget.maxValue;
+      if (value < widget.minValue) value = widget.minValue;
+      if (value > widget.maxValue) value = widget.maxValue;
     }
 
-    _updateControllers(val);
+    _updateControllers(value);
   }
 
   @override
