@@ -28,6 +28,7 @@ import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tiomusic/widgets/input/small_num_input_new.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tiomusic/widgets/small_icon_button.dart';
 import 'package:tiomusic/widgets/small_num_input.dart';
@@ -83,6 +84,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   final TextEditingController _numBeatsController = TextEditingController();
   final TextEditingController _numPolyBeatsController = TextEditingController();
+  final TextEditingController _simpleNumPolyBeatsController = TextEditingController();
 
   @override
   void initState() {
@@ -122,6 +124,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _numBeatsController.addListener(_onNumBeatsChanged);
       _numPolyBeatsController.addListener(_onNumPolyBeatsChanged);
+      _simpleNumPolyBeatsController.addListener(_onSimpleNumPolyBeatsChanged);
 
       if (context.read<ProjectLibrary>().showBeatToggleTip) {
         _createTutorial();
@@ -137,6 +140,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
     _numBeatsController.removeListener(_onNumBeatsChanged);
     _numPolyBeatsController.removeListener(_onNumPolyBeatsChanged);
+    _simpleNumPolyBeatsController.removeListener(_onSimpleNumPolyBeatsChanged);
     _numBeatsController.dispose();
     _numPolyBeatsController.dispose();
 
@@ -184,6 +188,16 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     }, context);
   }
 
+  List<int> getValidSimplePolyBeatValues(int numBeats) {
+    List<int> validValues = [];
+
+    for (int i = 1; i <= MetronomeParams.maxNumBeats; i++) {
+      if (i % numBeats == 0 || numBeats % i == 0) validValues.add(i);
+    }
+
+    return validValues;
+  }
+
   // Handle beat changes
   void _onNumBeatsChanged() {
     setState(() {
@@ -194,6 +208,12 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
             _beats.addAll(List.filled(newNumberOfBeats - _beats.length, BeatType.Unaccented));
           } else if (newNumberOfBeats < _beats.length) {
             _beats.removeRange(newNumberOfBeats, _beats.length);
+          }
+
+          final validValues = getValidSimplePolyBeatValues(newNumberOfBeats);
+          final currentSimplePolyBeats = int.tryParse(_simpleNumPolyBeatsController.text);
+          if (currentSimplePolyBeats == null || !validValues.contains(currentSimplePolyBeats)) {
+            _simpleNumPolyBeatsController.text = validValues.first.toString();
           }
 
           var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
@@ -216,6 +236,29 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
           var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
           metronomeSetRhythm(bars: bars, bars2: []);
+        }
+      }
+    });
+  }
+
+  void _onSimpleNumPolyBeatsChanged() {
+    setState(() {
+      if (_simpleNumPolyBeatsController.text != '') {
+        final currentBeats = int.tryParse(_numBeatsController.text);
+        final newNumberOfBeats = int.tryParse(_simpleNumPolyBeatsController.text);
+
+        if (currentBeats != null && newNumberOfBeats != null) {
+          final validValues = getValidSimplePolyBeatValues(currentBeats);
+          if (validValues.contains(newNumberOfBeats)) {
+            if (newNumberOfBeats > _polyBeats.length) {
+              _polyBeats.addAll(List.filled(newNumberOfBeats - _polyBeats.length, BeatTypePoly.Unaccented));
+            } else if (newNumberOfBeats < _polyBeats.length) {
+              _polyBeats.removeRange(newNumberOfBeats, _polyBeats.length);
+            }
+
+            var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
+            metronomeSetRhythm(bars: bars, bars2: []);
+          }
         }
       }
     });
@@ -364,16 +407,29 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                   buttonRadius: MetronomeParams.popupButtonRadius,
                   textFontSize: MetronomeParams.popupTextFontSize,
                 ),
-                SmallNumInput(
-                  maxValue: MetronomeParams.maxNumBeats,
-                  minValue: _minNumberOfPolyBeats,
-                  defaultValue: widget.currentPolyBeats.length,
-                  countingValue: 1,
-                  displayText: _numPolyBeatsController,
-                  descriptionText: l10n.metronomeNumberOfPolyBeats,
-                  buttonRadius: MetronomeParams.popupButtonRadius,
-                  textFontSize: MetronomeParams.popupTextFontSize,
-                ),
+                if (_isSimpleModeOn)
+                  SmallNumInputNew(
+                    maxValue: 20,
+                    minValue: 1,
+                    defaultValue: 1,
+                    countingValue: 1,
+                    displayText: _simpleNumPolyBeatsController,
+                    validValues: getValidSimplePolyBeatValues(int.tryParse(_numBeatsController.text) ?? 1),
+                    descriptionText: l10n.metronomeNumberOfPolyBeats,
+                    buttonRadius: MetronomeParams.popupButtonRadius,
+                    textFontSize: MetronomeParams.popupTextFontSize,
+                  )
+                else
+                  SmallNumInput(
+                    maxValue: MetronomeParams.maxNumBeats,
+                    minValue: _minNumberOfPolyBeats,
+                    defaultValue: widget.currentPolyBeats.length,
+                    countingValue: 1,
+                    displayText: _numPolyBeatsController,
+                    descriptionText: l10n.metronomeNumberOfPolyBeats,
+                    buttonRadius: MetronomeParams.popupButtonRadius,
+                    textFontSize: MetronomeParams.popupTextFontSize,
+                  ),
               ],
             ),
 
