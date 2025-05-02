@@ -28,10 +28,9 @@ import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
-import 'package:tiomusic/widgets/input/small_num_input_new.dart';
+import 'package:tiomusic/widgets/input/small_number_input_int.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tiomusic/widgets/small_icon_button.dart';
-import 'package:tiomusic/widgets/small_num_input.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class SetRhythmParameters extends StatefulWidget {
@@ -61,9 +60,15 @@ class SetRhythmParameters extends StatefulWidget {
 }
 
 class _SetRhythmParametersState extends State<SetRhythmParameters> {
+  // TODO: extract beat circle widget
+  // TODO: remove understores
+  // TODO: add tests for helper functions
   static final _logger = createPrefixLogger('SetRhythmParameters');
 
   late FileSystem _fs;
+
+  int beatCount = 0;
+  int polyBeatCount = 0;
 
   final int _minNumberOfBeats = 1;
   final int _minNumberOfPolyBeats = 0;
@@ -74,16 +79,13 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   bool _isPlaying = false;
   bool _processingButtonClick = false;
-  late bool _isSimpleModeOn = false;
+  bool _isSimpleModeOn = false;
 
   late Timer _beatDetection;
   final ActiveBeatsModel _activeBeatsModel = ActiveBeatsModel();
 
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyToggleBeats = GlobalKey();
-
-  final TextEditingController _numBeatsController = TextEditingController();
-  final TextEditingController _numPolyBeatsController = TextEditingController();
 
   @override
   void initState() {
@@ -101,8 +103,8 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     _polyBeats.addAll(widget.currentPolyBeats);
     _noteKey = widget.currentNoteKey;
 
-    _numBeatsController.text = _beats.length.toString();
-    _numPolyBeatsController.text = _polyBeats.length.toString();
+    beatCount = _beats.length;
+    polyBeatCount = _polyBeats.length;
 
     _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
       t,
@@ -121,9 +123,6 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _numBeatsController.addListener(_onNumBeatsChanged);
-      _numPolyBeatsController.addListener(_onNumPolyBeatsChanged);
-
       if (context.read<ProjectLibrary>().showBeatToggleTip) {
         _createTutorial();
         _tutorial.show(context);
@@ -135,12 +134,6 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   void dispose() {
     _stopBeat();
     _beatDetection.cancel();
-
-    _numBeatsController.removeListener(_onNumBeatsChanged);
-    _numPolyBeatsController.removeListener(_onNumPolyBeatsChanged);
-    _numBeatsController.dispose();
-    _numPolyBeatsController.dispose();
-
     super.dispose();
   }
 
@@ -151,7 +144,12 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     super.deactivate();
   }
 
-  void _toggleSimpleMode() => setState(() => _isSimpleModeOn = !_isSimpleModeOn);
+  void _toggleSimpleMode() {
+    setState(() {
+      _isSimpleModeOn = !_isSimpleModeOn;
+      if (_isSimpleModeOn) _onPolyBeatCountChange(beatCount);
+    });
+  }
 
   // React to beat signal
   void _onBeatHappened(BeatHappenedEvent event) {
@@ -185,124 +183,62 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     }, context);
   }
 
-  List<int> getValidSimplePolyBeatValues(int numBeats) {
-    List<int> validValues = [];
-
-    for (int i = 1; i <= MetronomeParams.maxNumBeats; i++) {
-      if (i % numBeats == 0 || numBeats % i == 0) validValues.add(i);
+  int getNextPolyBeatCount(int beatCount, int polyBeatCount) {
+    var next = polyBeatCount + 1;
+    while (beatCount > polyBeatCount ? beatCount % next != 0 : next % beatCount != 0) {
+      next++;
     }
-
-    return validValues;
+    return next;
   }
 
-  // Handle beat changes
-  void _onNumBeatsChanged() {
-    if (_isSimpleModeOn) {
-      _onNumBeatsChangedSimple();
-    } else {
-      _onNumBeatsChangedComplex();
+  int getPrevPolyBeatCount(int beatCount, int polyBeatCount) {
+    var prev = polyBeatCount - 1;
+    if (prev == 0) return 0;
+    while (beatCount >= polyBeatCount ? beatCount % prev != 0 : prev % beatCount != 0) {
+      prev--;
     }
+    return prev;
   }
 
-  void _onNumBeatsChangedSimple() {
+  int getIncrementStepForPolyBeat(int beatCount, int polyBeatCount) =>
+      getNextPolyBeatCount(beatCount, polyBeatCount) - polyBeatCount;
+
+  int getDecrementStepForPolyBeat(int beatCount, int polyBeatCount) =>
+      polyBeatCount - getPrevPolyBeatCount(beatCount, polyBeatCount);
+
+  void _onBeatCountChange(int newBeatCount) {
     setState(() {
-      if (_numBeatsController.text != '') {
-        int newNumberOfBeats = int.parse(_numBeatsController.text);
-        if (newNumberOfBeats >= _minNumberOfBeats && newNumberOfBeats <= MetronomeParams.maxNumBeats) {
-          if (newNumberOfBeats > _beats.length) {
-            _beats.addAll(List.filled(newNumberOfBeats - _beats.length, BeatType.Unaccented));
-          } else if (newNumberOfBeats < _beats.length) {
-            _beats.removeRange(newNumberOfBeats, _beats.length);
-          }
+      beatCount = newBeatCount;
+      if (_isSimpleModeOn) polyBeatCount = newBeatCount;
 
-          final validValues = getValidSimplePolyBeatValues(newNumberOfBeats);
-          final currentSimplePolyBeats = int.tryParse(_numPolyBeatsController.text);
-          if (currentSimplePolyBeats == null || !validValues.contains(currentSimplePolyBeats)) {
-            _numPolyBeatsController.text = validValues.first.toString();
-          }
-
-          var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
-          metronomeSetRhythm(bars: bars, bars2: []);
-        }
+      if (newBeatCount > _beats.length) {
+        _beats.addAll(List.filled(newBeatCount - _beats.length, BeatType.Unaccented));
+      } else if (newBeatCount < _beats.length) {
+        _beats.removeRange(newBeatCount, _beats.length);
       }
+
+      refreshRhythm();
     });
   }
 
-  void _onNumBeatsChangedComplex() {
+  void _onPolyBeatCountChange(int newPolyBeatCount) {
     setState(() {
-      if (_numBeatsController.text != '') {
-        int newNumberOfBeats = int.parse(_numBeatsController.text);
-        if (newNumberOfBeats >= _minNumberOfBeats && newNumberOfBeats <= MetronomeParams.maxNumBeats) {
-          if (newNumberOfBeats > _beats.length) {
-            _beats.addAll(List.filled(newNumberOfBeats - _beats.length, BeatType.Unaccented));
-          } else if (newNumberOfBeats < _beats.length) {
-            _beats.removeRange(newNumberOfBeats, _beats.length);
-          }
+      polyBeatCount = newPolyBeatCount;
 
-          var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
-          metronomeSetRhythm(bars: bars, bars2: []);
-        }
+      if (newPolyBeatCount > _polyBeats.length) {
+        _polyBeats.addAll(List.filled(newPolyBeatCount - _polyBeats.length, BeatTypePoly.Unaccented));
+      } else if (newPolyBeatCount < _polyBeats.length) {
+        _polyBeats.removeRange(newPolyBeatCount, _polyBeats.length);
       }
+
+      refreshRhythm();
     });
   }
 
-  void _onNumPolyBeatsChanged() {
-    if (_isSimpleModeOn) {
-      _onNumPolyBeatsChangedSimple();
-    } else {
-      _onNumPolyBeatsChangedComplex();
-    }
-  }
-
-  void _onNumPolyBeatsChangedSimple() {
-    setState(() {
-      if (_numPolyBeatsController.text != '') {
-        final currentBeats = int.tryParse(_numBeatsController.text);
-        final newNumberOfBeats = int.tryParse(_numPolyBeatsController.text);
-
-        if (currentBeats != null && newNumberOfBeats != null) {
-          final validValues = getValidSimplePolyBeatValues(currentBeats);
-          if (validValues.contains(newNumberOfBeats)) {
-            if (newNumberOfBeats > _polyBeats.length) {
-              _polyBeats.addAll(List.filled(newNumberOfBeats - _polyBeats.length, BeatTypePoly.Unaccented));
-            } else if (newNumberOfBeats < _polyBeats.length) {
-              _polyBeats.removeRange(newNumberOfBeats, _polyBeats.length);
-            }
-
-            var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
-            metronomeSetRhythm(bars: bars, bars2: []);
-          }
-        }
-      }
-    });
-  }
-
-
-
-  void _onNumPolyBeatsChangedComplex() {
-    setState(() {
-      if (_numPolyBeatsController.text != '') {
-        int newNumberOfBeats = int.parse(_numPolyBeatsController.text);
-        if (newNumberOfBeats >= _minNumberOfPolyBeats && newNumberOfBeats <= MetronomeParams.maxNumBeats) {
-          if (newNumberOfBeats > _polyBeats.length) {
-            _polyBeats.addAll(List.filled(newNumberOfBeats - _polyBeats.length, BeatTypePoly.Unaccented));
-          } else if (newNumberOfBeats < _polyBeats.length) {
-            _polyBeats.removeRange(newNumberOfBeats, _polyBeats.length);
-          }
-
-          var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
-          metronomeSetRhythm(bars: bars, bars2: []);
-        }
-      }
-    });
-  }
-
-  // Select the currently chosen icon
   void _selectIcon(String chosenNoteKey) {
     setState(() {
       _noteKey = chosenNoteKey;
-      var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
-      metronomeSetRhythm(bars: bars, bars2: []);
+      refreshRhythm();
     });
   }
 
@@ -430,39 +366,27 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SmallNumInput(
-                  maxValue: MetronomeParams.maxNumBeats,
-                  minValue: _minNumberOfBeats,
-                  defaultValue: widget.currentBeats.length,
-                  countingValue: 1,
-                  displayText: _numBeatsController,
-                  descriptionText: l10n.metronomeNumberOfBeats,
+                SmallNumberInputInt(
+                  value: beatCount,
+                  onChange: _onBeatCountChange,
+                  min: _minNumberOfBeats,
+                  max: MetronomeParams.maxBeatCount,
+                  step: 1,
+                  label: l10n.metronomeNumberOfBeats,
                   buttonRadius: MetronomeParams.popupButtonRadius,
                   textFontSize: MetronomeParams.popupTextFontSize,
                 ),
-                if (_isSimpleModeOn)
-                  SmallNumInputNew(
-                    maxValue: 20,
-                    minValue: 1,
-                    defaultValue: 1,
-                    countingValue: 1,
-                    displayText: _numPolyBeatsController,
-                    validValues: getValidSimplePolyBeatValues(int.tryParse(_numBeatsController.text) ?? 1),
-                    descriptionText: l10n.metronomeNumberOfPolyBeats,
-                    buttonRadius: MetronomeParams.popupButtonRadius,
-                    textFontSize: MetronomeParams.popupTextFontSize,
-                  )
-                else
-                  SmallNumInput(
-                    maxValue: MetronomeParams.maxNumBeats,
-                    minValue: _minNumberOfPolyBeats,
-                    defaultValue: widget.currentPolyBeats.length,
-                    countingValue: 1,
-                    displayText: _numPolyBeatsController,
-                    descriptionText: l10n.metronomeNumberOfPolyBeats,
-                    buttonRadius: MetronomeParams.popupButtonRadius,
-                    textFontSize: MetronomeParams.popupTextFontSize,
-                  ),
+                SmallNumberInputInt(
+                  value: polyBeatCount,
+                  onChange: _onPolyBeatCountChange,
+                  min: _minNumberOfPolyBeats,
+                  max: MetronomeParams.maxBeatCount,
+                  decrementStep: _isSimpleModeOn ? getDecrementStepForPolyBeat(beatCount, polyBeatCount) : 1,
+                  incrementStep: _isSimpleModeOn ? getIncrementStepForPolyBeat(beatCount, polyBeatCount) : 1,
+                  label: l10n.metronomeNumberOfPolyBeats,
+                  buttonRadius: MetronomeParams.popupButtonRadius,
+                  textFontSize: MetronomeParams.popupTextFontSize,
+                ),
               ],
             ),
 
@@ -501,15 +425,14 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   void _reset() {
     _selectIcon(MetronomeParams.defaultNoteKey);
-    _numBeatsController.text = MetronomeParams.defaultBeats.length.toString();
-    _numPolyBeatsController.text = MetronomeParams.defaultPolyBeats.length.toString();
+    beatCount = MetronomeParams.defaultBeats.length;
+    polyBeatCount = MetronomeParams.defaultPolyBeats.length;
 
     for (var i = 0; i < _beats.length; i++) {
       _beats[i] = MetronomeParams.defaultBeats[i];
     }
 
-    var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
-    metronomeSetRhythm(bars: bars, bars2: []);
+    refreshRhythm();
   }
 
   void _onCancel() {
@@ -556,9 +479,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                       } else {
                         polyBeats![index] = _getBeatTypePolyOnTap(polyBeats[index]);
                       }
-
-                      var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
-                      metronomeSetRhythm(bars: bars, bars2: []);
+                      refreshRhythm();
                     });
                   },
                 );
@@ -602,8 +523,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   Future<void> _startBeat() async {
     // set beat in rust
-    var bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
-    metronomeSetRhythm(bars: bars, bars2: []);
+    refreshRhythm();
 
     await MetronomeFunctions.stop();
     final success = await MetronomeFunctions.start();
@@ -637,5 +557,10 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     } else {
       return BeatTypePoly.Unaccented;
     }
+  }
+
+  void refreshRhythm() {
+    final bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
+    metronomeSetRhythm(bars: bars, bars2: []);
   }
 }
