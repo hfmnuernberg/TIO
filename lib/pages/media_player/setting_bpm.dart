@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
-import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
-import 'package:tiomusic/widgets/tap_to_tempo.dart';
+import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
+import 'package:tiomusic/widgets/input/tap_to_tempo.dart';
+import 'package:tiomusic/services/project_repository.dart';
 
 const defaultBpm = 80;
 const minBpm = 10;
@@ -20,55 +21,45 @@ class SetBPM extends StatefulWidget {
 }
 
 class _SetBPMState extends State<SetBPM> {
+  late int value;
   late MediaPlayerBlock _mediaPlayerBlock;
-  late NumberInputIntWithSlider _bpmInput;
 
   @override
   void initState() {
     super.initState();
-
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
-
-    _bpmInput = NumberInputIntWithSlider(
-      max: maxBpm,
-      min: minBpm,
-      defaultValue: _mediaPlayerBlock.bpm,
-      step: 1,
-      controller: TextEditingController(),
-      label: 'Basic Beat',
-      buttonRadius: 20,
-      textFieldWidth: 100,
-      textFontSize: 32,
-    );
+    value = _mediaPlayerBlock.bpm;
   }
 
-  void _onConfirm() async {
-    if (_bpmInput.controller.value.text != '') {
-      int newBpm = int.parse(_bpmInput.controller.value.text);
-      _mediaPlayerBlock.bpm = newBpm;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-    }
+  void _handleChange(int newBpm) => setState(() => value = newBpm);
 
-    Navigator.pop(context);
-  }
+  void _handleReset() => _handleChange(defaultBpm);
 
-  void _reset() {
-    _bpmInput.controller.value = _bpmInput.controller.value.copyWith(text: defaultBpm.toString());
-  }
-
-  void _onCancel() {
+  Future<void> _handleConfirm() async {
+    _mediaPlayerBlock.bpm = value;
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: 'Set Basic Beat',
-      confirm: _onConfirm,
-      reset: _reset,
-      cancel: _onCancel,
-      numberInput: _bpmInput,
-      customWidget: Tap2Tempo(bpmHandle: _bpmInput.controller),
+      title: context.l10n.mediaPlayerSetBasicBeat,
+      numberInput: NumberInputAndSliderInt(
+        value: value,
+        onChange: _handleChange,
+        min: minBpm,
+        max: maxBpm,
+        step: 1,
+        label: context.l10n.mediaPlayerBasicBeat,
+        buttonRadius: 20,
+        textFieldWidth: 100,
+        textFontSize: 32,
+      ),
+      customWidget: Tap2Tempo(value: value, onChange: _handleChange),
+      confirm: _handleConfirm,
+      reset: _handleReset,
     );
   }
 }

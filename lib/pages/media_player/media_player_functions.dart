@@ -8,16 +8,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
-import 'package:tiomusic/models/file_io.dart';
-import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/util_functions.dart';
+import 'package:tiomusic/util/log.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 abstract class MediaPlayerFunctions {
+  static final _logger = createPrefixLogger('MediaPlayerFunctions');
+
   static void setSpeedAndPitchInRust(double speedFactor, double pitchSemitones) {
     mediaPlayerSetSpeedFactor(speedFactor: speedFactor).then(
       (success) => {
@@ -80,7 +81,7 @@ abstract class MediaPlayerFunctions {
     }
 
     if (!await Permission.microphone.request().isGranted) {
-      debugPrint('failed to get mic permissions (in starting Recording in Media Player)');
+      _logger.w('Failed to get microphone permissions.');
       return false;
     }
 
@@ -97,29 +98,23 @@ abstract class MediaPlayerFunctions {
     return mediaPlayerStopRecording();
   }
 
-  static Future<String?> writeRecordingToFile(
-    String newFileName,
-    String? relativePathOfPreviousFile,
-    ProjectLibrary projectLibrary,
+  static Future<Float32List?> openAudioFileInRustAndGetRMSValues(
+    FileSystem fs,
+    MediaPlayerBlock block,
+    int numOfBins,
   ) async {
-    final samples = await mediaPlayerGetRecordingSamples();
-    return FileIO.writeSamplesToWaveFile(samples, newFileName, relativePathOfPreviousFile, projectLibrary);
-  }
-
-  static Future<Float32List?> openAudioFileInRustAndGetRMSValues(MediaPlayerBlock block, int numOfBins) async {
-    var absolutePath = await FileIO.getAbsoluteFilePath(block.relativePath);
+    var absolutePath = fs.toAbsoluteFilePath(block.relativePath);
     if (!File(absolutePath).existsSync()) return null;
     return _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }
 
-  // Functions for the Timer Display while recording
-  static Widget displayRecordingTimer(Duration duration, double height) {
+  static Widget displayRecordingTimer(String label, String duration, double height) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text('Recording...', style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
-          Text(getDurationFormated(duration), style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 6)),
+          Text(label, style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
+          Text(duration, style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 6)),
         ],
       ),
     );

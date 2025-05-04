@@ -1,0 +1,55 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Create GitHub release
+        id: semantic_release
+        uses: cycjimmy/semantic-release-action@v4.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Assert new release created
+        if: steps.semantic_release.outputs.new_release_published == 'false'
+        run: |
+          echo "❌ No new release created! See workflow logs for details." >> $GITHUB_STEP_SUMMARY
+          exit 1
+
+      - name: Load current build number
+        if: steps.semantic_release.outputs.new_release_published == 'true'
+        id: old
+        run: |
+          source scripts/load-version-from-latest-tag.sh
+          echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+
+      - name: Bump version
+        if: steps.semantic_release.outputs.new_release_published == 'true'
+        id: new
+        run: |
+          source scripts/bump-version-and-tag.sh ${{ steps.semantic_release.outputs.new_release_version }} ${{ steps.old.outputs.buildNumber }}
+          echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Create summary
+        if: steps.semantic_release.outputs.new_release_published == 'true'
+        run: |
+          echo "New Release: **${{ steps.semantic_release.outputs.new_release_version }}**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Next Version: **${{ steps.new.outputs.version }}**" >> $GITHUB_STEP_SUMMARY

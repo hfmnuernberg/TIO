@@ -6,10 +6,5 @@ The configuration for Dependabot is stored in the [Dependabot config](../.github
 
 ## Auto-merge
 
-If all CI checks in a PR opened by Dependabot pass, the PR will be merged automatically unless it's a major version bump.
-
-For the auto-merge to work, the following labels need to be configured manually in the GitHub repository settings:
-
-- `semver: major`
-- `semver: minor`
-- `semver: patch`
+If all CI checks in a PR opened by Dependabot pass, the PR will be merged automatically unless it's a major version
+bump.

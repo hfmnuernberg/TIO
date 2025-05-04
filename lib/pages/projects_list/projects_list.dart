@@ -1,11 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -15,12 +18,15 @@ import 'package:tiomusic/pages/media_player/media_player.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
-import 'package:tiomusic/pages/projects_list/import_project_dialog.dart';
+import 'package:tiomusic/pages/projects_list/import_project.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
+import 'package:tiomusic/services/file_references.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
@@ -36,11 +42,15 @@ class ProjectsList extends StatefulWidget {
 }
 
 class _ProjectsListState extends State<ProjectsList> {
+  late FileSystem _fs;
+  late FileReferences _fileReferences;
+  late ProjectRepository _projectRepo;
+
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
 
   bool _showBanner = false;
 
-  final Walkthrough _walkthrough = Walkthrough();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyAddProjectButton = GlobalKey();
   final GlobalKey _keyNavigationBar = GlobalKey();
 
@@ -48,60 +58,73 @@ class _ProjectsListState extends State<ProjectsList> {
   void initState() {
     super.initState();
 
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _aboutPagePressed,
-        child: const Text('About', style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _feedbackPagePressed,
-        child: const Text('Feedback', style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: () => importProject(context),
-        child: const Text('Import Project', style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _deleteAllProjectsPressed,
-        child: const Text('Delete all Projects', style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
-    _menuItems.add(
-      MenuItemButton(
-        onPressed: _showTutorialAgainPressed,
-        child: const Text('Show Walkthrough', style: TextStyle(color: ColorTheme.primary)),
-      ),
-    );
+    _fs = context.read<FileSystem>();
+    _fileReferences = context.read<FileReferences>();
+    _projectRepo = context.read<ProjectRepository>();
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
-    if (context.read<ProjectLibrary>().showHomepageTutorial) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _createWalkthrough();
-        _walkthrough.show(context);
-      });
-    }
   }
 
-  void _createWalkthrough() {
-    // add the targets here
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_menuItems.isEmpty) {
+      final l10n = context.l10n;
+
+      _menuItems.addAll([
+        MenuItemButton(
+          onPressed: _aboutPagePressed,
+          child: Text(l10n.homeAbout, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: _feedbackPagePressed,
+          child: Text(l10n.homeFeedback, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: () => importProject(context),
+          child: Text(l10n.projectsImport, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: _handleDeleteAllProjects,
+          child: Text(l10n.projectsDeleteAll, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: _showTutorialAgainPressed,
+          child: Text(l10n.projectsTutorialStart, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+      ]);
+    }
+
+    _showTutorial();
+  }
+
+  void _showTutorial() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final projectLibrary = context.read<ProjectLibrary>();
+
+      if (projectLibrary.showHomepageTutorial) {
+        projectLibrary.showHomepageTutorial = false;
+        await context.read<ProjectRepository>().saveLibrary(projectLibrary);
+        _createTutorial();
+        if (!mounted) return;
+        _tutorial.show(context);
+      }
+    });
+  }
+
+  void _createTutorial() {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyAddProjectButton,
-        'Tap here to create a new project',
+        context.l10n.projectsTutorialAddProject,
         alignText: ContentAlign.right,
         pointingDirection: PointingDirection.left,
         pointerPosition: PointerPosition.left,
       ),
       CustomTargetFocus(
         _keyNavigationBar,
-        'Tap here to start using a tool',
+        context.l10n.projectsTutorialStartUsingTool,
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
@@ -110,19 +133,19 @@ class _ProjectsListState extends State<ProjectsList> {
       CustomTargetFocus(
         null,
         context: context,
-        'Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.',
+        context.l10n.projectsTutorialHowToUseTio,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
       CustomTargetFocus(
         null,
         context: context,
-        'Projects can include multiple tools\n(tuner, metronome, piano setting, media player, image and text),\neven several tools of the same type.',
+        context.l10n.projectsTutorialCanIncludeMultipleTools,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showHomepageTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -146,24 +169,13 @@ class _ProjectsListState extends State<ProjectsList> {
     );
   }
 
-  void _deleteAllProjectsPressed() async {
-    bool? deleteProject = await _deleteProject(deleteAll: true);
-    if (deleteProject != null && deleteProject) {
-      if (mounted) {
-        final projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
-        projectLibrary.clearProjects();
-        FileIO.saveProjectLibraryToJson(projectLibrary);
-      }
-    }
-  }
-
-  void _showTutorialAgainPressed() {
+  void _showTutorialAgainPressed() async {
     context.read<ProjectLibrary>().resetAllTutorials();
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
-    _createWalkthrough();
+    _createTutorial();
     Future.delayed(Duration.zero, () {
-      if (mounted) _walkthrough.show(context);
+      if (mounted) _tutorial.show(context);
     });
   }
 
@@ -174,16 +186,16 @@ class _ProjectsListState extends State<ProjectsList> {
     Widget toolPage;
     switch (blockType) {
       case BlockType.metronome:
-        block = MetronomeBlock.withDefaults();
+        block = MetronomeBlock.withDefaults(context.l10n);
         toolPage = const Metronome(isQuickTool: true);
       case BlockType.tuner:
-        block = TunerBlock.withDefaults();
+        block = TunerBlock.withDefaults(context.l10n);
         toolPage = const Tuner(isQuickTool: true);
       case BlockType.mediaPlayer:
-        block = MediaPlayerBlock.withDefaults();
+        block = MediaPlayerBlock.withDefaults(context.l10n);
         toolPage = const MediaPlayer(isQuickTool: true);
       case BlockType.piano:
-        block = PianoBlock.withDefaults();
+        block = PianoBlock.withDefaults(context.l10n);
         toolPage = const Piano(isQuickTool: true);
       default:
         throw Exception('Wrong BlockType');
@@ -229,38 +241,72 @@ class _ProjectsListState extends State<ProjectsList> {
     }
   }
 
-  Future<bool?> _deleteProject({bool deleteAll = false}) => showDialog<bool>(
+  Future<bool?> _confirmDeleteProject({bool deleteAll = false}) => showDialog<bool>(
     context: context,
-    builder:
-        (context) => AlertDialog(
-          title: const Text('Delete?', style: TextStyle(color: ColorTheme.primary)),
-          content:
-              deleteAll
-                  ? const Text(
-                    'Do you really want to delete all projects?',
-                    style: TextStyle(color: ColorTheme.primary),
-                  )
-                  : const Text(
-                    'Do you really want to delete this project?',
-                    style: TextStyle(color: ColorTheme.primary),
-                  ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: const Text('No'),
-            ),
-            TIOFlatButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              text: 'Yes',
-              boldText: true,
-            ),
-          ],
-        ),
+    builder: (context) {
+      final l10n = context.l10n;
+
+      return AlertDialog(
+        title: Text(l10n.commonDelete, style: const TextStyle(color: ColorTheme.primary)),
+        content:
+            deleteAll
+                ? Text(l10n.projectsDeleteAllConfirmation, style: TextStyle(color: ColorTheme.primary))
+                : Text(l10n.projectsDeleteConfirmation, style: TextStyle(color: ColorTheme.primary)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Text(l10n.commonNo),
+          ),
+          TIOFlatButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            text: l10n.commonYes,
+            boldText: true,
+          ),
+        ],
+      );
+    },
   );
+
+  void _handleDeleteProject(int index) async {
+    bool? isConfirmed = await _confirmDeleteProject();
+    if (isConfirmed != true) return;
+
+    if (!mounted) return;
+    final projectLibrary = context.read<ProjectLibrary>();
+    final project = projectLibrary.projects[index];
+
+    for (final block in project.blocks) {
+      if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+      if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+    }
+
+    projectLibrary.removeProject(projectLibrary.projects[index]);
+
+    await _projectRepo.saveLibrary(projectLibrary);
+  }
+
+  void _handleDeleteAllProjects() async {
+    bool? isConfirmed = await _confirmDeleteProject();
+    if (isConfirmed != true) return;
+
+    if (!mounted) return;
+    final projectLibrary = context.read<ProjectLibrary>();
+
+    for (final project in projectLibrary.projects) {
+      for (final block in project.blocks) {
+        if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+        if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+      }
+    }
+
+    projectLibrary.clearProjects();
+
+    await _projectRepo.saveLibrary(projectLibrary);
+  }
 
   void _goToToolOverProjectPage(Project project, ProjectBlock tool, bool pianoAlreadyOn) {
     Navigator.of(context)
@@ -284,24 +330,22 @@ class _ProjectsListState extends State<ProjectsList> {
         .then(doActionOnReturn);
   }
 
-  void _goToProjectPage(Project project, bool withoutRealProject) {
-    Navigator.of(context)
-        .push(
-          MaterialPageRoute(
-            builder: (context) {
-              return ChangeNotifierProvider<Project>.value(
-                value: project,
-                builder: (context, child) {
-                  return ProjectPage(goStraightToTool: false, withoutRealProject: withoutRealProject);
-                },
-              );
-            },
-          ),
-        )
-        .then(doActionOnReturn);
+  Future<void> _goToProjectPage(Project project, bool withoutRealProject) async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder:
+            (context) => ChangeNotifierProvider<Project>.value(
+              value: project,
+              child: ProjectPage(goStraightToTool: false, withoutRealProject: withoutRealProject),
+            ),
+      ),
+    );
+    doActionOnReturn(result);
   }
 
   Widget _getSurveyBanner() {
+    final l10n = context.l10n;
+
     return Positioned(
       left: 0,
       top: 0,
@@ -317,29 +361,25 @@ class _ProjectsListState extends State<ProjectsList> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Do you like TIO Music? Please take part in this survey! (For now the survey is only available in German)',
-                style: TextStyle(color: ColorTheme.surfaceTint),
-              ),
+              Text(l10n.feedbackQuestion, style: TextStyle(color: ColorTheme.surfaceTint)),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
                     onPressed: () async {
-                      // open link in browser
                       final Uri url = Uri.parse('https://cloud9.evasys.de/hfmn/online.php?p=Q2TYV');
                       if (await launchUrl(url) && mounted) {
                         _showBanner = false;
                         context.read<ProjectLibrary>().neverShowSurveyAgain = true;
-                        FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+                        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
                         setState(() {});
                       }
                     },
-                    child: const Text('Fill out'),
+                    child: Text(l10n.feedbackCta),
                   ),
                   IconButton(
-                    onPressed: () {
+                    onPressed: () async {
                       _showBanner = false;
 
                       // show banner a second and third time and then never again
@@ -348,7 +388,7 @@ class _ProjectsListState extends State<ProjectsList> {
                       if (projectLibrary.idxCheckShowSurvey >= projectLibrary.showSurveyAtVisits.length) {
                         projectLibrary.neverShowSurveyAgain = true;
                       }
-                      FileIO.saveProjectLibraryToJson(projectLibrary);
+                      await _projectRepo.saveLibrary(projectLibrary);
 
                       setState(() {});
                     },
@@ -365,10 +405,13 @@ class _ProjectsListState extends State<ProjectsList> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final blockTypes = getBlockTypeInfos(l10n);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Home'),
+        title: Text(l10n.home),
         centerTitle: true,
         backgroundColor: ColorTheme.surfaceBright,
         foregroundColor: ColorTheme.primary,
@@ -377,20 +420,21 @@ class _ProjectsListState extends State<ProjectsList> {
           onPressed: () async {
             final newTitle = await showEditTextDialog(
               context: context,
-              label: 'New project:',
-              value: getDateAndTimeNow(),
+              label: l10n.projectsNew,
+              value: l10n.formatDateAndTime(DateTime.now()),
               isNew: true,
             );
             if (newTitle == null) return;
 
             final newProject = Project.defaultPicture(newTitle);
             if (context.mounted) {
-              FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+              await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
             }
 
             _goToProjectPage(newProject, true);
           },
           icon: const Icon(Icons.add),
+          tooltip: l10n.projectsNew,
         ),
         actions: [
           MenuAnchor(
@@ -400,6 +444,7 @@ class _ProjectsListState extends State<ProjectsList> {
                   controller.isOpen ? controller.close() : controller.open();
                 },
                 icon: const Icon(Icons.more_vert),
+                tooltip: context.l10n.projectsMenu,
               );
             },
             style: const MenuStyle(
@@ -414,23 +459,20 @@ class _ProjectsListState extends State<ProjectsList> {
         alignment: Alignment.bottomCenter,
         fit: StackFit.expand,
         children: [
-          // background image
           FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
 
           Column(
             children: [
               Expanded(
-                child:
-                // list
-                Consumer<ProjectLibrary>(
+                child: Consumer<ProjectLibrary>(
                   builder:
                       (context, projectLibrary, child) =>
                           projectLibrary.projects.isEmpty
-                              ? const Padding(
-                                padding: EdgeInsets.all(40),
+                              ? Padding(
+                                padding: const EdgeInsets.all(40),
                                 child: Text(
-                                  "Please click on '+' to create a new project.",
-                                  style: TextStyle(color: Colors.white, fontSize: 42),
+                                  l10n.projectsNoProjects,
+                                  style: const TextStyle(color: Colors.white, fontSize: 42),
                                 ),
                               )
                               : Padding(
@@ -443,26 +485,29 @@ class _ProjectsListState extends State<ProjectsList> {
                                   itemBuilder: (context, idx) {
                                     return CardListTile(
                                       title: projectLibrary.projects[idx].title,
-                                      subtitle: getDateAndTimeFormatted(projectLibrary.projects[idx].timeLastModified),
+                                      subtitle: l10n.formatDateAndTime(projectLibrary.projects[idx].timeLastModified),
                                       trailingIcon: IconButton(
+                                        tooltip: l10n.projectDetails,
+                                        icon: const Icon(Icons.arrow_forward),
+                                        color: ColorTheme.primaryFixedDim,
                                         onPressed: () {
                                           _goToProjectPage(projectLibrary.projects[idx], false);
                                         },
-                                        icon: const Icon(Icons.arrow_forward),
-                                        color: ColorTheme.primaryFixedDim,
                                       ),
                                       menuIconOne: IconButton(
-                                        onPressed: () async {
-                                          bool? deleteProject = await _deleteProject();
-                                          if (deleteProject != null && deleteProject) {
-                                            projectLibrary.removeProject(projectLibrary.projects[idx]);
-                                            FileIO.saveProjectLibraryToJson(projectLibrary);
-                                          }
-                                        },
+                                        tooltip: l10n.projectDelete,
                                         icon: const Icon(Icons.delete_outlined),
                                         color: ColorTheme.surfaceTint,
+                                        onPressed: () => _handleDeleteProject(idx),
                                       ),
-                                      leadingPicture: projectLibrary.projects[idx].thumbnail,
+                                      leadingPicture:
+                                          projectLibrary.projects[idx].thumbnailPath.isEmpty
+                                              ? const AssetImage(TIOMusicParams.tiomusicIconPath)
+                                              : FileImage(
+                                                File(
+                                                  _fs.toAbsoluteFilePath(projectLibrary.projects[idx].thumbnailPath),
+                                                ),
+                                              ),
                                       onTapFunction: () {
                                         _goToProjectPage(projectLibrary.projects[idx], false);
                                       },
@@ -482,10 +527,10 @@ class _ProjectsListState extends State<ProjectsList> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _quickToolButton(blockTypeInfos[BlockType.metronome]!.icon, 'Metronome', BlockType.metronome),
+                        _quickToolButton(blockTypes[BlockType.metronome]!.icon, l10n.metronome, BlockType.metronome),
                         _quickToolButton(
-                          blockTypeInfos[BlockType.mediaPlayer]!.icon,
-                          'Media Player',
+                          blockTypes[BlockType.mediaPlayer]!.icon,
+                          l10n.mediaPlayer,
                           BlockType.mediaPlayer,
                         ),
                       ],
@@ -493,8 +538,8 @@ class _ProjectsListState extends State<ProjectsList> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _quickToolButton(blockTypeInfos[BlockType.tuner]!.icon, 'Tuner', BlockType.tuner),
-                        _quickToolButton(blockTypeInfos[BlockType.piano]!.icon, 'Piano', BlockType.piano),
+                        _quickToolButton(blockTypes[BlockType.tuner]!.icon, l10n.tuner, BlockType.tuner),
+                        _quickToolButton(blockTypes[BlockType.piano]!.icon, l10n.piano, BlockType.piano),
                       ],
                     ),
                   ],
@@ -502,7 +547,6 @@ class _ProjectsListState extends State<ProjectsList> {
               ),
             ],
           ),
-          // survey banner
           if (_showBanner) _getSurveyBanner() else const SizedBox(),
         ],
       ),

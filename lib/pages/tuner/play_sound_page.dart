@@ -1,21 +1,23 @@
 import 'dart:async';
-
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
-
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
-import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
+import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
 
 const double buttonWidth = 40;
 const double buttonPadding = 4;
+const defaultOctave = 4;
+const minOctave = 1;
+const maxOctave = 7;
 
 class PlaySoundPage extends StatefulWidget {
   const PlaySoundPage({super.key});
@@ -25,11 +27,9 @@ class PlaySoundPage extends StatefulWidget {
 }
 
 class _PlaySoundPageState extends State<PlaySoundPage> {
-  int _octave = 4;
-  double _frequency = 0;
-  late NumberInputIntWithSlider _octaveInput;
-
   final ActiveReferenceSoundButton _buttonListener = ActiveReferenceSoundButton();
+  int _octave = defaultOctave;
+  double _frequency = 0;
   bool _running = false;
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
@@ -38,23 +38,25 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   void initState() {
     super.initState();
 
-    _octaveInput = NumberInputIntWithSlider(
-      max: 7,
-      min: 1,
-      defaultValue: _octave,
-      step: 1,
-      controller: TextEditingController(),
-      textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
-      label: 'Octave',
-    );
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await TunerFunctions.stop();
-
-      _octaveInput.controller.addListener(_onOctaveChanged);
-
       _buttonListener.addListener(_onButtonsChanged);
     });
+  }
+
+  @override
+  void dispose() {
+    _buttonListener.removeListener(_onButtonsChanged);
+    audioInterruptionListener?.cancel();
+    TunerFunctions.stopGenerator();
+    super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    audioInterruptionListener?.cancel();
+    TunerFunctions.stopGenerator();
   }
 
   List<Widget> _buildSoundButtons(List<int> midiNumbers, int startIdx, int offset) {
@@ -64,17 +66,6 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         idx: startIdx + index,
         buttonListener: _buttonListener,
       );
-    });
-  }
-
-  void _onOctaveChanged() {
-    double newFreq = _frequency;
-    if (int.parse(_octaveInput.controller.text) > _octave) newFreq = _frequency * 2;
-    if (int.parse(_octaveInput.controller.text) < _octave) newFreq = _frequency / 2;
-
-    setState(() {
-      _octave = int.parse(_octaveInput.controller.text);
-      _frequency = newFreq;
     });
   }
 
@@ -97,35 +88,34 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
       if (_running) {
         generatorNoteOn(newFreq: _buttonListener.freq);
-
-        setState(() {
-          _frequency = _buttonListener.freq;
-        });
+        setState(() => _frequency = _buttonListener.freq);
       }
     } else {
       generatorNoteOff();
-
-      setState(() {
-        _frequency = 0;
-      });
+      setState(() => _frequency = 0);
     }
   }
 
-  @override
-  void deactivate() {
-    super.deactivate();
-    audioInterruptionListener?.cancel();
-    TunerFunctions.stopGenerator();
+  void _handleChange(newOctave) {
+    if (newOctave > _octave) {
+      setState(() => _frequency = _frequency * 2);
+    } else if (newOctave < _octave) {
+      setState(() => _frequency = _frequency / 2);
+    }
+
+    setState(() => _octave = newOctave);
   }
 
   @override
   Widget build(BuildContext context) {
     int offset = (_octave - 1) * 12;
+    final l10n = context.l10n;
+
     return DismissKeyboard(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('Play Reference'),
+          title: Text(l10n.tunerPlayReference),
           backgroundColor: ColorTheme.surfaceBright,
           foregroundColor: ColorTheme.primary,
         ),
@@ -133,10 +123,21 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _octaveInput,
+            NumberInputAndSliderInt(
+              value: _octave,
+              onChange: _handleChange,
+              min: minOctave,
+              max: maxOctave,
+              step: 1,
+              label: l10n.commonOctave,
+              textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
+            ),
             const SizedBox(height: 40),
 
-            Text('Frequency: ${_frequency.floorToDouble()} Hz', style: const TextStyle(color: ColorTheme.primary)),
+            Text(
+              '${l10n.tunerFrequency}: ${l10n.formatNumber(double.parse(_frequency.toStringAsFixed(1)))} Hz',
+              style: const TextStyle(color: ColorTheme.primary),
+            ),
             const SizedBox(height: 40),
 
             Row(

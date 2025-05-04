@@ -46,9 +46,9 @@ class EmptyBlock extends ProjectBlock {
     notifyListeners();
   }
 
-  EmptyBlock() {
+  EmptyBlock(String title) {
     _timeLastModified = DateTime.now();
-    _title = 'Empty';
+    _title = title;
     _id = 'empty';
     _islandToolID = '';
   }

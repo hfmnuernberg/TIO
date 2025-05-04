@@ -4,11 +4,11 @@ set -e
 
 if [ ! -f "./pubspec.yaml" ]; then echo "❌  Wrong directory! Must be in project root!"; exit 2; fi
 
-fluttervm() { if command -v fvm >/dev/null 2>&1; then fvm flutter "$@"; else flutter "$@"; fi }
-dartvm() { if command -v fvm >/dev/null 2>&1; then fvm dart "$@"; else dart "$@"; fi }
+if command -v fvm >/dev/null 2>&1; then FLUTTER="fvm flutter"; else FLUTTER="flutter"; fi
+if command -v fvm >/dev/null 2>&1; then DART="fvm dart"; else DART="dart"; fi
 
 getTestCommand() {
-  command="fluttervm test"
+  command="$FLUTTER test"
 
   if [ -n "$2" ]; then TEST_PATH="$2"; fi
   if [ "${TEST_PATH#test/}" = "$TEST_PATH" ]; then TEST_PATH="test/$TEST_PATH"; fi
@@ -19,51 +19,16 @@ getTestCommand() {
   echo "$command"
 }
 
-analyze() { fluttervm analyze lib test; }
+analyze() { $FLUTTER analyze lib test; }
 analyzeFiles() { scripts/analyze-files-with-too-many-lines.sh .; }
-analyzeFix() { dartvm fix --apply --code="$2"; }
-analyzeFixDryRun() { dartvm fix --dry-run; }
+analyzeFix() { $DART fix --apply --code="$2"; }
+analyzeFixDryRun() { $DART fix --dry-run; }
 analyzeTodos() { scripts/analyze-todos-and-fixmes.sh .; }
 
-build() {
-  if [ "$2" = 'help' ]; then
-    echo "Usage: $0 build <platform> [<mode>]"
-    echo "platform  - ios, android"
-    echo 'mode      - debug, profile, release'
-    exit 0
-  fi
-
-  if [ "$2" = 'ios' ]; then PLATFORM='ios'; fi
-  if [ "$2" = 'android' ]; then PLATFORM='android'; fi
-
-  if [ -z "$PLATFORM" ]; then
-    echo "Usage: $0 build <platform> [<mode>]"
-    echo "platform  - ios, android"
-    echo 'mode      - debug, profile, release'
-    exit 1
-  fi
-
-  if [ -z "$3" ]; then MODE='debug'; else MODE="$3"; fi
-
-  echo "Building app for platform: '$PLATFORM' with mode: '$MODE' ..."
-
-  if [ "$PLATFORM" = 'ios' ]; then EXPORT_OPTIONS_ARG='--export-options-plist'; fi
-  if [ "$PLATFORM" = 'ios' ]; then EXPORT_OPTIONS_VAL='ios/export-options.plist'; fi
-
-  if [ "$PLATFORM" = 'ios' ]; then BUILD_COMMAND='ipa'; fi
-  if [ "$PLATFORM" = 'android' ]; then BUILD_COMMAND='appbundle'; fi
-
-  set -x
-  fluttervm build \
-    "$BUILD_COMMAND" \
-    --target lib/main.dart \
-    "$EXPORT_OPTIONS_ARG" "$EXPORT_OPTIONS_VAL" \
-    "--$MODE"
-  set +x
-}
+build() { shift; scripts/build.sh "$@"; }
 
 clean() {
-  fluttervm clean
+  $FLUTTER clean
   if [ -d "android/.gradle" ]; then rm -rf android/.gradle; fi
   if [ -d "android/vendor" ];  then rm -rf android/vendor;  fi
   if [ -d "coverage" ];        then rm -rf coverage;        fi
@@ -75,12 +40,12 @@ clean() {
 
 coverage() { coverageMeasure; coverageGenerate; coverageOpen; }
 coverageGenerate() { genhtml --no-function-coverage coverage/lcov.info -o coverage/html; }
-coverageMeasure() { fluttervm test --coverage test; }
-coverageMeasureRandom() { fluttervm test --coverage --test-randomize-ordering-seed random test; }
+coverageMeasure() { $FLUTTER test --coverage test; }
+coverageMeasureRandom() { $FLUTTER test --coverage --test-randomize-ordering-seed random test; }
 coverageOpen() { open coverage/html/index.html; }
 coveragePrint() { lcov --summary coverage/lcov.info; }
 coverageValidate() {
-  result=$(dartvm run test_cov_console --pass="$2")
+  result=$($DART run test_cov_console --pass="$2")
   echo "$result"
   if echo "$result" | grep -q "PASSED"; then true; else exit 1; fi
 }
@@ -92,15 +57,15 @@ deleteLockFiles() {
   rm -f rust_builder/cargokit/build_tool/pubspec.lock
 }
 
-doctor() { fluttervm doctor; }
+doctor() { $FLUTTER doctor; }
 
-format() { dartvm format --line-length=120 lib test; }
+format() { $DART format --line-length=120 lib test; }
 
 generate() { generateRust; generateSplash; generateIcon; generateJson; format; analyze; }
-generateIcon() { fluttervm pub run flutter_launcher_icons -f flutter_launcher_icons.yaml; }
-generateJson() { dartvm run build_runner build --delete-conflicting-outputs; }
+generateIcon() { $FLUTTER pub run flutter_launcher_icons -f flutter_launcher_icons.yaml; }
+generateJson() { $DART run build_runner build --delete-conflicting-outputs; }
 generateRust() { flutter_rust_bridge_codegen generate --no-dart-enums-style; }
-generateSplash() { fluttervm pub run flutter_native_splash:create --path=flutter_native_splash.yaml; }
+generateSplash() { $FLUTTER pub run flutter_native_splash:create --path=flutter_native_splash.yaml; }
 
 install() {
   installFlutterPackages
@@ -109,17 +74,16 @@ install() {
   installRustPackages
   installFlutterRustBridgeCodegen
 }
-installCocoaPods() { fluttervm precache --ios; cd ios; pod install --repo-update; cd ..; }
+installCocoaPods() { $FLUTTER precache --ios; cd ios; pod install --repo-update; cd ..; }
 installFastlane() { cd android; bundle install; cd ..; cd ios; bundle install; cd ..; }
-installFlutterPackages() { fluttervm pub get; }
-installFlutterRustBridgeCodegen() { cargo install flutter_rust_bridge_codegen --version 2.7.1; }
+installFlutterPackages() { $FLUTTER pub get; }
+installFlutterRustBridgeCodegen() { cargo install flutter_rust_bridge_codegen --version 2.9.0; }
 installRustPackages() {
   cd rust;
   cargo build;
   cd ..;
   rm -rf rust_builder/linux rust_builder/macos rust_builder/windows;
 }
-
 installRustTargets() {
   rustup target add \
     aarch64-apple-ios \
@@ -131,7 +95,14 @@ installRustTargets() {
     x86_64-linux-android
 }
 
-outdated() { fluttervm pub outdated; }
+outdated() { $FLUTTER pub outdated; }
+
+refresh() {
+  clean
+  install
+  generate
+  run
+}
 
 reset() {
   doctor
@@ -143,56 +114,18 @@ reset() {
   format
   analyze
   coverage
-  run ios
+  run
 }
 
-run() {
-  if [ "$2" = 'help' ]; then
-    echo "Usage: $0 run [<mode>]"
-    echo 'mode  - debug, profile, release'
-    exit 0
-  fi
-
-  if [ -z "$2" ]; then MODE='debug'; else MODE="$2"; fi
-
-  echo "Running app with mode: '$MODE' ..."
-
-  fluttervm run "--$MODE"
-}
+run() { shift; scripts/run.sh "$@"; }
 
 simulator() { open -a Simulator; }
 
-tests() { eval "$(getTestCommand "$@")"; }
-testsRandom() { fluttervm test --test-randomize-ordering-seed random test; }
-testsWatch() { command=$(getTestCommand "$@"); watchexec -e dart "$command"; }
+test() { eval "$(getTestCommand "$@")"; }
+testRandom() { $FLUTTER test --test-randomize-ordering-seed random test; }
+testWatch() { command=$(getTestCommand "$@"); watchexec -e dart "$command"; }
 
-upload() {
-  if [ "$2" = 'help' ]; then
-    echo "Usage: $0 upload <platform>"
-    echo "platform  - ios, android"
-    exit 0
-  fi
-
-  if [ "$2" = 'ios' ]; then PLATFORM='ios'; fi
-  if [ "$2" = 'android' ]; then PLATFORM='android'; fi
-
-  if [ -z "$PLATFORM" ]; then
-    echo "Usage: $0 upload <platform>"
-    echo "platform  - ios, android"
-    exit 1
-  fi
-
-  if [ "$PLATFORM" = 'ios' ]; then STORE='Apple'; fi
-  if [ "$PLATFORM" = 'android' ]; then STORE='Google'; fi
-
-  echo "Uploading app for platform: '$PLATFORM' to: '$STORE' ..."
-
-  cd "$PLATFORM"
-  set -x
-  fastlane "$PLATFORM" push_to_store
-  set +x
-  cd ..
-}
+upload() { shift; scripts/upload.sh "$@"; }
 
 help() {
   echo "Usage: $0 <command> [args]"
@@ -223,7 +156,7 @@ help() {
   echo 'generate:splash                               - update generated splash image assets'
   echo 'help                                          - print this help'
   echo 'install                                       - install dependencies'
-  echo 'install:cocoa:pods                            - install Cocoapods'
+  echo 'install:cocoa:pods                            - install Cocoa Pods'
   echo 'install:fastlane                              - install Fastlane'
   echo 'install:flutter:packages                      - install Flutter packages'
   echo 'install:rust:flutter-rust-bridge-codegen      - install Flutter/Dart<->Rust binding generator'
@@ -235,7 +168,8 @@ help() {
   echo 'lint:fix:dry                                  - synonym for analyze:fix:dry'
   echo 'lint:todos                                    - synonym for analyze:todos'
   echo 'outdated                                      - list outdated dependencies'
-  echo 'reset                                         - deletes lock files, re-installs, re-generates, runs tests, builds, and more'
+  echo 'refresh                                       - clean, install, generate, run'
+  echo 'reset                                         - clean, delete lock files, install, generate, analyze, test, build, run'
   echo 'run [<mode>]                                  - run app'
   echo 'simulator                                     - open iOS simulator'
   echo 'start                                         - synonym for run'
@@ -281,13 +215,14 @@ if [ "$1" = 'lint:fix' ]; then analyzeFix "$@"; exit; fi
 if [ "$1" = 'lint:fix:dry' ]; then analyzeFixDryRun; exit; fi
 if [ "$1" = 'lint:todos' ]; then analyzeTodos; exit; fi
 if [ "$1" = 'outdated' ]; then outdated; exit; fi
+if [ "$1" = 'refresh' ]; then refresh; exit; fi
 if [ "$1" = 'reset' ]; then reset; exit; fi
 if [ "$1" = 'run' ]; then run "$@"; exit; fi
 if [ "$1" = 'simulator' ]; then simulator; exit; fi
 if [ "$1" = 'start' ]; then run "$@"; exit; fi
-if [ "$1" = 'test' ]; then tests "$@"; exit; fi
-if [ "$1" = 'test:random' ]; then testsRandom "$@"; exit; fi
-if [ "$1" = 'test:watch' ]; then testsWatch "$@"; exit; fi
+if [ "$1" = 'test' ]; then test "$@"; exit; fi
+if [ "$1" = 'test:random' ]; then testRandom "$@"; exit; fi
+if [ "$1" = 'test:watch' ]; then testWatch "$@"; exit; fi
 if [ "$1" = 'upload' ]; then upload "$@"; exit; fi
 
 help

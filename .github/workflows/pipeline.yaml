@@ -2,12 +2,11 @@ name: Pipeline
 
 on:
   push:
-    tags:
-    - '*'
-  workflow_run:
-    workflows: ["Bump Build Number"]
-    types:
-    - completed
+    branches:
+    - main
+    paths-ignore:
+    - docs/**
+    - README.md
   workflow_dispatch:
 
 concurrency:
@@ -15,32 +14,43 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  bump-build-number:
+    name: Bump Build Number
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-bump-build-number.yaml@main
+    secrets: inherit
+    permissions:
+      contents: write
+    with:
+      ref: ${{ github.sha }}
+
   verify:
     name: Verify
     uses: hfmnuernberg/TIO/.github/workflows/reusable-verify.yaml@main
     secrets: inherit
     with:
-      ref: ${{ github.ref }}
+      ref: ${{ github.sha }}
 
   build-ios-app:
     name: Build iOS App
+    needs: bump-build-number
     uses: hfmnuernberg/TIO/.github/workflows/reusable-build-ios-app.yaml@main
     secrets: inherit
     with:
-      ref: ${{ github.ref }}
-      artifactName: ios-${{ github.sha }}-${{ github.run_number }}
+      ref: ${{ github.sha }}
+      version: ${{ needs.bump-build-number.outputs.version }}
       appIdentifier: 6477820301
 
   build-android-app:
     name: Build Android App
+    needs: bump-build-number
     uses: hfmnuernberg/TIO/.github/workflows/reusable-build-android-app.yaml@main
     secrets: inherit
     with:
-      ref: ${{ github.ref }}
-      artifactName: android-${{ github.sha }}-${{ github.run_number }}
+      ref: ${{ github.sha }}
+      version: ${{ needs.bump-build-number.outputs.version }}
 
   upload-ios-app:
-    needs: [verify, build-ios-app]
+    needs: [verify, bump-build-number, build-ios-app]
     name: Upload iOS App
     uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-ios-app.yaml@main
     secrets: inherit
@@ -49,12 +59,12 @@ jobs:
       id-token: write
       contents: read
     with:
-      ref: ${{ github.ref }}
-      artifactName: ios-${{ github.sha }}-${{ github.run_number }}
+      ref: ${{ github.sha }}
+      version: ${{ needs.bump-build-number.outputs.version }}
       appIdentifier: 6477820301
 
   upload-android-app:
-    needs: [verify, build-android-app]
+    needs: [verify, bump-build-number, build-android-app]
     name: Upload Android App
     uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-android-app.yaml@main
     secrets: inherit
@@ -63,6 +73,6 @@ jobs:
       id-token: write
       contents: read
     with:
-      ref: ${{ github.ref }}
-      artifactName: android-${{ github.sha }}-${{ github.run_number }}
+      ref: ${{ github.sha }}
+      version: ${{ needs.bump-build-number.outputs.version }}
       googlePlayStoreUrl: 'https://play.google.com/apps/test/com.studiofluffy.tonica/'

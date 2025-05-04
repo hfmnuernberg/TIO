@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
-
-import 'package:tiomusic/widgets/number_input_int_with_slider.dart';
 import 'package:tiomusic/util/constants.dart';
-
-import 'package:tiomusic/models/file_io.dart';
+import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
 
 class SetRandomMute extends StatefulWidget {
   const SetRandomMute({super.key});
@@ -19,69 +18,54 @@ class SetRandomMute extends StatefulWidget {
 }
 
 class _SetRandomMuteState extends State<SetRandomMute> {
+  late int value;
   late MetronomeBlock _metronomeBlock;
-  late NumberInputIntWithSlider _randomMuteProbInput;
 
   @override
   void initState() {
     super.initState();
-
     _metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
-
-    _randomMuteProbInput = NumberInputIntWithSlider(
-      max: 100,
-      min: 0,
-      defaultValue: _metronomeBlock.randomMute,
-      step: 1,
-      controller: TextEditingController(),
-      label: 'Probability in %',
-      buttonRadius: MetronomeParams.plusMinusButtonRadius,
-      textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
-      textFontSize: MetronomeParams.numInputTextFontSize,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _randomMuteProbInput.controller.addListener(_onUserChangedRandomMute);
-    });
+    value = _metronomeBlock.randomMute;
   }
 
-  void _onConfirm() async {
-    if (_randomMuteProbInput.controller.value.text != '') {
-      int newRandomMute = int.parse(_randomMuteProbInput.controller.value.text);
-      _metronomeBlock.randomMute = newRandomMute;
-      metronomeSetBeatMuteChance(muteChance: newRandomMute / 100.0).then((success) => null);
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-    }
+  void _handleChange(newValue) async {
+    setState(() => value = newValue);
+    metronomeSetBeatMuteChance(muteChance: newValue / 100.0).then((success) => null);
+  }
 
+  void _handleReset() => value = MetronomeParams.defaultRandomMute;
+
+  void _handleConfirm() async {
+    _metronomeBlock.randomMute = value;
+    metronomeSetBeatMuteChance(muteChance: value / 100.0).then((success) => null);
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 
-  void _reset() {
-    _randomMuteProbInput.controller.value = _randomMuteProbInput.controller.value.copyWith(
-      text: MetronomeParams.defaultRandomMute.toString(),
-    );
-  }
-
-  void _onCancel() {
+  void _handleCancel() {
     metronomeSetBeatMuteChance(muteChance: _metronomeBlock.randomMute / 100.0).then((success) => null);
     Navigator.pop(context);
-  }
-
-  void _onUserChangedRandomMute() async {
-    if (_randomMuteProbInput.controller.value.text != '') {
-      double newValue = double.parse(_randomMuteProbInput.controller.value.text);
-      metronomeSetBeatMuteChance(muteChance: newValue / 100.0).then((success) => null);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: 'Set Random Mute',
-      confirm: _onConfirm,
-      reset: _reset,
-      numberInput: _randomMuteProbInput,
-      cancel: _onCancel,
+      title: context.l10n.metronomeSetRandomMute,
+      numberInput: NumberInputAndSliderInt(
+        value: value,
+        onChange: _handleChange,
+        max: 100,
+        min: 0,
+        step: 1,
+        label: context.l10n.metronomeRandomMuteProbability,
+        buttonRadius: MetronomeParams.plusMinusButtonRadius,
+        textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
+        textFontSize: MetronomeParams.numInputTextFontSize,
+      ),
+      confirm: _handleConfirm,
+      reset: _handleReset,
+      cancel: _handleCancel,
     );
   }
 }

@@ -6,22 +6,23 @@ on:
       ref:
         required: true
         type: string
-        description: The commit SHA, tag or release to verify
-      artifactName:
+        description: The commit SHA, tag or release
+      version:
         required: true
         type: string
-        description: The name of the artifact to upload
+        description: The version
       googlePlayStoreUrl:
         required: true
         type: string
         description: The google play store URL
 
 concurrency:
-  group: ${{ inputs.artifactName }}
+  group: android-${{ inputs.version }}
   cancel-in-progress: true
 
 jobs:
   upload-android-app:
+    name: Upload Android App
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment: production
@@ -34,19 +35,18 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           ref: ${{ inputs.ref }}
-          fetch-depth: 0
 
       - name: Restore bundle
-        uses: actions/download-artifact@v4.1.9
+        uses: actions/download-artifact@v4.3.0
         with:
-          name: ${{ inputs.artifactName }}
+          name: android-${{ inputs.version }}
           path: build/app/outputs/bundle/release
 
       - name: Setup ruby
-        uses: ruby/setup-ruby@v1.225.0
+        uses: ruby/setup-ruby@v1.237.0
         with:
           ruby-version: '3.3'
           working-directory: android
@@ -68,7 +68,7 @@ jobs:
           encodedString: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
 
       - name: Prepare version
-        run: scripts/update-version-and-build-number-in-pubspec-with-latest-tag.sh
+        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }}
 
       - name: Upload bundle
         uses: maierj/fastlane-action@v3.1.0

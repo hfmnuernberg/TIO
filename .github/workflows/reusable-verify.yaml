@@ -6,13 +6,13 @@ on:
       ref:
         required: true
         type: string
-        description: The commit SHA, tag or release to verify
+        description: The commit SHA, tag or release
   workflow_call:
     inputs:
       ref:
         required: true
         type: string
-        description: The commit SHA, tag or release to verify
+        description: The commit SHA, tag or release
 
 jobs:
   static-code-analysis:
@@ -27,7 +27,7 @@ jobs:
           ref: ${{ inputs.ref }}
 
       - name: Setup Java
-        uses: actions/setup-java@v4.7.0
+        uses: actions/setup-java@v4.7.1
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -39,7 +39,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libasound2-dev
 
       - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1.11.0
+        uses: actions-rust-lang/setup-rust-toolchain@v1.12.0
 
       - name: Install Flutter dependencies
         run: scripts/app.sh install:flutter:packages
@@ -95,7 +95,7 @@ jobs:
           ref: ${{ inputs.ref }}
 
       - name: Setup Java
-        uses: actions/setup-java@v4.7.0
+        uses: actions/setup-java@v4.7.1
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -115,4 +115,4 @@ jobs:
         run: scripts/app.sh coverage:print
 
       - name: Validate coverage
-        run: scripts/app.sh coverage:validate 6
+        run: scripts/app.sh coverage:validate 13

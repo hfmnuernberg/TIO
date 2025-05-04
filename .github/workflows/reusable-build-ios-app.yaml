@@ -6,18 +6,19 @@ on:
       ref:
         required: true
         type: string
-        description: The commit SHA, tag or release to verify
-      artifactName:
+        description: The commit SHA, tag or release
+      version:
         required: true
         type: string
-        description: The name of the artifact to build
+        description: The version
       appIdentifier:
         required: true
         type: string
-        description: The ID of the app to build
+        description: The ID of the app
 
 jobs:
   build-ios-app:
+    name: Build iOS App
     runs-on: macos-latest
     timeout-minutes: 20
     env:
@@ -27,10 +28,9 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           ref: ${{ inputs.ref }}
-          fetch-depth: 0
 
       - name: Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1.6.0
@@ -47,13 +47,13 @@ jobs:
         uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
 
       - name: Install key for fastlane repo
-        uses: webfactory/ssh-agent@v0.9.0
+        uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: |
             ${{ secrets.FASTLANE_GITHUB_DEPLOY_PRIVATE_KEY }}
 
       - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1.11.0
+        uses: actions-rust-lang/setup-rust-toolchain@v1.12.0
 
       - name: Install Flutter dependencies
         run: scripts/app.sh install:flutter:packages
@@ -77,7 +77,7 @@ jobs:
         run: scripts/app.sh generate:json
 
       - name: Setup ruby
-        uses: ruby/setup-ruby@v1.225.0
+        uses: ruby/setup-ruby@v1.237.0
         with:
           ruby-version: '3.3'
           working-directory: ios
@@ -90,14 +90,15 @@ jobs:
           subdirectory: ios
 
       - name: Prepare version
-        run: scripts/update-version-and-build-number-in-pubspec-with-latest-tag.sh
+        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }}
 
       - name: Build bundle
         run: scripts/app.sh build ios release
 
       - name: Save bundle
-        uses: actions/upload-artifact@v4.6.1
+        uses: actions/upload-artifact@v4.6.2
         with:
-          name: ${{ inputs.artifactName }}
+          name: ios-${{ inputs.version }}
           path: build/ios/ipa
           retention-days: 1
+          if-no-files-found: error

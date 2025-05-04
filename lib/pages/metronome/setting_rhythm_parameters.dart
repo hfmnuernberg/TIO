@@ -4,6 +4,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -13,6 +14,8 @@ import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm_segment.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
@@ -20,11 +23,10 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/pages/metronome/rhythm_generator_setting_list_item.dart';
 import 'package:provider/provider.dart';
-
-import 'package:tiomusic/models/file_io.dart';
 import 'package:circular_widgets/circular_widgets.dart';
+import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tiomusic/widgets/small_num_input.dart';
@@ -57,8 +59,9 @@ class SetRhythmParameters extends StatefulWidget {
 }
 
 class _SetRhythmParametersState extends State<SetRhythmParameters> {
-  late SmallNumInput _numBeatsInput;
-  late SmallNumInput _numPolyBeatsInput;
+  static final _logger = createPrefixLogger('SetRhythmParameters');
+
+  late FileSystem _fs;
 
   final int _minNumberOfBeats = 1;
   final int _minNumberOfPolyBeats = 0;
@@ -73,51 +76,31 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   late Timer _beatDetection;
   final ActiveBeatsModel _activeBeatsModel = ActiveBeatsModel();
 
-  final Walkthrough _walkthrough = Walkthrough();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyToggleBeats = GlobalKey();
+
+  final TextEditingController _numBeatsController = TextEditingController();
+  final TextEditingController _numPolyBeatsController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
 
+    _fs = context.read<FileSystem>();
+
     // we need to use the first metronome, because the first metronome cannot have no beats
     // so if we edit a beat of the second metronome, we just load the sounds of the second metronome into the first metronome
     if (widget.isSecondMetronome) {
-      MetronomeUtils.loadMetro2SoundsIntoMetro1(widget.metronomeBlock);
+      MetronomeUtils.loadMetro2SoundsIntoMetro1(_fs, widget.metronomeBlock);
     }
 
-    for (var beat in widget.currentBeats) {
-      _beats.add(beat);
-    }
-    for (var beat in widget.currentPolyBeats) {
-      _polyBeats.add(beat);
-    }
-
+    _beats.addAll(widget.currentBeats);
+    _polyBeats.addAll(widget.currentPolyBeats);
     _noteKey = widget.currentNoteKey;
 
-    _numBeatsInput = SmallNumInput(
-      maxValue: MetronomeParams.maxNumBeats,
-      minValue: _minNumberOfBeats,
-      defaultValue: widget.currentBeats.length,
-      countingValue: 1,
-      displayText: TextEditingController(),
-      descriptionText: 'Number of Beats',
-      buttonRadius: MetronomeParams.popupButtonRadius,
-      textFontSize: MetronomeParams.popupTextFontSize,
-    );
+    _numBeatsController.text = _beats.length.toString();
+    _numPolyBeatsController.text = _polyBeats.length.toString();
 
-    _numPolyBeatsInput = SmallNumInput(
-      maxValue: MetronomeParams.maxNumBeats,
-      minValue: _minNumberOfPolyBeats,
-      defaultValue: widget.currentPolyBeats.length,
-      countingValue: 1,
-      displayText: TextEditingController(),
-      descriptionText: 'Number of Poly Beats',
-      buttonRadius: MetronomeParams.popupButtonRadius,
-      textFontSize: MetronomeParams.popupTextFontSize,
-    );
-
-    // Start beat detection timer
     _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
       t,
     ) async {
@@ -135,14 +118,27 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _numBeatsInput.displayText.addListener(_onNumBeatsChanged);
-      _numPolyBeatsInput.displayText.addListener(_onNumPolyBeatsChanged);
+      _numBeatsController.addListener(_onNumBeatsChanged);
+      _numPolyBeatsController.addListener(_onNumPolyBeatsChanged);
 
       if (context.read<ProjectLibrary>().showBeatToggleTip) {
-        _createWalkthrough();
-        _walkthrough.show(context);
+        _createTutorial();
+        _tutorial.show(context);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _stopBeat();
+    _beatDetection.cancel();
+
+    _numBeatsController.removeListener(_onNumBeatsChanged);
+    _numPolyBeatsController.removeListener(_onNumPolyBeatsChanged);
+    _numBeatsController.dispose();
+    _numPolyBeatsController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -168,27 +164,27 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     });
   }
 
-  void _createWalkthrough() {
+  void _createTutorial() {
     // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyToggleBeats,
-        'Tap a beat to switch between accented, unaccented and muted',
+        context.l10n.metronomeTutorialEditBeats,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showBeatToggleTip = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
   // Handle beat changes
   void _onNumBeatsChanged() {
     setState(() {
-      if (_numBeatsInput.displayText.value.text != '') {
-        int newNumberOfBeats = int.parse(_numBeatsInput.displayText.value.text);
+      if (_numBeatsController.text != '') {
+        int newNumberOfBeats = int.parse(_numBeatsController.text);
         if (newNumberOfBeats >= _minNumberOfBeats && newNumberOfBeats <= MetronomeParams.maxNumBeats) {
           if (newNumberOfBeats > _beats.length) {
             _beats.addAll(List.filled(newNumberOfBeats - _beats.length, BeatType.Unaccented));
@@ -205,8 +201,8 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   void _onNumPolyBeatsChanged() {
     setState(() {
-      if (_numPolyBeatsInput.displayText.value.text != '') {
-        int newNumberOfBeats = int.parse(_numPolyBeatsInput.displayText.value.text);
+      if (_numPolyBeatsController.text != '') {
+        int newNumberOfBeats = int.parse(_numPolyBeatsController.text);
         if (newNumberOfBeats >= _minNumberOfPolyBeats && newNumberOfBeats <= MetronomeParams.maxNumBeats) {
           if (newNumberOfBeats > _polyBeats.length) {
             _polyBeats.addAll(List.filled(newNumberOfBeats - _polyBeats.length, BeatTypePoly.Unaccented));
@@ -308,8 +304,10 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return ParentSettingPage(
-      title: 'Set Beat',
+      title: l10n.metronomeSetBpm,
       confirm: _onConfirm,
       reset: _reset,
       cancel: _onCancel,
@@ -341,11 +339,26 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Set number of beats
-                _numBeatsInput,
-
-                // Set number of poly beats
-                _numPolyBeatsInput,
+                SmallNumInput(
+                  maxValue: MetronomeParams.maxNumBeats,
+                  minValue: _minNumberOfBeats,
+                  defaultValue: widget.currentBeats.length,
+                  countingValue: 1,
+                  displayText: _numBeatsController,
+                  descriptionText: l10n.metronomeNumberOfBeats,
+                  buttonRadius: MetronomeParams.popupButtonRadius,
+                  textFontSize: MetronomeParams.popupTextFontSize,
+                ),
+                SmallNumInput(
+                  maxValue: MetronomeParams.maxNumBeats,
+                  minValue: _minNumberOfPolyBeats,
+                  defaultValue: widget.currentPolyBeats.length,
+                  countingValue: 1,
+                  displayText: _numPolyBeatsController,
+                  descriptionText: l10n.metronomeNumberOfPolyBeats,
+                  buttonRadius: MetronomeParams.popupButtonRadius,
+                  textFontSize: MetronomeParams.popupTextFontSize,
+                ),
               ],
             ),
 
@@ -357,7 +370,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     );
   }
 
-  void _onConfirm() {
+  Future<void> _onConfirm() async {
     _stopBeat();
 
     if (widget.isAddingNewBar) {
@@ -375,20 +388,17 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
       widget.rhythmGroups[widget.barIndex!].beatLen = NoteHandler.getBeatLength(_noteKey);
     }
 
-    MetronomeUtils.loadSounds(widget.metronomeBlock);
+    MetronomeUtils.loadSounds(_fs, widget.metronomeBlock);
 
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.of(context).pop(true);
   }
 
   void _reset() {
     _selectIcon(MetronomeParams.defaultNoteKey);
-    _numBeatsInput.displayText.value = _numBeatsInput.displayText.value.copyWith(
-      text: MetronomeParams.defaultBeats.length.toString(),
-    );
-    _numPolyBeatsInput.displayText.value = _numPolyBeatsInput.displayText.value.copyWith(
-      text: MetronomeParams.defaultPolyBeats.length.toString(),
-    );
+    _numBeatsController.text = MetronomeParams.defaultBeats.length.toString();
+    _numPolyBeatsController.text = MetronomeParams.defaultPolyBeats.length.toString();
 
     for (var i = 0; i < _beats.length; i++) {
       _beats[i] = MetronomeParams.defaultBeats[i];
@@ -400,7 +410,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   void _onCancel() {
     _stopBeat();
-    MetronomeUtils.loadSounds(widget.metronomeBlock);
+    MetronomeUtils.loadSounds(_fs, widget.metronomeBlock);
     Navigator.pop(context);
   }
 
@@ -494,7 +504,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     await MetronomeFunctions.stop();
     final success = await MetronomeFunctions.start();
     if (!success) {
-      debugPrint('failed to start metronome');
+      _logger.e('Unable to start metronome.');
       return;
     }
     _isPlaying = true;

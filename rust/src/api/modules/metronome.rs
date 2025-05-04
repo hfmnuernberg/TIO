@@ -62,7 +62,6 @@ pub struct BeatHappenedEvent {
     pub is_poly: bool,
     pub is_secondary: bool,
     pub beat_index: i32,
-    pub timestamp: i64,
 }
 
 static VOLUME: Mutex<f32> = Mutex::new(1.0);
@@ -181,7 +180,6 @@ fn on_audio_callback(data: &mut [f32], _: &cpal::OutputCallbackInfo) {
                 milliseconds_before_start: (samples_before_start as f32 / SAMPLE_RATE_IN_KHZ).round() as i32,
                 is_random_mute,
                 is_secondary: next_event.is_secondary,
-                timestamp: chrono::Local::now().timestamp_millis(),
             });
         }
     }

@@ -13,9 +13,17 @@ permissions:
 
 jobs:
   main:
-    name: Assert PR title is semantic
+    name: Verify PR title
     runs-on: ubuntu-latest
     steps:
-      - uses: amannn/action-semantic-pull-request@v5.5.3
+      - name: Assert PR title is semantic and includes JIRA ticket number
+        uses: amannn/action-semantic-pull-request@v5.5.3
+        with:
+          subjectPattern: '${{ env.JIRA_KEY }}-\d+: .+'
+          subjectPatternError: >
+            The PR title must include a JIRA ticket number in the format:
+            "<type>[(<scope>)]: ${{ env.JIRA_KEY }}-<#>: <description>"
+            (example: fix(login): ${{ env.JIRA_KEY }}-123: show error message on failed login attempt)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JIRA_KEY: TIO

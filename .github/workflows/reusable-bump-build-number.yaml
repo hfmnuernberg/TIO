@@ -1,0 +1,64 @@
+name: Bump Build Number
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release
+    outputs:
+      version:
+        description: 'The new version (e.g., 1.2.3+42)'
+        value: ${{ jobs.bump-build-number.outputs.version }}
+
+permissions:
+  contents: write
+
+jobs:
+  bump-build-number:
+    name: Bump Build Number
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.new.outputs.version }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.2.2
+      with:
+        ref: ${{ inputs.ref }}
+        fetch-depth: 0
+
+    - name: Configure Git user
+      run: |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "GitHub Actions"
+
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+
+    - name: Load current version
+      id: old
+      run: |
+        source scripts/load-version-from-latest-tag.sh
+        echo "semver=$SEMVER" >> "$GITHUB_OUTPUT"
+        echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+
+    - name: Bump build number
+      id: new
+      run: |
+        source scripts/bump-build-number-and-tag.sh ${{ steps.old.outputs.semver }} ${{ steps.old.outputs.buildNumber }}
+        echo "buildNumber=$NEW_BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+        echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+
+    - name: Create summary
+      run: |
+        echo "Semantic Version: **${{ steps.old.outputs.semver }}**" >> $GITHUB_STEP_SUMMARY
+        echo "Build Number: **${{ steps.old.outputs.buildNumber }} -> ${{ steps.new.outputs.buildNumber }}**" >> $GITHUB_STEP_SUMMARY
+        echo "New Version:      **${{ steps.new.outputs.version }}**" >> $GITHUB_STEP_SUMMARY

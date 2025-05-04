@@ -1,18 +1,24 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tiomusic/models/file_io.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
+import 'package:tiomusic/widgets/tool_navigation_bar.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ParentTool extends StatefulWidget {
@@ -28,7 +34,7 @@ class ParentTool extends StatefulWidget {
   final Widget? floatingActionButton;
   final double? heightForCenterModule;
   final GlobalKey? keySettingsList;
-  final Function()? onParentWalkthroughFinished;
+  final Function()? onParentTutorialFinished;
   final bool deactivateScroll;
 
   const ParentTool({
@@ -44,7 +50,7 @@ class ParentTool extends StatefulWidget {
     this.floatingActionButton,
     this.heightForCenterModule,
     this.keySettingsList,
-    this.onParentWalkthroughFinished,
+    this.onParentTutorialFinished,
     this.project,
     this.deactivateScroll = false,
   });
@@ -54,147 +60,153 @@ class ParentTool extends StatefulWidget {
 }
 
 class _ParentToolState extends State<ParentTool> {
+  late FileSystem _fs;
+  late ProjectRepository _projectRepo;
+
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
   final TextEditingController _toolTitle = TextEditingController();
 
-  final Walkthrough _walkthroughQuickTool = Walkthrough();
-  final Walkthrough _walkthroughTool = Walkthrough();
+  final Tutorial _tutorialQuickTool = Tutorial();
+  final Tutorial _tutorialTool = Tutorial();
   final GlobalKey _keyBookmarkSave = GlobalKey();
   final GlobalKey _keyChangeTitle = GlobalKey();
 
-  final Walkthrough _walkthroughIsland = Walkthrough();
+  final Tutorial _tutorialIsland = Tutorial();
   final GlobalKey _keyIsland = GlobalKey();
 
   @override
   void initState() {
     super.initState();
 
+    _fs = context.read<FileSystem>();
+    _projectRepo = context.read<ProjectRepository>();
+
     _toolTitle.text = widget.barTitle;
 
     var projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
     projectLibrary.visitedToolsCounter++;
 
-    FileIO.saveProjectLibraryToJson(projectLibrary);
+    unawaited(_projectRepo.saveLibrary(projectLibrary));
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.isQuickTool) {
         if (context.read<ProjectLibrary>().showQuickToolTutorial) {
-          _createWalkthroughQuickTool();
+          _createTutorialQuickTool();
           Future.delayed(Duration.zero, () {
-            if (mounted) _walkthroughQuickTool.show(context);
+            if (mounted) _tutorialQuickTool.show(context);
           });
         } else if (context.read<ProjectLibrary>().showIslandTutorial &&
             checkIslandPossible(widget.project, widget.toolBlock)) {
-          _createWalkthroughIsland();
+          _createTutorialIsland();
           Future.delayed(Duration.zero, () {
-            if (mounted) _walkthroughIsland.show(context);
+            if (mounted) _tutorialIsland.show(context);
           });
         } else {
-          if (widget.onParentWalkthroughFinished != null) {
-            widget.onParentWalkthroughFinished!();
+          if (widget.onParentTutorialFinished != null) {
+            widget.onParentTutorialFinished!();
           }
         }
       } else {
         if (context.read<ProjectLibrary>().showToolTutorial) {
-          _createWalkthroughTool();
+          _createTutorialTool();
           Future.delayed(Duration.zero, () {
-            if (mounted) _walkthroughTool.show(context);
+            if (mounted) _tutorialTool.show(context);
           });
         } else if (context.read<ProjectLibrary>().showIslandTutorial &&
             checkIslandPossible(widget.project, widget.toolBlock)) {
-          _createWalkthroughIsland();
+          _createTutorialIsland();
           Future.delayed(Duration.zero, () {
-            if (mounted) _walkthroughIsland.show(context);
+            if (mounted) _tutorialIsland.show(context);
           });
         } else {
-          if (widget.onParentWalkthroughFinished != null) {
-            widget.onParentWalkthroughFinished!();
+          if (widget.onParentTutorialFinished != null) {
+            widget.onParentTutorialFinished!();
           }
         }
       }
     });
   }
 
-  void _createWalkthroughQuickTool() {
+  void _createTutorialQuickTool() {
     // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyBookmarkSave,
-        'Tap here to save the tool to a project',
+        context.l10n.toolTutorialSave,
         alignText: ContentAlign.left,
         pointingDirection: PointingDirection.right,
       ),
     ];
-    _walkthroughQuickTool.create(targets.map((e) => e.targetFocus).toList(), () {
-      context.read<ProjectLibrary>().showQuickToolTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    _tutorialQuickTool.create(targets.map((e) => e.targetFocus).toList(), () async {
+      final projectLibrary = context.read<ProjectLibrary>();
+      projectLibrary.showQuickToolTutorial = false;
+      await _projectRepo.saveLibrary(projectLibrary);
 
       // start island tutorial
-      if (context.read<ProjectLibrary>().showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
-        _createWalkthroughIsland();
+      if (projectLibrary.showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
+        _createTutorialIsland();
         Future.delayed(Duration.zero, () {
-          if (mounted) _walkthroughIsland.show(context);
+          if (mounted) _tutorialIsland.show(context);
         });
-      } else if (widget.onParentWalkthroughFinished != null) {
-        widget.onParentWalkthroughFinished!();
+      } else if (widget.onParentTutorialFinished != null) {
+        widget.onParentTutorialFinished!();
       }
     }, context);
   }
 
-  void _createWalkthroughTool() {
-    // add the targets here
+  void _createTutorialTool() {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyBookmarkSave,
-        'Tap here to copy your tool to another project',
+        context.l10n.appTutorialToolSave,
         alignText: ContentAlign.left,
         pointingDirection: PointingDirection.right,
       ),
       CustomTargetFocus(
         _keyChangeTitle,
-        'Tap here to edit the title of your tool',
+        context.l10n.toolTutorialEditTitle,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthroughTool.create(targets.map((e) => e.targetFocus).toList(), () {
-      context.read<ProjectLibrary>().showToolTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    _tutorialTool.create(targets.map((e) => e.targetFocus).toList(), () async {
+      final projectLibrary = context.read<ProjectLibrary>();
+      projectLibrary.showToolTutorial = false;
+      await _projectRepo.saveLibrary(projectLibrary);
 
       // start island tutorial
-      if (context.read<ProjectLibrary>().showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
-        _createWalkthroughIsland();
+      if (projectLibrary.showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
+        _createTutorialIsland();
         Future.delayed(Duration.zero, () {
-          if (mounted) _walkthroughIsland.show(context);
+          if (mounted) _tutorialIsland.show(context);
         });
-      } else if (widget.onParentWalkthroughFinished != null) {
-        widget.onParentWalkthroughFinished!();
+      } else if (widget.onParentTutorialFinished != null) {
+        widget.onParentTutorialFinished!();
       }
     }, context);
   }
 
-  void _createWalkthroughIsland() {
-    // add the targets here
+  void _createTutorialIsland() {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyIsland,
-        'Tap here to combine your tool with a metronome, tuner or media player',
+        context.l10n.appTutorialToolIsland,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthroughIsland.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorialIsland.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showIslandTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
       // start specific tool tutorial
-      if (widget.onParentWalkthroughFinished != null) {
-        widget.onParentWalkthroughFinished!();
+      if (widget.onParentTutorialFinished != null) {
+        widget.onParentTutorialFinished!();
       }
     }, context);
   }
@@ -241,7 +253,7 @@ class _ParentToolState extends State<ParentTool> {
         }
 
         // if quick tool and values have been changed: ask for saving
-        if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(widget.toolBlock)) {
+        if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(widget.toolBlock, context.l10n)) {
           final save = await askForSavingQuickTool(context);
 
           // if user taps outside the dialog, we dont want to exit the quick tool and we dont want to save
@@ -264,12 +276,12 @@ class _ParentToolState extends State<ParentTool> {
         onTap: () async {
           final newTitle = await showEditTextDialog(
             context: context,
-            label: 'New tool:',
+            label: context.l10n.toolNewTitle,
             value: widget.toolBlock.title,
           );
           if (newTitle == null) return;
           widget.toolBlock.title = newTitle;
-          if (context.mounted) FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+          if (context.mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
           setState(() {});
         },
         child: Text(
@@ -285,13 +297,14 @@ class _ParentToolState extends State<ParentTool> {
 
   void _openBottomSheetAndSaveTool() {
     var projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
+    final l10n = context.l10n;
 
     ourModalBottomSheet(
       context,
       [
         CardListTile(
           title: widget.barTitle,
-          subtitle: formatSettingValues(widget.toolBlock.getSettingsFormatted()),
+          subtitle: formatSettingValues(widget.toolBlock.getSettingsFormatted(context.l10n)),
           trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
           leadingPicture: circleToolIcon(widget.toolBlock.icon),
           onTapFunction: () {},
@@ -304,8 +317,8 @@ class _ParentToolState extends State<ParentTool> {
             alignment: Alignment.centerLeft,
             child:
                 widget.isQuickTool
-                    ? const Text('Save in ...', style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
-                    : const Text('Save copy in ...', style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
+                    ? Text(l10n.toolSave, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
+                    : Text(l10n.toolSaveCopy, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
           ),
         ),
         Expanded(
@@ -319,7 +332,7 @@ class _ParentToolState extends State<ParentTool> {
                   builder: (context, setTileState) {
                     return CardListTile(
                       title: projectLibrary.projects[index].title,
-                      subtitle: getDateAndTimeFormatted(projectLibrary.projects[index].timeLastModified),
+                      subtitle: l10n.formatDateAndTime(projectLibrary.projects[index].timeLastModified),
                       highlightColor: _highlightColorOnSave,
                       trailingIcon: IconButton(
                         onPressed: () {
@@ -328,7 +341,10 @@ class _ParentToolState extends State<ParentTool> {
                         icon: _bookmarkIcon,
                         color: ColorTheme.surfaceTint,
                       ),
-                      leadingPicture: projectLibrary.projects[index].thumbnail,
+                      leadingPicture:
+                          projectLibrary.projects[index].thumbnailPath.isEmpty
+                              ? const AssetImage(TIOMusicParams.tiomusicIconPath)
+                              : FileImage(File(_fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath))),
                       onTapFunction: () {
                         _onSaveInProjectTap(setTileState, index, widget.toolBlock);
                       },
@@ -342,7 +358,11 @@ class _ParentToolState extends State<ParentTool> {
         TIOFlatButton(
           // creating a new project to save the tool in it
           onPressed: () async {
-            final newTitles = await editTwoTitles(context, getDateAndTimeNow(), '${widget.toolBlock.title} - copy');
+            final newTitles = await editTwoTitles(
+              context,
+              l10n.formatDateAndTime(DateTime.now()),
+              '${widget.toolBlock.title} - ${l10n.toolTitleCopy}',
+            );
             if (newTitles == null || newTitles.isEmpty) {
               if (mounted) {
                 // close the bottom up sheet
@@ -357,7 +377,7 @@ class _ParentToolState extends State<ParentTool> {
               saveToolInNewProject(context, widget.toolBlock, widget.isQuickTool, newTitles[0], newTitles[1]);
             }
           },
-          text: 'Save in a new project',
+          text: l10n.toolSaveInNewProject,
         ),
         const SizedBox(height: 16),
       ],
@@ -367,8 +387,8 @@ class _ParentToolState extends State<ParentTool> {
   void _onSaveInProjectTap(StateSetter setTileState, int index, ProjectBlock toolBlock) async {
     final newTitle = await showEditTextDialog(
       context: context,
-      label: 'Tool title:',
-      value: '${toolBlock.title} - copy',
+      label: context.l10n.toolNewTitle,
+      value: '${toolBlock.title} - ${context.l10n.toolTitleCopy}',
       isNew: true,
     );
     if (newTitle == null) {
@@ -393,7 +413,7 @@ class _ParentToolState extends State<ParentTool> {
 
     // saving the tool in a project
     if (mounted) {
-      saveToolInProject(context, index, toolBlock, widget.isQuickTool, newTitle);
+      await saveToolInProject(context, index, toolBlock, widget.isQuickTool, newTitle);
     }
   }
 
@@ -411,7 +431,10 @@ class _ParentToolState extends State<ParentTool> {
 
   @override
   Widget build(BuildContext context) {
+    final project = context.read<Project?>();
+
     return Scaffold(
+      extendBody: true,
       resizeToAvoidBottomInset: false,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(ParentToolParams.appBarHeight),
@@ -421,6 +444,7 @@ class _ParentToolState extends State<ParentTool> {
       body: widget.deactivateScroll ? _body() : SingleChildScrollView(child: _body()),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: widget.floatingActionButton,
+      bottomNavigationBar: project == null ? null : ToolNavigationBar(project: project, toolBlock: widget.toolBlock),
     );
   }
 

@@ -1,29 +1,28 @@
 import 'dart:async';
 import 'package:audio_session/audio_session.dart';
-import 'package:flutter/services.dart';
-import 'package:stats/stats.dart';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:tiomusic/models/file_io.dart';
+import 'package:stats/stats.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project.dart';
+import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
-import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/pages/tuner/play_sound_page.dart';
-import 'package:tiomusic/pages/tuner/setting_concert_pitch.dart';
-import 'package:tiomusic/pages/tuner/tuner_functions.dart';
-
 import 'package:tiomusic/pages/tuner/pitch_visualizer.dart';
+import 'package:tiomusic/pages/tuner/play_sound_page.dart';
+import 'package:tiomusic/pages/tuner/set_concert_pitch.dart';
+import 'package:tiomusic/pages/tuner/tuner_functions.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/util_midi.dart';
-import 'package:tiomusic/models/blocks/tuner_block.dart';
-import 'package:tiomusic/util/walkthrough_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -61,7 +60,7 @@ class _TunerState extends State<Tuner> {
 
   Timer? _timerPollFreq;
 
-  final Walkthrough _walkthrough = Walkthrough();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyStartStop = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
 
@@ -132,34 +131,33 @@ class _TunerState extends State<Tuner> {
             !context.read<ProjectLibrary>().showToolTutorial &&
             !context.read<ProjectLibrary>().showQuickToolTutorial &&
             !context.read<ProjectLibrary>().showIslandTutorial) {
-          _createWalkthrough();
-          _walkthrough.show(context);
+          _createTutorial();
+          _tutorial.show(context);
         }
       }
     });
   }
 
-  void _createWalkthrough() {
-    // add the targets here
+  void _createTutorial() {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyStartStop,
-        'Tap here to start and stop the tuner',
+        context.l10n.tunerTutorialStartStop,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
       ),
       CustomTargetFocus(
         _keySettings,
-        'Tap here to adjust the concert pitch or play a reference tone',
+        context.l10n.tunerTutorialAdjust,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _walkthrough.create(targets.map((e) => e.targetFocus).toList(), () {
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showTunerTutorial = false;
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+      await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
@@ -172,15 +170,17 @@ class _TunerState extends State<Tuner> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return ParentTool(
       barTitle: _tunerBlock.title,
       isQuickTool: widget.isQuickTool,
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: _tunerBlock,
-      onParentWalkthroughFinished: () {
+      onParentTutorialFinished: () {
         if (context.read<ProjectLibrary>().showTunerTutorial) {
-          _createWalkthrough();
-          _walkthrough.show(context);
+          _createTutorial();
+          _tutorial.show(context);
         }
       },
       island: ParentIslandView(
@@ -249,8 +249,8 @@ class _TunerState extends State<Tuner> {
       keySettingsList: _keySettings,
       settingTiles: [
         SettingsTile(
-          title: 'Concert Pitch',
-          subtitle: '${formatDoubleToString(_tunerBlock.chamberNoteHz)} Hz',
+          title: l10n.tunerConcertPitch,
+          subtitle: '${l10n.formatNumber(_tunerBlock.chamberNoteHz)} Hz',
           leadingIcon: Icons.location_searching,
           settingPage: const SetConcertPitch(),
           block: _tunerBlock,
@@ -258,7 +258,7 @@ class _TunerState extends State<Tuner> {
           inactive: _isInStartUp,
         ),
         SettingsTile(
-          title: 'Play Reference',
+          title: l10n.tunerPlayReference,
           subtitle: '',
           leadingIcon: Icons.music_note,
           settingPage: const PlaySoundPage(),
@@ -299,7 +299,7 @@ class _TunerState extends State<Tuner> {
     var centOffset = ((midi - midi.round()) * 100.0).round();
 
     setState(() {
-      _freqText.text = '${freq.toStringAsFixed(1)} Hz';
+      _freqText.text = '${context.l10n.formatNumber(double.parse(freq.toStringAsFixed(1)))} Hz';
       _midiText.text = midi.toString();
       _midiNameText.text = midiToName(midi.round());
       _centOffsetText.text = '$centOffset Cent';

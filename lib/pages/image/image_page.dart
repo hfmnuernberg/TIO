@@ -4,19 +4,25 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/pages/image/take_picture_screen.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/image/add_image_dialog.dart';
+import 'package:tiomusic/pages/image/take_picture_screen.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
+import 'package:tiomusic/services/file_picker.dart';
+import 'package:tiomusic/services/file_references.dart';
+import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/media_repository.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
+import 'package:tiomusic/widgets/small_icon_button.dart';
 
 class ImageTool extends StatefulWidget {
   final bool isQuickTool;
@@ -28,98 +34,81 @@ class ImageTool extends StatefulWidget {
 }
 
 class _ImageToolState extends State<ImageTool> {
+  static final _logger = createPrefixLogger('ImageTool');
+
+  late FileSystem _fs;
+  late FilePicker _filePicker;
+  late FileReferences _fileReferences;
+  late MediaRepository _mediaRepo;
+  late ProjectRepository _projectRepo;
+
   late ImageBlock _imageBlock;
   late Project _project;
-
-  final List<MenuItemButton> _menuItems = List.empty(growable: true);
-  late MenuItemButton _shareMenuButton;
-  late MenuItemButton _setAsThumbnailMenuButton;
 
   @override
   void initState() {
     super.initState();
 
-    _shareMenuButton = MenuItemButton(
-      onPressed: _shareFilePressed,
-      child: const Text('Share image', style: TextStyle(color: ColorTheme.primary)),
-    );
-
-    _setAsThumbnailMenuButton = MenuItemButton(
-      onPressed: _setAsThumbnail,
-      child: const Text('Set as thumbnail', style: TextStyle(color: ColorTheme.primary)),
-    );
+    _fs = context.read<FileSystem>();
+    _filePicker = context.read<FilePicker>();
+    _fileReferences = context.read<FileReferences>();
+    _mediaRepo = context.read<MediaRepository>();
+    _projectRepo = context.read<ProjectRepository>();
 
     _imageBlock = Provider.of<ProjectBlock>(context, listen: false) as ImageBlock;
     _imageBlock.timeLastModified = getCurrentDateTime();
-    _imageBlock.setImage(_imageBlock.relativePath);
 
     _project = Provider.of<Project>(context, listen: false);
 
-    // only allow portrait mode for this tool
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     if (_imageBlock.relativePath.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await _addImageDialog(context);
       });
-    } else {
-      _addOptionsToMenu();
     }
   }
 
-  void _addOptionsToMenu() {
-    setState(() {
-      if (!_menuItems.contains(_shareMenuButton)) {
-        _menuItems.add(_shareMenuButton);
-      }
-      if (!_menuItems.contains(_setAsThumbnailMenuButton)) {
-        _menuItems.add(_setAsThumbnailMenuButton);
-      }
-    });
-  }
-
   void _shareFilePressed() async {
-    XFile file = XFile(await FileIO.getAbsoluteFilePath(_imageBlock.relativePath));
-    await Share.shareXFiles([file]);
+    await _filePicker.shareFile(context.read<FileSystem>().toAbsoluteFilePath(_imageBlock.relativePath));
   }
 
   void _setAsThumbnail() async {
-    if (_imageBlock.image != null) {
-      bool? useAsProfilePicture = await _useAsProjectPicture();
-      if (useAsProfilePicture != null && useAsProfilePicture) {
-        _project.setThumbnail(_imageBlock.relativePath);
-        if (mounted) {
-          await FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-        }
+    if (_imageBlock.relativePath.isEmpty) return;
+
+    bool? useAsProfilePicture = await _useAsProjectPicture();
+    if (useAsProfilePicture != null && useAsProfilePicture) {
+      _project.setThumbnail(_imageBlock.relativePath);
+      if (mounted) {
+        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       }
     }
   }
 
   Future<bool?> _useAsProjectPicture() => showDialog<bool>(
     context: context,
-    builder:
-        (context) => AlertDialog(
-          title: const Text('Set Project Thumbnail', style: TextStyle(color: ColorTheme.primary)),
-          content: const Text(
-            'Do you want to use the image of this tool as your profile picture for this project?',
-            style: TextStyle(color: ColorTheme.primary),
+    builder: (context) {
+      final l10n = context.l10n;
+      return AlertDialog(
+        title: Text(l10n.imageSetAsProjectThumbnail, style: TextStyle(color: ColorTheme.primary)),
+        content: Text(l10n.imageSetAsThumbnailQuestion, style: TextStyle(color: ColorTheme.primary)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+            child: Text(l10n.commonNo),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-              child: const Text('No'),
-            ),
-            TIOFlatButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              text: 'Yes',
-              boldText: true,
-            ),
-          ],
-        ),
+          TIOFlatButton(
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+            text: l10n.commonYes,
+            boldText: true,
+          ),
+        ],
+      );
+    },
   );
 
   Future _addImageDialog(BuildContext context) => showDialog(
@@ -132,19 +121,34 @@ class _ImageToolState extends State<ImageTool> {
   );
 
   Future<void> _pickImageAndSave(bool useAsThumbnail) async {
-    await _imageBlock.pickImage(context, context.read<ProjectLibrary>());
+    try {
+      final imagePath = await _filePicker.pickImage();
+      if (imagePath == null) return;
 
-    if (_imageBlock.image != null) {
-      _addOptionsToMenu();
+      if (!await _fs.existsFileAfterGracePeriod(imagePath)) {
+        if (mounted) await showFileNotAccessibleDialog(context, fileName: imagePath);
+        return;
+      }
+
+      final newRelativePath = await _mediaRepo.import(imagePath, _fs.toBasename(imagePath));
+      if (newRelativePath == null) return;
+
+      if (!mounted) return;
+
+      if (useAsThumbnail) Provider.of<Project>(context, listen: false).setThumbnail(newRelativePath);
+
+      final projectLibrary = context.read<ProjectLibrary>();
+
+      _fileReferences.dec(_imageBlock.relativePath, projectLibrary);
+      _imageBlock.relativePath = newRelativePath;
+      _fileReferences.inc(newRelativePath);
+
+      await _projectRepo.saveLibrary(projectLibrary);
+
+      setState(() {});
+    } on PlatformException catch (e) {
+      _logger.e('Unable to pick image.', error: e);
     }
-
-    if (!mounted) return;
-
-    if (useAsThumbnail) {
-      Provider.of<Project>(context, listen: false).setThumbnail(_imageBlock.relativePath);
-    }
-
-    await FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
   }
 
   Future<void> _takePhotoAndSave(bool useAsThumbnail) async {
@@ -158,44 +162,31 @@ class _ImageToolState extends State<ImageTool> {
 
     final firstCamera = cameras.first;
 
-    if (mounted) {
-      XFile? image = await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) {
-            return TakePictureScreen(camera: firstCamera);
-          },
-        ),
-      );
+    if (!mounted) return;
 
-      if (image == null) return;
+    String? imagePath = await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (context) => TakePictureScreen(camera: firstCamera)));
+    if (imagePath == null) return;
 
-      var newFileName = '${_project.title}-${_imageBlock.title}';
+    var newFileName = '${_project.title}-${_imageBlock.title}';
 
-      if (mounted) {
-        var projectLib = context.read<ProjectLibrary>();
+    final newRelativePath = await _mediaRepo.import(imagePath, newFileName);
+    if (newRelativePath == null) return;
 
-        final newRelativePath = await FileIO.saveFileToAppStorage(
-          context,
-          File(image.path),
-          newFileName,
-          _imageBlock.relativePath == '' ? null : _imageBlock.relativePath,
-          projectLib,
-        );
+    if (!mounted) return;
 
-        if (newRelativePath == null) return;
+    if (useAsThumbnail) Provider.of<Project>(context, listen: false).setThumbnail(newRelativePath);
 
-        if (mounted) {
-          if (useAsThumbnail) {
-            Provider.of<Project>(context, listen: false).setThumbnail(newRelativePath);
-          }
+    final projectLibrary = context.read<ProjectLibrary>();
 
-          await _imageBlock.setImage(newRelativePath);
-          FileIO.saveProjectLibraryToJson(projectLib);
+    _fileReferences.dec(_imageBlock.relativePath, projectLibrary);
+    _imageBlock.relativePath = newRelativePath;
+    _fileReferences.inc(newRelativePath);
 
-          _addOptionsToMenu();
-        }
-      }
-    }
+    await _projectRepo.saveLibrary(projectLibrary);
+
+    setState(() {});
   }
 
   @override
@@ -205,40 +196,68 @@ class _ImageToolState extends State<ImageTool> {
       isQuickTool: widget.isQuickTool,
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: _imageBlock,
-      menuItems: _menuItems,
+      menuItems:
+          _imageBlock.relativePath.isNotEmpty
+              ? [
+                MenuItemButton(
+                  onPressed: _shareFilePressed,
+                  child: Text(context.l10n.imageShare, style: const TextStyle(color: ColorTheme.primary)),
+                ),
+                MenuItemButton(
+                  onPressed: _setAsThumbnail,
+                  child: Text(context.l10n.imageSetAsThumbnail, style: const TextStyle(color: ColorTheme.primary)),
+                ),
+                MenuItemButton(
+                  onPressed: () => _pickImageAndSave(false),
+                  child: Text(context.l10n.imagePickNewImage, style: const TextStyle(color: ColorTheme.primary)),
+                ),
+                MenuItemButton(
+                  onPressed: () => _takePhotoAndSave(false),
+                  child: Text(context.l10n.imageTakeNewPhoto, style: const TextStyle(color: ColorTheme.primary)),
+                ),
+              ]
+              : null,
       centerModule: Padding(
         padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
         child: Center(
           child: Consumer<ProjectBlock>(
             builder: (context, projectBlock, child) {
               var imageBlock = projectBlock as ImageBlock;
-              if (imageBlock.image != null) {
-                return Image(image: imageBlock.image!);
+              if (imageBlock.relativePath.isNotEmpty) {
+                return Image(image: FileImage(File(_fs.toAbsoluteFilePath(imageBlock.relativePath))));
               } else {
-                return const Text('No image in this tool.', style: TextStyle(color: ColorTheme.primary));
+                return Stack(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SmallIconButton(
+                          icon: const Icon(Icons.image_outlined, color: ColorTheme.primary),
+                          onPressed: () => _pickImageAndSave(false),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                            child: Text(
+                              context.l10n.imageNoImage,
+                              style: const TextStyle(color: ColorTheme.primary),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        SmallIconButton(
+                          icon: const Icon(Icons.camera_alt_outlined, color: ColorTheme.primary),
+                          onPressed: () => _takePhotoAndSave(false),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
               }
             },
           ),
-        ),
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            FloatingActionButton(
-              onPressed: () => _pickImageAndSave(false),
-              heroTag: null,
-              backgroundColor: ColorTheme.surface,
-              child: const Icon(Icons.image_outlined, color: ColorTheme.primary),
-            ),
-            FloatingActionButton(
-              onPressed: () => _takePhotoAndSave(false),
-              heroTag: null,
-              backgroundColor: ColorTheme.surface,
-              child: const Icon(Icons.camera_alt_outlined, color: ColorTheme.primary),
-            ),
-          ],
         ),
       ),
       settingTiles: const [],

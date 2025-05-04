@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/number_input_double_with_slider.dart';
+import 'package:tiomusic/widgets/input/number_input_and_slider_dec.dart';
+
+const minPitch = -24.0;
+const maxPitch = 24.0;
 
 class SetPitch extends StatefulWidget {
   const SetPitch({super.key});
@@ -17,87 +21,60 @@ class SetPitch extends StatefulWidget {
 }
 
 class _SetPitchState extends State<SetPitch> {
+  late double pitch;
   late MediaPlayerBlock _mediaPlayerBlock;
-  late NumberInputDoubleWithSlider _pitchInput;
 
   @override
   void initState() {
     super.initState();
-
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
+    pitch = _mediaPlayerBlock.pitchSemitones;
+  }
 
-    _pitchInput = NumberInputDoubleWithSlider(
-      max: 24,
-      min: -24,
-      defaultValue: _mediaPlayerBlock.pitchSemitones,
-      step: 0.1,
-      stepIntervalInMs: 200,
-      controller: TextEditingController(),
-      label: 'Semitones',
-      textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
-      allowNegativeNumbers: true,
-    );
+  Future<void> _updatePitch(newPitch) async {
+    final success = await mediaPlayerSetPitchSemitones(pitchSemitones: newPitch);
+    if (!success) {
+      throw 'Setting pitch semitones in rust failed using value: $newPitch';
+    }
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _pitchInput.controller.addListener(_onUserChangedPitch);
-    });
+  Future<void> _handleChange(double newPitch) async {
+    setState(() => pitch = newPitch.clamp(minPitch, maxPitch));
+    await _updatePitch(pitch);
+  }
+
+  Future<void> _handleReset() async => _handleChange(MediaPlayerParams.defaultPitchSemitones);
+
+  Future<void> _handleConfirm() async {
+    _mediaPlayerBlock.pitchSemitones = pitch;
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
+    Navigator.pop(context);
+  }
+
+  Future<void> _handleCancel() async {
+    await _handleChange(_mediaPlayerBlock.pitchSemitones);
+    if (!mounted) return;
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: 'Set Pitch',
-      confirm: _onConfirm,
-      reset: _reset,
-      numberInput: _pitchInput,
-      cancel: _onCancel,
+      title: context.l10n.mediaPlayerSetPitch,
+      numberInput: NumberInputAndSliderDec(
+        value: pitch,
+        min: minPitch,
+        max: maxPitch,
+        step: 0.1,
+        stepIntervalInMs: 200,
+        label: context.l10n.mediaPlayerSemitonesLabel,
+        textFieldWidth: TIOMusicParams.textFieldWidth4Digits,
+        onChange: _handleChange,
+      ),
+      confirm: _handleConfirm,
+      reset: _handleReset,
+      cancel: _handleCancel,
     );
-  }
-
-  void _onConfirm() async {
-    if (_pitchInput.controller.value.text != '') {
-      double newPitchValue = double.parse(_pitchInput.controller.value.text);
-
-      _mediaPlayerBlock.pitchSemitones = newPitchValue;
-
-      FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
-
-      mediaPlayerSetPitchSemitones(pitchSemitones: newPitchValue).then(
-        (success) => {
-          if (!success) {throw 'Setting pitch semitones in rust failed using this value: $newPitchValue'},
-        },
-      );
-    }
-
-    Navigator.pop(context);
-  }
-
-  void _reset() {
-    _pitchInput.controller.value = _pitchInput.controller.value.copyWith(
-      text: MediaPlayerParams.defaultPitchSemitones.toString(),
-    );
-  }
-
-  void _onCancel() {
-    mediaPlayerSetPitchSemitones(pitchSemitones: _mediaPlayerBlock.pitchSemitones).then(
-      (success) => {
-        if (!success)
-          {throw 'Setting pitch semitones in rust failed using this value: ${_mediaPlayerBlock.pitchSemitones}'},
-      },
-    );
-
-    Navigator.pop(context);
-  }
-
-  void _onUserChangedPitch() async {
-    if (_pitchInput.controller.value.text != '') {
-      double newPitchValue = double.parse(_pitchInput.controller.value.text);
-
-      mediaPlayerSetPitchSemitones(pitchSemitones: newPitchValue).then(
-        (success) => {
-          if (!success) {throw 'Setting pitch semitones in rust failed using this value: $newPitchValue'},
-        },
-      );
-    }
   }
 }

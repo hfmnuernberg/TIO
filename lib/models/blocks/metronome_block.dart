@@ -1,4 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tiomusic/l10n/app_localization.dart';
+import 'package:tiomusic/models/metronome_sound.dart';
+import 'package:tiomusic/models/metronome_sound_extension.dart';
 
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
@@ -8,6 +11,7 @@ import 'package:tiomusic/util/util_functions.dart';
 part 'metronome_block.g.dart';
 
 // ignore_for_file: must_be_immutable // FIXME: fix these block issues
+// ignore_for_file: deprecated_member_use_from_same_package // FIXME: fix these block issues
 
 @JsonSerializable()
 class MetronomeBlock extends ProjectBlock {
@@ -15,6 +19,7 @@ class MetronomeBlock extends ProjectBlock {
   // for now this check is only used to compare quick tools to the default settings, so some properties are left out here
   @override
   List<Object> get props => [
+    _id,
     bpm,
     randomMute,
     _rhythmGroups,
@@ -86,22 +91,22 @@ class MetronomeBlock extends ProjectBlock {
   @JsonKey(defaultValue: MetronomeParams.defaultRandomMute)
   late int randomMute;
 
-  @JsonKey(defaultValue: MetronomeParams.defaultAccSound)
+  @JsonKey(defaultValue: defaultMetronomeAccSound)
   late String accSound;
-  @JsonKey(defaultValue: MetronomeParams.defaultUnaccSound)
+  @JsonKey(defaultValue: defaultMetronomeUnaccSound)
   late String unaccSound;
-  @JsonKey(defaultValue: MetronomeParams.defaultPolyAccSound)
+  @JsonKey(defaultValue: defaultMetronomePolyAccSound)
   late String polyAccSound;
-  @JsonKey(defaultValue: MetronomeParams.defaultPolyUnaccSound)
+  @JsonKey(defaultValue: defaultMetronomePolyUnaccSound)
   late String polyUnaccSound;
 
-  @JsonKey(defaultValue: MetronomeParams.defaultAccSound2)
+  @JsonKey(defaultValue: defaultMetronomeAccSound2)
   late String accSound2;
-  @JsonKey(defaultValue: MetronomeParams.defaultUnaccSound2)
+  @JsonKey(defaultValue: defaultMetronomeUnaccSound2)
   late String unaccSound2;
-  @JsonKey(defaultValue: MetronomeParams.defaultPolyAccSound2)
+  @JsonKey(defaultValue: defaultMetronomePolyAccSound2)
   late String polyAccSound2;
-  @JsonKey(defaultValue: MetronomeParams.defaultPolyUnaccSound2)
+  @JsonKey(defaultValue: defaultMetronomePolyUnaccSound2)
   late String polyUnaccSound2;
 
   late List<RhythmGroup> _rhythmGroups;
@@ -133,7 +138,7 @@ class MetronomeBlock extends ProjectBlock {
   }
 
   @override
-  List<String> getSettingsFormatted() {
+  List<String> getSettingsFormatted(AppLocalizations l10n) {
     List<String> settings = [];
 
     if (_rhythmGroups2.isNotEmpty) {
@@ -141,24 +146,24 @@ class MetronomeBlock extends ProjectBlock {
     }
 
     settings.addAll([
-      '${_rhythmGroups.length} segment${pluralSInt(_rhythmGroups.length)}',
-      'Sound: $accSound/$unaccSound',
-      'Poly-Sound: $polyAccSound/$polyUnaccSound',
+      l10n.metronomeSegment(_rhythmGroups.length),
+      '${l10n.metronomeSound}: ${MetronomeSound.fromFilename(accSound).getLabel(l10n)}/${MetronomeSound.fromFilename(unaccSound).getLabel(l10n)}',
+      '${l10n.metronomeSoundPoly}: ${MetronomeSound.fromFilename(polyAccSound).getLabel(l10n)}/${MetronomeSound.fromFilename(polyUnaccSound).getLabel(l10n)}',
     ]);
 
     if (_rhythmGroups2.isNotEmpty) {
       settings.addAll([
         '_____ 2 _____',
-        '${_rhythmGroups2.length} segment${pluralSInt(_rhythmGroups2.length)}',
-        'Sound: $accSound2/$unaccSound2',
-        'Poly-Sound: $polyAccSound2/$polyUnaccSound2',
+        l10n.metronomeSegment(_rhythmGroups2.length),
+        '${l10n.metronomeSound}: ${MetronomeSound.fromFilename(accSound2).getLabel(l10n)}/${MetronomeSound.fromFilename(unaccSound2).getLabel(l10n)}',
+        '${l10n.metronomeSoundPoly}: ${MetronomeSound.fromFilename(polyAccSound2).getLabel(l10n)}/${MetronomeSound.fromFilename(polyUnaccSound2).getLabel(l10n)}',
       ]);
     }
 
-    settings.addAll(['$bpm bpm', '$randomMute % random mute']);
+    settings.addAll(['$bpm ${l10n.commonBpm}']);
 
     if (randomMute > 0) {
-      settings.add('$randomMute% mute chance');
+      settings.add('$randomMute% ${l10n.metronomeRandomMuteChance}');
     }
 
     return settings;
@@ -192,9 +197,9 @@ class MetronomeBlock extends ProjectBlock {
     _volume = volume;
   }
 
-  MetronomeBlock.withDefaults() {
+  MetronomeBlock.withDefaults(AppLocalizations l10n) {
     _timeLastModified = DateTime.now();
-    _title = MetronomeParams.displayName;
+    _title = l10n.metronome;
     _islandToolID = null;
     _volume = TIOMusicParams.defaultVolume;
     bpm = MetronomeParams.defaultBPM;
@@ -208,14 +213,14 @@ class MetronomeBlock extends ProjectBlock {
       ),
     ];
     _rhythmGroups2 = [];
-    accSound = MetronomeParams.defaultAccSound;
-    unaccSound = MetronomeParams.defaultUnaccSound;
-    polyAccSound = MetronomeParams.defaultPolyAccSound;
-    polyUnaccSound = MetronomeParams.defaultPolyUnaccSound;
-    accSound2 = MetronomeParams.defaultAccSound2;
-    unaccSound2 = MetronomeParams.defaultUnaccSound2;
-    polyAccSound2 = MetronomeParams.defaultPolyAccSound2;
-    polyUnaccSound2 = MetronomeParams.defaultPolyUnaccSound2;
+    accSound = defaultMetronomeAccSound;
+    unaccSound = defaultMetronomeUnaccSound;
+    polyAccSound = defaultMetronomePolyAccSound;
+    polyUnaccSound = defaultMetronomePolyUnaccSound;
+    accSound2 = defaultMetronomeAccSound2;
+    unaccSound2 = defaultMetronomeUnaccSound2;
+    polyAccSound2 = defaultMetronomePolyAccSound2;
+    polyUnaccSound2 = defaultMetronomePolyUnaccSound2;
     _id = ProjectBlock.createNewId();
   }
 
@@ -235,14 +240,14 @@ class MetronomeBlock extends ProjectBlock {
       ),
     ];
     _rhythmGroups2 = [];
-    accSound = MetronomeParams.defaultAccSound;
-    unaccSound = MetronomeParams.defaultUnaccSound;
-    polyAccSound = MetronomeParams.defaultPolyAccSound;
-    polyUnaccSound = MetronomeParams.defaultPolyUnaccSound;
-    accSound2 = MetronomeParams.defaultAccSound2;
-    unaccSound2 = MetronomeParams.defaultUnaccSound2;
-    polyAccSound2 = MetronomeParams.defaultPolyAccSound2;
-    polyUnaccSound2 = MetronomeParams.defaultPolyUnaccSound2;
+    accSound = defaultMetronomeAccSound;
+    unaccSound = defaultMetronomeUnaccSound;
+    polyAccSound = defaultMetronomePolyAccSound;
+    polyUnaccSound = defaultMetronomePolyUnaccSound;
+    accSound2 = defaultMetronomeAccSound2;
+    unaccSound2 = defaultMetronomeUnaccSound2;
+    polyAccSound2 = defaultMetronomePolyAccSound2;
+    polyUnaccSound2 = defaultMetronomePolyUnaccSound2;
     _id = ProjectBlock.createNewId();
   }
 
@@ -272,7 +277,7 @@ class MetronomeBlock extends ProjectBlock {
   }
 
   @override
-  get icon => blockTypeInfos[BlockType.metronome]!.icon;
+  get icon => MetronomeParams.icon;
 
   factory MetronomeBlock.fromJson(Map<String, dynamic> json) => _$MetronomeBlockFromJson(json);
 

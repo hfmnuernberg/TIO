@@ -2,14 +2,14 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
-import 'package:tiomusic/models/file_io.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/util_functions.dart';
 
 class EditMarkersPage extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;
@@ -64,8 +64,10 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return ParentSettingPage(
-      title: 'Edit Markers',
+      title: l10n.mediaPlayerEditMarkers,
       confirm: _onConfirm,
       reset: _removeAllMarkers,
       customWidget: Expanded(
@@ -97,7 +99,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               value: _sliderValue,
               inactiveColor: ColorTheme.primary80,
               divisions: 1000, // how many individual values, only showing labels when division is not null
-              label: getDurationFormatedWithMilliseconds(_positionDuration),
+              label: l10n.formatDurationWithMillis(_positionDuration),
               onChanged: (newValue) {
                 setState(() {
                   _sliderValue = newValue;
@@ -119,8 +121,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               },
             ),
             const SizedBox(height: TIOMusicParams.edgeInset),
-            _listButtons(Icons.add, 'Add Marker', _addNewMarker),
-            _listButtons(Icons.delete_outlined, 'Remove Selected Marker', _removeSelectedMarker),
+            _listButtons(Icons.add, l10n.mediaPlayerAddMarker, _addNewMarker),
+            _listButtons(Icons.delete_outlined, l10n.mediaPlayerRemoveMarker, _removeSelectedMarker),
           ],
         ),
       ),
@@ -234,13 +236,14 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     setState(() {});
   }
 
-  void _onConfirm() {
+  Future<void> _onConfirm() async {
     widget.mediaPlayerBlock.markerPositions.clear();
     for (var pos in _markerPositions) {
       widget.mediaPlayerBlock.markerPositions.add(pos);
     }
 
-    FileIO.saveProjectLibraryToJson(context.read<ProjectLibrary>());
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
     Navigator.pop(context);
   }
 }
