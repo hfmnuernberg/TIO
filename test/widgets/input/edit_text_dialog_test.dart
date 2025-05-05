@@ -16,18 +16,18 @@ extension WidgetTesterPumpExtension on WidgetTester {
       find.descendant(of: find.bySemanticsLabel('Alert'), matching: matching);
 }
 
-class TestWrapper extends StatefulWidget {
+class _TestWrapper extends StatefulWidget {
   final bool isNew;
   final String label;
   final String value;
 
-  const TestWrapper({super.key, this.label = 'Label', this.value = 'n/a', this.isNew = false});
+  const _TestWrapper({this.label = 'Label', this.value = 'n/a', this.isNew = false});
 
   @override
-  State<TestWrapper> createState() => _TestWrapperState();
+  State<_TestWrapper> createState() => _TestWrapperState();
 }
 
-class _TestWrapperState extends State<TestWrapper> {
+class _TestWrapperState extends State<_TestWrapper> {
   late String _text;
 
   @override
@@ -62,7 +62,7 @@ void main() {
 
   group('edit text dialog', () {
     testWidgets('shows new title when title change is submitted', (tester) async {
-      await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
+      await tester.renderWidget(_TestWrapper(label: 'Title input', value: 'Old title'));
       expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'Old title');
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
@@ -77,7 +77,7 @@ void main() {
     });
 
     testWidgets('hides edit text dialog when cancel is pressed', (tester) async {
-      await tester.renderWidget(TestWrapper());
+      await tester.renderWidget(_TestWrapper());
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
       expect(find.bySemanticsLabel('Alert'), findsOneWidget);
@@ -87,7 +87,7 @@ void main() {
     });
 
     testWidgets('does not allow entering title longer than max value', (tester) async {
-      await tester.renderWidget(TestWrapper(label: 'Title input', value: ''));
+      await tester.renderWidget(_TestWrapper(label: 'Title input', value: ''));
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
       await tester.enterTextAndSettle(
@@ -103,7 +103,7 @@ void main() {
     });
 
     testWidgets('shows old title when title change is canceled', (tester) async {
-      await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
+      await tester.renderWidget(_TestWrapper(label: 'Title input', value: 'Old title'));
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
       await tester.enterTextAndSettle(tester.withinAlert(find.bySemanticsLabel('Title input')), 'Edited title');
@@ -113,7 +113,7 @@ void main() {
     });
 
     testWidgets('disables submit button when title is empty', (tester) async {
-      await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
+      await tester.renderWidget(_TestWrapper(label: 'Title input', value: 'Old title'));
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
       await tester.enterTextAndSettle(tester.withinAlert(find.bySemanticsLabel('Title input')), '');
@@ -123,7 +123,7 @@ void main() {
     });
 
     testWidgets('disables submit button when title has not changed', (tester) async {
-      await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
+      await tester.renderWidget(_TestWrapper(label: 'Title input', value: 'Old title'));
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
 
@@ -132,7 +132,7 @@ void main() {
     });
 
     testWidgets('submits title when title has not changed but is marked as new', (tester) async {
-      await tester.renderWidget(TestWrapper(label: 'Title input', value: 'New title', isNew: true));
+      await tester.renderWidget(_TestWrapper(label: 'Title input', value: 'New title', isNew: true));
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
       await tester.enterTextAndSettle(tester.withinAlert(find.bySemanticsLabel('Title input')), 'Edited title');
@@ -142,7 +142,7 @@ void main() {
     });
 
     testWidgets('does not close dialog when clicking outside of dialog', (tester) async {
-      await tester.renderWidget(TestWrapper());
+      await tester.renderWidget(_TestWrapper());
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
 
