@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:audio_session/audio_session.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -23,14 +22,13 @@ import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/sound_font_extension.dart';
-import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
-import 'package:tonic/tonic.dart';
+import 'package:tiomusic/widgets/piano/keyboard.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class Key {
@@ -58,7 +56,6 @@ class _PianoState extends State<Piano> {
   late double _concertPitch = _pianoBlock.concertPitch;
   late String _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n);
 
-  final List<Key> _keys = [];
   int? _currentlyPlayedNote;
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
@@ -118,71 +115,13 @@ class _PianoState extends State<Piano> {
     });
   }
 
-  // void _handlePointerEvent(Offset position) {
-  //   for (final key in _keys.reversed) {
-  //     if (!key.boundary.contains(position)) continue;
-  //     if (key.note == _currentlyPlayedNote) return;
-  //     if (!_isPlaying) _pianoStart();
-  //     if (_currentlyPlayedNote != null) _playNoteOff(_currentlyPlayedNote!);
-  //     _playNoteOn(key);
-  //     return;
-  //   }
-  //
-  //   if (_currentlyPlayedNote != null) {
-  //     pianoNoteOff(note: _currentlyPlayedNote!.note);
-  //     _currentlyPlayedNote = null;
-  //   }
-  // }
-
-  void _handlePointerUp(PointerEvent event) {
-    if (_currentlyPlayedNote != null) _playNoteOff(_currentlyPlayedNote!);
-  }
-
-  void _handlePointerMove(PointerEvent event) {
-    print('event: localPosition: ${event.localPosition}, position: ${event.position}');
-    print('_currentlyPlayedNote: $_currentlyPlayedNote');
-    final key = _keys.reversed.firstWhereOrNull((key) => key.boundary.contains(event.localPosition));
-
-    if (key == null) {
-      print('key: null');
-      if (_currentlyPlayedNote != null) _playNoteOff(_currentlyPlayedNote!);
-      return;
-    }
-
-    print('key: note: ${key?.note}, boundary: ${key?.boundary}');
-    if (key.note == _currentlyPlayedNote) return;
-    if (_currentlyPlayedNote != null) _playNoteOff(_currentlyPlayedNote!);
-    _playNoteOn(key.note);
-  }
-
-  void _handlePointerMove2(int note, Size keySize, PointerEvent event) {
-    final isNotePlaying = _currentlyPlayedNote == note;
-    final isKeyPressed = _isWithin(event.localPosition, keySize);
-    print('note: $note, isNotePlaying: $isNotePlaying, isKeyPressed: $isKeyPressed');
-    if (isNotePlaying && isKeyPressed) return;
-    if (isNotePlaying && !isKeyPressed) _playNoteOff(note);
-    if (!isNotePlaying && isKeyPressed) _playNoteOn(note);
-    if (!isNotePlaying && !isKeyPressed) return;
-  }
-
-  bool _isWithin(Offset localPosition, Size keySize) {
-    if (localPosition.dx < 0) return false;
-    if (localPosition.dx > keySize.width) return false;
-    if (localPosition.dy < 0) return false;
-    if (localPosition.dy > keySize.height) return false;
-    return true;
-  }
-
   void _playNoteOn(int note) {
-    print('_playNoteOn: $note');
-    // if (!_isPlaying) _pianoStart();
     pianoNoteOn(note: note);
     _currentlyPlayedNote = note;
     setState(() {});
   }
 
   void _playNoteOff(int note) {
-    print('_playNoteOff: $note');
     pianoNoteOff(note: note);
     _currentlyPlayedNote = null;
     setState(() {});
@@ -499,15 +438,14 @@ class _PianoState extends State<Piano> {
                   // keys
                   Consumer<ProjectBlock>(
                     builder: (context, projectBlock, child) {
-                      var pianoBlock = projectBlock as PianoBlock;
+                      final pianoBlock = projectBlock as PianoBlock;
+                      // return SizedBox();
                       return Expanded(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            const double spaceBetweenKeys = 8;
-                            final whiteKeySize = Size(constraints.maxWidth / 12, constraints.maxHeight);
-                            final blackKeySize = Size(constraints.maxWidth / 12, constraints.maxHeight / 2);
-                            return _keyboard(pianoBlock.keyboardPosition, whiteKeySize, blackKeySize, spaceBetweenKeys);
-                          },
+                        child: Keyboard(
+                          lowestNote: pianoBlock.keyboardPosition,
+                          playedNote: _currentlyPlayedNote,
+                          onPlay: _playNoteOn,
+                          onRelease: _playNoteOff,
                         ),
                       );
                     },
@@ -518,149 +456,6 @@ class _PianoState extends State<Piano> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _keyboard(int lowestKey, Size whiteKeySize, Size blackKeySize, double spaceBetweenKeys) {
-    _keys.clear();
-
-    return Listener(
-      onPointerMove: _handlePointerMove,
-      onPointerUp: _handlePointerUp,
-      child: Stack(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: _buildWhiteKeyRow(lowestKey, whiteKeySize, spaceBetweenKeys),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: _buildBlackKeyRow(lowestKey, blackKeySize, spaceBetweenKeys),
-          ),
-        ],
-      ),
-    );
-  }
-
-  List<Widget> _buildWhiteKeyRow(int lowestKey, Size keySize, double spaceBetweenKeys) {
-    var keys = <Widget>[];
-    var midi = lowestKey;
-    double x = 0;
-
-    for (int i = 0; i < PianoParams.numberOfWhiteKeys; i++) {
-      if (midiToName(midi).length > 1) midi++;
-
-      keys.add(_whiteKey(midi, keySize, x));
-
-      midi++;
-      x += keySize.width;
-    }
-
-    return keys;
-  }
-
-  List<Widget> _buildBlackKeyRow(int lowestKey, Size keySize, double spaceBetweenKeys) {
-    var keys = <Widget>[];
-    var midi = lowestKey;
-    double x = 0;
-
-    keys.add(_spacingKey(keySize.width / 2));
-
-    for (int i = 0; i < PianoParams.numberOfWhiteKeys - 1; i++) {
-      if (midiToName(midi).length > 1) midi++;
-
-      if (midiToName(midi + 1).length > 1) {
-        keys.add(_blackKey(midi + 1, keySize, x));
-      } else {
-        keys.add(_spacingKey(keySize.width));
-      }
-
-      midi++;
-      x += keySize.width;
-    }
-
-    keys.add(_spacingKey(keySize.width / 2));
-    return keys;
-  }
-
-  Widget _blackKey(int midi, Size keySize, double x) {
-    _keys.add(Key(midi, Rect.fromLTWH(x, 0, keySize.width, keySize.height)));
-
-    final keyColor = _currentlyPlayedNote == midi
-        ? HSLColor.fromColor(ColorTheme.onTertiaryFixed).withLightness(0.2).toColor()
-        : ColorTheme.onTertiaryFixed;
-    final shadeColor = _currentlyPlayedNote == midi
-        ? HSLColor.fromColor(ColorTheme.tertiary).withLightness(0.5).toColor()
-        : ColorTheme.tertiary;
-
-    return SizedBox(
-      width: keySize.width,
-      height: keySize.height,
-      child: Stack(
-        children: [
-          Container(
-            color: shadeColor,
-            padding: const EdgeInsets.fromLTRB(10, 0, 0, 10),
-            child: Container(color: keyColor),
-          ),
-          Semantics(
-            button: true,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onTapDown: (_) => _playNoteOn(midi),
-                onTapUp: (_) => _playNoteOff(midi),
-                child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _whiteKey(int midi, Size keySize, double x) {
-    _keys.add(Key(midi, Rect.fromLTWH(x, 0, keySize.width, keySize.height)));
-
-    return SizedBox(
-      width: keySize.width,
-      child: Semantics(
-        button: true,
-        child: Material(
-          color: _currentlyPlayedNote == midi ? ColorTheme.secondaryContainer : Colors.white,
-          child: InkWell(
-            splashColor: ColorTheme.secondaryContainer,
-            highlightColor: ColorTheme.secondaryContainer,
-            onTapDown: (_) => _playNoteOn(midi),
-            onTapUp: (_) => _playNoteOff(midi),
-            // onTapCancel: () => _playNoteOff(midi),
-            child: Align(alignment: Alignment.bottomCenter, child: _showLabelOnC(midi)),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _spacingKey(double width) {
-    return SizedBox(width: width);
-  }
-
-  Widget _showLabelOnC(int midi) {
-    if (midi % 12 == 0) {
-      return _getPitchText(midi);
-    } else {
-      return Container();
-    }
-  }
-
-  Widget _getPitchText(int midi) {
-    final pitchName = Pitch.fromMidiNumber(midi).toString();
-    return Text(
-      pitchName,
-      textAlign: TextAlign.center,
-      style: const TextStyle(color: ColorTheme.primaryFixedDim, fontSize: 20),
     );
   }
 
