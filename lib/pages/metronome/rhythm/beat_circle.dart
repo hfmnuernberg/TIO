@@ -1,7 +1,7 @@
 import 'package:circular_widgets/circular_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:tiomusic/pages/metronome/beat_button.dart';
-import 'package:tiomusic/pages/metronome/rhythm_segment.dart';
+import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';

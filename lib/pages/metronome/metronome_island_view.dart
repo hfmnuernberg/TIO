@@ -8,7 +8,7 @@ import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/pages/metronome/beat_button.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
-import 'package:tiomusic/pages/metronome/rhythm_segment.dart';
+import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/src/rust/api/api.dart';

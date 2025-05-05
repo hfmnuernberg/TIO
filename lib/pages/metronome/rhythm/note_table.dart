@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:tiomusic/models/note_handler.dart';
-import 'package:tiomusic/pages/metronome/rhythm_generator_setting_list_item.dart';
+import 'package:tiomusic/pages/metronome/rhythm/rhythm_generator_setting_list_item.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class NoteTable extends StatelessWidget {
