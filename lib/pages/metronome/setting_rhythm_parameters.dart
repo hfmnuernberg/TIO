@@ -61,123 +61,122 @@ class SetRhythmParameters extends StatefulWidget {
 
 class _SetRhythmParametersState extends State<SetRhythmParameters> {
   // TODO: extract beat circle widget
-  // TODO: remove understores
   // TODO: add tests for helper functions
-  static final _logger = createPrefixLogger('SetRhythmParameters');
+  static final logger = createPrefixLogger('SetRhythmParameters');
 
-  late FileSystem _fs;
+  late FileSystem fs;
 
   int beatCount = 0;
   int polyBeatCount = 0;
 
-  final int _minNumberOfBeats = 1;
-  final int _minNumberOfPolyBeats = 0;
+  final int minNumberOfBeats = 1;
+  final int minNumberOfPolyBeats = 0;
 
-  late String _noteKey;
-  final List<BeatType> _beats = List.empty(growable: true);
-  final List<BeatTypePoly> _polyBeats = List.empty(growable: true);
+  late String noteKey;
+  final List<BeatType> beats = List.empty(growable: true);
+  final List<BeatTypePoly> polyBeats = List.empty(growable: true);
 
-  bool _isPlaying = false;
-  bool _processingButtonClick = false;
-  bool _isSimpleModeOn = false;
+  bool isPlaying = false;
+  bool processingButtonClick = false;
+  bool isSimpleModeOn = false;
 
-  late Timer _beatDetection;
-  final ActiveBeatsModel _activeBeatsModel = ActiveBeatsModel();
+  late Timer beatDetection;
+  final ActiveBeatsModel activeBeatsModel = ActiveBeatsModel();
 
-  final Tutorial _tutorial = Tutorial();
-  final GlobalKey _keyToggleBeats = GlobalKey();
+  final Tutorial tutorial = Tutorial();
+  final GlobalKey keyToggleBeats = GlobalKey();
 
   @override
   void initState() {
     super.initState();
 
-    _fs = context.read<FileSystem>();
+    fs = context.read<FileSystem>();
 
     // we need to use the first metronome, because the first metronome cannot have no beats
     // so if we edit a beat of the second metronome, we just load the sounds of the second metronome into the first metronome
     if (widget.isSecondMetronome) {
-      MetronomeUtils.loadMetro2SoundsIntoMetro1(_fs, widget.metronomeBlock);
+      MetronomeUtils.loadMetro2SoundsIntoMetro1(fs, widget.metronomeBlock);
     }
 
-    _beats.addAll(widget.currentBeats);
-    _polyBeats.addAll(widget.currentPolyBeats);
-    _noteKey = widget.currentNoteKey;
+    beats.addAll(widget.currentBeats);
+    polyBeats.addAll(widget.currentPolyBeats);
+    noteKey = widget.currentNoteKey;
 
-    beatCount = _beats.length;
-    polyBeatCount = _polyBeats.length;
+    beatCount = beats.length;
+    polyBeatCount = polyBeats.length;
 
-    _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
+    beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
       t,
     ) async {
       if (!mounted) {
         t.cancel();
         return;
       }
-      if (!_isPlaying) return;
+      if (!isPlaying) return;
 
       var event = await metronomePollBeatEventHappened();
       if (event != null) {
-        _onBeatHappened(event);
+        onBeatHappened(event);
         setState(() {});
       }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (context.read<ProjectLibrary>().showBeatToggleTip) {
-        _createTutorial();
-        _tutorial.show(context);
+        createTutorial();
+        tutorial.show(context);
       }
     });
   }
 
   @override
   void dispose() {
-    _stopBeat();
-    _beatDetection.cancel();
+    stopBeat();
+    beatDetection.cancel();
     super.dispose();
   }
 
   @override
   void deactivate() {
-    _stopBeat();
-    _beatDetection.cancel();
+    stopBeat();
+    beatDetection.cancel();
     super.deactivate();
   }
 
-  void _toggleSimpleMode() {
+  void toggleSimpleMode() {
     setState(() {
-      _isSimpleModeOn = !_isSimpleModeOn;
-      if (_isSimpleModeOn) _onPolyBeatCountChange(beatCount);
+      isSimpleModeOn = !isSimpleModeOn;
+      if (isSimpleModeOn) onPolyBeatCountChange(beatCount);
     });
   }
 
   // React to beat signal
-  void _onBeatHappened(BeatHappenedEvent event) {
+  void onBeatHappened(BeatHappenedEvent event) {
     Timer(Duration(milliseconds: event.millisecondsBeforeStart), () {
       setState(() {
-        _activeBeatsModel.setBeatOnOff(true, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
+        activeBeatsModel.setBeatOnOff(true, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
       });
     });
 
     Timer(Duration(milliseconds: event.millisecondsBeforeStart + MetronomeParams.flashDurationInMs), () {
       if (!mounted) return;
       setState(() {
-        _activeBeatsModel.setBeatOnOff(false, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
+        activeBeatsModel.setBeatOnOff(false, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
       });
     });
   }
 
-  void _createTutorial() {
+  void createTutorial() {
     // add the targets here
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
-        _keyToggleBeats,
+        keyToggleBeats,
         context.l10n.metronomeTutorialEditBeats,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
       ),
     ];
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showBeatToggleTip = false;
       await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     }, context);
@@ -206,43 +205,43 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   int getDecrementStepForPolyBeat(int beatCount, int polyBeatCount) =>
       polyBeatCount - getPrevPolyBeatCount(beatCount, polyBeatCount);
 
-  void _onBeatCountChange(int newBeatCount) {
+  void onBeatCountChange(int newBeatCount) {
     setState(() {
       beatCount = newBeatCount;
-      if (_isSimpleModeOn) polyBeatCount = newBeatCount;
+      if (isSimpleModeOn) polyBeatCount = newBeatCount;
 
-      if (newBeatCount > _beats.length) {
-        _beats.addAll(List.filled(newBeatCount - _beats.length, BeatType.Unaccented));
-      } else if (newBeatCount < _beats.length) {
-        _beats.removeRange(newBeatCount, _beats.length);
+      if (newBeatCount > beats.length) {
+        beats.addAll(List.filled(newBeatCount - beats.length, BeatType.Unaccented));
+      } else if (newBeatCount < beats.length) {
+        beats.removeRange(newBeatCount, beats.length);
       }
 
       refreshRhythm();
     });
   }
 
-  void _onPolyBeatCountChange(int newPolyBeatCount) {
+  void onPolyBeatCountChange(int newPolyBeatCount) {
     setState(() {
       polyBeatCount = newPolyBeatCount;
 
-      if (newPolyBeatCount > _polyBeats.length) {
-        _polyBeats.addAll(List.filled(newPolyBeatCount - _polyBeats.length, BeatTypePoly.Unaccented));
-      } else if (newPolyBeatCount < _polyBeats.length) {
-        _polyBeats.removeRange(newPolyBeatCount, _polyBeats.length);
+      if (newPolyBeatCount > polyBeats.length) {
+        polyBeats.addAll(List.filled(newPolyBeatCount - polyBeats.length, BeatTypePoly.Unaccented));
+      } else if (newPolyBeatCount < polyBeats.length) {
+        polyBeats.removeRange(newPolyBeatCount, polyBeats.length);
       }
 
       refreshRhythm();
     });
   }
 
-  void _selectIcon(String chosenNoteKey) {
+  void selectIcon(String chosenNoteKey) {
     setState(() {
-      _noteKey = chosenNoteKey;
+      noteKey = chosenNoteKey;
       refreshRhythm();
     });
   }
 
-  Widget _getNoteTable() {
+  Widget getNoteTable() {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Table(
@@ -250,7 +249,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
         children: <TableRow>[
           TableRow(
             children: <Widget>[
-              _getNoteButton(NoteValues.whole),
+              getNoteButton(NoteValues.whole),
               const SizedBox(),
               const SizedBox(),
               const SizedBox(),
@@ -259,44 +258,44 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
           ),
           TableRow(
             children: <Widget>[
-              _getNoteButton(NoteValues.half),
-              _getNoteButton(NoteValues.halfDotted),
-              _getNoteButton(NoteValues.tuplet3Half),
+              getNoteButton(NoteValues.half),
+              getNoteButton(NoteValues.halfDotted),
+              getNoteButton(NoteValues.tuplet3Half),
               const SizedBox(),
               const SizedBox(),
             ],
           ),
           TableRow(
             children: <Widget>[
-              _getNoteButton(NoteValues.quarter),
-              _getNoteButton(NoteValues.quarterDotted),
-              _getNoteButton(NoteValues.tuplet3Quarter),
+              getNoteButton(NoteValues.quarter),
+              getNoteButton(NoteValues.quarterDotted),
+              getNoteButton(NoteValues.tuplet3Quarter),
               const SizedBox(),
               const SizedBox(),
             ],
           ),
           TableRow(
             children: <Widget>[
-              _getNoteButton(NoteValues.eighth),
-              _getNoteButton(NoteValues.eighthDotted),
-              _getNoteButton(NoteValues.tuplet3Eighth),
+              getNoteButton(NoteValues.eighth),
+              getNoteButton(NoteValues.eighthDotted),
+              getNoteButton(NoteValues.tuplet3Eighth),
               const SizedBox(),
               const SizedBox(),
             ],
           ),
           TableRow(
             children: <Widget>[
-              _getNoteButton(NoteValues.sixteenth),
-              _getNoteButton(NoteValues.sixteenthDotted),
-              _getNoteButton(NoteValues.tuplet5Sixteenth),
-              _getNoteButton(NoteValues.tuplet6Sixteenth),
-              _getNoteButton(NoteValues.tuplet7Sixteenth),
+              getNoteButton(NoteValues.sixteenth),
+              getNoteButton(NoteValues.sixteenthDotted),
+              getNoteButton(NoteValues.tuplet5Sixteenth),
+              getNoteButton(NoteValues.tuplet6Sixteenth),
+              getNoteButton(NoteValues.tuplet7Sixteenth),
             ],
           ),
           TableRow(
             children: <Widget>[
-              _getNoteButton(NoteValues.thirtySecond),
-              _getNoteButton(NoteValues.thirtySecondDotted),
+              getNoteButton(NoteValues.thirtySecond),
+              getNoteButton(NoteValues.thirtySecondDotted),
               const SizedBox(),
               const SizedBox(),
               const SizedBox(),
@@ -307,14 +306,14 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     );
   }
 
-  Widget _getNoteButton(String noteKey) {
+  Widget getNoteButton(String noteKey) {
     bool isSelected = false;
-    if (_noteKey == noteKey) {
+    if (noteKey == noteKey) {
       isSelected = true;
     }
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: RhythmGeneratorSettingListItem(noteKey: noteKey, onTap: () => _selectIcon(noteKey), hasBorder: isSelected),
+      child: RhythmGeneratorSettingListItem(noteKey: noteKey, onTap: () => selectIcon(noteKey), hasBorder: isSelected),
     );
   }
 
@@ -324,9 +323,9 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
     return ParentSettingPage(
       title: l10n.metronomeSetBpm,
-      confirm: _onConfirm,
-      reset: _reset,
-      cancel: _onCancel,
+      confirm: onConfirm,
+      reset: reset,
+      cancel: onCancel,
       mustBeScrollable: true,
       customWidget: Padding(
         padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
@@ -341,22 +340,22 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                   right: 0,
                   child: SmallIconButton(
                     icon: Icon(
-                      _isSimpleModeOn ? Icons.music_note : Icons.music_note_outlined,
+                      isSimpleModeOn ? Icons.music_note : Icons.music_note_outlined,
                       color: ColorTheme.tertiary,
                     ),
-                    onPressed: _toggleSimpleMode,
+                    onPressed: toggleSimpleMode,
                   ),
                 ),
-                _beatCircle(
+                beatCircle(
                   MediaQuery.of(context).size.width / 3,
                   TIOMusicParams.beatButtonSizeBig,
-                  beats: _beats,
+                  beats: beats,
                   ColorTheme.surfaceTint,
                 ),
-                _beatCircle(
+                beatCircle(
                   MediaQuery.of(context).size.width / 5,
                   TIOMusicParams.beatButtonSizeSmall,
-                  polyBeats: _polyBeats,
+                  polyBeats: polyBeats,
                   ColorTheme.primary60,
                   noInnerBorder: false,
                 ),
@@ -368,8 +367,8 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
               children: [
                 SmallNumberInputInt(
                   value: beatCount,
-                  onChange: _onBeatCountChange,
-                  min: _minNumberOfBeats,
+                  onChange: onBeatCountChange,
+                  min: minNumberOfBeats,
                   max: MetronomeParams.maxBeatCount,
                   step: 1,
                   label: l10n.metronomeNumberOfBeats,
@@ -378,11 +377,11 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                 ),
                 SmallNumberInputInt(
                   value: polyBeatCount,
-                  onChange: _onPolyBeatCountChange,
-                  min: _minNumberOfPolyBeats,
+                  onChange: onPolyBeatCountChange,
+                  min: minNumberOfPolyBeats,
                   max: MetronomeParams.maxBeatCount,
-                  decrementStep: _isSimpleModeOn ? getDecrementStepForPolyBeat(beatCount, polyBeatCount) : 1,
-                  incrementStep: _isSimpleModeOn ? getIncrementStepForPolyBeat(beatCount, polyBeatCount) : 1,
+                  decrementStep: isSimpleModeOn ? getDecrementStepForPolyBeat(beatCount, polyBeatCount) : 1,
+                  incrementStep: isSimpleModeOn ? getIncrementStepForPolyBeat(beatCount, polyBeatCount) : 1,
                   label: l10n.metronomeNumberOfPolyBeats,
                   buttonRadius: MetronomeParams.popupButtonRadius,
                   textFontSize: MetronomeParams.popupTextFontSize,
@@ -391,57 +390,57 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
             ),
 
             // Show all note values
-            if (!_isSimpleModeOn) _getNoteTable(),
+            if (!isSimpleModeOn) getNoteTable(),
           ],
         ),
       ),
     );
   }
 
-  Future<void> _onConfirm() async {
-    _stopBeat();
+  Future<void> onConfirm() async {
+    stopBeat();
 
     if (widget.isAddingNewBar) {
-      widget.rhythmGroups.add(RhythmGroup(MetronomeParams.getNewKeyID(), _beats, _polyBeats, _noteKey));
+      widget.rhythmGroups.add(RhythmGroup(MetronomeParams.getNewKeyID(), beats, polyBeats, noteKey));
     } else if (widget.barIndex != null) {
       widget.rhythmGroups[widget.barIndex!].beats.clear();
-      for (var beat in _beats) {
+      for (var beat in beats) {
         widget.rhythmGroups[widget.barIndex!].beats.add(beat);
       }
       widget.rhythmGroups[widget.barIndex!].polyBeats.clear();
-      for (var beat in _polyBeats) {
+      for (var beat in polyBeats) {
         widget.rhythmGroups[widget.barIndex!].polyBeats.add(beat);
       }
-      widget.rhythmGroups[widget.barIndex!].noteKey = _noteKey;
-      widget.rhythmGroups[widget.barIndex!].beatLen = NoteHandler.getBeatLength(_noteKey);
+      widget.rhythmGroups[widget.barIndex!].noteKey = noteKey;
+      widget.rhythmGroups[widget.barIndex!].beatLen = NoteHandler.getBeatLength(noteKey);
     }
 
-    MetronomeUtils.loadSounds(_fs, widget.metronomeBlock);
+    MetronomeUtils.loadSounds(fs, widget.metronomeBlock);
 
     await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     if (!mounted) return;
     Navigator.of(context).pop(true);
   }
 
-  void _reset() {
-    _selectIcon(MetronomeParams.defaultNoteKey);
+  void reset() {
+    selectIcon(MetronomeParams.defaultNoteKey);
     beatCount = MetronomeParams.defaultBeats.length;
     polyBeatCount = MetronomeParams.defaultPolyBeats.length;
 
-    for (var i = 0; i < _beats.length; i++) {
-      _beats[i] = MetronomeParams.defaultBeats[i];
+    for (var i = 0; i < beats.length; i++) {
+      beats[i] = MetronomeParams.defaultBeats[i];
     }
 
     refreshRhythm();
   }
 
-  void _onCancel() {
-    _stopBeat();
-    MetronomeUtils.loadSounds(_fs, widget.metronomeBlock);
+  void onCancel() {
+    stopBeat();
+    MetronomeUtils.loadSounds(fs, widget.metronomeBlock);
     Navigator.pop(context);
   }
 
-  Widget _beatCircle(
+  Widget beatCircle(
     double centerWidgetRadius,
     double buttonSize,
     Color beatButtonColor, {
@@ -456,17 +455,17 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
         child: CircularWidgets(
           itemBuilder: (context, index) {
             return ListenableBuilder(
-              listenable: _activeBeatsModel,
+              listenable: activeBeatsModel,
               builder: (context, child) {
                 var highlight = false;
-                if (beats != null && index == _activeBeatsModel.mainBeat) {
-                  highlight = _activeBeatsModel.mainBeatOn;
-                } else if (polyBeats != null && index == _activeBeatsModel.polyBeat) {
-                  highlight = _activeBeatsModel.polyBeatOn;
+                if (beats != null && index == activeBeatsModel.mainBeat) {
+                  highlight = activeBeatsModel.mainBeatOn;
+                } else if (polyBeats != null && index == activeBeatsModel.polyBeat) {
+                  highlight = activeBeatsModel.polyBeatOn;
                 }
 
                 return BeatButton(
-                  key: beats != null && index == 0 ? _keyToggleBeats : null,
+                  key: beats != null && index == 0 ? keyToggleBeats : null,
                   color: beatButtonColor,
                   beatTypes: beats != null ? getBeatButtonsFromBeats(beats) : getBeatButtonsFromBeatsPoly(polyBeats!),
                   beatTypeIndex: index,
@@ -475,9 +474,9 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                   onTap: () {
                     setState(() {
                       if (beats != null) {
-                        beats[index] = _getBeatTypeOnTap(beats[index]);
+                        beats[index] = getBeatTypeOnTap(beats[index]);
                       } else {
-                        polyBeats![index] = _getBeatTypePolyOnTap(polyBeats[index]);
+                        polyBeats![index] = getBeatTypePolyOnTap(polyBeats[index]);
                       }
                       refreshRhythm();
                     });
@@ -494,8 +493,8 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                 : DecoratedBox(
                   decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ColorTheme.primary80)),
                   child: OnOffButton(
-                    isActive: _isPlaying,
-                    onTap: _startStopBeatPlayback,
+                    isActive: isPlaying,
+                    onTap: startStopBeatPlayback,
                     iconOff: Icons.play_arrow,
                     iconOn: TIOMusicParams.pauseIcon,
                     buttonSize: TIOMusicParams.sizeBigButtons,
@@ -507,39 +506,39 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     );
   }
 
-  void _startStopBeatPlayback() async {
-    if (_processingButtonClick) return;
-    setState(() => _processingButtonClick = true);
+  void startStopBeatPlayback() async {
+    if (processingButtonClick) return;
+    setState(() => processingButtonClick = true);
 
-    if (_isPlaying) {
-      await _stopBeat();
+    if (isPlaying) {
+      await stopBeat();
     } else {
-      await _startBeat();
+      await startBeat();
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
-    setState(() => _processingButtonClick = false);
+    setState(() => processingButtonClick = false);
   }
 
-  Future<void> _startBeat() async {
+  Future<void> startBeat() async {
     // set beat in rust
     refreshRhythm();
 
     await MetronomeFunctions.stop();
     final success = await MetronomeFunctions.start();
     if (!success) {
-      _logger.e('Unable to start metronome.');
+      logger.e('Unable to start metronome.');
       return;
     }
-    _isPlaying = true;
+    isPlaying = true;
   }
 
-  Future<void> _stopBeat() async {
+  Future<void> stopBeat() async {
     await metronomeStop();
-    _isPlaying = false;
+    isPlaying = false;
   }
 
-  BeatType _getBeatTypeOnTap(BeatType currentType) {
+  BeatType getBeatTypeOnTap(BeatType currentType) {
     if (currentType == BeatType.Accented) {
       return BeatType.Muted;
     } else if (currentType == BeatType.Unaccented) {
@@ -549,7 +548,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     }
   }
 
-  BeatTypePoly _getBeatTypePolyOnTap(BeatTypePoly currentType) {
+  BeatTypePoly getBeatTypePolyOnTap(BeatTypePoly currentType) {
     if (currentType == BeatTypePoly.Accented) {
       return BeatTypePoly.Muted;
     } else if (currentType == BeatTypePoly.Unaccented) {
@@ -560,7 +559,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   }
 
   void refreshRhythm() {
-    final bars = getRhythmAsMetroBar([RhythmGroup('', _beats, _polyBeats, _noteKey)]);
+    final bars = getRhythmAsMetroBar([RhythmGroup('', beats, polyBeats, noteKey)]);
     metronomeSetRhythm(bars: bars, bars2: []);
   }
 }
