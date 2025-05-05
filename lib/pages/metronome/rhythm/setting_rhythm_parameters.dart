@@ -13,6 +13,7 @@ import 'package:tiomusic/pages/metronome/rhythm/beat_circle.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm/note_table.dart';
+import 'package:tiomusic/pages/metronome/rhythm/rhythm_functions.dart';
 import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -58,7 +59,6 @@ class SetRhythmParameters extends StatefulWidget {
 }
 
 class _SetRhythmParametersState extends State<SetRhythmParameters> {
-  // TODO: add tests for helper functions
   static final logger = createPrefixLogger('SetRhythmParameters');
 
   late FileSystem fs;
@@ -176,29 +176,6 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
       await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
-
-  int getNextPolyBeatCount(int beatCount, int polyBeatCount) {
-    var next = polyBeatCount + 1;
-    while (beatCount > polyBeatCount ? beatCount % next != 0 : next % beatCount != 0) {
-      next++;
-    }
-    return next;
-  }
-
-  int getPrevPolyBeatCount(int beatCount, int polyBeatCount) {
-    var prev = polyBeatCount - 1;
-    if (prev == 0) return 0;
-    while (beatCount >= polyBeatCount ? beatCount % prev != 0 : prev % beatCount != 0) {
-      prev--;
-    }
-    return prev;
-  }
-
-  int getIncrementStepForPolyBeat(int beatCount, int polyBeatCount) =>
-      getNextPolyBeatCount(beatCount, polyBeatCount) - polyBeatCount;
-
-  int getDecrementStepForPolyBeat(int beatCount, int polyBeatCount) =>
-      polyBeatCount - getPrevPolyBeatCount(beatCount, polyBeatCount);
 
   void onBeatCountChange(int newBeatCount) {
     setState(() {
