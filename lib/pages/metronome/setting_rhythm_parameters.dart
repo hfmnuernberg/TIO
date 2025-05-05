@@ -9,7 +9,7 @@ import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
-import 'package:tiomusic/pages/metronome/beat_button.dart';
+import 'package:tiomusic/pages/metronome/beat_circle.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm_segment.dart';
@@ -23,13 +23,11 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/pages/metronome/rhythm_generator_setting_list_item.dart';
 import 'package:provider/provider.dart';
-import 'package:circular_widgets/circular_widgets.dart';
 import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
-import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tiomusic/widgets/small_icon_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -60,7 +58,6 @@ class SetRhythmParameters extends StatefulWidget {
 }
 
 class _SetRhythmParametersState extends State<SetRhythmParameters> {
-  // TODO: extract beat circle widget
   // TODO: add tests for helper functions
   static final logger = createPrefixLogger('SetRhythmParameters');
 
@@ -346,18 +343,41 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                     onPressed: toggleSimpleMode,
                   ),
                 ),
-                beatCircle(
-                  MediaQuery.of(context).size.width / 3,
-                  TIOMusicParams.beatButtonSizeBig,
+                BeatCircle(
                   beats: beats,
-                  ColorTheme.surfaceTint,
-                ),
-                beatCircle(
-                  MediaQuery.of(context).size.width / 5,
-                  TIOMusicParams.beatButtonSizeSmall,
                   polyBeats: polyBeats,
-                  ColorTheme.primary60,
+                  isMain: true,
+                  centerWidgetRadius: MediaQuery.of(context).size.width / 3,
+                  buttonSize: TIOMusicParams.beatButtonSizeBig,
+                  beatButtonColor: ColorTheme.surfaceTint,
+                  noInnerBorder: true,
+                  activeBeatsModel: activeBeatsModel,
+                  isPlaying: isPlaying,
+                  onStartStop: startStopBeatPlayback,
+                  onTapBeat: (index) {
+                    setState(() {
+                      beats[index] = getBeatTypeOnTap(beats[index]);
+                      refreshRhythm();
+                    });
+                  },
+                ),
+                BeatCircle(
+                  beats: beats,
+                  polyBeats: polyBeats,
+                  isMain: false,
+                  centerWidgetRadius: MediaQuery.of(context).size.width / 5,
+                  buttonSize: TIOMusicParams.beatButtonSizeSmall,
+                  beatButtonColor: ColorTheme.primary60,
                   noInnerBorder: false,
+                  activeBeatsModel: activeBeatsModel,
+                  isPlaying: isPlaying,
+                  onStartStop: startStopBeatPlayback,
+                  onTapBeat: (index) {
+                    setState(() {
+                      polyBeats[index] = getBeatTypePolyOnTap(polyBeats[index]);
+                      refreshRhythm();
+                    });
+                  },
                 ),
               ],
             ),
@@ -438,72 +458,6 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     stopBeat();
     MetronomeUtils.loadSounds(fs, widget.metronomeBlock);
     Navigator.pop(context);
-  }
-
-  Widget beatCircle(
-    double centerWidgetRadius,
-    double buttonSize,
-    Color beatButtonColor, {
-    List<BeatType>? beats,
-    List<BeatTypePoly>? polyBeats,
-    bool noInnerBorder = true,
-  }) {
-    return DecoratedBox(
-      decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ColorTheme.primary80)),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: CircularWidgets(
-          itemBuilder: (context, index) {
-            return ListenableBuilder(
-              listenable: activeBeatsModel,
-              builder: (context, child) {
-                var highlight = false;
-                if (beats != null && index == activeBeatsModel.mainBeat) {
-                  highlight = activeBeatsModel.mainBeatOn;
-                } else if (polyBeats != null && index == activeBeatsModel.polyBeat) {
-                  highlight = activeBeatsModel.polyBeatOn;
-                }
-
-                return BeatButton(
-                  key: beats != null && index == 0 ? keyToggleBeats : null,
-                  color: beatButtonColor,
-                  beatTypes: beats != null ? getBeatButtonsFromBeats(beats) : getBeatButtonsFromBeatsPoly(polyBeats!),
-                  beatTypeIndex: index,
-                  buttonSize: buttonSize,
-                  beatHighlighted: highlight,
-                  onTap: () {
-                    setState(() {
-                      if (beats != null) {
-                        beats[index] = getBeatTypeOnTap(beats[index]);
-                      } else {
-                        polyBeats![index] = getBeatTypePolyOnTap(polyBeats[index]);
-                      }
-                      refreshRhythm();
-                    });
-                  },
-                );
-              },
-            );
-          },
-          itemsLength: beats != null ? beats.length : polyBeats!.length,
-          config: CircularWidgetConfig(itemRadius: 16, centerWidgetRadius: centerWidgetRadius),
-          centerWidgetBuilder: (context) {
-            return noInnerBorder
-                ? Container()
-                : DecoratedBox(
-                  decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ColorTheme.primary80)),
-                  child: OnOffButton(
-                    isActive: isPlaying,
-                    onTap: startStopBeatPlayback,
-                    iconOff: Icons.play_arrow,
-                    iconOn: TIOMusicParams.pauseIcon,
-                    buttonSize: TIOMusicParams.sizeBigButtons,
-                  ),
-                );
-          },
-        ),
-      ),
-    );
   }
 
   void startStopBeatPlayback() async {
