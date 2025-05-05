@@ -229,11 +229,111 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     });
   }
 
+  void startStopBeatPlayback() async {
+    if (processingButtonClick) return;
+    setState(() => processingButtonClick = true);
+
+    if (isPlaying) {
+      await stopBeat();
+    } else {
+      await startBeat();
+    }
+
+    await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
+    setState(() => processingButtonClick = false);
+  }
+
+  Future<void> startBeat() async {
+    // set beat in rust
+    refreshRhythm();
+
+    await MetronomeFunctions.stop();
+    final success = await MetronomeFunctions.start();
+    if (!success) {
+      logger.e('Unable to start metronome.');
+      return;
+    }
+    isPlaying = true;
+  }
+
+  Future<void> stopBeat() async {
+    await metronomeStop();
+    isPlaying = false;
+  }
+
+  BeatType getBeatTypeOnTap(BeatType currentType) {
+    if (currentType == BeatType.Accented) {
+      return BeatType.Muted;
+    } else if (currentType == BeatType.Unaccented) {
+      return BeatType.Accented;
+    } else {
+      return BeatType.Unaccented;
+    }
+  }
+
+  BeatTypePoly getBeatTypePolyOnTap(BeatTypePoly currentType) {
+    if (currentType == BeatTypePoly.Accented) {
+      return BeatTypePoly.Muted;
+    } else if (currentType == BeatTypePoly.Unaccented) {
+      return BeatTypePoly.Accented;
+    } else {
+      return BeatTypePoly.Unaccented;
+    }
+  }
+
+  void refreshRhythm() {
+    final bars = getRhythmAsMetroBar([RhythmGroup('', beats, polyBeats, noteKey)]);
+    metronomeSetRhythm(bars: bars, bars2: []);
+  }
+
   void selectIcon(String chosenNoteKey) {
     setState(() {
       noteKey = chosenNoteKey;
       refreshRhythm();
     });
+  }
+
+  Future<void> onConfirm() async {
+    stopBeat();
+
+    if (widget.isAddingNewBar) {
+      widget.rhythmGroups.add(RhythmGroup(MetronomeParams.getNewKeyID(), beats, polyBeats, noteKey));
+    } else if (widget.barIndex != null) {
+      widget.rhythmGroups[widget.barIndex!].beats.clear();
+      for (var beat in beats) {
+        widget.rhythmGroups[widget.barIndex!].beats.add(beat);
+      }
+      widget.rhythmGroups[widget.barIndex!].polyBeats.clear();
+      for (var beat in polyBeats) {
+        widget.rhythmGroups[widget.barIndex!].polyBeats.add(beat);
+      }
+      widget.rhythmGroups[widget.barIndex!].noteKey = noteKey;
+      widget.rhythmGroups[widget.barIndex!].beatLen = NoteHandler.getBeatLength(noteKey);
+    }
+
+    MetronomeUtils.loadSounds(fs, widget.metronomeBlock);
+
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
+    Navigator.of(context).pop(true);
+  }
+
+  void reset() {
+    selectIcon(MetronomeParams.defaultNoteKey);
+    beatCount = MetronomeParams.defaultBeats.length;
+    polyBeatCount = MetronomeParams.defaultPolyBeats.length;
+
+    for (var i = 0; i < beats.length; i++) {
+      beats[i] = MetronomeParams.defaultBeats[i];
+    }
+
+    refreshRhythm();
+  }
+
+  void onCancel() {
+    stopBeat();
+    MetronomeUtils.loadSounds(fs, widget.metronomeBlock);
+    Navigator.pop(context);
   }
 
   @override
@@ -336,105 +436,5 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
         ),
       ),
     );
-  }
-
-  Future<void> onConfirm() async {
-    stopBeat();
-
-    if (widget.isAddingNewBar) {
-      widget.rhythmGroups.add(RhythmGroup(MetronomeParams.getNewKeyID(), beats, polyBeats, noteKey));
-    } else if (widget.barIndex != null) {
-      widget.rhythmGroups[widget.barIndex!].beats.clear();
-      for (var beat in beats) {
-        widget.rhythmGroups[widget.barIndex!].beats.add(beat);
-      }
-      widget.rhythmGroups[widget.barIndex!].polyBeats.clear();
-      for (var beat in polyBeats) {
-        widget.rhythmGroups[widget.barIndex!].polyBeats.add(beat);
-      }
-      widget.rhythmGroups[widget.barIndex!].noteKey = noteKey;
-      widget.rhythmGroups[widget.barIndex!].beatLen = NoteHandler.getBeatLength(noteKey);
-    }
-
-    MetronomeUtils.loadSounds(fs, widget.metronomeBlock);
-
-    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-    if (!mounted) return;
-    Navigator.of(context).pop(true);
-  }
-
-  void reset() {
-    selectIcon(MetronomeParams.defaultNoteKey);
-    beatCount = MetronomeParams.defaultBeats.length;
-    polyBeatCount = MetronomeParams.defaultPolyBeats.length;
-
-    for (var i = 0; i < beats.length; i++) {
-      beats[i] = MetronomeParams.defaultBeats[i];
-    }
-
-    refreshRhythm();
-  }
-
-  void onCancel() {
-    stopBeat();
-    MetronomeUtils.loadSounds(fs, widget.metronomeBlock);
-    Navigator.pop(context);
-  }
-
-  void startStopBeatPlayback() async {
-    if (processingButtonClick) return;
-    setState(() => processingButtonClick = true);
-
-    if (isPlaying) {
-      await stopBeat();
-    } else {
-      await startBeat();
-    }
-
-    await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
-    setState(() => processingButtonClick = false);
-  }
-
-  Future<void> startBeat() async {
-    // set beat in rust
-    refreshRhythm();
-
-    await MetronomeFunctions.stop();
-    final success = await MetronomeFunctions.start();
-    if (!success) {
-      logger.e('Unable to start metronome.');
-      return;
-    }
-    isPlaying = true;
-  }
-
-  Future<void> stopBeat() async {
-    await metronomeStop();
-    isPlaying = false;
-  }
-
-  BeatType getBeatTypeOnTap(BeatType currentType) {
-    if (currentType == BeatType.Accented) {
-      return BeatType.Muted;
-    } else if (currentType == BeatType.Unaccented) {
-      return BeatType.Accented;
-    } else {
-      return BeatType.Unaccented;
-    }
-  }
-
-  BeatTypePoly getBeatTypePolyOnTap(BeatTypePoly currentType) {
-    if (currentType == BeatTypePoly.Accented) {
-      return BeatTypePoly.Muted;
-    } else if (currentType == BeatTypePoly.Unaccented) {
-      return BeatTypePoly.Accented;
-    } else {
-      return BeatTypePoly.Unaccented;
-    }
-  }
-
-  void refreshRhythm() {
-    final bars = getRhythmAsMetroBar([RhythmGroup('', beats, polyBeats, noteKey)]);
-    metronomeSetRhythm(bars: bars, bars2: []);
   }
 }
