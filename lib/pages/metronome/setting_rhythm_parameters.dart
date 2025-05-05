@@ -12,6 +12,7 @@ import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/metronome/beat_circle.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
+import 'package:tiomusic/pages/metronome/note_table.dart';
 import 'package:tiomusic/pages/metronome/rhythm_segment.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -21,7 +22,6 @@ import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/pages/metronome/rhythm_generator_setting_list_item.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -236,82 +236,6 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     });
   }
 
-  Widget getNoteTable() {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Table(
-        border: const TableBorder(horizontalInside: BorderSide(color: ColorTheme.primary80)),
-        children: <TableRow>[
-          TableRow(
-            children: <Widget>[
-              getNoteButton(NoteValues.whole),
-              const SizedBox(),
-              const SizedBox(),
-              const SizedBox(),
-              const SizedBox(),
-            ],
-          ),
-          TableRow(
-            children: <Widget>[
-              getNoteButton(NoteValues.half),
-              getNoteButton(NoteValues.halfDotted),
-              getNoteButton(NoteValues.tuplet3Half),
-              const SizedBox(),
-              const SizedBox(),
-            ],
-          ),
-          TableRow(
-            children: <Widget>[
-              getNoteButton(NoteValues.quarter),
-              getNoteButton(NoteValues.quarterDotted),
-              getNoteButton(NoteValues.tuplet3Quarter),
-              const SizedBox(),
-              const SizedBox(),
-            ],
-          ),
-          TableRow(
-            children: <Widget>[
-              getNoteButton(NoteValues.eighth),
-              getNoteButton(NoteValues.eighthDotted),
-              getNoteButton(NoteValues.tuplet3Eighth),
-              const SizedBox(),
-              const SizedBox(),
-            ],
-          ),
-          TableRow(
-            children: <Widget>[
-              getNoteButton(NoteValues.sixteenth),
-              getNoteButton(NoteValues.sixteenthDotted),
-              getNoteButton(NoteValues.tuplet5Sixteenth),
-              getNoteButton(NoteValues.tuplet6Sixteenth),
-              getNoteButton(NoteValues.tuplet7Sixteenth),
-            ],
-          ),
-          TableRow(
-            children: <Widget>[
-              getNoteButton(NoteValues.thirtySecond),
-              getNoteButton(NoteValues.thirtySecondDotted),
-              const SizedBox(),
-              const SizedBox(),
-              const SizedBox(),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget getNoteButton(String noteKey) {
-    bool isSelected = false;
-    if (noteKey == noteKey) {
-      isSelected = true;
-    }
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: RhythmGeneratorSettingListItem(noteKey: noteKey, onTap: () => selectIcon(noteKey), hasBorder: isSelected),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -407,8 +331,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
               ],
             ),
 
-            // Show all note values
-            if (!isSimpleModeOn) getNoteTable(),
+            if (!isSimpleModeOn) NoteTable(selectedNoteKey: noteKey, onSelectNote: selectIcon),
           ],
         ),
       ),
