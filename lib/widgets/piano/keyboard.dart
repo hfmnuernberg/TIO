@@ -10,7 +10,7 @@ import 'package:tonic/tonic.dart';
 
 class Keyboard extends StatefulWidget {
   final int lowestNote;
-  final int? playedNote;
+  final Set<int> playedNotes;
 
   final List<Note> _notes;
   late final List<Note> _naturals;
@@ -23,21 +23,37 @@ class Keyboard extends StatefulWidget {
   Keyboard({
     super.key,
     required this.lowestNote,
-    required this.playedNote,
+    required this.playedNotes,
     required this.onPlay,
     required this.onRelease,
-  }) : _notes = _createNotes(lowestNote, playedNote) {
+  }) : _notes = createNotes(lowestNote, playedNotes) {
     _naturals = _notes.where((note) => note.isNatural).toList();
     _sharps = _notes.whereNot((note) => note.isNatural).toList();
-
-    _sharpsWithSpacing = [];
-    for (final note in _sharps) {
-      _sharpsWithSpacing.add(note);
-      if (note.name.startsWith('D') || note.name.startsWith('A')) _sharpsWithSpacing.add(null);
-    }
+    _sharpsWithSpacing = createSharpsWithSpacing(lowestNote, playedNotes);
   }
 
-  static List<Note> _createNotes(int lowestNote, int? playedNote) {
+  static List<Note> createNaturals(int lowestNote, Set<int> playedNotes) =>
+      createNotes(lowestNote, playedNotes).where((note) => note.isNatural).toList();
+
+  static List<Note> createSharps(int lowestNote, Set<int> playedNotes) =>
+      createSharpsWithSpacing(lowestNote, playedNotes).nonNulls.toList();
+
+  static List<Note?> createSharpsWithSpacing(int lowestNote, Set<int> playedNotes) {
+    final notes = createNotes(lowestNote, playedNotes);
+    final sharpsWithSpacing = <Note?>[];
+    for (final (index, note) in notes.indexed) {
+      if (index >= notes.length - 1) break;
+      if (!note.isNatural) continue;
+      if (notes[index + 1].isNatural) {
+        sharpsWithSpacing.add(null);
+      } else {
+        sharpsWithSpacing.add(notes[index + 1]);
+      }
+    }
+    return sharpsWithSpacing;
+  }
+
+  static List<Note> createNotes(int lowestNote, Set<int> playedNotes) {
     final notes = <Note>[];
     int currentNote = lowestNote;
     int naturalNotesRemaining = PianoParams.numberOfWhiteKeys;
@@ -49,7 +65,7 @@ class Keyboard extends StatefulWidget {
           note: currentNote,
           name: Pitch.fromMidiNumber(currentNote).toString(),
           isNatural: isNatural,
-          isPlayed: currentNote == playedNote,
+          isPlayed: playedNotes.contains(currentNote),
         ),
       );
       currentNote++;
@@ -65,28 +81,50 @@ class _KeyboardState extends State<Keyboard> {
   Size? keyboardSize;
   final Map<int, Rect> keyBoundaries = {};
 
+  @override
+  void didUpdateWidget(covariant Keyboard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (keyboardSize == null) return;
+    if (widget.lowestNote == oldWidget.lowestNote) return;
+
+    final keyWidth = keyboardSize!.width / PianoParams.numberOfWhiteKeys;
+    final keyHeight = keyboardSize!.height;
+    updateKeyBoundaries(keyWidth, keyHeight);
+  }
+
   void handlePlay(int note) => widget.onPlay(note);
 
   void handleRelease(int note) => widget.onRelease(note);
 
   void handlePointerUp(PointerEvent event) {
     if (!isWithinKeyboard(event.localPosition)) {
-      if (widget.playedNote != null) handleRelease(widget.playedNote!);
+      releaseAllPlayedNotes();
+      return;
     }
 
     final note = findPlayedNote(event.localPosition);
     if (note == null) return;
-    if (note.note == widget.playedNote) handleRelease(note.note);
+    if (widget.playedNotes.contains(note.note)) handleRelease(note.note);
   }
 
   void handlePointerMove(PointerEvent event) {
     if (!isWithinKeyboard(event.localPosition)) {
-      if (widget.playedNote != null) handleRelease(widget.playedNote!);
+      releaseAllPlayedNotes();
+      return;
     }
 
     final note = findPlayedNote(event.localPosition);
     if (note == null) return;
-    if (note.note != widget.playedNote) handlePlay(note.note);
+    if (!widget.playedNotes.contains(note.note)) {
+      releaseAllPlayedNotes();
+      handlePlay(note.note);
+    }
+  }
+
+  void releaseAllPlayedNotes() {
+    for (final note in widget.playedNotes.toList()) {
+      handleRelease(note);
+    }
   }
 
   bool isWithinKeyboard(Offset position) {
@@ -167,7 +205,6 @@ class _KeyboardState extends State<Keyboard> {
                                     width: keyWidth,
                                     height: keyHeight / 2,
                                     borderWidth: 4,
-                                    label: note.note % PianoParams.numberOfWhiteKeys == 0 ? note.name : null,
                                     onPlay: () => handlePlay(note.note),
                                     onRelease: () => handleRelease(note.note),
                                   ),

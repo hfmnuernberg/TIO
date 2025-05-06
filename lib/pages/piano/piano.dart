@@ -56,7 +56,7 @@ class _PianoState extends State<Piano> {
   late double _concertPitch = _pianoBlock.concertPitch;
   late String _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n);
 
-  int? _currentlyPlayedNote;
+  final Set<int> _playedNotes = {};
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
@@ -117,13 +117,13 @@ class _PianoState extends State<Piano> {
 
   void _playNoteOn(int note) {
     pianoNoteOn(note: note);
-    _currentlyPlayedNote = note;
+    _playedNotes.add(note);
     setState(() {});
   }
 
   void _playNoteOff(int note) {
     pianoNoteOff(note: note);
-    _currentlyPlayedNote = null;
+    _playedNotes.remove(note);
     setState(() {});
   }
 
@@ -443,7 +443,7 @@ class _PianoState extends State<Piano> {
                       return Expanded(
                         child: Keyboard(
                           lowestNote: pianoBlock.keyboardPosition,
-                          playedNote: _currentlyPlayedNote,
+                          playedNotes: _playedNotes,
                           onPlay: _playNoteOn,
                           onRelease: _playNoteOff,
                         ),
