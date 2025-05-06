@@ -45,9 +45,11 @@ coverageMeasureRandom() { $FLUTTER test --coverage --test-randomize-ordering-see
 coverageOpen() { open coverage/html/index.html; }
 coveragePrint() { lcov --summary coverage/lcov.info; }
 coverageValidate() {
-  result=$($DART run test_cov_console --pass="$2")
-  echo "$result"
-  if echo "$result" | grep -q "PASSED"; then true; else exit 1; fi
+  total=$(lcov --summary coverage/lcov.info | awk '/lines.......:/{print $2}' | tr -d '%')
+  threshold=$2
+  echo "Coverage:  $total%"
+  echo "Threshold: $threshold%"
+  awk -v cov="$total" -v th="$threshold" 'BEGIN {exit (cov >= th) ? 0 : 1}'
 }
 
 deleteLockFiles() {
