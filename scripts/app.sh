@@ -45,7 +45,7 @@ coverageMeasureRandom() { $FLUTTER test --coverage --test-randomize-ordering-see
 coverageOpen() { open coverage/html/index.html; }
 coveragePrint() { lcov --summary coverage/lcov.info; }
 coverageValidate() {
-  total=$(lcov --summary coverage/lcov.info | awk '/lines.......:/{print $2}' | tr -d '%')
+  total=$(lcov --summary coverage/lcov.info | awk '/lines[ .]*:/{print $2}' | tr -d '%')
   threshold=$2
   echo "Coverage:  $total%"
   echo "Threshold: $threshold%"
