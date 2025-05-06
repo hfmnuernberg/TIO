@@ -9,6 +9,7 @@ import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
+import 'package:tiomusic/pages/metronome/beat_button.dart';
 import 'package:tiomusic/pages/metronome/rhythm/beat_circle.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
@@ -343,15 +344,14 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                   ),
                 ),
                 BeatCircle(
-                  beats: beats,
-                  polyBeats: polyBeats,
-                  isMain: true,
+                  beatCount: beats.length,
+                  beatTypes: getBeatButtonsFromBeats(beats),
                   centerWidgetRadius: MediaQuery.of(context).size.width / 3,
                   buttonSize: TIOMusicParams.beatButtonSizeBig,
                   beatButtonColor: ColorTheme.surfaceTint,
                   noInnerBorder: true,
-                  activeBeatsModel: activeBeatsModel,
                   isPlaying: isPlaying,
+                  currentBeatIndex: activeBeatsModel.mainBeatOn ? activeBeatsModel.mainBeat : null,
                   onStartStop: startStopBeatPlayback,
                   onTapBeat: (index) {
                     setState(() {
@@ -361,15 +361,14 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                   },
                 ),
                 BeatCircle(
-                  beats: beats,
-                  polyBeats: polyBeats,
-                  isMain: false,
+                  beatCount: polyBeats.length,
+                  beatTypes: getBeatButtonsFromBeatsPoly(polyBeats),
                   centerWidgetRadius: MediaQuery.of(context).size.width / 5,
                   buttonSize: TIOMusicParams.beatButtonSizeSmall,
                   beatButtonColor: ColorTheme.primary60,
                   noInnerBorder: false,
-                  activeBeatsModel: activeBeatsModel,
                   isPlaying: isPlaying,
+                  currentBeatIndex: activeBeatsModel.polyBeatOn ? activeBeatsModel.polyBeat : null,
                   onStartStop: startStopBeatPlayback,
                   onTapBeat: (index) {
                     setState(() {
