@@ -43,17 +43,17 @@ Future<String> copyAssetToTemp(FileSystem fs, String assetPath) async {
 // format the settings into Text that can be displayed
 
 String formatSettingValues(List settingValues) {
-  String resultString = '';
+  final buffer = StringBuffer();
   bool firstTime = true;
   for (dynamic settingValue in settingValues) {
     if (firstTime) {
       firstTime = false;
     } else {
-      resultString = '$resultString\n';
+      buffer.write('\n');
     }
-    resultString = '$resultString$settingValue';
+    buffer.write('$settingValue');
   }
-  return resultString;
+  return buffer.toString();
 }
 
 // ---------------------------------------------------------------
