@@ -46,9 +46,8 @@ class _ProjectsListState extends State<ProjectsList> {
   late FileReferences _fileReferences;
   late ProjectRepository _projectRepo;
 
-  final List<MenuItemButton> _menuItems = List.empty(growable: true);
-
   bool _showBanner = false;
+  bool _isEditing = false;
 
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyAddProjectButton = GlobalKey();
@@ -63,38 +62,6 @@ class _ProjectsListState extends State<ProjectsList> {
     _projectRepo = context.read<ProjectRepository>();
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (_menuItems.isEmpty) {
-      final l10n = context.l10n;
-
-      _menuItems.addAll([
-        MenuItemButton(
-          onPressed: _aboutPagePressed,
-          child: Text(l10n.homeAbout, style: const TextStyle(color: ColorTheme.primary)),
-        ),
-        MenuItemButton(
-          onPressed: _feedbackPagePressed,
-          child: Text(l10n.homeFeedback, style: const TextStyle(color: ColorTheme.primary)),
-        ),
-        MenuItemButton(
-          onPressed: () => importProject(context),
-          child: Text(l10n.projectsImport, style: const TextStyle(color: ColorTheme.primary)),
-        ),
-        MenuItemButton(
-          onPressed: _handleDeleteAllProjects,
-          child: Text(l10n.projectsDeleteAll, style: const TextStyle(color: ColorTheme.primary)),
-        ),
-        MenuItemButton(
-          onPressed: _showTutorialAgainPressed,
-          child: Text(l10n.projectsTutorialStart, style: const TextStyle(color: ColorTheme.primary)),
-        ),
-      ]);
-    }
 
     _showTutorial();
   }
@@ -147,6 +114,26 @@ class _ProjectsListState extends State<ProjectsList> {
       context.read<ProjectLibrary>().showHomepageTutorial = false;
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
+  }
+
+  void _toggleEditingMode() => setState(() => _isEditing = !_isEditing);
+
+  void addNewProject() async {
+    final l10n = context.l10n;
+    final newTitle = await showEditTextDialog(
+      context: context,
+      label: l10n.projectsNew,
+      value: l10n.formatDateAndTime(DateTime.now()),
+      isNew: true,
+    );
+    if (newTitle == null) return;
+
+    final newProject = Project.defaultPicture(newTitle);
+    if (context.mounted) {
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }
+
+    _goToProjectPage(newProject, true);
   }
 
   void _aboutPagePressed() {
@@ -408,6 +395,43 @@ class _ProjectsListState extends State<ProjectsList> {
     final l10n = context.l10n;
     final blockTypes = getBlockTypeInfos(l10n);
 
+    final menuItems = [
+      MenuItemButton(
+        onPressed: _aboutPagePressed,
+        child: Text(context.l10n.homeAbout, style: const TextStyle(color: ColorTheme.primary)),
+      ),
+      MenuItemButton(
+        onPressed: _feedbackPagePressed,
+        child: Text(l10n.homeFeedback, style: const TextStyle(color: ColorTheme.primary)),
+      ),
+      MenuItemButton(
+        onPressed: () => importProject(context),
+        child: Text(l10n.projectsImport, style: const TextStyle(color: ColorTheme.primary)),
+      ),
+      MenuItemButton(
+        onPressed: () {
+          setState(() => _isEditing = false);
+          addNewProject();
+        },
+        child: Text(context.l10n.projectsAddNew, style: TextStyle(color: ColorTheme.primary)),
+      ),
+      MenuItemButton(
+        onPressed: _toggleEditingMode,
+        child: Text(
+          _isEditing ? context.l10n.projectsEditDone : context.l10n.projectsEdit,
+          style: TextStyle(color: ColorTheme.primary),
+        ),
+      ),
+      MenuItemButton(
+        onPressed: _handleDeleteAllProjects,
+        child: Text(l10n.projectsDeleteAll, style: const TextStyle(color: ColorTheme.primary)),
+      ),
+      MenuItemButton(
+        onPressed: _showTutorialAgainPressed,
+        child: Text(l10n.projectsTutorialStart, style: const TextStyle(color: ColorTheme.primary)),
+      ),
+    ];
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -417,22 +441,7 @@ class _ProjectsListState extends State<ProjectsList> {
         foregroundColor: ColorTheme.primary,
         leading: IconButton(
           key: _keyAddProjectButton,
-          onPressed: () async {
-            final newTitle = await showEditTextDialog(
-              context: context,
-              label: l10n.projectsNew,
-              value: l10n.formatDateAndTime(DateTime.now()),
-              isNew: true,
-            );
-            if (newTitle == null) return;
-
-            final newProject = Project.defaultPicture(newTitle);
-            if (context.mounted) {
-              await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-            }
-
-            _goToProjectPage(newProject, true);
-          },
+          onPressed: addNewProject,
           icon: const Icon(Icons.add),
           tooltip: l10n.projectsNew,
         ),
@@ -451,7 +460,7 @@ class _ProjectsListState extends State<ProjectsList> {
               backgroundColor: WidgetStatePropertyAll(ColorTheme.surface),
               elevation: WidgetStatePropertyAll(0),
             ),
-            menuChildren: _menuItems,
+            menuChildren: menuItems,
           ),
         ],
       ),
