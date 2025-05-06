@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 
@@ -175,7 +176,7 @@ class PianoBlock extends ProjectBlock {
   }
 
   @override
-  get icon => PianoParams.icon;
+  Widget get icon => PianoParams.icon;
 
   factory PianoBlock.fromJson(Map<String, dynamic> json) => _$PianoBlockFromJson(json);
 

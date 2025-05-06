@@ -12,7 +12,7 @@ formatter:
 
 linter:
   rules:
-#    always_declare_return_types: true # 19
+    always_declare_return_types: true
 #    always_put_required_named_parameters_first: true # 152
     always_use_package_imports: true
     avoid_annotating_with_dynamic: true
@@ -68,7 +68,7 @@ linter:
 #    prefer_expression_function_bodies: true # 138
 #    prefer_final_in_for_each: true # 12
 #    prefer_final_locals: true # 154
-    prefer_foreach: true # 5
+    prefer_foreach: true
     prefer_if_elements_to_conditional_expressions: true
     prefer_int_literals: true
     prefer_mixin: true

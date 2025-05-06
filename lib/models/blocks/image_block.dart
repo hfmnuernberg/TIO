@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path/path.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
@@ -93,5 +94,5 @@ class ImageBlock extends ProjectBlock {
   Map<String, dynamic> toJson() => _$ImageBlockToJson(this);
 
   @override
-  get icon => ImageParams.icon;
+  Widget get icon => ImageParams.icon;
 }

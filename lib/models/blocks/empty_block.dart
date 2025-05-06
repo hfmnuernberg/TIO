@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:tiomusic/models/project_block.dart';
 
 // ignore_for_file: must_be_immutable // FIXME: fix these block issues
@@ -54,7 +55,7 @@ class EmptyBlock extends ProjectBlock {
   }
 
   @override
-  get icon => {};
+  Widget get icon => const SizedBox.shrink();
 
   @override
   Map<String, dynamic> toJson() => {};
