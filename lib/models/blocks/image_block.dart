@@ -70,14 +70,6 @@ class ImageBlock extends ProjectBlock {
   @override
   List<String> getSettingsFormatted(AppLocalizations l10n) => [basename(_relativePath)];
 
-  factory ImageBlock.withDefaults(AppLocalizations l10n) {
-    return ImageBlock(l10n.image, ProjectBlock.createNewId(), null, ImageParams.defaultPath, DateTime.now());
-  }
-
-  factory ImageBlock.withTitle(String title) {
-    return ImageBlock(title, ProjectBlock.createNewId(), null, ImageParams.defaultPath, DateTime.now());
-  }
-
   ImageBlock(String title, String id, String? islandToolID, String relativePath, DateTime timeLastModified) {
     _timeLastModified = timeLastModified;
     _title = title;
@@ -85,6 +77,14 @@ class ImageBlock extends ProjectBlock {
     _islandToolID = islandToolID;
     _id = ProjectBlock.getIdOrCreateNewId(id);
     notifyListeners();
+  }
+
+  factory ImageBlock.withDefaults(AppLocalizations l10n) {
+    return ImageBlock(l10n.image, ProjectBlock.createNewId(), null, ImageParams.defaultPath, DateTime.now());
+  }
+
+  factory ImageBlock.withTitle(String title) {
+    return ImageBlock(title, ProjectBlock.createNewId(), null, ImageParams.defaultPath, DateTime.now());
   }
 
   factory ImageBlock.fromJson(Map<String, dynamic> json) => _$ImageBlockFromJson(json);
