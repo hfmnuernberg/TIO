@@ -8,7 +8,7 @@ int _getNextPolyBeatCount(int beatCount, int polyBeatCount) {
 
 int _getPrevPolyBeatCount(int beatCount, int polyBeatCount) {
   var prev = polyBeatCount - 1;
-  if (prev == 0) return 0;
+  if (prev <= 0) return 0;
   while (beatCount >= polyBeatCount ? beatCount % prev != 0 : prev % beatCount != 0) {
     prev--;
   }
@@ -16,11 +16,9 @@ int _getPrevPolyBeatCount(int beatCount, int polyBeatCount) {
 }
 
 int getIncrementStepForPolyBeat(int beatCount, int polyBeatCount) {
-  if (beatCount <= 0 || polyBeatCount <= 0) return 1;
   return _getNextPolyBeatCount(beatCount, polyBeatCount) - polyBeatCount;
 }
 
 int getDecrementStepForPolyBeat(int beatCount, int polyBeatCount) {
-  if (beatCount <= 0 || polyBeatCount <= 0) return 1;
   return polyBeatCount - _getPrevPolyBeatCount(beatCount, polyBeatCount);
 }

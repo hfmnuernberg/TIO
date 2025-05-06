@@ -31,10 +31,10 @@ class TestWrapper extends StatefulWidget {
   });
 
   @override
-  State<TestWrapper> createState() => _TestWrapperState();
+  State<TestWrapper> createState() => TestWrapperState();
 }
 
-class _TestWrapperState extends State<TestWrapper> {
+class TestWrapperState extends State<TestWrapper> {
   late int value;
 
   @override
