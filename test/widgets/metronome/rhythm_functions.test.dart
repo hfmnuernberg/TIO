@@ -24,11 +24,14 @@ void main() {
         expect(getIncrementStepForPolyBeat(6, 3), 3);
       });
 
-      test('increment step is difference to next multiple of beat count when beat count is higher than poly beat count', () {
-        expect(getIncrementStepForPolyBeat(5, 1), 4);
-        expect(getIncrementStepForPolyBeat(12, 3), 1);
-        expect(getIncrementStepForPolyBeat(12, 6), 6);
-      });
+      test(
+        'increment step is difference to next multiple of beat count when beat count is higher than poly beat count',
+        () {
+          expect(getIncrementStepForPolyBeat(5, 1), 4);
+          expect(getIncrementStepForPolyBeat(12, 3), 1);
+          expect(getIncrementStepForPolyBeat(12, 6), 6);
+        },
+      );
 
       test('increment step is one when poly beat count is zero', () {
         expect(getIncrementStepForPolyBeat(1, 0), 1);
@@ -72,17 +75,23 @@ void main() {
         expect(getDecrementStepForPolyBeat(3, 6), 3);
       });
 
-      test('decrement step is difference to previous multiple of beat count when poly beat count equal to beat count', () {
-        expect(getDecrementStepForPolyBeat(5, 5), 4);
-        expect(getDecrementStepForPolyBeat(8, 8), 4);
-        expect(getDecrementStepForPolyBeat(9, 9), 6);
-      });
+      test(
+        'decrement step is difference to previous multiple of beat count when poly beat count equal to beat count',
+        () {
+          expect(getDecrementStepForPolyBeat(5, 5), 4);
+          expect(getDecrementStepForPolyBeat(8, 8), 4);
+          expect(getDecrementStepForPolyBeat(9, 9), 6);
+        },
+      );
 
-      test('decrement step is difference to previous multiple of beat count when beat count is higher than poly beat count', () {
-        expect(getDecrementStepForPolyBeat(5, 1), 1);
-        expect(getDecrementStepForPolyBeat(12, 3), 1);
-        expect(getDecrementStepForPolyBeat(12, 6), 2);
-      });
+      test(
+        'decrement step is difference to previous multiple of beat count when beat count is higher than poly beat count',
+        () {
+          expect(getDecrementStepForPolyBeat(5, 1), 1);
+          expect(getDecrementStepForPolyBeat(12, 3), 1);
+          expect(getDecrementStepForPolyBeat(12, 6), 2);
+        },
+      );
 
       test('decrement step is one when poly beat count is zero', () {
         expect(getDecrementStepForPolyBeat(1, 0), 1);

@@ -31,13 +31,7 @@ class _TestWrapper extends StatefulWidget {
   final double max;
   final double step;
 
-  const _TestWrapper({
-    required this.value,
-    this.onChange,
-    this.min = 0.0,
-    this.max = 100.0,
-    this.step = 1.0,
-  });
+  const _TestWrapper({required this.value, this.onChange, this.min = 0.0, this.max = 100.0, this.step = 1.0});
 
   @override
   State<_TestWrapper> createState() => _TestWrapperState();
