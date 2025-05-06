@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -19,6 +17,7 @@ import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
 import 'package:tiomusic/pages/projects_page/import_project.dart';
+import 'package:tiomusic/pages/projects_page/project_list.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -27,7 +26,6 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
-import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
@@ -491,39 +489,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                   top: TIOMusicParams.bigSpaceAboveList,
                                   bottom: TIOMusicParams.bigSpaceAboveList / 2,
                                 ),
-                                child: ListView.builder(
-                                  itemCount: projectLibrary.projects.length,
-                                  itemBuilder: (context, idx) {
-                                    return CardListTile(
-                                      title: projectLibrary.projects[idx].title,
-                                      subtitle: l10n.formatDateAndTime(projectLibrary.projects[idx].timeLastModified),
-                                      trailingIcon: IconButton(
-                                        tooltip: l10n.projectDetails,
-                                        icon: const Icon(Icons.arrow_forward),
-                                        color: ColorTheme.primaryFixedDim,
-                                        onPressed: () {
-                                          _goToProjectPage(projectLibrary.projects[idx], false);
-                                        },
-                                      ),
-                                      menuIconOne: IconButton(
-                                        tooltip: l10n.projectDelete,
-                                        icon: const Icon(Icons.delete_outlined),
-                                        color: ColorTheme.surfaceTint,
-                                        onPressed: () => _handleDeleteProject(idx),
-                                      ),
-                                      leadingPicture:
-                                          projectLibrary.projects[idx].thumbnailPath.isEmpty
-                                              ? const AssetImage(TIOMusicParams.tiomusicIconPath)
-                                              : FileImage(
-                                                File(
-                                                  _fs.toAbsoluteFilePath(projectLibrary.projects[idx].thumbnailPath),
-                                                ),
-                                              ),
-                                      onTapFunction: () {
-                                        _goToProjectPage(projectLibrary.projects[idx], false);
-                                      },
-                                    );
-                                  },
+                                child: ProjectList(
+                                  fs: _fs,
+                                  projectLibrary: projectLibrary,
+                                  onGoToProject: _goToProjectPage,
+                                  onDeleteProject: _handleDeleteProject,
                                 ),
                               ),
                 ),
