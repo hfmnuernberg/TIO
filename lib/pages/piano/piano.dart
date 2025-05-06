@@ -31,13 +31,6 @@ import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tiomusic/widgets/piano/keyboard.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-class Key {
-  final int note;
-  final Rect boundary;
-
-  Key(this.note, this.boundary);
-}
-
 class Piano extends StatefulWidget {
   final bool isQuickTool;
   final bool withoutInitAndStart;
@@ -435,11 +428,9 @@ class _PianoState extends State<Piano> {
                       ),
                     ],
                   ),
-                  // keys
                   Consumer<ProjectBlock>(
                     builder: (context, projectBlock, child) {
                       final pianoBlock = projectBlock as PianoBlock;
-                      // return SizedBox();
                       return Expanded(
                         child: Keyboard(
                           lowestNote: pianoBlock.keyboardPosition,

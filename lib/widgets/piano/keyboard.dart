@@ -132,11 +132,11 @@ class _KeyboardState extends State<Keyboard> {
     return Rect.fromLTWH(0, 0, keyboardSize!.width, keyboardSize!.height).contains(position);
   }
 
-  Note? findPlayedNote(Offset position) => findPlayedSharps(position) ?? findPlayedNatural(position);
+  Note? findPlayedNote(Offset position) => findPlayedSharp(position) ?? findPlayedNatural(position);
 
   Note? findPlayedNatural(Offset position) => findPlayedNoteInNotes(widget._naturals, position);
 
-  Note? findPlayedSharps(Offset position) => findPlayedNoteInNotes(widget._sharps, position);
+  Note? findPlayedSharp(Offset position) => findPlayedNoteInNotes(widget._sharps, position);
 
   Note? findPlayedNoteInNotes(List<Note> notes, Offset position) => notes.firstWhereOrNull(
     (note) => keyBoundaries.containsKey(note.note) && keyBoundaries[note.note]!.contains(position),

@@ -115,4 +115,4 @@ jobs:
         run: scripts/app.sh coverage:print
 
       - name: Validate coverage
-        run: scripts/app.sh coverage:validate 13
+        run: scripts/app.sh coverage:validate 14
