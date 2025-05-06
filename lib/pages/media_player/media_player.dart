@@ -526,7 +526,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       isActive: _isPlaying,
       onTap: _togglePlaying,
       buttonSize: buttonSize,
-      iconOff: _mediaPlayerBlock.icon.icon!,
+      iconOff: (_mediaPlayerBlock.icon as Icon).icon!,
       iconOn: TIOMusicParams.pauseIcon,
       isDisabled: _isLoading,
     );

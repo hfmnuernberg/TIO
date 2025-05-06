@@ -21,7 +21,7 @@ class ToolNavigationBar extends StatelessWidget {
     final sameTools = tools.where((block) => block.kind == toolBlock.kind).toList();
     final sameToolsIndex = sameTools.indexOf(toolBlock);
 
-    replaceTool(ProjectBlock tool, {bool ltr = false}) =>
+    Future<void> replaceTool(ProjectBlock tool, {bool ltr = false}) =>
         goToTool(context, project, tool, replace: true, transitionLeftToRight: ltr);
 
     return _ToolNavigationBar(

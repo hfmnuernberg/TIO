@@ -7,14 +7,14 @@ class FilePickerMock extends Mock implements FilePicker {
 
   FilePickerMock([this._fs]);
 
-  mockPickArchive(String? path) => when(pickArchive).thenAnswer((_) async => path);
-  mockPickAudio(String? path) => when(pickAudio).thenAnswer((_) async => path);
-  mockPickImage(String? path) => when(pickImage).thenAnswer((_) async => path);
-  mockPickTextFile(String? path) => when(pickTextFile).thenAnswer((_) async => path);
+  void mockPickArchive(String? path) => when(pickArchive).thenAnswer((_) async => path);
+  void mockPickAudio(String? path) => when(pickAudio).thenAnswer((_) async => path);
+  void mockPickImage(String? path) => when(pickImage).thenAnswer((_) async => path);
+  void mockPickTextFile(String? path) => when(pickTextFile).thenAnswer((_) async => path);
 
-  mockShareFile(bool success) => when(() => shareFile(any())).thenAnswer((invocation) async => success);
+  void mockShareFile(bool success) => when(() => shareFile(any())).thenAnswer((invocation) async => success);
 
-  mockShareFileAndCapture(String path) => when(() => shareFile(any())).thenAnswer((invocation) async {
+  void mockShareFileAndCapture(String path) => when(() => shareFile(any())).thenAnswer((invocation) async {
     if (_fs == null) return false;
     final lastSharedFilePath = invocation.positionalArguments.first as String?;
     if (lastSharedFilePath == null) return false;

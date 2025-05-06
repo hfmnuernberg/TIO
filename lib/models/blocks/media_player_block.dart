@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path/path.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
@@ -216,7 +217,7 @@ class MediaPlayerBlock extends ProjectBlock {
   }
 
   @override
-  get icon => MediaPlayerParams.icon;
+  Widget get icon => MediaPlayerParams.icon;
 
   factory MediaPlayerBlock.fromJson(Map<String, dynamic> json) => _$MediaPlayerBlockFromJson(json);
 

@@ -1,6 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
-
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -98,7 +98,7 @@ class TunerBlock extends ProjectBlock {
   }
 
   @override
-  get icon => TunerParams.icon;
+  Widget get icon => TunerParams.icon;
 
   factory TunerBlock.fromJson(Map<String, dynamic> json) => _$TunerBlockFromJson(json);
 
