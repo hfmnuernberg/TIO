@@ -24,10 +24,10 @@ class TestWrapper extends StatefulWidget {
   const TestWrapper({super.key, this.label = 'Label', this.value = 'n/a', this.isNew = false});
 
   @override
-  State<TestWrapper> createState() => TestWrapperState();
+  State<TestWrapper> createState() => _TestWrapperState();
 }
 
-class TestWrapperState extends State<TestWrapper> {
+class _TestWrapperState extends State<TestWrapper> {
   late String _text;
 
   @override
