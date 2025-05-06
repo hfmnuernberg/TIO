@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:tiomusic/pages/projects_list/projects_list.dart';
+import 'package:tiomusic/pages/projects_page/projects_page.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 
@@ -30,6 +30,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(resizeToAvoidBottomInset: false, body: ProjectsList());
+    return const Scaffold(resizeToAvoidBottomInset: false, body: ProjectsPage());
   }
 }

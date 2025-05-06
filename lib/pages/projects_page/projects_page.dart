@@ -18,7 +18,7 @@ import 'package:tiomusic/pages/media_player/media_player.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
-import 'package:tiomusic/pages/projects_list/import_project.dart';
+import 'package:tiomusic/pages/projects_page/import_project.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -34,14 +34,16 @@ import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ProjectsList extends StatefulWidget {
-  const ProjectsList({super.key});
+class ProjectsPage extends StatefulWidget {
+  const ProjectsPage({super.key});
 
   @override
-  State<ProjectsList> createState() => _ProjectsListState();
+  State<ProjectsPage> createState() => _ProjectsPageState();
 }
 
-class _ProjectsListState extends State<ProjectsList> {
+class _ProjectsPageState extends State<ProjectsPage> {
+  // TODO: _getSurveyBanner into own file
+  // TODO: _quickToolButton into own file
   late FileSystem _fs;
   late FileReferences _fileReferences;
   late ProjectRepository _projectRepo;
