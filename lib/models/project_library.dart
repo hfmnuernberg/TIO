@@ -12,6 +12,7 @@ class ProjectLibrary extends ChangeNotifier {
   late List<Project> _projects;
   @JsonKey(defaultValue: [])
   UnmodifiableListView<Project> get projects => UnmodifiableListView(_projects);
+  set projects(List<Project> newProjects) => _projects = newProjects;
 
   late int _visitedToolsCounter;
   @JsonKey(defaultValue: 0)

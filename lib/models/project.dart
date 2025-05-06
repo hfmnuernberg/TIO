@@ -11,11 +11,15 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:uuid/uuid.dart';
 
 part 'project.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Project extends ChangeNotifier {
+  @JsonKey(defaultValue: '')
+  final String id;
+
   late String _title;
   @JsonKey(defaultValue: 'Default Title')
   String get title => _title;
@@ -79,13 +83,20 @@ class Project extends ChangeNotifier {
 
   late DateTime timeLastModified;
 
-  Project(String title, this._blocks, String thumbnailPath, this.timeLastModified, Map<String, int> toolCounter) {
+  Project(
+    this.id,
+    String title,
+    this._blocks,
+    String thumbnailPath,
+    this.timeLastModified,
+    Map<String, int> toolCounter,
+  ) {
     _title = title;
     _thumbnailPath = thumbnailPath;
     _toolCounter = toolCounter;
   }
 
-  Project.defaultPicture(String title) {
+  Project.defaultPicture(String title) : id = const Uuid().v4() {
     timeLastModified = DateTime.now();
     _title = title;
     _toolCounter = {

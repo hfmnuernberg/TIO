@@ -18,6 +18,7 @@ import 'package:tiomusic/pages/media_player/media_player.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
+import 'package:tiomusic/pages/projects_page/editable_project_list.dart';
 import 'package:tiomusic/pages/projects_page/import_project.dart';
 import 'package:tiomusic/pages/projects_page/project_list.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
@@ -120,6 +121,21 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
   void _toggleEditingMode() => setState(() => _isEditing = !_isEditing);
 
+  Future<void> _handleReorder(int oldIndex, int newIndex) async {
+    if (newIndex > oldIndex) newIndex--;
+
+    final projectLibrary = context.read<ProjectLibrary>();
+
+    final mutableList = projectLibrary.projects.toList();
+    final project = mutableList.removeAt(oldIndex);
+    mutableList.insert(newIndex, project);
+    projectLibrary.projects = mutableList;
+
+    await _projectRepo.saveLibrary(projectLibrary);
+
+    setState(() {});
+  }
+
   void addNewProject() async {
     final l10n = context.l10n;
     final newTitle = await showEditTextDialog(
@@ -132,10 +148,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
     final newProject = Project.defaultPicture(newTitle);
     if (context.mounted) {
+      // TODO: fix async gap warning
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }
 
-    _goToProjectPage(newProject, true);
+    _handleGoToProject(newProject, true);
   }
 
   void _aboutPagePressed() {
@@ -260,7 +277,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
     },
   );
 
-  void _handleDeleteProject(int index) async {
+  void _handleDelete(int index) async {
     bool? isConfirmed = await _confirmDeleteProject();
     if (isConfirmed != true) return;
 
@@ -319,7 +336,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         .then(doActionOnReturn);
   }
 
-  Future<void> _goToProjectPage(Project project, bool withoutRealProject) async {
+  Future<void> _handleGoToProject(Project project, bool withoutRealProject) async {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
         builder:
@@ -497,12 +514,20 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                   top: TIOMusicParams.bigSpaceAboveList,
                                   bottom: TIOMusicParams.bigSpaceAboveList / 2,
                                 ),
-                                child: ProjectList(
-                                  projectLibrary: projectLibrary,
-                                  projectThumbnails: _generateThumbnails(projectLibrary),
-                                  onGoToProject: _goToProjectPage,
-                                  onDeleteProject: _handleDeleteProject,
-                                ),
+                                child:
+                                    _isEditing
+                                        ? EditableProjectList(
+                                          projectLibrary: projectLibrary,
+                                          projectThumbnails: _generateThumbnails(projectLibrary),
+                                          onGoToProject: _handleGoToProject,
+                                          onDelete: _handleDelete,
+                                          onReorder: _handleReorder,
+                                        )
+                                        : ProjectList(
+                                          projectLibrary: projectLibrary,
+                                          projectThumbnails: _generateThumbnails(projectLibrary),
+                                          onGoToProject: _handleGoToProject,
+                                        ),
                               ),
                 ),
               ),

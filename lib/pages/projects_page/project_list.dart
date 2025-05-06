@@ -9,14 +9,12 @@ class ProjectList extends StatelessWidget {
   final ProjectLibrary projectLibrary;
   final List<ImageProvider<Object>> projectThumbnails;
   final void Function(Project project, bool withoutProject) onGoToProject;
-  final void Function(int index) onDeleteProject;
 
   const ProjectList({
     super.key,
     required this.projectLibrary,
     required this.projectThumbnails,
     required this.onGoToProject,
-    required this.onDeleteProject,
   });
 
   @override
@@ -25,24 +23,18 @@ class ProjectList extends StatelessWidget {
 
     return ListView.builder(
       itemCount: projectLibrary.projects.length,
-      itemBuilder: (context, idx) {
+      itemBuilder: (context, index) {
         return CardListTile(
-          title: projectLibrary.projects[idx].title,
-          subtitle: l10n.formatDateAndTime(projectLibrary.projects[idx].timeLastModified),
+          title: projectLibrary.projects[index].title,
+          subtitle: l10n.formatDateAndTime(projectLibrary.projects[index].timeLastModified),
           trailingIcon: IconButton(
             tooltip: l10n.projectDetails,
             icon: const Icon(Icons.arrow_forward),
             color: ColorTheme.primaryFixedDim,
-            onPressed: () => onGoToProject(projectLibrary.projects[idx], false),
+            onPressed: () => onGoToProject(projectLibrary.projects[index], false),
           ),
-          menuIconOne: IconButton(
-            tooltip: l10n.projectDelete,
-            icon: const Icon(Icons.delete_outlined),
-            color: ColorTheme.surfaceTint,
-            onPressed: () => onDeleteProject(idx),
-          ),
-          leadingPicture: projectThumbnails[idx],
-          onTapFunction: () => onGoToProject(projectLibrary.projects[idx], false),
+          leadingPicture: projectThumbnails[index],
+          onTapFunction: () => onGoToProject(projectLibrary.projects[index], false),
         );
       },
     );
