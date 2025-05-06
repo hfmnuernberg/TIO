@@ -241,6 +241,7 @@ class _ProjectPageState extends State<ProjectPage> {
   Widget _buildProjectPage(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      extendBody: true,
       appBar: AppBar(
         title: GestureDetector(
           onTap: () async {

@@ -163,7 +163,7 @@ class MetronomeParams {
   // Size of Rhythm Segments
   static const double rhythmSegmentSize = 48;
   // Maximum number of beats
-  static const int maxNumBeats = 20;
+  static const int maxBeatCount = 20;
   // Button radius in popup window
   static const double popupButtonRadius = 20;
   // Text font size in popup window
