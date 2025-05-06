@@ -122,9 +122,7 @@ class _KeyboardState extends State<Keyboard> {
   }
 
   void releaseAllPlayedNotes() {
-    for (final note in widget.playedNotes.toList()) {
-      handleRelease(note);
-    }
+    widget.playedNotes.toList().forEach(handleRelease);
   }
 
   bool isWithinKeyboard(Offset position) {
