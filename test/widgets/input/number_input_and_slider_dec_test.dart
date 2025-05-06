@@ -65,6 +65,7 @@ class _TestWrapperState extends State<_TestWrapper> {
       min: widget.min,
       max: widget.max,
       step: widget.step,
+      label: 'Test',
     );
   }
 }
