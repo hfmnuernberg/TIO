@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -390,6 +392,12 @@ class _ProjectsPageState extends State<ProjectsPage> {
     );
   }
 
+  List<ImageProvider<Object>> _generateThumbnails(ProjectLibrary projectLibrary) =>
+      projectLibrary.projects.map<ImageProvider<Object>>((project) {
+        if (project.thumbnailPath.isEmpty) return const AssetImage(TIOMusicParams.tiomusicIconPath);
+        return FileImage(File(_fs.toAbsoluteFilePath(project.thumbnailPath)));
+      }).toList();
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -490,8 +498,8 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                   bottom: TIOMusicParams.bigSpaceAboveList / 2,
                                 ),
                                 child: ProjectList(
-                                  fs: _fs,
                                   projectLibrary: projectLibrary,
+                                  projectThumbnails: _generateThumbnails(projectLibrary),
                                   onGoToProject: _goToProjectPage,
                                   onDeleteProject: _handleDeleteProject,
                                 ),

@@ -1,24 +1,20 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 
 class ProjectList extends StatelessWidget {
-  final FileSystem fs;
   final ProjectLibrary projectLibrary;
+  final List<ImageProvider<Object>> projectThumbnails;
   final void Function(Project project, bool withoutProject) onGoToProject;
   final void Function(int index) onDeleteProject;
 
   const ProjectList({
     super.key,
-    required this.fs,
     required this.projectLibrary,
+    required this.projectThumbnails,
     required this.onGoToProject,
     required this.onDeleteProject,
   });
@@ -45,10 +41,7 @@ class ProjectList extends StatelessWidget {
             color: ColorTheme.surfaceTint,
             onPressed: () => onDeleteProject(idx),
           ),
-          leadingPicture:
-              projectLibrary.projects[idx].thumbnailPath.isEmpty
-                  ? const AssetImage(TIOMusicParams.tiomusicIconPath)
-                  : FileImage(File(fs.toAbsoluteFilePath(projectLibrary.projects[idx].thumbnailPath))),
+          leadingPicture: projectThumbnails[idx],
           onTapFunction: () => onGoToProject(projectLibrary.projects[idx], false),
         );
       },
