@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
@@ -37,7 +37,7 @@ abstract class ProjectBlock extends ChangeNotifier with EquatableMixin {
   set islandToolID(String? newToolID);
 
   @IconSerialiser()
-  get icon;
+  Widget get icon;
 
   ProjectBlock();
 

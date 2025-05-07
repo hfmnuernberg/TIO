@@ -35,7 +35,7 @@ class _AboutPageState extends State<AboutPage> {
     }
   }
 
-  _showAppVersion() {
+  Widget _showAppVersion() {
     if (_isLoading) return const Center(child: CircularProgressIndicator());
     if (_packageInfo == null) return TextSection(content: context.l10n.appAboutVersionError);
     return TextSection(content: '${_packageInfo!.version} (${_packageInfo!.buildNumber})');

@@ -12,16 +12,16 @@ formatter:
 
 linter:
   rules:
-#    always_declare_return_types: true
-#    always_put_required_named_parameters_first: true
+    always_declare_return_types: true
+#    always_put_required_named_parameters_first: true # 152
     always_use_package_imports: true
     avoid_annotating_with_dynamic: true
     avoid_bool_literals_in_conditional_expressions: true
-#    avoid_classes_with_only_static_members: true
+#    avoid_classes_with_only_static_members: true # 7
     avoid_escaping_inner_quotes: true
     avoid_field_initializers_in_const_classes: true
     avoid_final_parameters: true
-#    avoid_positional_boolean_parameters: true
+#    avoid_positional_boolean_parameters: true # 12
     avoid_redundant_argument_values: true
     avoid_returning_this: true
     avoid_setters_without_getters: true
@@ -29,9 +29,9 @@ linter:
     avoid_type_to_string: true
     avoid_types_on_closure_parameters: true
     avoid_unused_constructor_parameters: true
-#    avoid_void_async: true
+#    avoid_void_async: true # 39
     cancel_subscriptions: true
-#    cascade_invocations: true
+#    cascade_invocations: true # 22
     cast_nullable_to_non_nullable: true
     close_sinks: true
     combinators_ordering: true
@@ -39,8 +39,8 @@ linter:
     conditional_uri_does_not_exist: true
     deprecated_consistency: true
     deprecated_member_use_from_same_package: true
-#    directives_ordering: true
-#    discarded_futures: true
+#    directives_ordering: true # 18
+#    discarded_futures: true # 99
     do_not_use_environment: true
     document_ignores: true
     eol_at_end_of_file: true
@@ -56,35 +56,35 @@ linter:
     no_runtimetype_tostring: true
     no_self_assignments: true
     noop_primitive_operations: true
-#    omit_local_variable_types: true
+#    omit_local_variable_types: true # 118
     one_member_abstracts: true
-#    only_throw_errors: true
-#    parameter_assignments: true
+#    only_throw_errors: true # 12
+#    parameter_assignments: true # 6
     prefer_asserts_in_initializer_lists: true
-#    prefer_const_constructors: true
+#    prefer_const_constructors: true # 131
     prefer_const_declarations: true
     prefer_const_literals_to_create_immutables: true
     prefer_constructors_over_static_methods: true
-#    prefer_expression_function_bodies: true
-#    prefer_final_in_for_each: true
-#    prefer_final_locals: true
-#    prefer_foreach: true
+#    prefer_expression_function_bodies: true # 138
+#    prefer_final_in_for_each: true # 12
+#    prefer_final_locals: true # 154
+    prefer_foreach: true
     prefer_if_elements_to_conditional_expressions: true
     prefer_int_literals: true
     prefer_mixin: true
-#    prefer_null_aware_method_calls: true
+#    prefer_null_aware_method_calls: true # 9
     prefer_single_quotes: true
     prefer_void_to_null: true
     require_trailing_commas: false # we prefer the current default behavior
     sized_box_shrink_expand: true
-#    sort_constructors_first: true
+#    sort_constructors_first: true # 123
     sort_pub_dependencies: true
-#    sort_unnamed_constructors_first: true
-#    strict_top_level_inference: true
+    sort_unnamed_constructors_first: true
+#    strict_top_level_inference: true # 21
     throw_in_finally: true
     tighten_type_of_initializing_formals: true
-#    type_annotate_public_apis: true
-#    unawaited_futures: true
+#    type_annotate_public_apis: true # 20
+#    unawaited_futures: true # 70
     unnecessary_await_in_return: true
     unnecessary_breaks: true
     unnecessary_lambdas: true
@@ -103,7 +103,7 @@ linter:
     use_named_constants: true
     use_raw_strings: true
     use_setters_to_change_properties: true
-#    use_string_buffers: true
+    use_string_buffers: true
     use_test_throws_matchers: true
     use_to_and_as_if_applicable: true
     use_truncating_division: true
