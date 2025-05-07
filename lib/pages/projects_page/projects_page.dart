@@ -21,6 +21,7 @@ import 'package:tiomusic/pages/project_page/project_page.dart';
 import 'package:tiomusic/pages/projects_page/editable_project_list.dart';
 import 'package:tiomusic/pages/projects_page/import_project.dart';
 import 'package:tiomusic/pages/projects_page/project_list.dart';
+import 'package:tiomusic/pages/projects_page/survey_banner.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -33,7 +34,6 @@ import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ProjectsPage extends StatefulWidget {
   const ProjectsPage({super.key});
@@ -43,7 +43,6 @@ class ProjectsPage extends StatefulWidget {
 }
 
 class _ProjectsPageState extends State<ProjectsPage> {
-  // TODO: _getSurveyBanner into own file
   // TODO: _quickToolButton into own file
   late FileSystem _fs;
   late FileReferences _fileReferences;
@@ -147,10 +146,10 @@ class _ProjectsPageState extends State<ProjectsPage> {
     if (newTitle == null) return;
 
     final newProject = Project.defaultPicture(newTitle);
-    if (context.mounted) {
-      // TODO: fix async gap warning
-      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    }
+
+    if (!mounted) return;
+
+    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
     _handleGoToProject(newProject, true);
   }
@@ -349,66 +348,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
     doActionOnReturn(result);
   }
 
-  Widget _getSurveyBanner() {
-    final l10n = context.l10n;
-
-    return Positioned(
-      left: 0,
-      top: 0,
-      width: MediaQuery.of(context).size.width,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        elevation: 8,
-        margin: const EdgeInsets.all(TIOMusicParams.edgeInset),
-        color: ColorTheme.onPrimary,
-        surfaceTintColor: ColorTheme.onPrimary,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(l10n.feedbackQuestion, style: TextStyle(color: ColorTheme.surfaceTint)),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () async {
-                      final Uri url = Uri.parse('https://cloud9.evasys.de/hfmn/online.php?p=Q2TYV');
-                      if (await launchUrl(url) && mounted) {
-                        _showBanner = false;
-                        context.read<ProjectLibrary>().neverShowSurveyAgain = true;
-                        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-                        setState(() {});
-                      }
-                    },
-                    child: Text(l10n.feedbackCta),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      _showBanner = false;
-
-                      // show banner a second and third time and then never again
-                      var projectLibrary = context.read<ProjectLibrary>();
-                      projectLibrary.idxCheckShowSurvey++;
-                      if (projectLibrary.idxCheckShowSurvey >= projectLibrary.showSurveyAtVisits.length) {
-                        projectLibrary.neverShowSurveyAgain = true;
-                      }
-                      await _projectRepo.saveLibrary(projectLibrary);
-
-                      setState(() {});
-                    },
-                    icon: const Icon(Icons.close, color: ColorTheme.surfaceTint),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   List<ImageProvider<Object>> _generateThumbnails(ProjectLibrary projectLibrary) =>
       projectLibrary.projects.map<ImageProvider<Object>>((project) {
         if (project.thumbnailPath.isEmpty) return const AssetImage(TIOMusicParams.tiomusicIconPath);
@@ -561,7 +500,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
               ),
             ],
           ),
-          if (_showBanner) _getSurveyBanner() else const SizedBox(),
+          if (_showBanner) SurveyBanner(onClose: () => setState(() => _showBanner = false)) else const SizedBox(),
         ],
       ),
     );
