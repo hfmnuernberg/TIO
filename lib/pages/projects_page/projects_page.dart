@@ -21,6 +21,7 @@ import 'package:tiomusic/pages/project_page/project_page.dart';
 import 'package:tiomusic/pages/projects_page/editable_project_list.dart';
 import 'package:tiomusic/pages/projects_page/import_project.dart';
 import 'package:tiomusic/pages/projects_page/project_list.dart';
+import 'package:tiomusic/pages/projects_page/quick_tool_button.dart';
 import 'package:tiomusic/pages/projects_page/survey_banner.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/services/file_references.dart';
@@ -43,7 +44,6 @@ class ProjectsPage extends StatefulWidget {
 }
 
 class _ProjectsPageState extends State<ProjectsPage> {
-  // TODO: _quickToolButton into own file
   late FileSystem _fs;
   late FileReferences _fileReferences;
   late ProjectRepository _projectRepo;
@@ -480,19 +480,31 @@ class _ProjectsPageState extends State<ProjectsPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _quickToolButton(blockTypes[BlockType.metronome]!.icon, l10n.metronome, BlockType.metronome),
-                        _quickToolButton(
-                          blockTypes[BlockType.mediaPlayer]!.icon,
-                          l10n.mediaPlayer,
-                          BlockType.mediaPlayer,
+                        QuickToolButton(
+                          icon: blockTypes[BlockType.metronome]!.icon,
+                          label: l10n.metronome,
+                          onTap: () => _onQuickToolTapped(BlockType.metronome),
+                        ),
+                        QuickToolButton(
+                          icon: blockTypes[BlockType.mediaPlayer]!.icon,
+                          label: l10n.mediaPlayer,
+                          onTap: () => _onQuickToolTapped(BlockType.mediaPlayer),
                         ),
                       ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _quickToolButton(blockTypes[BlockType.tuner]!.icon, l10n.tuner, BlockType.tuner),
-                        _quickToolButton(blockTypes[BlockType.piano]!.icon, l10n.piano, BlockType.piano),
+                        QuickToolButton(
+                          icon: blockTypes[BlockType.tuner]!.icon,
+                          label: l10n.tuner,
+                          onTap: () => _onQuickToolTapped(BlockType.tuner),
+                        ),
+                        QuickToolButton(
+                          icon: blockTypes[BlockType.piano]!.icon,
+                          label: l10n.piano,
+                          onTap: () => _onQuickToolTapped(BlockType.piano),
+                        ),
                       ],
                     ),
                   ],
@@ -502,32 +514,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
           ),
           if (_showBanner) SurveyBanner(onClose: () => setState(() => _showBanner = false)) else const SizedBox(),
         ],
-      ),
-    );
-  }
-
-  Widget _quickToolButton(icon, String label, BlockType block) {
-    return Padding(
-      padding: const EdgeInsets.all(2),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(color: ColorTheme.primary90),
-        ),
-        width: MediaQuery.of(context).size.width / 2 - TIOMusicParams.edgeInset,
-        child: InkWell(
-          onTap: () => _onQuickToolTapped(block),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                circleToolIcon(icon),
-                const SizedBox(width: 8),
-                Text(label, style: const TextStyle(color: ColorTheme.primary)),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
