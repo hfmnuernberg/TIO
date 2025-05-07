@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/metronome_sound.dart';
@@ -277,7 +278,7 @@ class MetronomeBlock extends ProjectBlock {
   }
 
   @override
-  get icon => MetronomeParams.icon;
+  Widget get icon => MetronomeParams.icon;
 
   factory MetronomeBlock.fromJson(Map<String, dynamic> json) => _$MetronomeBlockFromJson(json);
 

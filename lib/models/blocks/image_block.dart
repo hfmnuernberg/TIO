@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path/path.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
@@ -70,14 +71,6 @@ class ImageBlock extends ProjectBlock {
   @override
   List<String> getSettingsFormatted(AppLocalizations l10n) => [basename(_relativePath)];
 
-  factory ImageBlock.withDefaults(AppLocalizations l10n) {
-    return ImageBlock(l10n.image, ProjectBlock.createNewId(), null, ImageParams.defaultPath, DateTime.now());
-  }
-
-  factory ImageBlock.withTitle(String title) {
-    return ImageBlock(title, ProjectBlock.createNewId(), null, ImageParams.defaultPath, DateTime.now());
-  }
-
   ImageBlock(String title, String id, String? islandToolID, String relativePath, DateTime timeLastModified) {
     _timeLastModified = timeLastModified;
     _title = title;
@@ -87,11 +80,19 @@ class ImageBlock extends ProjectBlock {
     notifyListeners();
   }
 
+  factory ImageBlock.withDefaults(AppLocalizations l10n) {
+    return ImageBlock(l10n.image, ProjectBlock.createNewId(), null, ImageParams.defaultPath, DateTime.now());
+  }
+
+  factory ImageBlock.withTitle(String title) {
+    return ImageBlock(title, ProjectBlock.createNewId(), null, ImageParams.defaultPath, DateTime.now());
+  }
+
   factory ImageBlock.fromJson(Map<String, dynamic> json) => _$ImageBlockFromJson(json);
 
   @override
   Map<String, dynamic> toJson() => _$ImageBlockToJson(this);
 
   @override
-  get icon => ImageParams.icon;
+  Widget get icon => ImageParams.icon;
 }

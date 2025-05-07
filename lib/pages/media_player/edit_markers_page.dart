@@ -44,9 +44,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   void initState() {
     super.initState();
 
-    for (var pos in widget.mediaPlayerBlock.markerPositions) {
-      _markerPositions.add(pos);
-    }
+    widget.mediaPlayerBlock.markerPositions.forEach(_markerPositions.add);
 
     _positionDuration = widget.fileDuration * _sliderValue;
 
@@ -238,9 +236,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   Future<void> _onConfirm() async {
     widget.mediaPlayerBlock.markerPositions.clear();
-    for (var pos in _markerPositions) {
-      widget.mediaPlayerBlock.markerPositions.add(pos);
-    }
+    _markerPositions.forEach(widget.mediaPlayerBlock.markerPositions.add);
 
     await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     if (!mounted) return;

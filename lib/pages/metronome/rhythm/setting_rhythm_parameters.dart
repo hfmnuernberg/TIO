@@ -278,13 +278,11 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
       widget.rhythmGroups.add(RhythmGroup(MetronomeParams.getNewKeyID(), beats, polyBeats, noteKey));
     } else if (widget.barIndex != null) {
       widget.rhythmGroups[widget.barIndex!].beats.clear();
-      for (var beat in beats) {
-        widget.rhythmGroups[widget.barIndex!].beats.add(beat);
-      }
+      beats.forEach(widget.rhythmGroups[widget.barIndex!].beats.add);
+
       widget.rhythmGroups[widget.barIndex!].polyBeats.clear();
-      for (var beat in polyBeats) {
-        widget.rhythmGroups[widget.barIndex!].polyBeats.add(beat);
-      }
+      polyBeats.forEach(widget.rhythmGroups[widget.barIndex!].polyBeats.add);
+
       widget.rhythmGroups[widget.barIndex!].noteKey = noteKey;
       widget.rhythmGroups[widget.barIndex!].beatLen = NoteHandler.getBeatLength(noteKey);
     }
