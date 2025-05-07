@@ -344,12 +344,12 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                 BeatCircle(
                   beatCount: beats.length,
                   beatTypes: getBeatButtonsFromBeats(beats),
+                  currentBeatIndex: activeBeatsModel.mainBeatOn ? activeBeatsModel.mainBeat : null,
+                  isPlaying: isPlaying,
                   centerWidgetRadius: MediaQuery.of(context).size.width / 3,
                   buttonSize: TIOMusicParams.beatButtonSizeBig,
                   beatButtonColor: ColorTheme.surfaceTint,
                   noInnerBorder: true,
-                  isPlaying: isPlaying,
-                  currentBeatIndex: activeBeatsModel.mainBeatOn ? activeBeatsModel.mainBeat : null,
                   onStartStop: startStopBeatPlayback,
                   onTapBeat: (index) {
                     setState(() {
@@ -361,12 +361,12 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                 BeatCircle(
                   beatCount: polyBeats.length,
                   beatTypes: getBeatButtonsFromBeatsPoly(polyBeats),
+                  currentBeatIndex: activeBeatsModel.polyBeatOn ? activeBeatsModel.polyBeat : null,
+                  isPlaying: isPlaying,
                   centerWidgetRadius: MediaQuery.of(context).size.width / 5,
                   buttonSize: TIOMusicParams.beatButtonSizeSmall,
                   beatButtonColor: ColorTheme.primary60,
                   noInnerBorder: false,
-                  isPlaying: isPlaying,
-                  currentBeatIndex: activeBeatsModel.polyBeatOn ? activeBeatsModel.polyBeat : null,
                   onStartStop: startStopBeatPlayback,
                   onTapBeat: (index) {
                     setState(() {
