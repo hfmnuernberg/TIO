@@ -68,6 +68,8 @@ void main() {
     await tester.renderScaffold(ProjectsPage(), providers);
 
     await tester.createProject('Project 1');
+    await tester.tapAndSettle(find.byTooltip('Projects menu'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
     await tester.tapAndSettle(find.byTooltip('Delete project'));
     await tester.tapAndSettle(find.bySemanticsLabel('Yes'));
 

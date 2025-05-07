@@ -362,14 +362,17 @@ class _ProjectsPageState extends State<ProjectsPage> {
     final menuItems = [
       MenuItemButton(
         onPressed: _aboutPagePressed,
-        child: Text(context.l10n.homeAbout, style: const TextStyle(color: ColorTheme.primary)),
+        semanticsLabel: l10n.homeAbout,
+        child: Text(l10n.homeAbout, style: const TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
         onPressed: _feedbackPagePressed,
+        semanticsLabel: l10n.homeFeedback,
         child: Text(l10n.homeFeedback, style: const TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
         onPressed: () => importProject(context),
+        semanticsLabel: l10n.projectsImport,
         child: Text(l10n.projectsImport, style: const TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
@@ -377,21 +380,25 @@ class _ProjectsPageState extends State<ProjectsPage> {
           setState(() => _isEditing = false);
           addNewProject();
         },
-        child: Text(context.l10n.projectsAddNew, style: TextStyle(color: ColorTheme.primary)),
+        semanticsLabel: l10n.projectsAddNew,
+        child: Text(l10n.projectsAddNew, style: TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
         onPressed: _toggleEditingMode,
+        semanticsLabel: _isEditing ? l10n.projectsEditDone : l10n.projectsEdit,
         child: Text(
-          _isEditing ? context.l10n.projectsEditDone : context.l10n.projectsEdit,
+          _isEditing ? l10n.projectsEditDone : l10n.projectsEdit,
           style: TextStyle(color: ColorTheme.primary),
         ),
       ),
       MenuItemButton(
         onPressed: _handleDeleteAllProjects,
+        semanticsLabel: l10n.projectsDeleteAll,
         child: Text(l10n.projectsDeleteAll, style: const TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
         onPressed: _showTutorialAgainPressed,
+        semanticsLabel: l10n.projectsTutorialStart,
         child: Text(l10n.projectsTutorialStart, style: const TextStyle(color: ColorTheme.primary)),
       ),
     ];

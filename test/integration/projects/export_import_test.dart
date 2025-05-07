@@ -78,6 +78,8 @@ void main() {
 
     expect(find.bySemanticsLabel('Project 1'), findsOneWidget);
 
+    await tester.tapAndSettle(find.byTooltip('Projects menu'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
     await tester.tapAndSettle(find.byTooltip('Delete project'));
     await tester.tapAndSettle(find.bySemanticsLabel('Yes'));
 
@@ -88,6 +90,8 @@ void main() {
 
     expect(find.bySemanticsLabel('Project 1'), findsOneWidget);
 
+    await tester.tapAndSettle(find.byTooltip('Projects menu'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Finish editing'));
     await tester.tapAndSettle(find.byTooltip('Project details'));
   });
 }
