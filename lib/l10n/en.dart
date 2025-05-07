@@ -32,7 +32,6 @@ class English extends AppLocalizations {
   String get commonDelete => 'Delete?';
   String get commonGotIt => 'Got it';
   String get commonInput => 'input';
-  String get commonMenu => 'Menu';
   String get commonMinus => 'Minus button';
   String get commonNext => 'Next';
   String get commonNo => 'No';

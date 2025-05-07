@@ -32,7 +32,6 @@ class German extends AppLocalizations {
   String get commonDelete => 'Löschen?';
   String get commonGotIt => 'Verstanden';
   String get commonInput => 'Eingabefeld';
-  String get commonMenu => 'Menü';
   String get commonMinus => 'Minus-Schaltfläche';
   String get commonNext => 'Weiter';
   String get commonNo => 'Nein';

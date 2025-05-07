@@ -24,7 +24,6 @@ abstract class AppLocalizations {
   String get commonDelete;
   String get commonGotIt;
   String get commonInput;
-  String get commonMenu;
   String get commonMinus;
   String get commonNext;
   String get commonNo;
