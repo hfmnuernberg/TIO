@@ -76,7 +76,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   bool isPlaying = false;
   bool processingButtonClick = false;
-  bool isSimpleModeOn = false;
+  bool isSimpleModeOn = true;
 
   late Timer beatDetection;
   final ActiveBeatsModel activeBeatsModel = ActiveBeatsModel();
