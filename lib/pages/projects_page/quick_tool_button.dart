@@ -4,7 +4,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 
 class QuickToolButton extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String label;
   final VoidCallback onTap;
 
@@ -26,7 +26,7 @@ class QuickToolButton extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: Row(
               children: [
-                circleToolIcon(icon as Widget),
+                circleToolIcon(icon),
                 const SizedBox(width: 8),
                 Text(label, style: const TextStyle(color: ColorTheme.primary)),
               ],
