@@ -142,8 +142,30 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   }
 
   void toggleSimpleMode() {
-    setState(() => isSimpleModeOn = !isSimpleModeOn);
-    if (isSimpleModeOn) onPolyBeatCountChange(beatCount);
+    setState(() {
+      isSimpleModeOn = !isSimpleModeOn;
+
+      if (isSimpleModeOn) {
+        setAllBeatsUnaccented(beats);
+        setAllPolyBeatsUnaccented(polyBeats);
+
+        onPolyBeatCountChange(beatCount);
+      }
+
+      refreshRhythm();
+    });
+  }
+
+  void setAllBeatsUnaccented(List<BeatType> beats) {
+    for (int i = 0; i < beats.length; i++) {
+      beats[i] = BeatType.Unaccented;
+    }
+  }
+
+  void setAllPolyBeatsUnaccented(List<BeatTypePoly> polyBeats) {
+    for (int i = 0; i < polyBeats.length; i++) {
+      polyBeats[i] = BeatTypePoly.Unaccented;
+    }
   }
 
   // React to beat signal
