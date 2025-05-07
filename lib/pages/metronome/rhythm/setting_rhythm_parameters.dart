@@ -348,7 +348,9 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                   beatButtonColor: ColorTheme.surfaceTint,
                   noInnerBorder: true,
                   onStartStop: startStopBeatPlayback,
-                  onTapBeat: (index) {
+                  onTapBeat: isSimpleModeOn
+                      ? (_) {}
+                      : (index) {
                     setState(() {
                       beats[index] = getBeatTypeOnTap(beats[index]);
                       refreshRhythm();
@@ -365,12 +367,14 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                   beatButtonColor: ColorTheme.primary60,
                   noInnerBorder: false,
                   onStartStop: startStopBeatPlayback,
-                  onTapBeat: (index) {
-                    setState(() {
-                      polyBeats[index] = getBeatTypePolyOnTap(polyBeats[index]);
-                      refreshRhythm();
-                    });
-                  },
+                  onTapBeat: isSimpleModeOn
+                    ? (_) {}
+                    : (index) {
+                      setState(() {
+                        polyBeats[index] = getBeatTypePolyOnTap(polyBeats[index]);
+                        refreshRhythm();
+                      });
+                    },
                 ),
               ],
             ),
