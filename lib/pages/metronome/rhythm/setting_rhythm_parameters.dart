@@ -142,8 +142,8 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   }
 
   void toggleSimpleMode() {
-    if (isSimpleModeOn) onPolyBeatCountChange(beatCount);
     setState(() => isSimpleModeOn = !isSimpleModeOn);
+    if (isSimpleModeOn) onPolyBeatCountChange(beatCount);
   }
 
   // React to beat signal
