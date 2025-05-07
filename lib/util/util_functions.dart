@@ -367,9 +367,10 @@ Future<dynamic> goToTool(
     },
   );
 
-  final route = directionalPageRoute(page: page, transitionLeftToRight: transitionLeftToRight);
+  final route = MaterialPageRoute(builder: (context) => page);
+  final customRoute = DirectionalPageRoute(builder: (context) => page, transitionLeftToRight: transitionLeftToRight);
 
-  return replace ? Navigator.of(context).pushReplacement(route) : Navigator.of(context).push(route);
+  return replace ? Navigator.of(context).pushReplacement(customRoute) : Navigator.of(context).push(route);
 }
 
 // ---------------------------------------------------------------
