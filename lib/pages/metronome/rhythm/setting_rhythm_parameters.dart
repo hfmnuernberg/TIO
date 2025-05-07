@@ -334,10 +334,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                   top: 0,
                   right: 0,
                   child: SmallIconButton(
-                    icon: Icon(
-                      isSimpleModeOn ? Icons.music_note : Icons.music_note_outlined,
-                      color: ColorTheme.tertiary,
-                    ),
+                    icon: Icon(isSimpleModeOn ? Icons.music_note : Icons.tune, color: ColorTheme.tertiary),
                     onPressed: toggleSimpleMode,
                   ),
                 ),
