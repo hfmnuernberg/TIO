@@ -76,7 +76,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   bool isPlaying = false;
   bool processingButtonClick = false;
-  bool isSimpleModeOn = false;
+  bool isSimpleModeOn = true;
 
   late Timer beatDetection;
   final ActiveBeatsModel activeBeatsModel = ActiveBeatsModel();
@@ -142,8 +142,30 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   }
 
   void toggleSimpleMode() {
-    if (isSimpleModeOn) onPolyBeatCountChange(beatCount);
-    setState(() => isSimpleModeOn = !isSimpleModeOn);
+    setState(() {
+      isSimpleModeOn = !isSimpleModeOn;
+
+      if (isSimpleModeOn) {
+        setAllBeatsUnaccented(beats);
+        setAllPolyBeatsUnaccented(polyBeats);
+
+        onPolyBeatCountChange(beatCount);
+      }
+
+      refreshRhythm();
+    });
+  }
+
+  void setAllBeatsUnaccented(List<BeatType> beats) {
+    for (int i = 0; i < beats.length; i++) {
+      beats[i] = BeatType.Unaccented;
+    }
+  }
+
+  void setAllPolyBeatsUnaccented(List<BeatTypePoly> polyBeats) {
+    for (int i = 0; i < polyBeats.length; i++) {
+      polyBeats[i] = BeatTypePoly.Unaccented;
+    }
   }
 
   // React to beat signal
@@ -334,10 +356,7 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                   top: 0,
                   right: 0,
                   child: SmallIconButton(
-                    icon: Icon(
-                      isSimpleModeOn ? Icons.music_note : Icons.music_note_outlined,
-                      color: ColorTheme.tertiary,
-                    ),
+                    icon: Icon(isSimpleModeOn ? Icons.music_note : Icons.tune, color: ColorTheme.tertiary),
                     onPressed: toggleSimpleMode,
                   ),
                 ),
@@ -351,12 +370,15 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                   beatButtonColor: ColorTheme.surfaceTint,
                   noInnerBorder: true,
                   onStartStop: startStopBeatPlayback,
-                  onTapBeat: (index) {
-                    setState(() {
-                      beats[index] = getBeatTypeOnTap(beats[index]);
-                      refreshRhythm();
-                    });
-                  },
+                  onTapBeat:
+                      isSimpleModeOn
+                          ? (_) {}
+                          : (index) {
+                            setState(() {
+                              beats[index] = getBeatTypeOnTap(beats[index]);
+                              refreshRhythm();
+                            });
+                          },
                 ),
                 BeatCircle(
                   beatCount: polyBeats.length,
@@ -368,12 +390,15 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                   beatButtonColor: ColorTheme.primary60,
                   noInnerBorder: false,
                   onStartStop: startStopBeatPlayback,
-                  onTapBeat: (index) {
-                    setState(() {
-                      polyBeats[index] = getBeatTypePolyOnTap(polyBeats[index]);
-                      refreshRhythm();
-                    });
-                  },
+                  onTapBeat:
+                      isSimpleModeOn
+                          ? (_) {}
+                          : (index) {
+                            setState(() {
+                              polyBeats[index] = getBeatTypePolyOnTap(polyBeats[index]);
+                              refreshRhythm();
+                            });
+                          },
                 ),
               ],
             ),
