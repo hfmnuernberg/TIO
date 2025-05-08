@@ -68,13 +68,13 @@ jobs:
     - name: Analyze code
       run: scripts/app.sh analyze
 
-    - name: lint yaml files
+    - name: Analyze outdated dependencies
+      run: scripts/app.sh outdated
+
+    - name: Lint yaml files
       uses: ibiqlik/action-yamllint@v3.1.1
       with:
         strict: true
-
-    - name: Analyze outdated dependencies
-      run: scripts/app.sh outdated
 
     - name: Analyze files with too many lines
       run: scripts/app.sh analyze:files || true
