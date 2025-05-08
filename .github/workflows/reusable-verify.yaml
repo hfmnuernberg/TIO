@@ -15,6 +15,21 @@ on:
         description: The commit SHA, tag or release
 
 jobs:
+  lint-yaml:
+    name: Lint yaml files
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4.2.2
+      with:
+        ref: ${{ inputs.ref }}
+
+    - name: Lint yaml files
+      uses: ibiqlik/action-yamllint@v3.1.1
+      with:
+        strict: true
+
   static-code-analysis:
     name: Static Code Analysis
     runs-on: ubuntu-latest
@@ -70,11 +85,6 @@ jobs:
 
     - name: Analyze outdated dependencies
       run: scripts/app.sh outdated
-
-    - name: Lint yaml files
-      uses: ibiqlik/action-yamllint@v3.1.1
-      with:
-        strict: true
 
     - name: Analyze files with too many lines
       run: scripts/app.sh analyze:files || true
