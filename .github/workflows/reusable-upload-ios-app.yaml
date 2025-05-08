@@ -37,55 +37,55 @@ jobs:
       APPLE_APP_STORE_URL: 'https://testflight.apple.com/v1/app/${{ inputs.appIdentifier }}'
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4.2.2
-        with:
-          ref: ${{ inputs.ref }}
+    - name: Checkout code
+      uses: actions/checkout@v4.2.2
+      with:
+        ref: ${{ inputs.ref }}
 
-      - name: Restore bundle
-        uses: actions/download-artifact@v4.3.0
-        with:
-          name: ios-${{ inputs.version }}
-          path: build/ios/ipa
+    - name: Restore bundle
+      uses: actions/download-artifact@v4.3.0
+      with:
+        name: ios-${{ inputs.version }}
+        path: build/ios/ipa
 
-      - name: Setup ruby
-        uses: ruby/setup-ruby@v1.237.0
-        with:
-          ruby-version: '3.3'
-          working-directory: ios
-          bundler-cache: true
+    - name: Setup ruby
+      uses: ruby/setup-ruby@v1.237.0
+      with:
+        ruby-version: '3.3'
+        working-directory: ios
+        bundler-cache: true
 
-      - name: Create GitHub deployment
-        uses: chrnorm/deployment-action@v2.0.7
-        id: deployment
-        with:
-          token: '${{ github.token }}'
-          environment-url: ${{ env.APPLE_APP_STORE_URL }}
-          environment: production
+    - name: Create GitHub deployment
+      uses: chrnorm/deployment-action@v2.0.7
+      id: deployment
+      with:
+        token: '${{ github.token }}'
+        environment-url: ${{ env.APPLE_APP_STORE_URL }}
+        environment: production
 
-      - name: Prepare version
-        run: scripts/set-version-in-pubspec.sh ${{ inputs.version }}
+    - name: Prepare version
+      run: scripts/set-version-in-pubspec.sh ${{ inputs.version }}
 
-      - name: Upload bundle
-        uses: maierj/fastlane-action@v3.1.0
-        with:
-          lane: push_to_store
-          subdirectory: ios
+    - name: Upload bundle
+      uses: maierj/fastlane-action@v3.1.0
+      with:
+        lane: push_to_store
+        subdirectory: ios
 
-      - name: Update deployment status (success)
-        if: success()
-        uses: chrnorm/deployment-status@v2.0.3
-        with:
-          token: '${{ github.token }}'
-          environment-url: ${{ env.APPLE_APP_STORE_URL }}
-          state: 'success'
-          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+    - name: Update deployment status (success)
+      if: success()
+      uses: chrnorm/deployment-status@v2.0.3
+      with:
+        token: '${{ github.token }}'
+        environment-url: ${{ env.APPLE_APP_STORE_URL }}
+        state: 'success'
+        deployment-id: ${{ steps.deployment.outputs.deployment_id }}
 
-      - name: Update deployment status (failure)
-        if: failure()
-        uses: chrnorm/deployment-status@v2.0.3
-        with:
-          token: '${{ github.token }}'
-          environment-url: ${{ env.APPLE_APP_STORE_URL }}
-          state: 'failure'
-          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+    - name: Update deployment status (failure)
+      if: failure()
+      uses: chrnorm/deployment-status@v2.0.3
+      with:
+        token: '${{ github.token }}'
+        environment-url: ${{ env.APPLE_APP_STORE_URL }}
+        state: 'failure'
+        deployment-id: ${{ steps.deployment.outputs.deployment_id }}

@@ -60,5 +60,6 @@ jobs:
     - name: Create summary
       run: |
         echo "Semantic Version: **${{ steps.old.outputs.semver }}**" >> $GITHUB_STEP_SUMMARY
-        echo "Build Number: **${{ steps.old.outputs.buildNumber }} -> ${{ steps.new.outputs.buildNumber }}**" >> $GITHUB_STEP_SUMMARY
+        echo "Build Number: **${{ steps.old.outputs.buildNumber }} -> ${{ steps.new.outputs.buildNumber }}**" >> \
+          $GITHUB_STEP_SUMMARY
         echo "New Version:      **${{ steps.new.outputs.version }}**" >> $GITHUB_STEP_SUMMARY

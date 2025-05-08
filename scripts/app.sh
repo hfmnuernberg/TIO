@@ -19,11 +19,13 @@ getTestCommand() {
   echo "$command"
 }
 
-analyze() { $FLUTTER analyze lib test; }
+analyze() { analyzeDart; analyzeYaml; }
+analyzeDart() { $FLUTTER analyze lib test; }
 analyzeFiles() { scripts/analyze-files-with-too-many-lines.sh .; }
 analyzeFix() { $DART fix --apply --code="$2"; }
 analyzeFixDryRun() { $DART fix --dry-run; }
 analyzeTodos() { scripts/analyze-todos-and-fixmes.sh .; }
+analyzeYaml() { yamllint .; }
 
 build() { shift; scripts/build.sh "$@"; }
 
@@ -134,11 +136,13 @@ help() {
   echo
   echo 'Commands:'
   echo
-  echo 'analyze                                       - run static code analysis (lint)'
+  echo 'analyze                                       - analyze code and yaml files'
+  echo 'analyze:dart                                  - run static code analysis (lint)'
   echo 'analyze:files                                 - analyze files with too many lines of code'
   echo 'analyze:fix <rule>                            - fix static code analysis rule violations'
   echo 'analyze:fix:dry                               - simulates fixing static code analysis rule violations'
   echo 'analyze:todos                                 - analyze TODOs and FIXMEs in code'
+  echo 'analyze:yaml                                  - analyze yaml files'
   echo 'build <platform> [<mode>]                     - build app for ios or android'
   echo 'clean                                         - clean build'
   echo 'coverage                                      - measure and open test coverage report'
@@ -147,7 +151,7 @@ help() {
   echo 'coverage:measure:random                       - run all tests in random order and measure test coverage'
   echo 'coverage:open                                 - open test coverage report from previous test run'
   echo 'coverage:print                                - print test coverage report from previous test run to console'
-  echo 'coverage:validate <integer>                   - validates the total test coverage against the given threshold'
+  echo 'coverage:validate <decimal>                   - validates the total test coverage against the given threshold'
   echo 'delete:lock                                   - delete lock files'
   echo 'doctor                                        - run flutter doctor'
   echo 'format                                        - format code'
@@ -165,9 +169,11 @@ help() {
   echo 'install:rust:packages                         - install Rust packages'
   echo 'install:rust:targets                          - install Rust targets'
   echo 'lint                                          - synonym for analyze'
+  echo 'lint:dart                                     - synonym for analyze:flutter'
   echo 'lint:files                                    - synonym for analyze:files'
   echo 'lint:fix <rule>                               - synonym for analyze:fix'
   echo 'lint:fix:dry                                  - synonym for analyze:fix:dry'
+  echo 'lint:yaml                                     - synonym for analyze:yaml'
   echo 'lint:todos                                    - synonym for analyze:todos'
   echo 'outdated                                      - list outdated dependencies'
   echo 'refresh                                       - clean, install, generate, run'
@@ -182,10 +188,12 @@ help() {
 }
 
 if [ "$1" = 'analyze' ]; then analyze; exit; fi
+if [ "$1" = 'analyze:dart' ]; then analyzeDart; exit; fi
 if [ "$1" = 'analyze:files' ]; then analyzeFiles; exit; fi
 if [ "$1" = 'analyze:fix' ]; then analyzeFix "$@"; exit; fi
 if [ "$1" = 'analyze:fix:dry' ]; then analyzeFixDryRun; exit; fi
 if [ "$1" = 'analyze:todos' ]; then analyzeTodos; exit; fi
+if [ "$1" = 'analyze:yaml' ]; then analyzeYaml; exit; fi
 if [ "$1" = 'build' ]; then build "$@"; exit; fi
 if [ "$1" = 'clean' ]; then clean; exit; fi
 if [ "$1" = 'coverage' ]; then coverage; exit; fi
@@ -212,10 +220,12 @@ if [ "$1" = 'install:rust:flutter-rust-bridge-codegen' ]; then installFlutterRus
 if [ "$1" = 'install:rust:packages' ]; then installRustPackages; exit; fi
 if [ "$1" = 'install:rust:targets' ]; then installRustTargets; exit; fi
 if [ "$1" = 'lint' ]; then analyze; exit; fi
+if [ "$1" = 'lint:dart' ]; then analyzeDart; exit; fi
 if [ "$1" = 'lint:files' ]; then analyzeFiles; exit; fi
 if [ "$1" = 'lint:fix' ]; then analyzeFix "$@"; exit; fi
 if [ "$1" = 'lint:fix:dry' ]; then analyzeFixDryRun; exit; fi
 if [ "$1" = 'lint:todos' ]; then analyzeTodos; exit; fi
+if [ "$1" = 'lint:yaml' ]; then analyzeYaml; exit; fi
 if [ "$1" = 'outdated' ]; then outdated; exit; fi
 if [ "$1" = 'refresh' ]; then refresh; exit; fi
 if [ "$1" = 'reset' ]; then reset; exit; fi
