@@ -216,7 +216,7 @@ class _ProjectPageState extends State<ProjectPage> {
     goToTool(context, _project, newBlock).then((_) => setState(() {}));
   }
 
-  Future<void> _onReorder(int oldIndex, int newIndex) async {
+  Future<void> _handleReorder(int oldIndex, int newIndex) async {
     if (newIndex > oldIndex) newIndex--;
 
     final mutableBlocks = _project.blocks.toList();
@@ -314,7 +314,7 @@ class _ProjectPageState extends State<ProjectPage> {
             padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
             child:
                 _isEditing
-                    ? EditableToolList(project: _project, onReorder: _onReorder, onDeleteBlock: _handleDeleteBlock)
+                    ? EditableToolList(project: _project, onReorder: _handleReorder, onDeleteBlock: _handleDeleteBlock)
                     : ToolList(
                       project: _project,
                       onOpenTool: (block) async {

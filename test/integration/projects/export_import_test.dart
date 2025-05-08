@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/projects_list/projects_list.dart';
+import 'package:tiomusic/pages/projects_page/projects_page.dart';
 import 'package:tiomusic/services/archiver.dart';
 import 'package:tiomusic/services/decorators/archiver_log_decorator.dart';
 import 'package:tiomusic/services/decorators/file_picker_log_decorator.dart';
@@ -66,7 +66,7 @@ void main() {
     final exportedArchivePath = '${fileSystem.tmpFolderPath}/export/project.zip';
     filePickerMock.mockShareFileAndCapture(exportedArchivePath);
     filePickerMock.mockPickArchive(exportedArchivePath);
-    await tester.renderScaffold(ProjectsList(), providers);
+    await tester.renderScaffold(ProjectsPage(), providers);
 
     await tester.createProject('Project 1');
     await tester.tapAndSettle(find.byTooltip('Project details'));
@@ -78,6 +78,8 @@ void main() {
 
     expect(find.bySemanticsLabel('Project 1'), findsOneWidget);
 
+    await tester.tapAndSettle(find.byTooltip('Projects menu'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
     await tester.tapAndSettle(find.byTooltip('Delete project'));
     await tester.tapAndSettle(find.bySemanticsLabel('Yes'));
 
@@ -88,6 +90,8 @@ void main() {
 
     expect(find.bySemanticsLabel('Project 1'), findsOneWidget);
 
+    await tester.tapAndSettle(find.byTooltip('Projects menu'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Finish editing'));
     await tester.tapAndSettle(find.byTooltip('Project details'));
   });
 }

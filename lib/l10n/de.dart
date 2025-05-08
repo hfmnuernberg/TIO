@@ -220,9 +220,12 @@ class German extends AppLocalizations {
   String get projectsAbout => 'Projekte';
   String get projectsAboutExplanation =>
       'Alle Elemente lassen sich gemeinsam in Projekten abspeichern. So musst du z.B. das Metronom nicht jedes Mal neu einstellen oder dein Stimmgerät anpassen. Du kannst schnell und reibungslos da weitermachen, wo du beim letzten Mal aufgehört hast.';
+  String get projectsAddNew => 'Neues Projekt hinzufügen';
   String get projectsDeleteAll => 'Alle Projekte löschen';
   String get projectsDeleteAllConfirmation => 'Möchtest du wirklich alle Projekte löschen?';
   String get projectsDeleteConfirmation => 'Möchtest du dieses Projekt wirklich löschen?';
+  String get projectsEdit => 'Projekte editieren';
+  String get projectsEditDone => 'Editieren beenden';
   String get projectsImport => 'Projekt importieren';
   String get projectsImportError => 'Fehler beim Importieren des Projekts';
   String get projectsImportNoFileSelected => 'Keine Projektdatei ausgewählt';

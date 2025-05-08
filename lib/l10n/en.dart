@@ -217,9 +217,12 @@ class English extends AppLocalizations {
   String get projectsAbout => 'Projects';
   String get projectsAboutExplanation =>
       "All elements can be collectively saved in projects. So you don't have to set the metronome or adjust your tuner every time. You can continue quickly and smoothly from where you stopped last time.";
+  String get projectsAddNew => 'Add new project';
   String get projectsDeleteAll => 'Delete all projects';
   String get projectsDeleteAllConfirmation => 'Do you really want to delete all projects?';
   String get projectsDeleteConfirmation => 'Do you really want to delete this project?';
+  String get projectsEdit => 'Edit projects';
+  String get projectsEditDone => 'Finish editing';
   String get projectsImport => 'Import project';
   String get projectsImportError => 'Error importing project';
   String get projectsImportNoFileSelected => 'No project file selected';

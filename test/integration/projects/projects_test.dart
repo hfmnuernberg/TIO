@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/projects_list/projects_list.dart';
+import 'package:tiomusic/pages/projects_page/projects_page.dart';
 import 'package:tiomusic/services/decorators/file_references_log_decorator.dart';
 import 'package:tiomusic/services/decorators/file_system_log_decorator.dart';
 import 'package:tiomusic/services/decorators/media_repository_log_decorator.dart';
@@ -50,13 +50,13 @@ void main() {
   });
 
   testWidgets('shows no projects initially', (tester) async {
-    await tester.renderScaffold(ProjectsList(), providers);
+    await tester.renderScaffold(ProjectsPage(), providers);
 
     expect(find.bySemanticsLabel('Please click on "+" to create a new project.'), findsOneWidget);
   });
 
   testWidgets('shows one project when one project was added', (tester) async {
-    await tester.renderScaffold(ProjectsList(), providers);
+    await tester.renderScaffold(ProjectsPage(), providers);
 
     await tester.createProject('Project 1');
 
@@ -65,9 +65,11 @@ void main() {
   });
 
   testWidgets('deletes project when project was deleted', (tester) async {
-    await tester.renderScaffold(ProjectsList(), providers);
+    await tester.renderScaffold(ProjectsPage(), providers);
 
     await tester.createProject('Project 1');
+    await tester.tapAndSettle(find.byTooltip('Projects menu'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
     await tester.tapAndSettle(find.byTooltip('Delete project'));
     await tester.tapAndSettle(find.bySemanticsLabel('Yes'));
 
