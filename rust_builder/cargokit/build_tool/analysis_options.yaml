@@ -20,8 +20,8 @@ include: package:lints/recommended.yaml
 
 linter:
   rules:
-    - prefer_relative_imports
-    - directives_ordering
+  - prefer_relative_imports
+  - directives_ordering
 
 # analyzer:
 #   exclude:

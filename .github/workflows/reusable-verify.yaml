@@ -21,67 +21,72 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4.2.2
-        with:
-          ref: ${{ inputs.ref }}
+    - name: Checkout code
+      uses: actions/checkout@v4.2.2
+      with:
+        ref: ${{ inputs.ref }}
 
-      - name: Setup Java
-        uses: actions/setup-java@v4.7.1
-        with:
-          java-version: '21'
-          distribution: 'temurin'
+    - name: Setup Java
+      uses: actions/setup-java@v4.7.1
+      with:
+        java-version: '21'
+        distribution: 'temurin'
 
-      - name: Setup Flutter
-        uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
+    - name: Setup Flutter
+      uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
 
-      - name: Install ALSA dev libraries
-        run: sudo apt-get update && sudo apt-get install -y libasound2-dev
+    - name: Install ALSA dev libraries
+      run: sudo apt-get update && sudo apt-get install -y libasound2-dev
 
-      - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1.12.0
+    - name: Setup Rust
+      uses: actions-rust-lang/setup-rust-toolchain@v1.12.0
 
-      - name: Install Flutter dependencies
-        run: scripts/app.sh install:flutter:packages
+    - name: Install Flutter dependencies
+      run: scripts/app.sh install:flutter:packages
 
-      - name: Install Rust dependencies
-        run: scripts/app.sh install:rust:packages
+    - name: Install Rust dependencies
+      run: scripts/app.sh install:rust:packages
 
-      - name: Install Flutter/Dart<->Rust binding generator
-        run: scripts/app.sh install:rust:flutter-rust-bridge-codegen
+    - name: Install Flutter/Dart<->Rust binding generator
+      run: scripts/app.sh install:rust:flutter-rust-bridge-codegen
 
-      - name: Generate Rust TIO music library
-        run: scripts/app.sh generate:rust
+    - name: Generate Rust TIO music library
+      run: scripts/app.sh generate:rust
 
-      - name: Generate splash image assets
-        run: scripts/app.sh generate:splash
+    - name: Generate splash image assets
+      run: scripts/app.sh generate:splash
 
-      - name: Generate launcher icons
-        run: scripts/app.sh generate:icon
+    - name: Generate launcher icons
+      run: scripts/app.sh generate:icon
 
-      - name: Generate json *.g.dart files
-        run: scripts/app.sh generate:json
+    - name: Generate json *.g.dart files
+      run: scripts/app.sh generate:json
 
-      - name: Format code
-        run: scripts/app.sh format
+    - name: Format code
+      run: scripts/app.sh format
 
-      - name: Analyze code
-        run: scripts/app.sh analyze
+    - name: Analyze code
+      run: scripts/app.sh analyze
 
-      - name: Analyze outdated dependencies
-        run: scripts/app.sh outdated
+    - name: lint yaml files
+      uses: ibiqlik/action-yamllint@v3.1.1
+      with:
+        strict: true
 
-      - name: Analyze files with too many lines
-        run: scripts/app.sh analyze:files || true
+    - name: Analyze outdated dependencies
+      run: scripts/app.sh outdated
 
-      - name: Analyze TODOs and FIXMEs
-        run: scripts/app.sh analyze:todos || true
+    - name: Analyze files with too many lines
+      run: scripts/app.sh analyze:files || true
 
-      - name: Print local changes
-        run: git diff
+    - name: Analyze TODOs and FIXMEs
+      run: scripts/app.sh analyze:todos || true
 
-      - name: Assert no local changes (all code was formatted correctly, all generated code was checked in)
-        run: scripts/assert-no-local-changes.sh
+    - name: Print local changes
+      run: git diff
+
+    - name: Assert no local changes (all code was formatted correctly, all generated code was checked in)
+      run: scripts/assert-no-local-changes.sh
 
   tests:
     name: Tests
@@ -89,30 +94,30 @@ jobs:
     timeout-minutes: 15
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4.2.2
-        with:
-          ref: ${{ inputs.ref }}
+    - name: Checkout code
+      uses: actions/checkout@v4.2.2
+      with:
+        ref: ${{ inputs.ref }}
 
-      - name: Setup Java
-        uses: actions/setup-java@v4.7.1
-        with:
-          java-version: '21'
-          distribution: 'temurin'
+    - name: Setup Java
+      uses: actions/setup-java@v4.7.1
+      with:
+        java-version: '21'
+        distribution: 'temurin'
 
-      - name: Setup Flutter
-        uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
+    - name: Setup Flutter
+      uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
 
-      - name: Run unit and integration tests with coverage
-        run: scripts/app.sh coverage:measure:random
+    - name: Run unit and integration tests with coverage
+      run: scripts/app.sh coverage:measure:random
 
-      - name: Install lcov
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y lcov
+    - name: Install lcov
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y lcov
 
-      - name: Print coverage
-        run: scripts/app.sh coverage:print
+    - name: Print coverage
+      run: scripts/app.sh coverage:print
 
-      - name: Validate coverage
-        run: scripts/app.sh coverage:validate 14.0
+    - name: Validate coverage
+      run: scripts/app.sh coverage:validate 14.0
