@@ -17,27 +17,55 @@ part 'project.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Project extends ChangeNotifier {
-  @JsonKey(defaultValue: '')
-  final String id;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  late String _id;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  String get id => _id;
 
+  @JsonKey(includeFromJson: true, includeToJson: true, defaultValue: 'Default Title', name: 'title')
   late String _title;
-  @JsonKey(defaultValue: 'Default Title')
+  @JsonKey(includeFromJson: false, includeToJson: false)
   String get title => _title;
   set title(String newTitle) {
     _title = newTitle;
     notifyListeners();
   }
 
+  @JsonKey(includeFromJson: true, includeToJson: true, defaultValue: [])
+  late List<ProjectBlock> _blocks;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  UnmodifiableListView<ProjectBlock> get blocks => UnmodifiableListView(_blocks);
+  set blocks(List<ProjectBlock> newOrder) {
+    _blocks = newOrder;
+    notifyListeners();
+  }
+
+  @JsonKey(includeFromJson: true, includeToJson: true, defaultValue: TIOMusicParams.noImagePath, name: 'thumbnailPath')
   late String _thumbnailPath;
-  @JsonKey(defaultValue: TIOMusicParams.noImagePath)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   String get thumbnailPath => _thumbnailPath;
   set thumbnailPath(String newThumbnailPath) {
     _thumbnailPath = newThumbnailPath;
     notifyListeners();
   }
 
-  late Map<String, int> _toolCounter;
+  void setDefaultThumbnail() {
+    _thumbnailPath = TIOMusicParams.noImagePath;
+    notifyListeners();
+  }
+
+  @JsonKey(includeFromJson: true, includeToJson: true, name: 'timeLastModified')
+  late DateTime _timeLastModified;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  DateTime get timeLastModified => _timeLastModified;
+  set timeLastModified(DateTime timeLastModified) {
+    _timeLastModified = timeLastModified;
+    notifyListeners();
+  }
+
   @JsonKey(
+    includeFromJson: true,
+    includeToJson: true,
     defaultValue: {
       ImageParams.kind: 0,
       MediaPlayerParams.kind: 0,
@@ -46,7 +74,10 @@ class Project extends ChangeNotifier {
       TextParams.kind: 0,
       TunerParams.kind: 0,
     },
+    name: 'toolCounter',
   )
+  late Map<String, int> _toolCounter;
+  @JsonKey(includeFromJson: false, includeToJson: false)
   Map<String, int> get toolCounter => _toolCounter;
   void increaseCounter(String toolType) {
     _toolCounter.update(
@@ -60,45 +91,14 @@ class Project extends ChangeNotifier {
     );
   }
 
-  Future<void> setThumbnail(String relativePath) async {
-    _thumbnailPath = relativePath;
-    notifyListeners();
-  }
+  Project(this._title, this._blocks, this._thumbnailPath, this._timeLastModified, this._toolCounter)
+    : _id = const Uuid().v4();
 
-  Future<void> setDefaultThumbnail() async {
-    _thumbnailPath = TIOMusicParams.noImagePath;
-    notifyListeners();
-  }
-
-  @JsonKey(includeFromJson: true, includeToJson: true, defaultValue: [])
-  late List<ProjectBlock> _blocks;
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  UnmodifiableListView<ProjectBlock> get blocks => UnmodifiableListView(_blocks);
-
-  set blocks(List<ProjectBlock> newOrder) {
-    _blocks = newOrder;
-    notifyListeners();
-  }
-
-  late DateTime timeLastModified;
-
-  Project(
-    this.id,
-    String title,
-    this._blocks,
-    String thumbnailPath,
-    this.timeLastModified,
-    Map<String, int> toolCounter,
-  ) {
+  Project.defaultThumbnail(String title) {
+    _id = const Uuid().v4();
     _title = title;
-    _thumbnailPath = thumbnailPath;
-    _toolCounter = toolCounter;
-  }
-
-  Project.defaultPicture(String title) : id = const Uuid().v4() {
-    timeLastModified = DateTime.now();
-    _title = title;
+    _blocks = List.empty(growable: true);
+    _timeLastModified = DateTime.now();
     _toolCounter = {
       ImageParams.kind: 0,
       MediaPlayerParams.kind: 0,
@@ -107,7 +107,6 @@ class Project extends ChangeNotifier {
       TextParams.kind: 0,
       TunerParams.kind: 0,
     };
-    _blocks = List.empty(growable: true);
     setDefaultThumbnail();
   }
 

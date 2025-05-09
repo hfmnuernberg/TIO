@@ -75,8 +75,6 @@ class _ProjectPageState extends State<ProjectPage> {
       _showBlocks = true;
     }
 
-    _project.timeLastModified = getCurrentDateTime();
-
     if (widget.goStraightToTool) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         goToTool(
@@ -91,6 +89,10 @@ class _ProjectPageState extends State<ProjectPage> {
     }
 
     _showTutorial();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _project.timeLastModified = DateTime.now();
+    });
   }
 
   void _toggleEditingMode() => setState(() => _isEditing = !_isEditing);

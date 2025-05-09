@@ -1,13 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 
 class EditableProjectList extends StatelessWidget {
   final ProjectLibrary projectLibrary;
-  final List<ImageProvider<Object>> projectThumbnails;
   final void Function(Project project, bool withoutRealProject) onGoToProject;
   final void Function(int index) onDelete;
   final Future<void> Function(int newIndex, int oldIndex) onReorder;
@@ -15,7 +19,6 @@ class EditableProjectList extends StatelessWidget {
   const EditableProjectList({
     super.key,
     required this.projectLibrary,
-    required this.projectThumbnails,
     required this.onGoToProject,
     required this.onDelete,
     required this.onReorder,
@@ -24,6 +27,7 @@ class EditableProjectList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final fs = context.read<FileSystem>();
 
     return ReorderableListView.builder(
       padding: const EdgeInsets.only(bottom: 120),
@@ -48,7 +52,10 @@ class EditableProjectList extends StatelessWidget {
               color: ColorTheme.tertiary,
               onPressed: () => onDelete(index),
             ),
-            leadingPicture: projectThumbnails[index],
+            leadingPicture:
+                project.thumbnailPath.isEmpty
+                    ? AssetImage(TIOMusicParams.tiomusicIconPath)
+                    : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
             onTapFunction: () {},
           ),
         );

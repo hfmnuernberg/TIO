@@ -78,7 +78,7 @@ class _ImageToolState extends State<ImageTool> {
 
     bool? useAsProfilePicture = await _useAsProjectPicture();
     if (useAsProfilePicture != null && useAsProfilePicture) {
-      _project.setThumbnail(_imageBlock.relativePath);
+      _project.thumbnailPath = _imageBlock.relativePath;
       if (mounted) {
         await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       }
@@ -135,7 +135,7 @@ class _ImageToolState extends State<ImageTool> {
 
       if (!mounted) return;
 
-      if (useAsThumbnail) Provider.of<Project>(context, listen: false).setThumbnail(newRelativePath);
+      if (useAsThumbnail) Provider.of<Project>(context, listen: false).thumbnailPath = newRelativePath;
 
       final projectLibrary = context.read<ProjectLibrary>();
 
@@ -176,7 +176,7 @@ class _ImageToolState extends State<ImageTool> {
 
     if (!mounted) return;
 
-    if (useAsThumbnail) Provider.of<Project>(context, listen: false).setThumbnail(newRelativePath);
+    if (useAsThumbnail) Provider.of<Project>(context, listen: false).thumbnailPath = newRelativePath;
 
     final projectLibrary = context.read<ProjectLibrary>();
 
