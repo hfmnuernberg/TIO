@@ -40,7 +40,7 @@ class Project extends ChangeNotifier {
     notifyListeners();
   }
 
-  @JsonKey(includeFromJson: true, includeToJson: true, defaultValue: TIOMusicParams.noImagePath)
+  @JsonKey(includeFromJson: true, includeToJson: true, defaultValue: TIOMusicParams.noImagePath, name: 'thumbnailPath')
   late String _thumbnailPath;
   @JsonKey(includeFromJson: false, includeToJson: false)
   String get thumbnailPath => _thumbnailPath;

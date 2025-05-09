@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +23,6 @@ import 'package:tiomusic/pages/projects_page/quick_tool_button.dart';
 import 'package:tiomusic/pages/projects_page/survey_banner.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/services/file_references.dart';
-import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -44,7 +41,6 @@ class ProjectsPage extends StatefulWidget {
 }
 
 class _ProjectsPageState extends State<ProjectsPage> {
-  late FileSystem _fs;
   late FileReferences _fileReferences;
   late ProjectRepository _projectRepo;
 
@@ -59,7 +55,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
   void initState() {
     super.initState();
 
-    _fs = context.read<FileSystem>();
     _fileReferences = context.read<FileReferences>();
     _projectRepo = context.read<ProjectRepository>();
 
@@ -348,12 +343,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
     doActionOnReturn(result);
   }
 
-  List<ImageProvider<Object>> _generateThumbnails(ProjectLibrary projectLibrary) =>
-      projectLibrary.projects.map<ImageProvider<Object>>((project) {
-        if (project.thumbnailPath.isEmpty) return const AssetImage(TIOMusicParams.tiomusicIconPath);
-        return FileImage(File(_fs.toAbsoluteFilePath(project.thumbnailPath)));
-      }).toList();
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -464,14 +453,12 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                     _isEditing
                                         ? EditableProjectList(
                                           projectLibrary: projectLibrary,
-                                          projectThumbnails: _generateThumbnails(projectLibrary),
                                           onGoToProject: _handleGoToProject,
                                           onDelete: _handleDelete,
                                           onReorder: _handleReorder,
                                         )
                                         : ProjectList(
                                           projectLibrary: projectLibrary,
-                                          projectThumbnails: _generateThumbnails(projectLibrary),
                                           onGoToProject: _handleGoToProject,
                                         ),
                               ),
