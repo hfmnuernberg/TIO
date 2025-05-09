@@ -27,11 +27,11 @@ class English extends AppLocalizations {
   String get appTutorialToolIsland => 'Tap here to combine your tool with other tools.';
   String get appTutorialToolSave => 'Tap here to copy your tool to another project.';
 
-  String get commonBpm => 'bpm';
+  String get commonBpm => 'BPM';
   String get commonCancel => 'Cancel';
   String get commonDelete => 'Delete?';
   String get commonGotIt => 'Got it';
-  String get commonInput => 'input';
+  String get commonInput => 'Input';
   String get commonMinus => 'Minus button';
   String get commonNext => 'Next';
   String get commonNo => 'No';
@@ -39,7 +39,7 @@ class English extends AppLocalizations {
   String get commonPlus => 'Plus button';
   String get commonReset => 'Reset';
   String get commonSetVolume => 'Set Volume';
-  String get commonSlider => 'slider';
+  String get commonSlider => 'Slider';
   String get commonSubmit => 'Submit';
   String get commonVolume => 'Volume';
   String get commonVolumeHintLow =>
@@ -81,16 +81,16 @@ class English extends AppLocalizations {
   String get mainErrorDataLoading => 'Could not load user data!';
   String get mainOpenAnyway => 'Open anyway (all data is lost!)';
   String get mainRetry => 'Retry';
-  String get mainSplashScreen => 'Splash Screen';
+  String get mainSplashScreen => 'Splash screen';
 
   String get mediaPlayer => 'Media Player';
   String get mediaPlayerAbout => 'Media Player';
   String get mediaPlayerAboutExplanation =>
       'You can record, load and edit audio files and save configurations. In doing so, you can set your preferred volume, range (length and segment), playing speed and pitch. You can forward your projects to others using external messenger services.';
-  String get mediaPlayerAddMarker => 'Add Marker';
-  String get mediaPlayerBasicBeat => 'Basic Beat';
-  String get mediaPlayerDescription => 'record and play';
-  String get mediaPlayerEditMarkers => 'Edit Markers';
+  String get mediaPlayerAddMarker => 'Add marker';
+  String get mediaPlayerBasicBeat => 'Basic beat';
+  String get mediaPlayerDescription => 'Make recordings or load audio files, listen to them and edit them.';
+  String get mediaPlayerEditMarkers => 'Edit markers';
   String get mediaPlayerErrorFileAccessible => 'File is not accessible.';
   String get mediaPlayerErrorFileAccessibleDescription =>
       "Maybe the file needs to be downloaded first if it doesn't exist locally on your phone.";
@@ -101,7 +101,7 @@ class English extends AppLocalizations {
   String get mediaPlayerFactor => 'Factor';
   String get mediaPlayerFactorAndBpm => 'Factor and BPM slider';
   String get mediaPlayerFile => 'File';
-  String get mediaPlayerLoadAudioFile => 'Load Audio File';
+  String get mediaPlayerLoadAudioFile => 'Load audio file';
   String get mediaPlayerLooping => 'Looping';
   String get mediaPlayerMarkers => 'Markers';
   String get mediaPlayerOverwriteSound => 'Overwrite?';
@@ -109,15 +109,15 @@ class English extends AppLocalizations {
       'Do you want to overwrite the current audio file and start recording?';
   String get mediaPlayerPitch => 'Pitch';
   String get mediaPlayerRecording => 'Recording...';
-  String get mediaPlayerRemoveMarker => 'Remove Selected Marker';
-  String get mediaPlayerSecShort => 'sec';
-  String get mediaPlayerSemitonesLabel => 'semitones';
-  String get mediaPlayerSetBasicBeat => 'Set Basic Beat';
-  String get mediaPlayerSetPitch => 'Set Pitch';
-  String get mediaPlayerSetSpeed => 'Set Speed';
-  String get mediaPlayerSetTrim => 'Set Trim';
+  String get mediaPlayerRemoveMarker => 'Remove selected marker';
+  String get mediaPlayerSecShort => 'Sec';
+  String get mediaPlayerSemitonesLabel => 'Semitones';
+  String get mediaPlayerSetBasicBeat => 'Set basic beat';
+  String get mediaPlayerSetPitch => 'Set pitch';
+  String get mediaPlayerSetSpeed => 'Set tempo';
+  String get mediaPlayerSetTrim => 'Set trim';
   String get mediaPlayerShareAudioFile => 'Share audio file';
-  String get mediaPlayerSpeed => 'Speed';
+  String get mediaPlayerSpeed => 'Tempo';
   String get mediaPlayerTapToTempo => 'Tap to tempo';
   String get mediaPlayerTrim => 'Trim';
   String get mediaPlayerTutorialAdjust => 'Tap here to adjust your sound file.';
@@ -133,24 +133,24 @@ class English extends AppLocalizations {
   String get metronomeSecondary => 'Metronome 2';
   String get metronomeAbout => 'Metronome';
   String get metronomeAboutExplanation =>
-      'The metronome allows you to save and recall your individual configurations (tempo, time signature, polyrhythms, random mute, sounds). You can also combine the metronome with other tools.';
+      'The metronome allows you to save and recall your individual configurations (tempo, time signature, polyrhythms, random mute, sounds, etc.). You can also combine the metronome with other tools.';
   String get metronomeAccented => 'Accented';
-  String get metronomeBeatMain => 'Main Beat';
-  String get metronomeBeatPoly => 'Poly Beat';
+  String get metronomeBeatMain => 'Main beat';
+  String get metronomeBeatPoly => 'Poly beat';
   String get metronomeClearAllRhythms => 'Clear all rhythms';
-  String get metronomeDescription => 'create a rhythm';
-  String get metronomeNumberOfBeats => 'Number of Beats';
-  String get metronomeNumberOfPolyBeats => 'Number of Poly Beats';
-  String get metronomeRandomMute => 'Random Mute';
-  String get metronomeRandomMuteChance => 'mute chance';
+  String get metronomeDescription => 'Create a rhythm';
+  String get metronomeNumberOfBeats => 'Number of beats';
+  String get metronomeNumberOfPolyBeats => 'Number of poly beats';
+  String get metronomeRandomMute => 'Random mute';
+  String get metronomeRandomMuteChance => 'Mute chance';
   String get metronomeRandomMuteProbability => 'Probability in %';
   String get metronomeSetBpm => 'Set BPM';
-  String get metronomeSetRandomMute => 'Set Random Mute';
-  String get metronomeSetSoundsPrimary => 'Set Metronome Sounds';
-  String get metronomeSetSoundsSecondary => 'Set 2nd Metronome Sounds';
+  String get metronomeSetRandomMute => 'Set random mute';
+  String get metronomeSetSoundsPrimary => 'Set metronome sounds';
+  String get metronomeSetSoundsSecondary => 'Set 2nd metronome sounds';
   String get metronomeSound => 'Sound';
   String get metronomeSoundMain => 'Main';
-  String get metronomeSoundPoly => 'Poly-Sound';
+  String get metronomeSoundPoly => 'Poly sound';
   String get metronomeSoundPolyShort => 'Poly';
   String get metronomeSoundPrimary => 'Sound 1';
   String get metronomeSoundSecondary => 'Sound 2';
@@ -173,7 +173,7 @@ class English extends AppLocalizations {
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings.';
   String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted.';
   String get metronomeTutorialRelocate =>
-      'Hold and drag sideways to relocate,\nswipe upwards to delete\nor tap to edit.';
+      'Hold and drag sideways to relocate a bar, swipe upwards to delete a bar, or tap to edit the selected bar.';
   String get metronomeTutorialStartStop => 'Tap here to start and stop the metronome.';
   String get metronomeUnaccented => 'Unaccented';
 
@@ -184,16 +184,16 @@ class English extends AppLocalizations {
   String get pianoAboutExplanation =>
       'You can use the built-in piano, select different sound modes and save your individual configurations.';
   String get pianoConcertPitchInHz => 'Concert Pitch in Hz';
-  String get pianoDescription => 'become the next Herbie Hancock';
+  String get pianoDescription => 'No piano around? Try out a piece or play some chords.';
   String get pianoInstrumentElectricPiano1 => 'Electric Piano 1';
   String get pianoInstrumentElectricPiano2 => 'Electric Piano 2';
   String get pianoInstrumentGrandPiano1 => 'Grand Piano 1';
   String get pianoInstrumentGrandPiano2 => 'Grand Piano 2';
   String get pianoInstrumentHarpsichord => 'Harpsichord';
   String get pianoInstrumentPipeOrgan => 'Pipe Organ';
-  String get pianoLowestKey => 'Lowest Key';
-  String get pianoSetConcertPitch => 'Set Concert Pitch';
-  String get pianoSetSound => 'Set Piano Sound';
+  String get pianoLowestKey => 'Lowest piano key';
+  String get pianoSetConcertPitch => 'Set concert pitch';
+  String get pianoSetSound => 'Set piano sound';
   String get pianoTutorialAdjust => 'Tap here to adjust concert pitch, volume, and sound.';
   String get pianoTutorialChangeKeyOrOctave => 'Tap the left or right arrows to move up or down per key or per octave.';
 
@@ -216,7 +216,7 @@ class English extends AppLocalizations {
 
   String get projectsAbout => 'Projects';
   String get projectsAboutExplanation =>
-      "All elements can be collectively saved in projects. So you don't have to set the metronome or adjust your tuner every time. You can continue quickly and smoothly from where you stopped last time.";
+      "All elements can be collectively saved in projects. You don't need to set the metronome or adjust your tuner each time. You can easily continue from where you left off last time.";
   String get projectsAddNew => 'Add new project';
   String get projectsDeleteAll => 'Delete all projects';
   String get projectsDeleteAllConfirmation => 'Do you really want to delete all projects?';
@@ -258,8 +258,8 @@ class English extends AppLocalizations {
   String get toolNewTitle => 'Tool title';
   String get toolNoOtherToolAvailable =>
       'There is no other tool in this project. Please save another tool first to use it as an island.';
-  String get toolQuickTool => 'Quick Tool';
-  String get toolQuickToolSave => 'Save Quick Tool?';
+  String get toolQuickTool => 'Quick tool';
+  String get toolQuickToolSave => 'Save quick tool?';
   String get toolSave => 'Save in ...';
   String get toolSaveCopy => 'Save copy in ...';
   String get toolSaveInNewProject => 'Save in new project';
@@ -274,11 +274,11 @@ class English extends AppLocalizations {
   String get tunerAbout => 'Tuner';
   String get tunerAboutExplanation =>
       'You can tune your instruments to any concert pitch, play reference tones, save your individual configuration and combine the tuner with other tools.';
-  String get tunerConcertPitch => 'Concert Pitch';
-  String get tunerConcertPitchInHz => 'Concert Pitch in Hz';
-  String get tunerDescription => 'Tune your instrument';
+  String get tunerConcertPitch => 'Concert pitch';
+  String get tunerConcertPitchInHz => 'Concert pitch in Hz';
+  String get tunerDescription => 'Tune your instrument or use reference tones.';
   String get tunerFrequency => 'Frequency';
-  String get tunerPlayReference => 'Play Reference';
+  String get tunerPlayReference => 'Play reference';
   String get tunerSetConcertPitch => 'Set concert pitch';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner.';
