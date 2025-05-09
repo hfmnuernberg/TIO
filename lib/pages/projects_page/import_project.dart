@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/services/archiver.dart';
 import 'package:tiomusic/services/file_picker.dart';
@@ -8,6 +9,13 @@ import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/log.dart';
+
+Project _createNewProjectFromCopy(Project oldProject) {
+  final newProject = Project.defaultPicture(oldProject.title);
+  newProject.blocks = oldProject.blocks;
+  newProject.thumbnailPath = oldProject.thumbnailPath;
+  return newProject;
+}
 
 Future<void> importProject(BuildContext context) async {
   try {
@@ -27,7 +35,7 @@ Future<void> importProject(BuildContext context) async {
     final project = await archiver.extractProject(archivePath);
     if (!context.mounted) return;
 
-    projectLibrary.addProject(project);
+    projectLibrary.addProject(_createNewProjectFromCopy(project));
     await projectRepo.saveLibrary(projectLibrary);
     await fileReferences.init(projectLibrary);
 
