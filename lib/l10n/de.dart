@@ -88,7 +88,7 @@ class German extends AppLocalizations {
       'Du kannst Audiodateien aufnehmen, laden, bearbeiten und Konfigurationen speichern. Dabei kannst du deine bevorzugte Lautstärke, Range (Dauer und Ausschnitt), die Wiedergabegeschwindigkeit und die Tonhöhe (Transpose-Funktion) einstellen. Du hast die Möglichkeit, deine gespeicherten Projekte mithilfe von externen Messenger-Diensten an andere weiterzuleiten.';
   String get mediaPlayerAddMarker => 'Marker hinzufügen';
   String get mediaPlayerBasicBeat => 'Grundschlag';
-  String get mediaPlayerDescription => 'Mach Aufnahmen und spiele sie ab.';
+  String get mediaPlayerDescription => 'Lade Audio-Files oder nimm etwas auf, hör es dir an und bearbeite es.';
   String get mediaPlayerEditMarkers => 'Marker bearbeiten';
   String get mediaPlayerErrorFileAccessible => 'Datei nicht lesbar';
   String get mediaPlayerErrorFileAccessibleDescription =>
@@ -98,7 +98,7 @@ class German extends AppLocalizations {
   String get mediaPlayerErrorFileOpenDescription =>
       'Die Datei konnte nicht geöffnet werden. Versuche es noch einmal oder wähle eine andere Datei.';
   String get mediaPlayerFactor => 'Faktor';
-  String get mediaPlayerFactorAndBpm => 'Faktor und BPM Regler';
+  String get mediaPlayerFactorAndBpm => 'Faktor und BPM-Regler';
   String get mediaPlayerFile => 'Datei';
   String get mediaPlayerLoadAudioFile => 'Audio-Datei laden';
   String get mediaPlayerLooping => 'Loopen';
@@ -139,7 +139,7 @@ class German extends AppLocalizations {
   String get metronomeBeatMain => 'Main Beat';
   String get metronomeBeatPoly => 'Poly Beat';
   String get metronomeClearAllRhythms => 'Alle Rhythmen löschen';
-  String get metronomeDescription => 'Übe oder erstelle deinen eigenen Beat.';
+  String get metronomeDescription => 'Übe oder gestalte deinen eigenen Rhythmus.';
   String get metronomeNumberOfBeats => 'Anzahl der Beats';
   String get metronomeNumberOfPolyBeats => 'Anzahl der Poly Beats';
   String get metronomeRandomMute => 'Random mute';
@@ -175,7 +175,7 @@ class German extends AppLocalizations {
   String get metronomeTutorialEditBeats =>
       'Tippe auf einen der Schläge, um zwischen betont, unbetont und stumm zu wechseln.';
   String get metronomeTutorialRelocate =>
-      'Halte und ziehe seitlich, um Takte zu verschieben,\nwische nach oben, um Takte zu löschen\noder tippe, um den ausgewählten Takt zu bearbeiten.';
+      'Halte und ziehe seitlich, um Takte zu verschieben, wische nach oben, um Takte zu löschen oder tippe, um den ausgewählten Takt zu bearbeiten.';
   String get metronomeTutorialStartStop => 'Tippe hier, um das Metronom zu starten und zu stoppen.';
   String get metronomeUnaccented => 'Unbetont';
 
@@ -271,7 +271,7 @@ class German extends AppLocalizations {
   String get toolTutorialSave => 'Tippe hier, um das Tool in einem Projekt zu speichern.';
   String get toolUseBookmarkToSave => 'Verwende das Lesezeichen, um das Tool zu speichern.';
 
-  String toolHasNoIslandView(String tool) => '$tool hat keine Miniaturansicht!';
+  String toolHasNoIslandView(String tool) => '$tool hat keine Kompaktansicht!';
 
   String get tuner => 'Stimmgerät';
   String get tunerAbout => 'Stimmgerät';
@@ -279,7 +279,7 @@ class German extends AppLocalizations {
       'Du kannst deine Instrumente nach beliebigem Kammerton stimmen, Referenztöne abspielen, deine individuelle Konfiguration speichern sowie das Stimmgerät mit anderen Tools zusammen nutzen.';
   String get tunerConcertPitch => 'Kammerton';
   String get tunerConcertPitchInHz => 'Kammerton in Hz';
-  String get tunerDescription => 'Stimme dein Instrument.';
+  String get tunerDescription => 'Stimme dein Instrument oder nutze Referenztöne.';
   String get tunerFrequency => 'Frequenz';
   String get tunerPlayReference => 'Referenzton abspielen';
   String get tunerSetConcertPitch => 'Kammerton einstellen';
