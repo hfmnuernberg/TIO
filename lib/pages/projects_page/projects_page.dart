@@ -145,7 +145,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
     );
     if (newTitle == null) return;
 
-    final newProject = Project.defaultPicture(newTitle);
+    final newProject = Project.defaultThumbnail(newTitle);
 
     if (!mounted) return;
 
