@@ -76,12 +76,12 @@ void main() {
 
     testWidgets('change input value to integer when entering new value with decimal', (tester) async {
       await tester.renderWidget(TestWrapper(value: 10, onChange: (_) {}));
-      expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '10');
+      expect(tester.getSemantics(find.bySemanticsLabel('Test Input')).value, '10');
 
-      await tester.enterTextAndSettle(find.bySemanticsLabel('Test input'), '20.5');
+      await tester.enterTextAndSettle(find.bySemanticsLabel('Test Input'), '20.5');
       await tester.unfocusAndSettle();
 
-      expect(tester.getSemantics(find.bySemanticsLabel('Test input')).value, '21');
+      expect(tester.getSemantics(find.bySemanticsLabel('Test Input')).value, '21');
     });
   });
 }
