@@ -33,7 +33,7 @@ class BlackKey extends StatelessWidget {
       height: height,
       child: ClipRect(
         child: Padding(
-          padding: EdgeInsets.all(borderWidth),
+          padding: EdgeInsets.symmetric(horizontal: borderWidth),
           child: Material(
             color: Colors.transparent,
             child: Ink(
@@ -49,7 +49,6 @@ class BlackKey extends StatelessWidget {
                 highlightColor: playedColor,
                 onTapDown: (_) => onPlay(),
                 onTapUp: (_) => onRelease(),
-                child: Align(alignment: Alignment.bottomCenter, child: Container()),
               ),
             ),
           ),
