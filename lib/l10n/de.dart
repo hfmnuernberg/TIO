@@ -271,7 +271,7 @@ class German extends AppLocalizations {
   String get toolTutorialSave => 'Tippe hier, um das Tool in einem Projekt zu speichern.';
   String get toolUseBookmarkToSave => 'Verwende das Lesezeichen, um das Tool zu speichern.';
 
-  String toolHasNoIslandView(String tool) => '$tool hat keine Miniaturansicht!';
+  String toolHasNoIslandView(String tool) => '$tool hat keine Kompaktansicht!';
 
   String get tuner => 'Stimmgerät';
   String get tunerAbout => 'Stimmgerät';

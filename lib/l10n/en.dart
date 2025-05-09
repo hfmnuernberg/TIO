@@ -268,7 +268,7 @@ class English extends AppLocalizations {
   String get toolTutorialSave => 'Tap here to save the tool to a project.';
   String get toolUseBookmarkToSave => 'Use bookmark to save a tool.';
 
-  String toolHasNoIslandView(String tool) => '$tool has no Island View!';
+  String toolHasNoIslandView(String tool) => '$tool has no compact view!';
 
   String get tuner => 'Tuner';
   String get tunerAbout => 'Tuner';
