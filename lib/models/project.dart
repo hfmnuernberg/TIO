@@ -22,7 +22,7 @@ class Project extends ChangeNotifier {
   @JsonKey(includeFromJson: false, includeToJson: false)
   String get id => _id;
 
-  @JsonKey(includeFromJson: true, includeToJson: true, defaultValue: 'Default Title')
+  @JsonKey(includeFromJson: true, includeToJson: true, defaultValue: 'Default Title', name: 'title')
   late String _title;
   @JsonKey(includeFromJson: false, includeToJson: false)
   String get title => _title;
@@ -54,7 +54,7 @@ class Project extends ChangeNotifier {
     notifyListeners();
   }
 
-  @JsonKey(includeFromJson: true, includeToJson: true)
+  @JsonKey(includeFromJson: true, includeToJson: true, name: 'timeLastModified')
   late DateTime _timeLastModified;
   @JsonKey(includeFromJson: false, includeToJson: false)
   DateTime get timeLastModified => _timeLastModified;
@@ -74,6 +74,7 @@ class Project extends ChangeNotifier {
       TextParams.kind: 0,
       TunerParams.kind: 0,
     },
+    name: 'toolCounter',
   )
   late Map<String, int> _toolCounter;
   @JsonKey(includeFromJson: false, includeToJson: false)
