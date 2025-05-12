@@ -91,7 +91,7 @@ class _ProjectPageState extends State<ProjectPage> {
     _showTutorial();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _project.timeLastModified = DateTime.now();
+      _project.timeLastModified = getCurrentDateTime();
     });
   }
 
