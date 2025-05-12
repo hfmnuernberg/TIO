@@ -21,6 +21,14 @@ import '../../utils/action_utils.dart';
 import '../../utils/render_utils.dart';
 import 'project_utils.dart';
 
+extension WidgetTesterPumpExtension on WidgetTester {
+  Future<void> dragFromCenterToTargetAndSettle(FinderBase<Element> finder, Offset to) async {
+    final Offset widgetCenter = getCenter(finder);
+    await dragFrom(widgetCenter, to);
+    await pumpAndSettle();
+  }
+}
+
 void main() {
   late List<SingleChildWidget> providers;
 
@@ -75,5 +83,40 @@ void main() {
 
     expect(find.bySemanticsLabel('Project 1'), findsNothing);
     expect(find.bySemanticsLabel('Please click on "+" to create a new project.'), findsOneWidget);
+  });
+
+  testWidgets('changes order when project is moved during editing', (tester) async {
+    await tester.renderScaffold(ProjectsPage(), providers);
+    await tester.createProject('Project 1');
+    await tester.createProject('Project 2');
+
+    final projectList = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
+    final projectTitles = projectList.map((project) => (project.title! as Text).data).toList();
+
+    expect(projectTitles, equals(['Project 2', 'Project 1']));
+
+    await tester.tapAndSettle(find.byTooltip('Projects menu'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
+    await tester.dragFromCenterToTargetAndSettle(find.byTooltip('Reorder item').first, const Offset(0, 500));
+
+    final updatedProjectList = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
+    final updatedProjectTitles = updatedProjectList.map((project) => (project.title! as Text).data).toList();
+
+    expect(updatedProjectTitles, equals(['Project 1', 'Project 2']));
+  });
+
+  testWidgets('does not change order when project is moved too less during editing', (tester) async {
+    await tester.renderScaffold(ProjectsPage(), providers);
+    await tester.createProject('Project 1');
+    await tester.createProject('Project 2');
+
+    await tester.tapAndSettle(find.byTooltip('Projects menu'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
+    await tester.dragFromCenterToTargetAndSettle(find.byTooltip('Reorder item').first, const Offset(0, 10));
+
+    final projectList = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
+    final projectTitles = projectList.map((project) => (project.title! as Text).data).toList();
+
+    expect(projectTitles, equals(['Project 2', 'Project 1']));
   });
 }

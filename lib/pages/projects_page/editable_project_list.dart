@@ -34,9 +34,10 @@ class EditableProjectList extends StatelessWidget {
             title: project.title,
             subtitle: l10n.formatDateAndTime(project.timeLastModified),
             trailingIcon: IconButton(
-              onPressed: () {},
+              tooltip: l10n.commonReorderItem,
               icon: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
               color: ColorTheme.primaryFixedDim,
+              onPressed: () {},
             ),
             menuIconOne: IconButton(
               tooltip: l10n.projectDelete,

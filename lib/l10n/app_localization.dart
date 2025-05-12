@@ -29,6 +29,7 @@ abstract class AppLocalizations {
   String get commonNo;
   String get commonOctave;
   String get commonPlus;
+  String get commonReorderItem;
   String get commonReset;
   String get commonSetVolume;
   String get commonSlider;
@@ -178,6 +179,7 @@ abstract class AppLocalizations {
   String get pianoTutorialChangeKeyOrOctave;
 
   String get projectDelete;
+  String get projectDeleteTool;
   String get projectDeleteAllTools;
   String get projectDeleteAllToolsConfirmation;
   String get projectDeleteToolConfirmation;
