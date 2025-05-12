@@ -443,9 +443,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                   style: const TextStyle(color: Colors.white, fontSize: 42),
                                 ),
                               )
-                              : Padding(
-                                padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList + 2),
-                                child: Stack(
+                              : Stack(
                                   children: [
                                     if (_isEditing)
                                       EditableProjectList(
@@ -470,7 +468,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                     ),
                                   ],
                                 ),
-                              ),
                 ),
               ),
               Container(

@@ -312,19 +312,16 @@ class _ProjectPageState extends State<ProjectPage> {
         fit: StackFit.expand,
         children: [
           FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
-          Padding(
-            padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList + 2),
-            child:
-                _isEditing
-                    ? EditableToolList(project: _project, onReorder: _handleReorder, onDeleteBlock: _handleDeleteBlock)
-                    : ToolList(
-                      project: _project,
-                      onOpenTool: (block) async {
-                        await goToTool(context, _project, block);
-                        setState(() {});
-                      },
-                    ),
-          ),
+          if (_isEditing)
+            EditableToolList(project: _project, onReorder: _handleReorder, onDeleteBlock: _handleDeleteBlock)
+          else
+            ToolList(
+              project: _project,
+              onOpenTool: (block) async {
+                await goToTool(context, _project, block);
+                setState(() {});
+              },
+            ),
         ],
       ),
       bottomNavigationBar: EditProjectBar(
@@ -363,31 +360,29 @@ class _ProjectPageState extends State<ProjectPage> {
         fit: StackFit.expand,
         children: [
           FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
-          Padding(
+          ListView.builder(
             padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList + 2),
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: BlockType.values.length,
-              itemBuilder: (context, index) {
-                var info = getBlockTypeInfos(context.l10n)[BlockType.values[index]]!;
-                return CardListTile(
-                  title: info.name,
-                  subtitle: info.description,
-                  trailingIcon: IconButton(
-                    onPressed: () {
-                      _onNewToolTilePressed(info);
-                    },
-                    icon: const Icon(Icons.add),
-                    color: ColorTheme.surfaceTint,
-                  ),
-                  leadingPicture: circleToolIcon(info.icon),
-                  onTapFunction: () {
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: BlockType.values.length,
+            itemBuilder: (context, index) {
+              var info = getBlockTypeInfos(context.l10n)[BlockType.values[index]]!;
+              return CardListTile(
+                title: info.name,
+                subtitle: info.description,
+                trailingIcon: IconButton(
+                  onPressed: () {
                     _onNewToolTilePressed(info);
                   },
-                );
-              },
-            ),
+                  icon: const Icon(Icons.add),
+                  color: ColorTheme.surfaceTint,
+                ),
+                leadingPicture: circleToolIcon(info.icon),
+                onTapFunction: () {
+                  _onNewToolTilePressed(info);
+                },
+              );
+            },
           ),
         ],
       ),

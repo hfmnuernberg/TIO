@@ -22,7 +22,7 @@ class EditableProjectList extends StatelessWidget {
     final fs = context.read<FileSystem>();
 
     return ReorderableListView.builder(
-      padding: const EdgeInsets.only(bottom: 120),
+      padding: const EdgeInsets.fromLTRB(0, TIOMusicParams.smallSpaceAboveList + 2, 0, TIOMusicParams.smallSpaceAboveList - 4),
       itemCount: projectLibrary.projects.length,
       onReorder: onReorder,
       itemBuilder: (context, index) {
