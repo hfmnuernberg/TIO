@@ -22,7 +22,12 @@ class ProjectList extends StatelessWidget {
     final fs = context.read<FileSystem>();
 
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(0, TIOMusicParams.smallSpaceAboveList + 2, 0, TIOMusicParams.smallSpaceAboveList - 4),
+      padding: const EdgeInsets.fromLTRB(
+        0,
+        TIOMusicParams.smallSpaceAboveList + 2,
+        0,
+        TIOMusicParams.smallSpaceAboveList - 4,
+      ),
       itemCount: projectLibrary.projects.length,
       itemBuilder: (context, index) {
         final project = projectLibrary.projects[index];
