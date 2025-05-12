@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
+const _releasedColor = ColorTheme.onTertiaryFixed;
+const _releasedBorderColor = ColorTheme.tertiary;
+
+final _playedColor = HSLColor.fromColor(ColorTheme.onTertiaryFixed).withLightness(0.6).withAlpha(0.2).toColor();
+final _playedBorderColor = HSLColor.fromColor(ColorTheme.tertiary).withLightness(0.6).toColor();
+
 class BlackKey extends StatelessWidget {
   final bool isPlayed;
   final double width;
   final double height;
   final double borderWidth;
+  final String semanticsLabel;
 
   final Function() onPlay;
   final Function() onRelease;
@@ -16,40 +23,40 @@ class BlackKey extends StatelessWidget {
     required this.width,
     required this.height,
     required this.borderWidth,
+    required this.semanticsLabel,
     required this.onPlay,
     required this.onRelease,
   });
 
   @override
   Widget build(BuildContext context) {
-    const releasedColor = ColorTheme.onTertiaryFixed;
-    const shadedReleasedColor = ColorTheme.tertiary;
+    final color = isPlayed ? _playedColor : _releasedColor;
+    final borderColor = isPlayed ? _playedBorderColor : _releasedBorderColor;
 
-    final playedColor = HSLColor.fromColor(ColorTheme.onTertiaryFixed).withLightness(0.25).toColor();
-    final shadedPlayedColor = HSLColor.fromColor(ColorTheme.tertiary).withLightness(0.45).toColor();
-
-    return SizedBox(
-      width: width,
-      height: height,
-      child: ClipRect(
+    return Semantics(
+      label: semanticsLabel,
+      button: true,
+      child: SizedBox(
+        width: width,
+        height: height,
         child: Padding(
-          padding: EdgeInsets.all(borderWidth),
+          padding: EdgeInsets.symmetric(horizontal: borderWidth),
           child: Material(
-            color: Colors.transparent,
-            child: Ink(
-              decoration: BoxDecoration(
-                color: isPlayed ? playedColor : releasedColor,
-                border: Border(
-                  left: BorderSide(color: isPlayed ? shadedPlayedColor : shadedReleasedColor, width: 10),
-                  bottom: BorderSide(color: isPlayed ? shadedPlayedColor : shadedReleasedColor, width: 10),
+            color: _releasedColor,
+            child: InkWell(
+              excludeFromSemantics: true,
+              splashColor: _playedColor,
+              highlightColor: _playedColor,
+              onTapDown: (_) => onPlay(),
+              onTapUp: (_) => onRelease(),
+              child: Ink(
+                decoration: BoxDecoration(
+                  color: color,
+                  border: Border(
+                    left: BorderSide(color: borderColor, width: 10),
+                    bottom: BorderSide(color: borderColor, width: 10),
+                  ),
                 ),
-              ),
-              child: InkWell(
-                splashColor: playedColor,
-                highlightColor: playedColor,
-                onTapDown: (_) => onPlay(),
-                onTapUp: (_) => onRelease(),
-                child: Align(alignment: Alignment.bottomCenter, child: Container()),
               ),
             ),
           ),
