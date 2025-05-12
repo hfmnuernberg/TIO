@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +16,7 @@ import 'package:tiomusic/pages/media_player/media_player.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
+import 'package:tiomusic/pages/projects_page/edit_projects_bar.dart';
 import 'package:tiomusic/pages/projects_page/editable_project_list.dart';
 import 'package:tiomusic/pages/projects_page/import_project.dart';
 import 'package:tiomusic/pages/projects_page/project_list.dart';
@@ -25,7 +24,6 @@ import 'package:tiomusic/pages/projects_page/quick_tool_button.dart';
 import 'package:tiomusic/pages/projects_page/survey_banner.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/services/file_references.dart';
-import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -44,7 +42,6 @@ class ProjectsPage extends StatefulWidget {
 }
 
 class _ProjectsPageState extends State<ProjectsPage> {
-  late FileSystem _fs;
   late FileReferences _fileReferences;
   late ProjectRepository _projectRepo;
 
@@ -59,7 +56,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
   void initState() {
     super.initState();
 
-    _fs = context.read<FileSystem>();
     _fileReferences = context.read<FileReferences>();
     _projectRepo = context.read<ProjectRepository>();
 
@@ -135,7 +131,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
     setState(() {});
   }
 
-  void addNewProject() async {
+  void _handleNew() async {
     final l10n = context.l10n;
     final newTitle = await showEditTextDialog(
       context: context,
@@ -145,12 +141,13 @@ class _ProjectsPageState extends State<ProjectsPage> {
     );
     if (newTitle == null) return;
 
-    final newProject = Project.defaultPicture(newTitle);
+    final newProject = Project.defaultThumbnail(newTitle);
 
     if (!mounted) return;
 
     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
+    setState(() => _isEditing = false);
     _handleGoToProject(newProject, true);
   }
 
@@ -348,12 +345,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
     doActionOnReturn(result);
   }
 
-  List<ImageProvider<Object>> _generateThumbnails(ProjectLibrary projectLibrary) =>
-      projectLibrary.projects.map<ImageProvider<Object>>((project) {
-        if (project.thumbnailPath.isEmpty) return const AssetImage(TIOMusicParams.tiomusicIconPath);
-        return FileImage(File(_fs.toAbsoluteFilePath(project.thumbnailPath)));
-      }).toList();
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -376,10 +367,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         child: Text(l10n.projectsImport, style: const TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
-        onPressed: () {
-          setState(() => _isEditing = false);
-          addNewProject();
-        },
+        onPressed: _handleNew,
         semanticsLabel: l10n.projectsAddNew,
         child: Text(l10n.projectsAddNew, style: TextStyle(color: ColorTheme.primary)),
       ),
@@ -412,7 +400,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         foregroundColor: ColorTheme.primary,
         leading: IconButton(
           key: _keyAddProjectButton,
-          onPressed: addNewProject,
+          onPressed: _handleNew,
           icon: const Icon(Icons.add),
           tooltip: l10n.projectsNew,
         ),
@@ -455,25 +443,30 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                   style: const TextStyle(color: Colors.white, fontSize: 42),
                                 ),
                               )
-                              : Padding(
-                                padding: const EdgeInsets.only(
-                                  top: TIOMusicParams.bigSpaceAboveList,
-                                  bottom: TIOMusicParams.bigSpaceAboveList / 2,
-                                ),
-                                child:
-                                    _isEditing
-                                        ? EditableProjectList(
-                                          projectLibrary: projectLibrary,
-                                          projectThumbnails: _generateThumbnails(projectLibrary),
-                                          onGoToProject: _handleGoToProject,
-                                          onDelete: _handleDelete,
-                                          onReorder: _handleReorder,
-                                        )
-                                        : ProjectList(
-                                          projectLibrary: projectLibrary,
-                                          projectThumbnails: _generateThumbnails(projectLibrary),
-                                          onGoToProject: _handleGoToProject,
-                                        ),
+                              : Stack(
+                                children: [
+                                  if (_isEditing)
+                                    EditableProjectList(
+                                      projectLibrary: projectLibrary,
+                                      onDelete: _handleDelete,
+                                      onReorder: _handleReorder,
+                                    )
+                                  else
+                                    ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
+                                  Positioned(
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
+                                      child: EditProjectsBar(
+                                        isEditing: _isEditing,
+                                        onAddProject: _handleNew,
+                                        onToggleEditing: _toggleEditingMode,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                 ),
               ),
