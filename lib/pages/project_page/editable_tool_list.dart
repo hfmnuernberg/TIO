@@ -30,7 +30,7 @@ class EditableToolList extends StatelessWidget {
             subtitle: formatSettingValues(block.getSettingsFormatted(l10n)),
             leadingPicture: circleToolIcon(block.icon),
             trailingIcon: IconButton(
-              tooltip: l10n.commonReorderItem,
+              tooltip: l10n.commonReorder,
               icon: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
               color: ColorTheme.primaryFixedDim,
               onPressed: () {},

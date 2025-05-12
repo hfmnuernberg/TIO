@@ -37,7 +37,7 @@ class English extends AppLocalizations {
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
   String get commonPlus => 'Plus button';
-  String get commonReorderItem => 'Reorder item';
+  String get commonReorder => 'Reorder';
   String get commonReset => 'Reset';
   String get commonSetVolume => 'Set Volume';
   String get commonSlider => 'Slider';

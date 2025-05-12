@@ -37,7 +37,7 @@ class German extends AppLocalizations {
   String get commonNo => 'Nein';
   String get commonOctave => 'Oktave';
   String get commonPlus => 'Plus-Schaltfläche';
-  String get commonReorderItem => 'Element verschieben';
+  String get commonReorder => 'Verschieben';
   String get commonReset => 'Zurücksetzen';
   String get commonSetVolume => 'Lautstärke einstellen';
   String get commonSlider => 'Schieberegler';

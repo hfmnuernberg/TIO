@@ -97,7 +97,7 @@ void main() {
 
     await tester.tapAndSettle(find.byTooltip('Projects menu'));
     await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
-    await tester.dragFromCenterToTargetAndSettle(find.byTooltip('Reorder item').first, const Offset(0, 500));
+    await tester.dragFromCenterToTargetAndSettle(find.byTooltip('Reorder').first, const Offset(0, 500));
 
     final updatedProjectList = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
     final updatedProjectTitles = updatedProjectList.map((project) => (project.title! as Text).data).toList();
@@ -112,7 +112,7 @@ void main() {
 
     await tester.tapAndSettle(find.byTooltip('Projects menu'));
     await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
-    await tester.dragFromCenterToTargetAndSettle(find.byTooltip('Reorder item').first, const Offset(0, 10));
+    await tester.dragFromCenterToTargetAndSettle(find.byTooltip('Reorder').first, const Offset(0, 10));
 
     final projectList = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
     final projectTitles = projectList.map((project) => (project.title! as Text).data).toList();
