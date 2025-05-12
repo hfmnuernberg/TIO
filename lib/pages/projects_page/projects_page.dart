@@ -131,7 +131,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
     setState(() {});
   }
 
-  void addNewProject() async {
+  void _handleNew() async {
     final l10n = context.l10n;
     final newTitle = await showEditTextDialog(
       context: context,
@@ -367,7 +367,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         child: Text(l10n.projectsImport, style: const TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
-        onPressed: addNewProject,
+        onPressed: _handleNew,
         semanticsLabel: l10n.projectsAddNew,
         child: Text(l10n.projectsAddNew, style: TextStyle(color: ColorTheme.primary)),
       ),
@@ -400,7 +400,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         foregroundColor: ColorTheme.primary,
         leading: IconButton(
           key: _keyAddProjectButton,
-          onPressed: addNewProject,
+          onPressed: _handleNew,
           icon: const Icon(Icons.add),
           tooltip: l10n.projectsNew,
         ),
@@ -453,7 +453,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                     if (_isEditing)
                                       EditableProjectList(
                                         projectLibrary: projectLibrary,
-                                        onGoToProject: _handleGoToProject,
                                         onDelete: _handleDelete,
                                         onReorder: _handleReorder,
                                       )
@@ -465,7 +464,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                       bottom: 0,
                                       child: EditProjectsBar(
                                         isEditing: _isEditing,
-                                        onAddProject: addNewProject,
+                                        onAddProject: _handleNew,
                                         onToggleEditing: _toggleEditingMode,
                                       ),
                                     ),
