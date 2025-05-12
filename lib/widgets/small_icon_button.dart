@@ -3,9 +3,10 @@ import 'package:tiomusic/util/constants.dart';
 
 class SmallIconButton extends StatelessWidget {
   final Widget icon;
+  final String? tooltip;
   final VoidCallback? onPressed;
 
-  const SmallIconButton({super.key, required this.icon, this.onPressed});
+  const SmallIconButton({super.key, required this.icon, this.tooltip, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,12 @@ class SmallIconButton extends StatelessWidget {
         child: CircleAvatar(
           backgroundColor: Colors.white,
           radius: TIOMusicParams.sizeSmallButtons,
-          child: IconButton(icon: icon, iconSize: TIOMusicParams.sizeSmallButtons, onPressed: onPressed),
+          child: IconButton(
+            icon: icon,
+            iconSize: TIOMusicParams.sizeSmallButtons,
+            tooltip: tooltip,
+            onPressed: onPressed,
+          ),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/small_icon_button.dart';
 
@@ -28,9 +29,14 @@ class EditProjectsBar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SmallIconButton(icon: Icon(Icons.add, color: ColorTheme.tertiary), onPressed: onAddProject),
+                SmallIconButton(
+                  icon: Icon(Icons.add, color: ColorTheme.tertiary),
+                  tooltip: context.l10n.projectsAddNew,
+                  onPressed: onAddProject,
+                ),
                 SmallIconButton(
                   icon: Icon(isEditing ? Icons.check : Icons.edit, color: ColorTheme.tertiary),
+                  tooltip: isEditing ? context.l10n.projectsEditDone : context.l10n.projectsEdit,
                   onPressed: onToggleEditing,
                 ),
               ],
