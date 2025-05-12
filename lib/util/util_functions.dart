@@ -433,7 +433,7 @@ void saveToolInNewProject(
   bool pianoAlreadyOn = false,
 }) async {
   ProjectLibrary projectLibrary = context.read<ProjectLibrary>();
-  Project newProject = Project.defaultPicture(projectTitle);
+  Project newProject = Project.defaultThumbnail(projectTitle);
   projectLibrary.addProject(newProject);
   ProjectBlock newBlock = newProject.copyTool(tool, toolTitle);
 

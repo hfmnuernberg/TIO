@@ -37,6 +37,7 @@ class English extends AppLocalizations {
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
   String get commonPlus => 'Plus button';
+  String get commonReorder => 'Reorder';
   String get commonReset => 'Reset';
   String get commonSetVolume => 'Set Volume';
   String get commonSlider => 'Slider';
@@ -198,6 +199,7 @@ class English extends AppLocalizations {
   String get pianoTutorialChangeKeyOrOctave => 'Tap the left or right arrows to move up or down per key or per octave.';
 
   String get projectDelete => 'Delete project';
+  String get projectDeleteTool => 'Delete tool';
   String get projectDeleteAllTools => 'Delete all tools';
   String get projectDeleteAllToolsConfirmation => 'Do you really want to delete all tools in this project?';
   String get projectDeleteToolConfirmation => 'Do you really want to delete this tool?';
