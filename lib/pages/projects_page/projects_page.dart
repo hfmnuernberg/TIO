@@ -444,7 +444,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                 ),
                               )
                               : Padding(
-                                padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList / 2),
+                                padding: const EdgeInsets.only(top: 18),
                                 child: Stack(
                                   children: [
                                     if (_isEditing)
@@ -460,7 +460,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                       right: 0,
                                       bottom: 0,
                                       child: Padding(
-                                        padding: const EdgeInsets.only(bottom: TIOMusicParams.bigSpaceAboveList / 2),
+                                        padding: const EdgeInsets.only(bottom: 18),
                                         child: EditProjectsBar(
                                           isEditing: _isEditing,
                                           onAddProject: _handleNew,

@@ -313,7 +313,7 @@ class _ProjectPageState extends State<ProjectPage> {
         children: [
           FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
           Padding(
-            padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
+            padding: const EdgeInsets.only(top: 18),
             child:
                 _isEditing
                     ? EditableToolList(project: _project, onReorder: _handleReorder, onDeleteBlock: _handleDeleteBlock)
@@ -364,7 +364,7 @@ class _ProjectPageState extends State<ProjectPage> {
         children: [
           FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
           Padding(
-            padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
+            padding: const EdgeInsets.only(top: 18),
             child: ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
