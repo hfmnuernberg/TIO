@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -12,17 +11,10 @@ import 'package:tiomusic/widgets/card_list_tile.dart';
 
 class EditableProjectList extends StatelessWidget {
   final ProjectLibrary projectLibrary;
-  final void Function(Project project, bool withoutRealProject) onGoToProject;
   final void Function(int index) onDelete;
   final Future<void> Function(int newIndex, int oldIndex) onReorder;
 
-  const EditableProjectList({
-    super.key,
-    required this.projectLibrary,
-    required this.onGoToProject,
-    required this.onDelete,
-    required this.onReorder,
-  });
+  const EditableProjectList({super.key, required this.projectLibrary, required this.onDelete, required this.onReorder});
 
   @override
   Widget build(BuildContext context) {
