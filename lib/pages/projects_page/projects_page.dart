@@ -16,6 +16,7 @@ import 'package:tiomusic/pages/media_player/media_player.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
+import 'package:tiomusic/pages/projects_page/edit_projects_bar.dart';
 import 'package:tiomusic/pages/projects_page/editable_project_list.dart';
 import 'package:tiomusic/pages/projects_page/import_project.dart';
 import 'package:tiomusic/pages/projects_page/project_list.dart';
@@ -146,6 +147,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
+    setState(() => _isEditing = false);
     _handleGoToProject(newProject, true);
   }
 
@@ -365,10 +367,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         child: Text(l10n.projectsImport, style: const TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
-        onPressed: () {
-          setState(() => _isEditing = false);
-          addNewProject();
-        },
+        onPressed: addNewProject,
         semanticsLabel: l10n.projectsAddNew,
         child: Text(l10n.projectsAddNew, style: TextStyle(color: ColorTheme.primary)),
       ),
@@ -449,18 +448,29 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                   top: TIOMusicParams.bigSpaceAboveList,
                                   bottom: TIOMusicParams.bigSpaceAboveList / 2,
                                 ),
-                                child:
-                                    _isEditing
-                                        ? EditableProjectList(
-                                          projectLibrary: projectLibrary,
-                                          onGoToProject: _handleGoToProject,
-                                          onDelete: _handleDelete,
-                                          onReorder: _handleReorder,
-                                        )
-                                        : ProjectList(
-                                          projectLibrary: projectLibrary,
-                                          onGoToProject: _handleGoToProject,
-                                        ),
+                                child: Stack(
+                                  children: [
+                                    if (_isEditing)
+                                      EditableProjectList(
+                                        projectLibrary: projectLibrary,
+                                        onGoToProject: _handleGoToProject,
+                                        onDelete: _handleDelete,
+                                        onReorder: _handleReorder,
+                                      )
+                                    else
+                                      ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
+                                    Positioned(
+                                      left: 0,
+                                      right: 0,
+                                      bottom: 0,
+                                      child: EditProjectsBar(
+                                        isEditing: _isEditing,
+                                        onAddProject: addNewProject,
+                                        onToggleEditing: _toggleEditingMode,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                 ),
               ),
