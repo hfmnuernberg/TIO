@@ -32,9 +32,9 @@ class ToolNavigationBar extends StatelessWidget {
       toolOfSameTypeIcon: toolBlock.icon,
       onPrevTool: index == 0 ? null : () => replaceTool(tools[(index - 1)], ltr: true),
       onNextTool: index < tools.length - 1 ? () => replaceTool(tools[(index + 1)]) : null,
-      onPrevToolOfNextType: sameToolsIndex == 0 ? null : () => replaceTool(sameTools[(sameToolsIndex - 1)], ltr: true),
+      onPrevToolOfSameType: sameToolsIndex == 0 ? null : () => replaceTool(sameTools[sameToolsIndex - 1], ltr: true),
       onNextToolOfSameType:
-          sameToolsIndex < sameTools.length - 1 ? () => replaceTool(sameTools[(sameToolsIndex + 1)]) : null,
+          sameToolsIndex < sameTools.length - 1 ? () => replaceTool(sameTools[sameToolsIndex + 1]) : null,
     );
   }
 }
@@ -47,7 +47,7 @@ class _ToolNavigationBar extends StatelessWidget {
   final Widget? toolOfSameTypeIcon;
   final VoidCallback? onPrevTool;
   final VoidCallback? onNextTool;
-  final VoidCallback? onPrevToolOfNextType;
+  final VoidCallback? onPrevToolOfSameType;
   final VoidCallback? onNextToolOfSameType;
 
   const _ToolNavigationBar({
@@ -58,13 +58,14 @@ class _ToolNavigationBar extends StatelessWidget {
     this.toolOfSameTypeIcon,
     this.onPrevTool,
     this.onNextTool,
-    this.onPrevToolOfNextType,
+    this.onPrevToolOfSameType,
     this.onNextToolOfSameType,
   });
 
   @override
   Widget build(BuildContext context) {
     const smallIconButtonWidth = 56.0;
+
     return BottomAppBar(
       padding: EdgeInsets.symmetric(horizontal: 12),
       color: Colors.transparent,
@@ -78,8 +79,8 @@ class _ToolNavigationBar extends StatelessWidget {
                 SmallIconButton(icon: prevToolIcon!, onPressed: onPrevTool)
               else
                 SizedBox(width: smallIconButtonWidth),
-              if (onPrevToolOfNextType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon)
-                SmallIconButton(icon: toolOfSameTypeIcon!, onPressed: onPrevToolOfNextType)
+              if (onPrevToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon)
+                SmallIconButton(icon: toolOfSameTypeIcon!, onPressed: onPrevToolOfSameType)
               else
                 SizedBox(width: smallIconButtonWidth),
             ],

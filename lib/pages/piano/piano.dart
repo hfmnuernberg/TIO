@@ -29,6 +29,7 @@ import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tiomusic/widgets/piano/keyboard.dart';
+import 'package:tiomusic/widgets/piano/piano_tool_navigation_bar.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class Piano extends StatefulWidget {
@@ -202,6 +203,116 @@ class _PianoState extends State<Piano> {
     return pianoSetup(soundFontPath: tempSoundFontPath);
   }
 
+  Widget _buildSettingsRow() {
+    final l10n = context.l10n;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          key: _keyOctaveSwitch,
+          children: [
+            IconButton(
+              onPressed: _pianoBlock.octaveDown,
+              icon: const Icon(Icons.keyboard_double_arrow_left, color: ColorTheme.primary),
+            ),
+            IconButton(
+              onPressed: _pianoBlock.toneDown,
+              icon: const Icon(Icons.keyboard_arrow_left, color: ColorTheme.primary),
+            ),
+          ],
+        ),
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.only(right: TIOMusicParams.edgeInset),
+            child: Text(
+              l10n.formatNumber(_concertPitch),
+              textAlign: TextAlign.end,
+              style: const TextStyle(color: ColorTheme.onPrimary),
+            ),
+          ),
+        ),
+        Row(
+          key: _keySettings,
+          children: [
+            IconButton(
+              onPressed: () async {
+                await openSettingPage(
+                  SetConcertPitch(),
+                  callbackOnReturn: (_) async {
+                    await _pianoSetConcertPitch(_pianoBlock.concertPitch);
+                  },
+                  context,
+                  _pianoBlock,
+                );
+                setState(() => _concertPitch = _pianoBlock.concertPitch);
+              },
+              icon: const CircleAvatar(
+                backgroundColor: ColorTheme.primary50,
+                child: Text('Hz', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 20)),
+              ),
+            ),
+            IconButton(
+              onPressed: () async {
+                await openSettingPage(
+                  SetVolume(
+                    initialValue: _pianoBlock.volume,
+                    onConfirm: (vol) {
+                      _pianoBlock.volume = vol;
+                      pianoSetVolume(volume: vol);
+                    },
+                    onChange: (vol) => pianoSetVolume(volume: vol),
+                    onCancel: () => pianoSetVolume(volume: _pianoBlock.volume),
+                  ),
+                  callbackOnReturn: (_) => setState(() {}),
+                  context,
+                  _pianoBlock,
+                );
+              },
+              icon: const CircleAvatar(
+                backgroundColor: ColorTheme.primary50,
+                child: Icon(Icons.volume_up, color: ColorTheme.onPrimary),
+              ),
+            ),
+            IconButton(
+              onPressed: () async {
+                await openSettingPage(const ChooseSound(), context, _pianoBlock);
+                _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
+                setState(() => _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(l10n));
+              },
+              icon: const CircleAvatar(
+                backgroundColor: ColorTheme.primary50,
+                child: Icon(Icons.library_music_outlined, color: ColorTheme.onPrimary),
+              ),
+            ),
+          ],
+        ),
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.only(left: TIOMusicParams.edgeInset),
+            child: Text(
+              _instrumentName,
+              textAlign: TextAlign.start,
+              style: const TextStyle(color: ColorTheme.onPrimary),
+            ),
+          ),
+        ),
+        Row(
+          children: [
+            IconButton(
+              onPressed: _pianoBlock.toneUp,
+              icon: const Icon(Icons.keyboard_arrow_right, color: ColorTheme.primary),
+            ),
+            IconButton(
+              onPressed: _pianoBlock.octaveUp,
+              icon: const Icon(Icons.keyboard_double_arrow_right, color: ColorTheme.primary),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -284,11 +395,7 @@ class _PianoState extends State<Piano> {
                 children: [
                   // save button
                   IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _showSavingPage = true;
-                      });
-                    },
+                    onPressed: () => setState(() => _showSavingPage = true),
                     icon: Icon(
                       widget.isQuickTool ? Icons.bookmark_outline : Icons.bookmark_add_outlined,
                       color: ColorTheme.primary,
@@ -300,149 +407,54 @@ class _PianoState extends State<Piano> {
           ),
           // piano
           Expanded(
-            child: Container(
-              decoration: const BoxDecoration(
-                color: ColorTheme.primaryFixedDim,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-              ),
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // settings row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        key: _keyOctaveSwitch,
-                        children: [
-                          // octave down button
-                          IconButton(
-                            onPressed: _pianoBlock.octaveDown,
-                            icon: const Icon(Icons.keyboard_double_arrow_left, color: ColorTheme.primary),
-                          ),
-
-                          IconButton(
-                            onPressed: _pianoBlock.toneDown,
-                            icon: const Icon(Icons.keyboard_arrow_left, color: ColorTheme.primary),
-                          ),
-                        ],
+            child: Column(
+              children: [
+                if (widget.isQuickTool)
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: ColorTheme.primaryFixedDim,
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    child: _buildSettingsRow(),
+                  )
+                else
+                  PianoToolNavigationBar(
+                    project: Provider.of<Project>(context, listen: false),
+                    toolBlock: _pianoBlock,
+                    pianoSettings: Container(
+                      decoration: const BoxDecoration(
+                        color: ColorTheme.primaryFixedDim,
+                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                       ),
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(right: TIOMusicParams.edgeInset),
-                          child: Text(
-                            l10n.formatNumber(_concertPitch),
-                            textAlign: TextAlign.end,
-                            style: const TextStyle(color: ColorTheme.onPrimary),
-                          ),
-                        ),
-                      ),
-                      Row(
-                        key: _keySettings,
-                        children: [
-                          IconButton(
-                            onPressed: () async {
-                              await openSettingPage(
-                                SetConcertPitch(),
-                                callbackOnReturn: (value) async {
-                                  await _pianoSetConcertPitch(_pianoBlock.concertPitch);
-                                },
-                                context,
-                                _pianoBlock,
-                              );
-
-                              setState(() => _concertPitch = _pianoBlock.concertPitch);
-                            },
-                            icon: const CircleAvatar(
-                              backgroundColor: ColorTheme.primary50,
-                              child: Text(
-                                'Hz',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(color: ColorTheme.onPrimary, fontSize: 20),
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () async {
-                              await openSettingPage(
-                                SetVolume(
-                                  initialValue: _pianoBlock.volume,
-                                  onConfirm: (vol) {
-                                    _pianoBlock.volume = vol;
-                                    pianoSetVolume(volume: vol);
-                                  },
-                                  onChange: (vol) => pianoSetVolume(volume: vol),
-                                  onCancel: () => pianoSetVolume(volume: _pianoBlock.volume),
-                                ),
-                                callbackOnReturn: (value) => setState(() {}),
-                                context,
-                                _pianoBlock,
-                              );
-                            },
-                            icon: const CircleAvatar(
-                              backgroundColor: ColorTheme.primary50,
-                              child: Icon(Icons.volume_up, color: ColorTheme.onPrimary),
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () async {
-                              await openSettingPage(const ChooseSound(), context, _pianoBlock);
-
-                              _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
-
-                              setState(
-                                () => _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(l10n),
-                              );
-                            },
-                            icon: const CircleAvatar(
-                              backgroundColor: ColorTheme.primary50,
-                              child: Icon(Icons.library_music_outlined, color: ColorTheme.onPrimary),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: Container(
-                          margin: EdgeInsets.only(left: TIOMusicParams.edgeInset),
-                          child: Text(
-                            _instrumentName,
-                            textAlign: TextAlign.start,
-                            style: const TextStyle(color: ColorTheme.onPrimary),
-                          ),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          // octave up button
-                          IconButton(
-                            onPressed: _pianoBlock.toneUp,
-                            icon: const Icon(Icons.keyboard_arrow_right, color: ColorTheme.primary),
-                          ),
-
-                          IconButton(
-                            onPressed: _pianoBlock.octaveUp,
-                            icon: const Icon(Icons.keyboard_double_arrow_right, color: ColorTheme.primary),
-                          ),
-                        ],
-                      ),
-                    ],
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      child: _buildSettingsRow(),
+                    ),
                   ),
-                  Consumer<ProjectBlock>(
-                    builder: (context, projectBlock, child) {
-                      final pianoBlock = projectBlock as PianoBlock;
-                      return Expanded(
-                        child: Keyboard(
-                          lowestNote: pianoBlock.keyboardPosition,
-                          playedNotes: _playedNotes,
-                          onPlay: _playNoteOn,
-                          onRelease: _playNoteOff,
-                        ),
-                      );
-                    },
+
+                Expanded(
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: ColorTheme.primaryFixedDim,
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    child: Consumer<ProjectBlock>(
+                      builder: (context, projectBlock, child) {
+                        final pianoBlock = projectBlock as PianoBlock;
+                        return Expanded(
+                          child: Keyboard(
+                            lowestNote: pianoBlock.keyboardPosition,
+                            playedNotes: _playedNotes,
+                            onPlay: _playNoteOn,
+                            onRelease: _playNoteOff,
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
