@@ -20,11 +20,7 @@ class EditProjectsBar extends StatelessWidget {
       child: Stack(
         children: [
           Positioned.fill(
-            child: Listener(
-              behavior: HitTestBehavior.translucent,
-              onPointerDown: (_) {},
-              child: const SizedBox(),
-            ),
+            child: Listener(behavior: HitTestBehavior.translucent, onPointerDown: (_) {}, child: const SizedBox()),
           ),
 
           Padding(
@@ -32,15 +28,9 @@ class EditProjectsBar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                SmallIconButton(icon: Icon(Icons.add, color: ColorTheme.tertiary), onPressed: onAddProject),
                 SmallIconButton(
-                  icon: Icon(Icons.add, color: ColorTheme.tertiary),
-                  onPressed: onAddProject,
-                ),
-                SmallIconButton(
-                  icon: Icon(
-                    isEditing ? Icons.check : Icons.edit,
-                    color: ColorTheme.tertiary,
-                  ),
+                  icon: Icon(isEditing ? Icons.check : Icons.edit, color: ColorTheme.tertiary),
                   onPressed: onToggleEditing,
                 ),
               ],
