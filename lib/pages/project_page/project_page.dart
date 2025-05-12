@@ -328,7 +328,11 @@ class _ProjectPageState extends State<ProjectPage> {
         ],
       ),
       bottomNavigationBar: EditProjectBar(
-        onAddTool: () => setState(() => _showBlocks = false),
+        onAddTool:
+            () => setState(() {
+              _showBlocks = false;
+              _isEditing = false;
+            }),
         onToggleEditing: _toggleEditingMode,
         isEditing: _isEditing,
       ),
