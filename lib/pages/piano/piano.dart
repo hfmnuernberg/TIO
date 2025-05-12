@@ -323,6 +323,7 @@ class _PianoState extends State<Piano> {
   }
 
   Widget _buildPianoMainPage(BuildContext context) {
+    final project = Provider.of<Project>(context, listen: false);
     final l10n = context.l10n;
     final islandWidth = MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width / 1.9);
 
@@ -386,10 +387,7 @@ class _PianoState extends State<Piano> {
               SizedBox(
                 height: ParentToolParams.islandHeight,
                 width: islandWidth,
-                child: ParentIslandView(
-                  project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
-                  toolBlock: _pianoBlock,
-                ),
+                child: ParentIslandView(project: widget.isQuickTool ? null : project, toolBlock: _pianoBlock),
               ),
               Row(
                 children: [
@@ -407,54 +405,60 @@ class _PianoState extends State<Piano> {
           ),
           // piano
           Expanded(
-            child: Column(
-              children: [
-                if (widget.isQuickTool)
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: ColorTheme.primaryFixedDim,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    child: _buildSettingsRow(),
-                  )
-                else
-                  PianoToolNavigationBar(
-                    project: Provider.of<Project>(context, listen: false),
-                    toolBlock: _pianoBlock,
-                    pianoSettings: Container(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Column(
+                children: [
+                  if (widget.isQuickTool)
+                    Container(
                       decoration: const BoxDecoration(
                         color: ColorTheme.primaryFixedDim,
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding: const EdgeInsets.fromLTRB(10, 8, 10, 0),
                       child: _buildSettingsRow(),
+                    )
+                  else
+                    PianoToolNavigationBar(
+                      project: project,
+                      toolBlock: _pianoBlock,
+                      pianoSettings: Container(
+                        decoration: const BoxDecoration(
+                          color: ColorTheme.primaryFixedDim,
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+                        ),
+                        padding: const EdgeInsets.fromLTRB(10, 8, 10, 0),
+                        child: _buildSettingsRow(),
+                      ),
                     ),
-                  ),
 
-                Expanded(
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: ColorTheme.primaryFixedDim,
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    child: Consumer<ProjectBlock>(
-                      builder: (context, projectBlock, child) {
-                        final pianoBlock = projectBlock as PianoBlock;
-                        return Expanded(
-                          child: Keyboard(
-                            lowestNote: pianoBlock.keyboardPosition,
-                            playedNotes: _playedNotes,
-                            onPlay: _playNoteOn,
-                            onRelease: _playNoteOff,
-                          ),
-                        );
-                      },
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: ColorTheme.primaryFixedDim,
+                        borderRadius:
+                            project.blocks.length == 1
+                                ? BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))
+                                : BorderRadius.all(Radius.circular(20)),
+                      ),
+                      padding: const EdgeInsets.all(10),
+                      child: Consumer<ProjectBlock>(
+                        builder: (context, projectBlock, child) {
+                          final pianoBlock = projectBlock as PianoBlock;
+                          return Expanded(
+                            child: Keyboard(
+                              lowestNote: pianoBlock.keyboardPosition,
+                              playedNotes: _playedNotes,
+                              onPlay: _playNoteOn,
+                              onRelease: _playNoteOff,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
