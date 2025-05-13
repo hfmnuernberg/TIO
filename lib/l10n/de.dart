@@ -150,6 +150,8 @@ class German extends AppLocalizations {
   String get metronomeSetRandomMute => 'Random mute einstellen';
   String get metronomeSetSoundsPrimary => 'Sounds einstellen';
   String get metronomeSetSoundsSecondary => 'Sounds einstellen (Metronom 2)';
+  String get metronomeSimpleModeOff => 'Wechsel zu erweitertem Modus';
+  String get metronomeSimpleModeOn => 'Wechsel zu einfachem Modus';
   String get metronomeSound => 'Sound';
   String get metronomeSoundMain => 'Main';
   String get metronomeSoundPoly => 'Poly Sound';

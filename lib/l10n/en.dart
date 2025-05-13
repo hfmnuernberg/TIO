@@ -149,6 +149,8 @@ class English extends AppLocalizations {
   String get metronomeSetRandomMute => 'Set random mute';
   String get metronomeSetSoundsPrimary => 'Set metronome sounds';
   String get metronomeSetSoundsSecondary => 'Set 2nd metronome sounds';
+  String get metronomeSimpleModeOff => 'Switch to advanced mode';
+  String get metronomeSimpleModeOn => 'Switch to simple mode';
   String get metronomeSound => 'Sound';
   String get metronomeSoundMain => 'Main';
   String get metronomeSoundPoly => 'Poly sound';

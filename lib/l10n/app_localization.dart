@@ -131,6 +131,8 @@ abstract class AppLocalizations {
   String get metronomeSetRandomMute;
   String get metronomeSetSoundsPrimary;
   String get metronomeSetSoundsSecondary;
+  String get metronomeSimpleModeOff;
+  String get metronomeSimpleModeOn;
   String get metronomeSound;
   String get metronomeSoundMain;
   String get metronomeSoundPoly;

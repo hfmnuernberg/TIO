@@ -64,6 +64,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   final List<int> _lastRenderTimes = List.empty(growable: true);
   int _avgRenderTimeInMs = 0;
 
+  bool _isSimpleModeOn = true;
   bool _isStarted = false;
   bool _sound = true;
   bool _blink = MetronomeParams.defaultVisualMetronome;
@@ -147,6 +148,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       }
     });
   }
+
+  void _toggleSimpleMode() => setState(() => _isSimpleModeOn = !_isSimpleModeOn);
 
   void handleVolumeChange(double newVolume) {
     setState(() {
@@ -623,6 +626,13 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         MenuItemButton(
           onPressed: _clearAllRhythms,
           child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
+        ),
+        MenuItemButton(
+          onPressed: _toggleSimpleMode,
+          child: Text(
+            _isSimpleModeOn ? l10n.metronomeSimpleModeOff : l10n.metronomeSimpleModeOn,
+            style: const TextStyle(color: ColorTheme.primary),
+          ),
         ),
       ],
       onParentTutorialFinished: () {
