@@ -31,12 +31,12 @@ class PianoToolNavigationBar extends StatelessWidget {
 
     return _PianoToolNavigationBar(
       pianoSettings: pianoSettings,
-      prevToolIcon: index == 0 ? null : tools[(index - 1)].icon,
+      prevToolIcon: index > 0 ? tools[(index - 1)].icon : null,
       nextToolIcon: index < tools.length - 1 ? tools[index + 1].icon : null,
       toolOfSameTypeIcon: toolBlock.icon,
-      onPrevTool: index == 0 ? null : () => replaceTool(tools[(index - 1)], ltr: true),
+      onPrevTool: index > 0 ? () => replaceTool(tools[(index - 1)], ltr: true) : null,
       onNextTool: index < tools.length - 1 ? () => replaceTool(tools[index + 1]) : null,
-      onPrevToolOfSameType: sameToolsIndex == 0 ? null : () => replaceTool(sameTools[(sameToolsIndex - 1)], ltr: true),
+      onPrevToolOfSameType: sameToolsIndex > 0 ? () => replaceTool(sameTools[(sameToolsIndex - 1)], ltr: true) : null,
       onNextToolOfSameType:
           sameToolsIndex < sameTools.length - 1 ? () => replaceTool(sameTools[sameToolsIndex + 1]) : null,
     );
