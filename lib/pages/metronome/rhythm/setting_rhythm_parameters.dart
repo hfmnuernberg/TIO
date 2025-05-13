@@ -14,7 +14,6 @@ import 'package:tiomusic/pages/metronome/rhythm/beat_circle.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm/note_table.dart';
-import 'package:tiomusic/pages/metronome/rhythm/rhythm_functions.dart';
 import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -30,7 +29,6 @@ import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
-import 'package:tiomusic/widgets/small_icon_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class SetRhythmParameters extends StatefulWidget {
@@ -76,7 +74,6 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
 
   bool isPlaying = false;
   bool processingButtonClick = false;
-  bool isSimpleModeOn = false;
 
   late Timer beatDetection;
   final ActiveBeatsModel activeBeatsModel = ActiveBeatsModel();
@@ -141,12 +138,6 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     super.deactivate();
   }
 
-  void toggleSimpleMode() {
-    isSimpleModeOn = !isSimpleModeOn;
-    if (isSimpleModeOn) onPolyBeatCountChange(beatCount);
-    setState(() => {});
-  }
-
   // React to beat signal
   void onBeatHappened(BeatHappenedEvent event) {
     Timer(Duration(milliseconds: event.millisecondsBeforeStart), () {
@@ -182,7 +173,6 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
   void onBeatCountChange(int newBeatCount) {
     setState(() {
       beatCount = newBeatCount;
-      if (isSimpleModeOn) polyBeatCount = newBeatCount;
 
       if (newBeatCount > beats.length) {
         beats.addAll(List.filled(newBeatCount - beats.length, BeatType.Unaccented));
@@ -331,14 +321,6 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
             Stack(
               alignment: AlignmentDirectional.center,
               children: [
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: SmallIconButton(
-                    icon: Icon(isSimpleModeOn ? Icons.music_note : Icons.tune, color: ColorTheme.tertiary),
-                    onPressed: toggleSimpleMode,
-                  ),
-                ),
                 BeatCircle(
                   beatCount: beats.length,
                   beatTypes: getBeatButtonsFromBeats(beats),
@@ -394,16 +376,15 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
                   onChange: onPolyBeatCountChange,
                   min: minNumberOfPolyBeats,
                   max: MetronomeParams.maxBeatCount,
-                  decrementStep: isSimpleModeOn ? getDecrementStepForPolyBeat(beatCount, polyBeatCount) : 1,
-                  incrementStep: isSimpleModeOn ? getIncrementStepForPolyBeat(beatCount, polyBeatCount) : 1,
+                  decrementStep: 1,
+                  incrementStep: 1,
                   label: l10n.metronomeNumberOfPolyBeats,
                   buttonRadius: MetronomeParams.popupButtonRadius,
                   textFontSize: MetronomeParams.popupTextFontSize,
                 ),
               ],
             ),
-
-            if (!isSimpleModeOn) NoteTable(selectedNoteKey: noteKey, onSelectNote: selectIcon),
+            NoteTable(selectedNoteKey: noteKey, onSelectNote: selectIcon),
           ],
         ),
       ),

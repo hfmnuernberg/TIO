@@ -75,8 +75,6 @@ class _ProjectPageState extends State<ProjectPage> {
       _showBlocks = true;
     }
 
-    _project.timeLastModified = getCurrentDateTime();
-
     if (widget.goStraightToTool) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         goToTool(
@@ -91,6 +89,10 @@ class _ProjectPageState extends State<ProjectPage> {
     }
 
     _showTutorial();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _project.timeLastModified = getCurrentDateTime();
+    });
   }
 
   void _toggleEditingMode() => setState(() => _isEditing = !_isEditing);
@@ -310,23 +312,24 @@ class _ProjectPageState extends State<ProjectPage> {
         fit: StackFit.expand,
         children: [
           FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
-          Padding(
-            padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
-            child:
-                _isEditing
-                    ? EditableToolList(project: _project, onReorder: _handleReorder, onDeleteBlock: _handleDeleteBlock)
-                    : ToolList(
-                      project: _project,
-                      onOpenTool: (block) async {
-                        await goToTool(context, _project, block);
-                        setState(() {});
-                      },
-                    ),
-          ),
+          if (_isEditing)
+            EditableToolList(project: _project, onReorder: _handleReorder, onDeleteBlock: _handleDeleteBlock)
+          else
+            ToolList(
+              project: _project,
+              onOpenTool: (block) async {
+                await goToTool(context, _project, block);
+                setState(() {});
+              },
+            ),
         ],
       ),
       bottomNavigationBar: EditProjectBar(
-        onAddTool: () => setState(() => _showBlocks = false),
+        onAddTool:
+            () => setState(() {
+              _showBlocks = false;
+              _isEditing = false;
+            }),
         onToggleEditing: _toggleEditingMode,
         isEditing: _isEditing,
       ),
@@ -357,31 +360,29 @@ class _ProjectPageState extends State<ProjectPage> {
         fit: StackFit.expand,
         children: [
           FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
-          Padding(
-            padding: const EdgeInsets.only(top: TIOMusicParams.bigSpaceAboveList),
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: BlockType.values.length,
-              itemBuilder: (context, index) {
-                var info = getBlockTypeInfos(context.l10n)[BlockType.values[index]]!;
-                return CardListTile(
-                  title: info.name,
-                  subtitle: info.description,
-                  trailingIcon: IconButton(
-                    onPressed: () {
-                      _onNewToolTilePressed(info);
-                    },
-                    icon: const Icon(Icons.add),
-                    color: ColorTheme.surfaceTint,
-                  ),
-                  leadingPicture: circleToolIcon(info.icon),
-                  onTapFunction: () {
+          ListView.builder(
+            padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList + 2),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: BlockType.values.length,
+            itemBuilder: (context, index) {
+              var info = getBlockTypeInfos(context.l10n)[BlockType.values[index]]!;
+              return CardListTile(
+                title: info.name,
+                subtitle: info.description,
+                trailingIcon: IconButton(
+                  onPressed: () {
                     _onNewToolTilePressed(info);
                   },
-                );
-              },
-            ),
+                  icon: const Icon(Icons.add),
+                  color: ColorTheme.surfaceTint,
+                ),
+                leadingPicture: circleToolIcon(info.icon),
+                onTapFunction: () {
+                  _onNewToolTilePressed(info);
+                },
+              );
+            },
           ),
         ],
       ),

@@ -37,6 +37,7 @@ class German extends AppLocalizations {
   String get commonNo => 'Nein';
   String get commonOctave => 'Oktave';
   String get commonPlus => 'Plus-Schaltfläche';
+  String get commonReorder => 'Verschieben';
   String get commonReset => 'Zurücksetzen';
   String get commonSetVolume => 'Lautstärke einstellen';
   String get commonSlider => 'Schieberegler';
@@ -201,6 +202,7 @@ class German extends AppLocalizations {
       'Tippe auf die Pfeile links oder rechts, um die Tastatur um eine Taste oder um eine Oktave nach oben oder unten zu verschieben.';
 
   String get projectDelete => 'Project löschen';
+  String get projectDeleteTool => 'Tool löschen';
   String get projectDeleteAllTools => 'Alle Tools löschen';
   String get projectDeleteAllToolsConfirmation => 'Möchtest du wirklich alle Tools in diesem Projekt löschen?';
   String get projectDeleteToolConfirmation => 'Möchtest du dieses Tool wirklich löschen?';

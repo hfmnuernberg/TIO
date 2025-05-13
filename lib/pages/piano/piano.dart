@@ -50,8 +50,6 @@ class _PianoState extends State<Piano> {
   late double _concertPitch = _pianoBlock.concertPitch;
   late String _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n);
 
-  final Set<int> _playedNotes = {};
-
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
 
@@ -109,17 +107,9 @@ class _PianoState extends State<Piano> {
     });
   }
 
-  void _playNoteOn(int note) {
-    pianoNoteOn(note: note);
-    _playedNotes.add(note);
-    setState(() {});
-  }
+  void _playNoteOn(int note) => pianoNoteOn(note: note);
 
-  void _playNoteOff(int note) {
-    pianoNoteOff(note: note);
-    _playedNotes.remove(note);
-    setState(() {});
-  }
+  void _playNoteOff(int note) => pianoNoteOff(note: note);
 
   Future<void> _pianoStart() async {
     if (_isPlaying) return;
@@ -387,13 +377,20 @@ class _PianoState extends State<Piano> {
               SizedBox(
                 height: ParentToolParams.islandHeight,
                 width: islandWidth,
-                child: ParentIslandView(project: widget.isQuickTool ? null : project, toolBlock: _pianoBlock),
+                child: ParentIslandView(
+                  project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
+                  toolBlock: _pianoBlock,
+                ),
               ),
               Row(
                 children: [
                   // save button
                   IconButton(
-                    onPressed: () => setState(() => _showSavingPage = true),
+                    onPressed: () {
+                      setState(() {
+                        _showSavingPage = true;
+                      });
+                    },
                     icon: Icon(
                       widget.isQuickTool ? Icons.bookmark_outline : Icons.bookmark_add_outlined,
                       color: ColorTheme.primary,
@@ -437,9 +434,9 @@ class _PianoState extends State<Piano> {
                       decoration: BoxDecoration(
                         color: ColorTheme.primaryFixedDim,
                         borderRadius:
-                            project.blocks.length == 1
-                                ? BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))
-                                : BorderRadius.all(Radius.circular(20)),
+                        project.blocks.length == 1
+                            ? BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))
+                            : BorderRadius.all(Radius.circular(20)),
                       ),
                       padding: const EdgeInsets.all(10),
                       child: Consumer<ProjectBlock>(
@@ -448,7 +445,6 @@ class _PianoState extends State<Piano> {
                           return Expanded(
                             child: Keyboard(
                               lowestNote: pianoBlock.keyboardPosition,
-                              playedNotes: _playedNotes,
                               onPlay: _playNoteOn,
                               onRelease: _playNoteOff,
                             ),
@@ -510,12 +506,12 @@ class _PianoState extends State<Piano> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child:
-                              widget.isQuickTool
-                                  ? Text(l10n.toolSave, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
-                                  : Text(
-                                    l10n.toolSaveCopy,
-                                    style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
-                                  ),
+                          widget.isQuickTool
+                              ? Text(l10n.toolSave, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
+                              : Text(
+                            l10n.toolSaveCopy,
+                            style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
+                          ),
                         ),
                       ),
                       Expanded(
@@ -537,13 +533,13 @@ class _PianoState extends State<Piano> {
                                       color: ColorTheme.surfaceTint,
                                     ),
                                     leadingPicture:
-                                        projectLibrary.projects[index].thumbnailPath.isEmpty
-                                            ? const AssetImage(TIOMusicParams.tiomusicIconPath)
-                                            : FileImage(
-                                              File(
-                                                _fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath),
-                                              ),
-                                            ),
+                                    projectLibrary.projects[index].thumbnailPath.isEmpty
+                                        ? const AssetImage(TIOMusicParams.tiomusicIconPath)
+                                        : FileImage(
+                                      File(
+                                        _fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath),
+                                      ),
+                                    ),
                                     onTapFunction: () => _buildTextInputOverlay(setTileState, index),
                                   );
                                 },
@@ -579,49 +575,49 @@ class _PianoState extends State<Piano> {
     _entry = OverlayEntry(
       builder:
           (context) => Scaffold(
-            resizeToAvoidBottomInset: false,
-            backgroundColor: ColorTheme.primary92,
-            body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 2,
-                      // textfield for new tool title
-                      child: TextField(
-                        controller: _newToolTitle,
-                        autofocus: true,
-                        decoration: InputDecoration(
-                          hintText: '',
-                          border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          label: Text('${l10n.toolNewTitle}:', style: TextStyle(color: ColorTheme.surfaceTint)),
-                        ),
-                        style: const TextStyle(color: ColorTheme.primary),
-                        onSubmitted: (newText) {
-                          _newToolTitle.text = newText;
-                          // close
-                          _hideTextInputOverlay(true, setTileState, index);
-                        },
-                      ),
+        resizeToAvoidBottomInset: false,
+        backgroundColor: ColorTheme.primary92,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 2,
+                  // textfield for new tool title
+                  child: TextField(
+                    controller: _newToolTitle,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: '',
+                      border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                      label: Text('${l10n.toolNewTitle}:', style: TextStyle(color: ColorTheme.surfaceTint)),
                     ),
-                    // close button
-                    TextButton(
-                      onPressed: () => _hideTextInputOverlay(false, setTileState, index),
-                      child: Text(l10n.commonCancel),
-                    ),
-                    TIOFlatButton(
-                      onPressed: () => _hideTextInputOverlay(true, setTileState, index),
-                      text: l10n.commonSubmit,
-                      boldText: true,
-                    ),
-                  ],
+                    style: const TextStyle(color: ColorTheme.primary),
+                    onSubmitted: (newText) {
+                      _newToolTitle.text = newText;
+                      // close
+                      _hideTextInputOverlay(true, setTileState, index);
+                    },
+                  ),
                 ),
-              ),
+                // close button
+                TextButton(
+                  onPressed: () => _hideTextInputOverlay(false, setTileState, index),
+                  child: Text(l10n.commonCancel),
+                ),
+                TIOFlatButton(
+                  onPressed: () => _hideTextInputOverlay(true, setTileState, index),
+                  text: l10n.commonSubmit,
+                  boldText: true,
+                ),
+              ],
             ),
           ),
+        ),
+      ),
     );
 
     overlay.insert(_entry!);
@@ -640,66 +636,66 @@ class _PianoState extends State<Piano> {
     _entry = OverlayEntry(
       builder:
           (context) => Scaffold(
-            resizeToAvoidBottomInset: false,
-            backgroundColor: ColorTheme.primary92,
-            body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    // textfield for new project title
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 3.5,
-                      child: TextField(
-                        controller: _newProjectTitle,
-                        autofocus: true,
-                        decoration: InputDecoration(
-                          hintText: '',
-                          border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          label: Text('${l10n.toolNewProjectTitle}:', style: TextStyle(color: ColorTheme.surfaceTint)),
-                        ),
-                        style: const TextStyle(color: ColorTheme.primary),
-                        onSubmitted: (newText) {
-                          _newProjectTitle.text = newText;
-                          // focus next text field
-                          _toolTitleFieldFocus.requestFocus();
-                        },
-                      ),
+        resizeToAvoidBottomInset: false,
+        backgroundColor: ColorTheme.primary92,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // textfield for new project title
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 3.5,
+                  child: TextField(
+                    controller: _newProjectTitle,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: '',
+                      border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                      label: Text('${l10n.toolNewProjectTitle}:', style: TextStyle(color: ColorTheme.surfaceTint)),
                     ),
-                    // textfield for new tool title
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width / 3.5,
-                      child: TextField(
-                        controller: _newToolTitle,
-                        focusNode: _toolTitleFieldFocus,
-                        decoration: InputDecoration(
-                          hintText: '',
-                          border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
-                          label: Text('${l10n.toolNewTitle}:', style: TextStyle(color: ColorTheme.surfaceTint)),
-                        ),
-                        style: const TextStyle(color: ColorTheme.primary),
-                        onSubmitted: (newText) {
-                          _newToolTitle.text = newText;
-                          // close
-                          _hideTwoTextInputOverlay(true);
-                        },
-                      ),
-                    ),
-
-                    TextButton(onPressed: () => _hideTwoTextInputOverlay(false), child: Text(l10n.commonCancel)),
-                    TIOFlatButton(
-                      onPressed: () => _hideTwoTextInputOverlay(true),
-                      text: l10n.commonSubmit,
-                      boldText: true,
-                    ),
-                  ],
+                    style: const TextStyle(color: ColorTheme.primary),
+                    onSubmitted: (newText) {
+                      _newProjectTitle.text = newText;
+                      // focus next text field
+                      _toolTitleFieldFocus.requestFocus();
+                    },
+                  ),
                 ),
-              ),
+                // textfield for new tool title
+                SizedBox(
+                  width: MediaQuery.of(context).size.width / 3.5,
+                  child: TextField(
+                    controller: _newToolTitle,
+                    focusNode: _toolTitleFieldFocus,
+                    decoration: InputDecoration(
+                      hintText: '',
+                      border: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: ColorTheme.primary)),
+                      label: Text('${l10n.toolNewTitle}:', style: TextStyle(color: ColorTheme.surfaceTint)),
+                    ),
+                    style: const TextStyle(color: ColorTheme.primary),
+                    onSubmitted: (newText) {
+                      _newToolTitle.text = newText;
+                      // close
+                      _hideTwoTextInputOverlay(true);
+                    },
+                  ),
+                ),
+
+                TextButton(onPressed: () => _hideTwoTextInputOverlay(false), child: Text(l10n.commonCancel)),
+                TIOFlatButton(
+                  onPressed: () => _hideTwoTextInputOverlay(true),
+                  text: l10n.commonSubmit,
+                  boldText: true,
+                ),
+              ],
             ),
           ),
+        ),
+      ),
     );
 
     overlay.insert(_entry!);

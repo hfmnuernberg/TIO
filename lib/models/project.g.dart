@@ -7,7 +7,6 @@ part of 'project.dart';
 // **************************************************************************
 
 Project _$ProjectFromJson(Map<String, dynamic> json) => Project(
-  json['id'] as String? ?? '',
   json['title'] as String? ?? 'Default Title',
   (json['_blocks'] as List<dynamic>?)?.map((e) => ProjectBlock.fromJson(e as Map<String, dynamic>)).toList() ?? [],
   json['thumbnailPath'] as String? ?? '',
@@ -17,10 +16,9 @@ Project _$ProjectFromJson(Map<String, dynamic> json) => Project(
 );
 
 Map<String, dynamic> _$ProjectToJson(Project instance) => <String, dynamic>{
-  'id': instance.id,
-  'title': instance.title,
-  'thumbnailPath': instance.thumbnailPath,
-  'toolCounter': instance.toolCounter,
+  'title': instance._title,
   '_blocks': instance._blocks.map((e) => e.toJson()).toList(),
-  'timeLastModified': instance.timeLastModified.toIso8601String(),
+  'thumbnailPath': instance._thumbnailPath,
+  'timeLastModified': instance._timeLastModified.toIso8601String(),
+  'toolCounter': instance._toolCounter,
 };
