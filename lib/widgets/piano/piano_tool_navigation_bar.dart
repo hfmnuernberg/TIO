@@ -3,7 +3,7 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/widgets/small_icon_button.dart';
+import 'package:tiomusic/widgets/navigation_button.dart';
 
 class PianoToolNavigationBar extends StatelessWidget {
   final Widget pianoSettings;
@@ -68,7 +68,7 @@ class _PianoToolNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    const smallIconButtonWidth = 56.0;
+    const smallIconButtonWidth = 48.0;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -76,32 +76,40 @@ class _PianoToolNavigationBar extends StatelessWidget {
         Row(
           children: [
             if (onPrevTool != null && prevToolIcon != null)
-              SmallIconButton(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool)
+              NavigationButton(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool)
             else
               const SizedBox(width: smallIconButtonWidth),
-            if (onPrevToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon)
-              SmallIconButton(
-                icon: toolOfSameTypeIcon!,
-                tooltip: l10n.toolGoToPrevOfSameType,
-                onPressed: onPrevToolOfSameType,
-              )
-            else
-              const SizedBox(width: smallIconButtonWidth),
+
+            Padding(
+              padding: EdgeInsets.only(left: 4, right: 8),
+              child:
+                  onPrevToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon
+                      ? NavigationButton(
+                        icon: toolOfSameTypeIcon!,
+                        tooltip: l10n.toolGoToPrevOfSameType,
+                        onPressed: onPrevToolOfSameType,
+                      )
+                      : const SizedBox(width: smallIconButtonWidth),
+            ),
           ],
         ),
         Expanded(child: pianoSettings),
         Row(
           children: [
-            if (onNextToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != nextToolIcon)
-              SmallIconButton(
-                icon: toolOfSameTypeIcon!,
-                tooltip: l10n.toolGoToNextOfSameType,
-                onPressed: onNextToolOfSameType,
-              )
-            else
-              const SizedBox(width: smallIconButtonWidth),
+            Padding(
+              padding: EdgeInsets.only(left: 8, right: 4),
+              child:
+                  onNextToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != nextToolIcon
+                      ? NavigationButton(
+                        icon: toolOfSameTypeIcon!,
+                        tooltip: l10n.toolGoToNextOfSameType,
+                        onPressed: onNextToolOfSameType,
+                      )
+                      : const SizedBox(width: smallIconButtonWidth),
+            ),
+
             if (onNextTool != null && nextToolIcon != null)
-              SmallIconButton(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool)
+              NavigationButton(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool)
             else
               const SizedBox(width: smallIconButtonWidth),
           ],
