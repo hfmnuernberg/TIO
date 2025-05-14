@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -64,6 +65,7 @@ class _ToolNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     const smallIconButtonWidth = 56.0;
 
     return BottomAppBar(
@@ -76,11 +78,15 @@ class _ToolNavigationBar extends StatelessWidget {
           Row(
             children: [
               if (onPrevTool != null && prevToolIcon != null)
-                SmallIconButton(icon: prevToolIcon!, onPressed: onPrevTool)
+                SmallIconButton(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool)
               else
                 SizedBox(width: smallIconButtonWidth),
               if (onPrevToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon)
-                SmallIconButton(icon: toolOfSameTypeIcon!, onPressed: onPrevToolOfSameType)
+                SmallIconButton(
+                  icon: toolOfSameTypeIcon!,
+                  tooltip: l10n.toolGoToPrevOfSameType,
+                  onPressed: onPrevToolOfSameType,
+                )
               else
                 SizedBox(width: smallIconButtonWidth),
             ],
@@ -118,11 +124,15 @@ class _ToolNavigationBar extends StatelessWidget {
           Row(
             children: [
               if (onNextToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != nextToolIcon)
-                SmallIconButton(icon: toolOfSameTypeIcon!, onPressed: onNextToolOfSameType)
+                SmallIconButton(
+                  icon: toolOfSameTypeIcon!,
+                  tooltip: l10n.toolGoToNextOfSameType,
+                  onPressed: onNextToolOfSameType,
+                )
               else
                 SizedBox(width: smallIconButtonWidth),
               if (onNextTool != null && nextToolIcon != null)
-                SmallIconButton(icon: nextToolIcon!, onPressed: onNextTool)
+                SmallIconButton(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool)
               else
                 SizedBox(width: smallIconButtonWidth),
             ],

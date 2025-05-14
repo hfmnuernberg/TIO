@@ -25,7 +25,7 @@ import '../../mocks/file_picker_mock.dart';
 import '../../mocks/in_memory_file_system_mock.dart';
 import '../../utils/action_utils.dart';
 import '../../utils/render_utils.dart';
-import 'project_utils.dart';
+import '../../utils/project_utils.dart';
 
 void main() {
   late FileSystem fileSystem;
