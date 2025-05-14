@@ -191,23 +191,22 @@ class _PianoState extends State<Piano> {
   }
 
   Widget _buildSettingsRow() {
-    return Wrap(
-      alignment: WrapAlignment.spaceBetween,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: 8,
-      runSpacing: 8,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           key: _keyOctaveSwitch,
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              onPressed: _pianoBlock.octaveDown,
               icon: const Icon(Icons.keyboard_double_arrow_left, color: ColorTheme.primary),
+              padding: EdgeInsets.zero,
+              onPressed: _pianoBlock.octaveDown,
             ),
             IconButton(
-              onPressed: _pianoBlock.toneDown,
               icon: const Icon(Icons.keyboard_arrow_left, color: ColorTheme.primary),
+              padding: EdgeInsets.zero,
+              onPressed: _pianoBlock.toneDown,
             ),
           ],
         ),
@@ -216,6 +215,11 @@ class _PianoState extends State<Piano> {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
+              icon: const CircleAvatar(
+                backgroundColor: ColorTheme.primary50,
+                child: Text('Hz', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 20)),
+              ),
+              padding: EdgeInsets.zero,
               onPressed: () async {
                 await openSettingPage(
                   SetConcertPitch(),
@@ -224,12 +228,13 @@ class _PianoState extends State<Piano> {
                   _pianoBlock,
                 );
               },
-              icon: const CircleAvatar(
-                backgroundColor: ColorTheme.primary50,
-                child: Text('Hz', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 20)),
-              ),
             ),
             IconButton(
+              icon: const CircleAvatar(
+                backgroundColor: ColorTheme.primary50,
+                child: Icon(Icons.volume_up, color: ColorTheme.onPrimary),
+              ),
+              padding: EdgeInsets.zero,
               onPressed: () async {
                 await openSettingPage(
                   SetVolume(
@@ -246,20 +251,17 @@ class _PianoState extends State<Piano> {
                   _pianoBlock,
                 );
               },
-              icon: const CircleAvatar(
-                backgroundColor: ColorTheme.primary50,
-                child: Icon(Icons.volume_up, color: ColorTheme.onPrimary),
-              ),
             ),
             IconButton(
-              onPressed: () async {
-                await openSettingPage(const ChooseSound(), context, _pianoBlock);
-                _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
-              },
               icon: const CircleAvatar(
                 backgroundColor: ColorTheme.primary50,
                 child: Icon(Icons.library_music_outlined, color: ColorTheme.onPrimary),
               ),
+              padding: EdgeInsets.zero,
+              onPressed: () async {
+                await openSettingPage(const ChooseSound(), context, _pianoBlock);
+                _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
+              },
             ),
           ],
         ),
@@ -267,12 +269,14 @@ class _PianoState extends State<Piano> {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              onPressed: _pianoBlock.toneUp,
               icon: const Icon(Icons.keyboard_arrow_right, color: ColorTheme.primary),
+              padding: EdgeInsets.zero,
+              onPressed: _pianoBlock.toneUp,
             ),
             IconButton(
-              onPressed: _pianoBlock.octaveUp,
               icon: const Icon(Icons.keyboard_double_arrow_right, color: ColorTheme.primary),
+              padding: EdgeInsets.zero,
+              onPressed: _pianoBlock.octaveUp,
             ),
           ],
         ),
