@@ -21,6 +21,7 @@ import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/sound_font_extension.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
@@ -46,6 +47,8 @@ class _PianoState extends State<Piano> {
   late ProjectRepository _projectRepo;
 
   late PianoBlock _pianoBlock;
+  late double _concertPitch = _pianoBlock.concertPitch;
+  late String _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n);
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
@@ -227,6 +230,7 @@ class _PianoState extends State<Piano> {
                   context,
                   _pianoBlock,
                 );
+                setState(() => _concertPitch = _pianoBlock.concertPitch);
               },
             ),
             IconButton(
@@ -261,6 +265,7 @@ class _PianoState extends State<Piano> {
               onPressed: () async {
                 await openSettingPage(const ChooseSound(), context, _pianoBlock);
                 _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
+                setState(() => _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n));
               },
             ),
           ],
@@ -347,9 +352,23 @@ class _PianoState extends State<Piano> {
                     }
                     setState(() {});
                   },
-                  child: Text(
-                    _pianoBlock.title,
-                    style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _pianoBlock.title,
+                        style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        '${l10n.formatNumber(_concertPitch)} Hz/$_instrumentName',
+                        style: const TextStyle(color: ColorTheme.primary),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
               ),
