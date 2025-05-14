@@ -17,6 +17,7 @@ import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
+import 'package:tiomusic/pages/metronome/rhythm/set_rhythm_parameters_simple.dart';
 import 'package:tiomusic/pages/metronome/setting_bpm.dart';
 import 'package:tiomusic/pages/metronome/setting_metronome_sound.dart';
 import 'package:tiomusic/pages/metronome/setting_random_mute.dart';
@@ -658,6 +659,16 @@ class _MetronomeState extends State<Metronome> with RouteAware {
               children: [
                 _rhythmRow(),
                 if (_metronomeBlock.rhythmGroups2.isNotEmpty) _rhythmRow(isSecondMetronome: true) else const SizedBox(),
+
+                SetRhythmParametersSimple(
+                    currentNoteKey: _metronomeBlock.rhythmGroups[0].noteKey,
+                    currentBeats: _metronomeBlock.rhythmGroups[0].beats,
+                    currentPolyBeats: _metronomeBlock.rhythmGroups[0].polyBeats,
+                    isAddingNewBar: false,
+                    rhythmGroups: _metronomeBlock.rhythmGroups,
+                    isSecondMetronome: false,
+                    metronomeBlock: _metronomeBlock,
+                ),
 
                 const SizedBox(height: TIOMusicParams.edgeInset),
 
