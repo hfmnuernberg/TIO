@@ -80,10 +80,7 @@ void main() {
     await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
     expect(find.bySemanticsLabel('Tool list'), findsNothing);
 
-    await tester.tapAndSettle(find.bySemanticsLabel('Text'));
-    await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Text 1');
-    await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-    await tester.enterTextAndSettle(find.bySemanticsLabel('Text field'), 'Test text');
+    await tester.createTextToolInProject('Test text');
     await tester.tapAndSettle(find.bySemanticsLabel('Back'));
 
     expect(tester.withinList(find.bySemanticsLabel('Text 1')), findsOneWidget);
@@ -92,10 +89,7 @@ void main() {
   testWidgets('deletes tool when tool was deleted', (tester) async {
     await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
 
-    await tester.tapAndSettle(find.bySemanticsLabel('Text'));
-    await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Text 1');
-    await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-    await tester.enterTextAndSettle(find.bySemanticsLabel('Text field'), 'Test text');
+    await tester.createTextToolInProject('Test text');
     await tester.tapAndSettle(find.bySemanticsLabel('Back'));
 
     expect(tester.withinList(find.bySemanticsLabel('Text 1')), findsOneWidget);
@@ -113,7 +107,6 @@ void main() {
 
     await tester.createImageToolInProject();
     await tester.tapAndSettle(find.bySemanticsLabel('Back'));
-
     await tester.tapAndSettle(find.byTooltip('Add new tool'));
     await tester.createTextToolInProject('Test text');
 
