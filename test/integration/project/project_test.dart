@@ -111,18 +111,15 @@ void main() {
   testWidgets('navigate between tools when multiple tools was added', (tester) async {
     await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
 
-    await tester.createTextToolInProject('Test text');
-    await tester.tapAndSettle(find.bySemanticsLabel('Back'));
-
-    await tester.tapAndSettle(find.byTooltip('Add new tool'));
     await tester.createImageToolInProject();
     await tester.tapAndSettle(find.bySemanticsLabel('Back'));
 
-    await tester.tapAndSettle(find.bySemanticsLabel('Text 1'));
-    expect(find.bySemanticsLabel('Text field'), findsOneWidget);
+    await tester.tapAndSettle(find.byTooltip('Add new tool'));
+    await tester.createTextToolInProject('Test text');
 
-    await tester.tapAndSettle(find.byTooltip('Go to previous tool'));
+    await tester.tapAndSettle(find.byTooltip('Go to next tool'));
+
     expect(find.bySemanticsLabel('Please select an image or take a photo.'), findsOneWidget);
-    expect(find.bySemanticsLabel('Text 1'), findsNothing);
+    expect(find.bySemanticsLabel('Text field'), findsNothing);
   });
 }
