@@ -20,7 +20,7 @@ import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
 import 'package:tiomusic/pages/metronome/setting_bpm.dart';
 import 'package:tiomusic/pages/metronome/setting_metronome_sound.dart';
 import 'package:tiomusic/pages/metronome/setting_random_mute.dart';
-import 'package:tiomusic/pages/metronome/rhythm/setting_rhythm_parameters.dart';
+import 'package:tiomusic/pages/metronome/rhythm/set_rhythm_parameters.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
