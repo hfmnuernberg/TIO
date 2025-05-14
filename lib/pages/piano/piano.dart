@@ -238,7 +238,7 @@ class _PianoState extends State<Piano> {
                 backgroundColor: ColorTheme.primary50,
                 child: Icon(Icons.volume_up, color: ColorTheme.onPrimary),
               ),
-              padding: EdgeInsets.zero,
+              padding: EdgeInsets.symmetric(horizontal: 8),
               onPressed: () async {
                 await openSettingPage(
                   SetVolume(
@@ -412,8 +412,8 @@ class _PianoState extends State<Piano> {
                         color: ColorTheme.primaryFixedDim,
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                       ),
-                      height: 48,
-                      padding: const EdgeInsets.only(top: 8),
+                      height: 52,
+                      padding: const EdgeInsets.only(top: 10),
                       child: _buildSettingsRow(),
                     )
                   else
@@ -425,8 +425,8 @@ class _PianoState extends State<Piano> {
                           color: ColorTheme.primaryFixedDim,
                           borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                         ),
-                        height: 48,
-                        padding: const EdgeInsets.only(top: 8),
+                        height: 52,
+                        padding: const EdgeInsets.only(top: 10),
                         child: _buildSettingsRow(),
                       ),
                     ),
