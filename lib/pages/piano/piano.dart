@@ -393,7 +393,8 @@ class _PianoState extends State<Piano> {
                         color: ColorTheme.primaryFixedDim,
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                       ),
-                      padding: const EdgeInsets.fromLTRB(10, 8, 10, 0),
+                      height: 48,
+                      padding: const EdgeInsets.only(top: 8),
                       child: _buildSettingsRow(),
                     )
                   else
@@ -405,7 +406,8 @@ class _PianoState extends State<Piano> {
                           color: ColorTheme.primaryFixedDim,
                           borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                         ),
-                        padding: const EdgeInsets.fromLTRB(10, 8, 10, 0),
+                        height: 48,
+                        padding: const EdgeInsets.only(top: 8),
                         child: _buildSettingsRow(),
                       ),
                     ),
