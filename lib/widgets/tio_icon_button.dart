@@ -25,12 +25,7 @@ class TioIconButton extends StatelessWidget {
         child: CircleAvatar(
           backgroundColor: Colors.white,
           radius: size,
-          child: IconButton(
-            icon: icon,
-            iconSize: size,
-            tooltip: tooltip,
-            onPressed: onPressed,
-          ),
+          child: IconButton(icon: icon, iconSize: size, tooltip: tooltip, onPressed: onPressed),
         ),
       ),
     );
