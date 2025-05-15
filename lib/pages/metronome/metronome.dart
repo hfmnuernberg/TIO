@@ -657,18 +657,23 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           Center(
             child: Column(
               children: [
-                _rhythmRow(),
-                if (_metronomeBlock.rhythmGroups2.isNotEmpty) _rhythmRow(isSecondMetronome: true) else const SizedBox(),
-
-                SetRhythmParametersSimple(
-                    currentNoteKey: _metronomeBlock.rhythmGroups[0].noteKey,
-                    currentBeats: _metronomeBlock.rhythmGroups[0].beats,
-                    currentPolyBeats: _metronomeBlock.rhythmGroups[0].polyBeats,
-                    isAddingNewBar: false,
-                    rhythmGroups: _metronomeBlock.rhythmGroups,
-                    isSecondMetronome: false,
-                    metronomeBlock: _metronomeBlock,
-                ),
+                if (_isSimpleModeOn)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+                    child: SetRhythmParametersSimple(
+                      currentNoteKey: _metronomeBlock.rhythmGroups[0].noteKey,
+                      currentBeats: _metronomeBlock.rhythmGroups[0].beats,
+                      currentPolyBeats: _metronomeBlock.rhythmGroups[0].polyBeats,
+                      isAddingNewBar: false,
+                      rhythmGroups: _metronomeBlock.rhythmGroups,
+                      isSecondMetronome: false,
+                      metronomeBlock: _metronomeBlock,
+                    ),
+                  )
+                else ...[
+                  _rhythmRow(),
+                  if (_metronomeBlock.rhythmGroups2.isNotEmpty) _rhythmRow(isSecondMetronome: true),
+                ],
 
                 const SizedBox(height: TIOMusicParams.edgeInset),
 

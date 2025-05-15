@@ -317,7 +317,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
   //   Navigator.pop(context);
   // }
 
-  Widget _buildStyledNoteWheel() {
+  Widget _buildNoteWheel() {
     return Container(
       height: 100,
       width: 80,
@@ -330,9 +330,9 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
         borderRadius: BorderRadius.circular(16),
         child: ListWheelScrollView.useDelegate(
           controller: _wheelController,
-          itemExtent: 64,
+          itemExtent: 52,
           physics: const FixedExtentScrollPhysics(),
-          overAndUnderCenterOpacity: 0.5, // for teaser effect
+          overAndUnderCenterOpacity: 0.5,
           perspective: 0.002,
           onSelectedItemChanged: (index) {
             setState(() {
@@ -350,8 +350,11 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
                 noteKey: key,
                 hasBorder: isSelected,
                 onTap: () {
-                  _wheelController.animateToItem(index,
-                      duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                  _wheelController.animateToItem(
+                    index,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
                   setState(() {
                     noteKey = key;
                     refreshRhythm();
@@ -370,23 +373,21 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
     final l10n = context.l10n;
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: SmallNumberInputInt(
-            value: beatCount,
-            onChange: onBeatCountChange,
-            min: minNumberOfBeats,
-            max: MetronomeParams.maxBeatCount,
-            step: 1,
-            label: l10n.metronomeNumberOfBeats,
-            buttonRadius: MetronomeParams.popupButtonRadius,
-            textFontSize: MetronomeParams.popupTextFontSize,
-          ),
+        SmallNumberInputInt(
+          value: beatCount,
+          onChange: onBeatCountChange,
+          min: minNumberOfBeats,
+          max: MetronomeParams.maxBeatCount,
+          step: 1,
+          label: l10n.metronomeNumberOfBeats,
+          buttonRadius: MetronomeParams.popupButtonRadius,
+          textFontSize: MetronomeParams.popupTextFontSize,
         ),
 
+        Expanded(child: SizedBox()),
 
-        _buildStyledNoteWheel(),
+        _buildNoteWheel(),
       ],
     );
   }
