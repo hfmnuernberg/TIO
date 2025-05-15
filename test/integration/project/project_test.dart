@@ -81,8 +81,6 @@ void main() {
     expect(find.bySemanticsLabel('Tool list'), findsNothing);
 
     await tester.createTextToolInProject('Test text');
-    await tester.tapAndSettle(find.bySemanticsLabel('Back'));
-
     expect(tester.withinList(find.bySemanticsLabel('Text 1')), findsOneWidget);
   });
 
@@ -90,8 +88,6 @@ void main() {
     await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
 
     await tester.createTextToolInProject('Test text');
-    await tester.tapAndSettle(find.bySemanticsLabel('Back'));
-
     expect(tester.withinList(find.bySemanticsLabel('Text 1')), findsOneWidget);
 
     await tester.tapAndSettle(find.byTooltip('Project menu'));
@@ -106,9 +102,9 @@ void main() {
     await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
 
     await tester.createImageToolInProject();
-    await tester.tapAndSettle(find.bySemanticsLabel('Back'));
     await tester.tapAndSettle(find.byTooltip('Add new tool'));
     await tester.createTextToolInProject('Test text');
+    await tester.tapAndSettle(find.bySemanticsLabel('Text 1'));
 
     await tester.tapAndSettle(find.byTooltip('Go to next tool'));
 

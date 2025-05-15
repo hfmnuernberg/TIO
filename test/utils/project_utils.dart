@@ -21,6 +21,7 @@ extension WidgetTesterProjectExtension on WidgetTester {
     await enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Text 1');
     await tapAndSettle(find.bySemanticsLabel('Submit'));
     await enterTextAndSettle(find.bySemanticsLabel('Text field'), content);
+    await tapAndSettle(find.bySemanticsLabel('Back'));
   }
 
   Future<void> createImageToolInProject() async {
@@ -28,5 +29,6 @@ extension WidgetTesterProjectExtension on WidgetTester {
     await enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Image 1');
     await tapAndSettle(find.bySemanticsLabel('Submit'));
     await tapAndSettle(find.bySemanticsLabel('Do it later'));
+    await tapAndSettle(find.bySemanticsLabel('Back'));
   }
 }
