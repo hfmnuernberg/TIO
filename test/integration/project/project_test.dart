@@ -98,7 +98,7 @@ void main() {
     expect(tester.withinList(find.bySemanticsLabel('Text 1')), findsNothing);
   });
 
-  testWidgets('navigate between tools when multiple tools was added', (tester) async {
+  testWidgets('navigate between tools when multiple tools were added', (tester) async {
     await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
 
     await tester.createImageToolInProject();
