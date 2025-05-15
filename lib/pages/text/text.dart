@@ -89,7 +89,12 @@ class _TextToolState extends State<TextTool> {
             thumbVisibility: true,
             child: TextField(
               scrollController: _scrollController,
-              decoration: const InputDecoration(filled: true, fillColor: ColorTheme.surface, border: InputBorder.none),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: ColorTheme.surface,
+                border: InputBorder.none,
+                labelText: context.l10n.commonTextField,
+              ),
               controller: _textController,
               keyboardType: TextInputType.multiline,
               maxLines: null,

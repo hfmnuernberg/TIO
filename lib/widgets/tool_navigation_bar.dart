@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/widgets/small_icon_button.dart';
+import 'package:tiomusic/widgets/tio_icon_button.dart';
 
 class ToolNavigationBar extends StatelessWidget {
   final Project project;
@@ -27,14 +28,14 @@ class ToolNavigationBar extends StatelessWidget {
     return _ToolNavigationBar(
       toolIndex: index,
       toolCount: tools.length,
-      prevToolIcon: index == 0 ? null : tools[(index - 1)].icon,
+      prevToolIcon: index > 0 ? tools[(index - 1)].icon : null,
       nextToolIcon: index < tools.length - 1 ? tools[(index + 1)].icon : null,
       toolOfSameTypeIcon: toolBlock.icon,
-      onPrevTool: index == 0 ? null : () => replaceTool(tools[(index - 1)], ltr: true),
+      onPrevTool: index > 0 ? () => replaceTool(tools[(index - 1)], ltr: true) : null,
       onNextTool: index < tools.length - 1 ? () => replaceTool(tools[(index + 1)]) : null,
-      onPrevToolOfNextType: sameToolsIndex == 0 ? null : () => replaceTool(sameTools[(sameToolsIndex - 1)], ltr: true),
+      onPrevToolOfSameType: sameToolsIndex > 0 ? () => replaceTool(sameTools[sameToolsIndex - 1], ltr: true) : null,
       onNextToolOfSameType:
-          sameToolsIndex < sameTools.length - 1 ? () => replaceTool(sameTools[(sameToolsIndex + 1)]) : null,
+          sameToolsIndex < sameTools.length - 1 ? () => replaceTool(sameTools[sameToolsIndex + 1]) : null,
     );
   }
 }
@@ -47,7 +48,7 @@ class _ToolNavigationBar extends StatelessWidget {
   final Widget? toolOfSameTypeIcon;
   final VoidCallback? onPrevTool;
   final VoidCallback? onNextTool;
-  final VoidCallback? onPrevToolOfNextType;
+  final VoidCallback? onPrevToolOfSameType;
   final VoidCallback? onNextToolOfSameType;
 
   const _ToolNavigationBar({
@@ -58,13 +59,15 @@ class _ToolNavigationBar extends StatelessWidget {
     this.toolOfSameTypeIcon,
     this.onPrevTool,
     this.onNextTool,
-    this.onPrevToolOfNextType,
+    this.onPrevToolOfSameType,
     this.onNextToolOfSameType,
   });
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     const smallIconButtonWidth = 56.0;
+
     return BottomAppBar(
       padding: EdgeInsets.symmetric(horizontal: 12),
       color: Colors.transparent,
@@ -75,11 +78,15 @@ class _ToolNavigationBar extends StatelessWidget {
           Row(
             children: [
               if (onPrevTool != null && prevToolIcon != null)
-                SmallIconButton(icon: prevToolIcon!, onPressed: onPrevTool)
+                TioIconButton.sm(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool)
               else
                 SizedBox(width: smallIconButtonWidth),
-              if (onPrevToolOfNextType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon)
-                SmallIconButton(icon: toolOfSameTypeIcon!, onPressed: onPrevToolOfNextType)
+              if (onPrevToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon)
+                TioIconButton.sm(
+                  icon: toolOfSameTypeIcon!,
+                  tooltip: l10n.toolGoToPrevOfSameType,
+                  onPressed: onPrevToolOfSameType,
+                )
               else
                 SizedBox(width: smallIconButtonWidth),
             ],
@@ -117,11 +124,15 @@ class _ToolNavigationBar extends StatelessWidget {
           Row(
             children: [
               if (onNextToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != nextToolIcon)
-                SmallIconButton(icon: toolOfSameTypeIcon!, onPressed: onNextToolOfSameType)
+                TioIconButton.sm(
+                  icon: toolOfSameTypeIcon!,
+                  tooltip: l10n.toolGoToNextOfSameType,
+                  onPressed: onNextToolOfSameType,
+                )
               else
                 SizedBox(width: smallIconButtonWidth),
               if (onNextTool != null && nextToolIcon != null)
-                SmallIconButton(icon: nextToolIcon!, onPressed: onNextTool)
+                TioIconButton.sm(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool)
               else
                 SizedBox(width: smallIconButtonWidth),
             ],

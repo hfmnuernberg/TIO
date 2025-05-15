@@ -15,37 +15,40 @@ class EditableToolList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ReorderableListView.builder(
-      padding: const EdgeInsets.fromLTRB(0, TIOMusicParams.smallSpaceAboveList + 2, 0, 120),
-      itemCount: project.blocks.length,
-      onReorder: onReorder,
-      buildDefaultDragHandles: false,
-      itemBuilder: (context, index) {
-        final l10n = context.l10n;
-        final block = project.blocks[index];
+    return Semantics(
+      label: context.l10n.projectToolList,
+      child: ReorderableListView.builder(
+        padding: const EdgeInsets.fromLTRB(0, TIOMusicParams.smallSpaceAboveList + 2, 0, 120),
+        itemCount: project.blocks.length,
+        onReorder: onReorder,
+        buildDefaultDragHandles: false,
+        itemBuilder: (context, index) {
+          final l10n = context.l10n;
+          final block = project.blocks[index];
 
-        return Container(
-          key: ValueKey(block.id),
-          child: CardListTile(
-            title: block.title,
-            subtitle: formatSettingValues(block.getSettingsFormatted(l10n)),
-            leadingPicture: circleToolIcon(block.icon),
-            trailingIcon: IconButton(
-              tooltip: l10n.commonReorder,
-              icon: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
-              color: ColorTheme.primaryFixedDim,
-              onPressed: () {},
+          return Container(
+            key: ValueKey(block.id),
+            child: CardListTile(
+              title: block.title,
+              subtitle: formatSettingValues(block.getSettingsFormatted(l10n)),
+              leadingPicture: circleToolIcon(block.icon),
+              trailingIcon: IconButton(
+                tooltip: l10n.commonReorder,
+                icon: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
+                color: ColorTheme.primaryFixedDim,
+                onPressed: () {},
+              ),
+              menuIconOne: IconButton(
+                tooltip: l10n.projectDeleteTool,
+                icon: const Icon(Icons.delete_outlined),
+                color: ColorTheme.tertiary,
+                onPressed: () => onDeleteBlock(index),
+              ),
+              onTapFunction: () {},
             ),
-            menuIconOne: IconButton(
-              tooltip: l10n.projectDeleteTool,
-              icon: const Icon(Icons.delete_outlined),
-              color: ColorTheme.tertiary,
-              onPressed: () => onDeleteBlock(index),
-            ),
-            onTapFunction: () {},
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
