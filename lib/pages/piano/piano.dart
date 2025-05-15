@@ -299,9 +299,9 @@ class _PianoState extends State<Piano> {
   }
 
   Widget _buildPianoMainPage(BuildContext context) {
-    final project = Provider.of<Project>(context, listen: false);
-    final l10n = context.l10n;
+    final Project? project = widget.isQuickTool ? null : context.read<Project>();
     final islandWidth = MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width / 1.9);
+    final l10n = context.l10n;
 
     return SafeArea(
       child: Column(
@@ -377,10 +377,7 @@ class _PianoState extends State<Piano> {
               SizedBox(
                 height: ParentToolParams.islandHeight,
                 width: islandWidth,
-                child: ParentIslandView(
-                  project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
-                  toolBlock: _pianoBlock,
-                ),
+                child: ParentIslandView(project: project, toolBlock: _pianoBlock),
               ),
               Row(
                 children: [
@@ -418,7 +415,7 @@ class _PianoState extends State<Piano> {
                     )
                   else
                     PianoToolNavigationBar(
-                      project: project,
+                      project: project!,
                       toolBlock: _pianoBlock,
                       pianoSettings: Container(
                         decoration: const BoxDecoration(
@@ -436,7 +433,7 @@ class _PianoState extends State<Piano> {
                       decoration: BoxDecoration(
                         color: ColorTheme.primaryFixedDim,
                         borderRadius:
-                            project.blocks.length == 1
+                            (project == null || project.blocks.length == 1)
                                 ? BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))
                                 : BorderRadius.all(Radius.circular(20)),
                       ),
