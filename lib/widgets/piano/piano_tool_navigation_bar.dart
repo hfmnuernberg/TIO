@@ -3,7 +3,7 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/widgets/navigation_button.dart';
+import 'package:tiomusic/widgets/tio_icon_button.dart';
 
 class PianoToolNavigationBar extends StatelessWidget {
   final Widget pianoSettings;
@@ -76,7 +76,7 @@ class _PianoToolNavigationBar extends StatelessWidget {
         Row(
           children: [
             if (onPrevTool != null && prevToolIcon != null)
-              NavigationButton(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool)
+              TioIconButton.xs(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool)
             else
               const SizedBox(width: smallIconButtonWidth),
 
@@ -84,7 +84,7 @@ class _PianoToolNavigationBar extends StatelessWidget {
               padding: EdgeInsets.only(left: 4, right: 8),
               child:
                   onPrevToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon
-                      ? NavigationButton(
+                      ? TioIconButton.xs(
                         icon: toolOfSameTypeIcon!,
                         tooltip: l10n.toolGoToPrevOfSameType,
                         onPressed: onPrevToolOfSameType,
@@ -100,7 +100,7 @@ class _PianoToolNavigationBar extends StatelessWidget {
               padding: EdgeInsets.only(left: 8, right: 4),
               child:
                   onNextToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != nextToolIcon
-                      ? NavigationButton(
+                      ? TioIconButton.xs(
                         icon: toolOfSameTypeIcon!,
                         tooltip: l10n.toolGoToNextOfSameType,
                         onPressed: onNextToolOfSameType,
@@ -109,7 +109,7 @@ class _PianoToolNavigationBar extends StatelessWidget {
             ),
 
             if (onNextTool != null && nextToolIcon != null)
-              NavigationButton(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool)
+              TioIconButton.xs(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool)
             else
               const SizedBox(width: smallIconButtonWidth),
           ],
