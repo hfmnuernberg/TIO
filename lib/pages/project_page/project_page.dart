@@ -260,6 +260,8 @@ class _ProjectPageState extends State<ProjectPage> {
           child: Text(
             _project.title,
             style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         backgroundColor: ColorTheme.surfaceBright,
