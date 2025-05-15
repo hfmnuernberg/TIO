@@ -24,10 +24,10 @@ class TioIconButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(800),
         child: CircleAvatar(
           backgroundColor: Colors.white,
-          radius: TIOMusicParams.sizeSmallButtons,
+          radius: size,
           child: IconButton(
             icon: icon,
-            iconSize: TIOMusicParams.sizeSmallButtons,
+            iconSize: size,
             tooltip: tooltip,
             onPressed: onPressed,
           ),
