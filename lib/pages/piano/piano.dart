@@ -363,7 +363,7 @@ class _PianoState extends State<Piano> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        '${l10n.formatNumber(_concertPitch)} Hz/$_instrumentName',
+                        '${l10n.formatNumber(_concertPitch)} Hz – $_instrumentName',
                         style: const TextStyle(color: ColorTheme.primary),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
