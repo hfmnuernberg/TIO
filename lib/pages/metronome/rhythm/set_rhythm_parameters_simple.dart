@@ -319,11 +319,11 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
 
   Widget _buildNoteWheel() {
     return Container(
-      height: 100,
+      height: 110,
       width: 80,
       decoration: BoxDecoration(
         color: ColorTheme.surface,
-        border: Border.all(color: ColorTheme.primary80, width: 2),
+        border: Border.all(color: ColorTheme.primary80),
         borderRadius: BorderRadius.circular(16),
       ),
       child: ClipRRect(
@@ -332,7 +332,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
           controller: _wheelController,
           itemExtent: 52,
           physics: const FixedExtentScrollPhysics(),
-          overAndUnderCenterOpacity: 0.5,
+          overAndUnderCenterOpacity: 0.6,
           perspective: 0.002,
           onSelectedItemChanged: (index) {
             setState(() {
