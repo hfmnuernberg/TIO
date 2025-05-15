@@ -66,7 +66,6 @@ class Keyboard extends StatefulWidget {
 class _KeyboardState extends State<Keyboard> {
   Size? keyboardSize;
   final Map<int, Rect> keyBoundaries = {};
-  Set<int> playedNotes = {};
   int? lastPlayedNote;
 
   @override
@@ -81,32 +80,35 @@ class _KeyboardState extends State<Keyboard> {
   }
 
   void handlePlay(int note) {
+    print('=== handlePlay: $note (lastPlayedNote: $lastPlayedNote)');
     widget.onPlay(note);
-    playedNotes.add(note);
-    lastPlayedNote = note;
     setState(() {});
   }
 
   void handleRelease(int note) {
+    print('=== handleRelease: $note (lastPlayedNote: $lastPlayedNote)');
     widget.onRelease(note);
-    playedNotes.remove(note);
-    if (lastPlayedNote == note) lastPlayedNote = null;
     setState(() {});
   }
 
   void handlePointerUp(PointerEvent event) {
+    print('=== handlePointerUp (lastPlayedNote: $lastPlayedNote)');
+    if (lastPlayedNote == null) return;
+    widget.onRelease(lastPlayedNote!);
     lastPlayedNote = null;
     setState(() {});
   }
 
   void handlePointerMove(PointerEvent event) {
+    print('=== handlePointerMove (lastPlayedNote: $lastPlayedNote)');
     if (!isWithinKeyboard(event.localPosition)) return handlePointerUp(event);
 
     final key = findPlayedKey(event.localPosition);
     if (key == null) return handlePointerUp(event);
+    print('--- handlePointerMove: ${key.note} (lastPlayedNote: $lastPlayedNote)');
 
-    if (playedNotes.contains(key.note) && lastPlayedNote == key.note) playedNotes.remove(key.note);
-    if (playedNotes.contains(key.note) || lastPlayedNote == key.note) return;
+    if (lastPlayedNote == key.note) return;
+    if (lastPlayedNote != null) widget.onRelease(lastPlayedNote!);
 
     widget.onPlay(key.note);
     lastPlayedNote = key.note;
