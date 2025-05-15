@@ -14,6 +14,7 @@ import 'package:tiomusic/models/sound_font.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
+import 'package:tiomusic/pages/piano/piano_settings.dart';
 import 'package:tiomusic/pages/piano/set_concert_pitch.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -193,100 +194,37 @@ class _PianoState extends State<Piano> {
     return pianoSetup(soundFontPath: tempSoundFontPath);
   }
 
-  Widget _buildSettingsRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          key: _keyOctaveSwitch,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.keyboard_double_arrow_left, color: ColorTheme.primary),
-              padding: EdgeInsets.zero,
-              onPressed: _pianoBlock.octaveDown,
-            ),
-            IconButton(
-              icon: const Icon(Icons.keyboard_arrow_left, color: ColorTheme.primary),
-              padding: EdgeInsets.zero,
-              onPressed: _pianoBlock.toneDown,
-            ),
-          ],
-        ),
-        Row(
-          key: _keySettings,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const CircleAvatar(
-                backgroundColor: ColorTheme.primary50,
-                child: Text('Hz', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 20)),
-              ),
-              padding: EdgeInsets.zero,
-              onPressed: () async {
-                await openSettingPage(
-                  SetConcertPitch(),
-                  callbackOnReturn: (_) => _pianoSetConcertPitch(_pianoBlock.concertPitch),
-                  context,
-                  _pianoBlock,
-                );
-                setState(() => _concertPitch = _pianoBlock.concertPitch);
-              },
-            ),
-            IconButton(
-              icon: const CircleAvatar(
-                backgroundColor: ColorTheme.primary50,
-                child: Icon(Icons.volume_up, color: ColorTheme.onPrimary),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              onPressed: () async {
-                await openSettingPage(
-                  SetVolume(
-                    initialValue: _pianoBlock.volume,
-                    onConfirm: (vol) {
-                      _pianoBlock.volume = vol;
-                      pianoSetVolume(volume: vol);
-                    },
-                    onChange: (vol) => pianoSetVolume(volume: vol),
-                    onCancel: () => pianoSetVolume(volume: _pianoBlock.volume),
-                  ),
-                  callbackOnReturn: (_) => setState(() {}),
-                  context,
-                  _pianoBlock,
-                );
-              },
-            ),
-            IconButton(
-              icon: const CircleAvatar(
-                backgroundColor: ColorTheme.primary50,
-                child: Icon(Icons.library_music_outlined, color: ColorTheme.onPrimary),
-              ),
-              padding: EdgeInsets.zero,
-              onPressed: () async {
-                await openSettingPage(const ChooseSound(), context, _pianoBlock);
-                _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
-                setState(() => _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n));
-              },
-            ),
-          ],
-        ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.keyboard_arrow_right, color: ColorTheme.primary),
-              padding: EdgeInsets.zero,
-              onPressed: _pianoBlock.toneUp,
-            ),
-            IconButton(
-              icon: const Icon(Icons.keyboard_double_arrow_right, color: ColorTheme.primary),
-              padding: EdgeInsets.zero,
-              onPressed: _pianoBlock.octaveUp,
-            ),
-          ],
-        ),
-      ],
+  Future<void> handleOnOpenPitch() async {
+    await openSettingPage(
+      SetConcertPitch(),
+      callbackOnReturn: (_) => _pianoSetConcertPitch(_pianoBlock.concertPitch),
+      context,
+      _pianoBlock,
     );
+    setState(() => _concertPitch = _pianoBlock.concertPitch);
+  }
+
+  Future<void> handleOnOpenVolume() async {
+    await openSettingPage(
+      SetVolume(
+        initialValue: _pianoBlock.volume,
+        onConfirm: (vol) {
+          _pianoBlock.volume = vol;
+          pianoSetVolume(volume: vol);
+        },
+        onChange: (vol) => pianoSetVolume(volume: vol),
+        onCancel: () => pianoSetVolume(volume: _pianoBlock.volume),
+      ),
+      callbackOnReturn: (_) => setState(() {}),
+      context,
+      _pianoBlock,
+    );
+  }
+
+  Future<void> handleOnOpenSound() async {
+    await openSettingPage(const ChooseSound(), context, _pianoBlock);
+    _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
+    setState(() => _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n));
   }
 
   @override
@@ -411,7 +349,17 @@ class _PianoState extends State<Piano> {
                       ),
                       height: 52,
                       padding: const EdgeInsets.only(top: 10),
-                      child: _buildSettingsRow(),
+                      child: PianoSettings(
+                        onOctaveDown: _pianoBlock.octaveDown,
+                        onToneDown: _pianoBlock.toneDown,
+                        onToneUp: _pianoBlock.toneUp,
+                        onOctaveUp: _pianoBlock.octaveUp,
+                        onOpenPitch: handleOnOpenPitch,
+                        onOpenVolume: handleOnOpenVolume,
+                        onOpenSound: handleOnOpenSound,
+                        keyOctaveSwitch: _keyOctaveSwitch,
+                        keySettings: _keySettings,
+                      ),
                     )
                   else
                     PianoToolNavigationBar(
@@ -424,7 +372,17 @@ class _PianoState extends State<Piano> {
                         ),
                         height: 52,
                         padding: const EdgeInsets.only(top: 10),
-                        child: _buildSettingsRow(),
+                        child: PianoSettings(
+                          onOctaveDown: _pianoBlock.octaveDown,
+                          onToneDown: _pianoBlock.toneDown,
+                          onToneUp: _pianoBlock.toneUp,
+                          onOctaveUp: _pianoBlock.octaveUp,
+                          onOpenPitch: handleOnOpenPitch,
+                          onOpenVolume: handleOnOpenVolume,
+                          onOpenSound: handleOnOpenSound,
+                          keyOctaveSwitch: _keyOctaveSwitch,
+                          keySettings: _keySettings,
+                        ),
                       ),
                     ),
 
