@@ -42,6 +42,7 @@ class German extends AppLocalizations {
   String get commonSetVolume => 'Lautstärke einstellen';
   String get commonSlider => 'Schieberegler';
   String get commonSubmit => 'Bestätigen';
+  String get commonTextField => 'Textfeld';
   String get commonVolume => 'Lautstärke';
   String get commonVolumeHintLow =>
       'Die Lautstärke deines Geräts ist niedrig. Wenn nötig, erhöhe die Lautstärke des Geräts zusätzlich zur Lautstärke des Tools.';
@@ -219,6 +220,8 @@ class German extends AppLocalizations {
   String get projectMenu => 'Projektmenü';
   String get projectNew => 'Projekttitel';
   String get projectNewTool => 'Tool-Titel';
+  String get projectToolList => 'Tool-Liste';
+  String get projectToolListEmpty => 'Leere Tool-Liste';
   String get projectTutorialEditTitle => 'Tippe hier, um den Projekttitel zu bearbeiten.';
 
   String get projectsAbout => 'Projekte';
@@ -263,8 +266,12 @@ class German extends AppLocalizations {
   String get toolEmpty => 'Leerer Block';
   String get toolNewProjectTitle => 'Projekttitel';
   String get toolNewTitle => 'Tool-Titel';
+  String get toolGoToNext => 'Gehe zu nächstem Tool';
+  String get toolGoToNextOfSameType => 'Gehe zu nächstem Tool des gleichen Typs';
   String get toolNoOtherToolAvailable =>
       'Kein anderes Tool im Projekt verfügbar. Bitte speichere zuerst ein anderes Tool, um es mit diesem Tool verknüpfen zu können.';
+  String get toolGoToPrev => 'Gehe zu vorherigem Tool';
+  String get toolGoToPrevOfSameType => 'Gehe zu vorherigem Tool des gleichen Typs';
   String get toolQuickTool => 'Tool';
   String get toolQuickToolSave => 'Tool speichern?';
   String get toolSave => 'Speichern in ...';

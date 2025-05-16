@@ -42,6 +42,7 @@ class English extends AppLocalizations {
   String get commonSetVolume => 'Set Volume';
   String get commonSlider => 'Slider';
   String get commonSubmit => 'Submit';
+  String get commonTextField => 'Text field';
   String get commonVolume => 'Volume';
   String get commonVolumeHintLow =>
       'The device volume is low. If necessary, increase the device volume in addition to the tool volume.';
@@ -216,6 +217,8 @@ class English extends AppLocalizations {
   String get projectMenu => 'Project menu';
   String get projectNew => 'Project title';
   String get projectNewTool => 'Tool title';
+  String get projectToolList => 'Tool list';
+  String get projectToolListEmpty => 'Empty tool list';
   String get projectTutorialEditTitle => 'Tap here to edit the title of your project.';
 
   String get projectsAbout => 'Projects';
@@ -260,8 +263,12 @@ class English extends AppLocalizations {
   String get toolEmpty => 'Empty';
   String get toolNewProjectTitle => 'Project title';
   String get toolNewTitle => 'Tool title';
+  String get toolGoToNext => 'Go to next tool';
+  String get toolGoToNextOfSameType => 'Go to next tool of the same type';
   String get toolNoOtherToolAvailable =>
       'There is no other tool in this project. Please save another tool first to use it as an island.';
+  String get toolGoToPrev => 'Go to previous tool';
+  String get toolGoToPrevOfSameType => 'Go to previous tool of the same type';
   String get toolQuickTool => 'Quick tool';
   String get toolQuickToolSave => 'Save quick tool?';
   String get toolSave => 'Save in ...';

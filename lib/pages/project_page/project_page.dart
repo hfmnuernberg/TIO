@@ -260,6 +260,8 @@ class _ProjectPageState extends State<ProjectPage> {
           child: Text(
             _project.title,
             style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         backgroundColor: ColorTheme.surfaceBright,
@@ -337,10 +339,12 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   Widget _buildChooseToolPage() {
+    final l10n = context.l10n;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text(context.l10n.projectEmpty),
+        title: Text(l10n.projectEmpty),
         backgroundColor: ColorTheme.surfaceBright,
         foregroundColor: ColorTheme.primary,
         leading: IconButton(
@@ -360,29 +364,28 @@ class _ProjectPageState extends State<ProjectPage> {
         fit: StackFit.expand,
         children: [
           FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
-          ListView.builder(
-            padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList + 2),
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: BlockType.values.length,
-            itemBuilder: (context, index) {
-              var info = getBlockTypeInfos(context.l10n)[BlockType.values[index]]!;
-              return CardListTile(
-                title: info.name,
-                subtitle: info.description,
-                trailingIcon: IconButton(
-                  onPressed: () {
-                    _onNewToolTilePressed(info);
-                  },
-                  icon: const Icon(Icons.add),
-                  color: ColorTheme.surfaceTint,
-                ),
-                leadingPicture: circleToolIcon(info.icon),
-                onTapFunction: () {
-                  _onNewToolTilePressed(info);
-                },
-              );
-            },
+          Semantics(
+            label: l10n.projectToolListEmpty,
+            child: ListView.builder(
+              padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList + 2),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: BlockType.values.length,
+              itemBuilder: (context, index) {
+                var info = getBlockTypeInfos(l10n)[BlockType.values[index]]!;
+                return CardListTile(
+                  title: info.name,
+                  subtitle: info.description,
+                  trailingIcon: IconButton(
+                    onPressed: () => _onNewToolTilePressed(info),
+                    icon: const Icon(Icons.add),
+                    color: ColorTheme.surfaceTint,
+                  ),
+                  leadingPicture: circleToolIcon(info.icon),
+                  onTapFunction: () => _onNewToolTilePressed(info),
+                );
+              },
+            ),
           ),
         ],
       ),

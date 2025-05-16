@@ -34,6 +34,7 @@ abstract class AppLocalizations {
   String get commonSetVolume;
   String get commonSlider;
   String get commonSubmit;
+  String get commonTextField;
   String get commonVolume;
   String get commonVolumeHintLow;
   String get commonVolumeHintMid;
@@ -196,6 +197,8 @@ abstract class AppLocalizations {
   String get projectMenu;
   String get projectNew;
   String get projectNewTool;
+  String get projectToolList;
+  String get projectToolListEmpty;
   String get projectTutorialEditTitle;
 
   String get projectsAbout;
@@ -235,7 +238,11 @@ abstract class AppLocalizations {
   String get toolEmpty;
   String get toolNewProjectTitle;
   String get toolNewTitle;
+  String get toolGoToNext;
+  String get toolGoToNextOfSameType;
   String get toolNoOtherToolAvailable;
+  String get toolGoToPrev;
+  String get toolGoToPrevOfSameType;
   String get toolQuickTool;
   String get toolQuickToolSave;
   String get toolSave;
