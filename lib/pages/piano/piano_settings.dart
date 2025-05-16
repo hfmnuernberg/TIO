@@ -46,6 +46,9 @@ class PianoSettings extends StatelessWidget {
             ),
           ],
         ),
+
+        Expanded(child: SizedBox(width: 10)),
+
         Row(
           key: keySettings,
           mainAxisSize: MainAxisSize.min,
@@ -76,6 +79,9 @@ class PianoSettings extends StatelessWidget {
             ),
           ],
         ),
+
+        Expanded(child: SizedBox(width: 10)),
+
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [

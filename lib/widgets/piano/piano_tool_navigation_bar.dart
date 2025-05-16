@@ -2,24 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
+import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/tio_icon_button.dart';
 
+// TODO: Check what can derived from context, etc. to minimize params
+// TODO: Extract inner settings widget to a separate widget
+// TODO: Extract piano chevrons-navigation into a separate widget
+// TODO: clean up
+
 class PianoToolNavigationBar extends StatelessWidget {
-  final Widget pianoSettings;
+  // final Widget pianoSettings;
   final Project project;
   final ProjectBlock toolBlock;
+  final VoidCallback onOctaveDown;
+  final VoidCallback onToneDown;
+  final VoidCallback onOctaveUp;
+  final VoidCallback onToneUp;
+  final VoidCallback onOpenPitch;
+  final VoidCallback onOpenVolume;
+  final VoidCallback onOpenSound;
+  final Key? keyOctaveSwitch;
+  final Key? keySettings;
 
   const PianoToolNavigationBar({
     super.key,
-    required this.pianoSettings,
+    // required this.pianoSettings,
     required this.project,
     required this.toolBlock,
+    required this.onOctaveDown,
+    required this.onToneDown,
+    required this.onOctaveUp,
+    required this.onToneUp,
+    required this.onOpenPitch,
+    required this.onOpenVolume,
+    required this.onOpenSound,
+    this.keyOctaveSwitch,
+    this.keySettings,
   });
 
   @override
   Widget build(BuildContext context) {
-    if (project.blocks.length == 1) return pianoSettings;
+    // if (project.blocks.length == 1) return pianoSettings;
 
     final tools = project.blocks;
     final index = tools.indexOf(toolBlock);
@@ -31,7 +55,7 @@ class PianoToolNavigationBar extends StatelessWidget {
         goToTool(context, project, tool, replace: true, transitionLeftToRight: ltr);
 
     return _PianoToolNavigationBar(
-      pianoSettings: pianoSettings,
+      // pianoSettings: pianoSettings,
       prevToolIcon: index > 0 ? tools[(index - 1)].icon : null,
       nextToolIcon: index < tools.length - 1 ? tools[index + 1].icon : null,
       toolOfSameTypeIcon: toolBlock.icon,
@@ -40,12 +64,21 @@ class PianoToolNavigationBar extends StatelessWidget {
       onPrevToolOfSameType: sameToolsIndex > 0 ? () => replaceTool(sameTools[(sameToolsIndex - 1)], ltr: true) : null,
       onNextToolOfSameType:
           sameToolsIndex < sameTools.length - 1 ? () => replaceTool(sameTools[sameToolsIndex + 1]) : null,
+      onOctaveDown: onOctaveDown,
+      onToneDown: onToneDown,
+      onOctaveUp: onOctaveUp,
+      onToneUp: onToneUp,
+      onOpenPitch: onOpenPitch,
+      onOpenVolume: onOpenVolume,
+      onOpenSound: onOpenSound,
+      keyOctaveSwitch: keyOctaveSwitch,
+      keySettings: keySettings,
     );
   }
 }
 
 class _PianoToolNavigationBar extends StatelessWidget {
-  final Widget pianoSettings;
+  // final Widget pianoSettings;
   final Widget? prevToolIcon;
   final Widget? nextToolIcon;
   final Widget? toolOfSameTypeIcon;
@@ -53,9 +86,18 @@ class _PianoToolNavigationBar extends StatelessWidget {
   final VoidCallback? onNextTool;
   final VoidCallback? onPrevToolOfSameType;
   final VoidCallback? onNextToolOfSameType;
+  final VoidCallback onOctaveDown;
+  final VoidCallback onToneDown;
+  final VoidCallback onOctaveUp;
+  final VoidCallback onToneUp;
+  final VoidCallback onOpenPitch;
+  final VoidCallback onOpenVolume;
+  final VoidCallback onOpenSound;
+  final Key? keyOctaveSwitch;
+  final Key? keySettings;
 
   const _PianoToolNavigationBar({
-    required this.pianoSettings,
+    // required this.pianoSettings,
     this.prevToolIcon,
     this.nextToolIcon,
     this.toolOfSameTypeIcon,
@@ -63,22 +105,27 @@ class _PianoToolNavigationBar extends StatelessWidget {
     this.onNextTool,
     this.onPrevToolOfSameType,
     this.onNextToolOfSameType,
+    required this.onOctaveDown,
+    required this.onToneDown,
+    required this.onOctaveUp,
+    required this.onToneUp,
+    required this.onOpenPitch,
+    required this.onOpenVolume,
+    required this.onOpenSound,
+    this.keyOctaveSwitch,
+    this.keySettings,
   });
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    const smallIconButtonWidth = 48.0;
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(
           children: [
             if (onPrevTool != null && prevToolIcon != null)
-              TioIconButton.xs(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool)
-            else
-              const SizedBox(width: smallIconButtonWidth),
+              TioIconButton.xs(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool),
 
             Padding(
               padding: EdgeInsets.only(left: 4, right: 8),
@@ -89,11 +136,101 @@ class _PianoToolNavigationBar extends StatelessWidget {
                         tooltip: l10n.toolGoToPrevOfSameType,
                         onPressed: onPrevToolOfSameType,
                       )
-                      : const SizedBox(width: smallIconButtonWidth),
+                      : null,
             ),
           ],
         ),
-        Expanded(child: pianoSettings),
+
+        // Expanded(child: pianoSettings),
+        Expanded(
+          child: Container(
+            decoration: const BoxDecoration(
+              color: ColorTheme.primaryFixedDim,
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(20)),
+            ),
+            height: 52,
+            padding: const EdgeInsets.only(top: 10),
+            child: Row(
+              key: keyOctaveSwitch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.keyboard_double_arrow_left, color: ColorTheme.primary),
+                  padding: EdgeInsets.zero,
+                  onPressed: onOctaveDown,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.keyboard_arrow_left, color: ColorTheme.primary),
+                  padding: EdgeInsets.zero,
+                  onPressed: onToneDown,
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        Container(
+          decoration: const BoxDecoration(color: ColorTheme.primaryFixedDim),
+          height: 52,
+          padding: const EdgeInsets.only(top: 10),
+          child: Row(
+            key: keySettings,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const CircleAvatar(
+                  backgroundColor: ColorTheme.primary50,
+                  child: Text('Hz', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 20)),
+                ),
+                padding: EdgeInsets.zero,
+                onPressed: onOpenPitch,
+              ),
+              IconButton(
+                icon: const CircleAvatar(
+                  backgroundColor: ColorTheme.primary50,
+                  child: Icon(Icons.volume_up, color: ColorTheme.onPrimary),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                onPressed: onOpenVolume,
+              ),
+              IconButton(
+                icon: const CircleAvatar(
+                  backgroundColor: ColorTheme.primary50,
+                  child: Icon(Icons.library_music_outlined, color: ColorTheme.onPrimary),
+                ),
+                padding: EdgeInsets.zero,
+                onPressed: onOpenSound,
+              ),
+            ],
+          ),
+        ),
+
+        Expanded(
+          child: Container(
+            decoration: const BoxDecoration(
+              color: ColorTheme.primaryFixedDim,
+              borderRadius: BorderRadius.only(topRight: Radius.circular(20)),
+            ),
+            height: 52,
+            padding: const EdgeInsets.only(top: 10),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.keyboard_arrow_right, color: ColorTheme.primary),
+                  padding: EdgeInsets.zero,
+                  onPressed: onToneUp,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.keyboard_double_arrow_right, color: ColorTheme.primary),
+                  padding: EdgeInsets.zero,
+                  onPressed: onOctaveUp,
+                ),
+              ],
+            ),
+          ),
+        ),
+
         Row(
           children: [
             Padding(
@@ -105,13 +242,10 @@ class _PianoToolNavigationBar extends StatelessWidget {
                         tooltip: l10n.toolGoToNextOfSameType,
                         onPressed: onNextToolOfSameType,
                       )
-                      : const SizedBox(width: smallIconButtonWidth),
+                      : null,
             ),
-
             if (onNextTool != null && nextToolIcon != null)
-              TioIconButton.xs(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool)
-            else
-              const SizedBox(width: smallIconButtonWidth),
+              TioIconButton.xs(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool),
           ],
         ),
       ],
