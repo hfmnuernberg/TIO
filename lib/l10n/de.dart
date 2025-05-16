@@ -27,6 +27,8 @@ class German extends AppLocalizations {
   String get appTutorialToolIsland => 'Tippe hier, um dein Tool mit anderen Tools zu kombinieren.';
   String get appTutorialToolSave => 'Tippe hier, um dein Tool in ein anderes Projekt zu kopieren.';
 
+  String get commonBasicBeat => 'Grundschlag';
+  String get commonBasicBeatSetting => 'Grundschlag einstellen';
   String get commonBpm => 'BPM';
   String get commonCancel => 'Abbrechen';
   String get commonDelete => 'Löschen?';
@@ -89,7 +91,6 @@ class German extends AppLocalizations {
   String get mediaPlayerAboutExplanation =>
       'Du kannst Audiodateien aufnehmen, laden, bearbeiten und Konfigurationen speichern. Dabei kannst du deine bevorzugte Lautstärke, Range (Dauer und Ausschnitt), die Wiedergabegeschwindigkeit und die Tonhöhe (Transpose-Funktion) einstellen. Du hast die Möglichkeit, deine gespeicherten Projekte mithilfe von externen Messenger-Diensten an andere weiterzuleiten.';
   String get mediaPlayerAddMarker => 'Marker hinzufügen';
-  String get mediaPlayerBasicBeat => 'Grundschlag';
   String get mediaPlayerDescription => 'Lade Audio-Files oder nimm etwas auf, hör es dir an und bearbeite es.';
   String get mediaPlayerEditMarkers => 'Marker bearbeiten';
   String get mediaPlayerErrorFileAccessible => 'Datei nicht lesbar';
@@ -113,7 +114,6 @@ class German extends AppLocalizations {
   String get mediaPlayerRemoveMarker => 'Ausgewählten Marker entfernen';
   String get mediaPlayerSecShort => 'Sek.';
   String get mediaPlayerSemitonesLabel => 'Halbtöne';
-  String get mediaPlayerSetBasicBeat => 'Grundschlag einstellen';
   String get mediaPlayerSetPitch => 'Tonhöhe einstellen';
   String get mediaPlayerSetSpeed => 'Tempo einstellen';
   String get mediaPlayerSetTrim => 'Trimmbereich festlegen';
