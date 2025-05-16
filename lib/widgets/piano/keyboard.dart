@@ -66,7 +66,8 @@ class Keyboard extends StatefulWidget {
 class _KeyboardState extends State<Keyboard> {
   Size? keyboardSize;
   final Map<int, Rect> keyBoundaries = {};
-  int? lastPlayedNote;
+  final Set<int> pressedKeys = {};
+  final Set<int> draggedKeys = {};
 
   @override
   void didUpdateWidget(covariant Keyboard oldWidget) {
@@ -80,40 +81,62 @@ class _KeyboardState extends State<Keyboard> {
   }
 
   void handlePlay(int note) {
-    print('=== handlePlay: $note (lastPlayedNote: $lastPlayedNote)');
     widget.onPlay(note);
+    pressedKeys.add(note);
     setState(() {});
   }
 
   void handleRelease(int note) {
-    print('=== handleRelease: $note (lastPlayedNote: $lastPlayedNote)');
     widget.onRelease(note);
+    pressedKeys.remove(note);
     setState(() {});
   }
 
   void handlePointerUp(PointerEvent event) {
-    print('=== handlePointerUp (lastPlayedNote: $lastPlayedNote)');
-    if (lastPlayedNote == null) return;
-    widget.onRelease(lastPlayedNote!);
-    lastPlayedNote = null;
-    setState(() {});
+    if (!isWithinKeyboard(event.localPosition)) return handleGlissandoClear();
+
+    final key = findPlayedKey(event.localPosition);
+    if (key == null) return;
+
+    draggedKeys.remove(key.note);
+    handleRelease(key.note);
   }
 
   void handlePointerMove(PointerEvent event) {
-    print('=== handlePointerMove (lastPlayedNote: $lastPlayedNote)');
-    if (!isWithinKeyboard(event.localPosition)) return handlePointerUp(event);
+    if (!isWithinKeyboard(event.localPosition)) return handleGlissandoClear();
 
     final key = findPlayedKey(event.localPosition);
-    if (key == null) return handlePointerUp(event);
-    print('--- handlePointerMove: ${key.note} (lastPlayedNote: $lastPlayedNote)');
+    if (key == null) return handleGlissandoClear();
 
-    if (lastPlayedNote == key.note) return;
-    if (lastPlayedNote != null) widget.onRelease(lastPlayedNote!);
+    if (draggedKeys.contains(key.note)) return;
 
-    widget.onPlay(key.note);
-    lastPlayedNote = key.note;
+    handleGlissandoRelease(key.note);
+
+    handleGlissandoPlay(key.note);
+  }
+
+  void handleGlissandoPlay(int note) {
+    widget.onPlay(note);
+    draggedKeys.add(note);
     setState(() {});
   }
+
+  void handleGlissandoRelease(int note) {
+    final nearbyKeys = draggedKeys.where((k) => (k - note).abs() <= 2).toSet();
+    nearbyKeys.forEach(widget.onRelease);
+    pressedKeys.removeAll(nearbyKeys);
+    draggedKeys.removeAll(nearbyKeys);
+    setState(() {});
+  }
+
+  void handleGlissandoClear() {
+    draggedKeys.forEach(widget.onRelease);
+    pressedKeys.removeAll(draggedKeys);
+    draggedKeys.clear();
+    setState(() {});
+  }
+
+  bool isPlayed(int note) => draggedKeys.contains(note);
 
   bool isWithinKeyboard(Offset position) {
     if (keyboardSize == null) return false;
@@ -143,6 +166,7 @@ class _KeyboardState extends State<Keyboard> {
 
   @override
   Widget build(BuildContext context) {
+    print('build: pressedKeys: $pressedKeys, draggedKeys: $draggedKeys');
     return Column(
       children: [
         Expanded(
@@ -169,7 +193,7 @@ class _KeyboardState extends State<Keyboard> {
                           widget._naturals
                               .map(
                                 (key) => WhiteKey(
-                                  isPlayed: lastPlayedNote == key.note,
+                                  isPlayed: isPlayed(key.note),
                                   width: keyWidth,
                                   height: keyHeight,
                                   borderWidth: 4,
@@ -190,7 +214,7 @@ class _KeyboardState extends State<Keyboard> {
                               key == null
                                   ? SizedBox(width: keyWidth)
                                   : BlackKey(
-                                    isPlayed: lastPlayedNote == key.note,
+                                    isPlayed: isPlayed(key.note),
                                     width: keyWidth,
                                     height: keyHeight / 2,
                                     borderWidth: 4,
