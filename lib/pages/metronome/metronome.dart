@@ -723,8 +723,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         ),
         // BPM
         SettingsTile(
-          title: l10n.commonBpm,
-          subtitle: '${_metronomeBlock.bpm}',
+          title: l10n.commonBasicBeat,
+          subtitle: '${_metronomeBlock.bpm} ${l10n.commonBpm}',
           leadingIcon: Icons.speed,
           settingPage: const SetBPM(),
           block: _metronomeBlock,
