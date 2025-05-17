@@ -2,62 +2,23 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/piano/black_key.dart';
 import 'package:tiomusic/widgets/piano/key_note.dart';
+import 'package:tiomusic/widgets/piano/keyboard_utils.dart';
 import 'package:tiomusic/widgets/piano/white_key.dart';
-import 'package:tonic/tonic.dart';
 
 class Keyboard extends StatefulWidget {
   final int lowestNote;
 
-  final List<KeyNote> _notes;
-  late final List<KeyNote> _naturals;
-  late final List<KeyNote> _sharps;
-  late final List<KeyNote?> _sharpsWithSpacing;
+  final List<KeyNote> _naturals;
+  final List<KeyNote> _sharps;
+  final List<KeyNote?> _sharpsWithSpacing;
 
   final Function(int note) onPlay;
   final Function(int note) onRelease;
 
   Keyboard({super.key, required this.lowestNote, required this.onPlay, required this.onRelease})
-    : _notes = createNotes(lowestNote) {
-    _naturals = _notes.where((note) => note.isNatural).toList();
-    _sharps = _notes.whereNot((note) => note.isNatural).toList();
-    _sharpsWithSpacing = createSharpsWithSpacing(lowestNote);
-  }
-
-  static List<KeyNote> createNaturals(int lowestNote) =>
-      createNotes(lowestNote).where((note) => note.isNatural).toList();
-
-  static List<KeyNote> createSharps(int lowestNote) => createSharpsWithSpacing(lowestNote).nonNulls.toList();
-
-  static List<KeyNote?> createSharpsWithSpacing(int lowestNote) {
-    final notes = createNotes(lowestNote);
-    final sharpsWithSpacing = <KeyNote?>[];
-    for (final (index, note) in notes.indexed) {
-      if (index >= notes.length - 1) break;
-      if (!note.isNatural) continue;
-      if (notes[index + 1].isNatural) {
-        sharpsWithSpacing.add(null);
-      } else {
-        sharpsWithSpacing.add(notes[index + 1]);
-      }
-    }
-    return sharpsWithSpacing;
-  }
-
-  static List<KeyNote> createNotes(int lowestNote) {
-    final notes = <KeyNote>[];
-    int currentNote = lowestNote;
-    int naturalNotesRemaining = PianoParams.numberOfWhiteKeys;
-    while (naturalNotesRemaining > 0) {
-      final isNatural = midiToName(currentNote).length == 1;
-      if (isNatural) naturalNotesRemaining--;
-      notes.add(KeyNote(note: currentNote, name: Pitch.fromMidiNumber(currentNote).toString(), isNatural: isNatural));
-      currentNote++;
-    }
-    return notes;
-  }
+  : _naturals = createNaturals(lowestNote), _sharps = createSharps(lowestNote), _sharpsWithSpacing = createSharpsWithSpacing(lowestNote);
 
   @override
   State<Keyboard> createState() => _KeyboardState();

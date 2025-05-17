@@ -36,6 +36,7 @@ class BlackKey extends StatelessWidget {
     return Semantics(
       label: semanticsLabel,
       button: true,
+      excludeSemantics: true,
       child: SizedBox(
         width: width,
         height: height,
