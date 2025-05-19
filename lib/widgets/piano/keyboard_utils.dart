@@ -3,8 +3,7 @@ import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/piano/key_note.dart';
 import 'package:tonic/tonic.dart';
 
-List<KeyNote> createNaturals(int lowestNote) =>
-    createNotes(lowestNote).where((note) => note.isNatural).toList();
+List<KeyNote> createNaturals(int lowestNote) => createNotes(lowestNote).where((note) => note.isNatural).toList();
 
 List<KeyNote> createSharps(int lowestNote) => createSharpsWithSpacing(lowestNote).nonNulls.toList();
 

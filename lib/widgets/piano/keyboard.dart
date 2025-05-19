@@ -18,7 +18,9 @@ class Keyboard extends StatefulWidget {
   final Function(int note) onRelease;
 
   Keyboard({super.key, required this.lowestNote, required this.onPlay, required this.onRelease})
-  : _naturals = createNaturals(lowestNote), _sharps = createSharps(lowestNote), _sharpsWithSpacing = createSharpsWithSpacing(lowestNote);
+    : _naturals = createNaturals(lowestNote),
+      _sharps = createSharps(lowestNote),
+      _sharpsWithSpacing = createSharpsWithSpacing(lowestNote);
 
   @override
   State<Keyboard> createState() => _KeyboardState();
