@@ -19,7 +19,7 @@ import 'package:tiomusic/services/project_repository.dart';
 import '../../mocks/in_memory_file_system_mock.dart';
 import '../../utils/action_utils.dart';
 import '../../utils/render_utils.dart';
-import 'project_utils.dart';
+import '../../utils/project_utils.dart';
 
 extension WidgetTesterPumpExtension on WidgetTester {
   Future<void> dragFromCenterToTargetAndSettle(FinderBase<Element> finder, Offset to) async {

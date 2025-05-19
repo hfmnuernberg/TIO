@@ -27,6 +27,8 @@ class English extends AppLocalizations {
   String get appTutorialToolIsland => 'Tap here to combine your tool with other tools.';
   String get appTutorialToolSave => 'Tap here to copy your tool to another project.';
 
+  String get commonBasicBeat => 'Basic beat';
+  String get commonBasicBeatSetting => 'Set basic beat';
   String get commonBpm => 'BPM';
   String get commonCancel => 'Cancel';
   String get commonDelete => 'Delete?';
@@ -42,6 +44,7 @@ class English extends AppLocalizations {
   String get commonSetVolume => 'Set Volume';
   String get commonSlider => 'Slider';
   String get commonSubmit => 'Submit';
+  String get commonTextField => 'Text field';
   String get commonVolume => 'Volume';
   String get commonVolumeHintLow =>
       'The device volume is low. If necessary, increase the device volume in addition to the tool volume.';
@@ -89,7 +92,6 @@ class English extends AppLocalizations {
   String get mediaPlayerAboutExplanation =>
       'You can record, load and edit audio files and save configurations. In doing so, you can set your preferred volume, range (length and segment), playing speed and pitch. You can forward your projects to others using external messenger services.';
   String get mediaPlayerAddMarker => 'Add marker';
-  String get mediaPlayerBasicBeat => 'Basic beat';
   String get mediaPlayerDescription => 'Make recordings or load audio files, listen to them and edit them.';
   String get mediaPlayerEditMarkers => 'Edit markers';
   String get mediaPlayerErrorFileAccessible => 'File is not accessible.';
@@ -113,7 +115,6 @@ class English extends AppLocalizations {
   String get mediaPlayerRemoveMarker => 'Remove selected marker';
   String get mediaPlayerSecShort => 'Sec';
   String get mediaPlayerSemitonesLabel => 'Semitones';
-  String get mediaPlayerSetBasicBeat => 'Set basic beat';
   String get mediaPlayerSetPitch => 'Set pitch';
   String get mediaPlayerSetSpeed => 'Set tempo';
   String get mediaPlayerSetTrim => 'Set trim';
@@ -214,6 +215,8 @@ class English extends AppLocalizations {
   String get projectMenu => 'Project menu';
   String get projectNew => 'Project title';
   String get projectNewTool => 'Tool title';
+  String get projectToolList => 'Tool list';
+  String get projectToolListEmpty => 'Empty tool list';
   String get projectTutorialEditTitle => 'Tap here to edit the title of your project.';
 
   String get projectsAbout => 'Projects';
@@ -258,8 +261,12 @@ class English extends AppLocalizations {
   String get toolEmpty => 'Empty';
   String get toolNewProjectTitle => 'Project title';
   String get toolNewTitle => 'Tool title';
+  String get toolGoToNext => 'Go to next tool';
+  String get toolGoToNextOfSameType => 'Go to next tool of the same type';
   String get toolNoOtherToolAvailable =>
       'There is no other tool in this project. Please save another tool first to use it as an island.';
+  String get toolGoToPrev => 'Go to previous tool';
+  String get toolGoToPrevOfSameType => 'Go to previous tool of the same type';
   String get toolQuickTool => 'Quick tool';
   String get toolQuickToolSave => 'Save quick tool?';
   String get toolSave => 'Save in ...';

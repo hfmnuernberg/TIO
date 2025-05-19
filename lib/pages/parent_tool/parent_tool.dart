@@ -287,6 +287,8 @@ class _ParentToolState extends State<ParentTool> {
         child: Text(
           widget.toolBlock.title,
           style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
       backgroundColor: ColorTheme.surfaceBright,

@@ -15,24 +15,27 @@ class ToolList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(0, TIOMusicParams.smallSpaceAboveList + 2, 0, 120),
-      itemCount: project.blocks.length,
-      itemBuilder: (context, index) {
-        final block = project.blocks[index];
+    return Semantics(
+      label: context.l10n.projectToolList,
+      child: ListView.builder(
+        padding: const EdgeInsets.fromLTRB(0, TIOMusicParams.smallSpaceAboveList + 2, 0, 120),
+        itemCount: project.blocks.length,
+        itemBuilder: (context, index) {
+          final block = project.blocks[index];
 
-        return CardListTile(
-          title: block.title,
-          subtitle: formatSettingValues(block.getSettingsFormatted(context.l10n)),
-          leadingPicture: circleToolIcon(block.icon),
-          trailingIcon: IconButton(
-            onPressed: () => onOpenTool(block),
-            icon: const Icon(Icons.arrow_forward),
-            color: ColorTheme.primaryFixedDim,
-          ),
-          onTapFunction: () => onOpenTool(block),
-        );
-      },
+          return CardListTile(
+            title: block.title,
+            subtitle: formatSettingValues(block.getSettingsFormatted(context.l10n)),
+            leadingPicture: circleToolIcon(block.icon),
+            trailingIcon: IconButton(
+              onPressed: () => onOpenTool(block),
+              icon: const Icon(Icons.arrow_forward),
+              color: ColorTheme.primaryFixedDim,
+            ),
+            onTapFunction: () => onOpenTool(block),
+          );
+        },
+      ),
     );
   }
 }

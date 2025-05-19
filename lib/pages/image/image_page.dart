@@ -22,7 +22,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
-import 'package:tiomusic/widgets/small_icon_button.dart';
+import 'package:tiomusic/widgets/tio_icon_button.dart';
 
 class ImageTool extends StatefulWidget {
   final bool isQuickTool;
@@ -231,7 +231,7 @@ class _ImageToolState extends State<ImageTool> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        SmallIconButton(
+                        TioIconButton.sm(
                           icon: const Icon(Icons.image_outlined, color: ColorTheme.primary),
                           onPressed: () => _pickImageAndSave(false),
                         ),
@@ -247,7 +247,7 @@ class _ImageToolState extends State<ImageTool> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        SmallIconButton(
+                        TioIconButton.sm(
                           icon: const Icon(Icons.camera_alt_outlined, color: ColorTheme.primary),
                           onPressed: () => _takePhotoAndSave(false),
                         ),

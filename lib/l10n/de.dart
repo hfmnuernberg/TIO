@@ -27,6 +27,8 @@ class German extends AppLocalizations {
   String get appTutorialToolIsland => 'Tippe hier, um dein Tool mit anderen Tools zu kombinieren.';
   String get appTutorialToolSave => 'Tippe hier, um dein Tool in ein anderes Projekt zu kopieren.';
 
+  String get commonBasicBeat => 'Grundschlag';
+  String get commonBasicBeatSetting => 'Grundschlag einstellen';
   String get commonBpm => 'BPM';
   String get commonCancel => 'Abbrechen';
   String get commonDelete => 'Löschen?';
@@ -42,6 +44,7 @@ class German extends AppLocalizations {
   String get commonSetVolume => 'Lautstärke einstellen';
   String get commonSlider => 'Schieberegler';
   String get commonSubmit => 'Bestätigen';
+  String get commonTextField => 'Textfeld';
   String get commonVolume => 'Lautstärke';
   String get commonVolumeHintLow =>
       'Die Lautstärke deines Geräts ist niedrig. Wenn nötig, erhöhe die Lautstärke des Geräts zusätzlich zur Lautstärke des Tools.';
@@ -88,7 +91,6 @@ class German extends AppLocalizations {
   String get mediaPlayerAboutExplanation =>
       'Du kannst Audiodateien aufnehmen, laden, bearbeiten und Konfigurationen speichern. Dabei kannst du deine bevorzugte Lautstärke, Range (Dauer und Ausschnitt), die Wiedergabegeschwindigkeit und die Tonhöhe (Transpose-Funktion) einstellen. Du hast die Möglichkeit, deine gespeicherten Projekte mithilfe von externen Messenger-Diensten an andere weiterzuleiten.';
   String get mediaPlayerAddMarker => 'Marker hinzufügen';
-  String get mediaPlayerBasicBeat => 'Grundschlag';
   String get mediaPlayerDescription => 'Lade Audio-Files oder nimm etwas auf, hör es dir an und bearbeite es.';
   String get mediaPlayerEditMarkers => 'Marker bearbeiten';
   String get mediaPlayerErrorFileAccessible => 'Datei nicht lesbar';
@@ -112,7 +114,6 @@ class German extends AppLocalizations {
   String get mediaPlayerRemoveMarker => 'Ausgewählten Marker entfernen';
   String get mediaPlayerSecShort => 'Sek.';
   String get mediaPlayerSemitonesLabel => 'Halbtöne';
-  String get mediaPlayerSetBasicBeat => 'Grundschlag einstellen';
   String get mediaPlayerSetPitch => 'Tonhöhe einstellen';
   String get mediaPlayerSetSpeed => 'Tempo einstellen';
   String get mediaPlayerSetTrim => 'Trimmbereich festlegen';
@@ -217,6 +218,8 @@ class German extends AppLocalizations {
   String get projectMenu => 'Projektmenü';
   String get projectNew => 'Projekttitel';
   String get projectNewTool => 'Tool-Titel';
+  String get projectToolList => 'Tool-Liste';
+  String get projectToolListEmpty => 'Leere Tool-Liste';
   String get projectTutorialEditTitle => 'Tippe hier, um den Projekttitel zu bearbeiten.';
 
   String get projectsAbout => 'Projekte';
@@ -261,8 +264,12 @@ class German extends AppLocalizations {
   String get toolEmpty => 'Leerer Block';
   String get toolNewProjectTitle => 'Projekttitel';
   String get toolNewTitle => 'Tool-Titel';
+  String get toolGoToNext => 'Gehe zu nächstem Tool';
+  String get toolGoToNextOfSameType => 'Gehe zu nächstem Tool des gleichen Typs';
   String get toolNoOtherToolAvailable =>
       'Kein anderes Tool im Projekt verfügbar. Bitte speichere zuerst ein anderes Tool, um es mit diesem Tool verknüpfen zu können.';
+  String get toolGoToPrev => 'Gehe zu vorherigem Tool';
+  String get toolGoToPrevOfSameType => 'Gehe zu vorherigem Tool des gleichen Typs';
   String get toolQuickTool => 'Tool';
   String get toolQuickToolSave => 'Tool speichern?';
   String get toolSave => 'Speichern in ...';

@@ -19,6 +19,8 @@ abstract class AppLocalizations {
   String get appTutorialToolIsland;
   String get appTutorialToolSave;
 
+  String get commonBasicBeat;
+  String get commonBasicBeatSetting;
   String get commonBpm;
   String get commonCancel;
   String get commonDelete;
@@ -34,6 +36,7 @@ abstract class AppLocalizations {
   String get commonSetVolume;
   String get commonSlider;
   String get commonSubmit;
+  String get commonTextField;
   String get commonVolume;
   String get commonVolumeHintLow;
   String get commonVolumeHintMid;
@@ -76,7 +79,6 @@ abstract class AppLocalizations {
   String get mediaPlayerAbout;
   String get mediaPlayerAboutExplanation;
   String get mediaPlayerAddMarker;
-  String get mediaPlayerBasicBeat;
   String get mediaPlayerDescription;
   String get mediaPlayerEditMarkers;
   String get mediaPlayerErrorFileAccessible;
@@ -97,7 +99,6 @@ abstract class AppLocalizations {
   String get mediaPlayerRemoveMarker;
   String get mediaPlayerSecShort;
   String get mediaPlayerSemitonesLabel;
-  String get mediaPlayerSetBasicBeat;
   String get mediaPlayerSetPitch;
   String get mediaPlayerSetSpeed;
   String get mediaPlayerSetTrim;
@@ -194,6 +195,8 @@ abstract class AppLocalizations {
   String get projectMenu;
   String get projectNew;
   String get projectNewTool;
+  String get projectToolList;
+  String get projectToolListEmpty;
   String get projectTutorialEditTitle;
 
   String get projectsAbout;
@@ -233,7 +236,11 @@ abstract class AppLocalizations {
   String get toolEmpty;
   String get toolNewProjectTitle;
   String get toolNewTitle;
+  String get toolGoToNext;
+  String get toolGoToNextOfSameType;
   String get toolNoOtherToolAvailable;
+  String get toolGoToPrev;
+  String get toolGoToPrevOfSameType;
   String get toolQuickTool;
   String get toolQuickToolSave;
   String get toolSave;

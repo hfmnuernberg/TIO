@@ -59,7 +59,7 @@ class _SetBPMState extends State<SetBPM> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: context.l10n.metronomeSetBpm,
+      title: context.l10n.commonBasicBeatSetting,
       numberInput: NumberInputAndSliderInt(
         value: bpm,
         max: MetronomeParams.maxBPM,
