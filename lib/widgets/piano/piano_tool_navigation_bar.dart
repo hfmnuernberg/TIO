@@ -153,7 +153,6 @@ class _PianoToolNavigationBar extends StatelessWidget {
             padding: const EdgeInsets.only(top: 10),
             child: Row(
               key: keyOctaveSwitch,
-              mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
                   icon: const Icon(Icons.keyboard_double_arrow_left, color: ColorTheme.primary),
@@ -215,7 +214,7 @@ class _PianoToolNavigationBar extends StatelessWidget {
             height: 52,
             padding: const EdgeInsets.only(top: 10),
             child: Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
                   icon: const Icon(Icons.keyboard_arrow_right, color: ColorTheme.primary),
