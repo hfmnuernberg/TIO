@@ -70,12 +70,11 @@ class _KeyboardState extends State<Keyboard> {
 
     handleGlissandoRelease(key.note);
 
-    handleGlissandoPlay(key.note);
-  }
+    draggedKeys.add(key.note);
 
-  void handleGlissandoPlay(int note) {
-    widget.onPlay(note);
-    draggedKeys.add(note);
+    if (pressedKeys.contains(key.note)) return;
+
+    widget.onPlay(key.note);
     setState(() {});
   }
 
@@ -124,7 +123,6 @@ class _KeyboardState extends State<Keyboard> {
 
   @override
   Widget build(BuildContext context) {
-    print('build: pressedKeys: $pressedKeys, draggedKeys: $draggedKeys');
     return Column(
       children: [
         Expanded(
