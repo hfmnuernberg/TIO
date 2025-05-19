@@ -17,16 +17,13 @@ class TioIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 0, 4, 0),
-      child: Material(
-        elevation: 16,
-        borderRadius: BorderRadius.circular(800),
-        child: CircleAvatar(
-          backgroundColor: Colors.white,
-          radius: size,
-          child: IconButton(icon: icon, iconSize: size, tooltip: tooltip, onPressed: onPressed),
-        ),
+    return Material(
+      elevation: 16,
+      borderRadius: BorderRadius.circular(800),
+      child: CircleAvatar(
+        backgroundColor: Colors.white,
+        radius: size,
+        child: IconButton(icon: icon, iconSize: size, tooltip: tooltip, onPressed: onPressed),
       ),
     );
   }

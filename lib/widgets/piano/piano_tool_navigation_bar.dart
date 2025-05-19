@@ -125,19 +125,20 @@ class _PianoToolNavigationBar extends StatelessWidget {
         Row(
           children: [
             if (onPrevTool != null && prevToolIcon != null)
-              TioIconButton.xs(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool),
+              Padding(
+                padding: EdgeInsets.only(right: 12),
+                child: TioIconButton.xs(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool),
+              ),
 
-            Padding(
-              padding: EdgeInsets.only(left: 4, right: 8),
-              child:
-                  onPrevToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon
-                      ? TioIconButton.xs(
-                        icon: toolOfSameTypeIcon!,
-                        tooltip: l10n.toolGoToPrevOfSameType,
-                        onPressed: onPrevToolOfSameType,
-                      )
-                      : null,
-            ),
+            if (onPrevToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon)
+              Padding(
+                padding: EdgeInsets.only(right: 12),
+                child: TioIconButton.xs(
+                  icon: toolOfSameTypeIcon!,
+                  tooltip: l10n.toolGoToPrevOfSameType,
+                  onPressed: onPrevToolOfSameType,
+                ),
+              ),
           ],
         ),
 
@@ -233,19 +234,20 @@ class _PianoToolNavigationBar extends StatelessWidget {
 
         Row(
           children: [
-            Padding(
-              padding: EdgeInsets.only(left: 8, right: 4),
-              child:
-                  onNextToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != nextToolIcon
-                      ? TioIconButton.xs(
-                        icon: toolOfSameTypeIcon!,
-                        tooltip: l10n.toolGoToNextOfSameType,
-                        onPressed: onNextToolOfSameType,
-                      )
-                      : null,
-            ),
+            if (onNextToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != nextToolIcon)
+              Padding(
+                padding: EdgeInsets.only(left: 12),
+                child: TioIconButton.xs(
+                  icon: toolOfSameTypeIcon!,
+                  tooltip: l10n.toolGoToNextOfSameType,
+                  onPressed: onNextToolOfSameType,
+                ),
+              ),
             if (onNextTool != null && nextToolIcon != null)
-              TioIconButton.xs(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool),
+              Padding(
+                padding: EdgeInsets.only(left: 12),
+                child: TioIconButton.xs(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool),
+              ),
           ],
         ),
       ],

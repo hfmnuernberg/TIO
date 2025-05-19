@@ -13,7 +13,7 @@ class EditProjectBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-      padding: EdgeInsets.symmetric(horizontal: 12),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       color: Colors.transparent,
       height: 78,
       child: Row(
