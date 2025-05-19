@@ -49,7 +49,7 @@ jobs:
         path: build/ios/ipa
 
     - name: Setup ruby
-      uses: ruby/setup-ruby@v1.239.0
+      uses: ruby/setup-ruby@v1.242.0
       with:
         ruby-version: '3.3'
         working-directory: ios
