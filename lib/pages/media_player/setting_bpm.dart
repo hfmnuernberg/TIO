@@ -45,14 +45,14 @@ class _SetBPMState extends State<SetBPM> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: context.l10n.mediaPlayerSetBasicBeat,
+      title: context.l10n.commonBasicBeatSetting,
       numberInput: NumberInputAndSliderInt(
         value: value,
         onChange: _handleChange,
         min: minBpm,
         max: maxBpm,
         step: 1,
-        label: context.l10n.mediaPlayerBasicBeat,
+        label: context.l10n.commonBpm,
         buttonRadius: 20,
         textFieldWidth: 100,
         textFontSize: 32,

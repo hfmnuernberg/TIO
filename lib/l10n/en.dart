@@ -27,6 +27,8 @@ class English extends AppLocalizations {
   String get appTutorialToolIsland => 'Tap here to combine your tool with other tools.';
   String get appTutorialToolSave => 'Tap here to copy your tool to another project.';
 
+  String get commonBasicBeat => 'Basic beat';
+  String get commonBasicBeatSetting => 'Set basic beat';
   String get commonBpm => 'BPM';
   String get commonCancel => 'Cancel';
   String get commonDelete => 'Delete?';
@@ -90,7 +92,6 @@ class English extends AppLocalizations {
   String get mediaPlayerAboutExplanation =>
       'You can record, load and edit audio files and save configurations. In doing so, you can set your preferred volume, range (length and segment), playing speed and pitch. You can forward your projects to others using external messenger services.';
   String get mediaPlayerAddMarker => 'Add marker';
-  String get mediaPlayerBasicBeat => 'Basic beat';
   String get mediaPlayerDescription => 'Make recordings or load audio files, listen to them and edit them.';
   String get mediaPlayerEditMarkers => 'Edit markers';
   String get mediaPlayerErrorFileAccessible => 'File is not accessible.';
@@ -114,7 +115,6 @@ class English extends AppLocalizations {
   String get mediaPlayerRemoveMarker => 'Remove selected marker';
   String get mediaPlayerSecShort => 'Sec';
   String get mediaPlayerSemitonesLabel => 'Semitones';
-  String get mediaPlayerSetBasicBeat => 'Set basic beat';
   String get mediaPlayerSetPitch => 'Set pitch';
   String get mediaPlayerSetSpeed => 'Set tempo';
   String get mediaPlayerSetTrim => 'Set trim';
