@@ -52,9 +52,12 @@ class _KeyboardState extends State<Keyboard> {
 
     final key = findPlayedKey(event.localPosition);
     if (key == null) return;
+    if (!pressedKeys.contains(key.note) && !draggedKeys.contains(key.note)) return;
 
+    widget.onRelease(key.note);
     draggedKeys.remove(key.note);
-    handleRelease(key.note);
+    pressedKeys.remove(key.note);
+    setState(() {});
   }
 
   void handlePointerMove(PointerEvent event) {
