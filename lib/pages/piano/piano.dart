@@ -14,6 +14,7 @@ import 'package:tiomusic/models/sound_font.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
+import 'package:tiomusic/pages/piano/piano_keyboard_navigation.dart';
 import 'package:tiomusic/pages/piano/piano_settings.dart';
 import 'package:tiomusic/pages/piano/set_concert_pitch.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -342,22 +343,16 @@ class _PianoState extends State<Piano> {
               child: Column(
                 children: [
                   if (widget.isQuickTool)
-                    Container(
-                      decoration: const BoxDecoration(
-                        color: ColorTheme.primaryFixedDim,
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                      ),
-                      height: 52,
-                      padding: const EdgeInsets.only(top: 10),
+                    PianoKeyboardNavigation(
+                      onOctaveDown: _pianoBlock.octaveDown,
+                      onToneDown: _pianoBlock.toneDown,
+                      onToneUp: _pianoBlock.toneUp,
+                      onOctaveUp: _pianoBlock.octaveUp,
+                      keyOctaveSwitch: _keyOctaveSwitch,
                       child: PianoSettings(
-                        onOctaveDown: _pianoBlock.octaveDown,
-                        onToneDown: _pianoBlock.toneDown,
-                        onToneUp: _pianoBlock.toneUp,
-                        onOctaveUp: _pianoBlock.octaveUp,
                         onOpenPitch: handleOnOpenPitch,
                         onOpenVolume: handleOnOpenVolume,
                         onOpenSound: handleOnOpenSound,
-                        keyOctaveSwitch: _keyOctaveSwitch,
                         keySettings: _keySettings,
                       ),
                     )
@@ -369,42 +364,13 @@ class _PianoState extends State<Piano> {
                       onToneDown: _pianoBlock.toneDown,
                       onToneUp: _pianoBlock.toneUp,
                       onOctaveUp: _pianoBlock.octaveUp,
-                      onOpenPitch: handleOnOpenPitch,
-                      onOpenVolume: handleOnOpenVolume,
-                      onOpenSound: handleOnOpenSound,
                       keyOctaveSwitch: _keyOctaveSwitch,
                       keySettings: _keySettings,
-                      // pianoSettings: PianoSettings(
-                      //   onOctaveDown: _pianoBlock.octaveDown,
-                      //   onToneDown: _pianoBlock.toneDown,
-                      //   onToneUp: _pianoBlock.toneUp,
-                      //   onOctaveUp: _pianoBlock.octaveUp,
-                      //   onOpenPitch: handleOnOpenPitch,
-                      //   onOpenVolume: handleOnOpenVolume,
-                      //   onOpenSound: handleOnOpenSound,
-                      //   keyOctaveSwitch: _keyOctaveSwitch,
-                      //   keySettings: _keySettings,
-                      // ),
-
-                      // pianoSettings: Container(
-                      //   decoration: const BoxDecoration(
-                      //     color: ColorTheme.primaryFixedDim,
-                      //     borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                      //   ),
-                      //   height: 52,
-                      //   padding: const EdgeInsets.only(top: 10),
-                      //   // child: PianoSettings(
-                      //   //   onOctaveDown: _pianoBlock.octaveDown,
-                      //   //   onToneDown: _pianoBlock.toneDown,
-                      //   //   onToneUp: _pianoBlock.toneUp,
-                      //   //   onOctaveUp: _pianoBlock.octaveUp,
-                      //   //   onOpenPitch: handleOnOpenPitch,
-                      //   //   onOpenVolume: handleOnOpenVolume,
-                      //   //   onOpenSound: handleOnOpenSound,
-                      //   //   keyOctaveSwitch: _keyOctaveSwitch,
-                      //   //   keySettings: _keySettings,
-                      //   // ),
-                      // ),
+                      child: PianoSettings(
+                        onOpenPitch: handleOnOpenPitch,
+                        onOpenVolume: handleOnOpenVolume,
+                        onOpenSound: handleOnOpenSound,
+                      ),
                     ),
 
                   Expanded(

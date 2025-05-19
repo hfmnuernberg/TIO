@@ -7,44 +7,37 @@ import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/tio_icon_button.dart';
 
 // TODO: Check what can derived from context, etc. to minimize params
-// TODO: Extract inner settings widget to a separate widget
-// TODO: Extract piano chevrons-navigation into a separate widget
+// TODO: When only one piano block, set styling for edges > needs to be done in parent!
+// TODO: Extract inner settings widget to a separate widget?
+// TODO: Extract piano chevrons-navigation into a separate widget?
 // TODO: clean up
 
 class PianoToolNavigationBar extends StatelessWidget {
-  // final Widget pianoSettings;
   final Project project;
   final ProjectBlock toolBlock;
   final VoidCallback onOctaveDown;
   final VoidCallback onToneDown;
   final VoidCallback onOctaveUp;
   final VoidCallback onToneUp;
-  final VoidCallback onOpenPitch;
-  final VoidCallback onOpenVolume;
-  final VoidCallback onOpenSound;
   final Key? keyOctaveSwitch;
   final Key? keySettings;
+  final Widget child;
 
   const PianoToolNavigationBar({
     super.key,
-    // required this.pianoSettings,
     required this.project,
     required this.toolBlock,
     required this.onOctaveDown,
     required this.onToneDown,
     required this.onOctaveUp,
     required this.onToneUp,
-    required this.onOpenPitch,
-    required this.onOpenVolume,
-    required this.onOpenSound,
     this.keyOctaveSwitch,
     this.keySettings,
+    required this.child,
   });
 
   @override
   Widget build(BuildContext context) {
-    // if (project.blocks.length == 1) return pianoSettings;
-
     final tools = project.blocks;
     final index = tools.indexOf(toolBlock);
 
@@ -55,7 +48,6 @@ class PianoToolNavigationBar extends StatelessWidget {
         goToTool(context, project, tool, replace: true, transitionLeftToRight: ltr);
 
     return _PianoToolNavigationBar(
-      // pianoSettings: pianoSettings,
       prevToolIcon: index > 0 ? tools[(index - 1)].icon : null,
       nextToolIcon: index < tools.length - 1 ? tools[index + 1].icon : null,
       toolOfSameTypeIcon: toolBlock.icon,
@@ -68,17 +60,14 @@ class PianoToolNavigationBar extends StatelessWidget {
       onToneDown: onToneDown,
       onOctaveUp: onOctaveUp,
       onToneUp: onToneUp,
-      onOpenPitch: onOpenPitch,
-      onOpenVolume: onOpenVolume,
-      onOpenSound: onOpenSound,
       keyOctaveSwitch: keyOctaveSwitch,
       keySettings: keySettings,
+      child: child,
     );
   }
 }
 
 class _PianoToolNavigationBar extends StatelessWidget {
-  // final Widget pianoSettings;
   final Widget? prevToolIcon;
   final Widget? nextToolIcon;
   final Widget? toolOfSameTypeIcon;
@@ -90,14 +79,11 @@ class _PianoToolNavigationBar extends StatelessWidget {
   final VoidCallback onToneDown;
   final VoidCallback onOctaveUp;
   final VoidCallback onToneUp;
-  final VoidCallback onOpenPitch;
-  final VoidCallback onOpenVolume;
-  final VoidCallback onOpenSound;
   final Key? keyOctaveSwitch;
   final Key? keySettings;
+  final Widget child;
 
   const _PianoToolNavigationBar({
-    // required this.pianoSettings,
     this.prevToolIcon,
     this.nextToolIcon,
     this.toolOfSameTypeIcon,
@@ -109,28 +95,32 @@ class _PianoToolNavigationBar extends StatelessWidget {
     required this.onToneDown,
     required this.onOctaveUp,
     required this.onToneUp,
-    required this.onOpenPitch,
-    required this.onOpenVolume,
-    required this.onOpenSound,
     this.keyOctaveSwitch,
     this.keySettings,
+    required this.child,
   });
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final prevToolExists = onPrevTool != null && prevToolIcon != null;
+    final nextToolExists = onNextTool != null && nextToolIcon != null;
+    final prevToolOfSameTypeExists =
+        onPrevToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon;
+    final nextToolOfSameTypeExists =
+        onNextToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != nextToolIcon;
 
     return Row(
       children: [
         Row(
           children: [
-            if (onPrevTool != null && prevToolIcon != null)
+            if (prevToolExists)
               Padding(
                 padding: EdgeInsets.only(right: 12),
                 child: TioIconButton.xs(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool),
               ),
 
-            if (onPrevToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon)
+            if (prevToolOfSameTypeExists)
               Padding(
                 padding: EdgeInsets.only(right: 12),
                 child: TioIconButton.xs(
@@ -142,7 +132,6 @@ class _PianoToolNavigationBar extends StatelessWidget {
           ],
         ),
 
-        // Expanded(child: pianoSettings),
         Expanded(
           child: Container(
             decoration: const BoxDecoration(
@@ -169,45 +158,41 @@ class _PianoToolNavigationBar extends StatelessWidget {
           ),
         ),
 
-        Container(
-          decoration: const BoxDecoration(color: ColorTheme.primaryFixedDim),
-          height: 52,
-          padding: const EdgeInsets.only(top: 10),
-          child: Row(
-            key: keySettings,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: const CircleAvatar(
-                  backgroundColor: ColorTheme.primary50,
-                  child: Text('Hz', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 20)),
-                ),
-                padding: EdgeInsets.zero,
-                onPressed: onOpenPitch,
-              ),
-              IconButton(
-                icon: const CircleAvatar(
-                  backgroundColor: ColorTheme.primary50,
-                  child: Icon(Icons.volume_up, color: ColorTheme.onPrimary),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                onPressed: onOpenVolume,
-              ),
-              IconButton(
-                icon: const CircleAvatar(
-                  backgroundColor: ColorTheme.primary50,
-                  child: Icon(Icons.library_music_outlined, color: ColorTheme.onPrimary),
-                ),
-                padding: EdgeInsets.zero,
-                onPressed: onOpenSound,
-              ),
-            ],
+        if (!prevToolExists)
+          Container(
+            decoration: const BoxDecoration(color: ColorTheme.primaryFixedDim),
+            height: 52,
+            padding: const EdgeInsets.only(top: 10),
+            child: const SizedBox(width: 50),
           ),
-        ),
+        if (!prevToolOfSameTypeExists)
+          Container(
+            decoration: const BoxDecoration(color: ColorTheme.primaryFixedDim),
+            height: 52,
+            padding: const EdgeInsets.only(top: 10),
+            child: const SizedBox(width: 50),
+          ),
+
+        child,
+
+        if (!nextToolOfSameTypeExists)
+          Container(
+            decoration: const BoxDecoration(color: ColorTheme.primaryFixedDim),
+            height: 52,
+            padding: const EdgeInsets.only(top: 10),
+            child: const SizedBox(width: 50),
+          ),
+        if (!nextToolExists)
+          Container(
+            decoration: const BoxDecoration(color: ColorTheme.primaryFixedDim),
+            height: 52,
+            padding: const EdgeInsets.only(top: 10),
+            child: const SizedBox(width: 50),
+          ),
 
         Expanded(
           child: Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: ColorTheme.primaryFixedDim,
               borderRadius: BorderRadius.only(topRight: Radius.circular(20)),
             ),
@@ -233,7 +218,7 @@ class _PianoToolNavigationBar extends StatelessWidget {
 
         Row(
           children: [
-            if (onNextToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != nextToolIcon)
+            if (nextToolOfSameTypeExists)
               Padding(
                 padding: EdgeInsets.only(left: 12),
                 child: TioIconButton.xs(
@@ -242,7 +227,7 @@ class _PianoToolNavigationBar extends StatelessWidget {
                   onPressed: onNextToolOfSameType,
                 ),
               ),
-            if (onNextTool != null && nextToolIcon != null)
+            if (nextToolExists)
               Padding(
                 padding: EdgeInsets.only(left: 12),
                 child: TioIconButton.xs(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool),
