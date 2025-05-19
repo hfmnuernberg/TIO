@@ -47,12 +47,6 @@ class _KeyboardState extends State<Keyboard> {
     setState(() {});
   }
 
-  void handleRelease(int note) {
-    widget.onRelease(note);
-    pressedKeys.remove(note);
-    setState(() {});
-  }
-
   void handlePointerUp(PointerEvent event) {
     if (!isWithinKeyboard(event.localPosition)) return handleGlissandoClear();
 
@@ -161,7 +155,6 @@ class _KeyboardState extends State<Keyboard> {
                                   semanticsLabel: key.name,
                                   label: key.note % PianoParams.numberOfWhiteKeys == 0 ? key.name : null,
                                   onPlay: () => handlePlay(key.note),
-                                  onRelease: () => handleRelease(key.note),
                                 ),
                               )
                               .toList(),
@@ -181,7 +174,6 @@ class _KeyboardState extends State<Keyboard> {
                                     borderWidth: 4,
                                     semanticsLabel: key.name,
                                     onPlay: () => handlePlay(key.note),
-                                    onRelease: () => handleRelease(key.note),
                                   ),
                         ),
                         SizedBox(width: keyWidth / 2),
