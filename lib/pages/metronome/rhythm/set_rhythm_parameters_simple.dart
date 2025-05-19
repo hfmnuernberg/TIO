@@ -319,8 +319,8 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
 
   Widget _buildNoteWheel() {
     return Container(
-      height: 110,
-      width: 80,
+      height: 80,
+      width: 160,
       decoration: BoxDecoration(
         color: ColorTheme.surface,
         border: Border.all(color: ColorTheme.primary80),
@@ -328,40 +328,44 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: ListWheelScrollView.useDelegate(
-          controller: _wheelController,
-          itemExtent: 52,
-          physics: const FixedExtentScrollPhysics(),
-          overAndUnderCenterOpacity: 0.6,
-          perspective: 0.002,
-          onSelectedItemChanged: (index) {
-            setState(() {
-              noteKey = wheelNoteKeys[index];
-              refreshRhythm();
-            });
-          },
-          childDelegate: ListWheelChildBuilderDelegate(
-            childCount: wheelNoteKeys.length,
-            builder: (context, index) {
-              final key = wheelNoteKeys[index];
-              final isSelected = noteKey == key;
-
-              return RhythmGeneratorSettingListItem(
-                noteKey: key,
-                hasBorder: isSelected,
-                onTap: () {
-                  _wheelController.animateToItem(
-                    index,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                  setState(() {
-                    noteKey = key;
-                    refreshRhythm();
-                  });
-                },
-              );
+        child: RotatedBox(
+          quarterTurns: -1,
+          child: ListWheelScrollView.useDelegate(
+            controller: _wheelController,
+            itemExtent: 48,
+            perspective: 0.006,
+            physics: const FixedExtentScrollPhysics(),
+            overAndUnderCenterOpacity: 0.6,
+            onSelectedItemChanged: (index) {
+              setState(() {
+                noteKey = wheelNoteKeys[index];
+                refreshRhythm();
+              });
             },
+            childDelegate: ListWheelChildBuilderDelegate(
+              childCount: wheelNoteKeys.length,
+              builder: (context, index) {
+                final key = wheelNoteKeys[index];
+
+                return RotatedBox(
+                  quarterTurns: 1,
+                  child: RhythmGeneratorSettingListItem(
+                    noteKey: key,
+                    onTap: () {
+                      _wheelController.animateToItem(
+                        index,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                      setState(() {
+                        noteKey = key;
+                        refreshRhythm();
+                      });
+                    },
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
