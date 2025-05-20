@@ -174,8 +174,8 @@ class StyledBottomBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorTheme.primaryFixedDim,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(prevToolExists && prevToolOfSameTypeExists ? 20 : 0),
-          topRight: Radius.circular(nextToolExists && nextToolOfSameTypeExists ? 20 : 0),
+          topLeft: Radius.circular(prevToolExists || prevToolOfSameTypeExists ? 20 : 0),
+          topRight: Radius.circular(nextToolExists || nextToolOfSameTypeExists ? 20 : 0),
         ),
       ),
     );
