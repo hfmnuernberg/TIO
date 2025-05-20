@@ -10,6 +10,7 @@ import 'package:tiomusic/app.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/metronome_sound.dart';
 import 'package:tiomusic/models/metronome_sound_extension.dart';
+import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -664,10 +665,22 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                       currentNoteKey: _metronomeBlock.rhythmGroups[0].noteKey,
                       currentBeats: _metronomeBlock.rhythmGroups[0].beats,
                       currentPolyBeats: _metronomeBlock.rhythmGroups[0].polyBeats,
-                      isAddingNewBar: false,
                       rhythmGroups: _metronomeBlock.rhythmGroups,
-                      isSecondMetronome: false,
                       metronomeBlock: _metronomeBlock,
+                      onUpdateRhythm: (newBeats, newPolyBeats, newNoteKey) {
+                        final group = _metronomeBlock.rhythmGroups[0];
+                        group.beats = List.from(newBeats);
+                        group.polyBeats = List.from(newPolyBeats);
+                        group.noteKey = newNoteKey;
+                        group.beatLen = NoteHandler.getBeatLength(newNoteKey);
+
+                        _clearAndRebuildRhythmSegments(false);
+                        metronomeSetRhythm(
+                          bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
+                          bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
+                        );
+                        setState(() {});
+                      },
                     ),
                   )
                 else ...[
