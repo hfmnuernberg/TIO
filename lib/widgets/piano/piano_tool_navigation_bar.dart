@@ -110,34 +110,74 @@ class PianoNavigationBar extends StatelessWidget {
     final nextToolOfSameTypeExists =
         onNextToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != nextToolIcon;
 
-    return Row(
+    return Column(
       children: [
-        ToolNavLeftButtonGroup(
-          prevToolIcon: prevToolIcon,
-          toolOfSameTypeIcon: toolOfSameTypeIcon,
-          onPrevTool: onPrevTool,
-          onPrevToolOfSameType: onPrevToolOfSameType,
+        Row(
+          children: [
+            ToolNavLeftButtonGroup(
+              prevToolIcon: prevToolIcon,
+              toolOfSameTypeIcon: toolOfSameTypeIcon,
+              onPrevTool: onPrevTool,
+              onPrevToolOfSameType: onPrevToolOfSameType,
+            ),
+
+            ShiftKeysLeftButtonGroup(onToneDown: onToneDown, onOctaveDown: onOctaveDown),
+
+            if (!prevToolExists) Placeholder(),
+            if (!prevToolOfSameTypeExists) Placeholder(),
+
+            PianoSettingsButtonGroup(onOpenPitch: onOpenPitch, onOpenVolume: onOpenVolume, onOpenSound: onOpenSound),
+
+            if (!nextToolOfSameTypeExists) Placeholder(),
+            if (!nextToolExists) Placeholder(),
+
+            ShiftKeysRightButtonGroup(onToneUp: onToneUp, onOctaveUp: onOctaveUp),
+
+            ToolNavRightButtonGroup(
+              nextToolIcon: nextToolIcon,
+              toolOfSameTypeIcon: toolOfSameTypeIcon,
+              onNextTool: onNextTool,
+              onNextToolOfSameType: onNextToolOfSameType,
+            ),
+          ],
         ),
 
-        ShiftKeysLeftButtonGroup(onToneDown: onToneDown, onOctaveDown: onOctaveDown),
-
-        if (!prevToolExists) Placeholder(),
-        if (!prevToolOfSameTypeExists) Placeholder(),
-
-        PianoSettingsButtonGroup(onOpenPitch: onOpenPitch, onOpenVolume: onOpenVolume, onOpenSound: onOpenSound),
-
-        if (!nextToolOfSameTypeExists) Placeholder(),
-        if (!nextToolExists) Placeholder(),
-
-        ShiftKeysRightButtonGroup(onToneUp: onToneUp, onOctaveUp: onOctaveUp),
-
-        ToolNavRightButtonGroup(
-          nextToolIcon: nextToolIcon,
-          toolOfSameTypeIcon: toolOfSameTypeIcon,
-          onNextTool: onNextTool,
-          onNextToolOfSameType: onNextToolOfSameType,
+        StyledBottomBar(
+          prevToolExists: prevToolExists,
+          nextToolExists: nextToolExists,
+          prevToolOfSameTypeExists: prevToolOfSameTypeExists,
+          nextToolOfSameTypeExists: nextToolOfSameTypeExists,
         ),
       ],
+    );
+  }
+}
+
+class StyledBottomBar extends StatelessWidget {
+  final bool prevToolExists;
+  final bool nextToolExists;
+  final bool prevToolOfSameTypeExists;
+  final bool nextToolOfSameTypeExists;
+
+  const StyledBottomBar({
+    super.key,
+    required this.prevToolExists,
+    required this.nextToolExists,
+    required this.prevToolOfSameTypeExists,
+    required this.nextToolOfSameTypeExists,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 20,
+      decoration: BoxDecoration(
+        color: ColorTheme.primaryFixedDim,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(prevToolExists && prevToolOfSameTypeExists ? 20 : 0),
+          topRight: Radius.circular(nextToolExists && nextToolOfSameTypeExists ? 20 : 0),
+        ),
+      ),
     );
   }
 }

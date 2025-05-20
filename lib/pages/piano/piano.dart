@@ -334,11 +334,12 @@ class _PianoState extends State<Piano> {
               ),
             ],
           ),
-          // piano
+
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Column(
+              child: Stack(
+                clipBehavior: Clip.none,
                 children: [
                   if (widget.isQuickTool)
                     PianoNavigationBar(
@@ -363,14 +364,21 @@ class _PianoState extends State<Piano> {
                       onOpenSound: handleOnOpenSound,
                     ),
 
-                  Expanded(
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    top: 52,
                     child: Container(
                       decoration: BoxDecoration(
                         color: ColorTheme.primaryFixedDim,
                         borderRadius:
                             (project == null || project.blocks.length == 1)
-                                ? BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))
-                                : BorderRadius.all(Radius.circular(20)),
+                                ? const BorderRadius.only(
+                                  bottomLeft: Radius.circular(20),
+                                  bottomRight: Radius.circular(20),
+                                )
+                                : const BorderRadius.all(Radius.circular(20)),
                       ),
                       padding: const EdgeInsets.all(10),
                       child: Consumer<ProjectBlock>(
