@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
-class PianoSettings extends StatelessWidget {
+class PianoSettingsButtonGroup extends StatelessWidget {
   final VoidCallback onOpenPitch;
   final VoidCallback onOpenVolume;
   final VoidCallback onOpenSound;
-  final Key? keySettings;
 
-  const PianoSettings({
+  const PianoSettingsButtonGroup({
     super.key,
     required this.onOpenPitch,
     required this.onOpenVolume,
     required this.onOpenSound,
-    this.keySettings,
   });
 
   @override
@@ -22,7 +20,6 @@ class PianoSettings extends StatelessWidget {
       height: 52,
       padding: const EdgeInsets.only(top: 10),
       child: Row(
-        key: keySettings,
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(

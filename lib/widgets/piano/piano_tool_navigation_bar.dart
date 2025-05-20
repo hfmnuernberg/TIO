@@ -12,18 +12,16 @@ import 'package:tiomusic/widgets/tio_icon_button.dart';
 // TODO: Extract piano chevrons-navigation into a separate widget?
 // TODO: clean up
 
-class PianoToolNavigationBar extends StatelessWidget {
+class PianoNavigation extends StatelessWidget {
   final Project project;
   final ProjectBlock toolBlock;
   final VoidCallback onOctaveDown;
   final VoidCallback onToneDown;
   final VoidCallback onOctaveUp;
   final VoidCallback onToneUp;
-  final Key? keyOctaveSwitch;
-  final Key? keySettings;
-  final Widget child;
+  final Widget child; // TODO: add settings
 
-  const PianoToolNavigationBar({
+  const PianoNavigation({
     super.key,
     required this.project,
     required this.toolBlock,
@@ -31,8 +29,6 @@ class PianoToolNavigationBar extends StatelessWidget {
     required this.onToneDown,
     required this.onOctaveUp,
     required this.onToneUp,
-    this.keyOctaveSwitch,
-    this.keySettings,
     required this.child,
   });
 
@@ -47,7 +43,7 @@ class PianoToolNavigationBar extends StatelessWidget {
     Future<void> replaceTool(ProjectBlock tool, {bool ltr = false}) =>
         goToTool(context, project, tool, replace: true, transitionLeftToRight: ltr);
 
-    return _PianoToolNavigationBar(
+    return PianoNavigationBar(
       prevToolIcon: index > 0 ? tools[(index - 1)].icon : null,
       nextToolIcon: index < tools.length - 1 ? tools[index + 1].icon : null,
       toolOfSameTypeIcon: toolBlock.icon,
@@ -60,30 +56,30 @@ class PianoToolNavigationBar extends StatelessWidget {
       onToneDown: onToneDown,
       onOctaveUp: onOctaveUp,
       onToneUp: onToneUp,
-      keyOctaveSwitch: keyOctaveSwitch,
-      keySettings: keySettings,
       child: child,
     );
   }
 }
 
-class _PianoToolNavigationBar extends StatelessWidget {
+// TODO: rename this and use it instead of PianoKeyboardNavigation
+class PianoNavigationBar extends StatelessWidget {
   final Widget? prevToolIcon;
   final Widget? nextToolIcon;
   final Widget? toolOfSameTypeIcon;
+
   final VoidCallback? onPrevTool;
   final VoidCallback? onNextTool;
   final VoidCallback? onPrevToolOfSameType;
   final VoidCallback? onNextToolOfSameType;
+
   final VoidCallback onOctaveDown;
   final VoidCallback onToneDown;
   final VoidCallback onOctaveUp;
   final VoidCallback onToneUp;
-  final Key? keyOctaveSwitch;
-  final Key? keySettings;
+
   final Widget child;
 
-  const _PianoToolNavigationBar({
+  const PianoNavigationBar({
     this.prevToolIcon,
     this.nextToolIcon,
     this.toolOfSameTypeIcon,
@@ -95,14 +91,11 @@ class _PianoToolNavigationBar extends StatelessWidget {
     required this.onToneDown,
     required this.onOctaveUp,
     required this.onToneUp,
-    this.keyOctaveSwitch,
-    this.keySettings,
     required this.child,
   });
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final prevToolExists = onPrevTool != null && prevToolIcon != null;
     final nextToolExists = onNextTool != null && nextToolIcon != null;
     final prevToolOfSameTypeExists =
@@ -112,129 +105,198 @@ class _PianoToolNavigationBar extends StatelessWidget {
 
     return Row(
       children: [
-        Row(
-          children: [
-            if (prevToolExists)
-              Padding(
-                padding: EdgeInsets.only(right: 12),
-                child: TioIconButton.xs(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool),
-              ),
-
-            if (prevToolOfSameTypeExists)
-              Padding(
-                padding: EdgeInsets.only(right: 12),
-                child: TioIconButton.xs(
-                  icon: toolOfSameTypeIcon!,
-                  tooltip: l10n.toolGoToPrevOfSameType,
-                  onPressed: onPrevToolOfSameType,
-                ),
-              ),
-          ],
+        ToolNavLeftButtonGroup(
+          prevToolIcon: prevToolIcon,
+          toolOfSameTypeIcon: toolOfSameTypeIcon,
+          onPrevTool: onPrevTool,
+          onPrevToolOfSameType: onPrevToolOfSameType,
         ),
 
-        Expanded(
-          child: Container(
-            decoration: const BoxDecoration(
-              color: ColorTheme.primaryFixedDim,
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(20)),
-            ),
-            height: 52,
-            padding: const EdgeInsets.only(top: 10),
-            child: Row(
-              key: keyOctaveSwitch,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.keyboard_double_arrow_left, color: ColorTheme.primary),
-                  padding: EdgeInsets.zero,
-                  onPressed: onOctaveDown,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.keyboard_arrow_left, color: ColorTheme.primary),
-                  padding: EdgeInsets.zero,
-                  onPressed: onToneDown,
-                ),
-              ],
-            ),
-          ),
-        ),
+        ShiftKeysLeftButtonGroup(onToneDown: onToneDown, onOctaveDown: onOctaveDown),
 
-        if (!prevToolExists)
-          Container(
-            decoration: const BoxDecoration(color: ColorTheme.primaryFixedDim),
-            height: 52,
-            padding: const EdgeInsets.only(top: 10),
-            child: const SizedBox(width: 50),
-          ),
-        if (!prevToolOfSameTypeExists)
-          Container(
-            decoration: const BoxDecoration(color: ColorTheme.primaryFixedDim),
-            height: 52,
-            padding: const EdgeInsets.only(top: 10),
-            child: const SizedBox(width: 50),
-          ),
+        if (!prevToolExists) Placeholder(),
+        if (!prevToolOfSameTypeExists) Placeholder(),
 
         child,
 
-        if (!nextToolOfSameTypeExists)
-          Container(
-            decoration: const BoxDecoration(color: ColorTheme.primaryFixedDim),
-            height: 52,
-            padding: const EdgeInsets.only(top: 10),
-            child: const SizedBox(width: 50),
-          ),
-        if (!nextToolExists)
-          Container(
-            decoration: const BoxDecoration(color: ColorTheme.primaryFixedDim),
-            height: 52,
-            padding: const EdgeInsets.only(top: 10),
-            child: const SizedBox(width: 50),
-          ),
+        if (!nextToolOfSameTypeExists) Placeholder(),
+        if (!nextToolExists) Placeholder(),
 
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              color: ColorTheme.primaryFixedDim,
-              borderRadius: BorderRadius.only(topRight: Radius.circular(20)),
-            ),
-            height: 52,
-            padding: const EdgeInsets.only(top: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.keyboard_arrow_right, color: ColorTheme.primary),
-                  padding: EdgeInsets.zero,
-                  onPressed: onToneUp,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.keyboard_double_arrow_right, color: ColorTheme.primary),
-                  padding: EdgeInsets.zero,
-                  onPressed: onOctaveUp,
-                ),
-              ],
-            ),
-          ),
-        ),
+        ShiftKeysRightButtonGroup(onToneUp: onToneUp, onOctaveUp: onOctaveUp),
 
-        Row(
-          children: [
-            if (nextToolOfSameTypeExists)
-              Padding(
-                padding: EdgeInsets.only(left: 12),
-                child: TioIconButton.xs(
-                  icon: toolOfSameTypeIcon!,
-                  tooltip: l10n.toolGoToNextOfSameType,
-                  onPressed: onNextToolOfSameType,
-                ),
-              ),
-            if (nextToolExists)
-              Padding(
-                padding: EdgeInsets.only(left: 12),
-                child: TioIconButton.xs(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool),
-              ),
-          ],
+        ToolNavRightButtonGroup(
+          nextToolIcon: nextToolIcon,
+          toolOfSameTypeIcon: toolOfSameTypeIcon,
+          onNextTool: onNextTool,
+          onNextToolOfSameType: onNextToolOfSameType,
         ),
       ],
     );
+  }
+}
+
+class ToolNavLeftButtonGroup extends StatelessWidget {
+  final Widget? prevToolIcon;
+  final Widget? toolOfSameTypeIcon;
+
+  final VoidCallback? onPrevTool;
+  final VoidCallback? onPrevToolOfSameType;
+
+  const ToolNavLeftButtonGroup({
+    super.key,
+    required this.prevToolIcon,
+    required this.toolOfSameTypeIcon,
+    required this.onPrevTool,
+    required this.onPrevToolOfSameType,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final prevToolExists = onPrevTool != null && prevToolIcon != null;
+    final prevToolOfSameTypeExists =
+        onPrevToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon;
+
+    return Row(
+      children: [
+        if (prevToolExists)
+          Padding(
+            padding: EdgeInsets.only(right: 12),
+            child: TioIconButton.xs(icon: prevToolIcon!, tooltip: context.l10n.toolGoToPrev, onPressed: onPrevTool),
+          ),
+
+        if (prevToolOfSameTypeExists)
+          Padding(
+            padding: EdgeInsets.only(right: 12),
+            child: TioIconButton.xs(
+              icon: toolOfSameTypeIcon!,
+              tooltip: context.l10n.toolGoToPrevOfSameType,
+              onPressed: onPrevToolOfSameType,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class ToolNavRightButtonGroup extends StatelessWidget {
+  final Widget? nextToolIcon;
+  final Widget? toolOfSameTypeIcon;
+
+  final VoidCallback? onNextTool;
+  final VoidCallback? onNextToolOfSameType;
+
+  const ToolNavRightButtonGroup({
+    super.key,
+    required this.nextToolIcon,
+    required this.toolOfSameTypeIcon,
+    required this.onNextTool,
+    required this.onNextToolOfSameType,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final nextToolExists = onNextTool != null && nextToolIcon != null;
+    final nextToolOfSameTypeExists =
+        onNextToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != nextToolIcon;
+
+    return Row(
+      children: [
+        if (nextToolOfSameTypeExists)
+          Padding(
+            padding: EdgeInsets.only(left: 12),
+            child: TioIconButton.xs(
+              icon: toolOfSameTypeIcon!,
+              tooltip: context.l10n.toolGoToNextOfSameType,
+              onPressed: onNextToolOfSameType,
+            ),
+          ),
+        if (nextToolExists)
+          Padding(
+            padding: EdgeInsets.only(left: 12),
+            child: TioIconButton.xs(icon: nextToolIcon!, tooltip: context.l10n.toolGoToNext, onPressed: onNextTool),
+          ),
+      ],
+    );
+  }
+}
+
+class Placeholder extends StatelessWidget {
+  const Placeholder({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(color: ColorTheme.primaryFixedDim),
+      height: 52,
+      padding: const EdgeInsets.only(top: 10),
+      child: const SizedBox(width: 50),
+    );
+  }
+}
+
+class ShiftKeysLeftButtonGroup extends StatelessWidget {
+  final VoidCallback onToneDown;
+  final VoidCallback onOctaveDown;
+
+  const ShiftKeysLeftButtonGroup({super.key, required this.onToneDown, required this.onOctaveDown});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        decoration: const BoxDecoration(
+          color: ColorTheme.primaryFixedDim,
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(20)),
+        ),
+        height: 52,
+        padding: const EdgeInsets.only(top: 10),
+        child: Row(
+          children: [
+            ShiftKeyButton(icon: Icons.keyboard_double_arrow_left, onPressed: onOctaveDown),
+            ShiftKeyButton(icon: Icons.keyboard_arrow_left, onPressed: onToneDown),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ShiftKeysRightButtonGroup extends StatelessWidget {
+  final VoidCallback onToneUp;
+  final VoidCallback onOctaveUp;
+
+  const ShiftKeysRightButtonGroup({super.key, required this.onToneUp, required this.onOctaveUp});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: ColorTheme.primaryFixedDim,
+          borderRadius: BorderRadius.only(topRight: Radius.circular(20)),
+        ),
+        height: 52,
+        padding: const EdgeInsets.only(top: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ShiftKeyButton(icon: Icons.keyboard_arrow_right, onPressed: onToneUp),
+            ShiftKeyButton(icon: Icons.keyboard_double_arrow_right, onPressed: onOctaveUp),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ShiftKeyButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const ShiftKeyButton({super.key, required this.icon, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(icon: Icon(icon, color: ColorTheme.primary), padding: EdgeInsets.zero, onPressed: onPressed);
   }
 }

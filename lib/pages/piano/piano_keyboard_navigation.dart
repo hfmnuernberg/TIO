@@ -6,8 +6,6 @@ class PianoKeyboardNavigation extends StatelessWidget {
   final VoidCallback onToneDown;
   final VoidCallback onOctaveUp;
   final VoidCallback onToneUp;
-  final Key? keyOctaveSwitch;
-  final Key? keySettings;
   final Widget child;
 
   const PianoKeyboardNavigation({
@@ -16,8 +14,6 @@ class PianoKeyboardNavigation extends StatelessWidget {
     required this.onToneDown,
     required this.onOctaveUp,
     required this.onToneUp,
-    this.keyOctaveSwitch,
-    this.keySettings,
     required this.child,
   });
 
@@ -34,7 +30,6 @@ class PianoKeyboardNavigation extends StatelessWidget {
             height: 52,
             padding: const EdgeInsets.only(top: 10),
             child: Row(
-              key: keyOctaveSwitch,
               children: [
                 IconButton(
                   icon: const Icon(Icons.keyboard_double_arrow_left, color: ColorTheme.primary),
