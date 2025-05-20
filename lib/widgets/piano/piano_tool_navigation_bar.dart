@@ -4,24 +4,23 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
+import 'package:tiomusic/widgets/piano/piano_settings_button_group.dart';
 import 'package:tiomusic/widgets/tio_icon_button.dart';
 
-// TODO: Check what can derived from context, etc. to minimize params
-// TODO: When only one piano block, set styling for edges > needs to be done in parent!
-// TODO: Extract inner settings widget to a separate widget?
-// TODO: Extract piano chevrons-navigation into a separate widget?
-// TODO: clean up
-
-class PianoNavigation extends StatelessWidget {
+class PianoToolNavigationBar extends StatelessWidget {
   final Project project;
   final ProjectBlock toolBlock;
+
   final VoidCallback onOctaveDown;
   final VoidCallback onToneDown;
   final VoidCallback onOctaveUp;
   final VoidCallback onToneUp;
-  final Widget child; // TODO: add settings
 
-  const PianoNavigation({
+  final VoidCallback onOpenPitch;
+  final VoidCallback onOpenVolume;
+  final VoidCallback onOpenSound;
+
+  const PianoToolNavigationBar({
     super.key,
     required this.project,
     required this.toolBlock,
@@ -29,7 +28,9 @@ class PianoNavigation extends StatelessWidget {
     required this.onToneDown,
     required this.onOctaveUp,
     required this.onToneUp,
-    required this.child,
+    required this.onOpenPitch,
+    required this.onOpenVolume,
+    required this.onOpenSound,
   });
 
   @override
@@ -56,12 +57,13 @@ class PianoNavigation extends StatelessWidget {
       onToneDown: onToneDown,
       onOctaveUp: onOctaveUp,
       onToneUp: onToneUp,
-      child: child,
+      onOpenPitch: onOpenPitch,
+      onOpenVolume: onOpenVolume,
+      onOpenSound: onOpenSound,
     );
   }
 }
 
-// TODO: rename this and use it instead of PianoKeyboardNavigation
 class PianoNavigationBar extends StatelessWidget {
   final Widget? prevToolIcon;
   final Widget? nextToolIcon;
@@ -77,9 +79,12 @@ class PianoNavigationBar extends StatelessWidget {
   final VoidCallback onOctaveUp;
   final VoidCallback onToneUp;
 
-  final Widget child;
+  final VoidCallback onOpenPitch;
+  final VoidCallback onOpenVolume;
+  final VoidCallback onOpenSound;
 
   const PianoNavigationBar({
+    super.key,
     this.prevToolIcon,
     this.nextToolIcon,
     this.toolOfSameTypeIcon,
@@ -91,7 +96,9 @@ class PianoNavigationBar extends StatelessWidget {
     required this.onToneDown,
     required this.onOctaveUp,
     required this.onToneUp,
-    required this.child,
+    required this.onOpenPitch,
+    required this.onOpenVolume,
+    required this.onOpenSound,
   });
 
   @override
@@ -117,7 +124,7 @@ class PianoNavigationBar extends StatelessWidget {
         if (!prevToolExists) Placeholder(),
         if (!prevToolOfSameTypeExists) Placeholder(),
 
-        child,
+        PianoSettingsButtonGroup(onOpenPitch: onOpenPitch, onOpenVolume: onOpenVolume, onOpenSound: onOpenSound),
 
         if (!nextToolOfSameTypeExists) Placeholder(),
         if (!nextToolExists) Placeholder(),

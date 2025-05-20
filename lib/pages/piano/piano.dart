@@ -14,8 +14,6 @@ import 'package:tiomusic/models/sound_font.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
-import 'package:tiomusic/pages/piano/piano_keyboard_navigation.dart';
-import 'package:tiomusic/pages/piano/piano_settings_button_group.dart';
 import 'package:tiomusic/pages/piano/set_concert_pitch.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -342,31 +340,27 @@ class _PianoState extends State<Piano> {
               padding: const EdgeInsets.only(top: 8),
               child: Column(
                 children: [
-                  if (widget.isQuickTool) // TODO: use PianoNavigationBar with null
-                    PianoKeyboardNavigation(
+                  if (widget.isQuickTool)
+                    PianoNavigationBar(
                       onOctaveDown: _pianoBlock.octaveDown,
                       onToneDown: _pianoBlock.toneDown,
                       onToneUp: _pianoBlock.toneUp,
                       onOctaveUp: _pianoBlock.octaveUp,
-                      child: PianoSettingsButtonGroup(
-                        onOpenPitch: handleOnOpenPitch,
-                        onOpenVolume: handleOnOpenVolume,
-                        onOpenSound: handleOnOpenSound,
-                      ),
+                      onOpenPitch: handleOnOpenPitch,
+                      onOpenVolume: handleOnOpenVolume,
+                      onOpenSound: handleOnOpenSound,
                     )
-                  else // TODO: use PianoNavigation
-                    PianoNavigation(
+                  else
+                    PianoToolNavigationBar(
                       project: project!,
                       toolBlock: _pianoBlock,
                       onOctaveDown: _pianoBlock.octaveDown,
                       onToneDown: _pianoBlock.toneDown,
                       onToneUp: _pianoBlock.toneUp,
                       onOctaveUp: _pianoBlock.octaveUp,
-                      child: PianoSettingsButtonGroup(
-                        onOpenPitch: handleOnOpenPitch,
-                        onOpenVolume: handleOnOpenVolume,
-                        onOpenSound: handleOnOpenSound,
-                      ),
+                      onOpenPitch: handleOnOpenPitch,
+                      onOpenVolume: handleOnOpenVolume,
+                      onOpenSound: handleOnOpenSound,
                     ),
 
                   Expanded(
