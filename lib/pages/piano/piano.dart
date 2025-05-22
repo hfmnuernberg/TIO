@@ -29,6 +29,7 @@ import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tiomusic/widgets/piano/keyboard.dart';
+import 'package:tiomusic/widgets/piano/piano_navigation_bar.dart';
 import 'package:tiomusic/widgets/piano/piano_tool_navigation_bar.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -372,13 +373,7 @@ class _PianoState extends State<Piano> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: ColorTheme.primaryFixedDim,
-                        borderRadius:
-                            (project == null || project.blocks.length == 1)
-                                ? const BorderRadius.only(
-                                  bottomLeft: Radius.circular(20),
-                                  bottomRight: Radius.circular(20),
-                                )
-                                : const BorderRadius.all(Radius.circular(20)),
+                        borderRadius: const BorderRadius.all(Radius.circular(20)),
                       ),
                       padding: const EdgeInsets.all(10),
                       child: Consumer<ProjectBlock>(
