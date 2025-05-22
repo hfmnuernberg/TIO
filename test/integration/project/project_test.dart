@@ -76,12 +76,20 @@ void main() {
     expect(tester.withinEmptyList(find.bySemanticsLabel('Metronome')), findsOneWidget);
   });
 
-  testWidgets('shows one tool when one tool was added', (tester) async {
+  testWidgets('shows text tool when one text tool was added', (tester) async {
     await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
     expect(find.bySemanticsLabel('Tool list'), findsNothing);
 
     await tester.createTextToolInProject('Test text');
     expect(tester.withinList(find.bySemanticsLabel('Text 1')), findsOneWidget);
+  });
+
+  testWidgets('shows piano tool when piano tool was added', (tester) async {
+    await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+    expect(find.bySemanticsLabel('Tool list'), findsNothing);
+
+    await tester.createPianoToolInProject();
+    expect(tester.withinList(find.bySemanticsLabel('Piano 1')), findsOneWidget);
   });
 
   testWidgets('deletes tool when tool was deleted', (tester) async {

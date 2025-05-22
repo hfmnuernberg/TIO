@@ -31,4 +31,11 @@ extension WidgetTesterProjectExtension on WidgetTester {
     await tapAndSettle(find.bySemanticsLabel('Do it later'));
     await tapAndSettle(find.bySemanticsLabel('Back'));
   }
+
+  Future<void> createPianoToolInProject() async {
+    await tapAndSettle(find.bySemanticsLabel('Piano'));
+    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Piano 1');
+    await tapAndSettle(find.bySemanticsLabel('Submit'));
+    await tapAndSettle(find.bySemanticsLabel('Back'));
+  }
 }
