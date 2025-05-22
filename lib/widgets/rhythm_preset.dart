@@ -11,35 +11,179 @@ class RhythmPreset {
 
 RhythmPreset getPresetRhythmPattern(String noteKey) {
   switch (noteKey) {
-    case NoteValues.quarter:
+    case '1':
+      // Quarter, all beats equal
+      return RhythmPreset(
+        beats: [BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
+        polyBeats: [],
+        noteKey: NoteValues.quarter,
+      );
+    case '2':
+      // Quarter, beat 1 omitted
       return RhythmPreset(
         beats: [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
         polyBeats: [],
         noteKey: NoteValues.quarter,
       );
-    case NoteValues.eighth:
+    case '3':
+      // 2/8, all beats equal
       return RhythmPreset(
-        beats: [BeatType.Accented, BeatType.Unaccented, BeatType.Accented, BeatType.Unaccented],
-        polyBeats: [],
-        noteKey: NoteValues.eighth,
+        beats: [BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
+        polyBeats: [
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+        ],
+        noteKey: NoteValues.quarter,
       );
-    case NoteValues.sixteenth:
+    case '4':
+      // 2/8, beat 1 omitted
       return RhythmPreset(
-        beats: List.generate(8, (i) => i % 4 == 0 ? BeatType.Accented : BeatType.Unaccented),
-        polyBeats: [],
-        noteKey: NoteValues.sixteenth,
+        beats: [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
+        polyBeats: [
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+        ],
+        noteKey: NoteValues.quarter,
       );
-    case NoteValues.eighthDotted:
+    case '5':
+      // Eighth note rest with eighth note, all beats equal
       return RhythmPreset(
-        beats: [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented],
-        polyBeats: [],
-        noteKey: NoteValues.eighthDotted,
+        beats: [BeatType.Muted, BeatType.Muted, BeatType.Muted, BeatType.Muted],
+        polyBeats: [
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+        ],
+        noteKey: NoteValues.quarter,
       );
-    case NoteValues.tuplet3Quarter:
+    case '6':
+      // Eighth note rest with eighth note, beat 1 omitted
       return RhythmPreset(
-        beats: [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented],
-        polyBeats: [],
-        noteKey: NoteValues.tuplet3Quarter,
+        beats: [BeatType.Accented, BeatType.Muted, BeatType.Muted, BeatType.Muted],
+        polyBeats: [
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+        ],
+        noteKey: NoteValues.quarter,
+      );
+    case '7':
+      // Dotted eighth note with sixteenth note, all beats equal
+      return RhythmPreset(
+        beats: [BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
+        polyBeats: [
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+        ],
+        noteKey: NoteValues.quarter,
+      );
+    case '8':
+      // Dotted eighth note with sixteenth note, beat 1 omitted
+      return RhythmPreset(
+        beats: [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
+        polyBeats: [
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+        ],
+        noteKey: NoteValues.quarter,
+      );
+      case '9':
+      // Sixteenth note with dotted eighth note, all beats equal
+      return RhythmPreset(
+        beats: [BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
+        polyBeats: [
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+        ],
+        noteKey: NoteValues.quarter,
+      );
+    case '10':
+    // Sixteenth note with dotted eighth note, beat 1 omitted
+      return RhythmPreset(
+        beats: [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
+        polyBeats: [
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Muted,
+          BeatTypePoly.Muted,
+        ],
+        noteKey: NoteValues.quarter,
       );
     default:
       return RhythmPreset(

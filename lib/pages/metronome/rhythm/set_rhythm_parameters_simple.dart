@@ -9,7 +9,6 @@ import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
-import 'package:tiomusic/pages/metronome/rhythm/rhythm_generator_setting_list_item.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
@@ -21,13 +20,34 @@ import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
 import 'package:tiomusic/widgets/rhythm_preset.dart';
 
-const List<String> wheelNoteKeys = [
-  NoteValues.quarter,
-  NoteValues.eighth,
-  NoteValues.tuplet3Quarter,
-  NoteValues.sixteenth,
-  NoteValues.eighthDotted,
-];
+const List<String> wheelNoteKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+
+IconData getIconForNoteKey(String key) {
+  switch (key) {
+    case '1':
+      return Icons.looks_one;
+    case '2':
+      return Icons.looks_two;
+    case '3':
+      return Icons.looks_3;
+    case '4':
+      return Icons.looks_4;
+    case '5':
+      return Icons.looks_5;
+    case '6':
+      return Icons.looks_6;
+    case '7':
+      return Icons.ac_unit;
+    case '8':
+      return Icons.alarm;
+    case '9':
+      return Icons.accessibility;
+    case '10':
+      return Icons.accessible_forward;
+    default:
+      return Icons.music_note;
+  }
+}
 
 class SetRhythmParametersSimple extends StatefulWidget {
   final int? barIndex;
@@ -187,8 +207,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
 
                     return RotatedBox(
                       quarterTurns: 1,
-                      child: RhythmGeneratorSettingListItem(
-                        noteKey: key,
+                      child: GestureDetector(
                         onTap: () {
                           _wheelController.animateToItem(
                             index,
@@ -211,6 +230,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
 
                           notifyParent();
                         },
+                        child: Icon(getIconForNoteKey(key), size: 32, color: ColorTheme.primary),
                       ),
                     );
                   },
