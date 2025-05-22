@@ -14,7 +14,6 @@ import 'package:tiomusic/models/sound_font.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
-import 'package:tiomusic/pages/piano/piano_settings.dart';
 import 'package:tiomusic/pages/piano/set_concert_pitch.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -30,6 +29,7 @@ import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tiomusic/widgets/piano/keyboard.dart';
+import 'package:tiomusic/widgets/piano/piano_navigation_bar.dart';
 import 'package:tiomusic/widgets/piano/piano_tool_navigation_bar.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -249,7 +249,8 @@ class _PianoState extends State<Piano> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // close button
-              IconButton(
+              BackButton(
+                color: ColorTheme.primary,
                 onPressed: () async {
                   // if quick tool and values have been changed: ask for saving
                   if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock, l10n)) {
@@ -271,7 +272,6 @@ class _PianoState extends State<Piano> {
                     Navigator.of(context).pop();
                   }
                 },
-                icon: const Icon(Icons.arrow_back, color: ColorTheme.primary),
               ),
 
               // title
@@ -335,65 +335,45 @@ class _PianoState extends State<Piano> {
               ),
             ],
           ),
-          // piano
+
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Column(
+              child: Stack(
+                clipBehavior: Clip.none,
                 children: [
                   if (widget.isQuickTool)
-                    Container(
-                      decoration: const BoxDecoration(
-                        color: ColorTheme.primaryFixedDim,
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                      ),
-                      height: 52,
-                      padding: const EdgeInsets.only(top: 10),
-                      child: PianoSettings(
-                        onOctaveDown: _pianoBlock.octaveDown,
-                        onToneDown: _pianoBlock.toneDown,
-                        onToneUp: _pianoBlock.toneUp,
-                        onOctaveUp: _pianoBlock.octaveUp,
-                        onOpenPitch: handleOnOpenPitch,
-                        onOpenVolume: handleOnOpenVolume,
-                        onOpenSound: handleOnOpenSound,
-                        keyOctaveSwitch: _keyOctaveSwitch,
-                        keySettings: _keySettings,
-                      ),
+                    PianoNavigationBar(
+                      onOctaveDown: _pianoBlock.octaveDown,
+                      onToneDown: _pianoBlock.toneDown,
+                      onToneUp: _pianoBlock.toneUp,
+                      onOctaveUp: _pianoBlock.octaveUp,
+                      onOpenPitch: handleOnOpenPitch,
+                      onOpenVolume: handleOnOpenVolume,
+                      onOpenSound: handleOnOpenSound,
                     )
                   else
                     PianoToolNavigationBar(
                       project: project!,
                       toolBlock: _pianoBlock,
-                      pianoSettings: Container(
-                        decoration: const BoxDecoration(
-                          color: ColorTheme.primaryFixedDim,
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                        ),
-                        height: 52,
-                        padding: const EdgeInsets.only(top: 10),
-                        child: PianoSettings(
-                          onOctaveDown: _pianoBlock.octaveDown,
-                          onToneDown: _pianoBlock.toneDown,
-                          onToneUp: _pianoBlock.toneUp,
-                          onOctaveUp: _pianoBlock.octaveUp,
-                          onOpenPitch: handleOnOpenPitch,
-                          onOpenVolume: handleOnOpenVolume,
-                          onOpenSound: handleOnOpenSound,
-                          keyOctaveSwitch: _keyOctaveSwitch,
-                          keySettings: _keySettings,
-                        ),
-                      ),
+                      onOctaveDown: _pianoBlock.octaveDown,
+                      onToneDown: _pianoBlock.toneDown,
+                      onToneUp: _pianoBlock.toneUp,
+                      onOctaveUp: _pianoBlock.octaveUp,
+                      onOpenPitch: handleOnOpenPitch,
+                      onOpenVolume: handleOnOpenVolume,
+                      onOpenSound: handleOnOpenSound,
                     ),
 
-                  Expanded(
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    top: 52,
                     child: Container(
                       decoration: BoxDecoration(
                         color: ColorTheme.primaryFixedDim,
-                        borderRadius:
-                            (project == null || project.blocks.length == 1)
-                                ? BorderRadius.only(bottomLeft: Radius.circular(20), bottomRight: Radius.circular(20))
-                                : BorderRadius.all(Radius.circular(20)),
+                        borderRadius: const BorderRadius.all(Radius.circular(20)),
                       ),
                       padding: const EdgeInsets.all(10),
                       child: Consumer<ProjectBlock>(

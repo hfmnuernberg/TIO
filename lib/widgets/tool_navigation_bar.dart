@@ -69,7 +69,7 @@ class _ToolNavigationBar extends StatelessWidget {
     const smallIconButtonWidth = 56.0;
 
     return BottomAppBar(
-      padding: EdgeInsets.symmetric(horizontal: 12),
+      padding: EdgeInsets.symmetric(horizontal: 16),
       color: Colors.transparent,
       height: 78,
       child: Row(
