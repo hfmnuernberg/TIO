@@ -249,7 +249,8 @@ class _PianoState extends State<Piano> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // close button
-              IconButton(
+              BackButton(
+                color: ColorTheme.primary,
                 onPressed: () async {
                   // if quick tool and values have been changed: ask for saving
                   if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock, l10n)) {
@@ -271,7 +272,6 @@ class _PianoState extends State<Piano> {
                     Navigator.of(context).pop();
                   }
                 },
-                icon: const Icon(Icons.arrow_back, color: ColorTheme.primary),
               ),
 
               // title
