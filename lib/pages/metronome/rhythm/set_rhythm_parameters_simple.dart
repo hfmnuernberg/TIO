@@ -19,6 +19,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
+import 'package:tiomusic/widgets/rhythm_preset.dart';
 
 const List<String> wheelNoteKeys = [
   NoteValues.quarter,
@@ -162,10 +163,21 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
                 physics: const FixedExtentScrollPhysics(),
                 overAndUnderCenterOpacity: 0.6,
                 onSelectedItemChanged: (index) {
+                  final selectedKey = wheelNoteKeys[index];
+                  final preset = getPresetRhythmPattern(selectedKey);
+
                   setState(() {
-                    noteKey = wheelNoteKeys[index];
+                    beats
+                      ..clear()
+                      ..addAll(preset.beats);
+                    polyBeats
+                      ..clear()
+                      ..addAll(preset.polyBeats);
+                    noteKey = preset.noteKey;
+                    beatCount = preset.beats.length;
                     refreshRhythm();
                   });
+
                   notifyParent();
                 },
                 childDelegate: ListWheelChildBuilderDelegate(
@@ -180,13 +192,24 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
                         onTap: () {
                           _wheelController.animateToItem(
                             index,
-                            duration: const Duration(milliseconds: 300),
+                            duration: Duration(milliseconds: 300),
                             curve: Curves.easeInOut,
                           );
+                          final preset = getPresetRhythmPattern(key);
+
                           setState(() {
-                            noteKey = key;
+                            beats
+                              ..clear()
+                              ..addAll(preset.beats);
+                            polyBeats
+                              ..clear()
+                              ..addAll(preset.polyBeats);
+                            noteKey = preset.noteKey;
+                            beatCount = preset.beats.length;
                             refreshRhythm();
                           });
+
+                          notifyParent();
                         },
                       ),
                     );
