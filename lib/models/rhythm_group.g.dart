@@ -11,6 +11,7 @@ RhythmGroup _$RhythmGroupFromJson(Map<String, dynamic> json) => RhythmGroup(
   (json['beats'] as List<dynamic>?)?.map((e) => $enumDecode(_$BeatTypeEnumMap, e)).toList() ?? [],
   (json['polyBeats'] as List<dynamic>?)?.map((e) => $enumDecode(_$BeatTypePolyEnumMap, e)).toList() ?? [],
   json['noteKey'] as String? ?? 'e4',
+  presetKey: json['presetKey'] as String? ?? '',
 );
 
 Map<String, dynamic> _$RhythmGroupToJson(RhythmGroup instance) => <String, dynamic>{
@@ -18,6 +19,7 @@ Map<String, dynamic> _$RhythmGroupToJson(RhythmGroup instance) => <String, dynam
   'beats': instance.beats.map((e) => _$BeatTypeEnumMap[e]!).toList(),
   'polyBeats': instance.polyBeats.map((e) => _$BeatTypePolyEnumMap[e]!).toList(),
   'noteKey': instance.noteKey,
+  'presetKey': instance.presetKey,
 };
 
 const _$BeatTypeEnumMap = {BeatType.Accented: 'Accented', BeatType.Unaccented: 'Unaccented', BeatType.Muted: 'Muted'};

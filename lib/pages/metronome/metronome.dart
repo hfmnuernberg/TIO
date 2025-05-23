@@ -10,6 +10,7 @@ import 'package:tiomusic/app.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/metronome_sound.dart';
 import 'package:tiomusic/models/metronome_sound_extension.dart';
+import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -17,10 +18,11 @@ import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
+import 'package:tiomusic/widgets/metronome/set_rhythm_parameters_simple.dart';
 import 'package:tiomusic/pages/metronome/setting_bpm.dart';
 import 'package:tiomusic/pages/metronome/setting_metronome_sound.dart';
 import 'package:tiomusic/pages/metronome/setting_random_mute.dart';
-import 'package:tiomusic/pages/metronome/rhythm/setting_rhythm_parameters.dart';
+import 'package:tiomusic/pages/metronome/rhythm/set_rhythm_parameters.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
@@ -64,6 +66,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   final List<int> _lastRenderTimes = List.empty(growable: true);
   int _avgRenderTimeInMs = 0;
 
+  bool _isSimpleModeOn = true;
+  bool _forceFallbackToPreset = false;
   bool _isStarted = false;
   bool _sound = true;
   bool _blink = MetronomeParams.defaultVisualMetronome;
@@ -145,6 +149,13 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         _createTutorial();
         _tutorial.show(context);
       }
+    });
+  }
+
+  void _toggleSimpleMode() {
+    setState(() {
+      _forceFallbackToPreset = !_isSimpleModeOn;
+      _isSimpleModeOn = !_isSimpleModeOn;
     });
   }
 
@@ -300,6 +311,22 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         setState(() {});
       });
     }
+  }
+
+  void _handleUpdateRhythm(newBeats, newPolyBeats, newNoteKey, newPresetKey) {
+    final group = _metronomeBlock.rhythmGroups[0];
+    group.beats = List.from(newBeats);
+    group.polyBeats = List.from(newPolyBeats);
+    group.noteKey = newNoteKey;
+    group.presetKey = newPresetKey;
+    group.beatLen = NoteHandler.getBeatLength(newNoteKey);
+
+    _clearAndRebuildRhythmSegments(false);
+    metronomeSetRhythm(
+      bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
+      bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
+    );
+    setState(() {});
   }
 
   void _deleteRhythmSegment(int index, bool isSecond) async {
@@ -624,6 +651,13 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           onPressed: _clearAllRhythms,
           child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
         ),
+        MenuItemButton(
+          onPressed: _toggleSimpleMode,
+          child: Text(
+            _isSimpleModeOn ? l10n.metronomeSimpleModeOff : l10n.metronomeSimpleModeOn,
+            style: const TextStyle(color: ColorTheme.primary),
+          ),
+        ),
       ],
       onParentTutorialFinished: () {
         if (context.read<ProjectLibrary>().showMetronomeTutorial) {
@@ -646,8 +680,23 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           Center(
             child: Column(
               children: [
-                _rhythmRow(),
-                if (_metronomeBlock.rhythmGroups2.isNotEmpty) _rhythmRow(isSecondMetronome: true) else const SizedBox(),
+                if (_isSimpleModeOn)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+                    child: SetRhythmParametersSimple(
+                      currentNoteKey: _metronomeBlock.rhythmGroups[0].noteKey,
+                      currentBeats: _metronomeBlock.rhythmGroups[0].beats,
+                      currentPolyBeats: _metronomeBlock.rhythmGroups[0].polyBeats,
+                      rhythmGroups: _metronomeBlock.rhythmGroups,
+                      metronomeBlock: _metronomeBlock,
+                      forcePresetFallback: _forceFallbackToPreset,
+                      onUpdateRhythm: _handleUpdateRhythm,
+                    ),
+                  )
+                else ...[
+                  _rhythmRow(),
+                  if (_metronomeBlock.rhythmGroups2.isNotEmpty) _rhythmRow(isSecondMetronome: true),
+                ],
 
                 const SizedBox(height: TIOMusicParams.edgeInset),
 

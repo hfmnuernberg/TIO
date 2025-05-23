@@ -11,7 +11,7 @@ part 'rhythm_group.g.dart';
 @JsonSerializable()
 class RhythmGroup extends Equatable {
   @override
-  List<Object> get props => [beats, polyBeats, beatLen];
+  List<Object?> get props => [beats, polyBeats, beatLen, presetKey];
 
   @JsonKey(defaultValue: MetronomeParams.defaultId)
   late String keyID;
@@ -28,7 +28,10 @@ class RhythmGroup extends Equatable {
   @JsonKey(includeToJson: false, includeFromJson: false)
   late double beatLen;
 
-  RhythmGroup(this.keyID, this.beats, this.polyBeats, this.noteKey) {
+  @JsonKey(defaultValue: null)
+  String? presetKey;
+
+  RhythmGroup(this.keyID, this.beats, this.polyBeats, this.noteKey, {this.presetKey}) {
     if (keyID == '') {
       keyID = MetronomeParams.getNewKeyID();
     }
