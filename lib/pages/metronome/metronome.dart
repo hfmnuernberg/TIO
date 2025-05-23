@@ -67,6 +67,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   int _avgRenderTimeInMs = 0;
 
   bool _isSimpleModeOn = true;
+  bool _forceFallbackToPreset = false;
   bool _isStarted = false;
   bool _sound = true;
   bool _blink = MetronomeParams.defaultVisualMetronome;
@@ -151,7 +152,12 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     });
   }
 
-  void _toggleSimpleMode() => setState(() => _isSimpleModeOn = !_isSimpleModeOn);
+  void _toggleSimpleMode() {
+    setState(() {
+      _forceFallbackToPreset = !_isSimpleModeOn;
+      _isSimpleModeOn = !_isSimpleModeOn;
+    });
+  }
 
   void handleVolumeChange(double newVolume) {
     setState(() {
@@ -683,6 +689,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                       currentPolyBeats: _metronomeBlock.rhythmGroups[0].polyBeats,
                       rhythmGroups: _metronomeBlock.rhythmGroups,
                       metronomeBlock: _metronomeBlock,
+                      forcePresetFallback: _forceFallbackToPreset,
                       onUpdateRhythm: _handleUpdateRhythm,
                     ),
                   )

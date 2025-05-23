@@ -70,6 +70,8 @@ class SetRhythmParametersSimple extends StatefulWidget {
   final void Function(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey, String? presetKey)
   onUpdateRhythm;
 
+  final bool forcePresetFallback;
+
   const SetRhythmParametersSimple({
     super.key,
     required this.currentNoteKey,
@@ -78,6 +80,7 @@ class SetRhythmParametersSimple extends StatefulWidget {
     required this.rhythmGroups,
     required this.metronomeBlock,
     required this.onUpdateRhythm,
+    this.forcePresetFallback = false,
   });
 
   @override
@@ -115,7 +118,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
       }
     }
 
-    if (matchingKey == null) {
+    if (matchingKey == null && widget.forcePresetFallback) {
       final defaultPresetKey = wheelNoteKeys.first;
       final preset = getPresetRhythmPattern(defaultPresetKey);
 
@@ -129,7 +132,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
       beatCount = preset.beats.length;
       presetKey = defaultPresetKey;
     } else {
-      presetKey = matchingKey;
+      presetKey = matchingKey ?? wheelNoteKeys.first;
       beatCount = beats.length;
     }
 
