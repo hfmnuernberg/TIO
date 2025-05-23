@@ -268,14 +268,15 @@ class _SetRhythmParametersState extends State<SetRhythmParameters> {
     if (widget.isAddingNewBar) {
       widget.rhythmGroups.add(RhythmGroup(MetronomeParams.getNewKeyID(), beats, polyBeats, noteKey));
     } else if (widget.barIndex != null) {
-      widget.rhythmGroups[widget.barIndex!].beats.clear();
-      beats.forEach(widget.rhythmGroups[widget.barIndex!].beats.add);
-
-      widget.rhythmGroups[widget.barIndex!].polyBeats.clear();
-      polyBeats.forEach(widget.rhythmGroups[widget.barIndex!].polyBeats.add);
-
-      widget.rhythmGroups[widget.barIndex!].noteKey = noteKey;
-      widget.rhythmGroups[widget.barIndex!].beatLen = NoteHandler.getBeatLength(noteKey);
+      final group = widget.rhythmGroups[widget.barIndex!];
+      group.beats
+        ..clear()
+        ..addAll(beats);
+      group.polyBeats
+        ..clear()
+        ..addAll(polyBeats);
+      group.noteKey = noteKey;
+      group.beatLen = NoteHandler.getBeatLength(noteKey);
     }
 
     MetronomeUtils.loadSounds(fs, widget.metronomeBlock);
