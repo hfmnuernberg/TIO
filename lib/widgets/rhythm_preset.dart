@@ -13,7 +13,7 @@ List<BeatTypePoly> repeatPolyBeatPattern(int repetitions, List<BeatTypePoly> pat
   return List.generate(repetitions, (_) => pattern).expand((e) => e).toList();
 }
 
-RhythmPreset getPresetRhythmPattern(String noteKey) {
+RhythmPreset getPresetRhythmPattern(String? noteKey) {
   switch (noteKey) {
     case '1':
       // Quarter, all beats equal

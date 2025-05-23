@@ -307,6 +307,22 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     }
   }
 
+  void _handleUpdateRhythm(newBeats, newPolyBeats, newNoteKey, newPresetKey) {
+    final group = _metronomeBlock.rhythmGroups[0];
+    group.beats = List.from(newBeats);
+    group.polyBeats = List.from(newPolyBeats);
+    group.noteKey = newNoteKey;
+    group.presetKey = newPresetKey;
+    group.beatLen = NoteHandler.getBeatLength(newNoteKey);
+
+    _clearAndRebuildRhythmSegments(false);
+    metronomeSetRhythm(
+      bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
+      bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
+    );
+    setState(() {});
+  }
+
   void _deleteRhythmSegment(int index, bool isSecond) async {
     _stopMetronome().then((value) async {
       isSecond ? _metronomeBlock.rhythmGroups2.removeAt(index) : _metronomeBlock.rhythmGroups.removeAt(index);
@@ -667,22 +683,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                       currentPolyBeats: _metronomeBlock.rhythmGroups[0].polyBeats,
                       rhythmGroups: _metronomeBlock.rhythmGroups,
                       metronomeBlock: _metronomeBlock,
-                      onUpdateRhythm: (newBeats, newPolyBeats, newNoteKey) {
-                        final group = _metronomeBlock.rhythmGroups[0];
-                        group.beats = List.from(newBeats);
-                        group.polyBeats = List.from(newPolyBeats);
-                        group.noteKey = newNoteKey;
-                        group.beatLen = NoteHandler.getBeatLength(newNoteKey);
-
-                        _clearAndRebuildRhythmSegments(false);
-                        metronomeSetRhythm(
-                          bars: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups),
-                          bars2: getRhythmAsMetroBar(_metronomeBlock.rhythmGroups2),
-                        );
-                        setState(() {});
-                      },
-                    ),
-                  )
+                      onUpdateRhythm: _handleUpdateRhythm,
+                  ),
+                )
                 else ...[
                   _rhythmRow(),
                   if (_metronomeBlock.rhythmGroups2.isNotEmpty) _rhythmRow(isSecondMetronome: true),

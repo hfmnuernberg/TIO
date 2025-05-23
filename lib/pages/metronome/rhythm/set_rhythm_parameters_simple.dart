@@ -6,7 +6,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
-import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -50,17 +49,15 @@ IconData getIconForNoteKey(String key) {
 }
 
 class SetRhythmParametersSimple extends StatefulWidget {
-  final int? barIndex;
   final String currentNoteKey;
   final List<BeatType> currentBeats;
   final List<BeatTypePoly> currentPolyBeats;
   final List<RhythmGroup> rhythmGroups;
   final MetronomeBlock metronomeBlock;
-  final void Function(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey) onUpdateRhythm;
+  final void Function(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey, String? presetKey) onUpdateRhythm;
 
   const SetRhythmParametersSimple({
     super.key,
-    this.barIndex,
     required this.currentNoteKey,
     required this.currentBeats,
     required this.currentPolyBeats,
@@ -80,15 +77,17 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
   late int beatCount = 0;
   final int minNumberOfBeats = 1;
 
-  late String noteKey;
   final List<BeatType> beats = List.empty(growable: true);
   final List<BeatTypePoly> polyBeats = List.empty(growable: true);
+  late String noteKey;
+  late String? presetKey;
 
   @override
   void initState() {
     super.initState();
 
-    final currentIndex = wheelNoteKeys.indexOf(widget.currentNoteKey);
+    presetKey = widget.rhythmGroups[0].presetKey ?? widget.currentNoteKey;
+    final currentIndex = wheelNoteKeys.indexOf(presetKey!);
     _wheelController = FixedExtentScrollController(initialItem: currentIndex == -1 ? 0 : currentIndex);
 
     fs = context.read<FileSystem>();
@@ -96,12 +95,8 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
     beats.addAll(widget.currentBeats);
     polyBeats.addAll(widget.currentPolyBeats);
     noteKey = widget.currentNoteKey;
-
+    presetKey = widget.rhythmGroups[0].presetKey;
     beatCount = beats.length;
-  }
-
-  void notifyParent() {
-    widget.onUpdateRhythm(List.from(beats), List.from(polyBeats), noteKey);
   }
 
   @override
@@ -109,6 +104,8 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
     _wheelController.dispose();
     super.dispose();
   }
+
+  void notifyParent() => widget.onUpdateRhythm(List.from(beats), List.from(polyBeats), noteKey, presetKey);
 
   Future<void> onBeatCountChange(int newBeatCount) async {
     setState(() {
@@ -122,18 +119,6 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
 
       refreshRhythm();
     });
-
-    if (widget.barIndex != null) {
-      final group = widget.rhythmGroups[widget.barIndex!];
-      group.beats
-        ..clear()
-        ..addAll(beats);
-      group.polyBeats
-        ..clear()
-        ..addAll(polyBeats);
-      group.noteKey = noteKey;
-      group.beatLen = NoteHandler.getBeatLength(noteKey);
-    }
 
     notifyParent();
 
@@ -183,8 +168,8 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
                 physics: const FixedExtentScrollPhysics(),
                 overAndUnderCenterOpacity: 0.6,
                 onSelectedItemChanged: (index) {
-                  final selectedKey = wheelNoteKeys[index];
-                  final preset = getPresetRhythmPattern(selectedKey);
+                  final newPresetKey = wheelNoteKeys[index];
+                  final preset = getPresetRhythmPattern(newPresetKey);
 
                   setState(() {
                     beats
@@ -194,6 +179,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
                       ..clear()
                       ..addAll(preset.polyBeats);
                     noteKey = preset.noteKey;
+                    presetKey = newPresetKey;
                     beatCount = preset.beats.length;
                     refreshRhythm();
                   });
@@ -224,6 +210,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
                               ..clear()
                               ..addAll(preset.polyBeats);
                             noteKey = preset.noteKey;
+                            presetKey = key;
                             beatCount = preset.beats.length;
                             refreshRhythm();
                           });
