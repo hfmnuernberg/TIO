@@ -48,6 +48,19 @@ IconData getIconForNoteKey(String key) {
   }
 }
 
+bool _matchesPreset(RhythmPreset preset, List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey) {
+  if (preset.noteKey != noteKey) return false;
+  if (preset.beats.length != beats.length || preset.polyBeats.length != polyBeats.length) return false;
+
+  for (int i = 0; i < beats.length; i++) {
+    if (beats[i] != preset.beats[i]) return false;
+  }
+  for (int i = 0; i < polyBeats.length; i++) {
+    if (polyBeats[i] != preset.polyBeats[i]) return false;
+  }
+  return true;
+}
+
 class SetRhythmParametersSimple extends StatefulWidget {
   final String currentNoteKey;
   final List<BeatType> currentBeats;
@@ -85,18 +98,42 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
   @override
   void initState() {
     super.initState();
-
-    presetKey = widget.rhythmGroups[0].presetKey ?? widget.currentNoteKey;
-    final currentIndex = wheelNoteKeys.indexOf(presetKey!);
-    _wheelController = FixedExtentScrollController(initialItem: currentIndex == -1 ? 0 : currentIndex);
-
     fs = context.read<FileSystem>();
 
     beats.addAll(widget.currentBeats);
     polyBeats.addAll(widget.currentPolyBeats);
     noteKey = widget.currentNoteKey;
-    presetKey = widget.rhythmGroups[0].presetKey;
-    beatCount = beats.length;
+
+    String? matchingKey;
+    for (final key in wheelNoteKeys) {
+      final preset = getPresetRhythmPattern(key);
+
+      if (_matchesPreset(preset, beats, polyBeats, noteKey)) {
+        matchingKey = key;
+        break;
+      }
+    }
+
+    if (matchingKey == null) {
+      final defaultPresetKey = wheelNoteKeys.first;
+      final preset = getPresetRhythmPattern(defaultPresetKey);
+
+      beats
+        ..clear()
+        ..addAll(preset.beats);
+      polyBeats
+        ..clear()
+        ..addAll(preset.polyBeats);
+      noteKey = preset.noteKey;
+      beatCount = preset.beats.length;
+      presetKey = defaultPresetKey;
+    } else {
+      presetKey = matchingKey;
+      beatCount = beats.length;
+    }
+
+    final currentIndex = wheelNoteKeys.indexOf(presetKey!);
+    _wheelController = FixedExtentScrollController(initialItem: currentIndex == -1 ? 0 : currentIndex);
   }
 
   @override
