@@ -67,7 +67,8 @@ class SetRhythmParametersSimple extends StatefulWidget {
   final List<BeatTypePoly> currentPolyBeats;
   final List<RhythmGroup> rhythmGroups;
   final MetronomeBlock metronomeBlock;
-  final void Function(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey, String? presetKey) onUpdateRhythm;
+  final void Function(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey, String? presetKey)
+  onUpdateRhythm;
 
   const SetRhythmParametersSimple({
     super.key,

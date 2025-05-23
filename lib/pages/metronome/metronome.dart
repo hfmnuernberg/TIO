@@ -684,8 +684,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                       rhythmGroups: _metronomeBlock.rhythmGroups,
                       metronomeBlock: _metronomeBlock,
                       onUpdateRhythm: _handleUpdateRhythm,
-                  ),
-                )
+                    ),
+                  )
                 else ...[
                   _rhythmRow(),
                   if (_metronomeBlock.rhythmGroups2.isNotEmpty) _rhythmRow(isSecondMetronome: true),
