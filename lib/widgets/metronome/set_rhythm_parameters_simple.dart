@@ -48,7 +48,7 @@ IconData getIconForNoteKey(String key) {
   }
 }
 
-bool _matchesPreset(RhythmPreset preset, List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey) {
+bool matchesPreset(RhythmPreset preset, List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey) {
   if (preset.noteKey != noteKey) return false;
   if (preset.beats.length != beats.length || preset.polyBeats.length != polyBeats.length) return false;
 
@@ -109,7 +109,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
     for (final key in wheelNoteKeys) {
       final preset = getPresetRhythmPattern(key);
 
-      if (_matchesPreset(preset, beats, polyBeats, noteKey)) {
+      if (matchesPreset(preset, beats, polyBeats, noteKey)) {
         matchingKey = key;
         break;
       }
