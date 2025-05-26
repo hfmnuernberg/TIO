@@ -155,6 +155,7 @@ abstract class AppLocalizations {
   String get metronomeSoundTypeRim;
   String get metronomeSoundTypeTick;
   String get metronomeSoundTypeWood;
+  String get metronomeSubdivision;
   String get metronomeTutorialAddNew;
   String get metronomeTutorialAdjust;
   String get metronomeTutorialEditBeats;

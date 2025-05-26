@@ -173,6 +173,7 @@ class English extends AppLocalizations {
   String get metronomeSoundTypeRim => 'rim';
   String get metronomeSoundTypeTick => 'tick';
   String get metronomeSoundTypeWood => 'wood';
+  String get metronomeSubdivision => 'Subdivision';
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome.';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings.';
   String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted.';

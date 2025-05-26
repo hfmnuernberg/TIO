@@ -142,7 +142,7 @@ class German extends AppLocalizations {
   String get metronomeBeatPoly => 'Poly Beat';
   String get metronomeClearAllRhythms => 'Alle Rhythmen löschen';
   String get metronomeDescription => 'Übe oder gestalte deinen eigenen Rhythmus.';
-  String get metronomeNumberOfBeats => 'Anzahl der Beats';
+  String get metronomeNumberOfBeats => 'Anzahl der Beatsg';
   String get metronomeNumberOfPolyBeats => 'Anzahl der Poly Beats';
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Aussetzen';
@@ -174,6 +174,7 @@ class German extends AppLocalizations {
   String get metronomeSoundTypeRim => 'rim';
   String get metronomeSoundTypeTick => 'tick';
   String get metronomeSoundTypeWood => 'wood';
+  String get metronomeSubdivision => 'Unterteilung';
   String get metronomeTutorialAddNew => 'Tippe hier, um ein zweites Metronom hinzuzufügen.';
   String get metronomeTutorialAdjust => 'Tippe hier, um die Metronomeinstellungen anzupassen.';
   String get metronomeTutorialEditBeats =>

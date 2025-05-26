@@ -26,6 +26,7 @@ Widget getNoteIconWidget(String key) {
   try {
     return SvgPicture.asset(
       'assets/metronome_presets/$key.svg',
+      height: 50,
       colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn),
     );
   } catch (_) {
@@ -193,83 +194,93 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
 
         Expanded(child: SizedBox()),
 
-        Container(
-          height: 80,
-          width: 160,
-          decoration: BoxDecoration(
-            color: ColorTheme.surface,
-            border: Border.all(color: ColorTheme.primary80),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: RotatedBox(
-              quarterTurns: -1,
-              child: ListWheelScrollView.useDelegate(
-                controller: _wheelController,
-                itemExtent: 48,
-                perspective: 0.008,
-                physics: const FixedExtentScrollPhysics(),
-                overAndUnderCenterOpacity: 0.6,
-                onSelectedItemChanged: (index) {
-                  final newPresetKey = wheelNoteKeys[index];
-                  final preset = getPresetRhythmPattern(newPresetKey);
+        Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 12),
+              child: Container(
+                height: 78,
+                width: 160,
+                decoration: BoxDecoration(
+                  color: ColorTheme.surface,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: RotatedBox(
+                    quarterTurns: -1,
+                    child: ListWheelScrollView.useDelegate(
+                      controller: _wheelController,
+                      itemExtent: 70,
+                      perspective: 0.008,
+                      physics: const FixedExtentScrollPhysics(),
+                      overAndUnderCenterOpacity: 0.6,
+                      onSelectedItemChanged: (index) {
+                        final newPresetKey = wheelNoteKeys[index];
+                        final preset = getPresetRhythmPattern(newPresetKey);
 
-                  setState(() {
-                    beats
-                      ..clear()
-                      ..addAll(preset.beats);
-                    polyBeats
-                      ..clear()
-                      ..addAll(preset.polyBeats);
-                    noteKey = preset.noteKey;
-                    presetKey = newPresetKey;
-                    beatCount = preset.beats.length;
-                    refreshRhythm();
-                  });
+                        setState(() {
+                          beats
+                            ..clear()
+                            ..addAll(preset.beats);
+                          polyBeats
+                            ..clear()
+                            ..addAll(preset.polyBeats);
+                          noteKey = preset.noteKey;
+                          presetKey = newPresetKey;
+                          beatCount = preset.beats.length;
+                          refreshRhythm();
+                        });
 
-                  notifyParent();
-                },
-                childDelegate: ListWheelChildBuilderDelegate(
-                  childCount: wheelNoteKeys.length,
-                  builder: (context, index) {
-                    final key = wheelNoteKeys[index];
+                        notifyParent();
+                      },
+                      childDelegate: ListWheelChildBuilderDelegate(
+                        childCount: wheelNoteKeys.length,
+                        builder: (context, index) {
+                          final key = wheelNoteKeys[index];
 
-                    return RotatedBox(
-                      quarterTurns: 1,
-                      child: GestureDetector(
-                        onTap: () {
-                          _wheelController.animateToItem(
-                            index,
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
+                          return RotatedBox(
+                            quarterTurns: 1,
+                            child: GestureDetector(
+                              onTap: () {
+                                _wheelController.animateToItem(
+                                  index,
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                                final preset = getPresetRhythmPattern(key);
+
+                                setState(() {
+                                  beats
+                                    ..clear()
+                                    ..addAll(preset.beats);
+                                  polyBeats
+                                    ..clear()
+                                    ..addAll(preset.polyBeats);
+                                  noteKey = preset.noteKey;
+                                  presetKey = key;
+                                  beatCount = preset.beats.length;
+                                  refreshRhythm();
+                                });
+
+                                notifyParent();
+                              },
+                              child: getNoteIconWidget(key),
+                            ),
                           );
-                          final preset = getPresetRhythmPattern(key);
-
-                          setState(() {
-                            beats
-                              ..clear()
-                              ..addAll(preset.beats);
-                            polyBeats
-                              ..clear()
-                              ..addAll(preset.polyBeats);
-                            noteKey = preset.noteKey;
-                            presetKey = key;
-                            beatCount = preset.beats.length;
-                            refreshRhythm();
-                          });
-
-                          notifyParent();
                         },
-                        child: getNoteIconWidget(key),
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+            Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: Text(l10n.metronomeSubdivision, style: const TextStyle(color: ColorTheme.primary)),
+            ),
+          ],
+        )
       ],
     );
   }
