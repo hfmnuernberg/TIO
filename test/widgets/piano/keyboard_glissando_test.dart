@@ -53,7 +53,7 @@ void main() {
         pianoMock.verifyNoKeysPlayed();
       });
 
-      testWidgets('releases all keys when dragging into out of piano', (tester) async {
+      testWidgets('releases all keys when dragging out of piano', (tester) async {
         final pianoMock = await tester.renderKeyboard();
         final gesture = await tester.startGesture(whiteKey1);
         pianoMock.verifyKeyPlayed(c4);
