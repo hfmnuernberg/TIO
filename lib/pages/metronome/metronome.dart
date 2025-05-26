@@ -104,6 +104,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
     _metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
     _metronomeBlock.timeLastModified = getCurrentDateTime();
+    _isSimpleModeOn = _metronomeBlock.isSimpleModeOn;
 
     // only allow portrait mode for this tool
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -154,8 +155,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   void _toggleSimpleMode() {
     setState(() {
-      _forceFallbackToPreset = !_isSimpleModeOn;
       _isSimpleModeOn = !_isSimpleModeOn;
+      _forceFallbackToPreset = !_isSimpleModeOn;
+      _metronomeBlock.isSimpleModeOn = _isSimpleModeOn;
     });
   }
 
