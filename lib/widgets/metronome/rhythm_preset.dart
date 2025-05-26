@@ -15,25 +15,27 @@ List<BeatTypePoly> repeatPolyBeatPattern(int repetitions, List<BeatTypePoly> pat
 
 RhythmPreset getPresetRhythmPattern(String? noteKey) {
   switch (noteKey) {
-    case '1':
-      // Quarter, beat 1 omitted
+    case NoteValues.quarter:
       return RhythmPreset(
         beats: [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
         polyBeats: [],
         noteKey: NoteValues.quarter,
       );
-    case '2':
-      // 2/8, beat 1 omitted
+    case NoteValues.eighth:
       return RhythmPreset(
         beats: [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
         polyBeats: repeatPolyBeatPattern(4, [BeatTypePoly.Muted, BeatTypePoly.Unaccented]),
         noteKey: NoteValues.quarter,
       );
-    case '3':
-      // 4/16, beat 1 omitted
+    case NoteValues.sixteenth:
       return RhythmPreset(
         beats: [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
-        polyBeats: repeatPolyBeatPattern(4, [BeatTypePoly.Muted, BeatTypePoly.Unaccented, BeatTypePoly.Unaccented, BeatTypePoly.Unaccented]),
+        polyBeats: repeatPolyBeatPattern(4, [
+          BeatTypePoly.Muted,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Unaccented,
+          BeatTypePoly.Unaccented,
+        ]),
         noteKey: NoteValues.quarter,
       );
     default:

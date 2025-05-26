@@ -191,9 +191,9 @@ class MetronomeBlock extends ProjectBlock {
     this.polyAccSound2,
     this.polyUnaccSound2,
     DateTime timeLastModified,
-    double volume,
-    {this.isSimpleModeOn = true}
-  ) {
+    double volume, {
+    this.isSimpleModeOn = true,
+  }) {
     _timeLastModified = timeLastModified;
     _title = title;
     _rhythmGroups = rhythmGroups;
