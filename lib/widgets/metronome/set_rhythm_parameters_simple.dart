@@ -4,9 +4,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
-import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -20,24 +20,14 @@ import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 
-const List<String> wheelNoteKeys = [NoteValues.quarter, NoteValues.eighth, NoteValues.sixteenth];
-
-IconData getIconForNoteKey(String key) {
-  switch (key) {
-    case NoteValues.quarter:
-      return Icons.looks_one;
-    case NoteValues.eighth:
-      return Icons.looks_two;
-    case NoteValues.sixteenth:
-      return Icons.looks_3;
-    default:
-      return Icons.music_note;
-  }
-}
+const List<String> wheelNoteKeys = [oneFourth, twoEighth, fourSixteenth];
 
 Widget getNoteIconWidget(String key) {
   try {
-    return NoteHandler.getNoteSvg(key);
+    return SvgPicture.asset(
+      'assets/metronome_presets/$key.svg',
+      colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn),
+    );
   } catch (_) {
     return Icon(Icons.music_note, color: ColorTheme.primary);
   }

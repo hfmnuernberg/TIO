@@ -1,6 +1,10 @@
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 
+const oneFourth = '1_4th';
+const twoEighth = '2_8th';
+const fourSixteenth = '4_16th';
+
 class RhythmPreset {
   final List<BeatType> beats;
   final List<BeatTypePoly> polyBeats;
@@ -15,19 +19,19 @@ List<BeatTypePoly> repeatPolyBeatPattern(int repetitions, List<BeatTypePoly> pat
 
 RhythmPreset getPresetRhythmPattern(String? noteKey) {
   switch (noteKey) {
-    case NoteValues.quarter:
+    case oneFourth:
       return RhythmPreset(
         beats: [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
         polyBeats: [],
         noteKey: NoteValues.quarter,
       );
-    case NoteValues.eighth:
+    case twoEighth:
       return RhythmPreset(
         beats: [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
         polyBeats: repeatPolyBeatPattern(4, [BeatTypePoly.Muted, BeatTypePoly.Unaccented]),
         noteKey: NoteValues.quarter,
       );
-    case NoteValues.sixteenth:
+    case fourSixteenth:
       return RhythmPreset(
         beats: [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
         polyBeats: repeatPolyBeatPattern(4, [
