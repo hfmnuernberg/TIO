@@ -17,7 +17,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
-import 'package:tiomusic/widgets/rhythm_preset.dart';
+import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 
 const List<String> wheelNoteKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 

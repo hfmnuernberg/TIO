@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/widgets/metronome/set_rhythm_parameters_simple.dart';
-import 'package:tiomusic/widgets/rhythm_preset.dart';
+import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 
 void main() {
   group('metronome rhythm functions', () {
