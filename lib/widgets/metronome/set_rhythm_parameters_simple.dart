@@ -201,10 +201,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
               child: Container(
                 height: 78,
                 width: 160,
-                decoration: BoxDecoration(
-                  color: ColorTheme.surface,
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                decoration: BoxDecoration(color: ColorTheme.surface, borderRadius: BorderRadius.circular(16)),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: RotatedBox(
@@ -280,7 +277,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
               child: Text(l10n.metronomeSubdivision, style: const TextStyle(color: ColorTheme.primary)),
             ),
           ],
-        )
+        ),
       ],
     );
   }
