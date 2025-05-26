@@ -50,7 +50,7 @@ class PianoMock extends Mock {
 }
 
 extension WidgetTesterRenderExtension on WidgetTester {
-  Future<PianoMock> renderKeyboard([lowestNote = 60]) async {
+  Future<PianoMock> renderKeyboard([lowestNote = c4]) async {
     final pianoMock = PianoMock();
     await renderWidget(
       SizedBox(
