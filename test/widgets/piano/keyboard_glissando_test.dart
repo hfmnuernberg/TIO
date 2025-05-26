@@ -12,6 +12,8 @@ void main() {
         pianoMock.verifyKeyPlayed(c4);
 
         await gesture.moveBy(const Offset(1, 0));
+        await gesture.moveBy(const Offset(1, 0));
+
         pianoMock.verifyNoKeysReleased();
         pianoMock.verifyNoKeysPlayed();
       });
@@ -21,6 +23,7 @@ void main() {
 
         final gesture = await tester.startGesture(whiteKey1);
         pianoMock.verifyKeyPlayed(c4);
+        await gesture.moveBy(const Offset(1, 0));
         await gesture.moveBy(const Offset(1, 0));
 
         await gesture.moveBy(const Offset(10, 0));
@@ -35,6 +38,7 @@ void main() {
         final pianoMock = await tester.renderKeyboard();
         final gesture = await tester.startGesture(whiteKey1);
         pianoMock.verifyKeyPlayed(c4);
+        await gesture.moveBy(const Offset(1, 0));
         await gesture.moveBy(const Offset(1, 0));
 
         await gesture.moveBy(const Offset(5, -50));
@@ -53,10 +57,11 @@ void main() {
         pianoMock.verifyNoKeysPlayed();
       });
 
-      testWidgets('releases all keys when dragging into out of piano', (tester) async {
+      testWidgets('releases all keys when dragging out of piano', (tester) async {
         final pianoMock = await tester.renderKeyboard();
         final gesture = await tester.startGesture(whiteKey1);
         pianoMock.verifyKeyPlayed(c4);
+        await gesture.moveBy(const Offset(1, 0));
         await gesture.moveBy(const Offset(1, 0));
 
         await gesture.moveBy(const Offset(-10, 0));
@@ -76,6 +81,7 @@ void main() {
         final gesture = await tester.startGesture(blackKey1);
         pianoMock.verifyKeyPlayed(cSharp4);
         await gesture.moveBy(const Offset(1, 0));
+        await gesture.moveBy(const Offset(1, 0));
 
         await gesture.moveBy(const Offset(10, 0));
         pianoMock.verifyKeyReleased(cSharp4);
@@ -93,9 +99,66 @@ void main() {
         final gesture = await tester.startGesture(blackKey1);
         pianoMock.verifyKeyPlayed(cSharp4);
         await gesture.moveBy(const Offset(1, 0));
+        await gesture.moveBy(const Offset(1, 0));
 
         await gesture.moveBy(const Offset(0, -50));
         pianoMock.verifyKeyReleased(cSharp4);
+
+        pianoMock.verifyNoKeysReleased();
+        pianoMock.verifyNoKeysPlayed();
+      });
+
+      testWidgets('plays and holds key when dragging on same key with other finger', (tester) async {
+        final pianoMock = await tester.renderKeyboard();
+        final gesture1 = await tester.startGesture(whiteKey1);
+        pianoMock.verifyKeyPlayed(c4);
+        await gesture1.moveBy(const Offset(1, 0));
+        await gesture1.moveBy(const Offset(1, 0));
+
+        final gesture2 = await tester.startGesture(whiteKey1);
+        await gesture2.moveBy(const Offset(1, 0));
+        await gesture2.moveBy(const Offset(1, 0));
+
+        pianoMock.verifyNoKeysReleased();
+        pianoMock.verifyNoKeysPlayed();
+      });
+
+      testWidgets('plays and holds key when dragging over same key with other finger', (tester) async {
+        final pianoMock = await tester.renderKeyboard();
+        final gesture1 = await tester.startGesture(whiteKey2);
+        pianoMock.verifyKeyPlayed(d4);
+        await gesture1.moveBy(const Offset(1, 0));
+        await gesture1.moveBy(const Offset(1, 0));
+
+        final gesture2 = await tester.startGesture(whiteKey1);
+        await gesture2.moveBy(const Offset(1, 0));
+        pianoMock.verifyKeyPlayed(c4);
+
+        await gesture2.moveBy(const Offset(10, 0));
+        pianoMock.verifyKeyReleased(c4);
+
+        await gesture2.moveBy(const Offset(10, 0));
+        pianoMock.verifyKeyPlayed(e4);
+
+        pianoMock.verifyNoKeysReleased();
+        pianoMock.verifyNoKeysPlayed();
+      });
+
+      testWidgets('plays and holds key when dragging next to key with other finger', (tester) async {
+        final pianoMock = await tester.renderKeyboard();
+        final gesture1 = await tester.startGesture(whiteKey1);
+        pianoMock.verifyKeyPlayed(c4);
+        await gesture1.moveBy(const Offset(1, 0));
+        await gesture1.moveBy(const Offset(1, 0));
+
+        final gesture2 = await tester.startGesture(whiteKey3);
+        pianoMock.verifyKeyPlayed(e4);
+        await gesture2.moveBy(const Offset(1, 0));
+        await gesture1.moveBy(const Offset(1, 0));
+
+        await gesture2.moveBy(const Offset(-10, 0));
+        pianoMock.verifyKeyReleased(e4);
+        pianoMock.verifyKeyPlayed(d4);
 
         pianoMock.verifyNoKeysReleased();
         pianoMock.verifyNoKeysPlayed();
