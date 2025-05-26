@@ -19,7 +19,7 @@ import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 
-const List<String> wheelNoteKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+const List<String> wheelNoteKeys = ['1', '2', '3'];
 
 IconData getIconForNoteKey(String key) {
   switch (key) {
@@ -29,20 +29,6 @@ IconData getIconForNoteKey(String key) {
       return Icons.looks_two;
     case '3':
       return Icons.looks_3;
-    case '4':
-      return Icons.looks_4;
-    case '5':
-      return Icons.looks_5;
-    case '6':
-      return Icons.looks_6;
-    case '7':
-      return Icons.ac_unit;
-    case '8':
-      return Icons.alarm;
-    case '9':
-      return Icons.accessibility;
-    case '10':
-      return Icons.accessible_forward;
     default:
       return Icons.music_note;
   }
