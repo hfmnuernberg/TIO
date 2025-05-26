@@ -108,33 +108,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
     polyBeats.addAll(widget.currentPolyBeats);
     noteKey = widget.currentNoteKey;
 
-    String? matchingKey;
-    for (final key in wheelNoteKeys) {
-      final preset = getPresetRhythmPattern(key);
-
-      if (matchesPreset(preset, beats, polyBeats, noteKey)) {
-        matchingKey = key;
-        break;
-      }
-    }
-
-    if (matchingKey == null && widget.forcePresetFallback) {
-      final defaultPresetKey = wheelNoteKeys.first;
-      final preset = getPresetRhythmPattern(defaultPresetKey);
-
-      beats
-        ..clear()
-        ..addAll(preset.beats);
-      polyBeats
-        ..clear()
-        ..addAll(preset.polyBeats);
-      noteKey = preset.noteKey;
-      beatCount = preset.beats.length;
-      presetKey = defaultPresetKey;
-    } else {
-      presetKey = matchingKey ?? wheelNoteKeys.first;
-      beatCount = beats.length;
-    }
+    onResetRhythmWhenNotMatchingPreset();
 
     final currentIndex = wheelNoteKeys.indexOf(presetKey!);
     _wheelController = FixedExtentScrollController(initialItem: currentIndex == -1 ? 0 : currentIndex);
@@ -147,6 +121,50 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
   }
 
   void notifyParent() => widget.onUpdateRhythm(List.from(beats), List.from(polyBeats), noteKey, presetKey);
+
+  void onResetRhythmWhenNotMatchingPreset() {
+    final matchingKey = _findMatchingPresetKey();
+
+    if (matchingKey != null) {
+      presetKey = matchingKey;
+      beatCount = beats.length;
+    } else if (widget.forcePresetFallback) {
+      _applyPreset(wheelNoteKeys.first);
+    } else {
+      presetKey = wheelNoteKeys.first;
+      beatCount = beats.length;
+    }
+  }
+
+  String? _findMatchingPresetKey() {
+    for (final key in wheelNoteKeys) {
+      final preset = getPresetRhythmPattern(key);
+      if (matchesPreset(preset, beats, polyBeats, noteKey)) {
+        return key;
+      }
+    }
+    return null;
+  }
+
+  void _applyPreset(String key) {
+    final preset = getPresetRhythmPattern(key);
+
+    beats
+      ..clear()
+      ..addAll(preset.beats);
+    polyBeats
+      ..clear()
+      ..addAll(preset.polyBeats);
+    noteKey = preset.noteKey;
+    beatCount = preset.beats.length;
+    presetKey = key;
+
+    refreshRhythm();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyParent();
+    });
+  }
 
   Future<void> onBeatCountChange(int newBeatCount) async {
     setState(() {
