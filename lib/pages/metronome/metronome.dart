@@ -155,8 +155,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   void _toggleSimpleMode() {
     setState(() {
-      _isSimpleModeOn = !_isSimpleModeOn;
       _forceFallbackToPreset = !_isSimpleModeOn;
+      _isSimpleModeOn = !_isSimpleModeOn;
       _metronomeBlock.isSimpleModeOn = _isSimpleModeOn;
     });
   }
