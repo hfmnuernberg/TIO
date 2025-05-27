@@ -226,32 +226,30 @@ class _ImageToolState extends State<ImageTool> {
               if (imageBlock.relativePath.isNotEmpty) {
                 return Image(image: FileImage(File(_fs.toAbsoluteFilePath(imageBlock.relativePath))));
               } else {
-                return Stack(
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        TioIconButton.sm(
-                          icon: const Icon(Icons.image_outlined, color: ColorTheme.primary),
-                          onPressed: () => _pickImageAndSave(false),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                            child: Text(
-                              context.l10n.imageNoImage,
-                              style: const TextStyle(color: ColorTheme.primary),
-                              textAlign: TextAlign.center,
-                            ),
+                    Text(
+                      context.l10n.imageNoImage,
+                      style: const TextStyle(color: ColorTheme.primary),
+                      textAlign: TextAlign.center,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          TioIconButton.sm(
+                            icon: const Icon(Icons.image_outlined, color: ColorTheme.primary),
+                            onPressed: () => _pickImageAndSave(false),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        TioIconButton.sm(
-                          icon: const Icon(Icons.camera_alt_outlined, color: ColorTheme.primary),
-                          onPressed: () => _takePhotoAndSave(false),
-                        ),
-                      ],
+                          const SizedBox(width: 12),
+                          TioIconButton.sm(
+                            icon: const Icon(Icons.camera_alt_outlined, color: ColorTheme.primary),
+                            onPressed: () => _takePhotoAndSave(false),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 );
