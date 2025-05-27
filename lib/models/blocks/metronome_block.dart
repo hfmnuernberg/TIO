@@ -129,12 +129,9 @@ class MetronomeBlock extends ProjectBlock {
   //----------------------------------------------------
 
   void changeRhythmOrder(int oldIdx, int newIdx, List<RhythmGroup> rhythm) {
-    if (oldIdx < newIdx) {
-      newIdx -= 1;
-    }
     RhythmGroup currentGroup = rhythm[oldIdx];
     rhythm.removeAt(oldIdx);
-    rhythm.insert(newIdx, currentGroup);
+    rhythm.insert(oldIdx < newIdx ? newIdx - 1 : newIdx, currentGroup);
     notifyListeners();
   }
 

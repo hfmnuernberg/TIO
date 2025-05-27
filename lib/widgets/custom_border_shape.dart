@@ -28,20 +28,20 @@ class MessageBorder extends ShapeBorder {
 
   @override
   Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
-    rect = Rect.fromPoints(rect.topLeft, rect.bottomRight - Offset(0, _padding));
+    final rectMinusPadding = Rect.fromPoints(rect.topLeft, rect.bottomRight - Offset(0, _padding));
 
     switch (pointingDirection) {
       case PointingDirection.up:
-        return _pointUp(rect);
+        return _pointUp(rectMinusPadding);
       case PointingDirection.down:
-        return _pointDown(rect);
+        return _pointDown(rectMinusPadding);
       case PointingDirection.left:
-        return _pointLeft(rect);
+        return _pointLeft(rectMinusPadding);
       case PointingDirection.right:
-        return _pointRight(rect);
+        return _pointRight(rectMinusPadding);
       default:
         return Path()
-          ..addRect(rect)
+          ..addRect(rectMinusPadding)
           ..close();
     }
   }

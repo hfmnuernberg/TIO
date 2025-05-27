@@ -117,13 +117,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
   void _toggleEditingMode() => setState(() => _isEditing = !_isEditing);
 
   Future<void> _handleReorder(int oldIndex, int newIndex) async {
-    if (newIndex > oldIndex) newIndex--;
-
     final projectLibrary = context.read<ProjectLibrary>();
 
     final mutableList = projectLibrary.projects.toList();
     final project = mutableList.removeAt(oldIndex);
-    mutableList.insert(newIndex, project);
+    mutableList.insert(newIndex > oldIndex ? newIndex - 1 : newIndex, project);
     projectLibrary.projects = mutableList;
 
     await _projectRepo.saveLibrary(projectLibrary);

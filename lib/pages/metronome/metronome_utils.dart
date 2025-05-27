@@ -82,11 +82,9 @@ abstract class MetronomeUtils {
       }
     }
 
-    if (soundType == SoundType.accented || soundType == SoundType.polyAccented) {
-      file = '${file}_a';
-    }
+    final suffix = soundType == SoundType.accented || soundType == SoundType.polyAccented ? '_a' : '';
 
-    String wavFilePath = await copyAssetToTemp(fs, '${MetronomeSound.fromFilename(file).file}.wav');
+    String wavFilePath = await copyAssetToTemp(fs, '${MetronomeSound.fromFilename(file + suffix).file}.wav');
     metronomeLoadFile(beatType: beatType, wavFilePath: wavFilePath);
   }
 }
