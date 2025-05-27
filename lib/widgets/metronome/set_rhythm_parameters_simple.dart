@@ -1,6 +1,3 @@
-// Setting page for rhythm segments
-// Called when a new rhythm segment is initialized and when an existing one is tapped
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -32,19 +29,6 @@ Widget getNoteIconWidget(String key) {
   } catch (_) {
     return Icon(Icons.music_note, color: ColorTheme.primary);
   }
-}
-
-bool matchesPreset(RhythmPreset preset, List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey) {
-  if (preset.noteKey != noteKey) return false;
-  if (preset.beats.length != beats.length || preset.polyBeats.length != polyBeats.length) return false;
-
-  for (int i = 0; i < beats.length; i++) {
-    if (beats[i] != preset.beats[i]) return false;
-  }
-  for (int i = 0; i < polyBeats.length; i++) {
-    if (polyBeats[i] != preset.polyBeats[i]) return false;
-  }
-  return true;
 }
 
 class SetRhythmParametersSimple extends StatefulWidget {
@@ -109,20 +93,20 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
   void notifyParent() => widget.onUpdateRhythm(List.from(beats), List.from(polyBeats), noteKey, presetKey);
 
   void onResetRhythmWhenNotMatchingPreset() {
-    final matchingKey = _findMatchingPresetKey();
+    final matchingKey = findMatchingPresetKey();
 
     if (matchingKey != null) {
       presetKey = matchingKey;
       beatCount = beats.length;
     } else if (widget.forcePresetFallback) {
-      _applyPreset(wheelNoteKeys.first);
+      applyPreset(wheelNoteKeys.first);
     } else {
       presetKey = wheelNoteKeys.first;
       beatCount = beats.length;
     }
   }
 
-  String? _findMatchingPresetKey() {
+  String? findMatchingPresetKey() {
     for (final key in wheelNoteKeys) {
       final preset = getPresetRhythmPattern(key);
       if (matchesPreset(preset, beats, polyBeats, noteKey)) {
@@ -132,7 +116,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
     return null;
   }
 
-  void _applyPreset(String key) {
+  void applyPreset(String key) {
     final preset = getPresetRhythmPattern(key);
 
     beats
