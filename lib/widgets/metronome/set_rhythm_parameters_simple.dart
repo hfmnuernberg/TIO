@@ -108,8 +108,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
 
   String? findMatchingPresetKey() {
     for (final key in wheelNoteKeys) {
-      final preset = getPresetRhythmPattern(key);
-      if (matchesPreset(preset, beats, polyBeats, noteKey)) {
+      if (getPresetRhythmPattern(key) == RhythmPreset(beats: beats, polyBeats: polyBeats, noteKey: noteKey)) {
         return key;
       }
     }
