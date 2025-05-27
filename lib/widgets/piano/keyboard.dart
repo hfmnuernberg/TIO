@@ -30,7 +30,7 @@ class _KeyboardState extends State<Keyboard> {
   Size? keyboardSize;
   final Map<int, Rect> keyBoundaries = {};
   final Set<int> pressedKeys = {};
-  final Set<int> draggedKeys = {};
+  final Map<int, int> pointersWithLastNote = {};
 
   @override
   void didUpdateWidget(covariant Keyboard oldWidget) {
@@ -44,58 +44,45 @@ class _KeyboardState extends State<Keyboard> {
   }
 
   void handlePlay(int note) {
-    widget.onPlay(note);
     pressedKeys.add(note);
+    widget.onPlay(note);
     setState(() {});
   }
 
   void handlePointerUp(PointerEvent event) {
-    if (!isWithinKeyboard(event.localPosition)) return handleGlissandoClear();
+    final note = findPlayedKey(event.localPosition)?.note;
+    pointersWithLastNote.remove(event.pointer);
 
-    final key = findPlayedKey(event.localPosition);
-    if (key == null) return;
-    if (!pressedKeys.contains(key.note) && !draggedKeys.contains(key.note)) return;
+    if (note == null) return setState(() {});
 
-    widget.onRelease(key.note);
-    draggedKeys.remove(key.note);
-    pressedKeys.remove(key.note);
+    pressedKeys.remove(note);
+    widget.onRelease(note);
     setState(() {});
   }
 
   void handlePointerMove(PointerEvent event) {
-    if (!isWithinKeyboard(event.localPosition)) return handleGlissandoClear();
+    final note = findPlayedKey(event.localPosition)?.note;
 
-    final key = findPlayedKey(event.localPosition);
-    if (key == null) return handleGlissandoClear();
+    final lastNote = pointersWithLastNote[event.pointer];
+    final noOfPointersPlayingLastNote = pointersWithLastNote.values.where((note) => note == lastNote).length;
+    if (lastNote != null && lastNote != note && noOfPointersPlayingLastNote <= 1) widget.onRelease(lastNote);
 
-    if (draggedKeys.contains(key.note)) return;
+    if (note == null) return;
 
-    handleGlissandoRelease(key.note);
+    final isPlayedByOtherPointer = pointersWithLastNote.values.contains(note);
+    pointersWithLastNote[event.pointer] = note;
 
-    draggedKeys.add(key.note);
+    if (pressedKeys.contains(note)) {
+      pressedKeys.remove(note);
+      return setState(() {});
+    }
 
-    if (pressedKeys.contains(key.note)) return;
+    if (lastNote != note && !isPlayedByOtherPointer) widget.onPlay(note);
 
-    widget.onPlay(key.note);
     setState(() {});
   }
 
-  void handleGlissandoRelease(int note) {
-    final nearbyKeys = draggedKeys.where((k) => (k - note).abs() <= 2).toSet();
-    nearbyKeys.forEach(widget.onRelease);
-    pressedKeys.removeAll(nearbyKeys);
-    draggedKeys.removeAll(nearbyKeys);
-    setState(() {});
-  }
-
-  void handleGlissandoClear() {
-    draggedKeys.forEach(widget.onRelease);
-    pressedKeys.removeAll(draggedKeys);
-    draggedKeys.clear();
-    setState(() {});
-  }
-
-  bool isPlayed(int note) => draggedKeys.contains(note);
+  bool isPlayed(int note) => pointersWithLastNote.values.contains(note);
 
   bool isWithinKeyboard(Offset position) {
     if (keyboardSize == null) return false;

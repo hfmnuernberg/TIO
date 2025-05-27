@@ -33,6 +33,7 @@ const c6 = 84;
 
 const whiteKey1 = Offset(5, 75);
 const whiteKey2 = Offset(15, 75);
+const whiteKey3 = Offset(25, 75);
 const whiteKey12 = Offset(115, 75);
 
 const blackKey1 = Offset(10, 25);
@@ -50,7 +51,7 @@ class PianoMock extends Mock {
 }
 
 extension WidgetTesterRenderExtension on WidgetTester {
-  Future<PianoMock> renderKeyboard([lowestNote = 60]) async {
+  Future<PianoMock> renderKeyboard([lowestNote = c4]) async {
     final pianoMock = PianoMock();
     await renderWidget(
       SizedBox(
