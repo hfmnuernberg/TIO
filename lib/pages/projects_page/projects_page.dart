@@ -85,7 +85,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
         context.l10n.projectsTutorialAddProject,
         alignText: ContentAlign.right,
         pointingDirection: PointingDirection.left,
-        pointerPosition: PointerPosition.left,
       ),
       CustomTargetFocus(
         _keyNavigationBar,
