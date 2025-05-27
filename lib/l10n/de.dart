@@ -142,7 +142,7 @@ class German extends AppLocalizations {
   String get metronomeBeatPoly => 'Poly Beat';
   String get metronomeClearAllRhythms => 'Alle Rhythmen löschen';
   String get metronomeDescription => 'Übe oder gestalte deinen eigenen Rhythmus.';
-  String get metronomeNumberOfBeats => 'Anzahl der Beatsg';
+  String get metronomeNumberOfBeats => 'Anzahl der Beats';
   String get metronomeNumberOfPolyBeats => 'Anzahl der Poly Beats';
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Aussetzen';
