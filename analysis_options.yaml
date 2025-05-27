@@ -59,7 +59,7 @@ linter:
     # omit_local_variable_types: true # 118
     one_member_abstracts: true
     # only_throw_errors: true # 12
-    # parameter_assignments: true # 6
+    parameter_assignments: true
     prefer_asserts_in_initializer_lists: true
     # prefer_const_constructors: true # 131
     prefer_const_declarations: true

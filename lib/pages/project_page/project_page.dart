@@ -219,11 +219,9 @@ class _ProjectPageState extends State<ProjectPage> {
   }
 
   Future<void> _handleReorder(int oldIndex, int newIndex) async {
-    if (newIndex > oldIndex) newIndex--;
-
     final mutableBlocks = _project.blocks.toList();
     final block = mutableBlocks.removeAt(oldIndex);
-    mutableBlocks.insert(newIndex, block);
+    mutableBlocks.insert(newIndex > oldIndex ? newIndex - 1 : newIndex, block);
     _project.blocks = mutableBlocks;
 
     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
