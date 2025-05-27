@@ -86,13 +86,14 @@ class _NumberInputDecState extends State<NumberInputDec> {
       return widget.value;
     }
 
+    String normalizedInput = input;
     if (input[0] == '.') {
-      input = '0$input';
+      normalizedInput = '0$normalizedInput';
     } else if (input.substring(0, 1) == '-.') {
-      input = '-0${input.substring(1)}';
+      normalizedInput = '-0${normalizedInput.substring(1)}';
     }
 
-    return _parseNumber(input).clamp(widget.min, widget.max);
+    return _parseNumber(normalizedInput).clamp(widget.min, widget.max);
   }
 
   void _decreaseValue() =>
