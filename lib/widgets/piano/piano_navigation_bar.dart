@@ -147,7 +147,7 @@ class ToolNavLeftButtonGroup extends StatelessWidget {
       children: [
         if (prevToolExists)
           Padding(
-            padding: EdgeInsets.only(right: 12),
+            padding: EdgeInsets.symmetric(horizontal: 12),
             child: TioIconButton.xs(icon: prevToolIcon!, tooltip: context.l10n.toolGoToPrev, onPressed: onPrevTool),
           ),
 
@@ -199,7 +199,7 @@ class ToolNavRightButtonGroup extends StatelessWidget {
           ),
         if (nextToolExists)
           Padding(
-            padding: EdgeInsets.only(left: 12),
+            padding: EdgeInsets.symmetric(horizontal: 12),
             child: TioIconButton.xs(icon: nextToolIcon!, tooltip: context.l10n.toolGoToNext, onPressed: onNextTool),
           ),
       ],

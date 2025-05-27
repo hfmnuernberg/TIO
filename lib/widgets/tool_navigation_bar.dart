@@ -78,7 +78,10 @@ class _ToolNavigationBar extends StatelessWidget {
           Row(
             children: [
               if (onPrevTool != null && prevToolIcon != null)
-                TioIconButton.sm(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool)
+                Padding(
+                    padding: EdgeInsets.only(right: 12),
+                    child: TioIconButton.sm(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool),
+                )
               else
                 SizedBox(width: smallIconButtonWidth),
               if (onPrevToolOfSameType != null && toolOfSameTypeIcon != null && toolOfSameTypeIcon != prevToolIcon)
@@ -132,7 +135,10 @@ class _ToolNavigationBar extends StatelessWidget {
               else
                 SizedBox(width: smallIconButtonWidth),
               if (onNextTool != null && nextToolIcon != null)
-                TioIconButton.sm(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool)
+                Padding(
+                  padding: EdgeInsets.only(left: 12),
+                  child: TioIconButton.sm(icon: nextToolIcon!, tooltip: l10n.toolGoToNext, onPressed: onNextTool),
+                )
               else
                 SizedBox(width: smallIconButtonWidth),
             ],
