@@ -79,8 +79,8 @@ class _ToolNavigationBar extends StatelessWidget {
             children: [
               if (onPrevTool != null && prevToolIcon != null)
                 Padding(
-                    padding: EdgeInsets.only(right: 12),
-                    child: TioIconButton.sm(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool),
+                  padding: EdgeInsets.only(right: 12),
+                  child: TioIconButton.sm(icon: prevToolIcon!, tooltip: l10n.toolGoToPrev, onPressed: onPrevTool),
                 )
               else
                 SizedBox(width: smallIconButtonWidth),
