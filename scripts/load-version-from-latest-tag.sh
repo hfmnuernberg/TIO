@@ -13,7 +13,7 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 set +e
-SEMVER_TAG=$(git tag --list '[0-9]*.[0-9]*.[0-9]**' | sort -V | tail -n1)
+SEMVER_TAG=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]**' | sort -V | tail -n1)
 BUILD_NUMBER_TAG=$(git tag --list '[0-9]*.[0-9]*.[0-9]*+*' | sort -V | tail -n1)
 set -e
 
@@ -21,7 +21,7 @@ if [ -z "$SEMVER_TAG" ]; then
   echo "⚠️️ No Git tag with semantic version found! Assuming semantic version $DEFAULT_SEMVER."
   SEMVER=$DEFAULT_SEMVER
 else
-  SEMVER=$(echo "$SEMVER_TAG" | sed -E 's/^([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+  SEMVER=$(echo "$SEMVER_TAG" | sed -E 's/^v([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
   if [ "$SEMVER" = "$SEMVER_TAG" ]; then
     echo "⚠️️ No valid semantic version found in tag! Assuming semantic version $DEFAULT_SEMVER."
     SEMVER=$DEFAULT_SEMVER
@@ -43,7 +43,6 @@ VERSION="$SEMVER+$BUILD_NUMBER"
 
 export SEMVER_TAG
 export BUILD_NUMBER_TAG
-export VERSION_TAG
 export SEMVER
 export BUILD_NUMBER
 export VERSION
