@@ -19,14 +19,6 @@ import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 
 const List<RhythmPresetKey> wheelNoteKeys = RhythmPresetKey.values;
 
-Widget getNoteIconWidget(RhythmPresetKey key) {
-  return SvgPicture.asset(
-    'assets/metronome_presets/${key.assetName}.svg',
-    height: 50,
-    colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn),
-  );
-}
-
 class SetRhythmParametersSimple extends StatefulWidget {
   final String currentNoteKey;
   final List<BeatType> currentBeats;
@@ -241,7 +233,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
 
                                 notifyParent();
                               },
-                              child: getNoteIconWidget(key),
+                              child: NoteIconWidget(presetKey: key),
                             ),
                           );
                         },
@@ -258,6 +250,21 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
           ],
         ),
       ],
+    );
+  }
+}
+
+class NoteIconWidget extends StatelessWidget {
+  final RhythmPresetKey presetKey;
+
+  const NoteIconWidget({super.key, required this.presetKey});
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      'assets/metronome_presets/${presetKey.assetName}.svg',
+      height: 50,
+      colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn),
     );
   }
 }
