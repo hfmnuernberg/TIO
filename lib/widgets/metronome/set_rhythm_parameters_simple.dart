@@ -17,18 +17,14 @@ import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 
-const List<String> wheelNoteKeys = [oneFourth, twoEighth, fourSixteenth];
+const List<RhythmPresetKey> wheelNoteKeys = RhythmPresetKey.values;
 
-Widget getNoteIconWidget(String key) {
-  try {
-    return SvgPicture.asset(
-      'assets/metronome_presets/$key.svg',
-      height: 50,
-      colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn),
-    );
-  } catch (_) {
-    return Icon(Icons.music_note, color: ColorTheme.primary);
-  }
+Widget getNoteIconWidget(RhythmPresetKey key) {
+  return SvgPicture.asset(
+    'assets/metronome_presets/${key.assetName}.svg',
+    height: 50,
+    colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn),
+  );
 }
 
 class SetRhythmParametersSimple extends StatefulWidget {
@@ -37,7 +33,7 @@ class SetRhythmParametersSimple extends StatefulWidget {
   final List<BeatTypePoly> currentPolyBeats;
   final List<RhythmGroup> rhythmGroups;
   final MetronomeBlock metronomeBlock;
-  final void Function(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey, String? presetKey)
+  final void Function(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey, RhythmPresetKey? presetKey)
   onUpdateRhythm;
 
   final bool forcePresetFallback;
@@ -67,7 +63,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
   final List<BeatType> beats = List.empty(growable: true);
   final List<BeatTypePoly> polyBeats = List.empty(growable: true);
   late String noteKey;
-  late String? presetKey;
+  RhythmPresetKey? presetKey;
 
   @override
   void initState() {
@@ -106,7 +102,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
     }
   }
 
-  String? findMatchingPresetKey() {
+  RhythmPresetKey? findMatchingPresetKey() {
     for (final key in wheelNoteKeys) {
       if (getPresetRhythmPattern(key) == RhythmPreset(beats: beats, polyBeats: polyBeats, noteKey: noteKey)) {
         return key;
@@ -115,7 +111,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
     return null;
   }
 
-  void applyPreset(String key) {
+  void applyPreset(RhythmPresetKey key) {
     final preset = getPresetRhythmPattern(key);
 
     beats

@@ -2,9 +2,14 @@ import 'package:equatable/equatable.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 
-const oneFourth = '1_4th';
-const twoEighth = '2_8th';
-const fourSixteenth = '4_16th';
+enum RhythmPresetKey {
+  oneFourth('1_4th'),
+  twoEighth('2_8th'),
+  fourSixteenth('4_16th');
+
+  final String assetName;
+  const RhythmPresetKey(this.assetName);
+}
 
 class RhythmPreset extends Equatable {
   final List<BeatType> beats;
@@ -21,21 +26,21 @@ List<BeatTypePoly> _repeatPolyBeatPattern(int repetitions, List<BeatTypePoly> pa
   return List.generate(repetitions, (_) => pattern).expand((e) => e).toList();
 }
 
-RhythmPreset getPresetRhythmPattern(String? noteKey) {
-  switch (noteKey) {
-    case oneFourth:
+RhythmPreset getPresetRhythmPattern(RhythmPresetKey presetKey) {
+  switch (presetKey) {
+    case RhythmPresetKey.oneFourth:
       return RhythmPreset(
         beats: const [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
         polyBeats: const [],
         noteKey: NoteValues.quarter,
       );
-    case twoEighth:
+    case RhythmPresetKey.twoEighth:
       return RhythmPreset(
         beats: const [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
         polyBeats: _repeatPolyBeatPattern(4, [BeatTypePoly.Muted, BeatTypePoly.Unaccented]),
         noteKey: NoteValues.quarter,
       );
-    case fourSixteenth:
+    case RhythmPresetKey.fourSixteenth:
       return RhythmPreset(
         beats: const [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
         polyBeats: _repeatPolyBeatPattern(4, [
@@ -44,12 +49,6 @@ RhythmPreset getPresetRhythmPattern(String? noteKey) {
           BeatTypePoly.Unaccented,
           BeatTypePoly.Unaccented,
         ]),
-        noteKey: NoteValues.quarter,
-      );
-    default:
-      return RhythmPreset(
-        beats: const [BeatType.Accented, BeatType.Unaccented, BeatType.Unaccented, BeatType.Unaccented],
-        polyBeats: const [],
         noteKey: NoteValues.quarter,
       );
   }

@@ -3,6 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 
 part 'rhythm_group.g.dart';
 
@@ -28,8 +29,8 @@ class RhythmGroup extends Equatable {
   @JsonKey(includeToJson: false, includeFromJson: false)
   late double beatLen;
 
-  @JsonKey(defaultValue: null)
-  String? presetKey;
+  @JsonKey(fromJson: _presetKeyFromJson, toJson: _presetKeyToJson, defaultValue: null)
+  RhythmPresetKey? presetKey;
 
   RhythmGroup(this.keyID, this.beats, this.polyBeats, this.noteKey, {this.presetKey}) {
     if (keyID == '') {
@@ -54,3 +55,10 @@ class RhythmGroup extends Equatable {
 
   Map<String, dynamic> toJson() => _$RhythmGroupToJson(this);
 }
+
+RhythmPresetKey? _presetKeyFromJson(String? key) {
+  if (key == null) return null;
+  return RhythmPresetKey.values.firstWhere((e) => e.name == key, orElse: () => RhythmPresetKey.oneFourth);
+}
+
+String? _presetKeyToJson(RhythmPresetKey? key) => key?.name;

@@ -18,6 +18,8 @@ import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
+import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 import 'package:tiomusic/widgets/metronome/set_rhythm_parameters_simple.dart';
 import 'package:tiomusic/pages/metronome/setting_bpm.dart';
 import 'package:tiomusic/pages/metronome/setting_metronome_sound.dart';
@@ -315,7 +317,12 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     }
   }
 
-  void _handleUpdateRhythm(newBeats, newPolyBeats, newNoteKey, newPresetKey) {
+  void _handleUpdateRhythm(
+    List<BeatType> newBeats,
+    List<BeatTypePoly> newPolyBeats,
+    String newNoteKey,
+    RhythmPresetKey? newPresetKey,
+  ) {
     final group = _metronomeBlock.rhythmGroups[0];
     group.beats = List.from(newBeats);
     group.polyBeats = List.from(newPolyBeats);
