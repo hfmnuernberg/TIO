@@ -2,6 +2,11 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Commit SHA, tag, or branch to create version for (optional, defaults to main)'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -12,11 +17,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Set fallback ref
+      id: ref
+      run: |
+        REF_INPUT="${{ github.event.inputs.ref }}"
+        if [[ -z "$REF_INPUT" ]]; then
+          echo "ref=main" >> "$GITHUB_OUTPUT"
+        else
+          echo "ref=$REF_INPUT" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Show resolved ref
+      run: echo "Using ref ${{ steps.ref.outputs.ref }}"
+
     - name: Checkout repository
       uses: actions/checkout@v4.2.2
       with:
         ref: main
         fetch-depth: 0
+
+    - name: Checkout repository
+      uses: actions/checkout@v4.2.2
+      run: git checkout ${{ steps.ref.outputs.ref }}
 
     - name: Make scripts executable
       run: chmod +x scripts/*.sh
