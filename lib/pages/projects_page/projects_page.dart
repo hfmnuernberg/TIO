@@ -81,6 +81,12 @@ class _ProjectsPageState extends State<ProjectsPage> {
   void _createTutorial() {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
+        null,
+        context: context,
+        context.l10n.projectsTutorialHowToUseTio,
+        customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
+      ),
+      CustomTargetFocus(
         _keyAddProjectButton,
         context.l10n.projectsTutorialAddProject,
         alignText: ContentAlign.right,
@@ -93,12 +99,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
         pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
         shape: ShapeLightFocus.RRect,
-      ),
-      CustomTargetFocus(
-        null,
-        context: context,
-        context.l10n.projectsTutorialHowToUseTio,
-        customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
       CustomTargetFocus(
         null,
