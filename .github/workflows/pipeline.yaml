@@ -37,7 +37,7 @@ jobs:
     secrets: inherit
     with:
       ref: ${{ github.sha }}
-      version: ${{ needs.bump-build-number.outputs.version }}
+      version: ${{ needs.bump-build-number.outputs.tag }}
       appIdentifier: 6477820301
 
   build-android-app:
@@ -47,7 +47,7 @@ jobs:
     secrets: inherit
     with:
       ref: ${{ github.sha }}
-      version: ${{ needs.bump-build-number.outputs.version }}
+      version: ${{ needs.bump-build-number.outputs.tag }}
 
   upload-ios-app:
     needs: [verify, bump-build-number, build-ios-app]
@@ -60,7 +60,7 @@ jobs:
       contents: read
     with:
       ref: ${{ github.sha }}
-      version: ${{ needs.bump-build-number.outputs.version }}
+      version: ${{ needs.bump-build-number.outputs.tag }}
       appIdentifier: 6477820301
 
   upload-android-app:
@@ -74,5 +74,5 @@ jobs:
       contents: read
     with:
       ref: ${{ github.sha }}
-      version: ${{ needs.bump-build-number.outputs.version }}
+      version: ${{ needs.bump-build-number.outputs.tag }}
       googlePlayStoreUrl: 'https://play.google.com/apps/test/com.studiofluffy.tonica/'
