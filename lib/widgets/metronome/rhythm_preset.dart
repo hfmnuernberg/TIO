@@ -47,11 +47,7 @@ class RhythmPreset extends Equatable {
     RhythmPresetKey.fourSixteenth => fourSixteenth.copy(),
   };
 
-  RhythmPreset copy() => RhythmPreset(
-    beats: List.from(beats),
-    polyBeats: List.from(polyBeats),
-    noteKey: noteKey,
-  );
+  RhythmPreset copy() => RhythmPreset(beats: List.from(beats), polyBeats: List.from(polyBeats), noteKey: noteKey);
 
   @override
   List<Object> get props => [beats, polyBeats, noteKey];
