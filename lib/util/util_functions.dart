@@ -45,7 +45,7 @@ Future<String> copyAssetToTemp(FileSystem fs, String assetPath) async {
 String formatSettingValues(List settingValues) {
   final buffer = StringBuffer();
   bool firstTime = true;
-  for (dynamic settingValue in settingValues) {
+  for (final settingValue in settingValues) {
     if (firstTime) {
       firstTime = false;
     } else {
@@ -506,7 +506,7 @@ bool checkIslandPossible(Project? project, ProjectBlock toolBlock) {
     // check if there is more than one tool in the project
     if (project.blocks.length > 1) {
       bool possibleToolFound = false;
-      for (ProjectBlock block in project.blocks) {
+      for (final block in project.blocks) {
         // don't allow the same kind that is currently open
         if (block.kind != toolBlock.kind) {
           // only allow tuner, metronome and media player as islands

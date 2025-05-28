@@ -66,7 +66,7 @@ linter:
     prefer_const_literals_to_create_immutables: true
     prefer_constructors_over_static_methods: true
     # prefer_expression_function_bodies: true # 138
-    # prefer_final_in_for_each: true # 12
+    prefer_final_in_for_each: true
     # prefer_final_locals: true # 154
     prefer_foreach: true
     prefer_if_elements_to_conditional_expressions: true

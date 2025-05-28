@@ -16,7 +16,7 @@ abstract class NoteHandler {
     var noteFiles = assetManifest.listAssets().where((string) => string.startsWith('assets/notes')).toList();
     noteFiles = noteFiles.map((path) => path.replaceAll('assets/notes/', '')).toList();
 
-    for (var fileName in noteFiles) {
+    for (final fileName in noteFiles) {
       _logger.t(fileName);
 
       var key = basenameWithoutExtension(fileName);
