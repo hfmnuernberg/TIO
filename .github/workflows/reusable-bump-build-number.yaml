@@ -14,9 +14,15 @@ on:
         type: string
         description: The commit SHA, tag or release
     outputs:
-      version:
-        description: 'The new version (e.g., 1.2.3+42)'
-        value: ${{ jobs.bump-build-number.outputs.version }}
+      semver:
+        description: 'The current semantic version (e.g., 1.2.3)'
+        value: ${{ jobs.bump-build-number.outputs.semver }}
+      buildNumber:
+        description: 'The new build number (e.g., 42)'
+        value: ${{ jobs.bump-build-number.outputs.buildNumber }}
+      tag:
+        description: 'The new tag (e.g., 1.2.3+42)'
+        value: ${{ jobs.bump-build-number.outputs.tag }}
 
 permissions:
   contents: write
