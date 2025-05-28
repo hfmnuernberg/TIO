@@ -36,7 +36,7 @@ class _TestWrapperState extends State<TestWrapper> {
           label: 'Preset key',
           value: _presetKey == null ? 'No preset selected' : _presetKey!.assetName,
           excludeSemantics: true,
-          child: RhythmPresetWheel(presetKey: null, onPresetSelected: handlePresetSelected)
+          child: RhythmPresetWheel(presetKey: null, onPresetSelected: handlePresetSelected),
         ),
       ],
     );
