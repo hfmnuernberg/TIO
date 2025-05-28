@@ -96,7 +96,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
 
   RhythmPresetKey? findMatchingPresetKey() {
     for (final key in wheelNoteKeys) {
-      if (getPresetRhythmPattern(key) == RhythmPreset(beats: beats, polyBeats: polyBeats, noteKey: noteKey)) {
+      if (RhythmPreset.fromKey(key) == RhythmPreset(beats: beats, polyBeats: polyBeats, noteKey: noteKey)) {
         return key;
       }
     }
@@ -104,7 +104,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
   }
 
   void applyPreset(RhythmPresetKey key) {
-    final preset = getPresetRhythmPattern(key);
+    final preset = RhythmPreset.fromKey(key);
 
     beats
       ..clear()
@@ -185,7 +185,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
                       overAndUnderCenterOpacity: 0.6,
                       onSelectedItemChanged: (index) {
                         final newPresetKey = wheelNoteKeys[index];
-                        final preset = getPresetRhythmPattern(newPresetKey);
+                        final preset = RhythmPreset.fromKey(newPresetKey);
 
                         setState(() {
                           beats
@@ -216,7 +216,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
                                   duration: Duration(milliseconds: 300),
                                   curve: Curves.easeInOut,
                                 );
-                                final preset = getPresetRhythmPattern(key);
+                                final preset = RhythmPreset.fromKey(key);
 
                                 setState(() {
                                   beats
