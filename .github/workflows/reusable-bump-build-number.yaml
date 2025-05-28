@@ -26,7 +26,9 @@ jobs:
     name: Bump Build Number
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.new.outputs.version }}
+      semver: ${{ steps.old.outputs.semver }}
+      buildNumber: ${{ steps.new.outputs.buildNumber }}
+      tag: ${{ steps.new.outputs.tag }}
 
     steps:
     - name: Checkout repository
@@ -55,7 +57,6 @@ jobs:
       run: |
         source scripts/bump-build-number-and-tag.sh ${{ steps.old.outputs.semver }} ${{ steps.old.outputs.buildNumber }}
         echo "buildNumber=$NEW_BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-        echo "semver=$NEW_SEMVER" >> "$GITHUB_OUTPUT"
         echo "tag=$NEW_TAG" >> "$GITHUB_OUTPUT"
 
     - name: Create summary
