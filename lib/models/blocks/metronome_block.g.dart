@@ -24,7 +24,7 @@ MetronomeBlock _$MetronomeBlockFromJson(Map<String, dynamic> json) => MetronomeB
   json['polyUnaccSound2'] as String? ?? 'cowbell',
   json['timeLastModified'] == null ? getCurrentDateTime() : DateTime.parse(json['timeLastModified'] as String),
   (json['volume'] as num?)?.toDouble() ?? 0.5,
-  isSimpleModeOn: json['isSimpleModeOn'] as bool? ?? true,
+  isSimpleModeOn: json['isSimpleModeOn'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$MetronomeBlockToJson(MetronomeBlock instance) => <String, dynamic>{

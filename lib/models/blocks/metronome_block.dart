@@ -88,7 +88,7 @@ class MetronomeBlock extends ProjectBlock {
     notifyListeners();
   }
 
-  @JsonKey(defaultValue: true)
+  @JsonKey(defaultValue: false)
   bool isSimpleModeOn = true;
 
   @JsonKey(defaultValue: MetronomeParams.defaultBPM)
