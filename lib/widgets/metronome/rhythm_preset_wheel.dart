@@ -4,6 +4,8 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 
+const List<RhythmPresetKey> wheelNoteKeys = RhythmPresetKey.values;
+
 class NoteIconWidget extends StatelessWidget {
   final RhythmPresetKey presetKey;
 
@@ -19,17 +21,36 @@ class NoteIconWidget extends StatelessWidget {
   }
 }
 
-class RhythmPresetWheel extends StatelessWidget {
-  final FixedExtentScrollController controller;
-  final List<RhythmPresetKey> wheelNoteKeys;
+class RhythmPresetWheel extends StatefulWidget {
   final void Function(RhythmPresetKey key) onPresetSelected;
+  final RhythmPresetKey? presetKey;
 
-  const RhythmPresetWheel({
-    super.key,
-    required this.controller,
-    required this.wheelNoteKeys,
-    required this.onPresetSelected,
-  });
+  const RhythmPresetWheel({super.key, required this.presetKey, required this.onPresetSelected});
+
+  @override
+  State<RhythmPresetWheel> createState() => _RhythmPresetWheelState();
+}
+
+class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
+  late final FixedExtentScrollController _wheelController;
+
+  @override
+  void initState() {
+    super.initState();
+    final currentIndex = widget.presetKey == null ? 0 : wheelNoteKeys.indexOf(widget.presetKey!);
+    _wheelController = FixedExtentScrollController(initialItem: currentIndex == -1 ? 0 : currentIndex);
+  }
+
+  @override
+  void dispose() {
+    _wheelController.dispose();
+    super.dispose();
+  }
+
+  void handleSelectPreset(int index) {
+    _wheelController.animateToItem(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+    widget.onPresetSelected(wheelNoteKeys[index]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,12 +67,12 @@ class RhythmPresetWheel extends StatelessWidget {
               child: RotatedBox(
                 quarterTurns: -1,
                 child: ListWheelScrollView.useDelegate(
-                  controller: controller,
+                  controller: _wheelController,
                   itemExtent: 70,
                   perspective: 0.008,
                   physics: const FixedExtentScrollPhysics(),
                   overAndUnderCenterOpacity: 0.6,
-                  onSelectedItemChanged: (index) => onPresetSelected(wheelNoteKeys[index]),
+                  onSelectedItemChanged: handleSelectPreset,
                   childDelegate: ListWheelChildBuilderDelegate(
                     childCount: wheelNoteKeys.length,
                     builder: (context, index) {
@@ -59,14 +80,7 @@ class RhythmPresetWheel extends StatelessWidget {
                       return RotatedBox(
                         quarterTurns: 1,
                         child: GestureDetector(
-                          onTap: () {
-                            controller.animateToItem(
-                              index,
-                              duration: Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                            onPresetSelected(key);
-                          },
+                          onTap: () => handleSelectPreset(index),
                           child: NoteIconWidget(presetKey: key),
                         ),
                       );

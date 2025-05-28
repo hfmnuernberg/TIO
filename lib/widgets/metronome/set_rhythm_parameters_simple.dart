@@ -5,7 +5,6 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
-import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
@@ -15,8 +14,6 @@ import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset_wheel.dart';
-
-const List<RhythmPresetKey> wheelNoteKeys = RhythmPresetKey.values;
 
 class SetRhythmParametersSimple extends StatefulWidget {
   final String currentNoteKey;
@@ -45,9 +42,6 @@ class SetRhythmParametersSimple extends StatefulWidget {
 }
 
 class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
-  late FileSystem fs;
-  late FixedExtentScrollController _wheelController;
-
   late int beatCount = 0;
   final int minNumberOfBeats = 1;
 
@@ -59,22 +53,12 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
   @override
   void initState() {
     super.initState();
-    fs = context.read<FileSystem>();
 
     beats.addAll(widget.currentBeats);
     polyBeats.addAll(widget.currentPolyBeats);
     noteKey = widget.currentNoteKey;
 
     handleResetRhythmWhenNotMatchingPreset();
-
-    final currentIndex = wheelNoteKeys.indexOf(presetKey!);
-    _wheelController = FixedExtentScrollController(initialItem: currentIndex == -1 ? 0 : currentIndex);
-  }
-
-  @override
-  void dispose() {
-    _wheelController.dispose();
-    super.dispose();
   }
 
   void notifyParent() => widget.onUpdateRhythm(List.from(beats), List.from(polyBeats), noteKey, presetKey);
@@ -181,11 +165,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
 
         Expanded(child: SizedBox()),
 
-        RhythmPresetWheel(
-          controller: _wheelController,
-          wheelNoteKeys: wheelNoteKeys,
-          onPresetSelected: handlePresetSelected,
-        ),
+        RhythmPresetWheel(presetKey: presetKey, onPresetSelected: handlePresetSelected),
       ],
     );
   }
