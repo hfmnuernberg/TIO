@@ -152,7 +152,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   List<Widget> _buildMarkers() {
     List<Widget> markers = List.empty(growable: true);
 
-    for (double pos in _markerPositions) {
+    for (final pos in _markerPositions) {
       bool selected = false;
       if (_selectedMarkerPosition != null) {
         if (pos == _selectedMarkerPosition) {
@@ -214,7 +214,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     double? foundMarkerPosition;
 
     // check if position has marker
-    for (double pos in _markerPositions) {
+    for (final pos in _markerPositions) {
       if (relativeTapPosition >= pos - relativeMarkerClickArea &&
           relativeTapPosition <= pos + relativeMarkerClickArea) {
         foundMarkerPosition = pos;

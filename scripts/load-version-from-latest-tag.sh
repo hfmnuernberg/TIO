@@ -13,7 +13,7 @@ if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
 fi
 
 set +e
-SEMVER_TAG=$(git tag --list '[0-9]*.[0-9]*.[0-9]**' | sort -V | tail -n1)
+SEMVER_TAG=$(git tag --list '[0-9]*.[0-9]*.[0-9]*+*' | sort -V | tail -n1)
 BUILD_NUMBER_TAG=$(git tag --list '[0-9]*.[0-9]*.[0-9]*+*' | sort -V | tail -n1)
 set -e
 
@@ -43,7 +43,6 @@ VERSION="$SEMVER+$BUILD_NUMBER"
 
 export SEMVER_TAG
 export BUILD_NUMBER_TAG
-export VERSION_TAG
 export SEMVER
 export BUILD_NUMBER
 export VERSION

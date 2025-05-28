@@ -14,9 +14,15 @@ on:
         type: string
         description: The commit SHA, tag or release
     outputs:
-      version:
-        description: 'The new version (e.g., 1.2.3+42)'
-        value: ${{ jobs.bump-build-number.outputs.version }}
+      semver:
+        description: 'The current semantic version (e.g., 1.2.3)'
+        value: ${{ jobs.bump-build-number.outputs.semver }}
+      buildNumber:
+        description: 'The new build number (e.g., 42)'
+        value: ${{ jobs.bump-build-number.outputs.buildNumber }}
+      tag:
+        description: 'The new tag (e.g., 1.2.3+42)'
+        value: ${{ jobs.bump-build-number.outputs.tag }}
 
 permissions:
   contents: write
@@ -26,7 +32,9 @@ jobs:
     name: Bump Build Number
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.new.outputs.version }}
+      semver: ${{ steps.old.outputs.semver }}
+      buildNumber: ${{ steps.new.outputs.buildNumber }}
+      tag: ${{ steps.new.outputs.tag }}
 
     steps:
     - name: Checkout repository
@@ -55,11 +63,11 @@ jobs:
       run: |
         source scripts/bump-build-number-and-tag.sh ${{ steps.old.outputs.semver }} ${{ steps.old.outputs.buildNumber }}
         echo "buildNumber=$NEW_BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-        echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+        echo "tag=$NEW_TAG" >> "$GITHUB_OUTPUT"
 
     - name: Create summary
       run: |
-        echo "Semantic Version: **${{ steps.old.outputs.semver }}**" >> $GITHUB_STEP_SUMMARY
-        echo "Build Number: **${{ steps.old.outputs.buildNumber }} -> ${{ steps.new.outputs.buildNumber }}**" >> \
+        echo "Current SemVer: **${{ steps.old.outputs.semver }}**" >> $GITHUB_STEP_SUMMARY
+        echo "Build Number:   **${{ steps.old.outputs.buildNumber }} -> ${{ steps.new.outputs.buildNumber }}**" >> \
           $GITHUB_STEP_SUMMARY
-        echo "New Version:      **${{ steps.new.outputs.version }}**" >> $GITHUB_STEP_SUMMARY
+        echo "New Tag:        **${{ steps.new.outputs.tag }}**" >> $GITHUB_STEP_SUMMARY

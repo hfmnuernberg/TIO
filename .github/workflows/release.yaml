@@ -40,18 +40,18 @@ jobs:
         source scripts/load-version-from-latest-tag.sh
         echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
-    - name: Bump version
+    - name: Bump SemVer
       if: steps.semantic_release.outputs.new_release_published == 'true'
       id: new
       run: |
-        source scripts/bump-version-and-tag.sh \
+        source scripts/bump-semver-and-tag.sh \
           ${{ steps.semantic_release.outputs.new_release_version }} \
           ${{ steps.old.outputs.buildNumber }}
-        echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+        echo "semver=$NEW_SEMVER" >> "$GITHUB_OUTPUT"
 
     - name: Create summary
       if: steps.semantic_release.outputs.new_release_published == 'true'
       run: |
         echo "New Release: **${{ steps.semantic_release.outputs.new_release_version }}**" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "Next Version: **${{ steps.new.outputs.version }}**" >> $GITHUB_STEP_SUMMARY
+        echo "Next SemVer: **${{ steps.new.outputs.semver }}**" >> $GITHUB_STEP_SUMMARY
