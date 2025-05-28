@@ -2,6 +2,11 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Commit SHA or ref to create version for (optional, defaults to HEAD)'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -12,10 +17,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Set fallback ref
+      id: ref
+      run: |
+        REF_INPUT="${{ github.event.inputs.ref }}"
+        if [[ -z "$REF_INPUT" ]]; then
+          echo "ref=HEAD" >> "$GITHUB_OUTPUT"
+        else
+          echo "ref=$REF_INPUT" >> "$GITHUB_OUTPUT"
+        fi
+
     - name: Checkout repository
       uses: actions/checkout@v4.2.2
       with:
-        ref: main
+        ref: ${{ steps.ref.outputs.ref }}
         fetch-depth: 0
 
     - name: Make scripts executable
@@ -40,18 +55,18 @@ jobs:
         source scripts/load-version-from-latest-tag.sh
         echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
-    - name: Bump version
+    - name: Bump SemVer
       if: steps.semantic_release.outputs.new_release_published == 'true'
       id: new
       run: |
-        source scripts/bump-version-and-tag.sh \
+        source scripts/bump-semver-and-tag.sh \
           ${{ steps.semantic_release.outputs.new_release_version }} \
           ${{ steps.old.outputs.buildNumber }}
-        echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+        echo "semver=$NEW_SEMVER" >> "$GITHUB_OUTPUT"
 
     - name: Create summary
       if: steps.semantic_release.outputs.new_release_published == 'true'
       run: |
         echo "New Release: **${{ steps.semantic_release.outputs.new_release_version }}**" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "Next Version: **${{ steps.new.outputs.version }}**" >> $GITHUB_STEP_SUMMARY
+        echo "Next SemVer: **${{ steps.new.outputs.semver }}**" >> $GITHUB_STEP_SUMMARY

@@ -55,11 +55,12 @@ jobs:
       run: |
         source scripts/bump-build-number-and-tag.sh ${{ steps.old.outputs.semver }} ${{ steps.old.outputs.buildNumber }}
         echo "buildNumber=$NEW_BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-        echo "version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+        echo "semver=$NEW_SEMVER" >> "$GITHUB_OUTPUT"
+        echo "tag=$NEW_TAG" >> "$GITHUB_OUTPUT"
 
     - name: Create summary
       run: |
-        echo "Semantic Version: **${{ steps.old.outputs.semver }}**" >> $GITHUB_STEP_SUMMARY
-        echo "Build Number: **${{ steps.old.outputs.buildNumber }} -> ${{ steps.new.outputs.buildNumber }}**" >> \
+        echo "Current SemVer: **${{ steps.old.outputs.semver }}**" >> $GITHUB_STEP_SUMMARY
+        echo "Build Number:   **${{ steps.old.outputs.buildNumber }} -> ${{ steps.new.outputs.buildNumber }}**" >> \
           $GITHUB_STEP_SUMMARY
-        echo "New Version:      **${{ steps.new.outputs.version }}**" >> $GITHUB_STEP_SUMMARY
+        echo "New Tag:        **${{ steps.new.outputs.tag }}**" >> $GITHUB_STEP_SUMMARY
