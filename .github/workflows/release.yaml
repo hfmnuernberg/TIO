@@ -37,7 +37,6 @@ jobs:
         fetch-depth: 0
 
     - name: Checkout repository
-      uses: actions/checkout@v4.2.2
       run: git checkout ${{ steps.ref.outputs.ref }}
 
     - name: Make scripts executable
