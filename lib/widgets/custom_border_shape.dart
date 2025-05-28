@@ -28,20 +28,18 @@ class MessageBorder extends ShapeBorder {
 
   @override
   Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
-    final rectMinusPadding = Rect.fromPoints(rect.topLeft, rect.bottomRight - Offset(0, _padding));
-
     switch (pointingDirection) {
       case PointingDirection.up:
-        return _pointUp(rectMinusPadding);
+        return _pointUp(rect);
       case PointingDirection.down:
-        return _pointDown(rectMinusPadding);
+        return _pointDown(rect);
       case PointingDirection.left:
-        return _pointLeft(rectMinusPadding);
+        return _pointLeft(rect);
       case PointingDirection.right:
-        return _pointRight(rectMinusPadding);
+        return _pointRight(rect);
       default:
         return Path()
-          ..addRect(rectMinusPadding)
+          ..addRRect(RRect.fromRectAndRadius(rect, Radius.circular(12)))
           ..close();
     }
   }
@@ -51,15 +49,15 @@ class MessageBorder extends ShapeBorder {
     var moveToY = rect.bottomCenter.dy;
 
     if (pointerPosition == PointerPosition.left) {
-      moveToX = rect.bottomLeft.dx + _padding / 3;
+      moveToX = rect.bottomLeft.dx + _padding;
       moveToY = rect.bottomLeft.dy;
     } else if (pointerPosition == PointerPosition.right) {
-      moveToX = rect.bottomRight.dx - _padding - _padding / 3;
+      moveToX = rect.bottomRight.dx - _padding - _padding;
       moveToY = rect.bottomRight.dy;
     }
 
     return Path()
-      ..addRect(rect)
+      ..addRRect(RRect.fromRectAndRadius(rect, Radius.circular(12)))
       ..moveTo(moveToX, moveToY)
       ..relativeLineTo(_padding / 2, _padding)
       ..relativeLineTo(_padding / 2, -_padding)
@@ -71,15 +69,15 @@ class MessageBorder extends ShapeBorder {
     var moveToY = rect.topCenter.dy;
 
     if (pointerPosition == PointerPosition.left) {
-      moveToX = rect.topLeft.dx + _padding / 3;
+      moveToX = rect.topLeft.dx + _padding;
       moveToY = rect.topLeft.dy;
     } else if (pointerPosition == PointerPosition.right) {
-      moveToX = rect.topRight.dx - _padding - _padding / 3;
+      moveToX = rect.topRight.dx - _padding - _padding;
       moveToY = rect.topRight.dy;
     }
 
     return Path()
-      ..addRect(rect)
+      ..addRRect(RRect.fromRectAndRadius(rect, Radius.circular(12)))
       ..moveTo(moveToX, moveToY)
       ..relativeLineTo(_padding / 2, -_padding)
       ..relativeLineTo(_padding / 2, _padding)
@@ -92,14 +90,14 @@ class MessageBorder extends ShapeBorder {
 
     if (pointerPosition == PointerPosition.left) {
       moveToX = rect.bottomLeft.dx;
-      moveToY = rect.bottomLeft.dy - _padding - _padding / 3;
+      moveToY = rect.bottomLeft.dy - _padding - _padding;
     } else if (pointerPosition == PointerPosition.right) {
       moveToX = rect.topLeft.dx;
-      moveToY = rect.topLeft.dy + _padding / 3;
+      moveToY = rect.topLeft.dy + _padding;
     }
 
     return Path()
-      ..addRect(rect)
+      ..addRRect(RRect.fromRectAndRadius(rect, Radius.circular(12)))
       ..moveTo(moveToX, moveToY)
       ..relativeLineTo(-_padding, _padding / 2)
       ..relativeLineTo(_padding, _padding / 2)
@@ -112,14 +110,14 @@ class MessageBorder extends ShapeBorder {
 
     if (pointerPosition == PointerPosition.left) {
       moveToX = rect.topRight.dx;
-      moveToY = rect.topRight.dy + _padding / 3;
+      moveToY = rect.topRight.dy + _padding / 2;
     } else if (pointerPosition == PointerPosition.right) {
       moveToX = rect.bottomRight.dx;
-      moveToY = rect.bottomRight.dy - _padding - _padding / 3;
+      moveToY = rect.bottomRight.dy - _padding - _padding / 2;
     }
 
     return Path()
-      ..addRect(rect)
+      ..addRRect(RRect.fromRectAndRadius(rect, Radius.circular(12)))
       ..moveTo(moveToX, moveToY)
       ..relativeLineTo(_padding, _padding / 2)
       ..relativeLineTo(-_padding, _padding / 2)
