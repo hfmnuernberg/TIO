@@ -6,7 +6,7 @@ enum BeatButtonType { accented, unaccented, muted }
 
 List<BeatButtonType> getBeatButtonsFromBeats(List<BeatType> beats) {
   List<BeatButtonType> beatTypes = List.empty(growable: true);
-  for (var beatType in beats) {
+  for (final beatType in beats) {
     switch (beatType) {
       case BeatType.Accented:
         beatTypes.add(BeatButtonType.accented);
@@ -21,7 +21,7 @@ List<BeatButtonType> getBeatButtonsFromBeats(List<BeatType> beats) {
 
 List<BeatButtonType> getBeatButtonsFromBeatsPoly(List<BeatTypePoly> beatsPoly) {
   List<BeatButtonType> beatTypes = List.empty(growable: true);
-  for (var beatTypePoly in beatsPoly) {
+  for (final beatTypePoly in beatsPoly) {
     switch (beatTypePoly) {
       case BeatTypePoly.Accented:
         beatTypes.add(BeatButtonType.accented);

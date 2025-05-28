@@ -535,7 +535,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   List<Widget> _buildMarkers() {
     List<Widget> markers = List.empty(growable: true);
 
-    for (double pos in _mediaPlayerBlock.markerPositions) {
+    for (final pos in _mediaPlayerBlock.markerPositions) {
       var marker = Positioned(
         left: TIOMusicParams.edgeInset + ((pos * _waveFormWidth) - (MediaPlayerParams.markerIconSize / 2)),
         top: 4,
