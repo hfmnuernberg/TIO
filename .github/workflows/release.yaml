@@ -2,11 +2,6 @@ name: Release
 
 on:
   workflow_dispatch:
-    inputs:
-      ref:
-        description: 'Commit SHA or ref to create version for (optional, defaults to HEAD)'
-        required: false
-        type: string
 
 permissions:
   contents: write
@@ -17,20 +12,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Set fallback ref
-      id: ref
-      run: |
-        REF_INPUT="${{ github.event.inputs.ref }}"
-        if [[ -z "$REF_INPUT" ]]; then
-          echo "ref=HEAD" >> "$GITHUB_OUTPUT"
-        else
-          echo "ref=$REF_INPUT" >> "$GITHUB_OUTPUT"
-        fi
-
     - name: Checkout repository
       uses: actions/checkout@v4.2.2
       with:
-        ref: ${{ steps.ref.outputs.ref }}
+        ref: main
         fetch-depth: 0
 
     - name: Make scripts executable
