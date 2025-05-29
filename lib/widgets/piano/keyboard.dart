@@ -29,7 +29,6 @@ class Keyboard extends StatefulWidget {
 class _KeyboardState extends State<Keyboard> {
   Size? keyboardSize;
   final Map<int, Rect> keyBoundaries = {};
-  final Set<int> pressedKeys = {};
   final Map<int, int> pointersWithLastNote = {};
 
   @override
@@ -43,43 +42,34 @@ class _KeyboardState extends State<Keyboard> {
     updateKeyBoundaries(keyWidth, keyHeight);
   }
 
-  void handlePlay(int note) {
-    pressedKeys.add(note);
-    widget.onPlay(note);
-    setState(() {});
-  }
+  void handlePointerDown(PointerEvent event) => handlePlay(event.pointer, findPlayedKey(event.localPosition)?.note);
 
-  void handlePointerUp(PointerEvent event) {
-    final note = findPlayedKey(event.localPosition)?.note;
-    pointersWithLastNote.remove(event.pointer);
+  void handlePointerMove(PointerEvent event) => handlePlay(event.pointer, findPlayedKey(event.localPosition)?.note);
 
-    if (note == null) return setState(() {});
+  void handlePointerUp(PointerEvent event) => handleRelease(event.pointer, findPlayedKey(event.localPosition)?.note);
 
-    pressedKeys.remove(note);
-    widget.onRelease(note);
-    setState(() {});
-  }
+  void handlePointerCancel(PointerEvent event) =>
+      handleRelease(event.pointer, findPlayedKey(event.localPosition)?.note);
 
-  void handlePointerMove(PointerEvent event) {
-    final note = findPlayedKey(event.localPosition)?.note;
-
-    final lastNote = pointersWithLastNote[event.pointer];
+  void handlePlay(int pointer, int? note) {
+    final lastNote = pointersWithLastNote[pointer];
     final noOfPointersPlayingLastNote = pointersWithLastNote.values.where((note) => note == lastNote).length;
     if (lastNote != null && lastNote != note && noOfPointersPlayingLastNote <= 1) widget.onRelease(lastNote);
 
     if (note == null) return;
 
     final isPlayedByOtherPointer = pointersWithLastNote.values.contains(note);
-    pointersWithLastNote[event.pointer] = note;
-
-    if (pressedKeys.contains(note)) {
-      pressedKeys.remove(note);
-      return setState(() {});
-    }
+    pointersWithLastNote[pointer] = note;
 
     if (lastNote != note && !isPlayedByOtherPointer) widget.onPlay(note);
 
     setState(() {});
+  }
+
+  void handleRelease(int pointer, int? note) {
+    pointersWithLastNote.remove(pointer);
+    setState(() {});
+    if (note != null) widget.onRelease(note);
   }
 
   bool isPlayed(int note) => pointersWithLastNote.values.contains(note);
@@ -128,8 +118,10 @@ class _KeyboardState extends State<Keyboard> {
               }
 
               return Listener(
+                onPointerDown: handlePointerDown,
                 onPointerMove: handlePointerMove,
                 onPointerUp: handlePointerUp,
+                onPointerCancel: handlePointerCancel,
                 child: Stack(
                   children: [
                     Row(
@@ -144,7 +136,6 @@ class _KeyboardState extends State<Keyboard> {
                                   borderWidth: 4,
                                   semanticsLabel: key.name,
                                   label: key.note % PianoParams.numberOfWhiteKeys == 0 ? key.name : null,
-                                  onPlay: () => handlePlay(key.note),
                                 ),
                               )
                               .toList(),
@@ -163,7 +154,6 @@ class _KeyboardState extends State<Keyboard> {
                                     height: keyHeight / 2,
                                     borderWidth: 4,
                                     semanticsLabel: key.name,
-                                    onPlay: () => handlePlay(key.note),
                                   ),
                         ),
                         SizedBox(width: keyWidth / 2),
