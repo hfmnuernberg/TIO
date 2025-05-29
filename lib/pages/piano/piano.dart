@@ -27,7 +27,7 @@ import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
-import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
+import 'package:tiomusic/widgets/input/flat_edit_text_dialog.dart';
 import 'package:tiomusic/widgets/piano/keyboard.dart';
 import 'package:tiomusic/widgets/piano/piano_navigation_bar.dart';
 import 'package:tiomusic/widgets/piano/piano_tool_navigation_bar.dart';
@@ -53,8 +53,6 @@ class _PianoState extends State<Piano> {
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
-
-  final TextEditingController _titleController = TextEditingController();
 
   final TextEditingController _newToolTitle = TextEditingController();
   final TextEditingController _newProjectTitle = TextEditingController();
@@ -86,8 +84,6 @@ class _PianoState extends State<Piano> {
 
     _pianoBlock = Provider.of<ProjectBlock>(context, listen: false) as PianoBlock;
     _pianoBlock.timeLastModified = getCurrentDateTime();
-
-    _titleController.text = _pianoBlock.title;
 
     var projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
     projectLibrary.visitedToolsCounter++;
@@ -278,9 +274,9 @@ class _PianoState extends State<Piano> {
               Expanded(
                 child: GestureDetector(
                   onTap: () async {
-                    final newTitle = await showEditTextDialog(
+                    final newTitle = await showFlatEditTextDialog(
                       context: context,
-                      label: l10n.piano,
+                      label: l10n.toolNewTitle,
                       value: _pianoBlock.title,
                     );
                     if (newTitle == null) return;

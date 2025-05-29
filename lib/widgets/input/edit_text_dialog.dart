@@ -75,26 +75,22 @@ class EditTextDialog extends StatelessWidget {
           onSubmitted: (_) => handleSubmit(),
         ),
       ),
+      actionsAlignment: MainAxisAlignment.spaceAround,
       actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            TextButton(onPressed: onCancel, child: Text(context.l10n.commonCancel)),
-            ValueListenableBuilder<TextEditingValue>(
-              valueListenable: controller,
-              builder: (context, textValue, _) {
-                final isValid = textValue.text.isNotEmpty;
-                final isDirty = textValue.text != value;
-                final isSubmitEnabled = isValid && (isNew || isDirty);
+        TextButton(onPressed: onCancel, child: Text(context.l10n.commonCancel)),
+        ValueListenableBuilder<TextEditingValue>(
+          valueListenable: controller,
+          builder: (context, textValue, _) {
+            final isValid = textValue.text.isNotEmpty;
+            final isDirty = textValue.text != value;
+            final isSubmitEnabled = isValid && (isNew || isDirty);
 
-                return TIOFlatButton(
-                  onPressed: isSubmitEnabled ? handleSubmit : null,
-                  text: context.l10n.commonSubmit,
-                  boldText: true,
-                );
-              },
-            ),
-          ],
+            return TIOFlatButton(
+              onPressed: isSubmitEnabled ? handleSubmit : null,
+              text: context.l10n.commonSubmit,
+              boldText: true,
+            );
+          },
         ),
       ],
     );
