@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
+import 'package:tiomusic/widgets/input/flat_edit_text_dialog.dart';
 
 import '../../utils/action_utils.dart';
 import '../../utils/render_utils.dart';
@@ -37,7 +37,7 @@ class _TestWrapperState extends State<TestWrapper> {
   }
 
   Future<void> handleOpenDialog() async {
-    final newText = await showEditTextDialog(
+    final newText = await showFlatEditTextDialog(
       context: context,
       label: widget.label,
       value: widget.value,
@@ -60,7 +60,7 @@ class _TestWrapperState extends State<TestWrapper> {
 void main() {
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
-  group('EditTextDialog', () {
+  group('FlatEditTextDialog', () {
     testWidgets('shows new title when title change is submitted', (tester) async {
       await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
       expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'Old title');
