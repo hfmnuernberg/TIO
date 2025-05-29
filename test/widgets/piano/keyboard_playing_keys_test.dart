@@ -177,5 +177,26 @@ void main() {
         pianoMock.verifyNoKeysPlayed();
       });
     });
+
+    group('playing more keys than supported', () {
+      testWidgets('cancels keys', (tester) async {
+        final pianoMock = await tester.renderKeyboard();
+
+        final gesture1 = await tester.startGesture(blackKey1);
+        final gesture2 = await tester.startGesture(blackKey2);
+
+        pianoMock.verifyKeyPlayed(cSharp4);
+        pianoMock.verifyKeyPlayed(dSharp4);
+
+        await gesture1.cancel();
+        await gesture2.cancel();
+
+        pianoMock.verifyKeyReleased(cSharp4);
+        pianoMock.verifyKeyReleased(dSharp4);
+
+        pianoMock.verifyNoKeysReleased();
+        pianoMock.verifyNoKeysPlayed();
+      });
+    });
   });
 }

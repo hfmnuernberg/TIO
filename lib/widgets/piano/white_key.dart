@@ -12,8 +12,6 @@ class WhiteKey extends StatelessWidget {
   final String semanticsLabel;
   final String? label;
 
-  final Function() onPlay;
-
   const WhiteKey({
     super.key,
     required this.isPlayed,
@@ -22,7 +20,6 @@ class WhiteKey extends StatelessWidget {
     required this.borderWidth,
     required this.semanticsLabel,
     this.label,
-    required this.onPlay,
   });
 
   @override
@@ -42,7 +39,6 @@ class WhiteKey extends StatelessWidget {
               excludeFromSemantics: true,
               splashColor: _playedColor,
               highlightColor: _playedColor,
-              onTapDown: (_) => onPlay(),
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child:

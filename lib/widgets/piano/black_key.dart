@@ -14,8 +14,6 @@ class BlackKey extends StatelessWidget {
   final double borderWidth;
   final String semanticsLabel;
 
-  final Function() onPlay;
-
   const BlackKey({
     super.key,
     required this.isPlayed,
@@ -23,7 +21,6 @@ class BlackKey extends StatelessWidget {
     required this.height,
     required this.borderWidth,
     required this.semanticsLabel,
-    required this.onPlay,
   });
 
   @override
@@ -46,7 +43,6 @@ class BlackKey extends StatelessWidget {
               excludeFromSemantics: true,
               splashColor: _playedColor,
               highlightColor: _playedColor,
-              onTapDown: (_) => onPlay(),
               child: Ink(
                 decoration: BoxDecoration(
                   color: color,

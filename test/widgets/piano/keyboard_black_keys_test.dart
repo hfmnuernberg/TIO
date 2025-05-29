@@ -8,7 +8,7 @@ void main() {
       testWidgets('renders no sharp on first half of first white key', (tester) async {
         final pianoMock = await tester.renderKeyboard();
 
-        await tester.pressAndReleaseBlackKeyAt(5);
+        await tester.pressAndReleaseBlackKeyAt(4);
         pianoMock.verifyKeyPlayed(c4);
       });
 
@@ -125,7 +125,7 @@ void main() {
       testWidgets('renders no sharp on first half of first white key', (tester) async {
         final pianoMock = await tester.renderKeyboard(d4);
 
-        await tester.pressAndReleaseBlackKeyAt(5);
+        await tester.pressAndReleaseBlackKeyAt(4);
         pianoMock.verifyKeyPlayed(d4);
       });
 
@@ -211,7 +211,7 @@ void main() {
       testWidgets('renders no sharp on first half of first white key', (tester) async {
         final pianoMock = await tester.renderKeyboard(f4);
 
-        await tester.pressAndReleaseBlackKeyAt(5);
+        await tester.pressAndReleaseBlackKeyAt(4);
         pianoMock.verifyKeyPlayed(f4);
       });
 
