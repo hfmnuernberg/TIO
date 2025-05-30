@@ -4,23 +4,6 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 
-const List<RhythmPresetKey> wheelNoteKeys = RhythmPresetKey.values;
-
-class NoteIconWidget extends StatelessWidget {
-  final RhythmPresetKey presetKey;
-
-  const NoteIconWidget({super.key, required this.presetKey});
-
-  @override
-  Widget build(BuildContext context) {
-    return SvgPicture.asset(
-      'assets/metronome_presets/${presetKey.assetName}.svg',
-      height: 50,
-      colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn),
-    );
-  }
-}
-
 class RhythmPresetWheel extends StatefulWidget {
   final void Function(RhythmPresetKey key) onPresetSelected;
   final RhythmPresetKey presetKey;
@@ -37,7 +20,7 @@ class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
   @override
   void initState() {
     super.initState();
-    final currentIndex = wheelNoteKeys.indexOf(widget.presetKey);
+    final currentIndex = RhythmPresetKey.values.indexOf(widget.presetKey);
     _wheelController = FixedExtentScrollController(initialItem: currentIndex == -1 ? 0 : currentIndex);
   }
 
@@ -49,7 +32,7 @@ class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
 
   void handleSelectPreset(int index) {
     _wheelController.animateToItem(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
-    widget.onPresetSelected(wheelNoteKeys[index]);
+    widget.onPresetSelected(RhythmPresetKey.values[index]);
   }
 
   @override
@@ -74,9 +57,9 @@ class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
                   overAndUnderCenterOpacity: 0.6,
                   onSelectedItemChanged: handleSelectPreset,
                   childDelegate: ListWheelChildBuilderDelegate(
-                    childCount: wheelNoteKeys.length,
+                    childCount: RhythmPresetKey.values.length,
                     builder: (context, index) {
-                      final key = wheelNoteKeys[index];
+                      final key = RhythmPresetKey.values[index];
                       return RotatedBox(
                         quarterTurns: 1,
                         child: GestureDetector(
@@ -96,6 +79,21 @@ class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
           child: Text(context.l10n.metronomeSubdivision, style: const TextStyle(color: ColorTheme.primary)),
         ),
       ],
+    );
+  }
+}
+
+class NoteIconWidget extends StatelessWidget {
+  final RhythmPresetKey presetKey;
+
+  const NoteIconWidget({super.key, required this.presetKey});
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      'assets/metronome_presets/${presetKey.assetName}.svg',
+      height: 50,
+      colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn),
     );
   }
 }
