@@ -165,7 +165,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
 
         Expanded(child: SizedBox()),
 
-        RhythmPresetWheel(presetKey: presetKey, onPresetSelected: handlePresetSelected),
+        RhythmPresetWheel(presetKey: presetKey, onSelect: handlePresetSelected),
       ],
     );
   }

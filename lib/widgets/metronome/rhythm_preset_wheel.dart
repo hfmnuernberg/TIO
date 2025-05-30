@@ -5,34 +5,34 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 
 class RhythmPresetWheel extends StatefulWidget {
-  final void Function(RhythmPresetKey key) onPresetSelected;
   final RhythmPresetKey presetKey;
+  final void Function(RhythmPresetKey key) onSelect;
 
-  const RhythmPresetWheel({super.key, required this.presetKey, required this.onPresetSelected});
+  const RhythmPresetWheel({super.key, required this.presetKey, required this.onSelect});
 
   @override
   State<RhythmPresetWheel> createState() => _RhythmPresetWheelState();
 }
 
 class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
-  late final FixedExtentScrollController _wheelController;
+  late final FixedExtentScrollController wheelController;
 
   @override
   void initState() {
     super.initState();
     final currentIndex = RhythmPresetKey.values.indexOf(widget.presetKey);
-    _wheelController = FixedExtentScrollController(initialItem: currentIndex == -1 ? 0 : currentIndex);
+    wheelController = FixedExtentScrollController(initialItem: currentIndex == -1 ? 0 : currentIndex);
   }
 
   @override
   void dispose() {
-    _wheelController.dispose();
+    wheelController.dispose();
     super.dispose();
   }
 
   void handleSelectPreset(int index) {
-    _wheelController.animateToItem(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
-    widget.onPresetSelected(RhythmPresetKey.values[index]);
+    wheelController.animateToItem(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+    widget.onSelect(RhythmPresetKey.values[index]);
   }
 
   @override
@@ -50,7 +50,7 @@ class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
               child: RotatedBox(
                 quarterTurns: -1,
                 child: ListWheelScrollView.useDelegate(
-                  controller: _wheelController,
+                  controller: wheelController,
                   itemExtent: 70,
                   perspective: 0.008,
                   physics: const FixedExtentScrollPhysics(),

@@ -24,7 +24,7 @@ class _TestWrapperState extends State<TestWrapper> {
     presetKey = widget.presetKey;
   }
 
-  Future<void> handlePresetSelected(RhythmPresetKey key) async {
+  Future<void> handlePresetSelect(RhythmPresetKey key) async {
     setState(() => presetKey = key);
   }
 
@@ -36,7 +36,7 @@ class _TestWrapperState extends State<TestWrapper> {
           label: 'Preset key',
           value: presetKey.assetName,
           excludeSemantics: true,
-          child: RhythmPresetWheel(presetKey: presetKey, onPresetSelected: handlePresetSelected),
+          child: RhythmPresetWheel(presetKey: presetKey, onSelect: handlePresetSelect),
         ),
       ],
     );
