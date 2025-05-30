@@ -11,4 +11,10 @@ extension WidgetTesterActionxtension on WidgetTester {
     await enterText(finder, text);
     await pumpAndSettle();
   }
+
+  Future<void> dragFromCenterToTargetAndSettle(FinderBase<Element> finder, Offset to) async {
+    final Offset widgetCenter = getCenter(finder);
+    await dragFrom(widgetCenter, to);
+    await pumpAndSettle();
+  }
 }

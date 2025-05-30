@@ -48,7 +48,7 @@ class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
             decoration: BoxDecoration(color: ColorTheme.surface, borderRadius: BorderRadius.circular(16)),
             child: Semantics(
               label: context.l10n.metronomeSubdivision,
-              value: widget.presetKey.assetName,
+              value: widget.presetKey.getLabel(context.l10n),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: RotatedBox(
