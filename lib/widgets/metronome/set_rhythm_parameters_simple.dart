@@ -14,6 +14,7 @@ import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset_wheel.dart';
+import 'package:tiomusic/widgets/metronome/rhythm_utils.dart';
 
 class SetRhythmParametersSimple extends StatefulWidget {
   final String currentNoteKey;
@@ -106,7 +107,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
   }
 
   void handleResetRhythmWhenNotMatchingPreset() {
-    final matchingKey = findMatchingPresetKey();
+    final matchingKey = findMatchingPresetKey(beats: beats, polyBeats: polyBeats, noteKey: noteKey);
 
     if (matchingKey != null) {
       presetKey = matchingKey;
@@ -117,15 +118,6 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
       presetKey = RhythmPresetKey.values.first;
       beatCount = beats.length;
     }
-  }
-
-  RhythmPresetKey? findMatchingPresetKey() {
-    for (final key in RhythmPresetKey.values) {
-      if (RhythmPreset.fromKey(key) == RhythmPreset(beats: beats, polyBeats: polyBeats, noteKey: noteKey)) {
-        return key;
-      }
-    }
-    return null;
   }
 
   void applyPreset(RhythmPresetKey key) {

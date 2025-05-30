@@ -20,6 +20,7 @@ import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
+import 'package:tiomusic/widgets/metronome/rhythm_utils.dart';
 import 'package:tiomusic/widgets/metronome/set_rhythm_parameters_simple.dart';
 import 'package:tiomusic/pages/metronome/setting_bpm.dart';
 import 'package:tiomusic/pages/metronome/setting_metronome_sound.dart';
@@ -68,8 +69,10 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   final List<int> lastRenderTimes = List.empty(growable: true);
   int _avgRenderTimeInMs = 0;
 
+  RhythmPresetKey? presetKey;
   bool isSimpleModeOn = true;
-  bool forceFallbackToPreset = false;
+  bool isForcedToFallbackToPreset = false;
+
   bool isStarted = false;
   bool sound = true;
   bool blink = MetronomeParams.defaultVisualMetronome;
@@ -107,6 +110,12 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
     metronomeBlock.timeLastModified = getCurrentDateTime();
     isSimpleModeOn = metronomeBlock.isSimpleModeOn;
+
+    presetKey = findMatchingPresetKey(
+      beats: metronomeBlock.rhythmGroups[0].beats,
+      polyBeats: metronomeBlock.rhythmGroups[0].polyBeats,
+      noteKey: metronomeBlock.rhythmGroups[0].noteKey,
+    );
 
     // only allow portrait mode for this tool
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -157,7 +166,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   void _toggleSimpleMode() {
     setState(() {
-      forceFallbackToPreset = !isSimpleModeOn;
+      isForcedToFallbackToPreset = !isSimpleModeOn;
       isSimpleModeOn = !isSimpleModeOn;
       metronomeBlock.isSimpleModeOn = isSimpleModeOn;
     });
@@ -327,7 +336,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     group.beats = List.from(newBeats);
     group.polyBeats = List.from(newPolyBeats);
     group.noteKey = newNoteKey;
-    group.presetKey = newPresetKey;
     group.beatLen = NoteHandler.getBeatLength(newNoteKey);
 
     _clearAndRebuildRhythmSegments(false);
@@ -335,7 +343,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       bars: getRhythmAsMetroBar(metronomeBlock.rhythmGroups),
       bars2: getRhythmAsMetroBar(metronomeBlock.rhythmGroups2),
     );
-    setState(() {});
+    setState(() => presetKey = newPresetKey);
   }
 
   void _deleteRhythmSegment(int index, bool isSecond) async {
@@ -698,7 +706,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                       currentPolyBeats: metronomeBlock.rhythmGroups[0].polyBeats,
                       rhythmGroups: metronomeBlock.rhythmGroups,
                       metronomeBlock: metronomeBlock,
-                      forcePresetFallback: forceFallbackToPreset,
+                      forcePresetFallback: isForcedToFallbackToPreset,
                       onUpdateRhythm: _handleUpdateRhythm,
                     ),
                   )
