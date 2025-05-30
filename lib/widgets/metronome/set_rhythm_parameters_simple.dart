@@ -22,8 +22,7 @@ class SetRhythmParametersSimple extends StatefulWidget {
   final List<BeatTypePoly> currentPolyBeats;
   final List<RhythmGroup> rhythmGroups;
   final MetronomeBlock metronomeBlock;
-  final void Function(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey, RhythmPresetKey presetKey)
-  onUpdateRhythm;
+  final void Function(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey) onUpdateRhythm;
 
   final bool forcePresetFallback;
 
@@ -62,7 +61,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
     handleResetRhythmWhenNotMatchingPreset();
   }
 
-  void notifyParent() => widget.onUpdateRhythm(List.from(beats), List.from(polyBeats), noteKey, presetKey);
+  void notifyParent() => widget.onUpdateRhythm(List.from(beats), List.from(polyBeats), noteKey);
 
   void refreshRhythm() {
     final bars = getRhythmAsMetroBar([RhythmGroup('', beats, polyBeats, noteKey)]);

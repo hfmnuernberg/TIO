@@ -19,7 +19,6 @@ import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
-import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_utils.dart';
 import 'package:tiomusic/widgets/metronome/set_rhythm_parameters_simple.dart';
 import 'package:tiomusic/pages/metronome/setting_bpm.dart';
@@ -69,7 +68,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   final List<int> lastRenderTimes = List.empty(growable: true);
   int _avgRenderTimeInMs = 0;
 
-  RhythmPresetKey? presetKey;
   bool isSimpleModeOn = true;
   bool isForcedToFallbackToPreset = false;
 
@@ -109,13 +107,14 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
     metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
     metronomeBlock.timeLastModified = getCurrentDateTime();
-    isSimpleModeOn = metronomeBlock.isSimpleModeOn;
-
-    presetKey = findMatchingPresetKey(
-      beats: metronomeBlock.rhythmGroups[0].beats,
-      polyBeats: metronomeBlock.rhythmGroups[0].polyBeats,
-      noteKey: metronomeBlock.rhythmGroups[0].noteKey,
-    );
+    isSimpleModeOn =
+        findMatchingPresetKey(
+              beats: metronomeBlock.rhythmGroups[0].beats,
+              polyBeats: metronomeBlock.rhythmGroups[0].polyBeats,
+              noteKey: metronomeBlock.rhythmGroups[0].noteKey,
+            ) !=
+            null &&
+        metronomeBlock.rhythmGroups.length == 1;
 
     // only allow portrait mode for this tool
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -168,7 +167,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     setState(() {
       isForcedToFallbackToPreset = !isSimpleModeOn;
       isSimpleModeOn = !isSimpleModeOn;
-      metronomeBlock.isSimpleModeOn = isSimpleModeOn;
     });
   }
 
@@ -326,12 +324,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     }
   }
 
-  void _handleUpdateRhythm(
-    List<BeatType> newBeats,
-    List<BeatTypePoly> newPolyBeats,
-    String newNoteKey,
-    RhythmPresetKey newPresetKey,
-  ) {
+  void _handleUpdateRhythm(List<BeatType> newBeats, List<BeatTypePoly> newPolyBeats, String newNoteKey) {
     final group = metronomeBlock.rhythmGroups[0];
     group.beats = List.from(newBeats);
     group.polyBeats = List.from(newPolyBeats);
@@ -343,7 +336,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       bars: getRhythmAsMetroBar(metronomeBlock.rhythmGroups),
       bars2: getRhythmAsMetroBar(metronomeBlock.rhythmGroups2),
     );
-    setState(() => presetKey = newPresetKey);
+    setState(() {});
   }
 
   void _deleteRhythmSegment(int index, bool isSecond) async {

@@ -34,7 +34,6 @@ class MetronomeBlock extends ProjectBlock {
     polyAccSound2,
     polyUnaccSound2,
     _volume,
-    isSimpleModeOn,
   ];
 
   @override
@@ -87,9 +86,6 @@ class MetronomeBlock extends ProjectBlock {
     _volume = newValue;
     notifyListeners();
   }
-
-  @JsonKey(defaultValue: false)
-  bool isSimpleModeOn = true;
 
   @JsonKey(defaultValue: MetronomeParams.defaultBPM)
   late int bpm;
@@ -188,9 +184,8 @@ class MetronomeBlock extends ProjectBlock {
     this.polyAccSound2,
     this.polyUnaccSound2,
     DateTime timeLastModified,
-    double volume, {
-    this.isSimpleModeOn = true,
-  }) {
+    double volume,
+  ) {
     _timeLastModified = timeLastModified;
     _title = title;
     _rhythmGroups = rhythmGroups;
@@ -225,7 +220,6 @@ class MetronomeBlock extends ProjectBlock {
     polyAccSound2 = defaultMetronomePolyAccSound2;
     polyUnaccSound2 = defaultMetronomePolyUnaccSound2;
     _id = ProjectBlock.createNewId();
-    isSimpleModeOn = true;
   }
 
   MetronomeBlock.withTitle(String newTitle) {
@@ -253,7 +247,6 @@ class MetronomeBlock extends ProjectBlock {
     polyAccSound2 = defaultMetronomePolyAccSound2;
     polyUnaccSound2 = defaultMetronomePolyUnaccSound2;
     _id = ProjectBlock.createNewId();
-    isSimpleModeOn = true;
   }
 
   // this method is for copying the class.
@@ -278,7 +271,6 @@ class MetronomeBlock extends ProjectBlock {
       blockToCopy.polyUnaccSound2,
       blockToCopy.timeLastModified,
       blockToCopy.volume,
-      isSimpleModeOn: blockToCopy.isSimpleModeOn,
     );
   }
 
