@@ -46,7 +46,7 @@ class _TestWrapperState extends State<TestWrapper> {
 void main() {
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
-  group('rhythm preset wheel', () {
+  group('RhythmPresetWheel', () {
     testWidgets('shows given preset key when preset is given', (tester) async {
       await tester.renderWidget(TestWrapper(presetKey: RhythmPresetKey.oneFourth));
 
