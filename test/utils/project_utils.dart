@@ -16,11 +16,11 @@ extension WidgetTesterProjectExtension on WidgetTester {
     await tapAndSettle(find.bySemanticsLabel('Back'));
   }
 
-  Future<void> createTextToolInProject(String content) async {
+  Future<void> createTextToolInProject(String title) async {
     await tapAndSettle(find.bySemanticsLabel('Text'));
-    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Text 1');
+    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), title);
     await tapAndSettle(find.bySemanticsLabel('Submit'));
-    await enterTextAndSettle(find.bySemanticsLabel('Text field'), content);
+    await enterTextAndSettle(find.bySemanticsLabel('Text field'), '$title text content');
     await tapAndSettle(find.bySemanticsLabel('Back'));
   }
 

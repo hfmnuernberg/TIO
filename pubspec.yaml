@@ -69,6 +69,7 @@ flutter:
   assets:
   - assets/icons/
   - assets/images/
+  - assets/metronome_presets/
   - assets/metronome_sounds/
   - assets/midi_sounds/
   - assets/notes/

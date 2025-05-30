@@ -146,10 +146,15 @@ class English extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Mute chance';
   String get metronomeRandomMuteProbability => 'Probability in %';
+  String get metronomeRhythmPresetFourSixteenth => 'Four-sixteenth note';
+  String get metronomeRhythmPresetOneFourth => 'One-fourth note';
+  String get metronomeRhythmPresetTwoEighth => 'Two-eighth note';
   String get metronomeSetBpm => 'Set BPM';
   String get metronomeSetRandomMute => 'Set random mute';
   String get metronomeSetSoundsPrimary => 'Set metronome sounds';
   String get metronomeSetSoundsSecondary => 'Set 2nd metronome sounds';
+  String get metronomeSimpleModeOff => 'Switch to advanced mode';
+  String get metronomeSimpleModeOn => 'Switch to simple mode';
   String get metronomeSound => 'Sound';
   String get metronomeSoundMain => 'Main';
   String get metronomeSoundPoly => 'Poly sound';
@@ -171,6 +176,7 @@ class English extends AppLocalizations {
   String get metronomeSoundTypeRim => 'rim';
   String get metronomeSoundTypeTick => 'tick';
   String get metronomeSoundTypeWood => 'wood';
+  String get metronomeSubdivision => 'Subdivision';
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome.';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings.';
   String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted.';

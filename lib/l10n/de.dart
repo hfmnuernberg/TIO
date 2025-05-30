@@ -147,10 +147,15 @@ class German extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Aussetzen';
   String get metronomeRandomMuteProbability => 'Wahrscheinlichkeit in %';
+  String get metronomeRhythmPresetFourSixteenth => 'Vier-sechzehntel Takt';
+  String get metronomeRhythmPresetOneFourth => 'Ein-viertel Takt';
+  String get metronomeRhythmPresetTwoEighth => 'Zwei-achtel Takt';
   String get metronomeSetBpm => 'BPM einstellen';
   String get metronomeSetRandomMute => 'Random mute einstellen';
   String get metronomeSetSoundsPrimary => 'Sounds einstellen';
   String get metronomeSetSoundsSecondary => 'Sounds einstellen (Metronom 2)';
+  String get metronomeSimpleModeOff => 'Wechsel zu erweitertem Modus';
+  String get metronomeSimpleModeOn => 'Wechsel zu einfachem Modus';
   String get metronomeSound => 'Sound';
   String get metronomeSoundMain => 'Main';
   String get metronomeSoundPoly => 'Poly Sound';
@@ -172,6 +177,7 @@ class German extends AppLocalizations {
   String get metronomeSoundTypeRim => 'rim';
   String get metronomeSoundTypeTick => 'tick';
   String get metronomeSoundTypeWood => 'wood';
+  String get metronomeSubdivision => 'Unterteilung';
   String get metronomeTutorialAddNew => 'Tippe hier, um ein zweites Metronom hinzuzufügen.';
   String get metronomeTutorialAdjust => 'Tippe hier, um die Metronomeinstellungen anzupassen.';
   String get metronomeTutorialEditBeats =>
