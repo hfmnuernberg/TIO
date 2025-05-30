@@ -85,7 +85,7 @@ class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
             padding: EdgeInsets.only(top: 4),
             child: Text(context.l10n.metronomeSubdivision, style: const TextStyle(color: ColorTheme.primary)),
           ),
-        )
+        ),
       ],
     );
   }
