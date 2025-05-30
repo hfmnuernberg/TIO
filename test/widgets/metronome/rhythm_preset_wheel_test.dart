@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset_wheel.dart';
 
+import '../../utils/action_utils.dart';
 import '../../utils/render_utils.dart';
+import '../input/number_input_and_slider_dec_test.dart';
 
 class TestWrapper extends StatefulWidget {
   final RhythmPresetKey presetKey;
@@ -30,16 +33,7 @@ class _TestWrapperState extends State<TestWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Semantics(
-          label: 'Preset key',
-          value: presetKey.assetName,
-          excludeSemantics: true,
-          child: RhythmPresetWheel(presetKey: presetKey, onSelect: handlePresetSelect),
-        ),
-      ],
-    );
+    return RhythmPresetWheel(presetKey: presetKey, onSelect: handlePresetSelect);
   }
 }
 
@@ -47,10 +41,42 @@ void main() {
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   group('RhythmPresetWheel', () {
-    testWidgets('shows given preset key when preset is given', (tester) async {
+    testWidgets('shows given preset when valid preset key is given', (tester) async {
       await tester.renderWidget(TestWrapper(presetKey: RhythmPresetKey.oneFourth));
 
-      expect(tester.getSemantics(find.bySemanticsLabel('Preset key')).value, RhythmPresetKey.oneFourth.assetName);
+      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, RhythmPresetKey.oneFourth.assetName);
+    });
+
+    testWidgets('changes preset when tapping on other preset', (tester) async {
+      await tester.renderWidget(TestWrapper(presetKey: RhythmPresetKey.oneFourth));
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Two eighth note'));
+
+      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, RhythmPresetKey.twoEighth.assetName);
+    });
+
+    testWidgets('changes preset when dragging to next preset', (tester) async {
+      await tester.renderWidget(TestWrapper(presetKey: RhythmPresetKey.oneFourth));
+
+      await tester.dragFromCenterToTargetAndSettle(find.bySemanticsLabel('One quarter note'), const Offset(-70, 0));
+
+      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, RhythmPresetKey.twoEighth.assetName);
+    });
+
+    testWidgets('changes preset when dragging to previous preset', (tester) async {
+      await tester.renderWidget(TestWrapper(presetKey: RhythmPresetKey.twoEighth));
+
+      await tester.dragFromCenterToTargetAndSettle(find.bySemanticsLabel('Two eighth note'), const Offset(70, 0));
+
+      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, RhythmPresetKey.oneFourth.assetName);
+    });
+
+    testWidgets('changes preset to last preset when dragging too the end', (tester) async {
+      await tester.renderWidget(TestWrapper(presetKey: RhythmPresetKey.oneFourth));
+
+      await tester.dragFromCenterToTargetAndSettle(find.bySemanticsLabel('One quarter note'), const Offset(-140, 0));
+
+      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, RhythmPresetKey.fourSixteenth.assetName);
     });
   });
 }

@@ -147,6 +147,9 @@ class German extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Aussetzen';
   String get metronomeRandomMuteProbability => 'Wahrscheinlichkeit in %';
+  String get metronomeRhythmPresetFourSixteenth => 'Vier-Sechzehntel-Note';
+  String get metronomeRhythmPresetOneFourth => 'Eine-Viertel-Note';
+  String get metronomeRhythmPresetTwoEighth => 'Zwei-Achtel-Note';
   String get metronomeSetBpm => 'BPM einstellen';
   String get metronomeSetRandomMute => 'Random mute einstellen';
   String get metronomeSetSoundsPrimary => 'Sounds einstellen';

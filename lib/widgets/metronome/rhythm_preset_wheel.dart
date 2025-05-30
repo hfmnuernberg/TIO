@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/l10n_extensions.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 
 class RhythmPresetWheel extends StatefulWidget {
@@ -45,39 +46,46 @@ class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
             height: 78,
             width: 160,
             decoration: BoxDecoration(color: ColorTheme.surface, borderRadius: BorderRadius.circular(16)),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: RotatedBox(
-                quarterTurns: -1,
-                child: ListWheelScrollView.useDelegate(
-                  controller: wheelController,
-                  itemExtent: 70,
-                  perspective: 0.008,
-                  physics: const FixedExtentScrollPhysics(),
-                  overAndUnderCenterOpacity: 0.6,
-                  onSelectedItemChanged: handleSelectPreset,
-                  childDelegate: ListWheelChildBuilderDelegate(
-                    childCount: RhythmPresetKey.values.length,
-                    builder: (context, index) {
-                      final key = RhythmPresetKey.values[index];
-                      return RotatedBox(
-                        quarterTurns: 1,
-                        child: GestureDetector(
-                          onTap: () => handleSelectPreset(index),
-                          child: NoteIconWidget(presetKey: key),
-                        ),
-                      );
-                    },
+            child: Semantics(
+              label: context.l10n.metronomeSubdivision,
+              value: widget.presetKey.assetName,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: RotatedBox(
+                  quarterTurns: -1,
+                  child: ListWheelScrollView.useDelegate(
+                    controller: wheelController,
+                    itemExtent: 70,
+                    perspective: 0.008,
+                    physics: const FixedExtentScrollPhysics(),
+                    overAndUnderCenterOpacity: 0.6,
+                    onSelectedItemChanged: handleSelectPreset,
+                    childDelegate: ListWheelChildBuilderDelegate(
+                      childCount: RhythmPresetKey.values.length,
+                      builder: (context, index) {
+                        final key = RhythmPresetKey.values[index];
+                        return RotatedBox(
+                          quarterTurns: 1,
+                          child: GestureDetector(
+                            onTap: () => handleSelectPreset(index),
+                            child: NoteIconWidget(presetKey: key),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
             ),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.only(top: 4),
-          child: Text(context.l10n.metronomeSubdivision, style: const TextStyle(color: ColorTheme.primary)),
-        ),
+        Semantics(
+          excludeSemantics: true,
+          child: Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Text(context.l10n.metronomeSubdivision, style: const TextStyle(color: ColorTheme.primary)),
+          ),
+        )
       ],
     );
   }
@@ -90,10 +98,13 @@ class NoteIconWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SvgPicture.asset(
-      'assets/metronome_presets/${presetKey.assetName}.svg',
-      height: 50,
-      colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn),
+    return Semantics(
+      label: presetKey.getLabel(context.l10n),
+      child: SvgPicture.asset(
+        'assets/metronome_presets/${presetKey.assetName}.svg',
+        height: 50,
+        colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn),
+      ),
     );
   }
 }
