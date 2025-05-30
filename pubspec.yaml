@@ -1,12 +1,12 @@
 name: tiomusic
-description: home to your musical ideas
+description: Home to your musical ideas.
 
-publish_to: "none"
+publish_to: 'none'
 
 version: 0.0.1+1
 
 environment:
-  sdk: "3.7.0"
+  sdk: 3.7.0
 
 dependencies:
   archive: 4.0.7

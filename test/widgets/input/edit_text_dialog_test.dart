@@ -60,7 +60,7 @@ class _TestWrapperState extends State<TestWrapper> {
 void main() {
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
-  group('edit text dialog', () {
+  group('EditTextDialog', () {
     testWidgets('shows new title when title change is submitted', (tester) async {
       await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
       expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'Old title');
@@ -72,6 +72,17 @@ void main() {
 
       await tester.enterTextAndSettle(tester.withinAlert(find.bySemanticsLabel('Title input')), 'Edited title');
       await tester.tapAndSettle(tester.withinAlert(find.bySemanticsLabel('Submit')));
+
+      expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'Edited title');
+    });
+
+    testWidgets('shows new title when title change is submitted via keyboard', (tester) async {
+      await tester.renderWidget(TestWrapper(label: 'Title input', value: 'Old title'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
+
+      await tester.enterTextAndSettle(tester.withinAlert(find.bySemanticsLabel('Title input')), 'Edited title');
+      await tester.testTextInput.receiveAction(TextInputAction.done);
+      await tester.pumpAndSettle();
 
       expect(tester.getSemantics(find.bySemanticsLabel('Title display')).value, 'Edited title');
     });
