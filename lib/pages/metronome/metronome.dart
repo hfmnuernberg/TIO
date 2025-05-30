@@ -321,7 +321,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     List<BeatType> newBeats,
     List<BeatTypePoly> newPolyBeats,
     String newNoteKey,
-    RhythmPresetKey? newPresetKey,
+    RhythmPresetKey newPresetKey,
   ) {
     final group = _metronomeBlock.rhythmGroups[0];
     group.beats = List.from(newBeats);

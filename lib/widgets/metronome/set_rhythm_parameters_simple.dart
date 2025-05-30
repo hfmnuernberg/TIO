@@ -21,7 +21,7 @@ class SetRhythmParametersSimple extends StatefulWidget {
   final List<BeatTypePoly> currentPolyBeats;
   final List<RhythmGroup> rhythmGroups;
   final MetronomeBlock metronomeBlock;
-  final void Function(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey, RhythmPresetKey? presetKey)
+  final void Function(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey, RhythmPresetKey presetKey)
   onUpdateRhythm;
 
   final bool forcePresetFallback;
@@ -48,7 +48,7 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
   final List<BeatType> beats = List.empty(growable: true);
   final List<BeatTypePoly> polyBeats = List.empty(growable: true);
   late String noteKey;
-  RhythmPresetKey? presetKey;
+  late RhythmPresetKey presetKey;
 
   @override
   void initState() {
@@ -112,15 +112,15 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
       presetKey = matchingKey;
       beatCount = beats.length;
     } else if (widget.forcePresetFallback) {
-      applyPreset(wheelNoteKeys.first);
+      applyPreset(RhythmPresetKey.values.first);
     } else {
-      presetKey = wheelNoteKeys.first;
+      presetKey = RhythmPresetKey.values.first;
       beatCount = beats.length;
     }
   }
 
   RhythmPresetKey? findMatchingPresetKey() {
-    for (final key in wheelNoteKeys) {
+    for (final key in RhythmPresetKey.values) {
       if (RhythmPreset.fromKey(key) == RhythmPreset(beats: beats, polyBeats: polyBeats, noteKey: noteKey)) {
         return key;
       }

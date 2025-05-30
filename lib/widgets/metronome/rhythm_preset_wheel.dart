@@ -23,7 +23,7 @@ class NoteIconWidget extends StatelessWidget {
 
 class RhythmPresetWheel extends StatefulWidget {
   final void Function(RhythmPresetKey key) onPresetSelected;
-  final RhythmPresetKey? presetKey;
+  final RhythmPresetKey presetKey;
 
   const RhythmPresetWheel({super.key, required this.presetKey, required this.onPresetSelected});
 
@@ -37,7 +37,7 @@ class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
   @override
   void initState() {
     super.initState();
-    final currentIndex = widget.presetKey == null ? 0 : wheelNoteKeys.indexOf(widget.presetKey!);
+    final currentIndex = wheelNoteKeys.indexOf(widget.presetKey);
     _wheelController = FixedExtentScrollController(initialItem: currentIndex == -1 ? 0 : currentIndex);
   }
 

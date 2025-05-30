@@ -7,7 +7,7 @@ import 'package:tiomusic/widgets/metronome/rhythm_preset_wheel.dart';
 import '../../utils/render_utils.dart';
 
 class TestWrapper extends StatefulWidget {
-  final RhythmPresetKey? presetKey;
+  final RhythmPresetKey presetKey;
 
   const TestWrapper({super.key, required this.presetKey});
 
@@ -16,16 +16,16 @@ class TestWrapper extends StatefulWidget {
 }
 
 class _TestWrapperState extends State<TestWrapper> {
-  late RhythmPresetKey? _presetKey;
+  late RhythmPresetKey presetKey;
 
   @override
   void initState() {
     super.initState();
-    _presetKey = widget.presetKey;
+    presetKey = widget.presetKey;
   }
 
-  Future<void> handlePresetSelected(presetKey) async {
-    setState(() => _presetKey = presetKey ?? _presetKey);
+  Future<void> handlePresetSelected(RhythmPresetKey key) async {
+    setState(() => presetKey = key);
   }
 
   @override
@@ -34,9 +34,9 @@ class _TestWrapperState extends State<TestWrapper> {
       children: [
         Semantics(
           label: 'Preset key',
-          value: _presetKey == null ? 'No preset selected' : _presetKey!.assetName,
+          value: presetKey.assetName,
           excludeSemantics: true,
-          child: RhythmPresetWheel(presetKey: null, onPresetSelected: handlePresetSelected),
+          child: RhythmPresetWheel(presetKey: presetKey, onPresetSelected: handlePresetSelected),
         ),
       ],
     );
@@ -47,12 +47,6 @@ void main() {
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   group('rhythm preset wheel', () {
-    testWidgets('shows no preset when preset key is null', (tester) async {
-      await tester.renderWidget(TestWrapper(presetKey: null));
-
-      expect(tester.getSemantics(find.bySemanticsLabel('Preset key')).value, 'No preset selected');
-    });
-
     testWidgets('shows given preset key when preset is given', (tester) async {
       await tester.renderWidget(TestWrapper(presetKey: RhythmPresetKey.oneFourth));
 
