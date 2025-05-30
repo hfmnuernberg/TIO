@@ -146,6 +146,10 @@ class English extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Mute chance';
   String get metronomeRandomMuteProbability => 'Probability in %';
+  String get metronomeResetRhythmDialogConfirm => 'Confirm';
+  String get metronomeResetRhythmDialogHint =>
+      'ATTENTION: When switching to the simple mode, the current rhythm will be reset when not matching a rhythm preset!';
+  String get metronomeResetRhythmDialogTitle => 'Reset rhythm?';
   String get metronomeSetBpm => 'Set BPM';
   String get metronomeSetRandomMute => 'Set random mute';
   String get metronomeSetSoundsPrimary => 'Set metronome sounds';

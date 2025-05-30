@@ -147,6 +147,10 @@ class German extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Aussetzen';
   String get metronomeRandomMuteProbability => 'Wahrscheinlichkeit in %';
+  String get metronomeResetRhythmDialogConfirm => 'Bestätigen';
+  String get metronomeResetRhythmDialogHint =>
+      'ACHTUNG: Wenn du zum einfachen Modus wechselst wird dein aktueller Rhythmus zurückgesetzt, sofern er zu keinem voreingestelltem Set passt!';
+  String get metronomeResetRhythmDialogTitle => 'Rhythmus zurücksetzen?';
   String get metronomeSetBpm => 'BPM einstellen';
   String get metronomeSetRandomMute => 'Random mute einstellen';
   String get metronomeSetSoundsPrimary => 'Sounds einstellen';

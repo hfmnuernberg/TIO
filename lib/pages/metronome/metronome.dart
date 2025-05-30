@@ -19,7 +19,9 @@ import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
+import 'package:tiomusic/widgets/metronome/reset_rhythm_dialog.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
+import 'package:tiomusic/widgets/metronome/rhythm_utils.dart';
 import 'package:tiomusic/widgets/metronome/set_rhythm_parameters_simple.dart';
 import 'package:tiomusic/pages/metronome/setting_bpm.dart';
 import 'package:tiomusic/pages/metronome/setting_metronome_sound.dart';
@@ -155,7 +157,18 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     });
   }
 
-  void _toggleSimpleMode() {
+  void _toggleSimpleMode() async {
+    final matchingPresetKey = findMatchingPresetKey(
+      beats: _metronomeBlock.rhythmGroups[0].beats,
+      polyBeats: _metronomeBlock.rhythmGroups[0].polyBeats,
+      noteKey: _metronomeBlock.rhythmGroups[0].noteKey,
+    );
+
+    if (!_isSimpleModeOn && matchingPresetKey == null) {
+      final resetResponse = await showResetRhythmDialog(context: context);
+      if (!resetResponse) return;
+    }
+
     setState(() {
       _forceFallbackToPreset = !_isSimpleModeOn;
       _isSimpleModeOn = !_isSimpleModeOn;
@@ -164,9 +177,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   void handleVolumeChange(double newVolume) {
-    setState(() {
-      _deviceVolumeLevel = getVolumeLevel(newVolume);
-    });
+    setState(() => _deviceVolumeLevel = getVolumeLevel(newVolume));
   }
 
   void _createTutorial() {
