@@ -49,6 +49,19 @@ class RhythmPreset extends Equatable {
     RhythmPresetKey.fourSixteenth => fourSixteenth,
   };
 
+  static RhythmPresetKey? fromProperties({
+    required List<BeatType> beats,
+    required List<BeatTypePoly> polyBeats,
+    required String noteKey,
+  }) {
+    for (final key in RhythmPresetKey.values) {
+      if (RhythmPreset.fromKey(key) == RhythmPreset(beats: beats, polyBeats: polyBeats, noteKey: noteKey)) {
+        return key;
+      }
+    }
+    return null;
+  }
+
   @override
   List<Object> get props => [beats, polyBeats, noteKey];
 }
