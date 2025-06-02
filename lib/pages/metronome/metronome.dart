@@ -114,7 +114,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
               noteKey: metronomeBlock.rhythmGroups[0].noteKey,
             ) !=
             null &&
-        metronomeBlock.rhythmGroups.length == 1;
+        metronomeBlock.rhythmGroups.length == 1 &&
+        metronomeBlock.rhythmGroups2.isEmpty;
 
     // only allow portrait mode for this tool
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -356,7 +357,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     });
   }
 
-  void _reorderRythmSegments(int oldIndex, int newIndex, bool isSecond) async {
+  void _reorderRhythmSegments(int oldIndex, int newIndex, bool isSecond) async {
     _stopMetronome();
 
     metronomeBlock.changeRhythmOrder(
@@ -590,7 +591,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                   },
                   // Reorder rhythm segments
                   onReorder: (oldIndex, newIndex) {
-                    _reorderRythmSegments(oldIndex, newIndex, isSecondMetronome);
+                    _reorderRhythmSegments(oldIndex, newIndex, isSecondMetronome);
                   },
                 ),
                 const SizedBox(width: 4),
