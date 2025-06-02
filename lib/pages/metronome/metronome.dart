@@ -168,6 +168,20 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     setState(() {
       isForcedToFallbackToPreset = !isSimpleModeOn;
       isSimpleModeOn = !isSimpleModeOn;
+
+      if (isSimpleModeOn) {
+        final rhythmGroup = metronomeBlock.rhythmGroups[0];
+        final presetKey =
+            RhythmPreset.fromProperties(
+              beats: rhythmGroup.beats,
+              polyBeats: rhythmGroup.polyBeats,
+              noteKey: rhythmGroup.noteKey,
+            ) ??
+            RhythmPresetKey.oneFourth;
+        final preset = RhythmPreset.fromKey(presetKey);
+
+        _handleUpdateRhythm(preset.beats, preset.polyBeats, preset.noteKey);
+      }
     });
   }
 
@@ -325,19 +339,18 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     }
   }
 
-  void _handleUpdateRhythm(List<BeatType> newBeats, List<BeatTypePoly> newPolyBeats, String newNoteKey) {
+  void _handleUpdateRhythm(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey) async {
     final group = metronomeBlock.rhythmGroups[0];
-    group.beats = List.from(newBeats);
-    group.polyBeats = List.from(newPolyBeats);
-    group.noteKey = newNoteKey;
-    group.beatLen = NoteHandler.getBeatLength(newNoteKey);
+    group.beats = List.from(beats);
+    group.polyBeats = List.from(polyBeats);
+    group.noteKey = noteKey;
+    group.beatLen = NoteHandler.getBeatLength(noteKey);
 
-    _clearAndRebuildRhythmSegments(false);
-    metronomeSetRhythm(
-      bars: getRhythmAsMetroBar(metronomeBlock.rhythmGroups),
-      bars2: getRhythmAsMetroBar(metronomeBlock.rhythmGroups2),
-    );
+    metronomeSetRhythm(bars: getRhythmAsMetroBar([RhythmGroup('', beats, polyBeats, noteKey)]), bars2: []);
+
     setState(() {});
+
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
   }
 
   void _deleteRhythmSegment(int index, bool isSecond) async {
@@ -695,10 +708,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32, vertical: 20),
                     child: SetRhythmParametersSimple(
-                      initialNoteKey: metronomeBlock.rhythmGroups[0].noteKey,
-                      initialBeats: metronomeBlock.rhythmGroups[0].beats,
-                      initialPolyBeats: metronomeBlock.rhythmGroups[0].polyBeats,
-                      forcePresetFallback: isForcedToFallbackToPreset,
+                      noteKey: metronomeBlock.rhythmGroups[0].noteKey,
+                      beats: metronomeBlock.rhythmGroups[0].beats,
+                      polyBeats: metronomeBlock.rhythmGroups[0].polyBeats,
                       onUpdateRhythm: _handleUpdateRhythm,
                     ),
                   )
