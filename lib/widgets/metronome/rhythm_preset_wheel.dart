@@ -21,8 +21,9 @@ class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
   @override
   void initState() {
     super.initState();
-    final currentIndex = RhythmPresetKey.values.indexOf(widget.presetKey);
-    wheelController = FixedExtentScrollController(initialItem: currentIndex == -1 ? 0 : currentIndex);
+    wheelController = FixedExtentScrollController(
+      initialItem: indexOfOrThrow(RhythmPresetKey.values, widget.presetKey),
+    );
   }
 
   @override
@@ -107,4 +108,10 @@ class NoteIconWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+int indexOfOrThrow<T>(List<T> list, T value) {
+  final index = list.indexOf(value);
+  if (index == -1) throw StateError('Value not found in list: $value');
+  return index;
 }
