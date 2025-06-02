@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -17,22 +16,18 @@ import 'package:tiomusic/widgets/metronome/rhythm_preset_wheel.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_utils.dart';
 
 class SetRhythmParametersSimple extends StatefulWidget {
-  final String currentNoteKey;
-  final List<BeatType> currentBeats;
-  final List<BeatTypePoly> currentPolyBeats;
-  final List<RhythmGroup> rhythmGroups;
-  final MetronomeBlock metronomeBlock;
+  final String initialNoteKey;
+  final List<BeatType> initialBeats;
+  final List<BeatTypePoly> initialPolyBeats;
   final void Function(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey) onUpdateRhythm;
 
   final bool forcePresetFallback;
 
   const SetRhythmParametersSimple({
     super.key,
-    required this.currentNoteKey,
-    required this.currentBeats,
-    required this.currentPolyBeats,
-    required this.rhythmGroups,
-    required this.metronomeBlock,
+    required this.initialNoteKey,
+    required this.initialBeats,
+    required this.initialPolyBeats,
     required this.onUpdateRhythm,
     this.forcePresetFallback = false,
   });
@@ -54,9 +49,9 @@ class _SetRhythmParametersSimpleState extends State<SetRhythmParametersSimple> {
   void initState() {
     super.initState();
 
-    beats.addAll(widget.currentBeats);
-    polyBeats.addAll(widget.currentPolyBeats);
-    noteKey = widget.currentNoteKey;
+    beats.addAll(widget.initialBeats);
+    polyBeats.addAll(widget.initialPolyBeats);
+    noteKey = widget.initialNoteKey;
 
     handleResetRhythmWhenNotMatchingPreset();
   }

@@ -694,11 +694,9 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32, vertical: 20),
                     child: SetRhythmParametersSimple(
-                      currentNoteKey: metronomeBlock.rhythmGroups[0].noteKey,
-                      currentBeats: metronomeBlock.rhythmGroups[0].beats,
-                      currentPolyBeats: metronomeBlock.rhythmGroups[0].polyBeats,
-                      rhythmGroups: metronomeBlock.rhythmGroups,
-                      metronomeBlock: metronomeBlock,
+                      initialNoteKey: metronomeBlock.rhythmGroups[0].noteKey,
+                      initialBeats: metronomeBlock.rhythmGroups[0].beats,
+                      initialPolyBeats: metronomeBlock.rhythmGroups[0].polyBeats,
                       forcePresetFallback: isForcedToFallbackToPreset,
                       onUpdateRhythm: _handleUpdateRhythm,
                     ),
