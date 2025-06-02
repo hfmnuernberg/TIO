@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/l10n_extensions.dart';
+import 'package:tiomusic/util/rhythm_preset_key_extensions.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 
 class RhythmPresetWheel extends StatefulWidget {

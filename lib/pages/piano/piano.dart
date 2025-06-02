@@ -21,7 +21,7 @@ import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/l10n_extensions.dart';
+import 'package:tiomusic/util/sound_font_extensions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
