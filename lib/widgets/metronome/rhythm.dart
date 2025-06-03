@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/app.dart';
@@ -16,8 +14,9 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
-import 'package:tiomusic/widgets/metronome/editable_rhythm_segment.dart';
+import 'package:tiomusic/widgets/metronome/filled_screen.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
+import 'package:tiomusic/widgets/metronome/rhythm_row.dart';
 import 'package:tiomusic/widgets/metronome/set_rhythm_parameters_simple.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -271,124 +270,6 @@ class _RhythmState extends State<Rhythm> with RouteAware {
     setState(() {});
   }
 
-  // Additional widget to remove the segment background while dragging it
-  Widget _proxyDecorator(Widget child, int index, Animation<double> animation) {
-    return AnimatedBuilder(
-      animation: animation,
-      builder: (context, child) {
-        final double animValue = Curves.easeInOut.transform(animation.value);
-        final double elevation = lerpDouble(0, 6, animValue)!;
-        return Material(elevation: elevation, color: Colors.transparent, shadowColor: Colors.transparent, child: child);
-      },
-      child: child,
-    );
-  }
-
-  Widget _rhythmRow({bool isSecondMetronome = false}) {
-    return Column(
-      children: [
-        // rhythm groups and beats
-        SizedBox(
-          height: MetronomeParams.heightRhythmGroups,
-          child: Padding(
-            padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: <Widget>[
-                // List of rhythm segments
-                ReorderableListView.builder(
-                  proxyDecorator: _proxyDecorator,
-                  buildDefaultDragHandles: false,
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  itemCount: isSecondMetronome ? rhythmSegmentList2.length : rhythmSegmentList.length,
-                  itemBuilder: (context, index) {
-                    return Dismissible(
-                      key: Key(
-                        isSecondMetronome
-                            ? metronomeBlock.rhythmGroups2[index].keyID
-                            : metronomeBlock.rhythmGroups[index].keyID,
-                      ),
-                      direction:
-                          isSecondMetronome
-                              ? DismissDirection.up
-                              : metronomeBlock.rhythmGroups.length > 1
-                              ? DismissDirection.up
-                              : DismissDirection.none,
-                      onDismissed: (_) {
-                        _deleteRhythmSegment(index, isSecondMetronome);
-                      },
-                      background: const Icon(Icons.delete_outlined, color: ColorTheme.primary),
-                      child: EditableRhythmSegment(
-                        index: index,
-                        rhythmSegment: isSecondMetronome ? rhythmSegmentList2[index] : rhythmSegmentList[index],
-                        canReorder:
-                            (isSecondMetronome
-                                ? metronomeBlock.rhythmGroups2.length
-                                : metronomeBlock.rhythmGroups.length) >
-                            1,
-                        isReordering: isReordering,
-                        onEdit: (index) => _editRhythmSegment(index, isSecondMetronome),
-                      ),
-                    );
-                  },
-                  onReorderStart: (_) => setState(() => isReordering = true),
-                  onReorderEnd: (_) => setState(() => isReordering = false),
-                  onReorder: (oldIndex, newIndex) => _reorderRhythmSegments(oldIndex, newIndex, isSecondMetronome),
-                ),
-                const SizedBox(width: 4),
-                CircleAvatar(
-                  radius: TIOMusicParams.rhythmPlusButtonSize,
-                  backgroundColor: Colors.white,
-                  child: Center(
-                    child: IconButton(
-                      iconSize: TIOMusicParams.rhythmPlusButtonSize,
-                      onPressed: () => _addRhythmSegment(isSecondMetronome),
-                      icon: const Icon(Icons.add, color: ColorTheme.surfaceTint),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        // Metronome row title
-        Padding(
-          padding: const EdgeInsets.only(left: TIOMusicParams.edgeInset, right: TIOMusicParams.edgeInset),
-          child: Container(
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(color: ColorTheme.surface, width: 2),
-                bottom: BorderSide(color: ColorTheme.surface, width: 2),
-              ),
-            ),
-            height: TIOMusicParams.rhythmPlusButtonSize * 2.5,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  isSecondMetronome ? context.l10n.metronomeSecondary : context.l10n.metronomePrimary,
-                  style: const TextStyle(color: ColorTheme.primary),
-                ),
-                // add second metronome button
-                if (isSecondMetronome || metronomeBlock.rhythmGroups2.isNotEmpty)
-                  const SizedBox()
-                else
-                  IconButton(
-                    key: keyAddSecondMetro,
-                    iconSize: TIOMusicParams.rhythmPlusButtonSize,
-                    onPressed: () => _addRhythmSegment(true),
-                    icon: const Icon(Icons.add, color: ColorTheme.primary),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -409,33 +290,39 @@ class _RhythmState extends State<Rhythm> with RouteAware {
                   ),
                 )
               else ...[
-                _rhythmRow(),
-                if (metronomeBlock.rhythmGroups2.isNotEmpty) _rhythmRow(isSecondMetronome: true),
+                RhythmRow(
+                  rhythmSegmentList: rhythmSegmentList,
+                  label: context.l10n.metronomePrimary,
+                  canDeleteLastSegment: false,
+                  onAdd: () => _addRhythmSegment(false),
+                  onDelete: (index) => _deleteRhythmSegment(index, false),
+                  onEdit: (index) => _editRhythmSegment(index, false),
+                  onReorder: (oldIndex, newIndex) => _reorderRhythmSegments(oldIndex, newIndex, false),
+                  addSecondaryAction: metronomeBlock.rhythmGroups2.isEmpty
+                    ? IconButton(
+                      key: keyAddSecondMetro,
+                      iconSize: TIOMusicParams.rhythmPlusButtonSize,
+                      onPressed: () => _addRhythmSegment(true),
+                      icon: const Icon(Icons.add, color: ColorTheme.primary),
+                    )
+                    : const SizedBox(),
+                ),
+                if (metronomeBlock.rhythmGroups2.isNotEmpty)
+                  RhythmRow(
+                    rhythmSegmentList: rhythmSegmentList2,
+                    label: context.l10n.metronomeSecondary,
+                    canDeleteLastSegment: true,
+                    onAdd: () => _addRhythmSegment(true),
+                    onDelete: (index) => _deleteRhythmSegment(index, true),
+                    onEdit: (index) => _editRhythmSegment(index, true),
+                    onReorder: (oldIndex, newIndex) => _reorderRhythmSegments(oldIndex, newIndex, true),
+                    addSecondaryAction: const SizedBox(),
+                  ),
               ],
             ],
           ),
         ),
       ],
     );
-  }
-}
-
-// Fills the whole screen with any color
-class FilledScreen extends CustomPainter {
-  FilledScreen({required this.color});
-  Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    var paint =
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.fill;
-    canvas.drawRect(Offset.zero & size, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
   }
 }
