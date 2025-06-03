@@ -16,6 +16,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tiomusic/widgets/metronome/editable_rhythm_segment.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 import 'package:tiomusic/widgets/metronome/set_rhythm_parameters_simple.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
@@ -165,7 +166,7 @@ class _RhythmState extends State<Rhythm> with RouteAware {
     );
   }
 
-  void _editRhythmSegment(int idx, bool isSecond) async {
+  Future<void> _editRhythmSegment(int idx, bool isSecond) async {
     var rhythmGroups = isSecond ? metronomeBlock.rhythmGroups2 : metronomeBlock.rhythmGroups;
 
     openSettingPage(
@@ -181,7 +182,8 @@ class _RhythmState extends State<Rhythm> with RouteAware {
       ),
       context,
       metronomeBlock,
-    ).then((value) { // TODO: await instad of then
+    ).then((value) {
+      // TODO: await instad of then
       var newRhythmSegment = RhythmSegment(
         activeBeatsNotifier: activeBeatsModel,
         metronomeBlock: metronomeBlock,
@@ -282,28 +284,6 @@ class _RhythmState extends State<Rhythm> with RouteAware {
     );
   }
 
-  Widget _rhythmGroup(int index, bool isSecond) {
-    return DecoratedBox(
-      key: index == 0 && !isSecond ? keyGroups : null,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(4), color: isReordering ? const Color.fromARGB(57, 47, 47, 47) : Colors.transparent),
-      child: Padding(
-        padding: const EdgeInsets.all(4),
-        child:
-        // Reordering handle with icon
-        ReorderableDelayedDragStartListener(
-          index: index,
-          enabled: (isSecond ? metronomeBlock.rhythmGroups2.length : metronomeBlock.rhythmGroups.length) > 1,
-          child: GestureDetector(
-            onTap: () {
-              _editRhythmSegment(index, isSecond);
-            },
-            child: isSecond ? rhythmSegmentList2[index] : rhythmSegmentList[index],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _rhythmRow({bool isSecondMetronome = false}) {
     return Column(
       children: [
@@ -339,7 +319,17 @@ class _RhythmState extends State<Rhythm> with RouteAware {
                         _deleteRhythmSegment(index, isSecondMetronome);
                       },
                       background: const Icon(Icons.delete_outlined, color: ColorTheme.primary),
-                      child: _rhythmGroup(index, isSecondMetronome),
+                      child: EditableRhythmSegment(
+                        index: index,
+                        rhythmSegment: isSecondMetronome ? rhythmSegmentList2[index] : rhythmSegmentList[index],
+                        canReorder:
+                            (isSecondMetronome
+                                ? metronomeBlock.rhythmGroups2.length
+                                : metronomeBlock.rhythmGroups.length) >
+                            1,
+                        isReordering: isReordering,
+                        onEdit: (index) => _editRhythmSegment(index, isSecondMetronome),
+                      ),
                     );
                   },
                   onReorderStart: (_) => setState(() => isReordering = true),
@@ -402,31 +392,31 @@ class _RhythmState extends State<Rhythm> with RouteAware {
   @override
   Widget build(BuildContext context) {
     return Stack(
-        children: <Widget>[
-          Visibility(
-            visible: widget.isFlashOn,
-            child: CustomPaint(size: MediaQuery.of(context).size, painter: FilledScreen(color: ColorTheme.surfaceTint)),
-          ),
-          Center(
-            child: Column(
-              children: [
-                if (isSimpleModeOn)
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 20),
-                    child: SetRhythmParametersSimple(
-                      rhythmGroup: metronomeBlock.rhythmGroups[0],
-                      onUpdate: _handleUpdateRhythm,
-                    ),
-                  )
-                else ...[
-                  _rhythmRow(),
-                  if (metronomeBlock.rhythmGroups2.isNotEmpty) _rhythmRow(isSecondMetronome: true),
-                ],
+      children: <Widget>[
+        Visibility(
+          visible: widget.isFlashOn,
+          child: CustomPaint(size: MediaQuery.of(context).size, painter: FilledScreen(color: ColorTheme.surfaceTint)),
+        ),
+        Center(
+          child: Column(
+            children: [
+              if (isSimpleModeOn)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 20),
+                  child: SetRhythmParametersSimple(
+                    rhythmGroup: metronomeBlock.rhythmGroups[0],
+                    onUpdate: _handleUpdateRhythm,
+                  ),
+                )
+              else ...[
+                _rhythmRow(),
+                if (metronomeBlock.rhythmGroups2.isNotEmpty) _rhythmRow(isSecondMetronome: true),
               ],
-            ),
+            ],
           ),
-        ],
-      );
+        ),
+      ],
+    );
   }
 }
 
