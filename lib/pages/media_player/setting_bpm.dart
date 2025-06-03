@@ -61,7 +61,7 @@ class _SetBPMState extends State<SetBPM> {
     );
 
     _tutorial.create([target.targetFocus], () async {
-      context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
+      context.read<ProjectLibrary>().showMediaPlayerBasicBeatTutorial = false;
       await widget.onSave();
     }, context);
   }
