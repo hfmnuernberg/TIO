@@ -338,10 +338,10 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     group.noteKey = noteKey;
     group.beatLen = NoteHandler.getBeatLength(noteKey);
 
-    _syncMetronomeSound();
-
+    metronomeBlock.resetSecondaryMetronome();
     setState(() {});
 
+    _syncMetronomeSound();
     await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
   }
 

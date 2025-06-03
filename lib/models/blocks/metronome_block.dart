@@ -274,6 +274,14 @@ class MetronomeBlock extends ProjectBlock {
     );
   }
 
+  void resetSecondaryMetronome() {
+    rhythmGroups2.clear();
+    accSound2 = defaultMetronomeAccSound2;
+    unaccSound2 = defaultMetronomeUnaccSound2;
+    polyAccSound2 = defaultMetronomePolyAccSound2;
+    polyUnaccSound2 = defaultMetronomePolyUnaccSound2;
+  }
+
   @override
   Widget get icon => MetronomeParams.icon;
 
