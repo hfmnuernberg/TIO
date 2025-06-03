@@ -121,10 +121,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     metronomeSetVolume(volume: metronomeBlock.volume);
-    metronomeSetRhythm(
-      bars: getRhythmAsMetroBar(metronomeBlock.rhythmGroups),
-      bars2: getRhythmAsMetroBar(metronomeBlock.rhythmGroups2),
-    );
+    _syncMetronomeSound();
     metronomeSetBpm(bpm: metronomeBlock.bpm.toDouble());
     metronomeSetBeatMuteChance(muteChance: metronomeBlock.randomMute.toDouble() / 100.0);
 
@@ -290,10 +287,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
               isSecond ? rhythmSegmentList2.add(newRhythmSegment) : rhythmSegmentList.add(newRhythmSegment);
             }
 
-            metronomeSetRhythm(
-              bars: getRhythmAsMetroBar(metronomeBlock.rhythmGroups),
-              bars2: getRhythmAsMetroBar(metronomeBlock.rhythmGroups2),
-            );
+            _syncMetronomeSound();
           });
         },
       );
@@ -330,10 +324,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
         isSecond ? rhythmSegmentList2[idx] = newRhythmSegment : rhythmSegmentList[idx] = newRhythmSegment;
 
-        metronomeSetRhythm(
-          bars: getRhythmAsMetroBar(metronomeBlock.rhythmGroups),
-          bars2: getRhythmAsMetroBar(metronomeBlock.rhythmGroups2),
-        );
+        _syncMetronomeSound();
+
         setState(() {});
       });
     }
@@ -346,7 +338,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     group.noteKey = noteKey;
     group.beatLen = NoteHandler.getBeatLength(noteKey);
 
-    metronomeSetRhythm(bars: getRhythmAsMetroBar([RhythmGroup('', beats, polyBeats, noteKey)]), bars2: []);
+    _syncMetronomeSound();
 
     setState(() {});
 
@@ -359,10 +351,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
       _clearAndRebuildRhythmSegments(isSecond);
 
-      metronomeSetRhythm(
-        bars: getRhythmAsMetroBar(metronomeBlock.rhythmGroups),
-        bars2: getRhythmAsMetroBar(metronomeBlock.rhythmGroups2),
-      );
+      _syncMetronomeSound();
+
       if (mounted) {
         await projectRepo.saveLibrary(context.read<ProjectLibrary>());
         setState(() {});
@@ -381,10 +371,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
     _clearAndRebuildRhythmSegments(isSecond);
 
-    metronomeSetRhythm(
-      bars: getRhythmAsMetroBar(metronomeBlock.rhythmGroups),
-      bars2: getRhythmAsMetroBar(metronomeBlock.rhythmGroups2),
-    );
+    _syncMetronomeSound();
+
     await projectRepo.saveLibrary(context.read<ProjectLibrary>());
     setState(() {});
   }
@@ -415,10 +403,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       ),
     );
 
-    metronomeSetRhythm(
-      bars: getRhythmAsMetroBar(metronomeBlock.rhythmGroups),
-      bars2: getRhythmAsMetroBar(metronomeBlock.rhythmGroups2),
-    );
+    _syncMetronomeSound();
+
     if (mounted) {
       await projectRepo.saveLibrary(context.read<ProjectLibrary>());
       setState(() {});
@@ -834,6 +820,11 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       ],
     );
   }
+
+  void _syncMetronomeSound() => metronomeSetRhythm(
+    bars: getRhythmAsMetroBar(metronomeBlock.rhythmGroups),
+    bars2: getRhythmAsMetroBar(metronomeBlock.rhythmGroups2),
+  );
 }
 
 // Fills the whole screen with any color
