@@ -79,8 +79,6 @@ reset() {
   bash "$0" install
   bash "$0" outdated
   bash "$0" generate
-  bash "$0" format
-  bash "$0" analyze
   bash "$0" coverage
   bash "$0" run
 }

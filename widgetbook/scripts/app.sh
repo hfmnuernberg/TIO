@@ -34,6 +34,7 @@ reset() {
 aliases=(
   "lint:analyze"
   "start:run"
+  "wb:widgetbook"
 )
 
 # Alias expansion
@@ -62,6 +63,7 @@ help() {
   echo 'analyze:fix:dry                           - simulates fixing static code analysis rule violations'
   echo 'clean                                     - clean build'
   echo 'delete:lock                               - delete lock files'
+  echo 'dev                                       - build and run widgetbook'
   echo 'doctor                                    - run flutter doctor'
   echo 'format                                    - format code'
   echo 'generate                                  - update generated code'
@@ -86,6 +88,7 @@ case "$1" in
   analyze:fix:dry)           $DART fix --dry-run; ;;
   clean)                     clean; ;;
   delete:lock)               deleteLockFiles; ;;
+  dev)                       bash "$0" generate; bash "$0" run; ;;
   doctor)                    $FLUTTER doctor; ;;
   format)                    $DART format --line-length=120 lib; ;;
   generate)                  bash "$0" generate:json; bash "$0" format; bash "$0" analyze; ;;
@@ -98,6 +101,5 @@ case "$1" in
   reset)                     reset; ;;
   run)                       $FLUTTER run; ;;
   simulator)                 open -a Simulator; ;;
-  widgetbook)                bash "$0" build; bash "$0" run; ;;
   *)                         help; exit 1 ;;
 esac
