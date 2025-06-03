@@ -6,6 +6,7 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
 import 'package:tiomusic/widgets/input/tap_to_tempo.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -29,11 +30,12 @@ class _SetBPMState extends State<SetBPM> {
   late MediaPlayerBlock _mediaPlayerBlock;
 
   final Tutorial _tutorial = Tutorial();
+  final GlobalKey _keyBasicBeat = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
+    _mediaPlayerBlock = context.read<ProjectBlock>() as MediaPlayerBlock;
     value = _mediaPlayerBlock.bpm;
   }
 
@@ -49,15 +51,16 @@ class _SetBPMState extends State<SetBPM> {
   }
 
   void _createTutorial() {
-    final targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        null,
-        context: context,
-        context.l10n.mediaPlayerTutorialBasicBeat,
-        customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
-      ),
-    ];
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+    final target = CustomTargetFocus(
+      _keyBasicBeat,
+      context.l10n.mediaPlayerTutorialBasicBeat,
+      alignText: ContentAlign.bottom,
+      pointingDirection: PointingDirection.up,
+      buttonsPosition: ButtonsPosition.bottom,
+      shape: ShapeLightFocus.RRect,
+    );
+
+    _tutorial.create([target.targetFocus], () async {
       context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
       await widget.onSave();
     }, context);
@@ -79,6 +82,7 @@ class _SetBPMState extends State<SetBPM> {
     return ParentSettingPage(
       title: context.l10n.commonBasicBeatSetting,
       numberInput: NumberInputAndSliderInt(
+        key: _keyBasicBeat,
         value: value,
         onChange: _handleChange,
         min: minBpm,
