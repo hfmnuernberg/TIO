@@ -10,7 +10,6 @@ import 'package:tiomusic/app.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/metronome_sound.dart';
 import 'package:tiomusic/models/metronome_sound_extension.dart';
-import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -18,7 +17,6 @@ import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
-import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 import 'package:tiomusic/widgets/metronome/set_rhythm_parameters_simple.dart';
 import 'package:tiomusic/pages/metronome/setting_bpm.dart';
@@ -177,7 +175,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             RhythmPresetKey.oneFourth;
         final preset = RhythmPreset.fromKey(presetKey);
 
-        _handleUpdateRhythm(preset.beats, preset.polyBeats, preset.noteKey);
+        _handleUpdateRhythm(RhythmGroup('', preset.beats, preset.polyBeats, preset.noteKey));
       }
     });
   }
@@ -331,14 +329,16 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     }
   }
 
-  void _handleUpdateRhythm(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey) async {
-    final group = metronomeBlock.rhythmGroups[0];
-    group.beats = List.from(beats);
-    group.polyBeats = List.from(polyBeats);
-    group.noteKey = noteKey;
-    group.beatLen = NoteHandler.getBeatLength(noteKey);
+  void _handleUpdateRhythm(RhythmGroup rhythmGroup) async {
+    metronomeBlock.rhythmGroups
+      ..clear()
+      ..add(rhythmGroup);
 
     metronomeBlock.resetSecondaryMetronome();
+
+    _clearAndRebuildRhythmSegments(false);
+    _clearAndRebuildRhythmSegments(true);
+
     setState(() {});
 
     _syncMetronomeSound();
@@ -382,17 +382,10 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
     rhythmSegmentList.clear();
     rhythmSegmentList2.clear();
-    metronomeBlock.rhythmGroups.clear();
-    metronomeBlock.rhythmGroups2.clear();
+    metronomeBlock.resetPrimaryMetronome();
+    metronomeBlock.rhythmGroups[0].keyID = MetronomeParams.getNewKeyID();
+    metronomeBlock.resetSecondaryMetronome();
 
-    metronomeBlock.rhythmGroups.add(
-      RhythmGroup(
-        MetronomeParams.getNewKeyID(),
-        MetronomeParams.defaultBeats,
-        MetronomeParams.defaultPolyBeats,
-        MetronomeParams.defaultNoteKey,
-      ),
-    );
     rhythmSegmentList.add(
       RhythmSegment(
         activeBeatsNotifier: activeBeatsModel,
@@ -694,10 +687,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 32, vertical: 20),
                     child: SetRhythmParametersSimple(
-                      noteKey: metronomeBlock.rhythmGroups[0].noteKey,
-                      beats: metronomeBlock.rhythmGroups[0].beats,
-                      polyBeats: metronomeBlock.rhythmGroups[0].polyBeats,
-                      onUpdateRhythm: _handleUpdateRhythm,
+                      rhythmGroup: metronomeBlock.rhythmGroups[0],
+                      onUpdate: _handleUpdateRhythm,
                     ),
                   )
                 else ...[

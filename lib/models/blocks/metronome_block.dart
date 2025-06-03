@@ -202,23 +202,8 @@ class MetronomeBlock extends ProjectBlock {
     _volume = TIOMusicParams.defaultVolume;
     bpm = MetronomeParams.defaultBPM;
     randomMute = MetronomeParams.defaultRandomMute;
-    _rhythmGroups = [
-      RhythmGroup(
-        MetronomeParams.defaultId,
-        MetronomeParams.defaultBeats,
-        MetronomeParams.defaultPolyBeats,
-        MetronomeParams.defaultNoteKey,
-      ),
-    ];
-    _rhythmGroups2 = [];
-    accSound = defaultMetronomeAccSound;
-    unaccSound = defaultMetronomeUnaccSound;
-    polyAccSound = defaultMetronomePolyAccSound;
-    polyUnaccSound = defaultMetronomePolyUnaccSound;
-    accSound2 = defaultMetronomeAccSound2;
-    unaccSound2 = defaultMetronomeUnaccSound2;
-    polyAccSound2 = defaultMetronomePolyAccSound2;
-    polyUnaccSound2 = defaultMetronomePolyUnaccSound2;
+    resetPrimaryMetronome();
+    resetSecondaryMetronome();
     _id = ProjectBlock.createNewId();
   }
 
@@ -229,23 +214,8 @@ class MetronomeBlock extends ProjectBlock {
     _volume = TIOMusicParams.defaultVolume;
     bpm = MetronomeParams.defaultBPM;
     randomMute = MetronomeParams.defaultRandomMute;
-    _rhythmGroups = [
-      RhythmGroup(
-        MetronomeParams.defaultId,
-        MetronomeParams.defaultBeats,
-        MetronomeParams.defaultPolyBeats,
-        MetronomeParams.defaultNoteKey,
-      ),
-    ];
-    _rhythmGroups2 = [];
-    accSound = defaultMetronomeAccSound;
-    unaccSound = defaultMetronomeUnaccSound;
-    polyAccSound = defaultMetronomePolyAccSound;
-    polyUnaccSound = defaultMetronomePolyUnaccSound;
-    accSound2 = defaultMetronomeAccSound2;
-    unaccSound2 = defaultMetronomeUnaccSound2;
-    polyAccSound2 = defaultMetronomePolyAccSound2;
-    polyUnaccSound2 = defaultMetronomePolyUnaccSound2;
+    resetPrimaryMetronome();
+    resetSecondaryMetronome();
     _id = ProjectBlock.createNewId();
   }
 
@@ -272,6 +242,21 @@ class MetronomeBlock extends ProjectBlock {
       blockToCopy.timeLastModified,
       blockToCopy.volume,
     );
+  }
+
+  void resetPrimaryMetronome() {
+    _rhythmGroups = [
+      RhythmGroup(
+        MetronomeParams.defaultId,
+        MetronomeParams.defaultBeats,
+        MetronomeParams.defaultPolyBeats,
+        MetronomeParams.defaultNoteKey,
+      ),
+    ];
+    accSound = defaultMetronomeAccSound;
+    unaccSound = defaultMetronomeUnaccSound;
+    polyAccSound = defaultMetronomePolyAccSound;
+    polyUnaccSound = defaultMetronomePolyUnaccSound;
   }
 
   void resetSecondaryMetronome() {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
@@ -7,27 +8,19 @@ import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_preset_wheel.dart';
 
 class SetRhythmParametersSimple extends StatelessWidget {
-  final List<BeatType> beats;
-  final List<BeatTypePoly> polyBeats;
-  final String noteKey;
+  final RhythmGroup rhythmGroup;
 
-  final void Function(List<BeatType> beats, List<BeatTypePoly> polyBeats, String noteKey) onUpdateRhythm;
+  final void Function(RhythmGroup rhythmGroup) onUpdate;
 
-  const SetRhythmParametersSimple({
-    super.key,
-    required this.beats,
-    required this.polyBeats,
-    required this.noteKey,
-    required this.onUpdateRhythm,
-  });
+  const SetRhythmParametersSimple({super.key, required this.rhythmGroup, required this.onUpdate});
 
   void _handleBeatCountChange(int beatCount) {
-    onUpdateRhythm(_getBeats(beats, beatCount), polyBeats, noteKey);
+    onUpdate(RhythmGroup('', _getBeats(rhythmGroup.beats, beatCount), rhythmGroup.polyBeats, rhythmGroup.noteKey));
   }
 
   void _handlePresetSelected(RhythmPresetKey key) {
     final preset = RhythmPreset.fromKey(key);
-    onUpdateRhythm(preset.beats, preset.polyBeats, preset.noteKey);
+    onUpdate(RhythmGroup('', preset.beats, preset.polyBeats, preset.noteKey));
   }
 
   static List<BeatType> _getBeats(List<BeatType> beats, int beatCount) {
@@ -43,12 +36,17 @@ class SetRhythmParametersSimple extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final presetKey =
-        RhythmPreset.fromProperties(beats: beats, polyBeats: polyBeats, noteKey: noteKey) ?? RhythmPresetKey.oneFourth;
+        RhythmPreset.fromProperties(
+          beats: rhythmGroup.beats,
+          polyBeats: rhythmGroup.polyBeats,
+          noteKey: rhythmGroup.noteKey,
+        ) ??
+        RhythmPresetKey.oneFourth;
 
     return Row(
       children: [
         SmallNumberInputInt(
-          value: beats.length,
+          value: rhythmGroup.beats.length,
           onChange: _handleBeatCountChange,
           min: 1,
           max: MetronomeParams.maxBeatCount,
