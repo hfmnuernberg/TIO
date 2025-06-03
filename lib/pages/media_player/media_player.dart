@@ -425,7 +425,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           title: l10n.commonBasicBeat,
           subtitle: '${_mediaPlayerBlock.bpm} ${l10n.commonBpm}',
           leadingIcon: Icons.touch_app_outlined,
-          settingPage: const SetBPM(),
+          settingPage: SetBPM(onSave: () => _projectRepo.saveLibrary(context.read<ProjectLibrary>())),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
         ),

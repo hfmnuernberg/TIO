@@ -5,16 +5,20 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
 import 'package:tiomusic/widgets/input/tap_to_tempo.dart';
 import 'package:tiomusic/services/project_repository.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 const defaultBpm = 80;
 const minBpm = 10;
 const maxBpm = 500;
 
 class SetBPM extends StatefulWidget {
-  const SetBPM({super.key});
+  final Future<void> Function() onSave;
+
+  const SetBPM({super.key, required this.onSave});
 
   @override
   State<SetBPM> createState() => _SetBPMState();
@@ -24,11 +28,39 @@ class _SetBPMState extends State<SetBPM> {
   late int value;
   late MediaPlayerBlock _mediaPlayerBlock;
 
+  final Tutorial _tutorial = Tutorial();
+
   @override
   void initState() {
     super.initState();
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
     value = _mediaPlayerBlock.bpm;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (context.read<ProjectLibrary>().showMediaPlayerBasicBeatTutorial) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _createTutorial();
+        _tutorial.show(context);
+      });
+    }
+  }
+
+  void _createTutorial() {
+    final targets = <CustomTargetFocus>[
+      CustomTargetFocus(
+        null,
+        context: context,
+        context.l10n.mediaPlayerTutorialBasicBeat,
+        customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
+      ),
+    ];
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
+      await widget.onSave();
+    }, context);
   }
 
   void _handleChange(int newBpm) => setState(() => value = newBpm);

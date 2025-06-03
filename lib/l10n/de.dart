@@ -122,6 +122,8 @@ class German extends AppLocalizations {
   String get mediaPlayerTapToTempo => 'Tippe im Takt';
   String get mediaPlayerTrim => 'Trimmen';
   String get mediaPlayerTutorialAdjust => 'Tippe hier, um deine Audiodatei anzupassen.';
+  String get mediaPlayerTutorialBasicBeat =>
+      'Stelle hier den Grundschlag ein. Ausgehend von diesem Wert kannst du in der Einstellung "Tempo" die Geschwindigkeit einstellen.';
   String get mediaPlayerTutorialJumpTo =>
       'Tippe auf eine beliebige Stelle, um zu diesem Teil deiner Audiodatei zu springen.';
   String get mediaPlayerTutorialStartStop =>

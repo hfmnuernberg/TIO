@@ -107,6 +107,7 @@ abstract class AppLocalizations {
   String get mediaPlayerTapToTempo;
   String get mediaPlayerTrim;
   String get mediaPlayerTutorialAdjust;
+  String get mediaPlayerTutorialBasicBeat;
   String get mediaPlayerTutorialJumpTo;
   String get mediaPlayerTutorialStartStop;
 
