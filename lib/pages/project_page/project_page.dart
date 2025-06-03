@@ -55,6 +55,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyChangeTitle = GlobalKey();
+  final GlobalKey _keyChangeToolOrder = GlobalKey();
 
   @override
   void initState() {
@@ -88,28 +89,19 @@ class _ProjectPageState extends State<ProjectPage> {
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     }
 
-    _showTutorial();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _project.timeLastModified = getCurrentDateTime();
     });
+
+    if (context.read<ProjectLibrary>().showProjectPageTutorial && !widget.goStraightToTool) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _createTutorial();
+        _tutorial.show(context);
+      });
+    }
   }
 
   void _toggleEditingMode() => setState(() => _isEditing = !_isEditing);
-
-  void _showTutorial() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final projectLibrary = context.read<ProjectLibrary>();
-
-      if (projectLibrary.showHomepageTutorial) {
-        projectLibrary.showHomepageTutorial = false;
-        await _projectRepo.saveLibrary(projectLibrary);
-        _createTutorial();
-        if (!mounted) return;
-        _tutorial.show(context);
-      }
-    });
-  }
 
   void _createTutorial() {
     var targets = <CustomTargetFocus>[
@@ -118,6 +110,14 @@ class _ProjectPageState extends State<ProjectPage> {
         context.l10n.projectTutorialEditTitle,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
+        shape: ShapeLightFocus.RRect,
+      ),
+      CustomTargetFocus(
+        _keyChangeToolOrder,
+        context.l10n.projectTutorialChangeToolOrder,
+        buttonsPosition: ButtonsPosition.top,
+        pointingDirection: PointingDirection.down,
+        alignText: ContentAlign.top,
         shape: ShapeLightFocus.RRect,
       ),
     ];
@@ -256,6 +256,7 @@ class _ProjectPageState extends State<ProjectPage> {
             setState(() {});
           },
           child: Text(
+            key: _keyChangeTitle,
             _project.title,
             style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
             maxLines: 1,
@@ -324,14 +325,17 @@ class _ProjectPageState extends State<ProjectPage> {
             ),
         ],
       ),
-      bottomNavigationBar: EditProjectBar(
-        onAddTool:
-            () => setState(() {
-              _showBlocks = false;
-              _isEditing = false;
-            }),
-        onToggleEditing: _toggleEditingMode,
-        isEditing: _isEditing,
+      bottomNavigationBar: Container(
+        key: _keyChangeToolOrder,
+        child: EditProjectBar(
+          onAddTool:
+              () => setState(() {
+                _showBlocks = false;
+                _isEditing = false;
+              }),
+          onToggleEditing: _toggleEditingMode,
+          isEditing: _isEditing,
+        ),
       ),
     );
   }
