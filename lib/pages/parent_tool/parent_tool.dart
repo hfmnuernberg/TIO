@@ -265,7 +265,7 @@ class _ParentToolState extends State<ParentTool> {
             if (context.mounted) Navigator.of(context).pop();
           }
         } else {
-          Navigator.of(context).pop();
+          Navigator.of(context).pop({ReturnAction.showTutorial.name: true});
         }
       },
     );

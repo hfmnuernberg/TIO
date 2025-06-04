@@ -217,7 +217,8 @@ class English extends AppLocalizations {
   String get projectNewTool => 'Tool title';
   String get projectToolList => 'Tool list';
   String get projectToolListEmpty => 'Empty tool list';
-  String get projectTutorialChangeToolOrder => 'Tap the plus icon to add a new tool or the pencil icon to edit the tools.';
+  String get projectTutorialChangeToolOrder =>
+      'Tap the plus icon to add a new tool or the pencil icon to edit the tools.';
   String get projectTutorialEditTitle => 'Tap here to edit the title of your project.';
 
   String get projectsAbout => 'Projects';

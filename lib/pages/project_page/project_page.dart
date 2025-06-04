@@ -93,7 +93,9 @@ class _ProjectPageState extends State<ProjectPage> {
       _project.timeLastModified = getCurrentDateTime();
     });
 
-    if (context.read<ProjectLibrary>().showProjectPageTutorial && !widget.goStraightToTool) {
+    if (context.read<ProjectLibrary>().showProjectPageTutorial &&
+        !widget.goStraightToTool &&
+        _project.blocks.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _createTutorial();
         _tutorial.show(context);
@@ -198,8 +200,9 @@ class _ProjectPageState extends State<ProjectPage> {
   );
 
   Future<void> _createBlockAndGoToTool(BlockTypeInfo info, String blockTitle) async {
+    final projectLibrary = context.read<ProjectLibrary>();
+
     if (_withoutProject) {
-      final projectLibrary = context.read<ProjectLibrary>();
       projectLibrary.addProject(_project);
       _withoutProject = false;
     }
@@ -207,15 +210,23 @@ class _ProjectPageState extends State<ProjectPage> {
     final newBlock = info.createWithTitle(blockTitle);
 
     _project.addBlock(newBlock);
-    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    await _projectRepo.saveLibrary(projectLibrary);
 
-    setState(() {
-      _showBlocks = true;
-    });
+    setState(() => _showBlocks = true);
 
     if (!mounted) return;
 
-    goToTool(context, _project, newBlock).then((_) => setState(() {}));
+    final result = await goToTool(context, _project, newBlock);
+
+    if (!mounted) return;
+
+    final canShowTutorial =
+        result is Map && result[ReturnAction.showTutorial.name] == true && projectLibrary.showProjectPageTutorial;
+    if (canShowTutorial) {
+      _createTutorial();
+      _tutorial.show(context);
+    }
+    setState(() {});
   }
 
   Future<void> _handleReorder(int oldIndex, int newIndex) async {
