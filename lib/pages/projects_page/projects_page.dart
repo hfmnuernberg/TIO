@@ -431,40 +431,40 @@ class _ProjectsPageState extends State<ProjectsPage> {
               Expanded(
                 child: Consumer<ProjectLibrary>(
                   builder:
-                      (context, projectLibrary, child) =>
-                          projectLibrary.projects.isEmpty
-                              ? Padding(
-                                padding: const EdgeInsets.all(40),
-                                child: Text(
-                                  l10n.projectsNoProjects,
-                                  style: const TextStyle(color: Colors.white, fontSize: 42),
-                                ),
-                              )
-                              : Stack(
-                                children: [
-                                  if (_isEditing)
-                                    EditableProjectList(
-                                      projectLibrary: projectLibrary,
-                                      onDelete: _handleDelete,
-                                      onReorder: _handleReorder,
-                                    )
-                                  else
-                                    ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
-                                  Positioned(
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
-                                      child: EditProjectsBar(
-                                        isEditing: _isEditing,
-                                        onAddProject: _handleNew,
-                                        onToggleEditing: _toggleEditingMode,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                      (context, projectLibrary, child) => Stack(
+                        children: [
+                          if (projectLibrary.projects.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(40),
+                              child: Text(
+                                l10n.projectsNoProjects,
+                                style: const TextStyle(color: Colors.white, fontSize: 42),
                               ),
+                            )
+                          else if (_isEditing)
+                            EditableProjectList(
+                              projectLibrary: projectLibrary,
+                              onDelete: _handleDelete,
+                              onReorder: _handleReorder,
+                            )
+                          else
+                            ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
+
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
+                              child: EditProjectsBar(
+                                isEditing: _isEditing,
+                                onAddProject: _handleNew,
+                                onToggleEditing: _toggleEditingMode,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                 ),
               ),
               Container(
