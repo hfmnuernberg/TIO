@@ -334,17 +334,15 @@ class _ProjectPageState extends State<ProjectPage> {
             ),
         ],
       ),
-      bottomNavigationBar: Container(
+      bottomNavigationBar: EditProjectBar(
         key: _keyChangeToolOrder,
-        child: EditProjectBar(
-          onAddTool:
-              () => setState(() {
-                _showBlocks = false;
-                _isEditing = false;
-              }),
-          onToggleEditing: _toggleEditingMode,
-          isEditing: _isEditing,
-        ),
+        isEditing: _isEditing,
+        onAddTool:
+            () => setState(() {
+              _showBlocks = false;
+              _isEditing = false;
+            }),
+        onToggleEditing: _toggleEditingMode,
       ),
     );
   }
