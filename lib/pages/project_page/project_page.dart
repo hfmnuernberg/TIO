@@ -93,9 +93,7 @@ class _ProjectPageState extends State<ProjectPage> {
       _project.timeLastModified = getCurrentDateTime();
     });
 
-    if (context.read<ProjectLibrary>().showProjectPageTutorial &&
-        !widget.goStraightToTool &&
-        _project.blocks.isNotEmpty) {
+    if (context.read<ProjectLibrary>().showProjectPageTutorial && _project.blocks.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _createTutorial();
         _tutorial.show(context);
