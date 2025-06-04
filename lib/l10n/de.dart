@@ -241,6 +241,8 @@ class German extends AppLocalizations {
   String get projectsTutorialAddProject => 'Tippe hier, um ein neues Projekt zu erstellen.';
   String get projectsTutorialCanIncludeMultipleTools =>
       'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Piano, Media Player, Bild und Text),\nund sogar mehrere Tools desselben Typs.';
+  String get projectsTutorialChangeProjectOrder =>
+      'Tippe auf das Plus-Symbol um ein neues Projekt hinzuzufügen oder auf das Stift-Symbol um die Projekte zu bearbeiten.';
   String get projectsTutorialHowToUseTio =>
       'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
   String get projectsTutorialStart => 'Tutorial anzeigen';

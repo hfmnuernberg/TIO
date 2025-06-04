@@ -51,6 +51,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyAddProjectButton = GlobalKey();
   final GlobalKey _keyNavigationBar = GlobalKey();
+  final GlobalKey _keyQuickTools = GlobalKey();
 
   @override
   void initState() {
@@ -93,8 +94,16 @@ class _ProjectsPageState extends State<ProjectsPage> {
         pointingDirection: PointingDirection.left,
       ),
       CustomTargetFocus(
-        _keyNavigationBar,
+        _keyQuickTools,
         context.l10n.projectsTutorialStartUsingTool,
+        buttonsPosition: ButtonsPosition.top,
+        pointingDirection: PointingDirection.down,
+        alignText: ContentAlign.top,
+        shape: ShapeLightFocus.RRect,
+      ),
+      CustomTargetFocus(
+        _keyNavigationBar,
+        context.l10n.projectsTutorialChangeProjectOrder,
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
@@ -457,6 +466,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
                               child: EditProjectsBar(
+                                key: _keyNavigationBar,
                                 isEditing: _isEditing,
                                 onAddProject: _handleNew,
                                 onToggleEditing: _toggleEditingMode,
@@ -471,7 +481,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                 padding: const EdgeInsets.only(top: TIOMusicParams.edgeInset, bottom: TIOMusicParams.edgeInset),
                 color: ColorTheme.surface,
                 child: Column(
-                  key: _keyNavigationBar,
+                  key: _keyQuickTools,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Row(
