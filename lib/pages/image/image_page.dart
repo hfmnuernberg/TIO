@@ -120,36 +120,6 @@ class _ImageToolState extends State<ImageTool> {
         ),
   );
 
-  // Future<void> _pickImageAndSave(bool useAsThumbnail) async {
-  //   try {
-  //     final imagePath = await _filePicker.pickImage();
-  //     if (imagePath == null) return;
-  //
-  //     if (!await _fs.existsFileAfterGracePeriod(imagePath)) {
-  //       if (mounted) await showFileNotAccessibleDialog(context, fileName: imagePath);
-  //       return;
-  //     }
-  //
-  //     final newRelativePath = await _mediaRepo.import(imagePath, _fs.toBasename(imagePath));
-  //     if (newRelativePath == null) return;
-  //
-  //     if (!mounted) return;
-  //
-  //     if (useAsThumbnail) Provider.of<Project>(context, listen: false).thumbnailPath = newRelativePath;
-  //
-  //     final projectLibrary = context.read<ProjectLibrary>();
-  //
-  //     _fileReferences.dec(_imageBlock.relativePath, projectLibrary);
-  //     _imageBlock.relativePath = newRelativePath;
-  //     _fileReferences.inc(newRelativePath);
-  //
-  //     await _projectRepo.saveLibrary(projectLibrary);
-  //
-  //     setState(() {});
-  //   } on PlatformException catch (e) {
-  //     _logger.e('Unable to pick image.', error: e);
-  //   }
-  // }
   Future<void> _pickImagesAndSave(bool useAsThumbnail) async {
     try {
       final projectLibrary = context.read<ProjectLibrary>();
