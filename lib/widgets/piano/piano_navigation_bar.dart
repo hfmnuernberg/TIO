@@ -70,7 +70,12 @@ class PianoNavigationBar extends StatelessWidget {
             if (!prevToolExists) Placeholder(),
             if (!prevToolOfSameTypeExists) Placeholder(),
 
-            PianoSettingsButtonGroup(key: keySettings, onOpenPitch: onOpenPitch, onOpenVolume: onOpenVolume, onOpenSound: onOpenSound),
+            PianoSettingsButtonGroup(
+              key: keySettings,
+              onOpenPitch: onOpenPitch,
+              onOpenVolume: onOpenVolume,
+              onOpenSound: onOpenSound,
+            ),
 
             if (!nextToolOfSameTypeExists) Placeholder(),
             if (!nextToolExists) Placeholder(),
