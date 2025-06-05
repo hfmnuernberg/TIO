@@ -50,7 +50,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyAddProjectButton = GlobalKey();
-  final GlobalKey _keyNavigationBar = GlobalKey();
+  final GlobalKey _keyChangeProjectOrder = GlobalKey();
   final GlobalKey _keyQuickTools = GlobalKey();
 
   @override
@@ -102,7 +102,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         shape: ShapeLightFocus.RRect,
       ),
       CustomTargetFocus(
-        _keyNavigationBar,
+        _keyChangeProjectOrder,
         context.l10n.projectsTutorialChangeProjectOrder,
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
@@ -466,7 +466,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
                               child: EditProjectsBar(
-                                key: _keyNavigationBar,
+                                key: _keyChangeProjectOrder,
                                 isEditing: _isEditing,
                                 onAddProject: _handleNew,
                                 onToggleEditing: _toggleEditingMode,
