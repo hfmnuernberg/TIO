@@ -146,9 +146,13 @@ class English extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Mute chance';
   String get metronomeRandomMuteProbability => 'Probability in %';
-  String get metronomeRhythmPresetFourSixteenth => 'Four-sixteenth note';
-  String get metronomeRhythmPresetOneFourth => 'One-fourth note';
-  String get metronomeRhythmPresetTwoEighth => 'Two-eighth note';
+  String get metronomeRhythmQuarter => 'Quarter';
+  String get metronomeRhythmEighths => 'Eighths';
+  String get metronomeRhythmEighthRestFollowedByEighth => 'Eighth rest followed by Eighth';
+  String get metronomeRhythmTriplets => 'Triplets';
+  String get metronomeRhythmSixteenths => 'Sixteenths';
+  String get metronomeRhythmSixteenthFollowedByDottedEighth => 'Sixteenths followed by dotted Eighth';
+  String get metronomeRhythmDottedEighthFollowedBySixteenth => 'Dotted Eighth followed by Sixteenths';
   String get metronomeSetBpm => 'Set BPM';
   String get metronomeSetRandomMute => 'Set random mute';
   String get metronomeSetSoundsPrimary => 'Set metronome sounds';

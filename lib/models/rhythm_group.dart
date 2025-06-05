@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/models/note_handler.dart';
+import 'package:tiomusic/models/rhythm.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/constants.dart';
 
@@ -45,6 +46,21 @@ class RhythmGroup extends Equatable {
     // we need to do list.from with growable true to avoid the unmodifiable list error
     beats = List<BeatType>.from(beats);
     polyBeats = List<BeatTypePoly>.from(polyBeats);
+  }
+
+  factory RhythmGroup.fromRhythm(Rhythm rhythm, int beats) {
+    return RhythmGroup(
+      MetronomeParams.getNewKeyID(),
+      [
+        if (rhythm.main) BeatType.Accented else BeatType.Muted,
+        ...List.generate(beats - 1, (_) => rhythm.main ? BeatType.Unaccented : BeatType.Muted),
+      ],
+      List.generate(
+        beats,
+        (_) => rhythm.subs,
+      ).expand((sub) => sub).map((sub) => sub ? BeatTypePoly.Unaccented : BeatTypePoly.Muted).toList(),
+      MetronomeParams.defaultNoteKey,
+    );
   }
 
   factory RhythmGroup.fromJson(Map<String, dynamic> json) => _$RhythmGroupFromJson(json);

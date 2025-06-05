@@ -1,40 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/models/rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/rhythm_preset_key_extensions.dart';
-import 'package:tiomusic/widgets/metronome/rhythm_preset.dart';
+import 'package:tiomusic/util/rhythm_extension.dart';
 
-class RhythmPresetWheel extends StatefulWidget {
-  final RhythmPresetKey presetKey;
-  final void Function(RhythmPresetKey key) onSelect;
+class RhythmWheel extends StatefulWidget {
+  final Rhythm rhythm;
+  final void Function(Rhythm key) onSelect;
 
-  const RhythmPresetWheel({super.key, required this.presetKey, required this.onSelect});
+  const RhythmWheel({super.key, required this.rhythm, required this.onSelect});
 
   @override
-  State<RhythmPresetWheel> createState() => _RhythmPresetWheelState();
+  State<RhythmWheel> createState() => _RhythmWheelState();
 }
 
-class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
-  late final FixedExtentScrollController wheelController;
+class _RhythmWheelState extends State<RhythmWheel> {
+  late final FixedExtentScrollController controller;
 
   @override
   void initState() {
     super.initState();
-    wheelController = FixedExtentScrollController(
-      initialItem: indexOfOrThrow(RhythmPresetKey.values, widget.presetKey),
-    );
+    controller = FixedExtentScrollController(initialItem: indexOfOrThrow(Rhythm.values, widget.rhythm));
   }
 
   @override
   void dispose() {
-    wheelController.dispose();
+    controller.dispose();
     super.dispose();
   }
 
-  void handleSelectPreset(int index) {
-    wheelController.animateToItem(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
-    widget.onSelect(RhythmPresetKey.values[index]);
+  void handleSelect(int index) {
+    controller.animateToItem(index, duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+    widget.onSelect(Rhythm.values[index]);
   }
 
   @override
@@ -49,27 +47,27 @@ class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
             decoration: BoxDecoration(color: ColorTheme.surface, borderRadius: BorderRadius.circular(16)),
             child: Semantics(
               label: context.l10n.metronomeSubdivision,
-              value: widget.presetKey.getLabel(context.l10n),
+              value: widget.rhythm.getLabel(context.l10n),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: RotatedBox(
                   quarterTurns: -1,
                   child: ListWheelScrollView.useDelegate(
-                    controller: wheelController,
+                    controller: controller,
                     itemExtent: 70,
                     perspective: 0.008,
                     physics: const FixedExtentScrollPhysics(),
                     overAndUnderCenterOpacity: 0.6,
-                    onSelectedItemChanged: handleSelectPreset,
+                    onSelectedItemChanged: handleSelect,
                     childDelegate: ListWheelChildBuilderDelegate(
-                      childCount: RhythmPresetKey.values.length,
+                      childCount: Rhythm.values.length,
                       builder: (context, index) {
-                        final key = RhythmPresetKey.values[index];
+                        final key = Rhythm.values[index];
                         return RotatedBox(
                           quarterTurns: 1,
                           child: GestureDetector(
-                            onTap: () => handleSelectPreset(index),
-                            child: NoteIconWidget(presetKey: key),
+                            onTap: () => handleSelect(index),
+                            child: RhythmIconWidget(rhythm: key),
                           ),
                         );
                       },
@@ -92,17 +90,17 @@ class _RhythmPresetWheelState extends State<RhythmPresetWheel> {
   }
 }
 
-class NoteIconWidget extends StatelessWidget {
-  final RhythmPresetKey presetKey;
+class RhythmIconWidget extends StatelessWidget {
+  final Rhythm rhythm;
 
-  const NoteIconWidget({super.key, required this.presetKey});
+  const RhythmIconWidget({super.key, required this.rhythm});
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: presetKey.getLabel(context.l10n),
+      label: rhythm.getLabel(context.l10n),
       child: SvgPicture.asset(
-        'assets/metronome_presets/${presetKey.assetName}.svg',
+        'assets/rhythms/${rhythm.assetName}.svg',
         height: 50,
         colorFilter: const ColorFilter.mode(ColorTheme.surfaceTint, BlendMode.srcIn),
       ),

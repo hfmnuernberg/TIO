@@ -128,9 +128,13 @@ abstract class AppLocalizations {
   String get metronomeRandomMute;
   String get metronomeRandomMuteChance;
   String get metronomeRandomMuteProbability;
-  String get metronomeRhythmPresetFourSixteenth;
-  String get metronomeRhythmPresetOneFourth;
-  String get metronomeRhythmPresetTwoEighth;
+  String get metronomeRhythmQuarter;
+  String get metronomeRhythmEighths;
+  String get metronomeRhythmEighthRestFollowedByEighth;
+  String get metronomeRhythmTriplets;
+  String get metronomeRhythmSixteenths;
+  String get metronomeRhythmSixteenthFollowedByDottedEighth;
+  String get metronomeRhythmDottedEighthFollowedBySixteenth;
   String get metronomeSetBpm;
   String get metronomeSetRandomMute;
   String get metronomeSetSoundsPrimary;
