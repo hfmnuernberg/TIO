@@ -238,7 +238,7 @@ class _ImageToolState extends State<ImageTool> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      context.l10n.imageNoImage,
+                      context.l10n.imagePickOrTakeImage,
                       style: const TextStyle(color: ColorTheme.primary),
                       textAlign: TextAlign.center,
                     ),

@@ -69,9 +69,9 @@ class English extends AppLocalizations {
   String get imageDoLater => 'Do it later';
   String get imageNoCameraFound => 'No camera found';
   String get imageNoCameraFoundHint => 'There is no camera available on this device.';
-  String get imageNoImage => 'Please select an image or take a photo.';
   String get imagePickImage => 'Pick an image';
   String get imagePickNewImage => 'Pick new image';
+  String get imagePickOrTakeImage => 'Please select an image or take a photo.';
   String get imageSetAsProjectThumbnail => 'Set project thumbnail';
   String get imageSetAsThumbnail => 'Set as thumbnail';
   String get imageSetAsThumbnailQuestion =>
@@ -79,8 +79,9 @@ class English extends AppLocalizations {
   String get imageShare => 'Share image';
   String get imageTakePhoto => 'Take a photo';
   String get imageTakeNewPhoto => 'Take new photo';
-  String get imageUploadHint => 'Pick an image from your device or take a photo using the camera.';
-  String get imageUseAsThumbnailQuestion => 'Use image as project thumbnail.';
+  String get imageUploadHintFirst => 'Pick on or more images from your device or take a photo using the camera.';
+  String get imageUploadHintSecond => 'You can upload up to 10 images at once. The first image will be saved here, and a separate image tool will be created for all subsequent images.';
+  String get imageUseAsThumbnailQuestion => 'Use the first image as project thumbnail?';
 
   String get mainErrorDataLoading => 'Could not load user data!';
   String get mainOpenAnyway => 'Open anyway (all data is lost!)';

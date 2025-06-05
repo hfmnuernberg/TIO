@@ -20,11 +20,13 @@ class _AddImageDialogState extends State<AddImageDialog> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     return AlertDialog(
-      title: Text(l10n.imageNoImage, style: TextStyle(color: ColorTheme.primary)),
+      title: Text(l10n.imagePickOrTakeImage, style: TextStyle(color: ColorTheme.primary)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(l10n.imageUploadHint, style: TextStyle(color: ColorTheme.primary)),
+          Text(l10n.imageUploadHintFirst, style: TextStyle(color: ColorTheme.primary)),
+          const SizedBox(height: 10),
+          Text(l10n.imageUploadHintSecond, style: TextStyle(color: ColorTheme.primary)),
           const SizedBox(height: 10),
           TIOFlatButton(
             onPressed: () {
