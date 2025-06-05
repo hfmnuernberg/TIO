@@ -9,7 +9,7 @@ class FilePickerMock extends Mock implements FilePicker {
 
   void mockPickArchive(String? path) => when(pickArchive).thenAnswer((_) async => path);
   void mockPickAudio(String? path) => when(pickAudio).thenAnswer((_) async => path);
-  void mockPickImage(String? path) => when(pickImage).thenAnswer((_) async => path);
+  void mockPickMultipleImages(List<String>? paths) => when(pickMultipleImages).thenAnswer((_) async => paths);
   void mockPickTextFile(String? path) => when(pickTextFile).thenAnswer((_) async => path);
 
   void mockShareFile(bool success) => when(() => shareFile(any())).thenAnswer((invocation) async => success);

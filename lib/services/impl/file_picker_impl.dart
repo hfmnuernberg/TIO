@@ -12,7 +12,10 @@ class FilePickerImpl implements tio.FilePicker {
   Future<String?> pickAudio() async => (await FilePicker.platform.pickFiles(type: FileType.audio))?.files.single.path;
 
   @override
-  Future<String?> pickImage() async => (await ImagePicker().pickImage(source: ImageSource.gallery))?.path;
+  Future<List<String>?> pickMultipleImages() async {
+    final List<XFile> images = await ImagePicker().pickMultiImage();
+    return images.map((xfile) => xfile.path).toList();
+  }
 
   @override
   Future<String?> pickTextFile() async =>

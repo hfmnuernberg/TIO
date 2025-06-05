@@ -115,39 +115,78 @@ class _ImageToolState extends State<ImageTool> {
     context: context,
     builder:
         (context) => AddImageDialog(
-          pickImageFunction: (useAsThumbnail) => _pickImageAndSave(useAsThumbnail),
+          pickImageFunction: (useAsThumbnail) => _pickImagesAndSave(useAsThumbnail),
           takePhotoFunction: (useAsThumbnail) => _takePhotoAndSave(useAsThumbnail),
         ),
   );
 
-  Future<void> _pickImageAndSave(bool useAsThumbnail) async {
+  // Future<void> _pickImageAndSave(bool useAsThumbnail) async {
+  //   try {
+  //     final imagePath = await _filePicker.pickImage();
+  //     if (imagePath == null) return;
+  //
+  //     if (!await _fs.existsFileAfterGracePeriod(imagePath)) {
+  //       if (mounted) await showFileNotAccessibleDialog(context, fileName: imagePath);
+  //       return;
+  //     }
+  //
+  //     final newRelativePath = await _mediaRepo.import(imagePath, _fs.toBasename(imagePath));
+  //     if (newRelativePath == null) return;
+  //
+  //     if (!mounted) return;
+  //
+  //     if (useAsThumbnail) Provider.of<Project>(context, listen: false).thumbnailPath = newRelativePath;
+  //
+  //     final projectLibrary = context.read<ProjectLibrary>();
+  //
+  //     _fileReferences.dec(_imageBlock.relativePath, projectLibrary);
+  //     _imageBlock.relativePath = newRelativePath;
+  //     _fileReferences.inc(newRelativePath);
+  //
+  //     await _projectRepo.saveLibrary(projectLibrary);
+  //
+  //     setState(() {});
+  //   } on PlatformException catch (e) {
+  //     _logger.e('Unable to pick image.', error: e);
+  //   }
+  // }
+  Future<void> _pickImagesAndSave(bool useAsThumbnail) async {
     try {
-      final imagePath = await _filePicker.pickImage();
-      if (imagePath == null) return;
+      final projectLibrary = context.read<ProjectLibrary>();
+      final project = context.read<Project>();
 
-      if (!await _fs.existsFileAfterGracePeriod(imagePath)) {
-        if (mounted) await showFileNotAccessibleDialog(context, fileName: imagePath);
-        return;
+      final imagePaths = await _filePicker.pickMultipleImages();
+      if (imagePaths == null || imagePaths.isEmpty) return;
+
+      for (int i = 0; i < imagePaths.length; i++) {
+        final imagePath = imagePaths[i];
+        if (!await _fs.existsFileAfterGracePeriod(imagePath)) {
+          if (mounted) await showFileNotAccessibleDialog(context, fileName: imagePath);
+          continue;
+        }
+
+        final newRelativePath = await _mediaRepo.import(imagePath, _fs.toBasename(imagePath));
+        if (newRelativePath == null) continue;
+
+        if (!mounted) return;
+
+        if (i == 0) {
+          if (useAsThumbnail) project.thumbnailPath = newRelativePath;
+
+          _fileReferences.dec(_imageBlock.relativePath, projectLibrary);
+          _imageBlock.relativePath = newRelativePath;
+          _fileReferences.inc(newRelativePath);
+        } else {
+          final newBlock = ImageBlock.withTitle('Image ${i + 1}')..relativePath = newRelativePath;
+          _fileReferences.inc(newRelativePath);
+          project.addBlock(newBlock);
+        }
       }
 
-      final newRelativePath = await _mediaRepo.import(imagePath, _fs.toBasename(imagePath));
-      if (newRelativePath == null) return;
-
-      if (!mounted) return;
-
-      if (useAsThumbnail) Provider.of<Project>(context, listen: false).thumbnailPath = newRelativePath;
-
-      final projectLibrary = context.read<ProjectLibrary>();
-
-      _fileReferences.dec(_imageBlock.relativePath, projectLibrary);
-      _imageBlock.relativePath = newRelativePath;
-      _fileReferences.inc(newRelativePath);
-
       await _projectRepo.saveLibrary(projectLibrary);
-
       setState(() {});
     } on PlatformException catch (e) {
-      _logger.e('Unable to pick image.', error: e);
+      _logger.e('Unable to pick images.', error: e);
     }
   }
 
@@ -208,7 +247,7 @@ class _ImageToolState extends State<ImageTool> {
                   child: Text(context.l10n.imageSetAsThumbnail, style: const TextStyle(color: ColorTheme.primary)),
                 ),
                 MenuItemButton(
-                  onPressed: () => _pickImageAndSave(false),
+                  onPressed: () => _pickImagesAndSave(false),
                   child: Text(context.l10n.imagePickNewImage, style: const TextStyle(color: ColorTheme.primary)),
                 ),
                 MenuItemButton(
@@ -241,7 +280,7 @@ class _ImageToolState extends State<ImageTool> {
                         children: <Widget>[
                           TioIconButton.sm(
                             icon: const Icon(Icons.image_outlined, color: ColorTheme.primary),
-                            onPressed: () => _pickImageAndSave(false),
+                            onPressed: () => _pickImagesAndSave(false),
                           ),
                           const SizedBox(width: 12),
                           TioIconButton.sm(
