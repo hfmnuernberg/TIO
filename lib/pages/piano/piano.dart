@@ -154,8 +154,8 @@ class _PianoState extends State<Piano> {
       CustomTargetFocus(
         _keySettings,
         context.l10n.pianoTutorialAdjust,
-        alignText: ContentAlign.top,
-        pointingDirection: PointingDirection.down,
+        alignText: ContentAlign.left,
+        pointingDirection: PointingDirection.right,
         shape: ShapeLightFocus.RRect,
         buttonsPosition: ButtonsPosition.bottomright,
       ),
@@ -340,6 +340,8 @@ class _PianoState extends State<Piano> {
                 children: [
                   if (widget.isQuickTool)
                     PianoNavigationBar(
+                      keyOctaveSwitch: _keyOctaveSwitch,
+                      keySettings: _keySettings,
                       onOctaveDown: _pianoBlock.octaveDown,
                       onToneDown: _pianoBlock.toneDown,
                       onToneUp: _pianoBlock.toneUp,
@@ -351,6 +353,8 @@ class _PianoState extends State<Piano> {
                   else
                     PianoToolNavigationBar(
                       project: project!,
+                      keyOctaveSwitch: _keyOctaveSwitch,
+                      keySettings: _keySettings,
                       toolBlock: _pianoBlock,
                       onOctaveDown: _pianoBlock.octaveDown,
                       onToneDown: _pianoBlock.toneDown,

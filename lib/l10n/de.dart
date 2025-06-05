@@ -121,7 +121,8 @@ class German extends AppLocalizations {
   String get mediaPlayerSpeed => 'Tempo';
   String get mediaPlayerTapToTempo => 'Tippe im Takt';
   String get mediaPlayerTrim => 'Trimmen';
-  String get mediaPlayerTutorialAdjust => 'Tippe hier, um deine Audiodatei anzupassen.';
+  String get mediaPlayerTutorialAdjust =>
+      'Tippe hier, um deine Audiodatei anzupassen. Du kannst die Lautstärke, den Ausschnitt, die Geschwindigkeit und die Tonhöhe ändern, sowie Marker setzen. Der eingestellte Grundschlag dient als Basis für die Tempoeinstellung.';
   String get mediaPlayerTutorialJumpTo =>
       'Tippe auf eine beliebige Stelle, um zu diesem Teil deiner Audiodatei zu springen.';
   String get mediaPlayerTutorialStartStop =>
@@ -220,6 +221,8 @@ class German extends AppLocalizations {
   String get projectNewTool => 'Tool-Titel';
   String get projectToolList => 'Tool-Liste';
   String get projectToolListEmpty => 'Leere Tool-Liste';
+  String get projectTutorialChangeToolOrder =>
+      'Tippe auf das Plus-Symbol um ein neues Tool hinzuzufügen oder auf das Stift-Symbol um die Tools zu bearbeiten.';
   String get projectTutorialEditTitle => 'Tippe hier, um den Projekttitel zu bearbeiten.';
 
   String get projectsAbout => 'Projekte';
@@ -241,6 +244,8 @@ class German extends AppLocalizations {
   String get projectsTutorialAddProject => 'Tippe hier, um ein neues Projekt zu erstellen.';
   String get projectsTutorialCanIncludeMultipleTools =>
       'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Piano, Media Player, Bild und Text),\nund sogar mehrere Tools desselben Typs.';
+  String get projectsTutorialChangeProjectOrder =>
+      'Tippe auf das Plus-Symbol um ein neues Projekt hinzuzufügen oder auf das Stift-Symbol um die Projekte zu bearbeiten.';
   String get projectsTutorialHowToUseTio =>
       'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
   String get projectsTutorialStart => 'Tutorial anzeigen';

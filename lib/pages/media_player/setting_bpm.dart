@@ -27,7 +27,7 @@ class _SetBPMState extends State<SetBPM> {
   @override
   void initState() {
     super.initState();
-    _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
+    _mediaPlayerBlock = context.read<ProjectBlock>() as MediaPlayerBlock;
     value = _mediaPlayerBlock.bpm;
   }
 
