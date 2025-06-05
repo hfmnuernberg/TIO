@@ -154,7 +154,9 @@ class _ImageToolState extends State<ImageTool> {
       _fileReferences.dec(_imageBlock.relativePath, _projectLibrary);
       _imageBlock.relativePath = newRelativePath;
     } else {
-      final newBlock = ImageBlock.withTitle('Image ${index + 1}')..relativePath = newRelativePath;
+      final fileName = _fs.toBasename(imagePath);
+      final title = fileName.length > 100 ? fileName.substring(0, 100) : fileName;
+      final newBlock = ImageBlock.withTitle(title)..relativePath = newRelativePath;
       _project.addBlock(newBlock);
     }
   }
