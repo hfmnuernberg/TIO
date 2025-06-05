@@ -1,13 +1,17 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
+import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/metronome/editable_rhythm_segment.dart';
 
 class RhythmRow extends StatefulWidget {
-  final List<RhythmSegment> rhythmSegmentList;
+  final List<RhythmGroup> rhythmGroups;
+  final int? highlightedSegmentIndex;
+  final int? highlightedMainBeatIndex;
+  final int? highlightedPolyBeatIndex;
+
   final String label;
   final bool canDeleteLastSegment;
   final Widget addSecondaryAction;
@@ -19,7 +23,10 @@ class RhythmRow extends StatefulWidget {
 
   const RhythmRow({
     super.key,
-    required this.rhythmSegmentList,
+    required this.rhythmGroups,
+    required this.highlightedSegmentIndex,
+    required this.highlightedMainBeatIndex,
+    required this.highlightedPolyBeatIndex,
     required this.label,
     required this.canDeleteLastSegment,
     required this.onAdd,
@@ -36,6 +43,12 @@ class RhythmRow extends StatefulWidget {
 class _RhythmRowState extends State<RhythmRow> with RouteAware {
   bool isReordering = false;
 
+  int? _getHighlightedMainBeatIndex(int segmentIndex) =>
+      widget.highlightedSegmentIndex == segmentIndex ? widget.highlightedMainBeatIndex : null;
+
+  int? _getHighlightedPolyBeatIndex(int segmentIndex) =>
+      widget.highlightedSegmentIndex == segmentIndex ? widget.highlightedPolyBeatIndex : null;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -48,36 +61,44 @@ class _RhythmRowState extends State<RhythmRow> with RouteAware {
               scrollDirection: Axis.horizontal,
               children: <Widget>[
                 ReorderableListView.builder(
-                  proxyDecorator: (child, index, animation) => AnimatedBuilder(
-                    animation: animation,
-                    builder: (context, child) {
-                      final double animValue = Curves.easeInOut.transform(animation.value);
-                      final double elevation = lerpDouble(0, 6, animValue)!;
-                      return Material(elevation: elevation, color: Colors.transparent, shadowColor: Colors.transparent, child: child);
-                    },
-                    child: child,
-                  ),
+                  proxyDecorator:
+                      (child, index, animation) => AnimatedBuilder(
+                        animation: animation,
+                        builder: (context, child) {
+                          final double animValue = Curves.easeInOut.transform(animation.value);
+                          final double elevation = lerpDouble(0, 6, animValue)!;
+                          return Material(
+                            elevation: elevation,
+                            color: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            child: child,
+                          );
+                        },
+                        child: child,
+                      ),
                   buildDefaultDragHandles: false,
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
-                  itemCount: widget.rhythmSegmentList.length,
-                  itemBuilder: (context, index) {
-                    return Dismissible(
-                      key: Key(index.toString()),
-                      direction: widget.canDeleteLastSegment || widget.rhythmSegmentList.length > 1
-                          ? DismissDirection.up
-                          : DismissDirection.none,
-                      onDismissed: (_) => widget.onDelete(index),
-                      background: const Icon(Icons.delete_outlined, color: ColorTheme.primary),
-                      child: EditableRhythmSegment(
-                        index: index,
-                        rhythmSegment: widget.rhythmSegmentList[index],
-                        canReorder: widget.rhythmSegmentList.length > 1,
-                        isReordering: isReordering,
-                        onEdit: (index) => widget.onEdit(index),
+                  itemCount: widget.rhythmGroups.length,
+                  itemBuilder:
+                      (context, index) => Dismissible(
+                        key: Key(widget.rhythmGroups[index].keyID),
+                        direction:
+                            widget.canDeleteLastSegment || widget.rhythmGroups.length > 1
+                                ? DismissDirection.up
+                                : DismissDirection.none,
+                        onDismissed: (_) => widget.onDelete(index),
+                        background: const Icon(Icons.delete_outlined, color: ColorTheme.primary),
+                        child: EditableRhythmSegment(
+                          index: index,
+                          highlightedMainBeatIndex: _getHighlightedMainBeatIndex(index),
+                          highlightedPolyBeatIndex: _getHighlightedPolyBeatIndex(index),
+                          rhythmGroup: widget.rhythmGroups[index],
+                          canReorder: widget.rhythmGroups.length > 1,
+                          isReordering: isReordering,
+                          onEdit: () => widget.onEdit(index),
+                        ),
                       ),
-                    );
-                  },
                   onReorderStart: (_) => setState(() => isReordering = true),
                   onReorderEnd: (_) => setState(() => isReordering = false),
                   onReorder: widget.onReorder,
@@ -112,10 +133,7 @@ class _RhythmRowState extends State<RhythmRow> with RouteAware {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  widget.label,
-                  style: const TextStyle(color: ColorTheme.primary),
-                ),
+                Text(widget.label, style: const TextStyle(color: ColorTheme.primary)),
                 widget.addSecondaryAction,
               ],
             ),

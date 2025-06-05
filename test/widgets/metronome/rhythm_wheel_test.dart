@@ -48,7 +48,7 @@ void main() {
     testWidgets('changes rhythm when tapping on other rhythm', (tester) async {
       await tester.renderWidget(StatefulRhythmWheel(rhythm: Rhythm.quarter));
 
-      await tester.tapAndSettle(find.bySemanticsLabel('Eighth'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Eighths'));
 
       expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, 'Eighths');
     });
@@ -66,7 +66,7 @@ void main() {
 
       await tester.dragFromCenterToTargetAndSettle(find.bySemanticsLabel('Eighths'), const Offset(70, 0));
 
-      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, 'One-fourth note');
+      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, 'Quarter');
     });
 
     testWidgets('changes rhythm to last rhythm when dragging too the end', (tester) async {
@@ -74,7 +74,7 @@ void main() {
 
       await tester.dragFromCenterToTargetAndSettle(find.bySemanticsLabel('Quarter'), const Offset(-140, 0));
 
-      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, 'Sixteenths');
+      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, 'Eighths');
     });
   });
 }

@@ -54,10 +54,9 @@ class _RhythmWheelState extends State<RhythmWheel> {
                   quarterTurns: -1,
                   child: ListWheelScrollView.useDelegate(
                     controller: controller,
-                    itemExtent: 70,
-                    perspective: 0.008,
+                    itemExtent: 90,
+                    perspective: 0.007,
                     physics: const FixedExtentScrollPhysics(),
-                    overAndUnderCenterOpacity: 0.6,
                     onSelectedItemChanged: handleSelect,
                     childDelegate: ListWheelChildBuilderDelegate(
                       childCount: Rhythm.values.length,

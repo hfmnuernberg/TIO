@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-class FilledScreen extends CustomPainter {
-  FilledScreen({required this.color});
+class ColorPainter extends CustomPainter {
   Color color;
+
+  ColorPainter({required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint =
-    Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
+        Paint()
+          ..color = color
+          ..style = PaintingStyle.fill;
     canvas.drawRect(Offset.zero & size, paint);
   }
 

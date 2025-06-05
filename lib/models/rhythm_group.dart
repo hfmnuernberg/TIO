@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/models/note_handler.dart';
@@ -48,15 +49,18 @@ class RhythmGroup extends Equatable {
     polyBeats = List<BeatTypePoly>.from(polyBeats);
   }
 
-  factory RhythmGroup.fromRhythm(Rhythm rhythm, int beats) {
+  Rhythm? get rhythm =>
+      Rhythm.values.firstWhereOrNull((rhythm) => RhythmGroup.fromRhythm(rhythm, beats.length) == this);
+
+  factory RhythmGroup.fromRhythm(Rhythm rhythm, int beatCount) {
     return RhythmGroup(
       MetronomeParams.getNewKeyID(),
       [
         if (rhythm.main) BeatType.Accented else BeatType.Muted,
-        ...List.generate(beats - 1, (_) => rhythm.main ? BeatType.Unaccented : BeatType.Muted),
+        ...List.generate(beatCount - 1, (_) => rhythm.main ? BeatType.Unaccented : BeatType.Muted),
       ],
       List.generate(
-        beats,
+        beatCount,
         (_) => rhythm.subs,
       ).expand((sub) => sub).map((sub) => sub ? BeatTypePoly.Unaccented : BeatTypePoly.Muted).toList(),
       MetronomeParams.defaultNoteKey,

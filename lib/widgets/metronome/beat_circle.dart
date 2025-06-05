@@ -1,6 +1,7 @@
 import 'package:circular_widgets/circular_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:tiomusic/pages/metronome/beat_button.dart';
+import 'package:tiomusic/widgets/metronome/beat_button.dart';
+import 'package:tiomusic/widgets/metronome/beat_button_type.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
@@ -14,8 +15,9 @@ class BeatCircle extends StatelessWidget {
   final double buttonSize;
   final Color beatButtonColor;
   final bool noInnerBorder;
+
   final VoidCallback onStartStop;
-  final Function(int index) onTapBeat;
+  final Function(int index) onTap;
 
   const BeatCircle({
     super.key,
@@ -28,7 +30,7 @@ class BeatCircle extends StatelessWidget {
     required this.beatButtonColor,
     required this.noInnerBorder,
     required this.onStartStop,
-    required this.onTapBeat,
+    required this.onTap,
   });
 
   @override
@@ -41,11 +43,10 @@ class BeatCircle extends StatelessWidget {
           itemBuilder:
               (context, index) => BeatButton(
                 color: beatButtonColor,
-                beatTypes: beatTypes,
-                beatTypeIndex: index,
+                type: beatTypes[index],
                 buttonSize: buttonSize,
-                beatHighlighted: index == currentBeatIndex,
-                onTap: () => onTapBeat(index),
+                isHighlighted: index == currentBeatIndex,
+                onTap: () => onTap(index),
               ),
           itemsLength: beatCount,
           config: CircularWidgetConfig(itemRadius: 16, centerWidgetRadius: centerWidgetRadius),

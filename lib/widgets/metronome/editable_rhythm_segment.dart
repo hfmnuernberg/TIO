@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/models/rhythm_group.dart';
+import 'package:tiomusic/widgets/metronome/rhythm_segment.dart';
 
 class EditableRhythmSegment extends StatelessWidget {
   final int index;
-  final Widget rhythmSegment;
+  final RhythmGroup rhythmGroup;
+  final int? highlightedMainBeatIndex;
+  final int? highlightedPolyBeatIndex;
+
   final bool canReorder;
   final bool isReordering;
 
-  final Function(int index) onEdit;
+  final Function() onEdit;
 
   const EditableRhythmSegment({
     super.key,
     required this.index,
-    required this.rhythmSegment,
+    required this.rhythmGroup,
+    required this.highlightedMainBeatIndex,
+    required this.highlightedPolyBeatIndex,
     required this.canReorder,
     required this.isReordering,
     required this.onEdit,
@@ -29,7 +36,15 @@ class EditableRhythmSegment extends StatelessWidget {
         child: ReorderableDelayedDragStartListener(
           index: index,
           enabled: canReorder,
-          child: GestureDetector(onTap: () => onEdit(index), child: rhythmSegment),
+          child: GestureDetector(
+            onTap: onEdit,
+            child: RhythmSegment(
+              highlightedMainBeatIndex: highlightedMainBeatIndex,
+              highlightedPolyBeatIndex: highlightedPolyBeatIndex,
+              rhythmGroup: rhythmGroup,
+              onEdit: onEdit,
+            ),
+          ),
         ),
       ),
     );

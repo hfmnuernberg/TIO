@@ -260,7 +260,7 @@ class MetronomeBlock extends ProjectBlock {
   }
 
   void resetSecondaryMetronome() {
-    rhythmGroups2.clear();
+    rhythmGroups2 = [];
     accSound2 = defaultMetronomeAccSound2;
     unaccSound2 = defaultMetronomeUnaccSound2;
     polyAccSound2 = defaultMetronomePolyAccSound2;
@@ -269,6 +269,9 @@ class MetronomeBlock extends ProjectBlock {
 
   @override
   Widget get icon => MetronomeParams.icon;
+
+  bool get isSimpleModeSupported =>
+      _rhythmGroups2.isEmpty && _rhythmGroups.length == 1 && rhythmGroups[0].rhythm != null;
 
   factory MetronomeBlock.fromJson(Map<String, dynamic> json) => _$MetronomeBlockFromJson(json);
 
