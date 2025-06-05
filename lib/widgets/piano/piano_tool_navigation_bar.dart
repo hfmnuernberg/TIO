@@ -7,6 +7,8 @@ import 'package:tiomusic/widgets/piano/piano_navigation_bar.dart';
 class PianoToolNavigationBar extends StatelessWidget {
   final Project project;
   final ProjectBlock toolBlock;
+  final GlobalKey keyOctaveSwitch;
+  final GlobalKey keySettings;
 
   final VoidCallback onOctaveDown;
   final VoidCallback onToneDown;
@@ -21,6 +23,8 @@ class PianoToolNavigationBar extends StatelessWidget {
     super.key,
     required this.project,
     required this.toolBlock,
+    required this.keyOctaveSwitch,
+    required this.keySettings,
     required this.onOctaveDown,
     required this.onToneDown,
     required this.onOctaveUp,
@@ -45,6 +49,8 @@ class PianoToolNavigationBar extends StatelessWidget {
       prevToolIcon: index > 0 ? tools[(index - 1)].icon : null,
       nextToolIcon: index < tools.length - 1 ? tools[index + 1].icon : null,
       toolOfSameTypeIcon: toolBlock.icon,
+      keyOctaveSwitch: keyOctaveSwitch,
+      keySettings: keySettings,
       onPrevTool: index > 0 ? () => replaceTool(tools[(index - 1)], ltr: true) : null,
       onNextTool: index < tools.length - 1 ? () => replaceTool(tools[index + 1]) : null,
       onPrevToolOfSameType: sameToolsIndex > 0 ? () => replaceTool(sameTools[(sameToolsIndex - 1)], ltr: true) : null,
