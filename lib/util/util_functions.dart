@@ -461,7 +461,7 @@ void saveToolInNewProject(
   }
 }
 
-enum ReturnAction { goToNewTool }
+enum ReturnAction { goToNewTool, showTutorial }
 
 // ---------------------------------------------------------------
 // our modal bottom sheet
