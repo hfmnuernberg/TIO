@@ -122,7 +122,8 @@ class English extends AppLocalizations {
   String get mediaPlayerSpeed => 'Tempo';
   String get mediaPlayerTapToTempo => 'Tap to tempo';
   String get mediaPlayerTrim => 'Trim';
-  String get mediaPlayerTutorialAdjust => 'Tap here to adjust your sound file.';
+  String get mediaPlayerTutorialAdjust =>
+      'Tap here to adjust your audio file. You can change the volume, the clip, the speed, and the pitch, as well as set markers. The set basic beat serves as the basis for the tempo setting.';
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file.';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file.';
 
@@ -217,6 +218,8 @@ class English extends AppLocalizations {
   String get projectNewTool => 'Tool title';
   String get projectToolList => 'Tool list';
   String get projectToolListEmpty => 'Empty tool list';
+  String get projectTutorialChangeToolOrder =>
+      'Tap the plus icon to add a new tool or the pencil icon to edit the tools.';
   String get projectTutorialEditTitle => 'Tap here to edit the title of your project.';
 
   String get projectsAbout => 'Projects';

@@ -121,7 +121,8 @@ class German extends AppLocalizations {
   String get mediaPlayerSpeed => 'Tempo';
   String get mediaPlayerTapToTempo => 'Tippe im Takt';
   String get mediaPlayerTrim => 'Trimmen';
-  String get mediaPlayerTutorialAdjust => 'Tippe hier, um deine Audiodatei anzupassen.';
+  String get mediaPlayerTutorialAdjust =>
+      'Tippe hier, um deine Audiodatei anzupassen. Du kannst die Lautstärke, den Ausschnitt, die Geschwindigkeit und die Tonhöhe ändern, sowie Marker setzen. Der eingestellte Grundschlag dient als Basis für die Tempoeinstellung.';
   String get mediaPlayerTutorialJumpTo =>
       'Tippe auf eine beliebige Stelle, um zu diesem Teil deiner Audiodatei zu springen.';
   String get mediaPlayerTutorialStartStop =>
@@ -220,6 +221,8 @@ class German extends AppLocalizations {
   String get projectNewTool => 'Tool-Titel';
   String get projectToolList => 'Tool-Liste';
   String get projectToolListEmpty => 'Leere Tool-Liste';
+  String get projectTutorialChangeToolOrder =>
+      'Tippe auf das Plus-Symbol um ein neues Tool hinzuzufügen oder auf das Stift-Symbol um die Tools zu bearbeiten.';
   String get projectTutorialEditTitle => 'Tippe hier, um den Projekttitel zu bearbeiten.';
 
   String get projectsAbout => 'Projekte';

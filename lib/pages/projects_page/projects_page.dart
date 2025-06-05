@@ -96,9 +96,9 @@ class _ProjectsPageState extends State<ProjectsPage> {
       CustomTargetFocus(
         _keyQuickTools,
         context.l10n.projectsTutorialStartUsingTool,
-        buttonsPosition: ButtonsPosition.top,
-        pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
+        pointingDirection: PointingDirection.down,
+        buttonsPosition: ButtonsPosition.top,
         shape: ShapeLightFocus.RRect,
       ),
       CustomTargetFocus(
