@@ -41,6 +41,8 @@ class _ImageToolState extends State<ImageTool> {
   late FileReferences _fileReferences;
   late MediaRepository _mediaRepo;
   late ProjectRepository _projectRepo;
+  late ProjectLibrary _projectLibrary;
+
 
   late ImageBlock _imageBlock;
   late Project _project;
@@ -54,11 +56,12 @@ class _ImageToolState extends State<ImageTool> {
     _fileReferences = context.read<FileReferences>();
     _mediaRepo = context.read<MediaRepository>();
     _projectRepo = context.read<ProjectRepository>();
+    _projectLibrary = context.read<ProjectLibrary>();
 
     _imageBlock = Provider.of<ProjectBlock>(context, listen: false) as ImageBlock;
     _imageBlock.timeLastModified = getCurrentDateTime();
 
-    _project = Provider.of<Project>(context, listen: false);
+    _project = context.read<Project>();
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
@@ -80,7 +83,7 @@ class _ImageToolState extends State<ImageTool> {
     if (useAsProfilePicture != null && useAsProfilePicture) {
       _project.thumbnailPath = _imageBlock.relativePath;
       if (mounted) {
-        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+        await _projectRepo.saveLibrary(_projectLibrary);
       }
     }
   }
@@ -122,41 +125,38 @@ class _ImageToolState extends State<ImageTool> {
 
   Future<void> _pickImagesAndSave(bool useAsThumbnail) async {
     try {
-      final projectLibrary = context.read<ProjectLibrary>();
-      final project = context.read<Project>();
-
       final imagePaths = await _filePicker.pickMultipleImages();
       if (imagePaths == null || imagePaths.isEmpty) return;
 
       for (int i = 0; i < imagePaths.length; i++) {
-        final imagePath = imagePaths[i];
-        if (!await _fs.existsFileAfterGracePeriod(imagePath)) {
-          if (mounted) await showFileNotAccessibleDialog(context, fileName: imagePath);
-          continue;
-        }
-
-        final newRelativePath = await _mediaRepo.import(imagePath, _fs.toBasename(imagePath));
-        if (newRelativePath == null) continue;
-
-        if (!mounted) return;
-
-        if (i == 0) {
-          if (useAsThumbnail) project.thumbnailPath = newRelativePath;
-
-          _fileReferences.dec(_imageBlock.relativePath, projectLibrary);
-          _imageBlock.relativePath = newRelativePath;
-          _fileReferences.inc(newRelativePath);
-        } else {
-          final newBlock = ImageBlock.withTitle('Image ${i + 1}')..relativePath = newRelativePath;
-          _fileReferences.inc(newRelativePath);
-          project.addBlock(newBlock);
-        }
+        await handleImage(i, imagePaths[i], useAsThumbnail);
       }
 
-      await _projectRepo.saveLibrary(projectLibrary);
+      await _projectRepo.saveLibrary(_projectLibrary);
       setState(() {});
     } on PlatformException catch (e) {
       _logger.e('Unable to pick images.', error: e);
+    }
+  }
+
+  Future<void> handleImage(int index, String imagePath, bool useAsThumbnail) async {
+    if (!await _fs.existsFileAfterGracePeriod(imagePath)) {
+      if (mounted) await showFileNotAccessibleDialog(context, fileName: imagePath);
+      return;
+    }
+
+    final newRelativePath = await _mediaRepo.import(imagePath, _fs.toBasename(imagePath));
+    if (newRelativePath == null || !mounted) return;
+
+    _fileReferences.inc(newRelativePath);
+
+    if (index == 0) {
+      if (useAsThumbnail) _project.thumbnailPath = newRelativePath;
+      _fileReferences.dec(_imageBlock.relativePath, _projectLibrary);
+      _imageBlock.relativePath = newRelativePath;
+    } else {
+      final newBlock = ImageBlock.withTitle('Image ${index + 1}')..relativePath = newRelativePath;
+      _project.addBlock(newBlock);
     }
   }
 
@@ -187,13 +187,12 @@ class _ImageToolState extends State<ImageTool> {
 
     if (useAsThumbnail) Provider.of<Project>(context, listen: false).thumbnailPath = newRelativePath;
 
-    final projectLibrary = context.read<ProjectLibrary>();
 
-    _fileReferences.dec(_imageBlock.relativePath, projectLibrary);
+    _fileReferences.dec(_imageBlock.relativePath, _projectLibrary);
     _imageBlock.relativePath = newRelativePath;
     _fileReferences.inc(newRelativePath);
 
-    await _projectRepo.saveLibrary(projectLibrary);
+    await _projectRepo.saveLibrary(_projectLibrary);
 
     setState(() {});
   }
