@@ -43,7 +43,6 @@ class _ImageToolState extends State<ImageTool> {
   late ProjectRepository _projectRepo;
   late ProjectLibrary _projectLibrary;
 
-
   late ImageBlock _imageBlock;
   late Project _project;
 
@@ -125,7 +124,7 @@ class _ImageToolState extends State<ImageTool> {
 
   Future<void> _pickImagesAndSave(bool useAsThumbnail) async {
     try {
-      final imagePaths = await _filePicker.pickMultipleImages();
+      final imagePaths = await _filePicker.pickMultipleImages(limit: 10);
       if (imagePaths == null || imagePaths.isEmpty) return;
 
       for (int i = 0; i < imagePaths.length; i++) {
@@ -186,7 +185,6 @@ class _ImageToolState extends State<ImageTool> {
     if (!mounted) return;
 
     if (useAsThumbnail) Provider.of<Project>(context, listen: false).thumbnailPath = newRelativePath;
-
 
     _fileReferences.dec(_imageBlock.relativePath, _projectLibrary);
     _imageBlock.relativePath = newRelativePath;
