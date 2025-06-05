@@ -197,6 +197,7 @@ abstract class AppLocalizations {
   String get projectNewTool;
   String get projectToolList;
   String get projectToolListEmpty;
+  String get projectTutorialChangeToolOrder;
   String get projectTutorialEditTitle;
 
   String get projectsAbout;
