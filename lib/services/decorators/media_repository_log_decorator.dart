@@ -55,4 +55,10 @@ class MediaRepositoryLogDecorator implements MediaRepository {
     _logger.t('delete($relativeFilePath)');
     return _repo.delete(relativeFilePath);
   }
+
+  @override
+  Future<void> deleteTemporaryFiles(String absoluteSourceFilePath) async {
+    _logger.t('delete($absoluteSourceFilePath)');
+    return _repo.deleteTemporaryFiles(absoluteSourceFilePath);
+  }
 }
