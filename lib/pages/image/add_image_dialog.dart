@@ -49,12 +49,7 @@ class _AddImageDialogState extends State<AddImageDialog> {
           ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n.imageDoLater),
-        ),
-      ],
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.imageDoLater))],
     );
   }
 }
