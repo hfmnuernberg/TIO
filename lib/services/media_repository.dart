@@ -14,6 +14,4 @@ mixin MediaRepository {
   Future<String?> saveSamplesToWaveFile(String basename, Float64List samples);
 
   Future<void> delete(String relativeFilePath);
-
-  Future<void> deleteTemporaryFiles(String absoluteSourceFilePath);
 }

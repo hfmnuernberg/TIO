@@ -25,5 +25,7 @@ mixin FileSystem {
 
   Future<void> deleteFile(String absoluteFilePath);
 
+  Future<void> deleteIfTmpFile(String absoluteSourceFilePath);
+
   Future<void> createFolder(String absoluteFolderPath);
 }

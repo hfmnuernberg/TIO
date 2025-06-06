@@ -31,7 +31,7 @@ class FileBasedMediaRepository implements MediaRepository {
 
     await _fs.copyFile(absoluteSourceFilePath, absolutePath);
 
-    await deleteTemporaryFiles(absoluteSourceFilePath);
+    await _fs.deleteIfTmpFile(absoluteSourceFilePath);
 
     return relativePath;
   }
@@ -60,14 +60,6 @@ class FileBasedMediaRepository implements MediaRepository {
   Future<void> delete(String relativePath) async {
     final absolutePath = '${_fs.appFolderPath}/$relativePath';
     if (_fs.existsFile(absolutePath)) await _fs.deleteFile(absolutePath);
-  }
-
-  @override
-  Future<void> deleteTemporaryFiles(String absoluteSourceFilePath) async {
-    final isTemporaryFile = absoluteSourceFilePath.contains('/tmp') || absoluteSourceFilePath.contains('/cache/');
-    if (isTemporaryFile && _fs.existsFile(absoluteSourceFilePath)) {
-      await _fs.deleteFile(absoluteSourceFilePath);
-    }
   }
 
   String _toFilename(String basename, String extension, [int counter = 0]) =>
