@@ -132,7 +132,7 @@ class _ImageToolState extends State<ImageTool> {
       }
 
       await projectRepo.saveLibrary(projectLibrary);
-      setState(() {});
+      if (mounted) setState(() {});
     } on PlatformException catch (e) {
       logger.e('Unable to pick images.', error: e);
     }
