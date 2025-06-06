@@ -78,10 +78,7 @@ class German extends AppLocalizations {
   String get imageShare => 'Bild teilen';
   String get imageTakePhoto => 'Foto aufnehmen';
   String get imageTakeNewPhoto => 'Neues Foto aufnehmen';
-  String get imageUploadHintFirst =>
-      'Wähle ein oder mehrere Bilder von deinem Gerät aus oder mache ein Foto mit der Kamera.';
-  String get imageUploadHintSecond =>
-      'Du kannst bis zu 10 Bilder gleichzeitig hochladen. Das erste Bild wird hier gespeichert und für alle weiteren Bilder wird ein separates Bild-Tool angelegt.';
+  String get imageUploadHint => 'Wähle ein oder mehrere Bilder von deinem Gerät aus oder mache ein Foto mit der Kamera.\n\nDu kannst bis zu 10 Bilder gleichzeitig hochladen. Das erste Bild wird hier gespeichert und für alle weiteren Bilder wird ein separates Bild-Tool angelegt.';
   String get imageUseAsThumbnailQuestion => 'Das erste Bild als Projektbild verwenden?';
 
   String get mainErrorDataLoading => 'Benutzerdaten konnten nicht geladen werden!';

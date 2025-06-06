@@ -79,9 +79,7 @@ class English extends AppLocalizations {
   String get imageShare => 'Share image';
   String get imageTakePhoto => 'Take a photo';
   String get imageTakeNewPhoto => 'Take new photo';
-  String get imageUploadHintFirst => 'Pick one or more images from your device or take a photo using the camera.';
-  String get imageUploadHintSecond =>
-      'You can upload up to 10 images at once. The first image will be saved here, and a separate image tool will be created for all subsequent images.';
+  String get imageUploadHint => 'Pick one or more images from your device or take a photo using the camera.\n\nYou can upload up to 10 images at once. The first image will be saved here, and a separate image tool will be created for all subsequent images.';
   String get imageUseAsThumbnailQuestion => 'Use the first image as project thumbnail?';
 
   String get mainErrorDataLoading => 'Could not load user data!';
