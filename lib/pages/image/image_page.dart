@@ -41,7 +41,6 @@ class _ImageToolState extends State<ImageTool> {
   late FileReferences fileReferences;
   late MediaRepository mediaRepo;
   late ProjectRepository projectRepo;
-  late ProjectLibrary projectLibrary;
 
   late ImageBlock imageBlock;
   late Project project;
@@ -55,7 +54,6 @@ class _ImageToolState extends State<ImageTool> {
     fileReferences = context.read<FileReferences>();
     mediaRepo = context.read<MediaRepository>();
     projectRepo = context.read<ProjectRepository>();
-    projectLibrary = context.read<ProjectLibrary>();
 
     imageBlock = Provider.of<ProjectBlock>(context, listen: false) as ImageBlock;
     imageBlock.timeLastModified = getCurrentDateTime();
@@ -82,7 +80,7 @@ class _ImageToolState extends State<ImageTool> {
     if (useAsProfilePicture != null && useAsProfilePicture) {
       project.thumbnailPath = imageBlock.relativePath;
       if (mounted) {
-        await projectRepo.saveLibrary(projectLibrary);
+        await projectRepo.saveLibrary(context.read<ProjectLibrary>());
       }
     }
   }
@@ -131,8 +129,10 @@ class _ImageToolState extends State<ImageTool> {
         await handleImage(i, imagePaths[i], useAsThumbnail);
       }
 
-      await projectRepo.saveLibrary(projectLibrary);
-      if (mounted) setState(() {});
+      if (!mounted) return;
+
+      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      setState(() {});
     } on PlatformException catch (e) {
       logger.e('Unable to pick images.', error: e);
     }
@@ -151,7 +151,7 @@ class _ImageToolState extends State<ImageTool> {
 
     if (index == 0) {
       if (useAsThumbnail) project.thumbnailPath = newRelativePath;
-      fileReferences.dec(imageBlock.relativePath, projectLibrary);
+      fileReferences.dec(imageBlock.relativePath, context.read<ProjectLibrary>());
       imageBlock.relativePath = newRelativePath;
     } else {
       final title = '${imageBlock.title}($index)';
@@ -187,11 +187,11 @@ class _ImageToolState extends State<ImageTool> {
 
     if (useAsThumbnail) Provider.of<Project>(context, listen: false).thumbnailPath = newRelativePath;
 
-    fileReferences.dec(imageBlock.relativePath, projectLibrary);
+    fileReferences.dec(imageBlock.relativePath, context.read<ProjectLibrary>());
     imageBlock.relativePath = newRelativePath;
     fileReferences.inc(newRelativePath);
 
-    await projectRepo.saveLibrary(projectLibrary);
+    await projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
     setState(() {});
   }
