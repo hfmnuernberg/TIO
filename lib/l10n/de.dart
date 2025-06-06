@@ -69,17 +69,18 @@ class German extends AppLocalizations {
   String get imageDoLater => 'Später';
   String get imageNoCameraFound => 'Keine Kamera gefunden';
   String get imageNoCameraFoundHint => 'Es ist keine Kamera auf diesem Gerät verfügbar.';
-  String get imageNoImage => 'Bitte lade ein Foto hoch oder mache ein neues Foto.';
-  String get imagePickImage => 'Bild auswählen';
-  String get imagePickNewImage => 'Neues Bild auswählen';
+  String get imagePickImage => 'Bild(er) auswählen';
+  String get imagePickNewImage => 'Neue(s) Bild(er) auswählen';
+  String get imagePickOrTakeImage => 'Bitte lade ein Foto hoch oder mache ein neues Foto.';
   String get imageSetAsProjectThumbnail => 'Projektbild festlegen';
   String get imageSetAsThumbnail => 'Als Projektbild festlegen';
   String get imageSetAsThumbnailQuestion => 'Möchtest du das Bild als Projektbild verwenden?';
   String get imageShare => 'Bild teilen';
   String get imageTakePhoto => 'Foto aufnehmen';
   String get imageTakeNewPhoto => 'Neues Foto aufnehmen';
-  String get imageUploadHint => 'Wähle ein Bild von deinem Gerät aus oder mache ein Foto mit der Kamera.';
-  String get imageUseAsThumbnailQuestion => 'Bild als Projektbild verwenden';
+  String get imageUploadHint =>
+      'Wähle ein oder mehrere Bilder von deinem Gerät aus oder mache ein Foto mit der Kamera.\n\nDu kannst bis zu 10 Bilder gleichzeitig hochladen. Das erste Bild wird hier gespeichert und für alle weiteren Bilder wird ein separates Bild-Tool angelegt.';
+  String get imageUseAsThumbnailQuestion => 'Das erste Bild als Projektbild verwenden?';
 
   String get mainErrorDataLoading => 'Benutzerdaten konnten nicht geladen werden!';
   String get mainOpenAnyway => 'Trotzdem öffnen (alle Daten gehen verloren!)';

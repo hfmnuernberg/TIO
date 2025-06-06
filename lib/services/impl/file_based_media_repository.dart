@@ -31,6 +31,8 @@ class FileBasedMediaRepository implements MediaRepository {
 
     await _fs.copyFile(absoluteSourceFilePath, absolutePath);
 
+    await _fs.deleteIfTmpFile(absoluteSourceFilePath);
+
     return relativePath;
   }
 

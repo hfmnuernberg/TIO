@@ -58,9 +58,9 @@ abstract class AppLocalizations {
   String get imageDoLater;
   String get imageNoCameraFound;
   String get imageNoCameraFoundHint;
-  String get imageNoImage;
   String get imagePickImage;
   String get imagePickNewImage;
+  String get imagePickOrTakeImage;
   String get imageSetAsProjectThumbnail;
   String get imageSetAsThumbnail;
   String get imageSetAsThumbnailQuestion;
