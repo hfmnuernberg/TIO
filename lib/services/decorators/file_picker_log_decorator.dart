@@ -24,9 +24,9 @@ class FilePickerLogDecorator implements FilePicker {
   }
 
   @override
-  Future<List<String>?> pickImages({required int limit}) async {
+  Future<List<String>> pickImages({required int limit}) async {
     final absoluteFilePaths = await _filePicker.pickImages(limit: limit);
-    _logger.t('pickImages(): ${absoluteFilePaths?.map(shortenPath).join(", ")}');
+    _logger.t('pickImages(): ${absoluteFilePaths.map(shortenPath).join(", ")}');
     return absoluteFilePaths;
   }
 

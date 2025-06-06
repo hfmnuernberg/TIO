@@ -123,7 +123,7 @@ class _ImageToolState extends State<ImageTool> {
   Future<void> pickImagesAndSave(bool useAsThumbnail) async {
     try {
       final imagePaths = await filePicker.pickImages(limit: 10);
-      if (imagePaths == null || imagePaths.isEmpty) return;
+      if (imagePaths.isEmpty) return;
 
       for (int i = 0; i < imagePaths.length; i++) {
         await handleImage(i, imagePaths[i], useAsThumbnail);
