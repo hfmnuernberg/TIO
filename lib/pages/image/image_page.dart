@@ -154,8 +154,7 @@ class _ImageToolState extends State<ImageTool> {
       fileReferences.dec(imageBlock.relativePath, projectLibrary);
       imageBlock.relativePath = newRelativePath;
     } else {
-      final fileName = fs.toBasename(imagePath);
-      final title = fileName.length > 100 ? fileName.substring(0, 100) : fileName;
+      final title = '${imageBlock.title}($index)';
       final newBlock = ImageBlock.withTitle(title)..relativePath = newRelativePath;
       project.addBlock(newBlock);
     }
