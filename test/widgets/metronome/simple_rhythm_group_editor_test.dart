@@ -5,7 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
-import 'package:tiomusic/widgets/metronome/simple_rhythm_group_select.dart';
+import 'package:tiomusic/widgets/metronome/simple_rhythm_group_editor.dart';
 
 import '../../utils/action_utils.dart';
 import '../../utils/render_utils.dart';
@@ -24,12 +24,12 @@ void main() {
     await NoteHandler.createNoteBeatLengthMap();
   });
 
-  group('SimpleRhythmGroupSelect', () {
+  group('SimpleRhythmGroupEditor', () {
     testWidgets('updates rhythm group when increasing beats', (tester) async {
       final onRhythmUpdateMock = OnRhythmUpdateMock();
 
       await tester.renderWidget(
-        SimpleRhythmGroupSelect(
+        SimpleRhythmGroupEditor(
           rhythmGroup: rhythmGroup(const [BeatType.Accented], const [BeatTypePoly.Muted, BeatTypePoly.Unaccented]),
           onUpdate: onRhythmUpdateMock.onUpdate,
         ),
@@ -49,7 +49,7 @@ void main() {
       final onRhythmUpdateMock = OnRhythmUpdateMock();
 
       await tester.renderWidget(
-        SimpleRhythmGroupSelect(
+        SimpleRhythmGroupEditor(
           rhythmGroup: rhythmGroup(
             const [BeatType.Accented, BeatType.Unaccented],
             const [BeatTypePoly.Muted, BeatTypePoly.Unaccented, BeatTypePoly.Muted, BeatTypePoly.Unaccented],
@@ -69,7 +69,7 @@ void main() {
       final onRhythmUpdateMock = OnRhythmUpdateMock();
 
       await tester.renderWidget(
-        SimpleRhythmGroupSelect(
+        SimpleRhythmGroupEditor(
           rhythmGroup: rhythmGroup(const [BeatType.Accented, BeatType.Unaccented], const <BeatTypePoly>[]),
           onUpdate: onRhythmUpdateMock.onUpdate,
         ),

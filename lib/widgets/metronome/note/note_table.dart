@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:tiomusic/models/note_handler.dart';
-import 'package:tiomusic/widgets/metronome/note_button.dart';
+import 'package:tiomusic/widgets/metronome/note/note_button.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class NoteTable extends StatelessWidget {

@@ -48,6 +48,12 @@ class FileSystemLogDecorator implements FileSystem {
   }
 
   @override
+  Future<void> deleteIfTmpFile(String absoluteSourceFilePath) async {
+    _logger.t('delete($absoluteSourceFilePath)');
+    return _fs.deleteIfTmpFile(absoluteSourceFilePath);
+  }
+
+  @override
   bool existsFile(String absoluteFilePath) {
     final result = _fs.existsFile(absoluteFilePath);
     _logger.t('existsFile(${shortenPath(absoluteFilePath)}): $result');

@@ -1,20 +1,21 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/metronome/note.dart';
+import 'package:tiomusic/widgets/metronome/beat/beat.dart';
+import 'package:tiomusic/widgets/metronome/beat/beat_button_type.dart';
 
-class Notes extends StatelessWidget {
-  final int numberOfNotes;
-  final String noteKey;
+class Beats extends StatelessWidget {
+  final List<BeatButtonType> beatTypes;
+  final int? highlightedBeatIndex;
   final double width;
-  final double? spaceBetweenNotes;
+  final double? spaceBetweenBeats;
 
-  const Notes({
+  const Beats({
     super.key,
-    required this.numberOfNotes,
-    required this.noteKey,
+    required this.beatTypes,
+    required this.highlightedBeatIndex,
     required this.width,
-    this.spaceBetweenNotes,
+    this.spaceBetweenBeats,
   });
 
   @override
@@ -22,21 +23,21 @@ class Notes extends StatelessWidget {
     return SizedBox(
       width: width,
       child:
-          numberOfNotes == 0
+          beatTypes.isEmpty
               ? const SizedBox(height: TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2)
               : Row(
                 children:
-                    List.generate(numberOfNotes, (i) => noteKey)
+                    beatTypes
                         .expandIndexed(
-                          (i, noteKey) => [
-                            if (spaceBetweenNotes != null && i > 0)
+                          (i, beatType) => [
+                            if (spaceBetweenBeats != null && i > 0)
                               SizedBox(
                                 width:
-                                    spaceBetweenNotes! -
+                                    spaceBetweenBeats! -
                                     TIOMusicParams.beatButtonSizeMainPage -
                                     TIOMusicParams.beatButtonPadding * 2,
                               ),
-                            Note(noteKey: noteKey),
+                            Beat(beatType: beatType, isHighlighted: i == highlightedBeatIndex),
                           ],
                         )
                         .toList(),

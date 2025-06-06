@@ -55,6 +55,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyChangeTitle = GlobalKey();
+  final GlobalKey _keyChangeToolOrder = GlobalKey();
 
   @override
   void initState() {
@@ -88,28 +89,19 @@ class _ProjectPageState extends State<ProjectPage> {
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     }
 
-    _showTutorial();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _project.timeLastModified = getCurrentDateTime();
     });
+
+    if (context.read<ProjectLibrary>().showProjectPageTutorial && _project.blocks.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _createTutorial();
+        _tutorial.show(context);
+      });
+    }
   }
 
   void _toggleEditingMode() => setState(() => _isEditing = !_isEditing);
-
-  void _showTutorial() {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final projectLibrary = context.read<ProjectLibrary>();
-
-      if (projectLibrary.showHomepageTutorial) {
-        projectLibrary.showHomepageTutorial = false;
-        await _projectRepo.saveLibrary(projectLibrary);
-        _createTutorial();
-        if (!mounted) return;
-        _tutorial.show(context);
-      }
-    });
-  }
 
   void _createTutorial() {
     var targets = <CustomTargetFocus>[
@@ -118,6 +110,14 @@ class _ProjectPageState extends State<ProjectPage> {
         context.l10n.projectTutorialEditTitle,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
+        shape: ShapeLightFocus.RRect,
+      ),
+      CustomTargetFocus(
+        _keyChangeToolOrder,
+        context.l10n.projectTutorialChangeToolOrder,
+        buttonsPosition: ButtonsPosition.top,
+        pointingDirection: PointingDirection.down,
+        alignText: ContentAlign.top,
         shape: ShapeLightFocus.RRect,
       ),
     ];
@@ -198,8 +198,9 @@ class _ProjectPageState extends State<ProjectPage> {
   );
 
   Future<void> _createBlockAndGoToTool(BlockTypeInfo info, String blockTitle) async {
+    final projectLibrary = context.read<ProjectLibrary>();
+
     if (_withoutProject) {
-      final projectLibrary = context.read<ProjectLibrary>();
       projectLibrary.addProject(_project);
       _withoutProject = false;
     }
@@ -207,15 +208,23 @@ class _ProjectPageState extends State<ProjectPage> {
     final newBlock = info.createWithTitle(blockTitle);
 
     _project.addBlock(newBlock);
-    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    await _projectRepo.saveLibrary(projectLibrary);
 
-    setState(() {
-      _showBlocks = true;
-    });
+    setState(() => _showBlocks = true);
 
     if (!mounted) return;
 
-    goToTool(context, _project, newBlock).then((_) => setState(() {}));
+    final result = await goToTool(context, _project, newBlock);
+
+    if (!mounted) return;
+
+    final canShowTutorial =
+        result is Map && result[ReturnAction.showTutorial.name] == true && projectLibrary.showProjectPageTutorial;
+    if (canShowTutorial) {
+      _createTutorial();
+      _tutorial.show(context);
+    }
+    setState(() {});
   }
 
   Future<void> _handleReorder(int oldIndex, int newIndex) async {
@@ -256,6 +265,7 @@ class _ProjectPageState extends State<ProjectPage> {
             setState(() {});
           },
           child: Text(
+            key: _keyChangeTitle,
             _project.title,
             style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
             maxLines: 1,
@@ -325,13 +335,14 @@ class _ProjectPageState extends State<ProjectPage> {
         ],
       ),
       bottomNavigationBar: EditProjectBar(
+        key: _keyChangeToolOrder,
+        isEditing: _isEditing,
         onAddTool:
             () => setState(() {
               _showBlocks = false;
               _isEditing = false;
             }),
         onToggleEditing: _toggleEditingMode,
-        isEditing: _isEditing,
       ),
     );
   }

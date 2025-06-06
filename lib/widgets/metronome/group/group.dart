@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/metronome/beat_button_type.dart';
-import 'package:tiomusic/widgets/metronome/beats.dart';
-import 'package:tiomusic/widgets/metronome/notes.dart';
+import 'package:tiomusic/widgets/metronome/beat/beat_button_type.dart';
+import 'package:tiomusic/widgets/metronome/beat/beats.dart';
+import 'package:tiomusic/widgets/metronome/note/notes.dart';
 
-class RhythmSegment extends StatelessWidget {
+class Group extends StatelessWidget {
   final RhythmGroup rhythmGroup;
   final int? highlightedMainBeatIndex;
   final int? highlightedPolyBeatIndex;
 
   final Function onEdit;
 
-  const RhythmSegment({
+  const Group({
     super.key,
     required this.rhythmGroup,
     required this.highlightedMainBeatIndex,

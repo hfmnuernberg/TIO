@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/metronome/editable_rhythm_segment.dart';
+import 'package:tiomusic/widgets/metronome/group/editable_group.dart';
 
-class RhythmRow extends StatefulWidget {
+class Groups extends StatefulWidget {
   final List<RhythmGroup> rhythmGroups;
   final int? highlightedSegmentIndex;
   final int? highlightedMainBeatIndex;
@@ -21,7 +21,7 @@ class RhythmRow extends StatefulWidget {
   final Function(int index) onEdit;
   final Function(int oldIndex, int newIndex) onReorder;
 
-  const RhythmRow({
+  const Groups({
     super.key,
     required this.rhythmGroups,
     required this.highlightedSegmentIndex,
@@ -37,10 +37,10 @@ class RhythmRow extends StatefulWidget {
   });
 
   @override
-  State<RhythmRow> createState() => _RhythmRowState();
+  State<Groups> createState() => _GroupsState();
 }
 
-class _RhythmRowState extends State<RhythmRow> with RouteAware {
+class _GroupsState extends State<Groups> with RouteAware {
   bool isReordering = false;
 
   int? _getHighlightedMainBeatIndex(int segmentIndex) =>
@@ -89,7 +89,7 @@ class _RhythmRowState extends State<RhythmRow> with RouteAware {
                                 : DismissDirection.none,
                         onDismissed: (_) => widget.onDelete(index),
                         background: const Icon(Icons.delete_outlined, color: ColorTheme.primary),
-                        child: EditableRhythmSegment(
+                        child: EditableGroup(
                           index: index,
                           highlightedMainBeatIndex: _getHighlightedMainBeatIndex(index),
                           highlightedPolyBeatIndex: _getHighlightedPolyBeatIndex(index),

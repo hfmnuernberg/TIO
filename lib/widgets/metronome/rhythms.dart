@@ -6,7 +6,7 @@ import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
-import 'package:tiomusic/pages/metronome/complex_rhythm_group_select.dart';
+import 'package:tiomusic/pages/metronome/advanced_rhythm_group_editor.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -14,8 +14,8 @@ import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/metronome/current_beat.dart';
-import 'package:tiomusic/widgets/metronome/rhythm_row.dart';
-import 'package:tiomusic/widgets/metronome/simple_rhythm_group_select.dart';
+import 'package:tiomusic/widgets/metronome/group/groups.dart';
+import 'package:tiomusic/widgets/metronome/simple_rhythm_group_editor.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class Rhythms extends StatefulWidget {
@@ -100,7 +100,7 @@ class _RhythmsState extends State<Rhythms> with RouteAware {
   void _handleAddRhythmGroup(bool isSecondary) async {
     widget.onUpdate();
     openSettingPage(
-      ComplexRhythmGroupSelect(
+      AdvancedRhythmGroupEditor(
         metronomeBlock: metronomeBlock,
         rhythmGroups: isSecondary ? metronomeBlock.rhythmGroups2 : metronomeBlock.rhythmGroups,
         currentNoteKey: MetronomeParams.defaultNoteKey,
@@ -124,7 +124,7 @@ class _RhythmsState extends State<Rhythms> with RouteAware {
     final rhythmGroups = isSecondary ? metronomeBlock.rhythmGroups2 : metronomeBlock.rhythmGroups;
 
     await openSettingPage(
-      ComplexRhythmGroupSelect(
+      AdvancedRhythmGroupEditor(
         metronomeBlock: metronomeBlock,
         rhythmGroups: rhythmGroups,
         rhythmGroupIndex: index,
@@ -177,13 +177,13 @@ class _RhythmsState extends State<Rhythms> with RouteAware {
           if (widget.isSimpleModeOn)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 32, vertical: 20),
-              child: SimpleRhythmGroupSelect(
+              child: SimpleRhythmGroupEditor(
                 rhythmGroup: metronomeBlock.rhythmGroups[0],
                 onUpdate: _handleUpdateRhythmGroup,
               ),
             )
           else ...[
-            RhythmRow(
+            Groups(
               rhythmGroups: metronomeBlock.rhythmGroups,
               highlightedSegmentIndex: widget.currentPrimaryBeat.segmentIndex,
               highlightedMainBeatIndex: widget.currentPrimaryBeat.mainBeatIndex,
@@ -205,7 +205,7 @@ class _RhythmsState extends State<Rhythms> with RouteAware {
                       : const SizedBox(),
             ),
             if (metronomeBlock.rhythmGroups2.isNotEmpty)
-              RhythmRow(
+              Groups(
                 rhythmGroups: metronomeBlock.rhythmGroups2,
                 highlightedSegmentIndex: widget.currentSecondaryBeat.segmentIndex,
                 highlightedMainBeatIndex: widget.currentSecondaryBeat.mainBeatIndex,

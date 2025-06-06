@@ -6,7 +6,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_wheel.dart';
 
-class SimpleRhythmGroupSelect extends StatelessWidget {
+class SimpleRhythmGroupEditor extends StatelessWidget {
   final RhythmGroup rhythmGroup;
 
   final void Function(RhythmGroup rhythmGroup) onUpdate;
@@ -14,7 +14,7 @@ class SimpleRhythmGroupSelect extends StatelessWidget {
   int get beatCount => rhythmGroup.beats.length;
   Rhythm get rhythm => rhythmGroup.rhythm ?? Rhythm.quarter;
 
-  const SimpleRhythmGroupSelect({super.key, required this.rhythmGroup, required this.onUpdate});
+  const SimpleRhythmGroupEditor({super.key, required this.rhythmGroup, required this.onUpdate});
 
   @override
   Widget build(BuildContext context) {

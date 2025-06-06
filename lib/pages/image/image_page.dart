@@ -34,58 +34,58 @@ class ImageTool extends StatefulWidget {
 }
 
 class _ImageToolState extends State<ImageTool> {
-  static final _logger = createPrefixLogger('ImageTool');
+  static final logger = createPrefixLogger('ImageTool');
 
-  late FileSystem _fs;
-  late FilePicker _filePicker;
-  late FileReferences _fileReferences;
-  late MediaRepository _mediaRepo;
-  late ProjectRepository _projectRepo;
+  late FileSystem fs;
+  late FilePicker filePicker;
+  late FileReferences fileReferences;
+  late MediaRepository mediaRepo;
+  late ProjectRepository projectRepo;
 
-  late ImageBlock _imageBlock;
-  late Project _project;
+  late ImageBlock imageBlock;
+  late Project project;
 
   @override
   void initState() {
     super.initState();
 
-    _fs = context.read<FileSystem>();
-    _filePicker = context.read<FilePicker>();
-    _fileReferences = context.read<FileReferences>();
-    _mediaRepo = context.read<MediaRepository>();
-    _projectRepo = context.read<ProjectRepository>();
+    fs = context.read<FileSystem>();
+    filePicker = context.read<FilePicker>();
+    fileReferences = context.read<FileReferences>();
+    mediaRepo = context.read<MediaRepository>();
+    projectRepo = context.read<ProjectRepository>();
 
-    _imageBlock = Provider.of<ProjectBlock>(context, listen: false) as ImageBlock;
-    _imageBlock.timeLastModified = getCurrentDateTime();
+    imageBlock = Provider.of<ProjectBlock>(context, listen: false) as ImageBlock;
+    imageBlock.timeLastModified = getCurrentDateTime();
 
-    _project = Provider.of<Project>(context, listen: false);
+    project = context.read<Project>();
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-    if (_imageBlock.relativePath.isEmpty) {
+    if (imageBlock.relativePath.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await _addImageDialog(context);
+        await addImageDialog(context);
       });
     }
   }
 
-  void _shareFilePressed() async {
-    await _filePicker.shareFile(context.read<FileSystem>().toAbsoluteFilePath(_imageBlock.relativePath));
+  void shareFilePressed() async {
+    await filePicker.shareFile(context.read<FileSystem>().toAbsoluteFilePath(imageBlock.relativePath));
   }
 
-  void _setAsThumbnail() async {
-    if (_imageBlock.relativePath.isEmpty) return;
+  void setAsThumbnail() async {
+    if (imageBlock.relativePath.isEmpty) return;
 
-    bool? useAsProfilePicture = await _useAsProjectPicture();
+    bool? useAsProfilePicture = await useAsProjectPicture();
     if (useAsProfilePicture != null && useAsProfilePicture) {
-      _project.thumbnailPath = _imageBlock.relativePath;
+      project.thumbnailPath = imageBlock.relativePath;
       if (mounted) {
-        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+        await projectRepo.saveLibrary(context.read<ProjectLibrary>());
       }
     }
   }
 
-  Future<bool?> _useAsProjectPicture() => showDialog<bool>(
+  Future<bool?> useAsProjectPicture() => showDialog<bool>(
     context: context,
     builder: (context) {
       final l10n = context.l10n;
@@ -111,47 +111,56 @@ class _ImageToolState extends State<ImageTool> {
     },
   );
 
-  Future _addImageDialog(BuildContext context) => showDialog(
+  Future addImageDialog(BuildContext context) => showDialog(
     context: context,
     builder:
         (context) => AddImageDialog(
-          pickImageFunction: (useAsThumbnail) => _pickImageAndSave(useAsThumbnail),
-          takePhotoFunction: (useAsThumbnail) => _takePhotoAndSave(useAsThumbnail),
+          pickImageFunction: (useAsThumbnail) => pickImagesAndSave(useAsThumbnail),
+          takePhotoFunction: (useAsThumbnail) => takePhotoAndSave(useAsThumbnail),
         ),
   );
 
-  Future<void> _pickImageAndSave(bool useAsThumbnail) async {
+  Future<void> pickImagesAndSave(bool useAsThumbnail) async {
     try {
-      final imagePath = await _filePicker.pickImage();
-      if (imagePath == null) return;
+      final imagePaths = await filePicker.pickImages(limit: 10);
+      if (imagePaths.isEmpty) return;
 
-      if (!await _fs.existsFileAfterGracePeriod(imagePath)) {
-        if (mounted) await showFileNotAccessibleDialog(context, fileName: imagePath);
-        return;
+      for (int i = 0; i < imagePaths.length; i++) {
+        await handleImage(i, imagePaths[i], useAsThumbnail);
       }
-
-      final newRelativePath = await _mediaRepo.import(imagePath, _fs.toBasename(imagePath));
-      if (newRelativePath == null) return;
 
       if (!mounted) return;
 
-      if (useAsThumbnail) Provider.of<Project>(context, listen: false).thumbnailPath = newRelativePath;
-
-      final projectLibrary = context.read<ProjectLibrary>();
-
-      _fileReferences.dec(_imageBlock.relativePath, projectLibrary);
-      _imageBlock.relativePath = newRelativePath;
-      _fileReferences.inc(newRelativePath);
-
-      await _projectRepo.saveLibrary(projectLibrary);
-
+      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
       setState(() {});
     } on PlatformException catch (e) {
-      _logger.e('Unable to pick image.', error: e);
+      logger.e('Unable to pick images.', error: e);
     }
   }
 
-  Future<void> _takePhotoAndSave(bool useAsThumbnail) async {
+  Future<void> handleImage(int index, String imagePath, bool useAsThumbnail) async {
+    if (!await fs.existsFileAfterGracePeriod(imagePath)) {
+      if (mounted) await showFileNotAccessibleDialog(context, fileName: imagePath);
+      return;
+    }
+
+    final newRelativePath = await mediaRepo.import(imagePath, fs.toBasename(imagePath));
+    if (newRelativePath == null || !mounted) return;
+
+    fileReferences.inc(newRelativePath);
+
+    if (index == 0) {
+      if (useAsThumbnail) project.thumbnailPath = newRelativePath;
+      fileReferences.dec(imageBlock.relativePath, context.read<ProjectLibrary>());
+      imageBlock.relativePath = newRelativePath;
+    } else {
+      final title = '${imageBlock.title}($index)';
+      final newBlock = ImageBlock.withTitle(title)..relativePath = newRelativePath;
+      project.addBlock(newBlock);
+    }
+  }
+
+  Future<void> takePhotoAndSave(bool useAsThumbnail) async {
     WidgetsFlutterBinding.ensureInitialized();
     final cameras = await availableCameras();
 
@@ -169,22 +178,20 @@ class _ImageToolState extends State<ImageTool> {
     ).push(MaterialPageRoute(builder: (context) => TakePictureScreen(camera: firstCamera)));
     if (imagePath == null) return;
 
-    var newFileName = '${_project.title}-${_imageBlock.title}';
+    var newFileName = '${project.title}-${imageBlock.title}';
 
-    final newRelativePath = await _mediaRepo.import(imagePath, newFileName);
+    final newRelativePath = await mediaRepo.import(imagePath, newFileName);
     if (newRelativePath == null) return;
 
     if (!mounted) return;
 
     if (useAsThumbnail) Provider.of<Project>(context, listen: false).thumbnailPath = newRelativePath;
 
-    final projectLibrary = context.read<ProjectLibrary>();
+    fileReferences.dec(imageBlock.relativePath, context.read<ProjectLibrary>());
+    imageBlock.relativePath = newRelativePath;
+    fileReferences.inc(newRelativePath);
 
-    _fileReferences.dec(_imageBlock.relativePath, projectLibrary);
-    _imageBlock.relativePath = newRelativePath;
-    _fileReferences.inc(newRelativePath);
-
-    await _projectRepo.saveLibrary(projectLibrary);
+    await projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
     setState(() {});
   }
@@ -192,27 +199,27 @@ class _ImageToolState extends State<ImageTool> {
   @override
   Widget build(BuildContext context) {
     return ParentTool(
-      barTitle: _imageBlock.title,
+      barTitle: imageBlock.title,
       isQuickTool: widget.isQuickTool,
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
-      toolBlock: _imageBlock,
+      toolBlock: imageBlock,
       menuItems:
-          _imageBlock.relativePath.isNotEmpty
+          imageBlock.relativePath.isNotEmpty
               ? [
                 MenuItemButton(
-                  onPressed: _shareFilePressed,
+                  onPressed: shareFilePressed,
                   child: Text(context.l10n.imageShare, style: const TextStyle(color: ColorTheme.primary)),
                 ),
                 MenuItemButton(
-                  onPressed: _setAsThumbnail,
+                  onPressed: setAsThumbnail,
                   child: Text(context.l10n.imageSetAsThumbnail, style: const TextStyle(color: ColorTheme.primary)),
                 ),
                 MenuItemButton(
-                  onPressed: () => _pickImageAndSave(false),
+                  onPressed: () => pickImagesAndSave(false),
                   child: Text(context.l10n.imagePickNewImage, style: const TextStyle(color: ColorTheme.primary)),
                 ),
                 MenuItemButton(
-                  onPressed: () => _takePhotoAndSave(false),
+                  onPressed: () => takePhotoAndSave(false),
                   child: Text(context.l10n.imageTakeNewPhoto, style: const TextStyle(color: ColorTheme.primary)),
                 ),
               ]
@@ -224,13 +231,13 @@ class _ImageToolState extends State<ImageTool> {
             builder: (context, projectBlock, child) {
               var imageBlock = projectBlock as ImageBlock;
               if (imageBlock.relativePath.isNotEmpty) {
-                return Image(image: FileImage(File(_fs.toAbsoluteFilePath(imageBlock.relativePath))));
+                return Image(image: FileImage(File(fs.toAbsoluteFilePath(imageBlock.relativePath))));
               } else {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      context.l10n.imageNoImage,
+                      context.l10n.imagePickOrTakeImage,
                       style: const TextStyle(color: ColorTheme.primary),
                       textAlign: TextAlign.center,
                     ),
@@ -241,12 +248,12 @@ class _ImageToolState extends State<ImageTool> {
                         children: <Widget>[
                           TioIconButton.sm(
                             icon: const Icon(Icons.image_outlined, color: ColorTheme.primary),
-                            onPressed: () => _pickImageAndSave(false),
+                            onPressed: () => pickImagesAndSave(false),
                           ),
                           const SizedBox(width: 12),
                           TioIconButton.sm(
                             icon: const Icon(Icons.camera_alt_outlined, color: ColorTheme.primary),
-                            onPressed: () => _takePhotoAndSave(false),
+                            onPressed: () => takePhotoAndSave(false),
                           ),
                         ],
                       ),

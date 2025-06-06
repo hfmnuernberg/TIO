@@ -22,13 +22,13 @@ import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
-import 'package:tiomusic/widgets/metronome/beat_button_type.dart';
-import 'package:tiomusic/widgets/metronome/beat_circle.dart';
+import 'package:tiomusic/widgets/metronome/beat/beat_button_type.dart';
+import 'package:tiomusic/widgets/metronome/beat/beat_circle.dart';
 import 'package:tiomusic/widgets/metronome/current_beat.dart';
-import 'package:tiomusic/widgets/metronome/note_table.dart';
+import 'package:tiomusic/widgets/metronome/note/note_table.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-class ComplexRhythmGroupSelect extends StatefulWidget {
+class AdvancedRhythmGroupEditor extends StatefulWidget {
   final MetronomeBlock metronomeBlock;
   final List<RhythmGroup> rhythmGroups;
   final int? rhythmGroupIndex;
@@ -38,7 +38,7 @@ class ComplexRhythmGroupSelect extends StatefulWidget {
   final bool isAddingNewRhythmGroup;
   final bool isSecondMetronome;
 
-  const ComplexRhythmGroupSelect({
+  const AdvancedRhythmGroupEditor({
     super.key,
     required this.metronomeBlock,
     required this.rhythmGroups,
@@ -51,11 +51,11 @@ class ComplexRhythmGroupSelect extends StatefulWidget {
   });
 
   @override
-  State<ComplexRhythmGroupSelect> createState() => _ComplexRhythmGroupSelectState();
+  State<AdvancedRhythmGroupEditor> createState() => _AdvancedRhythmGroupEditorState();
 }
 
-class _ComplexRhythmGroupSelectState extends State<ComplexRhythmGroupSelect> {
-  static final logger = createPrefixLogger('ComplexRhythmGroupSelect');
+class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
+  static final logger = createPrefixLogger('AdvancedRhythmGroupEditor');
 
   late FileSystem fs;
 

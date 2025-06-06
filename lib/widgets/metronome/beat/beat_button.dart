@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tiomusic/widgets/metronome/beat_button_type.dart';
+import 'package:tiomusic/widgets/metronome/beat/beat_button_type.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class BeatButton extends StatelessWidget {

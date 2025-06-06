@@ -69,9 +69,9 @@ class English extends AppLocalizations {
   String get imageDoLater => 'Do it later';
   String get imageNoCameraFound => 'No camera found';
   String get imageNoCameraFoundHint => 'There is no camera available on this device.';
-  String get imageNoImage => 'Please select an image or take a photo.';
-  String get imagePickImage => 'Pick an image';
-  String get imagePickNewImage => 'Pick new image';
+  String get imagePickImage => 'Pick image(s)';
+  String get imagePickNewImage => 'Pick new image(s)';
+  String get imagePickOrTakeImage => 'Please select an image or take a photo.';
   String get imageSetAsProjectThumbnail => 'Set project thumbnail';
   String get imageSetAsThumbnail => 'Set as thumbnail';
   String get imageSetAsThumbnailQuestion =>
@@ -79,8 +79,9 @@ class English extends AppLocalizations {
   String get imageShare => 'Share image';
   String get imageTakePhoto => 'Take a photo';
   String get imageTakeNewPhoto => 'Take new photo';
-  String get imageUploadHint => 'Pick an image from your device or take a photo using the camera.';
-  String get imageUseAsThumbnailQuestion => 'Use image as project thumbnail.';
+  String get imageUploadHint =>
+      'Pick one or more images from your device or take a photo using the camera.\n\nYou can upload up to 10 images at once. The first image will be saved here, and a separate image tool will be created for all subsequent images.';
+  String get imageUseAsThumbnailQuestion => 'Use the first image as project thumbnail?';
 
   String get mainErrorDataLoading => 'Could not load user data!';
   String get mainOpenAnyway => 'Open anyway (all data is lost!)';
@@ -122,7 +123,8 @@ class English extends AppLocalizations {
   String get mediaPlayerSpeed => 'Tempo';
   String get mediaPlayerTapToTempo => 'Tap to tempo';
   String get mediaPlayerTrim => 'Trim';
-  String get mediaPlayerTutorialAdjust => 'Tap here to adjust your sound file.';
+  String get mediaPlayerTutorialAdjust =>
+      'Tap here to adjust your audio file. You can change the volume, the clip, the speed, and the pitch, as well as set markers. The set basic beat serves as the basis for the tempo setting.';
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file.';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file.';
 
@@ -227,6 +229,8 @@ class English extends AppLocalizations {
   String get projectNewTool => 'Tool title';
   String get projectToolList => 'Tool list';
   String get projectToolListEmpty => 'Empty tool list';
+  String get projectTutorialChangeToolOrder =>
+      'Tap the plus icon to add a new tool or the pencil icon to edit the tools.';
   String get projectTutorialEditTitle => 'Tap here to edit the title of your project.';
 
   String get projectsAbout => 'Projects';
@@ -248,6 +252,8 @@ class English extends AppLocalizations {
   String get projectsTutorialAddProject => 'Tap here to create a new project.';
   String get projectsTutorialCanIncludeMultipleTools =>
       'Projects can include multiple tools\n(tuner, metronome, piano, media player, image and text),\neven several tools of the same type.';
+  String get projectsTutorialChangeProjectOrder =>
+      'Tap the plus icon to add a new project or the pencil icon to edit the projects.';
   String get projectsTutorialHowToUseTio =>
       'Welcome! You can use TIO in two ways.\n1. Create a project and add tools.\n2. Start with using a tool and save your specific settings to any project.';
   String get projectsTutorialStart => 'Show tutorial';

@@ -58,9 +58,9 @@ abstract class AppLocalizations {
   String get imageDoLater;
   String get imageNoCameraFound;
   String get imageNoCameraFoundHint;
-  String get imageNoImage;
   String get imagePickImage;
   String get imagePickNewImage;
+  String get imagePickOrTakeImage;
   String get imageSetAsProjectThumbnail;
   String get imageSetAsThumbnail;
   String get imageSetAsThumbnailQuestion;
@@ -207,6 +207,7 @@ abstract class AppLocalizations {
   String get projectNewTool;
   String get projectToolList;
   String get projectToolListEmpty;
+  String get projectTutorialChangeToolOrder;
   String get projectTutorialEditTitle;
 
   String get projectsAbout;
@@ -226,6 +227,7 @@ abstract class AppLocalizations {
   String get projectsNoProjects;
   String get projectsTutorialAddProject;
   String get projectsTutorialCanIncludeMultipleTools;
+  String get projectsTutorialChangeProjectOrder;
   String get projectsTutorialHowToUseTio;
   String get projectsTutorialStart;
   String get projectsTutorialStartUsingTool;
