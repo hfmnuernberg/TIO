@@ -23,7 +23,7 @@ jobs:
 
     - name: Create GitHub release
       id: semantic_release
-      uses: cycjimmy/semantic-release-action@v4.2.0
+      uses: cycjimmy/semantic-release-action@v4.2.1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

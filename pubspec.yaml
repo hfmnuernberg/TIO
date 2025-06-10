@@ -72,6 +72,7 @@ flutter:
   - assets/metronome_sounds/
   - assets/midi_sounds/
   - assets/notes/
+  - assets/rhythms/
   - assets/sound_fonts/
   - assets/splash/
   - assets/temp/sounds/

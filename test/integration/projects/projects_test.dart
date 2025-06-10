@@ -21,14 +21,6 @@ import '../../utils/action_utils.dart';
 import '../../utils/render_utils.dart';
 import '../../utils/project_utils.dart';
 
-extension WidgetTesterPumpExtension on WidgetTester {
-  Future<void> dragFromCenterToTargetAndSettle(FinderBase<Element> finder, Offset to) async {
-    final Offset widgetCenter = getCenter(finder);
-    await dragFrom(widgetCenter, to);
-    await pumpAndSettle();
-  }
-}
-
 void main() {
   late List<SingleChildWidget> providers;
 

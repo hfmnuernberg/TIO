@@ -79,6 +79,17 @@ class InMemoryFileSystemMock implements FileSystem {
   }
 
   @override
+  Future<void> deleteIfTmpFile(String absoluteSourceFilePath) async {
+    final isTemporaryFile =
+        absoluteSourceFilePath.contains('/tmp') ||
+        absoluteSourceFilePath.contains('/cache/') ||
+        absoluteSourceFilePath.startsWith(_tmpFolderPath);
+    if (isTemporaryFile && existsFile(absoluteSourceFilePath)) {
+      await deleteFile(absoluteSourceFilePath);
+    }
+  }
+
+  @override
   Future<void> createFolder(String absoluteFolderPath) async {
     _folders.putIfAbsent(absoluteFolderPath, () => []);
   }

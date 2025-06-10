@@ -80,7 +80,7 @@ void main() {
     await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
     expect(find.bySemanticsLabel('Tool list'), findsNothing);
 
-    await tester.createTextToolInProject('Test text');
+    await tester.createTextToolInProject('Text 1');
     expect(tester.withinList(find.bySemanticsLabel('Text 1')), findsOneWidget);
   });
 
@@ -95,7 +95,7 @@ void main() {
   testWidgets('deletes tool when tool was deleted', (tester) async {
     await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
 
-    await tester.createTextToolInProject('Test text');
+    await tester.createTextToolInProject('Text 1');
     expect(tester.withinList(find.bySemanticsLabel('Text 1')), findsOneWidget);
 
     await tester.tapAndSettle(find.byTooltip('Project menu'));
@@ -106,17 +106,137 @@ void main() {
     expect(tester.withinList(find.bySemanticsLabel('Text 1')), findsNothing);
   });
 
-  testWidgets('navigate between tools when multiple tools were added', (tester) async {
-    await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+  group('next tool navigation', () {
+    testWidgets('navigate to next tool when multiple tools were added', (tester) async {
+      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
 
-    await tester.createImageToolInProject();
-    await tester.tapAndSettle(find.byTooltip('Add new tool'));
-    await tester.createTextToolInProject('Test text');
-    await tester.tapAndSettle(find.bySemanticsLabel('Text 1'));
+      await tester.createImageToolInProject();
+      await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      await tester.createTextToolInProject('Text 1');
 
-    await tester.tapAndSettle(find.byTooltip('Go to next tool'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Text 1'));
+      await tester.tapAndSettle(find.byTooltip('Go to next tool'));
 
-    expect(find.bySemanticsLabel('Please select an image or take a photo.'), findsOneWidget);
-    expect(find.bySemanticsLabel('Text field'), findsNothing);
+      expect(find.bySemanticsLabel('Please select an image or take a photo.'), findsOneWidget);
+      expect(find.bySemanticsLabel('Text field'), findsNothing);
+    });
+
+    testWidgets('does not have other buttons', (tester) async {
+      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+
+      await tester.createImageToolInProject();
+      await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      await tester.createTextToolInProject('Text 1');
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Text 1'));
+
+      expect(find.byTooltip('Go to next tool'), findsOneWidget);
+      expect(find.byTooltip('Go to next tool of the same type'), findsNothing);
+      expect(find.byTooltip('Go to previous tool'), findsNothing);
+      expect(find.byTooltip('Go to previous tool of the same type'), findsNothing);
+    });
+  });
+
+  group('previous tool navigation', () {
+    testWidgets('navigate to previous tool when multiple tools were added', (tester) async {
+      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+
+      await tester.createTextToolInProject('Text 1');
+      await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      await tester.createImageToolInProject();
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Text 1'));
+      await tester.tapAndSettle(find.byTooltip('Go to previous tool'));
+
+      expect(find.bySemanticsLabel('Please select an image or take a photo.'), findsOneWidget);
+      expect(find.bySemanticsLabel('Text field'), findsNothing);
+    });
+
+    testWidgets('does not have other buttons', (tester) async {
+      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+
+      await tester.createTextToolInProject('Text 1');
+      await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      await tester.createImageToolInProject();
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Text 1'));
+
+      expect(find.byTooltip('Go to previous tool'), findsOneWidget);
+      expect(find.byTooltip('Go to next tool'), findsNothing);
+      expect(find.byTooltip('Go to next tool of the same type'), findsNothing);
+      expect(find.byTooltip('Go to previous tool of the same type'), findsNothing);
+    });
+  });
+
+  group('next tool of same type navigation', () {
+    testWidgets('navigate to next tool of same type when multiple tools of same type were added', (tester) async {
+      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+
+      await tester.createTextToolInProject('Text 1');
+      await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      await tester.createImageToolInProject();
+      await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      await tester.createTextToolInProject('Text 2');
+      await tester.tapAndSettle(find.bySemanticsLabel('Text 2'));
+      expect(tester.getSemantics(find.bySemanticsLabel('Text field')).value, 'Text 2 text content');
+
+      await tester.tapAndSettle(find.byTooltip('Go to next tool of the same type'));
+
+      expect(find.bySemanticsLabel('Please select an image or take a photo.'), findsNothing);
+      expect(tester.getSemantics(find.bySemanticsLabel('Text field')).value, 'Text 1 text content');
+    });
+
+    testWidgets('does not have previous buttons', (tester) async {
+      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+
+      await tester.createTextToolInProject('Text 1');
+      await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      await tester.createImageToolInProject();
+      await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      await tester.createTextToolInProject('Text 2');
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Text 2'));
+
+      expect(find.byTooltip('Go to next tool'), findsOneWidget);
+      expect(find.byTooltip('Go to next tool of the same type'), findsOneWidget);
+      expect(find.byTooltip('Go to previous tool'), findsNothing);
+      expect(find.byTooltip('Go to previous tool of the same type'), findsNothing);
+    });
+  });
+
+  group('previous tool of same type navigation', () {
+    testWidgets('navigate to previous tool of same type when multiple tools of same type were added', (tester) async {
+      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+
+      await tester.createTextToolInProject('Text 1');
+      await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      await tester.createImageToolInProject();
+      await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      await tester.createTextToolInProject('Text 2');
+      await tester.tapAndSettle(find.bySemanticsLabel('Text 1'));
+      expect(tester.getSemantics(find.bySemanticsLabel('Text field')).value, 'Text 1 text content');
+
+      await tester.tapAndSettle(find.byTooltip('Go to previous tool of the same type'));
+
+      expect(find.bySemanticsLabel('Please select an image or take a photo.'), findsNothing);
+      expect(tester.getSemantics(find.bySemanticsLabel('Text field')).value, 'Text 2 text content');
+    });
+
+    testWidgets('does not have next buttons', (tester) async {
+      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+
+      await tester.createTextToolInProject('Text 1');
+      await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      await tester.createImageToolInProject();
+      await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      await tester.createTextToolInProject('Text 2');
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Text 1'));
+
+      expect(find.byTooltip('Go to previous tool'), findsOneWidget);
+      expect(find.byTooltip('Go to previous tool of the same type'), findsOneWidget);
+      expect(find.byTooltip('Go to next tool'), findsNothing);
+      expect(find.byTooltip('Go to next tool of the same type'), findsNothing);
+    });
   });
 }

@@ -3,10 +3,30 @@ import 'package:tiomusic/models/metronome_sound.dart';
 import 'package:tiomusic/pages/metronome/setting_metronome_sound.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/util_functions.dart';
+import 'package:tiomusic/widgets/metronome/current_beat.dart';
 
 abstract class MetronomeUtils {
+  static CurrentBeat getCurrentPrimaryBeatFromEvent({required bool isOn, required BeatHappenedEvent event}) {
+    if (!isOn || event.isSecondary) return CurrentBeat();
+    return CurrentBeat(
+      segmentIndex: event.barIndex,
+      mainBeatIndex: event.isPoly ? null : event.beatIndex,
+      polyBeatIndex: event.isPoly ? event.beatIndex : null,
+    );
+  }
+
+  static CurrentBeat getCurrentSecondaryBeatFromEvent({required bool isOn, required BeatHappenedEvent event}) {
+    if (!isOn || !event.isSecondary) return CurrentBeat();
+    return CurrentBeat(
+      segmentIndex: event.barIndex,
+      mainBeatIndex: event.isPoly ? null : event.beatIndex,
+      polyBeatIndex: event.isPoly ? event.beatIndex : null,
+    );
+  }
+
   // This function takes the currently selected sounds of the metronome block and loads them in rust
   static void loadSounds(FileSystem fs, MetronomeBlock block) async {
     String tempPathAcc = await copyAssetToTemp(fs, '${MetronomeSound.fromFilename(block.accSound).file}_a.wav');

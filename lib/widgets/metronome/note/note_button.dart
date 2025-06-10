@@ -1,29 +1,31 @@
-// List item in rhythm generator setting page that shows a note value
-
 import 'package:flutter/material.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 
-class RhythmGeneratorSettingListItem extends StatefulWidget {
+class NoteToggle extends StatefulWidget {
   final String noteKey;
-  final Function() onTap;
-  final bool hasBorder;
+  final bool isSelected;
 
-  const RhythmGeneratorSettingListItem({super.key, required this.noteKey, required this.onTap, this.hasBorder = false});
+  final Function() onTap;
+
+  const NoteToggle({super.key, required this.noteKey, this.isSelected = false, required this.onTap});
 
   @override
-  State<RhythmGeneratorSettingListItem> createState() => _RhythmGeneratorSettingListItemState();
+  State<NoteToggle> createState() => _NoteToggleState();
 }
 
-class _RhythmGeneratorSettingListItemState extends State<RhythmGeneratorSettingListItem> {
+class _NoteToggleState extends State<NoteToggle> {
   @override
   Widget build(BuildContext context) {
     return Material(
       type: MaterialType.transparency,
       child: Ink(
         decoration: BoxDecoration(
-          border: Border.all(style: widget.hasBorder ? BorderStyle.solid : BorderStyle.none, color: ColorTheme.primary),
+          border: Border.all(
+            style: widget.isSelected ? BorderStyle.solid : BorderStyle.none,
+            color: ColorTheme.primary,
+          ),
           borderRadius: BorderRadius.circular(MetronomeParams.rhythmSegmentSize / 2),
         ),
         child: InkWell(

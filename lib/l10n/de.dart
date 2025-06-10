@@ -69,17 +69,18 @@ class German extends AppLocalizations {
   String get imageDoLater => 'Später';
   String get imageNoCameraFound => 'Keine Kamera gefunden';
   String get imageNoCameraFoundHint => 'Es ist keine Kamera auf diesem Gerät verfügbar.';
-  String get imageNoImage => 'Bitte lade ein Foto hoch oder mache ein neues Foto.';
-  String get imagePickImage => 'Bild auswählen';
-  String get imagePickNewImage => 'Neues Bild auswählen';
+  String get imagePickImage => 'Bild(er) auswählen';
+  String get imagePickNewImage => 'Neue(s) Bild(er) auswählen';
+  String get imagePickOrTakeImage => 'Bitte lade ein Foto hoch oder mache ein neues Foto.';
   String get imageSetAsProjectThumbnail => 'Projektbild festlegen';
   String get imageSetAsThumbnail => 'Als Projektbild festlegen';
   String get imageSetAsThumbnailQuestion => 'Möchtest du das Bild als Projektbild verwenden?';
   String get imageShare => 'Bild teilen';
   String get imageTakePhoto => 'Foto aufnehmen';
   String get imageTakeNewPhoto => 'Neues Foto aufnehmen';
-  String get imageUploadHint => 'Wähle ein Bild von deinem Gerät aus oder mache ein Foto mit der Kamera.';
-  String get imageUseAsThumbnailQuestion => 'Bild als Projektbild verwenden';
+  String get imageUploadHint =>
+      'Wähle ein oder mehrere Bilder von deinem Gerät aus oder mache ein Foto mit der Kamera.\n\nDu kannst bis zu 10 Bilder gleichzeitig hochladen. Das erste Bild wird hier gespeichert und für alle weiteren Bilder wird ein separates Bild-Tool angelegt.';
+  String get imageUseAsThumbnailQuestion => 'Das erste Bild als Projektbild verwenden?';
 
   String get mainErrorDataLoading => 'Benutzerdaten konnten nicht geladen werden!';
   String get mainOpenAnyway => 'Trotzdem öffnen (alle Daten gehen verloren!)';
@@ -148,10 +149,19 @@ class German extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Aussetzen';
   String get metronomeRandomMuteProbability => 'Wahrscheinlichkeit in %';
+  String get metronomeRhythmQuarter => 'Viertel';
+  String get metronomeRhythmEighths => 'Achtel';
+  String get metronomeRhythmEighthRestFollowedByEighth => 'Achtelpause gefolgt von Achtel';
+  String get metronomeRhythmTriplets => 'Triole';
+  String get metronomeRhythmSixteenths => 'Sechzehntel';
+  String get metronomeRhythmSixteenthFollowedByDottedEighth => 'Sechzehntel gefolgt von punktierter Achtel';
+  String get metronomeRhythmDottedEighthFollowedBySixteenth => 'Punktierte Achtel gefolgt von Sechzehntel';
   String get metronomeSetBpm => 'BPM einstellen';
   String get metronomeSetRandomMute => 'Random mute einstellen';
   String get metronomeSetSoundsPrimary => 'Sounds einstellen';
   String get metronomeSetSoundsSecondary => 'Sounds einstellen (Metronom 2)';
+  String get metronomeSimpleModeOff => 'Wechsel zu erweitertem Modus';
+  String get metronomeSimpleModeOn => 'Wechsel zu einfachem Modus';
   String get metronomeSound => 'Sound';
   String get metronomeSoundMain => 'Main';
   String get metronomeSoundPoly => 'Poly Sound';
@@ -173,6 +183,7 @@ class German extends AppLocalizations {
   String get metronomeSoundTypeRim => 'rim';
   String get metronomeSoundTypeTick => 'tick';
   String get metronomeSoundTypeWood => 'wood';
+  String get metronomeSubdivision => 'Unterteilung';
   String get metronomeTutorialAddNew => 'Tippe hier, um ein zweites Metronom hinzuzufügen.';
   String get metronomeTutorialAdjust => 'Tippe hier, um die Metronomeinstellungen anzupassen.';
   String get metronomeTutorialEditBeats =>
