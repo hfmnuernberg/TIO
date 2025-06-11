@@ -105,6 +105,7 @@ abstract class MediaPlayerFunctions {
   ) async {
     var absolutePath = fs.toAbsoluteFilePath(block.relativePath);
     if (!File(absolutePath).existsSync()) return null;
+    print('>>>>>>>>>>>>>>> openAudioFileInRustAndGetRMSValues > absolutePath: $absolutePath');
     return _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }
 

@@ -48,3 +48,5 @@ symphonia = { version = "0.5.4", features = [
     "opt-simd-neon",
     "default",
 ] }
+#synthrs = "0.1.0"
+synthrs = { git = "https://github.com/gyng/synthrs" }

@@ -3,6 +3,7 @@
  */
 
 use flutter_rust_bridge::frb;
+use hound;
 
 use crate::{
     api::audio::global::GLOBAL_AUDIO_LOCK,
@@ -41,6 +42,7 @@ use crate::{
         util_functions::{
             get_platform_default_input_sample_rate, get_platform_default_output_sample_rate,
             load_audio_file,
+            load_midi_file,
         },
     },
 };
@@ -172,10 +174,23 @@ pub fn piano_set_concert_pitch(new_concert_pitch: f32) -> bool {
 
 // media player
 
+// for Solution 1
 pub fn media_player_load_wav(wav_file_path: String) -> bool {
     log::info!("media player load wav: {}", wav_file_path);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        match load_audio_file(wav_file_path) {
+        let extension = std::path::Path::new(&wav_file_path)
+                    .extension()
+                    .and_then(|ext| ext.to_str())
+                    .unwrap_or("")
+                    .to_lowercase();
+
+        let result = if extension == "mid" {
+                    load_midi_file(&wav_file_path)
+                } else {
+                    load_audio_file(wav_file_path)
+                };
+
+        match result {
             Ok(buffer) => {
                 media_player_set_buffer(buffer);
                 log::info!("media player load wav done");
@@ -189,6 +204,25 @@ pub fn media_player_load_wav(wav_file_path: String) -> bool {
     } else {
         false
     }
+}
+
+// for Solution 2
+fn media_player_load_wav(path: &str) -> Result<Vec<f32>, Box<dyn std::error::Error>> {
+    let reader = hound::WavReader::open(path)?;
+    let spec = reader.spec();
+
+    // Ensure the WAV file has the expected format
+    if spec.sample_format != hound::SampleFormat::Int || spec.bits_per_sample != 16 {
+        return Err("Unsupported WAV format".into());
+    }
+
+    // Read and convert samples to f32
+    let samples: Vec<f32> = reader
+        .into_samples::<i16>()
+        .map(|s| s.map(|sample| sample as f32 / i16::MAX as f32))
+        .collect::<Result<_, _>>()?;
+
+    Ok(samples)
 }
 
 pub fn media_player_start() -> bool {

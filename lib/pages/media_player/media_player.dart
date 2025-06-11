@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:audio_session/audio_session.dart';
@@ -589,18 +590,29 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   Future<void> _pickNewAudioFile() async {
+    print('---------------------------');
+    print('---------------------------');
+    print('---------------------------');
+    print('_pickNewAudioFile start');
+    print('---------------------------');
+    print('---------------------------');
+    print('---------------------------');
     final audioPath = await _pickAudioFile(context, context.read<ProjectLibrary>());
     if (audioPath == null) return;
+    print('--------------------------- audiopath: $audioPath');
 
     if (!mounted) return;
 
     final extension = _fs.toExtension(audioPath);
+    print('--------------------------- extension: $extension');
     if (!_isAcceptedFormat(extension)) {
+      print('--------------------------- showFormatNotSupportedDialog');
       await showFormatNotSupportedDialog(context, extension);
       return;
     }
 
     if (!await _fs.existsFileAfterGracePeriod(audioPath)) {
+      print('--------------------------- showFileNotAccessibleDialog');
       if (mounted) await showFileNotAccessibleDialog(context, fileName: audioPath);
       return;
     }
@@ -780,6 +792,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
       setState(() => _isLoading = true);
 
       final fileExtension = _fs.toExtension(_mediaPlayerBlock.relativePath);
+      print('fileExtension: $fileExtension');
+
       if (mounted && fileExtension != null && !TIOMusicParams.audioFormats.contains(fileExtension)) {
         await showFormatNotSupportedDialog(context, fileExtension);
       }
@@ -806,6 +820,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       setState(() => _isLoading = false);
     }
 
+    // TODO: Delete if possible!
     var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_fs, _mediaPlayerBlock, _numOfBins);
     if (newRms == null) {
       if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);

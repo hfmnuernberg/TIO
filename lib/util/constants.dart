@@ -56,7 +56,7 @@ class TIOMusicParams {
 
   // media file extensions
 
-  static const List<String> audioFormats = ['wav', 'aiff', 'mp3', 'ogg', 'flac', 'm4a'];
+  static const List<String> audioFormats = ['wav', 'aiff', 'mp3', 'ogg', 'flac', 'm4a', 'mid'];
 }
 
 //---------------------------------------------

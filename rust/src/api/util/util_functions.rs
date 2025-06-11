@@ -1,4 +1,4 @@
-use ::num::{Float, NumCast};
+use ::num::{Float, NumCast}; // TODO: Can be deleted?
 use anyhow::{Error, Result};
 use cpal::{
     traits::{DeviceTrait, HostTrait},
@@ -14,6 +14,11 @@ use symphonia::core::{
     probe::Hint,
     sample::Sample,
 };
+use synthrs::synthesizer::{make_samples_from_midi_file, peak_normalize, quantize_samples};
+use std::io::Read;
+use synthrs::wave;
+use synthrs::midi::read_midi_file; // TODO: Can be deleted?
+use synthrs::writer::write_wav_file;
 
 use super::constants::{INPUT_SAMPLE_RATE, NUM_CHANNELS, OUTPUT_SAMPLE_RATE};
 use crate::api::api::get_sample_rate;
@@ -80,6 +85,52 @@ pub fn load_audio_file(file_path: String) -> Result<Vec<f32>> {
     }
 
     Ok(out_samples)
+}
+
+// Solution 1:
+// #[flutter_rust_bridge::frb(ignore)]
+// pub fn load_midi_file<P: AsRef<Path>>(path: P) -> Result<Vec<f32>> {
+//     let default_sample_rate = get_sample_rate();
+//
+//     // Read the MIDI file into a byte vector
+//     let mut file = File::open(&path)?;
+//     let mut midi_data = Vec::new();
+//     file.read_to_end(&mut midi_data)?;
+//
+//     // Generate samples from the MIDI data
+//     let samples = make_samples_from_midi_file(&midi_data)?;
+//
+//     // Convert i16 samples to f32 in the range [-1.0, 1.0]
+//     let samples_f32: Vec<f32> = samples.into_iter().map(|s| s as f32 / i16::MAX as f32).collect();
+//
+//     Ok(samples_f32)
+// }
+
+// Solution 2:
+#[flutter_rust_bridge::frb(ignore)]
+fn load_midi_file(path: &str) -> Result<Vec<f32>, Box<dyn std::error::Error>> {
+    // Read the MIDI file into a buffer
+    let mut file = File::open(path)?;
+    let mut buffer = Vec::new();
+    file.read_to_end(&mut buffer)?;
+
+    // Parse the MIDI data
+    let smf = Smf::parse(&buffer)?;
+
+    // Initialize your synthesizer
+    let mut synth = Synthesizer::new();
+
+    // Process MIDI events and generate audio samples
+    for track in smf.tracks {
+        for event in track {
+            synth.process_event(event)?;
+        }
+    }
+
+    // Retrieve the synthesized audio samples
+    let audio_samples = synth.get_audio_samples();
+
+    Ok(audio_samples)
 }
 
 #[flutter_rust_bridge::frb(ignore)]

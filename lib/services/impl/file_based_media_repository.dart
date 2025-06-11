@@ -46,11 +46,14 @@ class FileBasedMediaRepository implements MediaRepository {
 
   @override
   Future<String?> saveSamplesToWaveFile(String basename, Float64List samples) async {
+    print('--------------------------- saveSamplesToWaveFile > basename: $basename');
     final filename = _getNextAvailableFilename(basename, 'wav');
+    print('--------------------------- saveSamplesToWaveFile > filename: $filename');
     final relativePath = '$_mediaFolderName/$filename';
     final absolutePath = '$_mediaFolderPath/$filename';
 
     final wavFile = Wav([samples], await getSampleRate(), WavFormat.float32);
+    print('--------------------------- wavFile: $wavFile');
     await wavFile.writeFile(absolutePath);
 
     return _fs.existsFile(absolutePath) ? relativePath : null;
