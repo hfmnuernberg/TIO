@@ -128,13 +128,14 @@ abstract class AppLocalizations {
   String get metronomeRandomMute;
   String get metronomeRandomMuteChance;
   String get metronomeRandomMuteProbability;
-  String get metronomeRhythmQuarter;
-  String get metronomeRhythmEighths;
-  String get metronomeRhythmEighthRestFollowedByEighth;
-  String get metronomeRhythmTriplets;
-  String get metronomeRhythmSixteenths;
-  String get metronomeRhythmSixteenthFollowedByDottedEighth;
   String get metronomeRhythmDottedEighthFollowedBySixteenth;
+  String get metronomeRhythmEighthRestFollowedByEighth;
+  String get metronomeRhythmEighths;
+  String get metronomeRhythmPattern;
+  String get metronomeRhythmQuarter;
+  String get metronomeRhythmSixteenthFollowedByDottedEighth;
+  String get metronomeRhythmSixteenths;
+  String get metronomeRhythmTriplets;
   String get metronomeSetBpm;
   String get metronomeSetRandomMute;
   String get metronomeSetSoundsPrimary;
@@ -162,7 +163,6 @@ abstract class AppLocalizations {
   String get metronomeSoundTypeRim;
   String get metronomeSoundTypeTick;
   String get metronomeSoundTypeWood;
-  String get metronomeSubdivision;
   String get metronomeTutorialAddNew;
   String get metronomeTutorialAdjust;
   String get metronomeTutorialEditBeats;
