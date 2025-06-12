@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,21 +29,21 @@ import '../../utils/project_utils.dart';
 import '../../utils/render_utils.dart';
 
 void main() {
-  late FileSystem fileSystem;
+  late FileSystem inMemoryFileSystem;
   late FilePickerMock filePickerMock;
   late List<SingleChildWidget> providers;
 
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   setUp(() async {
-    fileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
-    filePickerMock = FilePickerMock(fileSystem);
+    inMemoryFileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
+    filePickerMock = FilePickerMock(inMemoryFileSystem);
     final filePicker = FilePickerLogDecorator(filePickerMock);
-    final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(fileSystem));
-    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(fileSystem));
+    final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(inMemoryFileSystem));
+    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(inMemoryFileSystem));
     final fileReferences = FileReferencesLogDecorator(FileReferencesImpl(mediaRepo));
 
-    await fileSystem.init();
+    await inMemoryFileSystem.init();
     await mediaRepo.init();
     final projectLibrary =
         projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults()
@@ -52,7 +54,7 @@ void main() {
 
     providers = [
       Provider<FilePicker>(create: (_) => filePicker),
-      Provider<FileSystem>(create: (_) => fileSystem),
+      Provider<FileSystem>(create: (_) => inMemoryFileSystem),
       Provider<MediaRepository>(create: (_) => mediaRepo),
       Provider<ProjectRepository>(create: (_) => projectRepo),
       Provider<FileReferences>(create: (_) => fileReferences),
@@ -63,7 +65,8 @@ void main() {
 
   group('ImageTool', () {
     testWidgets('uploads image', (tester) async {
-      const imagePath = 'assets/test/black_circle.jpg';
+      final imagePath = '${inMemoryFileSystem.tmpFolderPath}/image.jpg';
+      inMemoryFileSystem.saveFileAsBytes(imagePath, File('assets/test/black_circle.jpg').readAsBytesSync());
       filePickerMock.mockPickImages([imagePath]);
 
       await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
