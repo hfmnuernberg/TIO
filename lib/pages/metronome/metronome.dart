@@ -304,10 +304,11 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: metronomeBlock,
       menuItems: <MenuItemButton>[
-        MenuItemButton(
-          onPressed: _clearAllRhythms,
-          child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
-        ),
+        if (!isSimpleModeOn)
+          MenuItemButton(
+            onPressed: _clearAllRhythms,
+            child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
+          ),
         MenuItemButton(
           onPressed: _toggleSimpleMode,
           child: Text(
