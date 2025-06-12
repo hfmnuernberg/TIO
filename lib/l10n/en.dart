@@ -124,7 +124,7 @@ class English extends AppLocalizations {
   String get mediaPlayerTapToTempo => 'Tap to tempo';
   String get mediaPlayerTrim => 'Trim';
   String get mediaPlayerTutorialAdjust =>
-      'Tap here to adjust your audio file. You can change the volume, the clip, the speed, and the pitch, as well as set markers. The set basic beat serves as the basis for the tempo setting.';
+      'Tap here to adjust your audio file. You can set the volume and the basic beat, trim your file and set markers, as well as change the pitch and tempo afterwards.';
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file.';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file.';
 
@@ -148,10 +148,19 @@ class English extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Mute chance';
   String get metronomeRandomMuteProbability => 'Probability in %';
+  String get metronomeRhythmQuarter => 'Quarter';
+  String get metronomeRhythmEighths => 'Eighths';
+  String get metronomeRhythmEighthRestFollowedByEighth => 'Eighth rest followed by Eighth';
+  String get metronomeRhythmTriplets => 'Triplets';
+  String get metronomeRhythmSixteenths => 'Sixteenths';
+  String get metronomeRhythmSixteenthFollowedByDottedEighth => 'Sixteenths followed by dotted Eighth';
+  String get metronomeRhythmDottedEighthFollowedBySixteenth => 'Dotted Eighth followed by Sixteenths';
   String get metronomeSetBpm => 'Set BPM';
   String get metronomeSetRandomMute => 'Set random mute';
   String get metronomeSetSoundsPrimary => 'Set metronome sounds';
   String get metronomeSetSoundsSecondary => 'Set 2nd metronome sounds';
+  String get metronomeSimpleModeOff => 'Switch to advanced mode';
+  String get metronomeSimpleModeOn => 'Switch to simple mode';
   String get metronomeSound => 'Sound';
   String get metronomeSoundMain => 'Main';
   String get metronomeSoundPoly => 'Poly sound';
@@ -173,6 +182,7 @@ class English extends AppLocalizations {
   String get metronomeSoundTypeRim => 'rim';
   String get metronomeSoundTypeTick => 'tick';
   String get metronomeSoundTypeWood => 'wood';
+  String get metronomeSubdivision => 'Subdivision';
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome.';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings.';
   String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted.';
