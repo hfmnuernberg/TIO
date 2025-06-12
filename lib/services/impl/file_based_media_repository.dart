@@ -25,7 +25,7 @@ class FileBasedMediaRepository implements MediaRepository {
   @override
   Future<String?> import(String absoluteSourceFilePath, String basename) async {
     final extension = (_fs.toExtension(absoluteSourceFilePath) ?? '').toLowerCase();
-    final filename = _getNextAvailableFilename(basename, extension);
+    final filename = _getNextAvailableFilename(_sanitize(basename), extension);
     final relativePath = '$_mediaFolderName/$filename';
     final absolutePath = '$_mediaFolderPath/$filename';
 
@@ -42,11 +42,11 @@ class FileBasedMediaRepository implements MediaRepository {
 
   @override
   Future<void> save(String filename, List<int> bytes) async =>
-      _fs.saveFileAsBytes('$_mediaFolderPath/$filename', bytes);
+      _fs.saveFileAsBytes('$_mediaFolderPath/${_sanitize(filename)}', bytes);
 
   @override
   Future<String?> saveSamplesToWaveFile(String basename, Float64List samples) async {
-    final filename = _getNextAvailableFilename(basename, 'wav');
+    final filename = _getNextAvailableFilename(_sanitize(basename), 'wav');
     final relativePath = '$_mediaFolderName/$filename';
     final absolutePath = '$_mediaFolderPath/$filename';
 
@@ -61,6 +61,8 @@ class FileBasedMediaRepository implements MediaRepository {
     final absolutePath = '${_fs.appFolderPath}/$relativePath';
     if (_fs.existsFile(absolutePath)) await _fs.deleteFile(absolutePath);
   }
+
+  String _sanitize(String filename) => filename.replaceAll('/', '-');
 
   String _toFilename(String basename, String extension, [int counter = 0]) =>
       '$basename${counter == 0 ? '' : '_$counter'}.$extension';
