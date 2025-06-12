@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -77,9 +76,28 @@ void main() {
       expect(find.byTooltip('Pick image(s)'), findsOneWidget);
 
       await tester.tapAndSettle(find.byTooltip('Pick image(s)'));
-      debugDumpSemanticsTree();
 
       expect(find.byTooltip('Pick image(s)'), findsNothing);
+    });
+
+    testWidgets('uploads multiple images', (tester) async {
+      final imagePath1 = '${inMemoryFileSystem.tmpFolderPath}/image1.jpg';
+      final imagePath2 = '${inMemoryFileSystem.tmpFolderPath}/image2.jpg';
+      inMemoryFileSystem.saveFileAsBytes(imagePath1, File('assets/test/black_circle.jpg').readAsBytesSync());
+      inMemoryFileSystem.saveFileAsBytes(imagePath2, File('assets/test/black_circle.jpg').readAsBytesSync());
+      filePickerMock.mockPickImages([imagePath1, imagePath2]);
+
+      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+
+      expect(find.bySemanticsLabel('Image 1'), findsNothing);
+
+      await tester.createImageToolInProject();
+      await tester.tapAndSettle(find.bySemanticsLabel('Image 1'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Pick image(s)'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+
+      expect(find.bySemanticsLabel('Image 1'), findsOneWidget);
+      expect(find.bySemanticsLabel('Image 1(1)'), findsOneWidget);
     });
   });
 }
