@@ -124,7 +124,7 @@ class English extends AppLocalizations {
   String get mediaPlayerTapToTempo => 'Tap to tempo';
   String get mediaPlayerTrim => 'Trim';
   String get mediaPlayerTutorialAdjust =>
-      'Tap here to adjust your audio file. You can change the volume, the clip, the speed, and the pitch, as well as set markers. The set basic beat serves as the basis for the tempo setting.';
+      'Tap here to adjust your audio file. You can set the volume and the basic beat, trim your file and set markers, as well as change the pitch and tempo afterwards.';
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file.';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file.';
 
