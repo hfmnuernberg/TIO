@@ -6,7 +6,6 @@ import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
-import 'package:tiomusic/pages/metronome/advanced_rhythm_group_editor.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -23,6 +22,8 @@ class Rhythms extends StatefulWidget {
   final CurrentBeat currentPrimaryBeat;
   final CurrentBeat currentSecondaryBeat;
   final void Function() onUpdate;
+  final void Function(bool isSecondary, int rhythmGroupIndex) onEditRhythmGroup;
+  final void Function(bool isSecondary) onAddRhythmGroup;
 
   const Rhythms({
     super.key,
@@ -30,6 +31,8 @@ class Rhythms extends StatefulWidget {
     required this.currentPrimaryBeat,
     required this.currentSecondaryBeat,
     required this.onUpdate,
+    required this.onEditRhythmGroup,
+    required this.onAddRhythmGroup,
   });
 
   @override
@@ -39,8 +42,6 @@ class Rhythms extends StatefulWidget {
 class _RhythmsState extends State<Rhythms> with RouteAware {
   late ProjectRepository projectRepo;
   late MetronomeBlock metronomeBlock;
-
-  // final ActiveBeatsModel activeBeatsModel = ActiveBeatsModel();
 
   final Tutorial tutorial = Tutorial();
   final GlobalKey keyGroups = GlobalKey();
@@ -97,53 +98,6 @@ class _RhythmsState extends State<Rhythms> with RouteAware {
     if (route is PageRoute) routeObserver.subscribe(this, route);
   }
 
-  void _handleAddRhythmGroup(bool isSecondary) async {
-    widget.onUpdate();
-    openSettingPage(
-      AdvancedRhythmGroupEditor(
-        metronomeBlock: metronomeBlock,
-        rhythmGroups: isSecondary ? metronomeBlock.rhythmGroups2 : metronomeBlock.rhythmGroups,
-        currentNoteKey: MetronomeParams.defaultNoteKey,
-        currentMainBeats: MetronomeParams.defaultBeats,
-        currentPolyBeats: MetronomeParams.defaultPolyBeats,
-        isAddingNewRhythmGroup: true,
-        isSecondMetronome: isSecondary,
-      ),
-      context,
-      metronomeBlock,
-      callbackOnReturn: (addingConfirmed) {
-        if (addingConfirmed != true) return;
-        setState(() {});
-        widget.onUpdate();
-      },
-    );
-  }
-
-  Future<void> _handleEditRhythmGroup(int index, bool isSecondary) async {
-    widget.onUpdate();
-    final rhythmGroups = isSecondary ? metronomeBlock.rhythmGroups2 : metronomeBlock.rhythmGroups;
-
-    await openSettingPage(
-      AdvancedRhythmGroupEditor(
-        metronomeBlock: metronomeBlock,
-        rhythmGroups: rhythmGroups,
-        rhythmGroupIndex: index,
-        currentNoteKey: rhythmGroups[index].noteKey,
-        currentMainBeats: rhythmGroups[index].beats,
-        currentPolyBeats: rhythmGroups[index].polyBeats,
-        isAddingNewRhythmGroup: false,
-        isSecondMetronome: isSecondary,
-      ),
-      context,
-      metronomeBlock,
-      callbackOnReturn: (editingConfirmed) {
-        if (editingConfirmed != true) return;
-        setState(() {});
-        widget.onUpdate();
-      },
-    );
-  }
-
   void _handleUpdateRhythmGroup(RhythmGroup rhythmGroup) async {
     metronomeBlock.rhythmGroups
       ..clear()
@@ -190,16 +144,16 @@ class _RhythmsState extends State<Rhythms> with RouteAware {
               highlightedPolyBeatIndex: widget.currentPrimaryBeat.polyBeatIndex,
               label: context.l10n.metronomePrimary,
               canDeleteLastSegment: false,
-              onAdd: () => _handleAddRhythmGroup(false),
+              onAdd: () => widget.onAddRhythmGroup(false),
               onDelete: (index) => _handleDeleteRhythmGroup(index, false),
-              onEdit: (index) => _handleEditRhythmGroup(index, false),
+              onEdit: (index) => widget.onEditRhythmGroup(false, index),
               onReorder: (oldIndex, newIndex) => _handleReorderRhythmSegments(oldIndex, newIndex, false),
               addSecondaryAction:
                   metronomeBlock.rhythmGroups2.isEmpty
                       ? IconButton(
                         key: keyAddSecondMetro,
                         iconSize: TIOMusicParams.rhythmPlusButtonSize,
-                        onPressed: () => _handleAddRhythmGroup(true),
+                        onPressed: () => widget.onAddRhythmGroup(true),
                         icon: const Icon(Icons.add, color: ColorTheme.primary),
                       )
                       : const SizedBox(),
@@ -212,9 +166,9 @@ class _RhythmsState extends State<Rhythms> with RouteAware {
                 highlightedPolyBeatIndex: widget.currentSecondaryBeat.polyBeatIndex,
                 label: context.l10n.metronomeSecondary,
                 canDeleteLastSegment: true,
-                onAdd: () => _handleAddRhythmGroup(true),
+                onAdd: () => widget.onAddRhythmGroup(true),
                 onDelete: (index) => _handleDeleteRhythmGroup(index, true),
-                onEdit: (index) => _handleEditRhythmGroup(index, true),
+                onEdit: (index) => widget.onEditRhythmGroup(true, index),
                 onReorder: (oldIndex, newIndex) => _handleReorderRhythmSegments(oldIndex, newIndex, true),
                 addSecondaryAction: const SizedBox(),
               ),

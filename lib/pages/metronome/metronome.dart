@@ -12,6 +12,7 @@ import 'package:tiomusic/models/metronome_sound_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/pages/metronome/advanced_rhythm_group_editor.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/setting_bpm.dart';
@@ -201,11 +202,61 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   void _handleUpdateRhythm() async {
-    if (isStarted) await _stopMetronome();
-
     setState(() {});
     if (mounted) await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     await _syncMetronomeSound();
+  }
+
+  Future<void> _handleEditRhythmGroup(bool isSecondary, int index) async {
+    if (isStarted) await _stopMetronome();
+    if (!mounted) return;
+
+    final rhythmGroups = isSecondary ? metronomeBlock.rhythmGroups2 : metronomeBlock.rhythmGroups;
+    await openSettingPage(
+      AdvancedRhythmGroupEditor(
+        metronomeBlock: metronomeBlock,
+        rhythmGroups: rhythmGroups,
+        rhythmGroupIndex: index,
+        currentNoteKey: rhythmGroups[index].noteKey,
+        currentMainBeats: rhythmGroups[index].beats,
+        currentPolyBeats: rhythmGroups[index].polyBeats,
+        isAddingNewRhythmGroup: false,
+        isSecondMetronome: isSecondary,
+      ),
+      context,
+      metronomeBlock,
+      callbackOnReturn: (editingConfirmed) async {
+        if (editingConfirmed != true) return;
+        setState(() {});
+        if (mounted) await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+        await _syncMetronomeSound();
+      },
+    );
+  }
+
+  void _handleAddRhythmGroup(bool isSecondary) async {
+    if (isStarted) await _stopMetronome();
+    if (!mounted) return;
+
+    openSettingPage(
+      AdvancedRhythmGroupEditor(
+        metronomeBlock: metronomeBlock,
+        rhythmGroups: isSecondary ? metronomeBlock.rhythmGroups2 : metronomeBlock.rhythmGroups,
+        currentNoteKey: MetronomeParams.defaultNoteKey,
+        currentMainBeats: MetronomeParams.defaultBeats,
+        currentPolyBeats: MetronomeParams.defaultPolyBeats,
+        isAddingNewRhythmGroup: true,
+        isSecondMetronome: isSecondary,
+      ),
+      context,
+      metronomeBlock,
+      callbackOnReturn: (addingConfirmed) async {
+        if (addingConfirmed != true) return;
+        setState(() {});
+        if (mounted) await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+        await _syncMetronomeSound();
+      },
+    );
   }
 
   void _clearAllRhythms() async {
@@ -304,10 +355,11 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: metronomeBlock,
       menuItems: <MenuItemButton>[
-        MenuItemButton(
-          onPressed: _clearAllRhythms,
-          child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
-        ),
+        if (!isSimpleModeOn)
+          MenuItemButton(
+            onPressed: _clearAllRhythms,
+            child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
+          ),
         MenuItemButton(
           onPressed: _toggleSimpleMode,
           child: Text(
@@ -341,6 +393,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                   currentPrimaryBeat: currentPrimaryBeat,
                   currentSecondaryBeat: currentSecondaryBeat,
                   onUpdate: _handleUpdateRhythm,
+                  onEditRhythmGroup: _handleEditRhythmGroup,
+                  onAddRhythmGroup: _handleAddRhythmGroup,
                 ),
 
                 const SizedBox(height: TIOMusicParams.edgeInset),
