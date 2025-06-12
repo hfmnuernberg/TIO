@@ -97,7 +97,7 @@ void main() {
       await tester.tapAndSettle(find.bySemanticsLabel('Back'));
 
       expect(find.bySemanticsLabel('Image 1'), findsOneWidget);
-      expect(find.bySemanticsLabel('Image 1(1)'), findsOneWidget);
+      expect(find.bySemanticsLabel('Image 1 (1)'), findsOneWidget);
     });
   });
 }
