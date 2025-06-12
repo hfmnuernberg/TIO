@@ -28,22 +28,22 @@ import '../../utils/render_utils.dart';
 import '../../utils/project_utils.dart';
 
 void main() {
-  late FileSystem fileSystem;
+  late FileSystem inMemoryFileSystem;
   late FilePickerMock filePickerMock;
   late List<SingleChildWidget> providers;
 
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   setUp(() async {
-    fileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
-    filePickerMock = FilePickerMock(fileSystem);
+    inMemoryFileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
+    filePickerMock = FilePickerMock(inMemoryFileSystem);
     final filePicker = FilePickerLogDecorator(filePickerMock);
-    final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(fileSystem));
-    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(fileSystem));
+    final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(inMemoryFileSystem));
+    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(inMemoryFileSystem));
     final fileReferences = FileReferencesLogDecorator(FileReferencesImpl(mediaRepo));
-    final archiver = ArchiverLogDecorator(FileBasedArchiver(fileSystem, mediaRepo));
+    final archiver = ArchiverLogDecorator(FileBasedArchiver(inMemoryFileSystem, mediaRepo));
 
-    await fileSystem.init();
+    await inMemoryFileSystem.init();
     await mediaRepo.init();
     final projectLibrary =
         projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults()
@@ -53,7 +53,7 @@ void main() {
 
     providers = [
       Provider<FilePicker>(create: (_) => filePicker),
-      Provider<FileSystem>(create: (_) => fileSystem),
+      Provider<FileSystem>(create: (_) => inMemoryFileSystem),
       Provider<MediaRepository>(create: (_) => mediaRepo),
       Provider<ProjectRepository>(create: (_) => projectRepo),
       Provider<FileReferences>(create: (_) => fileReferences),
@@ -63,7 +63,7 @@ void main() {
   });
 
   testWidgets('exports and imports project with text', (tester) async {
-    final exportedArchivePath = '${fileSystem.tmpFolderPath}/export/project.zip';
+    final exportedArchivePath = '${inMemoryFileSystem.tmpFolderPath}/export/project.zip';
     filePickerMock.mockShareFileAndCapture(exportedArchivePath);
     filePickerMock.mockPickArchive(exportedArchivePath);
     await tester.renderScaffold(ProjectsPage(), providers);

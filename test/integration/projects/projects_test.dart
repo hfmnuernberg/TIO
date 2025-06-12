@@ -27,12 +27,12 @@ void main() {
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   setUp(() async {
-    final fileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
-    final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(fileSystem));
-    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(fileSystem));
+    final inMemoryFileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
+    final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(inMemoryFileSystem));
+    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(inMemoryFileSystem));
     final fileReferences = FileReferencesLogDecorator(FileReferencesImpl(mediaRepo));
 
-    await fileSystem.init();
+    await inMemoryFileSystem.init();
     await mediaRepo.init();
     final projectLibrary =
         projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults()
@@ -41,7 +41,7 @@ void main() {
     await fileReferences.init(projectLibrary);
 
     providers = [
-      Provider<FileSystem>(create: (_) => fileSystem),
+      Provider<FileSystem>(create: (_) => inMemoryFileSystem),
       Provider<MediaRepository>(create: (_) => mediaRepo),
       Provider<ProjectRepository>(create: (_) => projectRepo),
       Provider<FileReferences>(create: (_) => fileReferences),
