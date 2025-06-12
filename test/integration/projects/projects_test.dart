@@ -15,6 +15,7 @@ import 'package:tiomusic/services/impl/file_based_project_repository.dart';
 import 'package:tiomusic/services/impl/file_references_impl.dart';
 import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/services/project_repository.dart';
+import 'package:tiomusic/widgets/card_list_tile.dart';
 
 import '../../mocks/in_memory_file_system_mock.dart';
 import '../../utils/action_utils.dart';
@@ -27,12 +28,12 @@ void main() {
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   setUp(() async {
-    final fileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
-    final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(fileSystem));
-    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(fileSystem));
+    final inMemoryFileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
+    final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(inMemoryFileSystem));
+    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(inMemoryFileSystem));
     final fileReferences = FileReferencesLogDecorator(FileReferencesImpl(mediaRepo));
 
-    await fileSystem.init();
+    await inMemoryFileSystem.init();
     await mediaRepo.init();
     final projectLibrary =
         projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults()
@@ -41,7 +42,7 @@ void main() {
     await fileReferences.init(projectLibrary);
 
     providers = [
-      Provider<FileSystem>(create: (_) => fileSystem),
+      Provider<FileSystem>(create: (_) => inMemoryFileSystem),
       Provider<MediaRepository>(create: (_) => mediaRepo),
       Provider<ProjectRepository>(create: (_) => projectRepo),
       Provider<FileReferences>(create: (_) => fileReferences),
@@ -82,17 +83,16 @@ void main() {
     await tester.createProject('Project 1');
     await tester.createProject('Project 2');
 
-    final projectList = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
-    final projectTitles = projectList.map((project) => (project.title! as Text).data).toList();
-
+    final projects = tester.widgetList<CardListTile>(find.byType(CardListTile)).toList();
+    final projectTitles = projects.map((tile) => tile.title).toList();
     expect(projectTitles, equals(['Project 2', 'Project 1']));
 
     await tester.tapAndSettle(find.byTooltip('Projects menu'));
     await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
     await tester.dragFromCenterToTargetAndSettle(find.byTooltip('Reorder').first, const Offset(0, 500));
 
-    final updatedProjectList = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
-    final updatedProjectTitles = updatedProjectList.map((project) => (project.title! as Text).data).toList();
+    final updatedProjects = tester.widgetList<CardListTile>(find.byType(CardListTile)).toList();
+    final updatedProjectTitles = updatedProjects.map((tile) => tile.title).toList();
 
     expect(updatedProjectTitles, equals(['Project 1', 'Project 2']));
   });
@@ -106,8 +106,8 @@ void main() {
     await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
     await tester.dragFromCenterToTargetAndSettle(find.byTooltip('Reorder').first, const Offset(0, 10));
 
-    final projectList = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
-    final projectTitles = projectList.map((project) => (project.title! as Text).data).toList();
+    final projects = tester.widgetList<CardListTile>(find.byType(CardListTile)).toList();
+    final projectTitles = projects.map((tile) => tile.title).toList();
 
     expect(projectTitles, equals(['Project 2', 'Project 1']));
   });
