@@ -414,6 +414,14 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
+          title: l10n.commonBasicBeat,
+          subtitle: '${_mediaPlayerBlock.bpm} ${l10n.commonBpm}',
+          leadingIcon: Icons.touch_app_outlined,
+          settingPage: const SetBPM(),
+          block: _mediaPlayerBlock,
+          callOnReturn: (value) => setState(() {}),
+        ),
+        SettingsTile(
           title: l10n.mediaPlayerTrim,
           subtitle: '${(_mediaPlayerBlock.rangeStart * 100).round()}% → ${(_mediaPlayerBlock.rangeEnd * 100).round()}%',
           leadingIcon: 'assets/icons/arrow_range.svg',
@@ -423,19 +431,14 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
-          title: l10n.commonBasicBeat,
-          subtitle: '${_mediaPlayerBlock.bpm} ${l10n.commonBpm}',
-          leadingIcon: Icons.touch_app_outlined,
-          settingPage: const SetBPM(),
-          block: _mediaPlayerBlock,
-          callOnReturn: (value) => setState(() {}),
-        ),
-        SettingsTile(
-          title: l10n.mediaPlayerSpeed,
-          subtitle:
-              '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
-          leadingIcon: Icons.speed,
-          settingPage: const SetSpeed(),
+          title: l10n.mediaPlayerMarkers,
+          subtitle: _mediaPlayerBlock.markerPositions.length.toString(),
+          leadingIcon: Icons.arrow_drop_down,
+          settingPage: EditMarkersPage(
+            mediaPlayerBlock: _mediaPlayerBlock,
+            fileDuration: _fileDuration,
+            rmsValues: _rmsValues,
+          ),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
           inactive: _isLoading,
@@ -453,14 +456,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
-          title: l10n.mediaPlayerMarkers,
-          subtitle: _mediaPlayerBlock.markerPositions.length.toString(),
-          leadingIcon: Icons.arrow_drop_down,
-          settingPage: EditMarkersPage(
-            mediaPlayerBlock: _mediaPlayerBlock,
-            fileDuration: _fileDuration,
-            rmsValues: _rmsValues,
-          ),
+          title: l10n.mediaPlayerSpeed,
+          subtitle:
+              '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
+          leadingIcon: Icons.speed,
+          settingPage: const SetSpeed(),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
           inactive: _isLoading,
