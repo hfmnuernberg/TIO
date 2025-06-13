@@ -68,14 +68,8 @@ class _TextToolState extends State<TextTool> {
             if (_textController.text.isNotEmpty) {
               final shouldOverwrite = await showConfirmDialog(
                 context: context,
-                title: Text(l10n.textImportDialogTitle, style: TextStyle(color: ColorTheme.primary)),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(l10n.textImportDialogHint, style: TextStyle(color: ColorTheme.primary)),
-                    SizedBox(height: 10),
-                  ],
-                ),
+                title: l10n.textImportDialogTitle,
+                content: l10n.textImportDialogHint,
               );
               if (!shouldOverwrite) return;
             }

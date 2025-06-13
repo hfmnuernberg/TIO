@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
-Future<bool> showConfirmDialog({required BuildContext context, required Widget title, required Widget content}) async {
+Future<bool> showConfirmDialog({required BuildContext context, required String title, required String content}) async {
   final bool? result = await showDialog<bool>(
     context: context,
     builder: (context) {
@@ -14,8 +15,8 @@ Future<bool> showConfirmDialog({required BuildContext context, required Widget t
 }
 
 class ConfirmDialog extends StatelessWidget {
-  final Widget title;
-  final Widget content;
+  final String title;
+  final String content;
   final Function onDone;
 
   const ConfirmDialog({super.key, required this.title, required this.content, required this.onDone});
@@ -23,8 +24,14 @@ class ConfirmDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: title,
-      content: Transform.translate(offset: const Offset(0, 10), child: content),
+      title: Text(title, style: TextStyle(color: ColorTheme.primary)),
+      content: Transform.translate(
+        offset: const Offset(0, 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [Text(content, style: TextStyle(color: ColorTheme.primary)), SizedBox(height: 10)],
+        ),
+      ),
       actions: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,

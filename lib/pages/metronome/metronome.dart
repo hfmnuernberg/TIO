@@ -147,14 +147,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     if (!isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) {
       final shouldReset = await showConfirmDialog(
         context: context,
-        title: Text(context.l10n.metronomeResetDialogTitle, style: TextStyle(color: ColorTheme.primary)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(context.l10n.metronomeResetDialogHint, style: TextStyle(color: ColorTheme.primary)),
-            SizedBox(height: 10),
-          ],
-        ),
+        title: context.l10n.metronomeResetDialogTitle,
+        content: context.l10n.metronomeResetDialogHint,
       );
 
       if (!shouldReset) return;

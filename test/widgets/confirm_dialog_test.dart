@@ -9,7 +9,7 @@ class TestWrapper extends StatelessWidget {
   const TestWrapper({super.key});
 
   Future<void> handleOpenDialog(BuildContext context) async {
-    await showConfirmDialog(context: context, title: Text('Title'), content: Text('Content'));
+    await showConfirmDialog(context: context, title: 'Title', content: 'Content');
   }
 
   @override
@@ -47,7 +47,7 @@ void main() {
       await tester.tapAndSettle(find.bySemanticsLabel('Open dialog'));
       expect(find.bySemanticsLabel('Title'), findsOneWidget);
 
-      await tester.tapAndSettle(find.bySemanticsLabel('Confirm'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Proceed'));
       expect(find.bySemanticsLabel('Title'), findsNothing);
     });
   });
