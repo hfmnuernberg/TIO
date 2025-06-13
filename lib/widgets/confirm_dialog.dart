@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
-Future<bool> showConfirmDialog({
-  required BuildContext context,
-  required Widget title,
-  required Widget content,
-}) async {
+Future<bool> showConfirmDialog({required BuildContext context, required Widget title, required Widget content}) async {
   final bool? result = await showDialog<bool>(
     context: context,
     builder: (context) {
@@ -28,10 +24,7 @@ class ConfirmDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: title,
-      content: Transform.translate(
-        offset: const Offset(0, 10),
-        child: content,
-      ),
+      content: Transform.translate(offset: const Offset(0, 10), child: content),
       actions: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
