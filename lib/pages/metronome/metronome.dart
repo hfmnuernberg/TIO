@@ -138,9 +138,10 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   Future<void> _toggleSimpleMode() async {
-    isSimpleModeOn = !isSimpleModeOn;
+    final bool matchesRhythmPreset = metronomeBlock.rhythmGroups[0].rhythm != null;
+    if (matchesRhythmPreset) isSimpleModeOn = !isSimpleModeOn;
 
-    if (isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) {
+    if (!isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) {
       final shouldReset = await showConfirmDialog(
         context: context,
         title: Text(context.l10n.metronomeResetDialogTitle, style: TextStyle(color: ColorTheme.primary)),
@@ -152,7 +153,10 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           ],
         ),
       );
-      if (shouldReset) _clearAllRhythms();
+      if (shouldReset) {
+        _clearAllRhythms();
+        isSimpleModeOn = !isSimpleModeOn;
+      }
     }
 
     setState(() {});
