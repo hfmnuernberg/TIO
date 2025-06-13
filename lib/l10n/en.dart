@@ -149,6 +149,9 @@ class English extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Mute chance';
   String get metronomeRandomMuteProbability => 'Probability in %';
+  String get metronomeResetDialogHint =>
+      'ATTENTION: This will reset the metronome to its default settings. All your current settings will be lost. Do you want to continue?';
+  String get metronomeResetDialogTitle => 'Reset metronome?';
   String get metronomeRhythmDottedEighthFollowedBySixteenth => 'Dotted Eighth followed by Sixteenths';
   String get metronomeRhythmEighthRestFollowedByEighth => 'Eighth rest followed by Eighth';
   String get metronomeRhythmEighths => 'Eighths';

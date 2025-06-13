@@ -137,6 +137,8 @@ abstract class AppLocalizations {
   String get metronomeRhythmSixteenthFollowedByDottedEighth;
   String get metronomeRhythmSixteenths;
   String get metronomeRhythmTriplets;
+  String get metronomeResetDialogHint;
+  String get metronomeResetDialogTitle;
   String get metronomeSetBpm;
   String get metronomeSetRandomMute;
   String get metronomeSetSoundsPrimary;

@@ -33,6 +33,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
+import 'package:tiomusic/widgets/confirm_dialog.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/metronome/color_painter.dart';
 import 'package:tiomusic/widgets/metronome/current_beat.dart';
@@ -136,9 +137,24 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     });
   }
 
-  void _toggleSimpleMode() {
+  Future<void> _toggleSimpleMode() async {
     isSimpleModeOn = !isSimpleModeOn;
-    if (isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) _clearAllRhythms();
+
+    if (isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) {
+      final shouldReset = await showConfirmDialog(
+        context: context,
+        title: Text(context.l10n.metronomeResetDialogTitle, style: TextStyle(color: ColorTheme.primary)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(context.l10n.metronomeResetDialogHint, style: TextStyle(color: ColorTheme.primary)),
+            SizedBox(height: 10),
+          ],
+        ),
+      );
+      if (shouldReset) _clearAllRhythms();
+    }
+
     setState(() {});
   }
 
