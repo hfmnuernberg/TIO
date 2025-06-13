@@ -23,6 +23,7 @@ abstract class AppLocalizations {
   String get commonBasicBeatSetting;
   String get commonBpm;
   String get commonCancel;
+  String get commonConfirm;
   String get commonDelete;
   String get commonGotIt;
   String get commonInput;
@@ -237,7 +238,6 @@ abstract class AppLocalizations {
   String get textAboutExplanation;
   String get textDescription;
   String get textImport;
-  String get textImportDialogConfirm;
   String get textImportDialogHint;
   String get textImportDialogTitle;
   String get textImportError;

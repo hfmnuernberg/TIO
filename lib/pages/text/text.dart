@@ -7,12 +7,12 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/models/blocks/text_block.dart';
-import 'package:tiomusic/pages/text/confirm_dialog.dart';
 import 'package:tiomusic/pages/text/import_text.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
+import 'package:tiomusic/widgets/confirm_dialog.dart';
 
 class TextTool extends StatefulWidget {
   final bool isQuickTool;
@@ -55,6 +55,8 @@ class _TextToolState extends State<TextTool> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return ParentTool(
       barTitle: _textBlock.title,
       isQuickTool: widget.isQuickTool,
@@ -64,7 +66,17 @@ class _TextToolState extends State<TextTool> {
         MenuItemButton(
           onPressed: () async {
             if (_textController.text.isNotEmpty) {
-              final shouldOverwrite = await showConfirmDialog(context: context);
+              final shouldOverwrite = await showConfirmDialog(
+                context: context,
+                title: Text(l10n.textImportDialogTitle, style: TextStyle(color: ColorTheme.primary)),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(l10n.textImportDialogHint, style: TextStyle(color: ColorTheme.primary)),
+                    SizedBox(height: 10),
+                  ],
+                ),
+              );
               if (!shouldOverwrite) return;
             }
 

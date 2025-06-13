@@ -31,6 +31,7 @@ class German extends AppLocalizations {
   String get commonBasicBeatSetting => 'Grundschlag einstellen';
   String get commonBpm => 'BPM';
   String get commonCancel => 'Abbrechen';
+  String get commonConfirm => 'Bestätigen';
   String get commonDelete => 'Löschen?';
   String get commonGotIt => 'Verstanden';
   String get commonInput => 'Eingabefeld';
@@ -268,7 +269,6 @@ class German extends AppLocalizations {
       'Über dein Endgerät kannst du Notizen in Textform erstellen, z. B. für Spielanweisungen, Hintergrundinformationen, Songtexte etc.';
   String get textDescription => 'Mach dir Notizen.';
   String get textImport => 'Text importieren';
-  String get textImportDialogConfirm => 'Importieren';
   String get textImportDialogHint =>
       'ACHTUNG: Wenn du einen Text importierst, wird der aktuelle Inhalt des Text-Tools überschrieben.';
   String get textImportDialogTitle => 'Text importieren?';

@@ -31,6 +31,7 @@ class English extends AppLocalizations {
   String get commonBasicBeatSetting => 'Set basic beat';
   String get commonBpm => 'BPM';
   String get commonCancel => 'Cancel';
+  String get commonConfirm => 'Confirm';
   String get commonDelete => 'Delete?';
   String get commonGotIt => 'Got it';
   String get commonInput => 'Input';
@@ -265,7 +266,6 @@ class English extends AppLocalizations {
       'You can use your device to create text notes, e.g. for playing instructions, background information, song lyrics etc.';
   String get textDescription => 'Write down your notes.';
   String get textImport => 'Import text';
-  String get textImportDialogConfirm => 'Import';
   String get textImportDialogHint =>
       'ATTENTION: When importing a text, the current content of the text tool will be overwritten.';
   String get textImportDialogTitle => 'Import text?';
