@@ -33,6 +33,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
+import 'package:tiomusic/widgets/confirm_dialog.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/metronome/color_painter.dart';
 import 'package:tiomusic/widgets/metronome/current_beat.dart';
@@ -140,6 +141,20 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     isSimpleModeOn = !isSimpleModeOn;
     if (isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) _clearAllRhythms();
     setState(() {});
+  }
+
+  Future<void> _toggleSimpleModeIfSaveOrUserConfirms() async {
+    if (!isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) {
+      final shouldReset = await showConfirmDialog(
+        context: context,
+        title: context.l10n.metronomeResetDialogTitle,
+        content: context.l10n.metronomeResetDialogHint,
+      );
+
+      if (!shouldReset) return;
+    }
+
+    _toggleSimpleMode();
   }
 
   void handleVolumeChange(double newVolume) {
@@ -360,7 +375,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
           ),
         MenuItemButton(
-          onPressed: _toggleSimpleMode,
+          onPressed: _toggleSimpleModeIfSaveOrUserConfirms,
           child: Text(
             isSimpleModeOn ? l10n.metronomeSimpleModeOff : l10n.metronomeSimpleModeOn,
             style: const TextStyle(color: ColorTheme.primary),

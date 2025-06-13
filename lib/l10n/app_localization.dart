@@ -31,6 +31,7 @@ abstract class AppLocalizations {
   String get commonNo;
   String get commonOctave;
   String get commonPlus;
+  String get commonProceed;
   String get commonReorder;
   String get commonReset;
   String get commonSetVolume;
@@ -136,6 +137,8 @@ abstract class AppLocalizations {
   String get metronomeRhythmSixteenthFollowedByDottedEighth;
   String get metronomeRhythmSixteenths;
   String get metronomeRhythmTriplets;
+  String get metronomeResetDialogHint;
+  String get metronomeResetDialogTitle;
   String get metronomeSetBpm;
   String get metronomeSetRandomMute;
   String get metronomeSetSoundsPrimary;
@@ -237,7 +240,6 @@ abstract class AppLocalizations {
   String get textAboutExplanation;
   String get textDescription;
   String get textImport;
-  String get textImportDialogConfirm;
   String get textImportDialogHint;
   String get textImportDialogTitle;
   String get textImportError;
