@@ -23,7 +23,6 @@ abstract class AppLocalizations {
   String get commonBasicBeatSetting;
   String get commonBpm;
   String get commonCancel;
-  String get commonConfirm;
   String get commonDelete;
   String get commonGotIt;
   String get commonInput;
@@ -32,6 +31,7 @@ abstract class AppLocalizations {
   String get commonNo;
   String get commonOctave;
   String get commonPlus;
+  String get commonProceed;
   String get commonReorder;
   String get commonReset;
   String get commonSetVolume;

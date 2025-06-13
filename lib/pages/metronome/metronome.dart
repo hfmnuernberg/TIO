@@ -137,10 +137,13 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     });
   }
 
-  Future<void> _toggleSimpleMode() async {
-    final bool matchesRhythmPreset = metronomeBlock.rhythmGroups[0].rhythm != null;
-    if (matchesRhythmPreset) isSimpleModeOn = !isSimpleModeOn;
+  void _toggleSimpleMode() {
+    isSimpleModeOn = !isSimpleModeOn;
+    if (isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) _clearAllRhythms();
+    setState(() {});
+  }
 
+  Future<void> _toggleSimpleModeIfSaveOrUserConfirms() async {
     if (!isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) {
       final shouldReset = await showConfirmDialog(
         context: context,
@@ -153,13 +156,11 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           ],
         ),
       );
-      if (shouldReset) {
-        _clearAllRhythms();
-        isSimpleModeOn = !isSimpleModeOn;
-      }
+
+      if (!shouldReset) return;
     }
 
-    setState(() {});
+    _toggleSimpleMode();
   }
 
   void handleVolumeChange(double newVolume) {
@@ -380,7 +381,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
           ),
         MenuItemButton(
-          onPressed: _toggleSimpleMode,
+          onPressed: _toggleSimpleModeIfSaveOrUserConfirms,
           child: Text(
             isSimpleModeOn ? l10n.metronomeSimpleModeOff : l10n.metronomeSimpleModeOn,
             style: const TextStyle(color: ColorTheme.primary),

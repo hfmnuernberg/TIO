@@ -31,7 +31,6 @@ class English extends AppLocalizations {
   String get commonBasicBeatSetting => 'Set basic beat';
   String get commonBpm => 'BPM';
   String get commonCancel => 'Cancel';
-  String get commonConfirm => 'Confirm';
   String get commonDelete => 'Delete?';
   String get commonGotIt => 'Got it';
   String get commonInput => 'Input';
@@ -40,6 +39,7 @@ class English extends AppLocalizations {
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
   String get commonPlus => 'Plus button';
+  String get commonProceed => 'Proceed';
   String get commonReorder => 'Reorder';
   String get commonReset => 'Reset';
   String get commonSetVolume => 'Set Volume';

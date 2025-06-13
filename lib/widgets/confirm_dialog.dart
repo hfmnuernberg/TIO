@@ -30,7 +30,7 @@ class ConfirmDialog extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             TextButton(onPressed: () => onDone(false), child: Text(context.l10n.commonCancel)),
-            TIOFlatButton(onPressed: () => onDone(true), text: context.l10n.commonConfirm, boldText: true),
+            TIOFlatButton(onPressed: () => onDone(true), text: context.l10n.commonProceed, boldText: true),
           ],
         ),
       ],
