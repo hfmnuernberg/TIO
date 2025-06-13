@@ -266,9 +266,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     metronomeBlock.rhythmGroups[0].keyID = MetronomeParams.getNewKeyID();
     metronomeBlock.resetSecondaryMetronome();
 
-    setState(() {});
-    if (mounted) await projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    await _syncMetronomeSound();
+    _handleUpdateRhythm();
+    MetronomeUtils.loadSounds(fs, metronomeBlock);
   }
 
   void _onToggleButtonClicked() async {
