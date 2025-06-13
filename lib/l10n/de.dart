@@ -151,7 +151,7 @@ class German extends AppLocalizations {
   String get metronomeRandomMuteChance => 'Aussetzen';
   String get metronomeRandomMuteProbability => 'Wahrscheinlichkeit in %';
   String get metronomeResetDialogHint =>
-      'ACHTUNG: Alle Metronomeinstellungen werden auf die Standardwerte zurückgesetzt. Möchtest du fortfahren?';
+      'ACHTUNG: Dadurch werden der Metronomrhythmus und -sound auf die Standardeinstellungen zurückgesetzt. Alle deine aktuellen Einstellungen gehen verloren. Möchtest du fortfahren?';
   String get metronomeResetDialogTitle => 'Metronome zurücksetzen?';
   String get metronomeRhythmDottedEighthFollowedBySixteenth => 'Punktierte Achtel gefolgt von Sechzehntel';
   String get metronomeRhythmEighthRestFollowedByEighth => 'Achtelpause gefolgt von Achtel';
