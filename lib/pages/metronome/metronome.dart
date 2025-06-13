@@ -267,6 +267,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     metronomeBlock.resetSecondaryMetronome();
 
     _handleUpdateRhythm();
+    MetronomeUtils.loadSounds(fs, metronomeBlock);
   }
 
   void _onToggleButtonClicked() async {
