@@ -653,13 +653,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _setFileDuration();
       _addShareOptionToMenu();
       _mediaPlayerBlock.markerPositions.clear();
-      if (mounted) {
-        await _projectRepo.saveLibrary(projectLibrary);
-      }
+      if (mounted) await _projectRepo.saveLibrary(projectLibrary);
     }
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
 
     await _queryAndUpdateStateFromRust();
   }
