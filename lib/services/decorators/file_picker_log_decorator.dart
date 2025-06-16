@@ -17,9 +17,16 @@ class FilePickerLogDecorator implements FilePicker {
   }
 
   @override
-  Future<String?> pickAudio() async {
-    final absoluteFilePath = await _filePicker.pickAudio();
-    _logger.t('pickAudio(): ${shortenPath(absoluteFilePath)}');
+  Future<String?> pickAudioFromFileSystem() async {
+    final absoluteFilePath = await _filePicker.pickAudioFromFileSystem();
+    _logger.t('pickAudioFromAppFileSystem(): ${shortenPath(absoluteFilePath)}');
+    return absoluteFilePath;
+  }
+
+  @override
+  Future<String?> pickAudioFromMediaLibrary() async {
+    final absoluteFilePath = await _filePicker.pickAudioFromMediaLibrary();
+    _logger.t('pickAudioFromMediaLibrary(): ${shortenPath(absoluteFilePath)}');
     return absoluteFilePath;
   }
 

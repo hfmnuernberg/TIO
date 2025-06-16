@@ -106,7 +106,8 @@ class English extends AppLocalizations {
   String get mediaPlayerFactor => 'Factor';
   String get mediaPlayerFactorAndBpm => 'Factor and BPM slider';
   String get mediaPlayerFile => 'File';
-  String get mediaPlayerLoadAudioFile => 'Load audio file';
+  String get mediaPlayerLoadAudioFileFromFileSystem => 'Load audio file from file system';
+  String get mediaPlayerLoadAudioFileFromMediaLibrary => 'Load audio file from media library';
   String get mediaPlayerLooping => 'Looping';
   String get mediaPlayerMarkers => 'Markers';
   String get mediaPlayerOverwriteSound => 'Overwrite?';

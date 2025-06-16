@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:audio_session/audio_session.dart';
@@ -387,9 +388,30 @@ class _MediaPlayerState extends State<MediaPlayer> {
                     _tutorial.show(context);
                   }
                 },
-                text: _fileLoaded ? _fs.toBasename(_mediaPlayerBlock.relativePath) : l10n.mediaPlayerLoadAudioFile,
+                text:
+                    _fileLoaded
+                        ? _fs.toBasename(_mediaPlayerBlock.relativePath)
+                        : l10n.mediaPlayerLoadAudioFileFromMediaLibrary,
               ),
             ),
+            if (Platform.isIOS)
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: TIOFlatButton(
+                  onPressed: () async {
+                    await _pickNewAudioFile(pickAudioFromFileSystem: true);
+                    if (!context.mounted) return;
+                    if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
+                      _createTutorialWaveformTip();
+                      _tutorial.show(context);
+                    }
+                  },
+                  text:
+                      _fileLoaded
+                          ? _fs.toBasename(_mediaPlayerBlock.relativePath)
+                          : l10n.mediaPlayerLoadAudioFileFromFileSystem,
+                ),
+              ),
           ],
         ),
       ),
@@ -587,8 +609,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
     await _queryAndUpdateStateFromRust();
   }
 
-  Future<void> _pickNewAudioFile() async {
-    final audioPath = await _pickAudioFile(context, context.read<ProjectLibrary>());
+  Future<void> _pickNewAudioFile({bool pickAudioFromFileSystem = false}) async {
+    final audioPath = await _pickAudioFile(context, context.read<ProjectLibrary>(), pickAudioFromFileSystem);
     if (audioPath == null) return;
 
     if (!mounted) return;
@@ -659,9 +681,15 @@ class _MediaPlayerState extends State<MediaPlayer> {
     await _queryAndUpdateStateFromRust();
   }
 
-  Future<String?> _pickAudioFile(BuildContext context, ProjectLibrary projectLibrary) async {
+  Future<String?> _pickAudioFile(
+    BuildContext context,
+    ProjectLibrary projectLibrary,
+    bool pickAudioFromFileSystem,
+  ) async {
     try {
-      return await _filePicker.pickAudio();
+      return pickAudioFromFileSystem
+          ? await _filePicker.pickAudioFromFileSystem()
+          : await _filePicker.pickAudioFromMediaLibrary();
     } on PlatformException catch (e) {
       _logger.e('Failed to pick audio.', error: e);
       return null;
