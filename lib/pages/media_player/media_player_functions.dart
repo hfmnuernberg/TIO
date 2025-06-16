@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -103,8 +102,9 @@ abstract class MediaPlayerFunctions {
     MediaPlayerBlock block,
     int numOfBins,
   ) async {
-    var absolutePath = fs.toAbsoluteFilePath(block.relativePath);
-    if (!File(absolutePath).existsSync()) return null;
+    final absolutePath = fs.toAbsoluteFilePath(block.relativePath);
+    if (!fs.existsFile(absolutePath)) return null;
+
     return _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }
 
