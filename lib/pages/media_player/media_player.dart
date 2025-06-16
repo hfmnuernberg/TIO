@@ -605,7 +605,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
       return;
     }
 
-    final newRelativePath = await _mediaRepo.import(audioPath, _fs.toBasename(audioPath));
+    final basenameWithTimestamp = '${_fs.toBasename(audioPath)}_${DateTime.now().millisecondsSinceEpoch}';
+    final newRelativePath = await _mediaRepo.import(audioPath, basenameWithTimestamp);
+
     if (newRelativePath == null) return;
 
     // Wait to prevent the following error:
