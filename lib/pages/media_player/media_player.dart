@@ -107,7 +107,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     _mediaPlayerBlock.timeLastModified = getCurrentDateTime();
 
     if (!widget.isQuickTool) {
-      _project = Provider.of<Project>(context, listen: false);
+      _project = context.read<Project>();
     }
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -120,9 +120,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
       MediaPlayerFunctions.setSpeedAndPitchInRust(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.pitchSemitones);
 
-      setState(() {
-        _isLoading = true;
-      });
+      setState(() => _isLoading = true);
+
       final fileExtension = _fs.toExtension(_mediaPlayerBlock.relativePath);
       if (mounted && fileExtension != null && !TIOMusicParams.audioFormats.contains(fileExtension)) {
         await showFormatNotSupportedDialog(context, fileExtension);
@@ -634,9 +633,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _numOfBins,
     );
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_fs, _mediaPlayerBlock, _numOfBins);
     if (newRms == null) {
@@ -823,9 +820,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _mediaPlayerBlock.markerPositions.clear();
       if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
   }
 
   Future _askForKeepRecordingOnExit() async {
