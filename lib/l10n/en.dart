@@ -39,6 +39,7 @@ class English extends AppLocalizations {
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
   String get commonPlus => 'Plus button';
+  String get commonProceed => 'Proceed';
   String get commonReorder => 'Reorder';
   String get commonReset => 'Reset';
   String get commonSetVolume => 'Set Volume';
@@ -148,6 +149,9 @@ class English extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Mute chance';
   String get metronomeRandomMuteProbability => 'Probability in %';
+  String get metronomeResetDialogHint =>
+      'ATTENTION: This will reset the metronome rhythm and sound to its default settings. All your current settings will be lost. Do you want to continue?';
+  String get metronomeResetDialogTitle => 'Reset metronome?';
   String get metronomeRhythmDottedEighthFollowedBySixteenth => 'Dotted Eighth followed by Sixteenths';
   String get metronomeRhythmEighthRestFollowedByEighth => 'Eighth rest followed by Eighth';
   String get metronomeRhythmEighths => 'Eighths';
@@ -265,7 +269,6 @@ class English extends AppLocalizations {
       'You can use your device to create text notes, e.g. for playing instructions, background information, song lyrics etc.';
   String get textDescription => 'Write down your notes.';
   String get textImport => 'Import text';
-  String get textImportDialogConfirm => 'Import';
   String get textImportDialogHint =>
       'ATTENTION: When importing a text, the current content of the text tool will be overwritten.';
   String get textImportDialogTitle => 'Import text?';

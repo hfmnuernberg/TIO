@@ -39,6 +39,7 @@ class German extends AppLocalizations {
   String get commonNo => 'Nein';
   String get commonOctave => 'Oktave';
   String get commonPlus => 'Plus-Schaltfläche';
+  String get commonProceed => 'Fortfahren';
   String get commonReorder => 'Verschieben';
   String get commonReset => 'Zurücksetzen';
   String get commonSetVolume => 'Lautstärke einstellen';
@@ -149,6 +150,9 @@ class German extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Aussetzen';
   String get metronomeRandomMuteProbability => 'Wahrscheinlichkeit in %';
+  String get metronomeResetDialogHint =>
+      'ACHTUNG: Dadurch werden der Metronomrhythmus und -sound auf die Standardeinstellungen zurückgesetzt. Alle deine aktuellen Einstellungen gehen verloren. Möchtest du fortfahren?';
+  String get metronomeResetDialogTitle => 'Metronome zurücksetzen?';
   String get metronomeRhythmDottedEighthFollowedBySixteenth => 'Punktierte Achtel gefolgt von Sechzehntel';
   String get metronomeRhythmEighthRestFollowedByEighth => 'Achtelpause gefolgt von Achtel';
   String get metronomeRhythmEighths => 'Achtel';
@@ -268,7 +272,6 @@ class German extends AppLocalizations {
       'Über dein Endgerät kannst du Notizen in Textform erstellen, z. B. für Spielanweisungen, Hintergrundinformationen, Songtexte etc.';
   String get textDescription => 'Mach dir Notizen.';
   String get textImport => 'Text importieren';
-  String get textImportDialogConfirm => 'Importieren';
   String get textImportDialogHint =>
       'ACHTUNG: Wenn du einen Text importierst, wird der aktuelle Inhalt des Text-Tools überschrieben.';
   String get textImportDialogTitle => 'Text importieren?';
