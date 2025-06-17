@@ -48,20 +48,23 @@ class _TunerTypePageState extends State<TunerTypePage> {
       title: context.l10n.tunerSelectType,
       confirm: _onConfirm,
       reset: _reset,
-      customWidget: ToggleButtons(
-        direction: Axis.vertical,
-        onPressed: (index) {
-          setState(() {
-            for (int i = 0; i < _selectedTuners.length; i++) {
-              _selectedTuners[i] = i == index;
-            }
-          });
-        },
-        isSelected: _selectedTuners,
-        children:
-            TunerType.values
-                .map((type) => Text(type.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)))
-                .toList(),
+      customWidget: Center(
+        child: ToggleButtons(
+          direction: Axis.vertical,
+          constraints: const BoxConstraints(minHeight: 30, minWidth: 200),
+          onPressed: (index) {
+            setState(() {
+              for (int i = 0; i < _selectedTuners.length; i++) {
+                _selectedTuners[i] = i == index;
+              }
+            });
+          },
+          isSelected: _selectedTuners,
+          children:
+              TunerType.values
+                  .map((type) => Text(type.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)))
+                  .toList(),
+        ),
       ),
     );
   }
