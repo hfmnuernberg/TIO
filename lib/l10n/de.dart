@@ -107,7 +107,7 @@ class German extends AppLocalizations {
   String get mediaPlayerFile => 'Datei';
   String get mediaPlayerLooping => 'Loopen';
   String get mediaPlayerMarkers => 'Marker';
-  String get mediaPlayerOpenFileSystem => 'Öffne Dateisystem';
+  String get mediaPlayerOpenFileSystem => 'Öffne Dateien';
   String get mediaPlayerOpenMediaLibrary => 'Öffne Mediathek';
   String get mediaPlayerOverwriteSound => 'Audio-Datei überschreiben?';
   String get mediaPlayerOverwriteSoundQuestion =>
