@@ -5,6 +5,7 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/pages/tuner/play_sound_page.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
+import 'package:tiomusic/widgets/tuner/active_reference_sound_button.dart';
 
 class SoundButton extends StatefulWidget {
   final int midiNumber;

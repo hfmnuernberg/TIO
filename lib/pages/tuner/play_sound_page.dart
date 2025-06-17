@@ -12,6 +12,7 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
+import 'package:tiomusic/widgets/tuner/active_reference_sound_button.dart';
 import 'package:tiomusic/widgets/tuner/sound_button.dart';
 
 const double buttonWidth = 40;
@@ -170,23 +171,5 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         ),
       ),
     );
-  }
-}
-
-class ActiveReferenceSoundButton with ChangeNotifier {
-  int buttonIdx = 0;
-  bool buttonOn = false;
-  double freq = 0;
-
-  void turnOff() {
-    buttonOn = false;
-    notifyListeners();
-  }
-
-  void turnOn(int idx, double frequency) {
-    buttonOn = true;
-    buttonIdx = idx;
-    freq = frequency;
-    notifyListeners();
   }
 }
