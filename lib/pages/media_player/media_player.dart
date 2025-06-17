@@ -377,41 +377,54 @@ class _MediaPlayerState extends State<MediaPlayer> {
                 _switchRightButton(),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: TIOFlatButton(
-                onPressed: () async {
-                  await _pickNewAudioFile();
-                  if (!context.mounted) return;
-                  if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
-                    _createTutorialWaveformTip();
-                    _tutorial.show(context);
-                  }
-                },
-                text:
-                    _fileLoaded
-                        ? _fs.toBasename(_mediaPlayerBlock.relativePath)
-                        : l10n.mediaPlayerLoadAudioFileFromMediaLibrary,
-              ),
-            ),
-            if (Platform.isIOS)
+
+            if (_fileLoaded)
               Padding(
-                padding: const EdgeInsets.all(8),
-                child: TIOFlatButton(
-                  onPressed: () async {
-                    await _pickNewAudioFile(pickAudioFromFileSystem: true);
-                    if (!context.mounted) return;
-                    if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
-                      _createTutorialWaveformTip();
-                      _tutorial.show(context);
-                    }
-                  },
-                  text:
-                      _fileLoaded
-                          ? _fs.toBasename(_mediaPlayerBlock.relativePath)
-                          : l10n.mediaPlayerLoadAudioFileFromFileSystem,
+                padding: const EdgeInsets.only(top: 16),
+                child: Text(
+                  _fs.toBasename(_mediaPlayerBlock.relativePath),
+                  style: TextStyle(color: ColorTheme.primary),
                 ),
               ),
+
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: TIOFlatButton(
+                      onPressed: () async {
+                        await _pickNewAudioFile();
+                        if (!context.mounted) return;
+                        if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
+                          _createTutorialWaveformTip();
+                          _tutorial.show(context);
+                        }
+                      },
+                      text: l10n.mediaPlayerOpenMediaLibrary,
+                    ),
+                  ),
+
+                  SizedBox(width: 10),
+
+                  if (Platform.isIOS)
+                    Expanded(
+                      child: TIOFlatButton(
+                        onPressed: () async {
+                          await _pickNewAudioFile(pickAudioFromFileSystem: true);
+                          if (!context.mounted) return;
+                          if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
+                            _createTutorialWaveformTip();
+                            _tutorial.show(context);
+                          }
+                        },
+                        text: l10n.mediaPlayerOpenFileSystem,
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ],
         ),
       ),

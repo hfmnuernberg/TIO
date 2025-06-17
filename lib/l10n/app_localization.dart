@@ -90,10 +90,10 @@ abstract class AppLocalizations {
   String get mediaPlayerFactor;
   String get mediaPlayerFactorAndBpm;
   String get mediaPlayerFile;
-  String get mediaPlayerLoadAudioFileFromFileSystem;
-  String get mediaPlayerLoadAudioFileFromMediaLibrary;
   String get mediaPlayerLooping;
   String get mediaPlayerMarkers;
+  String get mediaPlayerOpenFileSystem;
+  String get mediaPlayerOpenMediaLibrary;
   String get mediaPlayerOverwriteSound;
   String get mediaPlayerOverwriteSoundQuestion;
   String get mediaPlayerPitch;
