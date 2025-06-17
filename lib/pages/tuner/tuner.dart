@@ -16,6 +16,7 @@ import 'package:tiomusic/pages/tuner/pitch_visualizer.dart';
 import 'package:tiomusic/pages/tuner/play_sound_page.dart';
 import 'package:tiomusic/pages/tuner/set_concert_pitch.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
+import 'package:tiomusic/pages/tuner/tuner_type_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -267,6 +268,16 @@ class _TunerState extends State<Tuner> {
           callBeforeOpen: () async {
             await stopTuner();
           },
+          inactive: _isInStartUp,
+        ),
+        SettingsTile(
+          title: l10n.tunerSelectType,
+          subtitle: l10n.tunerSelectTypeDescription,
+          leadingIcon: Icons.tune,
+          settingPage: const TunerTypePage(),
+          block: _tunerBlock,
+          callOnReturn: (value) => setState(() {}),
+          callBeforeOpen: stopTuner,
           inactive: _isInStartUp,
         ),
       ],

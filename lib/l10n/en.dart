@@ -307,9 +307,13 @@ class English extends AppLocalizations {
   String get tunerDescription => 'Tune your instrument or use reference tones.';
   String get tunerFrequency => 'Frequency';
   String get tunerPlayReference => 'Play reference';
+  String get tunerSelectType => 'Tuner type';
+  String get tunerSelectTypeDescription => 'Select the type of tuner you want to use.';
   String get tunerSetConcertPitch => 'Set concert pitch';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner.';
+  String get tunerTypeChromatic => 'Chromatic';
+  String get tunerTypeGuitar => 'Guitar';
 
   String formatDateAndTime(DateTime time) => DateFormat('dd/MM/yyyy - HH:mm:ss').format(time);
 }

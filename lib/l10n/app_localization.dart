@@ -275,9 +275,13 @@ abstract class AppLocalizations {
   String get tunerDescription;
   String get tunerFrequency;
   String get tunerPlayReference;
+  String get tunerSelectType;
+  String get tunerSelectTypeDescription;
   String get tunerSetConcertPitch;
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
+  String get tunerTypeChromatic;
+  String get tunerTypeGuitar;
 
   String formatNumber(double number) => NumberFormat.decimalPattern(locale).format(number);
 
