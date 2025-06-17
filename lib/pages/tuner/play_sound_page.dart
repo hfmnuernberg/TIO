@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
+import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -110,6 +111,32 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   Widget build(BuildContext context) {
     int offset = (_octave - 1) * 12;
     final l10n = context.l10n;
+    final tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
+    final tunerType = tunerBlock.tunerType;
+
+    List<Widget> soundButtonWidgets;
+
+    if (tunerType == TunerType.guitar) {
+      final guitarNotes = [40, 45, 50, 55, 59, 64]; // E2, A2, D3, G3, B3, E4
+      soundButtonWidgets = [
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: _buildSoundButtons(guitarNotes, 0, 0)),
+      ];
+    } else {
+      soundButtonWidgets = [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ..._buildSoundButtons([25, 27], 0, offset),
+            SizedBox(width: buttonWidth + buttonPadding * 2),
+            ..._buildSoundButtons([30, 32, 34], 2, offset),
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: _buildSoundButtons([24, 26, 28, 29, 31, 33, 35], 5, offset),
+        ),
+      ];
+    }
 
     return DismissKeyboard(
       child: Scaffold(
@@ -133,25 +160,12 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
               textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
             ),
             const SizedBox(height: 40),
-
             Text(
               '${l10n.tunerFrequency}: ${l10n.formatNumber(double.parse(_frequency.toStringAsFixed(1)))} Hz',
               style: const TextStyle(color: ColorTheme.primary),
             ),
             const SizedBox(height: 40),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ..._buildSoundButtons([25, 27], 0, offset),
-                SizedBox(width: buttonWidth + buttonPadding * 2),
-                ..._buildSoundButtons([30, 32, 34], 2, offset),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _buildSoundButtons([24, 26, 28, 29, 31, 33, 35], 5, offset),
-            ),
+            ...soundButtonWidgets,
           ],
         ),
       ),
