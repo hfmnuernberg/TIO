@@ -34,21 +34,21 @@ extension WidgetTesterPumpExtension on WidgetTester {
 }
 
 void main() {
-  late FileSystem fileSystem;
+  late FileSystem inMemoryFileSystem;
   late FilePickerMock filePickerMock;
   late List<SingleChildWidget> providers;
 
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   setUp(() async {
-    fileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
-    filePickerMock = FilePickerMock(fileSystem);
+    inMemoryFileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
+    filePickerMock = FilePickerMock(inMemoryFileSystem);
     final filePicker = FilePickerLogDecorator(filePickerMock);
-    final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(fileSystem));
-    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(fileSystem));
+    final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(inMemoryFileSystem));
+    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(inMemoryFileSystem));
     final fileReferences = FileReferencesLogDecorator(FileReferencesImpl(mediaRepo));
 
-    await fileSystem.init();
+    await inMemoryFileSystem.init();
     await mediaRepo.init();
     final projectLibrary =
         projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults()
@@ -59,7 +59,7 @@ void main() {
 
     providers = [
       Provider<FilePicker>(create: (_) => filePicker),
-      Provider<FileSystem>(create: (_) => fileSystem),
+      Provider<FileSystem>(create: (_) => inMemoryFileSystem),
       Provider<MediaRepository>(create: (_) => mediaRepo),
       Provider<ProjectRepository>(create: (_) => projectRepo),
       Provider<FileReferences>(create: (_) => fileReferences),

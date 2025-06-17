@@ -154,7 +154,7 @@ class _ImageToolState extends State<ImageTool> {
       fileReferences.dec(imageBlock.relativePath, context.read<ProjectLibrary>());
       imageBlock.relativePath = newRelativePath;
     } else {
-      final title = '${imageBlock.title}($index)';
+      final title = '${imageBlock.title} ($index)';
       final newBlock = ImageBlock.withTitle(title)..relativePath = newRelativePath;
       project.addBlock(newBlock);
     }
@@ -248,11 +248,13 @@ class _ImageToolState extends State<ImageTool> {
                         children: <Widget>[
                           TioIconButton.sm(
                             icon: const Icon(Icons.image_outlined, color: ColorTheme.primary),
+                            tooltip: context.l10n.imagePickImage,
                             onPressed: () => pickImagesAndSave(false),
                           ),
                           const SizedBox(width: 12),
                           TioIconButton.sm(
                             icon: const Icon(Icons.camera_alt_outlined, color: ColorTheme.primary),
+                            tooltip: context.l10n.imageTakePhoto,
                             onPressed: () => takePhotoAndSave(false),
                           ),
                         ],

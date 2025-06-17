@@ -39,6 +39,7 @@ class German extends AppLocalizations {
   String get commonNo => 'Nein';
   String get commonOctave => 'Oktave';
   String get commonPlus => 'Plus-Schaltfläche';
+  String get commonProceed => 'Fortfahren';
   String get commonReorder => 'Verschieben';
   String get commonReset => 'Zurücksetzen';
   String get commonSetVolume => 'Lautstärke einstellen';
@@ -123,7 +124,7 @@ class German extends AppLocalizations {
   String get mediaPlayerTapToTempo => 'Tippe im Takt';
   String get mediaPlayerTrim => 'Trimmen';
   String get mediaPlayerTutorialAdjust =>
-      'Tippe hier, um deine Audiodatei anzupassen. Du kannst die Lautstärke, den Ausschnitt, die Geschwindigkeit und die Tonhöhe ändern, sowie Marker setzen. Der eingestellte Grundschlag dient als Basis für die Tempoeinstellung.';
+      'Tippe hier, um deine Audiodatei anzupassen. Du kannst die Lautstärke und den Grundschlag einstellen, deine Datei trimmen und Marker setzen, sowie Tonhöhe und Tempo nachträglich verändern.';
   String get mediaPlayerTutorialJumpTo =>
       'Tippe auf eine beliebige Stelle, um zu diesem Teil deiner Audiodatei zu springen.';
   String get mediaPlayerTutorialStartStop =>
@@ -149,13 +150,17 @@ class German extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Aussetzen';
   String get metronomeRandomMuteProbability => 'Wahrscheinlichkeit in %';
-  String get metronomeRhythmQuarter => 'Viertel';
-  String get metronomeRhythmEighths => 'Achtel';
-  String get metronomeRhythmEighthRestFollowedByEighth => 'Achtelpause gefolgt von Achtel';
-  String get metronomeRhythmTriplets => 'Triole';
-  String get metronomeRhythmSixteenths => 'Sechzehntel';
-  String get metronomeRhythmSixteenthFollowedByDottedEighth => 'Sechzehntel gefolgt von punktierter Achtel';
+  String get metronomeResetDialogHint =>
+      'ACHTUNG: Dadurch werden der Metronomrhythmus und -sound auf die Standardeinstellungen zurückgesetzt. Alle deine aktuellen Einstellungen gehen verloren. Möchtest du fortfahren?';
+  String get metronomeResetDialogTitle => 'Metronome zurücksetzen?';
   String get metronomeRhythmDottedEighthFollowedBySixteenth => 'Punktierte Achtel gefolgt von Sechzehntel';
+  String get metronomeRhythmEighthRestFollowedByEighth => 'Achtelpause gefolgt von Achtel';
+  String get metronomeRhythmEighths => 'Achtel';
+  String get metronomeRhythmPattern => 'Rhythmus-Pattern';
+  String get metronomeRhythmQuarter => 'Viertel';
+  String get metronomeRhythmSixteenthFollowedByDottedEighth => 'Sechzehntel gefolgt von punktierter Achtel';
+  String get metronomeRhythmSixteenths => 'Sechzehntel';
+  String get metronomeRhythmTriplets => 'Triole';
   String get metronomeSetBpm => 'BPM einstellen';
   String get metronomeSetRandomMute => 'Random mute einstellen';
   String get metronomeSetSoundsPrimary => 'Sounds einstellen';
@@ -183,7 +188,6 @@ class German extends AppLocalizations {
   String get metronomeSoundTypeRim => 'rim';
   String get metronomeSoundTypeTick => 'tick';
   String get metronomeSoundTypeWood => 'wood';
-  String get metronomeSubdivision => 'Unterteilung';
   String get metronomeTutorialAddNew => 'Tippe hier, um ein zweites Metronom hinzuzufügen.';
   String get metronomeTutorialAdjust => 'Tippe hier, um die Metronomeinstellungen anzupassen.';
   String get metronomeTutorialEditBeats =>
@@ -268,7 +272,6 @@ class German extends AppLocalizations {
       'Über dein Endgerät kannst du Notizen in Textform erstellen, z. B. für Spielanweisungen, Hintergrundinformationen, Songtexte etc.';
   String get textDescription => 'Mach dir Notizen.';
   String get textImport => 'Text importieren';
-  String get textImportDialogConfirm => 'Importieren';
   String get textImportDialogHint =>
       'ACHTUNG: Wenn du einen Text importierst, wird der aktuelle Inhalt des Text-Tools überschrieben.';
   String get textImportDialogTitle => 'Text importieren?';

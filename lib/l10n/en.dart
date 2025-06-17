@@ -39,6 +39,7 @@ class English extends AppLocalizations {
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
   String get commonPlus => 'Plus button';
+  String get commonProceed => 'Proceed';
   String get commonReorder => 'Reorder';
   String get commonReset => 'Reset';
   String get commonSetVolume => 'Set Volume';
@@ -124,7 +125,7 @@ class English extends AppLocalizations {
   String get mediaPlayerTapToTempo => 'Tap to tempo';
   String get mediaPlayerTrim => 'Trim';
   String get mediaPlayerTutorialAdjust =>
-      'Tap here to adjust your audio file. You can change the volume, the clip, the speed, and the pitch, as well as set markers. The set basic beat serves as the basis for the tempo setting.';
+      'Tap here to adjust your audio file. You can set the volume and the basic beat, trim your file and set markers, as well as change the pitch and tempo afterwards.';
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file.';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file.';
 
@@ -148,13 +149,17 @@ class English extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Mute chance';
   String get metronomeRandomMuteProbability => 'Probability in %';
-  String get metronomeRhythmQuarter => 'Quarter';
-  String get metronomeRhythmEighths => 'Eighths';
-  String get metronomeRhythmEighthRestFollowedByEighth => 'Eighth rest followed by Eighth';
-  String get metronomeRhythmTriplets => 'Triplets';
-  String get metronomeRhythmSixteenths => 'Sixteenths';
-  String get metronomeRhythmSixteenthFollowedByDottedEighth => 'Sixteenths followed by dotted Eighth';
+  String get metronomeResetDialogHint =>
+      'ATTENTION: This will reset the metronome rhythm and sound to its default settings. All your current settings will be lost. Do you want to continue?';
+  String get metronomeResetDialogTitle => 'Reset metronome?';
   String get metronomeRhythmDottedEighthFollowedBySixteenth => 'Dotted Eighth followed by Sixteenths';
+  String get metronomeRhythmEighthRestFollowedByEighth => 'Eighth rest followed by Eighth';
+  String get metronomeRhythmEighths => 'Eighths';
+  String get metronomeRhythmPattern => 'Rhythm pattern';
+  String get metronomeRhythmQuarter => 'Quarter';
+  String get metronomeRhythmSixteenthFollowedByDottedEighth => 'Sixteenths followed by dotted Eighth';
+  String get metronomeRhythmSixteenths => 'Sixteenths';
+  String get metronomeRhythmTriplets => 'Triplets';
   String get metronomeSetBpm => 'Set BPM';
   String get metronomeSetRandomMute => 'Set random mute';
   String get metronomeSetSoundsPrimary => 'Set metronome sounds';
@@ -182,7 +187,6 @@ class English extends AppLocalizations {
   String get metronomeSoundTypeRim => 'rim';
   String get metronomeSoundTypeTick => 'tick';
   String get metronomeSoundTypeWood => 'wood';
-  String get metronomeSubdivision => 'Subdivision';
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome.';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings.';
   String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted.';
@@ -265,7 +269,6 @@ class English extends AppLocalizations {
       'You can use your device to create text notes, e.g. for playing instructions, background information, song lyrics etc.';
   String get textDescription => 'Write down your notes.';
   String get textImport => 'Import text';
-  String get textImportDialogConfirm => 'Import';
   String get textImportDialogHint =>
       'ATTENTION: When importing a text, the current content of the text tool will be overwritten.';
   String get textImportDialogTitle => 'Import text?';

@@ -108,7 +108,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     _mediaPlayerBlock.timeLastModified = getCurrentDateTime();
 
     if (!widget.isQuickTool) {
-      _project = Provider.of<Project>(context, listen: false);
+      _project = context.read<Project>();
     }
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -121,9 +121,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
       MediaPlayerFunctions.setSpeedAndPitchInRust(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.pitchSemitones);
 
-      setState(() {
-        _isLoading = true;
-      });
+      setState(() => _isLoading = true);
+
       final fileExtension = _fs.toExtension(_mediaPlayerBlock.relativePath);
       if (mounted && fileExtension != null && !TIOMusicParams.audioFormats.contains(fileExtension)) {
         await showFormatNotSupportedDialog(context, fileExtension);
@@ -415,6 +414,14 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
+          title: l10n.commonBasicBeat,
+          subtitle: '${_mediaPlayerBlock.bpm} ${l10n.commonBpm}',
+          leadingIcon: Icons.touch_app_outlined,
+          settingPage: const SetBPM(),
+          block: _mediaPlayerBlock,
+          callOnReturn: (value) => setState(() {}),
+        ),
+        SettingsTile(
           title: l10n.mediaPlayerTrim,
           subtitle: '${(_mediaPlayerBlock.rangeStart * 100).round()}% → ${(_mediaPlayerBlock.rangeEnd * 100).round()}%',
           leadingIcon: 'assets/icons/arrow_range.svg',
@@ -424,19 +431,14 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
-          title: l10n.commonBasicBeat,
-          subtitle: '${_mediaPlayerBlock.bpm} ${l10n.commonBpm}',
-          leadingIcon: Icons.touch_app_outlined,
-          settingPage: const SetBPM(),
-          block: _mediaPlayerBlock,
-          callOnReturn: (value) => setState(() {}),
-        ),
-        SettingsTile(
-          title: l10n.mediaPlayerSpeed,
-          subtitle:
-              '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
-          leadingIcon: Icons.speed,
-          settingPage: const SetSpeed(),
+          title: l10n.mediaPlayerMarkers,
+          subtitle: _mediaPlayerBlock.markerPositions.length.toString(),
+          leadingIcon: Icons.arrow_drop_down,
+          settingPage: EditMarkersPage(
+            mediaPlayerBlock: _mediaPlayerBlock,
+            fileDuration: _fileDuration,
+            rmsValues: _rmsValues,
+          ),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
           inactive: _isLoading,
@@ -454,14 +456,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
           inactive: _isLoading,
         ),
         SettingsTile(
-          title: l10n.mediaPlayerMarkers,
-          subtitle: _mediaPlayerBlock.markerPositions.length.toString(),
-          leadingIcon: Icons.arrow_drop_down,
-          settingPage: EditMarkersPage(
-            mediaPlayerBlock: _mediaPlayerBlock,
-            fileDuration: _fileDuration,
-            rmsValues: _rmsValues,
-          ),
+          title: l10n.mediaPlayerSpeed,
+          subtitle:
+              '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
+          leadingIcon: Icons.speed,
+          settingPage: const SetSpeed(),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
           inactive: _isLoading,
@@ -617,7 +616,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
       return;
     }
 
-    final newRelativePath = await _mediaRepo.import(audioPath, _fs.toBasename(audioPath));
+    final basenameWithTimestamp = '${_fs.toBasename(audioPath)}_${DateTime.now().millisecondsSinceEpoch}';
+    final newRelativePath = await _mediaRepo.import(audioPath, basenameWithTimestamp);
+
     if (newRelativePath == null) return;
 
     // Wait to prevent the following error:
@@ -644,9 +645,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _numOfBins,
     );
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_fs, _mediaPlayerBlock, _numOfBins);
     if (newRms == null) {
@@ -665,13 +664,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _setFileDuration();
       _addShareOptionToMenu();
       _mediaPlayerBlock.markerPositions.clear();
-      if (mounted) {
-        await _projectRepo.saveLibrary(projectLibrary);
-      }
+      if (mounted) await _projectRepo.saveLibrary(projectLibrary);
     }
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
 
     await _queryAndUpdateStateFromRust();
   }
@@ -840,9 +835,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _mediaPlayerBlock.markerPositions.clear();
       if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
   }
 
   Future _askForKeepRecordingOnExit() async {

@@ -42,7 +42,7 @@ void main() {
     testWidgets('shows given rhythm when valid rhythm is given', (tester) async {
       await tester.renderWidget(StatefulRhythmWheel(rhythm: Rhythm.quarter));
 
-      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, 'Quarter');
+      expect(tester.getSemantics(find.bySemanticsLabel('Rhythm pattern')).value, 'Quarter');
     });
 
     testWidgets('changes rhythm when tapping on other rhythm', (tester) async {
@@ -50,7 +50,7 @@ void main() {
 
       await tester.tapAndSettle(find.bySemanticsLabel('Eighths'));
 
-      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, 'Eighths');
+      expect(tester.getSemantics(find.bySemanticsLabel('Rhythm pattern')).value, 'Eighths');
     });
 
     testWidgets('changes rhythm when dragging to next rhythm', (tester) async {
@@ -58,7 +58,7 @@ void main() {
 
       await tester.dragFromCenterToTargetAndSettle(find.bySemanticsLabel('Quarter'), const Offset(-70, 0));
 
-      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, 'Eighths');
+      expect(tester.getSemantics(find.bySemanticsLabel('Rhythm pattern')).value, 'Eighths');
     });
 
     testWidgets('changes rhythm when dragging to previous rhythm', (tester) async {
@@ -66,7 +66,7 @@ void main() {
 
       await tester.dragFromCenterToTargetAndSettle(find.bySemanticsLabel('Eighths'), const Offset(70, 0));
 
-      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, 'Quarter');
+      expect(tester.getSemantics(find.bySemanticsLabel('Rhythm pattern')).value, 'Quarter');
     });
 
     testWidgets('changes rhythm to last rhythm when dragging too the end', (tester) async {
@@ -74,7 +74,7 @@ void main() {
 
       await tester.dragFromCenterToTargetAndSettle(find.bySemanticsLabel('Quarter'), const Offset(-140, 0));
 
-      expect(tester.getSemantics(find.bySemanticsLabel('Subdivision')).value, 'Eighths');
+      expect(tester.getSemantics(find.bySemanticsLabel('Rhythm pattern')).value, 'Eighths');
     });
   });
 }

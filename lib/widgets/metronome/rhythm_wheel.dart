@@ -46,7 +46,7 @@ class _RhythmWheelState extends State<RhythmWheel> {
             width: 160,
             decoration: BoxDecoration(color: ColorTheme.surface, borderRadius: BorderRadius.circular(16)),
             child: Semantics(
-              label: context.l10n.metronomeSubdivision,
+              label: context.l10n.metronomeRhythmPattern,
               value: widget.rhythm.getLabel(context.l10n),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
@@ -81,7 +81,7 @@ class _RhythmWheelState extends State<RhythmWheel> {
           excludeSemantics: true,
           child: Padding(
             padding: EdgeInsets.only(top: 4),
-            child: Text(context.l10n.metronomeSubdivision, style: const TextStyle(color: ColorTheme.primary)),
+            child: Text(context.l10n.metronomeRhythmPattern, style: const TextStyle(color: ColorTheme.primary)),
           ),
         ),
       ],
