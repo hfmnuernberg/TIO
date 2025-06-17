@@ -311,7 +311,6 @@ class German extends AppLocalizations {
   String get tunerFrequency => 'Frequenz';
   String get tunerPlayReference => 'Referenzton abspielen';
   String get tunerSelectType => 'Tuner Typ';
-  String get tunerSelectTypeDescription => 'Wähle den Typ des Stimmgeräts, das du verwenden möchtest.';
   String get tunerSetConcertPitch => 'Kammerton einstellen';
   String get tunerTutorialAdjust => 'Tippe hier, um den Kammerton anzupassen oder einen Referenzton abzuspielen.';
   String get tunerTutorialStartStop => 'Tippe hier, um das Stimmgerät zu starten und zu stoppen.';

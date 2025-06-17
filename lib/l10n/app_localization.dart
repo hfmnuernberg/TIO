@@ -276,7 +276,6 @@ abstract class AppLocalizations {
   String get tunerFrequency;
   String get tunerPlayReference;
   String get tunerSelectType;
-  String get tunerSelectTypeDescription;
   String get tunerSetConcertPitch;
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;

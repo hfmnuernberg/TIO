@@ -9,6 +9,7 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
@@ -272,7 +273,7 @@ class _TunerState extends State<Tuner> {
         ),
         SettingsTile(
           title: l10n.tunerSelectType,
-          subtitle: l10n.tunerSelectTypeDescription,
+          subtitle: _tunerBlock.tunerType.getLabel(l10n),
           leadingIcon: Icons.tune,
           settingPage: const TunerTypePage(),
           block: _tunerBlock,

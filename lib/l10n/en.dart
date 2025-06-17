@@ -308,7 +308,6 @@ class English extends AppLocalizations {
   String get tunerFrequency => 'Frequency';
   String get tunerPlayReference => 'Play reference';
   String get tunerSelectType => 'Tuner type';
-  String get tunerSelectTypeDescription => 'Select the type of tuner you want to use.';
   String get tunerSetConcertPitch => 'Set concert pitch';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner.';
