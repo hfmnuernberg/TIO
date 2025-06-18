@@ -13,7 +13,7 @@ class SoundButton extends StatefulWidget {
   final int midiNumber;
   final int idx;
   final ActiveReferenceSoundButton buttonListener;
-  final String? customLabel;
+  final String label;
   final void Function(int) onOctaveChange;
 
   const SoundButton({
@@ -21,7 +21,7 @@ class SoundButton extends StatefulWidget {
     required this.midiNumber,
     required this.idx,
     required this.buttonListener,
-    this.customLabel,
+    required this.label,
     required this.onOctaveChange,
   });
 
@@ -72,7 +72,7 @@ class _SoundButtonState extends State<SoundButton> {
               ),
               child: Center(
                 child: Text(
-                  widget.customLabel ?? midiToNameOneChar(widget.midiNumber),
+                  widget.label,
                   style: TextStyle(color: isSelectedButton && isButtonOn ? ColorTheme.surface : ColorTheme.primary),
                 ),
               ),

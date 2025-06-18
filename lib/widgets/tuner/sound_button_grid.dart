@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/models/tuner_type.dart';
-import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/tuner/active_reference_sound_button.dart';
 import 'package:tiomusic/widgets/tuner/sound_buttons.dart';
 
@@ -24,19 +23,16 @@ class SoundButtonGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (tunerType == TunerType.guitar) {
-      final guitarNotes = [40, 45, 50, 55, 59, 64];
-      final guitarLabels = guitarNotes.map(midiToNameAndOctave).toList();
-
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SoundButtons(
-            midiNumbers: guitarNotes,
+            midiNumbers: const [40, 45, 50, 55, 59, 64],
             startIdx: 0,
             offset: 0,
             buttonListener: buttonListener,
+            isGuitar: true,
             onOctaveChange: onOctaveChange,
-            customLabels: guitarLabels,
           ),
         ],
       );
