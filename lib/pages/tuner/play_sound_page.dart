@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -13,10 +12,8 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
 import 'package:tiomusic/widgets/tuner/active_reference_sound_button.dart';
-import 'package:tiomusic/widgets/tuner/sound_button.dart';
+import 'package:tiomusic/widgets/tuner/sound_button_rows.dart';
 
-const double buttonWidth = 40;
-const double buttonPadding = 4;
 const defaultOctave = 4;
 const minOctave = 1;
 const maxOctave = 7;
@@ -61,16 +58,6 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
     TunerFunctions.stopGenerator();
   }
 
-  List<Widget> _buildSoundButtons(List<int> midiNumbers, int startIdx, int offset) {
-    return List.generate(midiNumbers.length, (index) {
-      return SoundButton(
-        midiNumber: midiNumbers[index] + offset,
-        idx: startIdx + index,
-        buttonListener: _buttonListener,
-      );
-    });
-  }
-
   void _onButtonsChanged() async {
     if (_buttonListener.buttonOn) {
       if (!_running) {
@@ -113,31 +100,6 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
     int offset = (_octave - 1) * 12;
     final l10n = context.l10n;
     final tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
-    final tunerType = tunerBlock.tunerType;
-
-    List<Widget> soundButtonWidgets;
-
-    if (tunerType == TunerType.guitar) {
-      final guitarNotes = [40, 45, 50, 55, 59, 64]; // E2, A2, D3, G3, B3, E4
-      soundButtonWidgets = [
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: _buildSoundButtons(guitarNotes, 0, 0)),
-      ];
-    } else {
-      soundButtonWidgets = [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ..._buildSoundButtons([25, 27], 0, offset),
-            SizedBox(width: buttonWidth + buttonPadding * 2),
-            ..._buildSoundButtons([30, 32, 34], 2, offset),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: _buildSoundButtons([24, 26, 28, 29, 31, 33, 35], 5, offset),
-        ),
-      ];
-    }
 
     return DismissKeyboard(
       child: Scaffold(
@@ -166,7 +128,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
               style: const TextStyle(color: ColorTheme.primary),
             ),
             const SizedBox(height: 40),
-            ...soundButtonWidgets,
+            SoundButtonRows(tunerType: tunerBlock.tunerType, offset: offset, buttonListener: _buttonListener),
           ],
         ),
       ),
