@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
+import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -113,16 +114,18 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            NumberInputAndSliderInt(
-              value: octave,
-              onChange: _handleChange,
-              min: minOctave,
-              max: maxOctave,
-              step: 1,
-              label: l10n.commonOctave,
-              textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
-            ),
-            const SizedBox(height: 40),
+            if (tunerBlock.tunerType == TunerType.chromatic) ...[
+              NumberInputAndSliderInt(
+                value: octave,
+                onChange: _handleChange,
+                min: minOctave,
+                max: maxOctave,
+                step: 1,
+                label: l10n.commonOctave,
+                textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
+              ),
+              const SizedBox(height: 40),
+            ],
             Text(
               '${l10n.tunerFrequency}: ${l10n.formatNumber(double.parse(frequency.toStringAsFixed(1)))} Hz',
               style: const TextStyle(color: ColorTheme.primary),

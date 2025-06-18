@@ -23,9 +23,8 @@ class SoundButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final labels = isGuitar
-      ? midiNumbers.map(midiToNameAndOctave).toList()
-      : midiNumbers.map(midiToNameOneChar).toList();
+    final labels =
+        isGuitar ? midiNumbers.map(midiToNameAndOctave).toList() : midiNumbers.map(midiToNameOneChar).toList();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
