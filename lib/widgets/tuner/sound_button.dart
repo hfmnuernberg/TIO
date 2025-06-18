@@ -13,20 +13,29 @@ class SoundButton extends StatefulWidget {
   final int midiNumber;
   final int idx;
   final ActiveReferenceSoundButton buttonListener;
+  final String? customLabel;
+  final void Function(int) onOctaveChange;
 
-  const SoundButton({super.key, required this.midiNumber, required this.idx, required this.buttonListener});
+  const SoundButton({
+    super.key,
+    required this.midiNumber,
+    required this.idx,
+    required this.buttonListener,
+    this.customLabel,
+    required this.onOctaveChange,
+  });
 
   @override
   State<SoundButton> createState() => _SoundButtonState();
 }
 
 class _SoundButtonState extends State<SoundButton> {
-  late double _concertPitch;
+  late double concertPitch;
 
   @override
   void initState() {
     super.initState();
-    _concertPitch = (Provider.of<ProjectBlock>(context, listen: false) as TunerBlock).chamberNoteHz;
+    concertPitch = (Provider.of<ProjectBlock>(context, listen: false) as TunerBlock).chamberNoteHz;
   }
 
   @override
@@ -34,16 +43,21 @@ class _SoundButtonState extends State<SoundButton> {
     return ListenableBuilder(
       listenable: widget.buttonListener,
       builder: (context, child) {
+        final bool isButtonOn = widget.buttonListener.buttonOn;
+        final bool isSelectedButton = widget.buttonListener.buttonIdx == widget.idx;
+
         return Listener(
           onPointerDown: (details) async {
+            int octave = (widget.midiNumber / 12 - 1).floor();
+            widget.onOctaveChange.call(octave);
             setState(() {
-              if (widget.buttonListener.buttonOn) {
+              if (isButtonOn) {
                 widget.buttonListener.turnOff();
-                if (widget.buttonListener.buttonIdx != widget.idx) {
-                  widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
+                if (!isSelectedButton) {
+                  widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: concertPitch));
                 }
               } else {
-                widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
+                widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: concertPitch));
               }
             });
           },
@@ -53,21 +67,13 @@ class _SoundButtonState extends State<SoundButton> {
               width: buttonWidth,
               height: 60,
               decoration: BoxDecoration(
-                color:
-                    widget.buttonListener.buttonIdx == widget.idx && widget.buttonListener.buttonOn
-                        ? ColorTheme.primary
-                        : ColorTheme.surface,
+                color: isSelectedButton && isButtonOn ? ColorTheme.primary : ColorTheme.surface,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Center(
                 child: Text(
-                  midiToNameOneChar(widget.midiNumber),
-                  style: TextStyle(
-                    color:
-                        widget.buttonListener.buttonIdx == widget.idx && widget.buttonListener.buttonOn
-                            ? ColorTheme.surface
-                            : ColorTheme.primary,
-                  ),
+                  widget.customLabel ?? midiToNameOneChar(widget.midiNumber),
+                  style: TextStyle(color: isSelectedButton && isButtonOn ? ColorTheme.surface : ColorTheme.primary),
                 ),
               ),
             ),

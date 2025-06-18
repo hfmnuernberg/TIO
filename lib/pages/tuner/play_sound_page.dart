@@ -12,7 +12,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
 import 'package:tiomusic/widgets/tuner/active_reference_sound_button.dart';
-import 'package:tiomusic/widgets/tuner/sound_button_rows.dart';
+import 'package:tiomusic/widgets/tuner/sound_button_grid.dart';
 
 const defaultOctave = 4;
 const minOctave = 1;
@@ -26,10 +26,10 @@ class PlaySoundPage extends StatefulWidget {
 }
 
 class _PlaySoundPageState extends State<PlaySoundPage> {
-  final ActiveReferenceSoundButton _buttonListener = ActiveReferenceSoundButton();
-  int _octave = defaultOctave;
-  double _frequency = 0;
-  bool _running = false;
+  final ActiveReferenceSoundButton buttonListener = ActiveReferenceSoundButton();
+  int octave = defaultOctave;
+  double frequency = 0;
+  bool running = false;
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
 
@@ -39,13 +39,13 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await TunerFunctions.stop();
-      _buttonListener.addListener(_onButtonsChanged);
+      buttonListener.addListener(_onButtonsChanged);
     });
   }
 
   @override
   void dispose() {
-    _buttonListener.removeListener(_onButtonsChanged);
+    buttonListener.removeListener(_onButtonsChanged);
     audioInterruptionListener?.cancel();
     TunerFunctions.stopGenerator();
     super.dispose();
@@ -59,45 +59,45 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   }
 
   void _onButtonsChanged() async {
-    if (_buttonListener.buttonOn) {
-      if (!_running) {
+    if (buttonListener.buttonOn) {
+      if (!running) {
         await TunerFunctions.startGenerator();
-        _running = true;
+        running = true;
 
         audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
           if (event.type == AudioInterruptionType.unknown) {
             TunerFunctions.stopGenerator();
             setState(() {
-              _running = false;
-              _buttonListener.turnOff();
+              running = false;
+              buttonListener.turnOff();
             });
           }
         });
       }
 
-      if (_running) {
-        generatorNoteOn(newFreq: _buttonListener.freq);
-        setState(() => _frequency = _buttonListener.freq);
+      if (running) {
+        generatorNoteOn(newFreq: buttonListener.freq);
+        setState(() => frequency = buttonListener.freq);
       }
     } else {
       generatorNoteOff();
-      setState(() => _frequency = 0);
+      setState(() => frequency = 0);
     }
   }
 
   void _handleChange(newOctave) {
-    if (newOctave > _octave) {
-      setState(() => _frequency = _frequency * 2);
-    } else if (newOctave < _octave) {
-      setState(() => _frequency = _frequency / 2);
+    if (newOctave > octave) {
+      setState(() => frequency = frequency * 2);
+    } else if (newOctave < octave) {
+      setState(() => frequency = frequency / 2);
     }
 
-    setState(() => _octave = newOctave);
+    setState(() => octave = newOctave);
   }
 
   @override
   Widget build(BuildContext context) {
-    int offset = (_octave - 1) * 12;
+    int offset = (octave - 1) * 12;
     final l10n = context.l10n;
     final tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
 
@@ -114,7 +114,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             NumberInputAndSliderInt(
-              value: _octave,
+              value: octave,
               onChange: _handleChange,
               min: minOctave,
               max: maxOctave,
@@ -124,11 +124,16 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
             ),
             const SizedBox(height: 40),
             Text(
-              '${l10n.tunerFrequency}: ${l10n.formatNumber(double.parse(_frequency.toStringAsFixed(1)))} Hz',
+              '${l10n.tunerFrequency}: ${l10n.formatNumber(double.parse(frequency.toStringAsFixed(1)))} Hz',
               style: const TextStyle(color: ColorTheme.primary),
             ),
             const SizedBox(height: 40),
-            SoundButtonRows(tunerType: tunerBlock.tunerType, offset: offset, buttonListener: _buttonListener),
+            SoundButtonGrid(
+              tunerType: tunerBlock.tunerType,
+              offset: offset,
+              buttonListener: buttonListener,
+              onOctaveChange: (newOctave) => setState(() => octave = newOctave),
+            ),
           ],
         ),
       ),
