@@ -108,7 +108,7 @@ class English extends AppLocalizations {
   String get mediaPlayerFile => 'File';
   String get mediaPlayerLooping => 'Looping';
   String get mediaPlayerMarkers => 'Markers';
-  String get mediaPlayerOpenFileSystem => 'Open file system';
+  String get mediaPlayerOpenFileSystem => 'Open files';
   String get mediaPlayerOpenMediaLibrary => 'Open media library';
   String get mediaPlayerOverwriteSound => 'Overwrite?';
   String get mediaPlayerOverwriteSoundQuestion =>

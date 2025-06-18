@@ -402,13 +402,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
                           _tutorial.show(context);
                         }
                       },
-                      text: l10n.mediaPlayerOpenMediaLibrary,
+                      text: Platform.isIOS ? l10n.mediaPlayerOpenMediaLibrary : l10n.mediaPlayerOpenFileSystem,
                     ),
                   ),
 
-                  SizedBox(width: 10),
-
                   if (Platform.isIOS)
+                    SizedBox(width: 10),
                     Expanded(
                       child: TIOFlatButton(
                         onPressed: () async {
