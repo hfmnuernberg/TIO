@@ -406,7 +406,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                     ),
                   ),
 
-                  if (Platform.isIOS)
+                  if (Platform.isIOS) ...[
                     SizedBox(width: 10),
                     Expanded(
                       child: TIOFlatButton(
@@ -421,6 +421,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                         text: l10n.mediaPlayerOpenFileSystem,
                       ),
                     ),
+                  ],
                 ],
               ),
             ),
