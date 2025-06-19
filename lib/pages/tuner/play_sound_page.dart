@@ -9,11 +9,10 @@ import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
-import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
 import 'package:tiomusic/widgets/tuner/active_reference_sound_button.dart';
-import 'package:tiomusic/widgets/tuner/sound_button_grid.dart';
+import 'package:tiomusic/widgets/tuner/chromatic_play_reference.dart';
+import 'package:tiomusic/widgets/tuner/instrument_play_reference.dart';
 
 const defaultOctave = 4;
 const minOctave = 1;
@@ -98,7 +97,6 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
   @override
   Widget build(BuildContext context) {
-    int offset = (octave - 1) * 12;
     final l10n = context.l10n;
     final tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
 
@@ -114,29 +112,22 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (tunerBlock.tunerType == TunerType.chromatic) ...[
-              NumberInputAndSliderInt(
-                value: octave,
-                onChange: _handleChange,
-                min: minOctave,
-                max: maxOctave,
-                step: 1,
-                label: l10n.commonOctave,
-                textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
+            if (tunerBlock.tunerType == TunerType.chromatic)
+              ChromaticPlayReference(
+                octave: octave,
+                frequency: frequency,
+                tunerType: tunerBlock.tunerType,
+                buttonListener: buttonListener,
+                onOctaveChange: _handleChange,
+              )
+            else
+              InstrumentPlayReference(
+                octave: octave,
+                frequency: frequency,
+                tunerType: tunerBlock.tunerType,
+                buttonListener: buttonListener,
+                onOctaveChange: (newOctave) => setState(() => octave = newOctave),
               ),
-              const SizedBox(height: 40),
-            ],
-            Text(
-              '${l10n.tunerFrequency}: ${l10n.formatNumber(double.parse(frequency.toStringAsFixed(1)))} Hz',
-              style: const TextStyle(color: ColorTheme.primary),
-            ),
-            const SizedBox(height: 40),
-            SoundButtonGrid(
-              tunerType: tunerBlock.tunerType,
-              offset: offset,
-              buttonListener: buttonListener,
-              onOctaveChange: (newOctave) => setState(() => octave = newOctave),
-            ),
           ],
         ),
       ),
