@@ -61,11 +61,11 @@ class TunerBlock extends ProjectBlock {
     notifyListeners();
   }
 
-  late TunerType _tunerType;
+  late TunerType _type;
   @JsonKey(defaultValue: TunerType.chromatic)
-  TunerType get tunerType => _tunerType;
+  TunerType get tunerType => _type;
   set tunerType(TunerType newType) {
-    _tunerType = newType;
+    _type = newType;
     notifyListeners();
   }
 
@@ -88,7 +88,7 @@ class TunerBlock extends ProjectBlock {
     _title = title;
     _id = ProjectBlock.getIdOrCreateNewId(id);
     _islandToolID = islandToolID;
-    _tunerType = TunerType.chromatic;
+    _type = TunerType.chromatic;
   }
 
   TunerBlock.withDefaults(AppLocalizations l10n) {
@@ -97,7 +97,7 @@ class TunerBlock extends ProjectBlock {
     _title = l10n.tuner;
     _islandToolID = null;
     _id = ProjectBlock.createNewId();
-    _tunerType = TunerType.chromatic;
+    _type = TunerType.chromatic;
   }
 
   TunerBlock.withTitle(String newTitle) {
@@ -106,7 +106,7 @@ class TunerBlock extends ProjectBlock {
     _title = newTitle;
     _islandToolID = null;
     _id = ProjectBlock.createNewId();
-    _tunerType = TunerType.chromatic;
+    _type = TunerType.chromatic;
   }
 
   @override
