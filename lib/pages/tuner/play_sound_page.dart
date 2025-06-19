@@ -9,8 +9,8 @@ import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
-import 'package:tiomusic/widgets/tuner/active_reference_sound_button.dart';
 import 'package:tiomusic/widgets/tuner/chromatic_play_reference.dart';
 import 'package:tiomusic/widgets/tuner/instrument_play_reference.dart';
 
@@ -26,10 +26,9 @@ class PlaySoundPage extends StatefulWidget {
 }
 
 class _PlaySoundPageState extends State<PlaySoundPage> {
-  final ActiveReferenceSoundButton buttonListener = ActiveReferenceSoundButton();
   int octave = defaultOctave;
-  double frequency = 0;
-  bool running = false;
+  int? midi;
+  bool isOn = false;
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
 
@@ -39,13 +38,11 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await TunerFunctions.stop();
-      buttonListener.addListener(_onButtonsChanged);
     });
   }
 
   @override
   void dispose() {
-    buttonListener.removeListener(_onButtonsChanged);
     audioInterruptionListener?.cancel();
     TunerFunctions.stopGenerator();
     super.dispose();
@@ -58,46 +55,84 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
     TunerFunctions.stopGenerator();
   }
 
-  void _onButtonsChanged() async {
-    if (buttonListener.buttonOn) {
-      if (!running) {
-        await TunerFunctions.startGenerator();
-        running = true;
+  // void _onButtonsChanged() async {
+  //   if (buttonListener.buttonOn) {
+  //     if (!running) {
+  //       await TunerFunctions.startGenerator();
+  //       running = true;
+  //
+  //       audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
+  //         if (event.type == AudioInterruptionType.unknown) {
+  //           TunerFunctions.stopGenerator();
+  //           setState(() {
+  //             running = false;
+  //             buttonListener.turnOff();
+  //           });
+  //         }
+  //       });
+  //     }
+  //
+  //     if (running) {
+  //       generatorNoteOn(newFreq: buttonListener.freq);
+  //       setState(() => frequency = buttonListener.freq);
+  //     }
+  //   } else {
+  //     generatorNoteOff();
+  //     setState(() => frequency = 0);
+  //   }
+  // }
 
-        audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
-          if (event.type == AudioInterruptionType.unknown) {
-            TunerFunctions.stopGenerator();
-            setState(() {
-              running = false;
-              buttonListener.turnOff();
-            });
-          }
+  void _handleToggle(int midiNumber) async {
+    final isSameButton = midi == midiNumber;
+    final wasOn = isOn;
+
+    if (wasOn && isSameButton) {
+      // Case: turn off the current note
+      generatorNoteOff();
+      TunerFunctions.stopGenerator();
+      setState(() {
+        isOn = false;
+        midi = null;
+      });
+      return;
+    }
+
+    if (wasOn && !isSameButton) {
+      // Case: switch to a different note (stop current one first)
+      generatorNoteOff();
+    }
+
+    // Start generator (either first time or switching)
+    await TunerFunctions.startGenerator();
+
+    // Reset interruption listener
+    audioInterruptionListener?.cancel();
+    audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
+      if (event.type == AudioInterruptionType.unknown) {
+        TunerFunctions.stopGenerator();
+        setState(() {
+          isOn = false;
+          midi = null;
         });
       }
+    });
 
-      if (running) {
-        generatorNoteOn(newFreq: buttonListener.freq);
-        setState(() => frequency = buttonListener.freq);
-      }
-    } else {
-      generatorNoteOff();
-      setState(() => frequency = 0);
-    }
+    // Activate the new note
+    setState(() {
+      midi = midiNumber;
+      isOn = true;
+      octave = (midiNumber / 12 - 1).floor();
+    });
+
+    generatorNoteOn(newFreq: midiToFreq(midiNumber));
   }
 
-  void _handleChange(newOctave) {
-    if (newOctave > octave) {
-      setState(() => frequency = frequency * 2);
-    } else if (newOctave < octave) {
-      setState(() => frequency = frequency / 2);
-    }
-
-    setState(() => octave = newOctave);
-  }
+  void _handleChange(newOctave) => setState(() => octave = newOctave);
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final frequency = isOn && midi != null ? midiToFreq(midi!) : 0.0;
     final tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
 
     return DismissKeyboard(
@@ -115,18 +150,20 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
             if (tunerBlock.tunerType == TunerType.chromatic)
               ChromaticPlayReference(
                 octave: octave,
+                midi: midi,
                 frequency: frequency,
                 tunerType: tunerBlock.tunerType,
-                buttonListener: buttonListener,
                 onOctaveChange: _handleChange,
+                onButtonToggle: _handleToggle,
               )
             else
               InstrumentPlayReference(
                 octave: octave,
+                midi: midi,
                 frequency: frequency,
                 tunerType: tunerBlock.tunerType,
-                buttonListener: buttonListener,
-                onOctaveChange: (newOctave) => setState(() => octave = newOctave),
+                onOctaveChange: _handleChange,
+                onButtonToggle: _handleToggle,
               ),
           ],
         ),

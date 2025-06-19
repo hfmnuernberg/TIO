@@ -4,23 +4,24 @@ import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
-import 'package:tiomusic/widgets/tuner/active_reference_sound_button.dart';
 import 'package:tiomusic/widgets/tuner/sound_button_grid.dart';
 
 class ChromaticPlayReference extends StatelessWidget {
   final int octave;
+  final int? midi;
   final double frequency;
   final TunerType tunerType;
-  final ActiveReferenceSoundButton buttonListener;
   final ValueChanged<int> onOctaveChange;
+  final void Function(int midiNumber) onButtonToggle;
 
   const ChromaticPlayReference({
     super.key,
     required this.octave,
+    required this.midi,
     required this.frequency,
     required this.tunerType,
-    required this.buttonListener,
     required this.onOctaveChange,
+    required this.onButtonToggle,
   });
 
   @override
@@ -49,8 +50,8 @@ class ChromaticPlayReference extends StatelessWidget {
         SoundButtonGrid(
           tunerType: tunerType,
           offset: offset,
-          buttonListener: buttonListener,
           onOctaveChange: onOctaveChange,
+          onButtonToggle: onButtonToggle,
         ),
       ],
     );

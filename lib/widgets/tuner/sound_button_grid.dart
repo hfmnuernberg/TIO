@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/models/tuner_type.dart';
-import 'package:tiomusic/widgets/tuner/active_reference_sound_button.dart';
 import 'package:tiomusic/widgets/tuner/sound_buttons.dart';
 
 const double buttonWidth = 40;
@@ -8,16 +7,18 @@ const double buttonPadding = 4;
 
 class SoundButtonGrid extends StatelessWidget {
   final TunerType tunerType;
+  final int? currentMidi;
   final int offset;
-  final ActiveReferenceSoundButton buttonListener;
   final void Function(int) onOctaveChange;
+  final void Function(int midiNumber) onButtonToggle;
 
   const SoundButtonGrid({
     super.key,
     required this.tunerType,
+    this.currentMidi,
     required this.offset,
-    required this.buttonListener,
     required this.onOctaveChange,
+    required this.onButtonToggle,
   });
 
   @override
@@ -28,11 +29,12 @@ class SoundButtonGrid extends StatelessWidget {
         children: [
           SoundButtons(
             midiNumbers: const [40, 45, 50, 55, 59, 64],
+            currentMidi: currentMidi,
             startIdx: 0,
             offset: 0,
-            buttonListener: buttonListener,
             isGuitar: true,
             onOctaveChange: onOctaveChange,
+            onButtonToggle: onButtonToggle,
           ),
         ],
       );
@@ -45,27 +47,30 @@ class SoundButtonGrid extends StatelessWidget {
           children: [
             SoundButtons(
               midiNumbers: const [25, 27],
+              currentMidi: currentMidi,
               startIdx: 0,
               offset: offset,
-              buttonListener: buttonListener,
               onOctaveChange: onOctaveChange,
+              onButtonToggle: onButtonToggle,
             ),
             SizedBox(width: buttonWidth + buttonPadding * 2),
             SoundButtons(
               midiNumbers: const [30, 32, 34],
+              currentMidi: currentMidi,
               startIdx: 2,
               offset: offset,
-              buttonListener: buttonListener,
               onOctaveChange: onOctaveChange,
+              onButtonToggle: onButtonToggle,
             ),
           ],
         ),
         SoundButtons(
           midiNumbers: const [24, 26, 28, 29, 31, 33, 35],
+          currentMidi: currentMidi,
           startIdx: 5,
           offset: offset,
-          buttonListener: buttonListener,
           onOctaveChange: onOctaveChange,
+          onButtonToggle: onButtonToggle,
         ),
       ],
     );
