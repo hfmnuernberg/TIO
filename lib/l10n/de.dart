@@ -311,12 +311,12 @@ class German extends AppLocalizations {
   String get tunerDescription => 'Stimme dein Instrument oder nutze Referenztöne.';
   String get tunerFrequency => 'Frequenz';
   String get tunerPlayReference => 'Referenzton abspielen';
-  String get tunerSelectType => 'Instrument';
   String get tunerSetConcertPitch => 'Kammerton einstellen';
   String get tunerTutorialAdjust => 'Tippe hier, um den Kammerton anzupassen oder einen Referenzton abzuspielen.';
   String get tunerTutorialStartStop => 'Tippe hier, um das Stimmgerät zu starten und zu stoppen.';
-  String get tunerTypeChromatic => 'Chromatisch';
+  String get tunerTypeChromatic => 'Chromatisches Stimmgerät';
   String get tunerTypeGuitar => 'Gitarre';
+  String get tunerTypeSelect => 'Instrument';
 
   String formatDateAndTime(DateTime time) => DateFormat('dd.MM.yyyy - HH:mm:ss').format(time);
 }
