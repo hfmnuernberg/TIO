@@ -24,8 +24,17 @@ import 'package:tiomusic/services/impl/file_system_impl.dart';
 import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/splash_app.dart';
+import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+import 'package:image_picker_android/image_picker_android.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final platform = ImagePickerPlatform.instance;
+  if (platform is ImagePickerAndroid) {
+    platform.useAndroidPhotoPicker = true;
+  }
+
   runApp(
     MultiProvider(
       providers: _getProviders(),
