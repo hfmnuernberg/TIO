@@ -30,7 +30,7 @@ dependencies:
   image_picker_platform_interface: 2.10.1  # TODO: Delete when image_picker fixed limit for images on Android
   intl: 0.19.0  # TODO: upgrade as soon as flutter_localizations supports it
   json_annotation: 4.9.0
-  logger: 2.5.0
+  logger: 2.6.0
   meta: 1.16.0
   package_info_plus: 8.3.0
   path: 1.9.1
