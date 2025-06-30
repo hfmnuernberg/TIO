@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/project_block.dart';
+import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 
@@ -60,6 +61,14 @@ class TunerBlock extends ProjectBlock {
     notifyListeners();
   }
 
+  late TunerType _tunerType;
+  @JsonKey(defaultValue: TunerType.chromatic)
+  TunerType get tunerType => _tunerType;
+  set tunerType(TunerType newType) {
+    _tunerType = newType;
+    notifyListeners();
+  }
+
   late double _chamberNoteHz;
   @JsonKey(defaultValue: TunerParams.defaultConcertPitch)
   double get chamberNoteHz => _chamberNoteHz;
@@ -79,6 +88,7 @@ class TunerBlock extends ProjectBlock {
     _title = title;
     _id = ProjectBlock.getIdOrCreateNewId(id);
     _islandToolID = islandToolID;
+    _tunerType = TunerType.chromatic;
   }
 
   TunerBlock.withDefaults(AppLocalizations l10n) {
@@ -87,6 +97,7 @@ class TunerBlock extends ProjectBlock {
     _title = l10n.tuner;
     _islandToolID = null;
     _id = ProjectBlock.createNewId();
+    _tunerType = TunerType.chromatic;
   }
 
   TunerBlock.withTitle(String newTitle) {
@@ -95,6 +106,7 @@ class TunerBlock extends ProjectBlock {
     _title = newTitle;
     _islandToolID = null;
     _id = ProjectBlock.createNewId();
+    _tunerType = TunerType.chromatic;
   }
 
   @override
