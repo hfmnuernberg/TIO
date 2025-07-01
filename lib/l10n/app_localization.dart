@@ -169,9 +169,9 @@ abstract class AppLocalizations {
   String get metronomeSoundTypeWood;
   String get metronomeTutorialAddNew;
   String get metronomeTutorialAdjust;
+  String get metronomeTutorialAdvancedView;
   String get metronomeTutorialChangeMode;
   String get metronomeTutorialEditBeats;
-  String get metronomeTutorialRelocate;
   String get metronomeTutorialSimpleView;
   String get metronomeTutorialStartStop;
   String get metronomeUnaccented;

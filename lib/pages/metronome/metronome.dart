@@ -217,7 +217,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       targets.add(
         CustomTargetFocus(
           keyAdvancedView,
-          l10n.metronomeTutorialRelocate,
+          l10n.metronomeTutorialAdvancedView,
           alignText: ContentAlign.bottom,
           pointingDirection: PointingDirection.up,
           shape: ShapeLightFocus.RRect,
@@ -257,7 +257,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         keyAdvancedView,
-        l10n.metronomeTutorialRelocate,
+        l10n.metronomeTutorialAdvancedView,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
