@@ -69,7 +69,7 @@ class _GroupsState extends State<Groups> with RouteAware {
     projectRepo = context.read<ProjectRepository>();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.read<ProjectLibrary>().showRhythmTutorial ) {
+      if (context.read<ProjectLibrary>().showRhythmTutorial) {
         _createTutorial();
         tutorial.show(context);
       }
