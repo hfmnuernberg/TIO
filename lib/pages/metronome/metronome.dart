@@ -127,8 +127,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!context.read<ProjectLibrary>().showMetronomeTutorial &&
-          !context.read<ProjectLibrary>().showToolTutorial) {
+      if (!context.read<ProjectLibrary>().showMetronomeTutorial && !context.read<ProjectLibrary>().showToolTutorial) {
         if (isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) {
           _createTutorialSimpleMode();
           tutorial.show(context);
