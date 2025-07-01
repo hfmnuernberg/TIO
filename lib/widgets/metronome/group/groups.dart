@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
-import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/metronome/group/editable_group.dart';
@@ -43,8 +42,6 @@ class Groups extends StatefulWidget {
 
 class _GroupsState extends State<Groups> with RouteAware {
   bool isReordering = false;
-
-  late ProjectRepository projectRepo;
 
   int? _getHighlightedMainBeatIndex(int segmentIndex) =>
       widget.highlightedSegmentIndex == segmentIndex ? widget.highlightedMainBeatIndex : null;
