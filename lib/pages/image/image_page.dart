@@ -198,10 +198,13 @@ class _ImageToolState extends State<ImageTool> {
 
   @override
   Widget build(BuildContext context) {
+    final project = widget.isQuickTool ? null : context.read<Project>();
+    final isUsedAsThumbnail = project?.thumbnailPath == imageBlock.relativePath;
+
     return ParentTool(
       barTitle: imageBlock.title,
       isQuickTool: widget.isQuickTool,
-      project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
+      project: project,
       toolBlock: imageBlock,
       menuItems:
           imageBlock.relativePath.isNotEmpty
@@ -215,11 +218,11 @@ class _ImageToolState extends State<ImageTool> {
                   child: Text(context.l10n.imageSetAsThumbnail, style: const TextStyle(color: ColorTheme.primary)),
                 ),
                 MenuItemButton(
-                  onPressed: () => pickImagesAndSave(false),
+                  onPressed: () => pickImagesAndSave(isUsedAsThumbnail),
                   child: Text(context.l10n.imagePickNewImage, style: const TextStyle(color: ColorTheme.primary)),
                 ),
                 MenuItemButton(
-                  onPressed: () => takePhotoAndSave(false),
+                  onPressed: () => takePhotoAndSave(isUsedAsThumbnail),
                   child: Text(context.l10n.imageTakeNewPhoto, style: const TextStyle(color: ColorTheme.primary)),
                 ),
               ]
