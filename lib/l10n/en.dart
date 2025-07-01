@@ -190,6 +190,8 @@ class English extends AppLocalizations {
   String get metronomeSoundTypeWood => 'wood';
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome.';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings.';
+  String get metronomeTutorialChangeMode =>
+      'You can switch between basic and advanced mode using the menu in the top right corner.';
   String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted.';
   String get metronomeTutorialRelocate =>
       'Hold and drag sideways to relocate a bar, swipe upwards to delete a bar, or tap to edit the selected bar.';

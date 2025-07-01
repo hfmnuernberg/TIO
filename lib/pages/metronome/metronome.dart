@@ -206,6 +206,12 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         buttonsPosition: ButtonsPosition.top,
         shape: ShapeLightFocus.RRect,
       ),
+      CustomTargetFocus(
+        null,
+        context: context,
+        l10n.metronomeTutorialChangeMode,
+        customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
+      ),
     ];
 
     if (isSimpleModeOn) {
