@@ -22,6 +22,7 @@ import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_picker.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -50,6 +51,7 @@ class MediaPlayer extends StatefulWidget {
 class _MediaPlayerState extends State<MediaPlayer> {
   static final _logger = createPrefixLogger('MediaPlayer');
 
+  late AudioSystem _as;
   late FileSystem _fs;
   late FilePicker _filePicker;
   late FileReferences _fileReferences;
@@ -96,6 +98,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   void initState() {
     super.initState();
 
+    _as = context.read<AudioSystem>();
     _fs = context.read<FileSystem>();
     _filePicker = context.read<FilePicker>();
     _fileReferences = context.read<FileReferences>();
@@ -758,7 +761,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       return;
     }
 
-    var success = await MediaPlayerFunctions.startPlaying(_mediaPlayerBlock.looping);
+    var success = await MediaPlayerFunctions.startPlaying(_as, _mediaPlayerBlock.looping);
     playInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _stopPlaying();
     });

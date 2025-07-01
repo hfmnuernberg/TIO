@@ -8,6 +8,7 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -27,6 +28,7 @@ class MediaPlayerIslandView extends StatefulWidget {
 class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   static final _logger = createPrefixLogger('MediaPlayerIslandView');
 
+  late AudioSystem _as;
   late WaveformVisualizer _waveformVisualizer;
 
   Float32List _rmsValues = Float32List(100);
@@ -47,6 +49,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   void initState() {
     super.initState();
 
+    _as = context.read<AudioSystem>();
     mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
 
     _waveformVisualizer = WaveformVisualizer(
@@ -189,7 +192,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     playInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _stopPlaying();
     });
-    var success = await MediaPlayerFunctions.startPlaying(widget.mediaPlayerBlock.looping);
+    var success = await MediaPlayerFunctions.startPlaying(_as, widget.mediaPlayerBlock.looping);
     if (mounted) setState(() => _isPlaying = success);
   }
 }

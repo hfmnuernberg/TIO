@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
@@ -57,11 +58,11 @@ abstract class MediaPlayerFunctions {
     return newList;
   }
 
-  static Future<bool> startPlaying(bool looping) async {
+  static Future<bool> startPlaying(AudioSystem as, bool looping) async {
     await stopRecording();
     await mediaPlayerSetLoop(looping: looping);
     await configureAudioSession(AudioSessionType.playback);
-    var success = await mediaPlayerStart();
+    var success = await as.mediaPlayerStart();
     if (success) {
       await WakelockPlus.enable();
     }
