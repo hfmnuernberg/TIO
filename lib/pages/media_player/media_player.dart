@@ -395,7 +395,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                   Expanded(
                     child: TIOFlatButton(
                       onPressed: () async {
-                        await _pickNewAudioFile();
+                        await _pickAudioFilesAndSave();
                         if (!context.mounted) return;
                         if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
                           _createTutorialWaveformTip();
@@ -411,7 +411,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                     Expanded(
                       child: TIOFlatButton(
                         onPressed: () async {
-                          await _pickNewAudioFile(pickAudioFromFileSystem: true);
+                          await _pickAudioFilesAndSave(pickAudioFromFileSystem: true);
                           if (!context.mounted) return;
                           if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
                             _createTutorialWaveformTip();
@@ -622,10 +622,27 @@ class _MediaPlayerState extends State<MediaPlayer> {
     await _queryAndUpdateStateFromRust();
   }
 
-  Future<void> _pickNewAudioFile({bool pickAudioFromFileSystem = false}) async {
-    final audioPath = await _pickAudioFile(context, context.read<ProjectLibrary>(), pickAudioFromFileSystem);
-    if (audioPath == null) return;
+  Future<void> _pickAudioFilesAndSave({bool pickAudioFromFileSystem = false}) async {
+    try {
+      final audioPaths = await _pickAudioFiles(context, context.read<ProjectLibrary>(), pickAudioFromFileSystem);
+      if (audioPaths == null || audioPaths.isEmpty) return;
 
+      for (int i = 0; i < audioPaths.length; i++) {
+        final audioPath = audioPaths[i];
+        if (audioPath == null) return;
+        await _handleAudioFile(i, audioPath);
+      }
+
+      if (!mounted) return;
+
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      setState(() {});
+    } on PlatformException catch (e) {
+      logger.e('Unable to pick audio files.', error: e);
+    }
+  }
+
+  Future<void> _handleAudioFile(int index, String audioPath) async {
     if (!mounted) return;
 
     final extension = _fs.toExtension(audioPath);
@@ -652,30 +669,15 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     final projectLibrary = context.read<ProjectLibrary>();
 
-    _fileReferences.dec(_mediaPlayerBlock.relativePath, projectLibrary);
-    _mediaPlayerBlock.relativePath = newRelativePath;
-    _fileReferences.inc(newRelativePath);
+    if (index == 0) {
+      _fileReferences.dec(_mediaPlayerBlock.relativePath, projectLibrary);
+      _mediaPlayerBlock.relativePath = newRelativePath;
+      _fileReferences.inc(newRelativePath);
 
-    await _projectRepo.saveLibrary(projectLibrary);
+      await _projectRepo.saveLibrary(projectLibrary);
 
-    _fileLoaded = false;
-    _rmsValues = Float32List(0);
-    _waveformVisualizer = WaveformVisualizer(
-      0,
-      _mediaPlayerBlock.rangeStart,
-      _mediaPlayerBlock.rangeEnd,
-      _rmsValues,
-      _numOfBins,
-    );
-
-    setState(() => _isLoading = true);
-
-    var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_fs, _mediaPlayerBlock, _numOfBins);
-    if (newRms == null) {
-      if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
-    } else {
-      _fileLoaded = true;
-      _rmsValues = newRms;
+      _fileLoaded = false;
+      _rmsValues = Float32List(0);
       _waveformVisualizer = WaveformVisualizer(
         0,
         _mediaPlayerBlock.rangeStart,
@@ -684,17 +686,38 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _numOfBins,
       );
 
-      _setFileDuration();
-      _addShareOptionToMenu();
-      _mediaPlayerBlock.markerPositions.clear();
-      if (mounted) await _projectRepo.saveLibrary(projectLibrary);
-    }
-    setState(() => _isLoading = false);
+      setState(() => _isLoading = true);
 
-    await _queryAndUpdateStateFromRust();
+      var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_fs, _mediaPlayerBlock, _numOfBins);
+      if (newRms == null) {
+        if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
+      } else {
+        _fileLoaded = true;
+        _rmsValues = newRms;
+        _waveformVisualizer = WaveformVisualizer(
+          0,
+          _mediaPlayerBlock.rangeStart,
+          _mediaPlayerBlock.rangeEnd,
+          _rmsValues,
+          _numOfBins,
+        );
+
+        _setFileDuration();
+        _addShareOptionToMenu();
+        _mediaPlayerBlock.markerPositions.clear();
+        if (mounted) await _projectRepo.saveLibrary(projectLibrary);
+      }
+      setState(() => _isLoading = false);
+
+      await _queryAndUpdateStateFromRust();
+    } else {
+      final title = '${_mediaPlayerBlock.title} ($index)';
+      final newBlock = MediaPlayerBlock.withTitle(title)..relativePath = newRelativePath;
+      _project?.addBlock(newBlock);
+    }
   }
 
-  Future<String?> _pickAudioFile(
+  Future<List<String?>?> _pickAudioFiles(
     BuildContext context,
     ProjectLibrary projectLibrary,
     bool pickAudioFromFileSystem,

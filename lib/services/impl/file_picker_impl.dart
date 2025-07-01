@@ -10,15 +10,16 @@ class FilePickerImpl implements tio.FilePicker {
       (await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['zip']))?.files.single.path;
 
   @override
-  Future<String?> pickAudioFromFileSystem() async =>
+  Future<List<String?>?> pickAudioFromFileSystem() async =>
       (await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: TIOMusicParams.audioFormats,
-      ))?.files.single.path;
+        allowMultiple: true,
+      ))?.paths;
 
   @override
-  Future<String?> pickAudioFromMediaLibrary() async =>
-      (await FilePicker.platform.pickFiles(type: FileType.audio))?.files.single.path;
+  Future<List<String?>?> pickAudioFromMediaLibrary() async =>
+      (await FilePicker.platform.pickFiles(type: FileType.audio, allowMultiple: true))?.paths;
 
   @override
   Future<List<String>> pickImages({required int limit}) async =>
