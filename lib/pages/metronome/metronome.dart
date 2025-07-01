@@ -127,26 +127,16 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (context.read<ProjectLibrary>().showMetronomeTutorial &&
-          !context.read<ProjectLibrary>().showToolTutorial &&
-          !context.read<ProjectLibrary>().showQuickToolTutorial &&
-          !context.read<ProjectLibrary>().showIslandTutorial) {
-        _createTutorial();
-        tutorial.show(context);
-      } else if (context.read<ProjectLibrary>().showMetronomeSimpleTutorial &&
-          isSimpleModeOn &&
-          !context.read<ProjectLibrary>().showToolTutorial &&
-          !context.read<ProjectLibrary>().showQuickToolTutorial &&
-          !context.read<ProjectLibrary>().showIslandTutorial) {
-        _createTutorialSimpleMode();
-        tutorial.show(context);
-      } else if (context.read<ProjectLibrary>().showMetronomeAdvancedTutorial &&
-          !isSimpleModeOn &&
-          !context.read<ProjectLibrary>().showToolTutorial &&
-          !context.read<ProjectLibrary>().showQuickToolTutorial &&
-          !context.read<ProjectLibrary>().showIslandTutorial) {
-        _createTutorialAdvancedMode();
-        tutorial.show(context);
+      if (!context.read<ProjectLibrary>().showMetronomeTutorial &&
+          !context.read<ProjectLibrary>().showToolTutorial) {
+        if (isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) {
+          _createTutorialSimpleMode();
+          tutorial.show(context);
+        }
+        if (!isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeAdvancedTutorial) {
+          _createTutorialAdvancedMode();
+          tutorial.show(context);
+        }
       }
 
       await _syncMetronomeSound();
@@ -157,6 +147,12 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     isSimpleModeOn = !isSimpleModeOn;
     if (isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) _clearAllRhythms();
     setState(() {});
+  }
+
+  void showSimpleOrAdvancedTutorial() {
+    if (!isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) _createTutorialSimpleMode();
+    if (isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeAdvancedTutorial) _createTutorialAdvancedMode();
+    tutorial.show(context);
   }
 
   Future<void> _toggleSimpleModeIfSaveOrUserConfirms() async {
@@ -170,15 +166,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       if (!shouldReset) return;
     }
 
-    if (mounted && isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeAdvancedTutorial) {
-      _createTutorialAdvancedMode();
-      tutorial.show(context);
-    }
-
-    if (mounted && !isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) {
-      _createTutorialSimpleMode();
-      tutorial.show(context);
-    }
+    showSimpleOrAdvancedTutorial();
 
     _toggleSimpleMode();
   }
@@ -225,9 +213,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           pointerPosition: PointerPosition.left,
         ),
       );
-    }
-
-    if (!isSimpleModeOn) {
+    } else {
       targets.add(
         CustomTargetFocus(
           keyAdvancedView,
@@ -242,6 +228,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showMetronomeTutorial = false;
+      if (isSimpleModeOn) context.read<ProjectLibrary>().showMetronomeSimpleTutorial = false;
+      if (!isSimpleModeOn) context.read<ProjectLibrary>().showMetronomeAdvancedTutorial = false;
       await projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
@@ -269,7 +257,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         keyAdvancedView,
-        l10n.metronomeTutorialRelocate, // TODO: Rename to "Advanced View"
+        l10n.metronomeTutorialRelocate,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
