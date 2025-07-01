@@ -193,6 +193,7 @@ class English extends AppLocalizations {
   String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted.';
   String get metronomeTutorialRelocate =>
       'Hold and drag sideways to relocate a bar, swipe upwards to delete a bar, or tap to edit the selected bar.';
+  String get metronomeTutorialSimpleView => 'In simple mode, you can set the basic beats and the rhythm pattern.';
   String get metronomeTutorialStartStop => 'Tap here to start and stop the metronome.';
   String get metronomeUnaccented => 'Unaccented';
 

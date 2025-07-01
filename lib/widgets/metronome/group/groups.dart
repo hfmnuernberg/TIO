@@ -1,17 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/tutorial_util.dart';
-import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/metronome/group/editable_group.dart';
-import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class Groups extends StatefulWidget {
   final List<RhythmGroup> rhythmGroups;
@@ -52,10 +46,6 @@ class _GroupsState extends State<Groups> with RouteAware {
 
   late ProjectRepository projectRepo;
 
-  final Tutorial tutorial = Tutorial();
-  final GlobalKey keyGroups = GlobalKey();
-  final GlobalKey keyAddSecondMetro = GlobalKey();
-
   int? _getHighlightedMainBeatIndex(int segmentIndex) =>
       widget.highlightedSegmentIndex == segmentIndex ? widget.highlightedMainBeatIndex : null;
 
@@ -63,47 +53,8 @@ class _GroupsState extends State<Groups> with RouteAware {
       widget.highlightedSegmentIndex == segmentIndex ? widget.highlightedPolyBeatIndex : null;
 
   @override
-  void initState() {
-    super.initState();
-
-    projectRepo = context.read<ProjectRepository>();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.read<ProjectLibrary>().showRhythmTutorial) {
-        _createTutorial();
-        tutorial.show(context);
-      }
-    });
-  }
-
-  void _createTutorial() {
-    final l10n = context.l10n;
-    final targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        keyGroups,
-        l10n.metronomeTutorialRelocate,
-        alignText: ContentAlign.bottom,
-        pointingDirection: PointingDirection.up,
-        shape: ShapeLightFocus.RRect,
-        pointerPosition: PointerPosition.left,
-      ),
-      CustomTargetFocus(
-        keyAddSecondMetro,
-        l10n.metronomeTutorialAddNew,
-        alignText: ContentAlign.left,
-        pointingDirection: PointingDirection.right,
-      ),
-    ];
-    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showMetronomeTutorial = false;
-      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    }, context);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Column(
-      key: keyGroups,
       children: [
         SizedBox(
           height: MetronomeParams.heightRhythmGroups,
@@ -186,7 +137,7 @@ class _GroupsState extends State<Groups> with RouteAware {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(widget.label, style: const TextStyle(color: ColorTheme.primary)),
-                Container(key: keyAddSecondMetro, child: widget.addSecondaryAction),
+                widget.addSecondaryAction,
               ],
             ),
           ),

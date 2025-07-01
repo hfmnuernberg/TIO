@@ -195,6 +195,7 @@ class German extends AppLocalizations {
       'Tippe auf einen der Schläge, um zwischen betont, unbetont und stumm zu wechseln.';
   String get metronomeTutorialRelocate =>
       'Halte und ziehe seitlich, um Takte zu verschieben, wische nach oben, um Takte zu löschen oder tippe, um den ausgewählten Takt zu bearbeiten.';
+  String get metronomeTutorialSimpleView => 'Im einfachen Modus kannst du die Basic Beats und einen Rhytmus festlegen.';
   String get metronomeTutorialStartStop => 'Tippe hier, um das Metronom zu starten und zu stoppen.';
   String get metronomeUnaccented => 'Unbetont';
 

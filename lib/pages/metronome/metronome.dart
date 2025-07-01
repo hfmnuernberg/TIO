@@ -82,6 +82,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   final Tutorial tutorial = Tutorial();
   final GlobalKey keyStartStop = GlobalKey();
   final GlobalKey keySettings = GlobalKey();
+  final GlobalKey keySimpleView = GlobalKey();
+  final GlobalKey keyAdvancedView = GlobalKey();
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
 
@@ -131,6 +133,20 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           !context.read<ProjectLibrary>().showIslandTutorial) {
         _createTutorial();
         tutorial.show(context);
+      } else if (context.read<ProjectLibrary>().showMetronomeSimpleTutorial &&
+          isSimpleModeOn &&
+          !context.read<ProjectLibrary>().showToolTutorial &&
+          !context.read<ProjectLibrary>().showQuickToolTutorial &&
+          !context.read<ProjectLibrary>().showIslandTutorial) {
+        _createTutorialSimpleMode();
+        tutorial.show(context);
+      } else if (context.read<ProjectLibrary>().showMetronomeAdvancedTutorial &&
+          !isSimpleModeOn &&
+          !context.read<ProjectLibrary>().showToolTutorial &&
+          !context.read<ProjectLibrary>().showQuickToolTutorial &&
+          !context.read<ProjectLibrary>().showIslandTutorial) {
+        _createTutorialAdvancedMode();
+        tutorial.show(context);
       }
 
       await _syncMetronomeSound();
@@ -152,6 +168,16 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       );
 
       if (!shouldReset) return;
+    }
+
+    if (mounted && isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeAdvancedTutorial) {
+      _createTutorialAdvancedMode();
+      tutorial.show(context);
+    }
+
+    if (mounted && !isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) {
+      _createTutorialSimpleMode();
+      tutorial.show(context);
     }
 
     _toggleSimpleMode();
@@ -181,8 +207,71 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         shape: ShapeLightFocus.RRect,
       ),
     ];
+
+    if (isSimpleModeOn) {
+      targets.add(
+        CustomTargetFocus(
+          keySimpleView,
+          l10n.metronomeTutorialSimpleView,
+          alignText: ContentAlign.bottom,
+          pointingDirection: PointingDirection.up,
+          shape: ShapeLightFocus.RRect,
+          pointerPosition: PointerPosition.left,
+        ),
+      );
+    }
+
+    if (!isSimpleModeOn) {
+      targets.add(
+        CustomTargetFocus(
+          keyAdvancedView,
+          l10n.metronomeTutorialRelocate,
+          alignText: ContentAlign.bottom,
+          pointingDirection: PointingDirection.up,
+          shape: ShapeLightFocus.RRect,
+          pointerPosition: PointerPosition.left,
+        ),
+      );
+    }
+
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showMetronomeTutorial = false;
+      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }, context);
+  }
+
+  void _createTutorialSimpleMode() {
+    final l10n = context.l10n;
+    var targets = <CustomTargetFocus>[
+      CustomTargetFocus(
+        keySimpleView,
+        l10n.metronomeTutorialSimpleView,
+        alignText: ContentAlign.bottom,
+        pointingDirection: PointingDirection.up,
+        shape: ShapeLightFocus.RRect,
+        pointerPosition: PointerPosition.left,
+      ),
+    ];
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showMetronomeSimpleTutorial = false;
+      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }, context);
+  }
+
+  void _createTutorialAdvancedMode() {
+    final l10n = context.l10n;
+    var targets = <CustomTargetFocus>[
+      CustomTargetFocus(
+        keyAdvancedView,
+        l10n.metronomeTutorialRelocate, // TODO: Rename to "Advanced View"
+        alignText: ContentAlign.bottom,
+        pointingDirection: PointingDirection.up,
+        shape: ShapeLightFocus.RRect,
+        pointerPosition: PointerPosition.left,
+      ),
+    ];
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showMetronomeAdvancedTutorial = false;
       await projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
@@ -403,6 +492,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             child: Column(
               children: [
                 Rhythms(
+                  key: isSimpleModeOn ? keySimpleView : keyAdvancedView,
                   isSimpleModeOn: isSimpleModeOn,
                   currentPrimaryBeat: currentPrimaryBeat,
                   currentSecondaryBeat: currentSecondaryBeat,

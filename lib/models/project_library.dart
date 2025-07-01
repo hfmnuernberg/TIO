@@ -55,7 +55,9 @@ class ProjectLibrary extends ChangeNotifier {
   @JsonKey(defaultValue: true)
   late bool showMetronomeTutorial;
   @JsonKey(defaultValue: true)
-  late bool showRhythmTutorial;
+  late bool showMetronomeAdvancedTutorial;
+  @JsonKey(defaultValue: true)
+  late bool showMetronomeSimpleTutorial;
   @JsonKey(defaultValue: true)
   late bool showMediaPlayerTutorial;
   @JsonKey(defaultValue: true)
@@ -104,6 +106,8 @@ class ProjectLibrary extends ChangeNotifier {
     showIslandTutorial = true;
     showTunerTutorial = true;
     showMetronomeTutorial = true;
+    showMetronomeAdvancedTutorial = true;
+    showMetronomeSimpleTutorial = true;
     showMediaPlayerTutorial = true;
     showPianoTutorial = true;
     showImageTutorial = true;
@@ -123,6 +127,8 @@ class ProjectLibrary extends ChangeNotifier {
     showIslandTutorial = true;
     showTunerTutorial = true;
     showMetronomeTutorial = true;
+    showMetronomeAdvancedTutorial = true;
+    showMetronomeSimpleTutorial = true;
     showMediaPlayerTutorial = true;
     showPianoTutorial = true;
     showImageTutorial = true;
@@ -138,6 +144,8 @@ class ProjectLibrary extends ChangeNotifier {
     showIslandTutorial = false;
     showTunerTutorial = false;
     showMetronomeTutorial = false;
+    showMetronomeAdvancedTutorial = false;
+    showMetronomeSimpleTutorial = false;
     showMediaPlayerTutorial = false;
     showPianoTutorial = false;
     showImageTutorial = false;
