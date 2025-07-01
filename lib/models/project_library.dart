@@ -55,6 +55,8 @@ class ProjectLibrary extends ChangeNotifier {
   @JsonKey(defaultValue: true)
   late bool showMetronomeTutorial;
   @JsonKey(defaultValue: true)
+  late bool showRhythmTutorial;
+  @JsonKey(defaultValue: true)
   late bool showMediaPlayerTutorial;
   @JsonKey(defaultValue: true)
   late bool showPianoTutorial;

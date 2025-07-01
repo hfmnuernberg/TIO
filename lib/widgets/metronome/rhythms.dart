@@ -14,8 +14,6 @@ import 'package:tiomusic/widgets/metronome/group/groups.dart';
 import 'package:tiomusic/widgets/metronome/simple_rhythm_group_editor.dart';
 
 class Rhythms extends StatefulWidget {
-  final Key keyGroups;
-  final Key keyAddSecondMetro;
   final bool isSimpleModeOn;
   final CurrentBeat currentPrimaryBeat;
   final CurrentBeat currentSecondaryBeat;
@@ -25,8 +23,6 @@ class Rhythms extends StatefulWidget {
 
   const Rhythms({
     super.key,
-    required this.keyGroups,
-    required this.keyAddSecondMetro,
     required this.isSimpleModeOn,
     required this.currentPrimaryBeat,
     required this.currentSecondaryBeat,
@@ -100,7 +96,6 @@ class _RhythmsState extends State<Rhythms> with RouteAware {
             )
           else ...[
             Groups(
-              key: widget.keyGroups,
               rhythmGroups: metronomeBlock.rhythmGroups,
               highlightedSegmentIndex: widget.currentPrimaryBeat.segmentIndex,
               highlightedMainBeatIndex: widget.currentPrimaryBeat.mainBeatIndex,
@@ -114,7 +109,6 @@ class _RhythmsState extends State<Rhythms> with RouteAware {
               addSecondaryAction:
                   metronomeBlock.rhythmGroups2.isEmpty
                       ? IconButton(
-                        key: widget.keyAddSecondMetro,
                         iconSize: TIOMusicParams.rhythmPlusButtonSize,
                         onPressed: () => widget.onAddRhythmGroup(true),
                         icon: const Icon(Icons.add, color: ColorTheme.primary),

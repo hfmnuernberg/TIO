@@ -23,7 +23,7 @@ ProjectLibrary _$ProjectLibraryFromJson(Map<String, dynamic> json) => ProjectLib
   json['showImageTutorial'] as bool? ?? true,
   json['showWaveformTip'] as bool? ?? true,
   json['showBeatToggleTip'] as bool? ?? true,
-);
+)..showRhythmTutorial = json['showRhythmTutorial'] as bool? ?? true;
 
 Map<String, dynamic> _$ProjectLibraryToJson(ProjectLibrary instance) => <String, dynamic>{
   'projects': instance.projects.map((e) => e.toJson()).toList(),
@@ -37,6 +37,7 @@ Map<String, dynamic> _$ProjectLibraryToJson(ProjectLibrary instance) => <String,
   'showIslandTutorial': instance.showIslandTutorial,
   'showTunerTutorial': instance.showTunerTutorial,
   'showMetronomeTutorial': instance.showMetronomeTutorial,
+  'showRhythmTutorial': instance.showRhythmTutorial,
   'showMediaPlayerTutorial': instance.showMediaPlayerTutorial,
   'showPianoTutorial': instance.showPianoTutorial,
   'showImageTutorial': instance.showImageTutorial,

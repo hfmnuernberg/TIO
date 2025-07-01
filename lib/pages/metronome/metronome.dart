@@ -82,8 +82,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   final Tutorial tutorial = Tutorial();
   final GlobalKey keyStartStop = GlobalKey();
   final GlobalKey keySettings = GlobalKey();
-  final GlobalKey keyGroups = GlobalKey();
-  final GlobalKey keyAddSecondMetro = GlobalKey();
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
 
@@ -181,20 +179,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,
         shape: ShapeLightFocus.RRect,
-      ),
-      CustomTargetFocus(
-        keyGroups,
-        l10n.metronomeTutorialRelocate,
-        alignText: ContentAlign.bottom,
-        pointingDirection: PointingDirection.up,
-        shape: ShapeLightFocus.RRect,
-        pointerPosition: PointerPosition.left,
-      ),
-      CustomTargetFocus(
-        keyAddSecondMetro,
-        l10n.metronomeTutorialAddNew,
-        alignText: ContentAlign.left,
-        pointingDirection: PointingDirection.right,
       ),
     ];
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
@@ -419,8 +403,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             child: Column(
               children: [
                 Rhythms(
-                  keyGroups: keyGroups,
-                  keyAddSecondMetro: keyAddSecondMetro,
                   isSimpleModeOn: isSimpleModeOn,
                   currentPrimaryBeat: currentPrimaryBeat,
                   currentSecondaryBeat: currentSecondaryBeat,
