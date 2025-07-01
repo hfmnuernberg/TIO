@@ -305,6 +305,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
         child: Column(
           children: [
             Stack(
+              key: keyToggleBeats,
               alignment: AlignmentDirectional.center,
               children: [
                 BeatCircle(
