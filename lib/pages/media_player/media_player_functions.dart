@@ -56,6 +56,8 @@ abstract class MediaPlayerFunctions {
     Float32List newList = Float32List(rmsList.length);
     var minValue = rmsList.reduce(min);
     var maxValue = rmsList.reduce(max);
+    if (minValue == maxValue) return newList;
+
     for (int i = 0; i < rmsList.length; i++) {
       newList[i] = (rmsList[i] - minValue) / (maxValue - minValue);
     }
