@@ -1,6 +1,6 @@
 mixin FilePicker {
-  Future<List<String?>?> pickAudioFromFileSystem();
-  Future<List<String?>?> pickAudioFromMediaLibrary();
+  Future<List<String?>?> pickAudioFromFileSystem({required bool isMultiUploadEnabled});
+  Future<List<String?>?> pickAudioFromMediaLibrary({required bool isMultiUploadEnabled});
   Future<String?> pickArchive();
   Future<List<String>> pickImages({required int limit});
   Future<String?> pickTextFile();
