@@ -10,7 +10,6 @@ import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
@@ -50,7 +49,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     super.initState();
 
     _as = context.read<AudioSystem>();
-    mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
+    _as.mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
 
     _waveformVisualizer = WaveformVisualizer(
       0,
@@ -61,6 +60,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     );
 
     MediaPlayerFunctions.setSpeedAndPitchInRust(
+      _as,
       widget.mediaPlayerBlock.speedFactor,
       widget.mediaPlayerBlock.pitchSemitones,
     );
@@ -85,6 +85,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
       if (widget.mediaPlayerBlock.relativePath.isNotEmpty) {
         var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(
+          _as,
           fs,
           widget.mediaPlayerBlock,
           numOfBins,
@@ -119,7 +120,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
         return;
       }
       if (!_isPlaying) return;
-      mediaPlayerGetState().then((mediaPlayerState) {
+      _as.mediaPlayerGetState().then((mediaPlayerState) {
         if (mediaPlayerState == null) {
           _logger.e('State is null.');
           return;
@@ -142,7 +143,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   @override
   void deactivate() {
     playInterruptionListener?.cancel();
-    MediaPlayerFunctions.stopPlaying().then((value) => MediaPlayerFunctions.stopRecording());
+    MediaPlayerFunctions.stopPlaying(_as).then((value) => MediaPlayerFunctions.stopRecording(_as));
 
     _timerPollPlaybackPosition?.cancel();
     super.deactivate();
@@ -184,7 +185,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
   Future<void> _stopPlaying() async {
     await playInterruptionListener?.cancel();
-    await MediaPlayerFunctions.stopPlaying();
+    await MediaPlayerFunctions.stopPlaying(_as);
     if (mounted) setState(() => _isPlaying = false);
   }
 

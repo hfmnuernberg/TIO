@@ -11,6 +11,9 @@ class FilePickerMock extends Mock implements FilePicker {
   void mockPickAudioFromFileSystem([List<String> paths = const [], bool isMultiUploadEnabled = true]) => when(
     () => pickAudioFromFileSystem(isMultiUploadEnabled: any(named: 'isMultiUploadEnabled')),
   ).thenAnswer((_) async => paths);
+  void mockPickAudioFromMediaLibrary([List<String> paths = const [], bool isMultiUploadEnabled = true]) => when(
+    () => pickAudioFromMediaLibrary(isMultiUploadEnabled: any(named: 'isMultiUploadEnabled')),
+  ).thenAnswer((_) async => paths);
   void mockPickImages(List<String> paths, {int limit = 10}) =>
       when(() => pickImages(limit: limit)).thenAnswer((_) async => paths);
   void mockPickTextFile(String? path) => when(pickTextFile).thenAnswer((_) async => path);
