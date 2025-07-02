@@ -300,7 +300,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   Widget build(BuildContext context) {
     var waveformHeight = 200.0;
     final l10n = context.l10n;
-    final isMultiUploadEnabled = !widget.isQuickTool;
+    final isMultiImportEnabled = !widget.isQuickTool;
 
     return ParentTool(
       barTitle: _mediaPlayerBlock.title,
@@ -403,7 +403,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                   Expanded(
                     child: TIOFlatButton(
                       onPressed: () async {
-                        await _pickAudioFilesAndSave(isMultiUploadEnabled: isMultiUploadEnabled);
+                        await _pickAudioFilesAndSave(isMultipleAllowed: isMultiImportEnabled);
                         if (!context.mounted) return;
                         if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
                           _createTutorialWaveformTip();
@@ -420,7 +420,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                       child: TIOFlatButton(
                         onPressed: () async {
                           await _pickAudioFilesAndSave(
-                            isMultiUploadEnabled: isMultiUploadEnabled,
+                            isMultipleAllowed: isMultiImportEnabled,
                             pickAudioFromFileSystem: true,
                           );
                           if (!context.mounted) return;
@@ -633,16 +633,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
     await _queryAndUpdateStateFromRust();
   }
 
-  Future<void> _pickAudioFilesAndSave({
-    required bool isMultiUploadEnabled,
-    bool pickAudioFromFileSystem = false,
-  }) async {
+  Future<void> _pickAudioFilesAndSave({required bool isMultipleAllowed, bool pickAudioFromFileSystem = false}) async {
     try {
       final audioPaths = await _pickAudioFiles(
         context: context,
         projectLibrary: context.read<ProjectLibrary>(),
         pickAudioFromFileSystem: pickAudioFromFileSystem,
-        isMultiUploadEnabled: isMultiUploadEnabled,
+        isMultipleAllowed: isMultipleAllowed,
       );
       if (audioPaths == null || audioPaths.isEmpty) return;
       if (audioPaths.length > 10) {
@@ -749,12 +746,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
     required BuildContext context,
     required ProjectLibrary projectLibrary,
     required bool pickAudioFromFileSystem,
-    required bool isMultiUploadEnabled,
+    required bool isMultipleAllowed,
   }) async {
     try {
       return pickAudioFromFileSystem
-          ? await _filePicker.pickAudioFromFileSystem(isMultiUploadEnabled: isMultiUploadEnabled)
-          : await _filePicker.pickAudioFromMediaLibrary(isMultiUploadEnabled: isMultiUploadEnabled);
+          ? await _filePicker.pickAudioFromFileSystem(isMultipleAllowed: isMultipleAllowed)
+          : await _filePicker.pickAudioFromMediaLibrary(isMultipleAllowed: isMultipleAllowed);
     } on PlatformException catch (e) {
       _logger.e('Failed to pick audio.', error: e);
       return null;

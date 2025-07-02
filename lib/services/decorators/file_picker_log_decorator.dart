@@ -17,15 +17,15 @@ class FilePickerLogDecorator implements FilePicker {
   }
 
   @override
-  Future<List<String?>?> pickAudioFromFileSystem({required bool isMultiUploadEnabled}) async {
-    final absoluteFilePaths = await _filePicker.pickAudioFromFileSystem(isMultiUploadEnabled: isMultiUploadEnabled);
+  Future<List<String?>?> pickAudioFromFileSystem({required bool isMultipleAllowed}) async {
+    final absoluteFilePaths = await _filePicker.pickAudioFromFileSystem(isMultipleAllowed: isMultipleAllowed);
     _logger.t('pickAudioFromAppFileSystem(): ${absoluteFilePaths?.map(shortenPath).join(", ")}');
     return absoluteFilePaths;
   }
 
   @override
-  Future<List<String?>?> pickAudioFromMediaLibrary({required bool isMultiUploadEnabled}) async {
-    final absoluteFilePaths = await _filePicker.pickAudioFromMediaLibrary(isMultiUploadEnabled: isMultiUploadEnabled);
+  Future<List<String?>?> pickAudioFromMediaLibrary({required bool isMultipleAllowed}) async {
+    final absoluteFilePaths = await _filePicker.pickAudioFromMediaLibrary(isMultipleAllowed: isMultipleAllowed);
     _logger.t('pickAudioFromMediaLibrary(): ${absoluteFilePaths?.map(shortenPath).join(", ")}');
     return absoluteFilePaths;
   }

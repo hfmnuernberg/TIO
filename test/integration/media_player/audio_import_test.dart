@@ -71,7 +71,7 @@ void main() {
   });
 
   group('MediaPlayerTool', () {
-    testWidgets('uploads file', (tester) async {
+    testWidgets('imports audio file', (tester) async {
       final filePath = '${inMemoryFileSystem.tmpFolderPath}/audio_file.wav';
       inMemoryFileSystem.saveFileAsBytes(filePath, File('assets/test/ping.wav').readAsBytesSync());
       filePickerMock.mockPickAudioFromMediaLibrary([filePath]);
@@ -85,7 +85,7 @@ void main() {
       expect(find.textContaining('audio_file'), findsOneWidget);
     });
 
-    testWidgets('uploads multiple files', (tester) async {
+    testWidgets('imports multiple audio files', (tester) async {
       final filePath1 = '${inMemoryFileSystem.tmpFolderPath}/audio_file_01.wav';
       final filePath2 = '${inMemoryFileSystem.tmpFolderPath}/audio_file_02.wav';
       inMemoryFileSystem.saveFileAsBytes(filePath1, File('assets/test/ping.wav').readAsBytesSync());
