@@ -128,14 +128,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!context.read<ProjectLibrary>().showMetronomeTutorial && !context.read<ProjectLibrary>().showToolTutorial) {
-        if (isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) {
-          _createTutorialSimpleMode();
-          tutorial.show(context);
-        }
-        if (!isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeAdvancedTutorial) {
-          _createTutorialAdvancedMode();
-          tutorial.show(context);
-        }
+        showModeTutorial();
       }
 
       await _syncMetronomeSound();
@@ -144,16 +137,19 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   void _toggleSimpleMode() {
     isSimpleModeOn = !isSimpleModeOn;
+
+    showModeTutorial();
+
     if (isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) _clearAllRhythms();
     setState(() {});
   }
 
   void showModeTutorial() {
-    if (!isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) {
+    if (isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) {
       _createTutorialSimpleMode();
       tutorial.show(context);
     }
-    if (isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeAdvancedTutorial) {
+    if (!isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeAdvancedTutorial) {
       _createTutorialAdvancedMode();
       tutorial.show(context);
     }
@@ -169,8 +165,6 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
       if (!shouldReset) return;
     }
-
-    showModeTutorial();
 
     _toggleSimpleMode();
   }
