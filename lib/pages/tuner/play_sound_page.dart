@@ -12,11 +12,7 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
 import 'package:tiomusic/widgets/tuner/chromatic_play_reference.dart';
-import 'package:tiomusic/widgets/tuner/instrument_play_reference.dart';
-
-const defaultOctave = 4;
-const minOctave = 1;
-const maxOctave = 7;
+import 'package:tiomusic/widgets/tuner/guitar_play_reference.dart';
 
 class PlaySoundPage extends StatefulWidget {
   const PlaySoundPage({super.key});
@@ -26,9 +22,7 @@ class PlaySoundPage extends StatefulWidget {
 }
 
 class _PlaySoundPageState extends State<PlaySoundPage> {
-  int octave = defaultOctave;
   int? midi;
-  bool isOn = false;
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
 
@@ -55,85 +49,41 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
     TunerFunctions.stopGenerator();
   }
 
-  // void _onButtonsChanged() async {
-  //   if (buttonListener.buttonOn) {
-  //     if (!running) {
-  //       await TunerFunctions.startGenerator();
-  //       running = true;
-  //
-  //       audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
-  //         if (event.type == AudioInterruptionType.unknown) {
-  //           TunerFunctions.stopGenerator();
-  //           setState(() {
-  //             running = false;
-  //             buttonListener.turnOff();
-  //           });
-  //         }
-  //       });
-  //     }
-  //
-  //     if (running) {
-  //       generatorNoteOn(newFreq: buttonListener.freq);
-  //       setState(() => frequency = buttonListener.freq);
-  //     }
-  //   } else {
-  //     generatorNoteOff();
-  //     setState(() => frequency = 0);
-  //   }
-  // }
-
   void _handleToggle(int midiNumber) async {
     final isSameButton = midi == midiNumber;
-    final wasOn = isOn;
+    final wasOn = midi != null;
 
     if (wasOn && isSameButton) {
-      // Case: turn off the current note
       generatorNoteOff();
       TunerFunctions.stopGenerator();
-      setState(() {
-        isOn = false;
-        midi = null;
-      });
+      setState(() => midi = null);
       return;
     }
 
-    if (wasOn && !isSameButton) {
-      // Case: switch to a different note (stop current one first)
-      generatorNoteOff();
-    }
+    if (wasOn && !isSameButton) generatorNoteOff();
 
-    // Start generator (either first time or switching)
     await TunerFunctions.startGenerator();
 
-    // Reset interruption listener
     audioInterruptionListener?.cancel();
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) {
         TunerFunctions.stopGenerator();
-        setState(() {
-          isOn = false;
-          midi = null;
-        });
+        setState(() => midi = null);
       }
     });
 
-    // Activate the new note
-    setState(() {
-      midi = midiNumber;
-      isOn = true;
-      octave = (midiNumber / 12 - 1).floor();
-    });
+    setState(() => midi = midiNumber);
 
-    generatorNoteOn(newFreq: midiToFreq(midiNumber));
+    if (!mounted) return;
+    final tunerBlock = context.read<ProjectBlock>() as TunerBlock;
+    generatorNoteOn(newFreq: midiToFreq(midiNumber, concertPitch: tunerBlock.chamberNoteHz));
   }
-
-  void _handleChange(newOctave) => setState(() => octave = newOctave);
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final frequency = isOn && midi != null ? midiToFreq(midi!) : 0.0;
-    final tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
+    final tunerBlock = context.read<ProjectBlock>() as TunerBlock;
+    final frequency = midi != null ? midiToFreq(midi!, concertPitch: tunerBlock.chamberNoteHz) : 0.0;
 
     return DismissKeyboard(
       child: Scaffold(
@@ -148,23 +98,9 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (tunerBlock.tunerType == TunerType.chromatic)
-              ChromaticPlayReference(
-                octave: octave,
-                midi: midi,
-                frequency: frequency,
-                tunerType: tunerBlock.tunerType,
-                onOctaveChange: _handleChange,
-                onButtonToggle: _handleToggle,
-              )
+              ChromaticPlayReference(midi: midi, frequency: frequency, onToggle: _handleToggle)
             else
-              InstrumentPlayReference(
-                octave: octave,
-                midi: midi,
-                frequency: frequency,
-                tunerType: tunerBlock.tunerType,
-                onOctaveChange: _handleChange,
-                onButtonToggle: _handleToggle,
-              ),
+              GuitarPlayReference(midi: midi, frequency: frequency, onToggle: _handleToggle),
           ],
         ),
       ),

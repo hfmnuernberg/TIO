@@ -1,98 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:tiomusic/models/blocks/tuner_block.dart';
-import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/util_midi.dart';
-import 'package:tiomusic/widgets/tuner/active_reference_sound_button.dart';
 
 const double buttonWidth = 40;
 const double buttonPadding = 4;
 
-class SoundButton extends StatefulWidget {
-  final int midiNumber;
+class SoundButton extends StatelessWidget {
+  final bool isActive;
   final String label;
-  final bool isOn;
   final VoidCallback onToggle;
 
-  const SoundButton({
-    super.key,
-    required this.midiNumber,
-    required this.label,
-    required this.isOn,
-    required this.onToggle,
-  });
-
-  @override
-  State<SoundButton> createState() => _SoundButtonState();
-}
-
-class _SoundButtonState extends State<SoundButton> {
-  late double concertPitch;
-
-  @override
-  void initState() {
-    super.initState();
-    // TODO: Remove concertPitch and make widget stateless
-    concertPitch = (Provider.of<ProjectBlock>(context, listen: false) as TunerBlock).chamberNoteHz;
-  }
+  const SoundButton({super.key, required this.isActive, required this.label, required this.onToggle});
 
   @override
   Widget build(BuildContext context) {
-    // return ListenableBuilder(
-    //   listenable: widget.buttonListener,
-    //   builder: (context, child) {
-    //     final bool isButtonOn = widget.buttonListener.buttonOn;
-    //     final bool isSelectedButton = widget.buttonListener.buttonIdx == widget.idx;
-    //
-    //     return Listener(
-    //       onPointerDown: (details) async {
-    //         int octave = (widget.midiNumber / 12 - 1).floor();
-    //         widget.onToggle(octave);
-    //         setState(() {
-    //           if (isButtonOn) {
-    //             widget.buttonListener.turnOff();
-    //             if (!isSelectedButton) {
-    //               widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: concertPitch));
-    //             }
-    //           } else {
-    //             widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: concertPitch));
-    //           }
-    //         });
-    //       },
-    //       child: Padding(
-    //         padding: const EdgeInsets.all(buttonPadding),
-    //         child: Container(
-    //           width: buttonWidth,
-    //           height: 60,
-    //           decoration: BoxDecoration(
-    //             color: isSelectedButton && isButtonOn ? ColorTheme.primary : ColorTheme.surface,
-    //             borderRadius: BorderRadius.circular(20),
-    //           ),
-    //           child: Center(
-    //             child: Text(
-    //               widget.label,
-    //               style: TextStyle(color: isSelectedButton && isButtonOn ? ColorTheme.surface : ColorTheme.primary),
-    //             ),
-    //           ),
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
     return InkWell(
-      onTap: widget.onToggle,
+      onTap: onToggle,
       child: Padding(
         padding: const EdgeInsets.all(buttonPadding),
         child: Container(
           width: buttonWidth,
           height: 60,
           decoration: BoxDecoration(
-            color: widget.isOn ? ColorTheme.primary : ColorTheme.surface,
+            color: isActive ? ColorTheme.primary : ColorTheme.surface,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Center(
-            child: Text(widget.label, style: TextStyle(color: widget.isOn ? ColorTheme.surface : ColorTheme.primary)),
+            child: Text(label, style: TextStyle(color: isActive ? ColorTheme.surface : ColorTheme.primary)),
           ),
         ),
       ),
