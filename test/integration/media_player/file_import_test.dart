@@ -74,7 +74,6 @@ void main() {
     testWidgets('uploads file', (tester) async {
       final filePath = '${inMemoryFileSystem.tmpFolderPath}/audio_file.wav';
       inMemoryFileSystem.saveFileAsBytes(filePath, File('assets/test/ping.wav').readAsBytesSync());
-      filePickerMock.mockPickAudioFromFileSystem([filePath]);
       filePickerMock.mockPickAudioFromMediaLibrary([filePath]);
 
       await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
@@ -84,6 +83,24 @@ void main() {
       await tester.tapAndSettle(find.bySemanticsLabel('Open files'));
 
       expect(find.textContaining('audio_file'), findsOneWidget);
+    });
+
+    testWidgets('uploads multiple files', (tester) async {
+      final filePath1 = '${inMemoryFileSystem.tmpFolderPath}/audio_file_01.wav';
+      final filePath2 = '${inMemoryFileSystem.tmpFolderPath}/audio_file_02.wav';
+      inMemoryFileSystem.saveFileAsBytes(filePath1, File('assets/test/ping.wav').readAsBytesSync());
+      inMemoryFileSystem.saveFileAsBytes(filePath2, File('assets/test/ping.wav').readAsBytesSync());
+      filePickerMock.mockPickAudioFromMediaLibrary([filePath1, filePath2]);
+
+      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+
+      await tester.createMediaPlayerToolInProject();
+      await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Open files'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+
+      expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
+      expect(find.bySemanticsLabel('Media Player 1 (1)'), findsOneWidget);
     });
   });
 }
