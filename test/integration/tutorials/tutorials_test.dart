@@ -34,7 +34,7 @@ void main() {
     await inMemoryFileSystem.init();
     await mediaRepo.init();
     final projectLibrary =
-    projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults();
+        projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults();
     await projectRepo.saveLibrary(projectLibrary);
     await fileReferences.init(projectLibrary);
 
