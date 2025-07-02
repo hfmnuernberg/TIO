@@ -149,9 +149,14 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   void showSimpleOrAdvancedTutorial() {
-    if (!isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) _createTutorialSimpleMode();
-    if (isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeAdvancedTutorial) _createTutorialAdvancedMode();
-    tutorial.show(context);
+    if (!isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) {
+      _createTutorialSimpleMode();
+      tutorial.show(context);
+    }
+    if (isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeAdvancedTutorial) {
+      _createTutorialAdvancedMode();
+      tutorial.show(context);
+    }
   }
 
   Future<void> _toggleSimpleModeIfSaveOrUserConfirms() async {
