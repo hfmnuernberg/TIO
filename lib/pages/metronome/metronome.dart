@@ -82,8 +82,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   final Tutorial tutorial = Tutorial();
   final GlobalKey keyStartStop = GlobalKey();
   final GlobalKey keySettings = GlobalKey();
-  final GlobalKey keySimpleView = GlobalKey();
-  final GlobalKey keyAdvancedView = GlobalKey();
+  final GlobalKey keySimpleMode = GlobalKey();
+  final GlobalKey keyAdvancedMode = GlobalKey();
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
 
@@ -148,7 +148,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     setState(() {});
   }
 
-  void showSimpleOrAdvancedTutorial() {
+  void showModeTutorial() {
     if (!isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) {
       _createTutorialSimpleMode();
       tutorial.show(context);
@@ -170,7 +170,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       if (!shouldReset) return;
     }
 
-    showSimpleOrAdvancedTutorial();
+    showModeTutorial();
 
     _toggleSimpleMode();
   }
@@ -184,6 +184,14 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   void _createTutorial() {
     final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
+      CustomTargetFocus(
+        isSimpleModeOn ? keySimpleMode : keyAdvancedMode,
+        isSimpleModeOn ? l10n.metronomeTutorialModeSimple : l10n.metronomeTutorialModeAdvanced,
+        alignText: ContentAlign.bottom,
+        pointingDirection: PointingDirection.up,
+        shape: ShapeLightFocus.RRect,
+        pointerPosition: PointerPosition.left,
+      ),
       CustomTargetFocus(
         keyStartStop,
         l10n.metronomeTutorialStartStop,
@@ -201,34 +209,10 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       CustomTargetFocus(
         null,
         context: context,
-        l10n.metronomeTutorialChangeMode,
+        l10n.metronomeTutorialModeChange,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
     ];
-
-    if (isSimpleModeOn) {
-      targets.add(
-        CustomTargetFocus(
-          keySimpleView,
-          l10n.metronomeTutorialSimpleView,
-          alignText: ContentAlign.bottom,
-          pointingDirection: PointingDirection.up,
-          shape: ShapeLightFocus.RRect,
-          pointerPosition: PointerPosition.left,
-        ),
-      );
-    } else {
-      targets.add(
-        CustomTargetFocus(
-          keyAdvancedView,
-          l10n.metronomeTutorialAdvancedView,
-          alignText: ContentAlign.bottom,
-          pointingDirection: PointingDirection.up,
-          shape: ShapeLightFocus.RRect,
-          pointerPosition: PointerPosition.left,
-        ),
-      );
-    }
 
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showMetronomeTutorial = false;
@@ -242,8 +226,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
-        keySimpleView,
-        l10n.metronomeTutorialSimpleView,
+        keySimpleMode,
+        l10n.metronomeTutorialModeSimple,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
@@ -260,8 +244,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
-        keyAdvancedView,
-        l10n.metronomeTutorialAdvancedView,
+        keyAdvancedMode,
+        l10n.metronomeTutorialModeAdvanced,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
@@ -490,7 +474,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             child: Column(
               children: [
                 Rhythms(
-                  key: isSimpleModeOn ? keySimpleView : keyAdvancedView,
+                  key: isSimpleModeOn ? keySimpleMode : keyAdvancedMode,
                   isSimpleModeOn: isSimpleModeOn,
                   currentPrimaryBeat: currentPrimaryBeat,
                   currentSecondaryBeat: currentSecondaryBeat,
