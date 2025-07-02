@@ -49,12 +49,14 @@ void main() {
 
   testWidgets('shows projects tutorial initially', (tester) async {
     await tester.renderScaffold(ProjectsPage(), providers);
-
-    await tester.pump(const Duration(milliseconds: 500));
-    await tester.pumpAndSettle();
+    await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
     expect(find.bySemanticsLabel(RegExp('Welcome! You can use')), findsOneWidget);
+
     await tester.tapAndSettle(find.bySemanticsLabel('Next'));
     expect(find.bySemanticsLabel('Tap here to create a new project.'), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
+    expect(find.bySemanticsLabel('Tap here to create a new project.'), findsNothing);
   });
 }
