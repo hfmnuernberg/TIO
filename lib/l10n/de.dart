@@ -123,6 +123,9 @@ class German extends AppLocalizations {
   String get mediaPlayerShareAudioFile => 'Audio-Datei teilen';
   String get mediaPlayerSpeed => 'Tempo';
   String get mediaPlayerTapToTempo => 'Tippe im Takt';
+  String get mediaPlayerTooManyFilesDescription =>
+      'Aus technischen Gründen werden nur 10 Dateien gleichzeitig geladen.\n\nBitte wiederhole den Vorgang mit den übrigen Dateien, die in diesem Schritt nicht geladen wurden.';
+  String get mediaPlayerTooManyFilesTitle => 'Zu viele Dateien';
   String get mediaPlayerTrim => 'Trimmen';
   String get mediaPlayerTutorialAdjust =>
       'Tippe hier, um deine Audiodatei anzupassen. Du kannst die Lautstärke und den Grundschlag einstellen, deine Datei trimmen und Marker setzen, sowie Tonhöhe und Tempo nachträglich verändern.';
