@@ -93,12 +93,15 @@ class _ProjectPageState extends State<ProjectPage> {
       _project.timeLastModified = getCurrentDateTime();
     });
 
-    if (context.read<ProjectLibrary>().showProjectPageTutorial && _project.blocks.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_project.blocks.isNotEmpty &&
+          context.read<ProjectLibrary>().showProjectPageTutorial &&
+          !context.read<ProjectLibrary>().showQuickToolTutorial &&
+          !context.read<ProjectLibrary>().showIslandTutorial) {
         _createTutorial();
         _tutorial.show(context);
-      });
-    }
+      }
+    });
   }
 
   void _toggleEditingMode() => setState(() => _isEditing = !_isEditing);

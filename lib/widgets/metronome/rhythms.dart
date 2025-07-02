@@ -4,18 +4,14 @@ import 'package:tiomusic/app.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/metronome/current_beat.dart';
 import 'package:tiomusic/widgets/metronome/group/groups.dart';
 import 'package:tiomusic/widgets/metronome/simple_rhythm_group_editor.dart';
-import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class Rhythms extends StatefulWidget {
   final bool isSimpleModeOn;
@@ -43,10 +39,6 @@ class _RhythmsState extends State<Rhythms> with RouteAware {
   late ProjectRepository projectRepo;
   late MetronomeBlock metronomeBlock;
 
-  final Tutorial tutorial = Tutorial();
-  final GlobalKey keyGroups = GlobalKey();
-  final GlobalKey keyAddSecondMetro = GlobalKey();
-
   @override
   void initState() {
     super.initState();
@@ -55,40 +47,6 @@ class _RhythmsState extends State<Rhythms> with RouteAware {
 
     metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
     metronomeBlock.timeLastModified = getCurrentDateTime();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.read<ProjectLibrary>().showMetronomeTutorial &&
-          !context.read<ProjectLibrary>().showToolTutorial &&
-          !context.read<ProjectLibrary>().showQuickToolTutorial &&
-          !context.read<ProjectLibrary>().showIslandTutorial) {
-        _createTutorial();
-        tutorial.show(context);
-      }
-    });
-  }
-
-  void _createTutorial() {
-    final l10n = context.l10n;
-    final targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        keyGroups,
-        l10n.metronomeTutorialRelocate,
-        alignText: ContentAlign.bottom,
-        pointingDirection: PointingDirection.up,
-        shape: ShapeLightFocus.RRect,
-        pointerPosition: PointerPosition.left,
-      ),
-      CustomTargetFocus(
-        keyAddSecondMetro,
-        l10n.metronomeTutorialAddNew,
-        alignText: ContentAlign.left,
-        pointingDirection: PointingDirection.right,
-      ),
-    ];
-    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showMetronomeTutorial = false;
-      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    }, context);
   }
 
   @override
@@ -151,7 +109,6 @@ class _RhythmsState extends State<Rhythms> with RouteAware {
               addSecondaryAction:
                   metronomeBlock.rhythmGroups2.isEmpty
                       ? IconButton(
-                        key: keyAddSecondMetro,
                         iconSize: TIOMusicParams.rhythmPlusButtonSize,
                         onPressed: () => widget.onAddRhythmGroup(true),
                         icon: const Icon(Icons.add, color: ColorTheme.primary),
