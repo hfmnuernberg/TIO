@@ -30,6 +30,8 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   void initState() {
     super.initState();
 
+    TunerFunctions.startGenerator();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await TunerFunctions.stop();
     });
@@ -55,14 +57,17 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
     if (wasOn && isSameButton) {
       generatorNoteOff();
-      TunerFunctions.stopGenerator();
+      setState(() => midi = null);
+      return;
+    }
+
+    if (wasOn && !isSameButton) {
+      generatorNoteOff();
       setState(() => midi = null);
       return;
     }
 
     if (wasOn && !isSameButton) generatorNoteOff();
-
-    await TunerFunctions.startGenerator();
 
     audioInterruptionListener?.cancel();
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {

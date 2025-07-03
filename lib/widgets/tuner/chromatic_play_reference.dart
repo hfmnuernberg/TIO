@@ -46,7 +46,7 @@ class _ChromaticPlayReferenceState extends State<ChromaticPlayReference> {
           style: const TextStyle(color: ColorTheme.primary),
         ),
         const SizedBox(height: 40),
-        PianoKeys(midi: widget.midi, octave: octave, onToggle: widget.onToggle),
+        PianoKeys(currentMidi: widget.midi, octave: octave, onToggle: widget.onToggle),
       ],
     );
   }
@@ -56,11 +56,11 @@ const double buttonWidth = 40;
 const double buttonPadding = 4;
 
 class PianoKeys extends StatelessWidget {
-  final int? midi;
+  final int? currentMidi;
   final int octave;
   final void Function(int midi) onToggle;
 
-  const PianoKeys({super.key, this.midi, required this.octave, required this.onToggle});
+  const PianoKeys({super.key, this.currentMidi, required this.octave, required this.onToggle});
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,7 @@ class PianoKeys extends StatelessWidget {
           children: [
             ...[25, 27].map(
               (midi) => SoundButton(
-                isActive: midi == midi,
+                isActive: currentMidi == midi + offset,
                 label: midiToNameOneChar(midi),
                 onToggle: () => onToggle(midi + offset),
               ),
@@ -83,7 +83,7 @@ class PianoKeys extends StatelessWidget {
 
             ...[30, 32, 34].map(
               (midi) => SoundButton(
-                isActive: midi == midi,
+                isActive: currentMidi == midi + offset,
                 label: midiToNameOneChar(midi),
                 onToggle: () => onToggle(midi + offset),
               ),
@@ -96,7 +96,7 @@ class PianoKeys extends StatelessWidget {
           children: [
             ...[24, 26, 28, 29, 31, 33, 35].map(
               (midi) => SoundButton(
-                isActive: midi == midi,
+                isActive: currentMidi == midi + offset,
                 label: midiToNameOneChar(midi),
                 onToggle: () => onToggle(midi + offset),
               ),
