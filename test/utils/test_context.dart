@@ -42,9 +42,7 @@ class TestContext {
     await inMemoryFileSystem.init();
     await mediaRepo.init();
 
-    var projectLibrary = projectRepo.existsLibrary()
-        ? await projectRepo.loadLibrary()
-        : ProjectLibrary.withDefaults();
+    var projectLibrary = projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults();
 
     if (dismissTutorials) projectLibrary.dismissAllTutorials();
 
