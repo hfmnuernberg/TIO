@@ -1,0 +1,1 @@
+enum TunerType { chromatic, guitar }

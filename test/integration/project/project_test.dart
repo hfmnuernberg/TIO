@@ -43,6 +43,7 @@ void main() {
   setUp(() async {
     inMemoryFileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
     filePickerMock = FilePickerMock(inMemoryFileSystem);
+
     final filePicker = FilePickerLogDecorator(filePickerMock);
     final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(inMemoryFileSystem));
     final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(inMemoryFileSystem));

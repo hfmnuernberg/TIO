@@ -9,7 +9,7 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/sound_font_extensions.dart';
+import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
 
 class ChooseSound extends StatefulWidget {
   const ChooseSound({super.key});

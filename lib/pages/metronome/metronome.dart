@@ -8,7 +8,7 @@ import 'package:tiomusic/app.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/metronome_sound.dart';
-import 'package:tiomusic/models/metronome_sound_extension.dart';
+import 'package:tiomusic/util/l10n/metronome_sound_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
