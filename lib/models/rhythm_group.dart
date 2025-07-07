@@ -70,4 +70,13 @@ class RhythmGroup extends Equatable {
   factory RhythmGroup.fromJson(Map<String, dynamic> json) => _$RhythmGroupFromJson(json);
 
   Map<String, dynamic> toJson() => _$RhythmGroupToJson(this);
+
+  RhythmGroup from() {
+    return RhythmGroup(
+      MetronomeParams.getNewKeyID(),
+      List<BeatType>.from(beats),
+      List<BeatTypePoly>.from(polyBeats),
+      noteKey,
+    );
+  }
 }
