@@ -52,6 +52,15 @@ class RhythmGroup extends Equatable {
   Rhythm? get rhythm =>
       Rhythm.values.firstWhereOrNull((rhythm) => RhythmGroup.fromRhythm(rhythm, beats.length) == this);
 
+  factory RhythmGroup.from(RhythmGroup rhythmGroup) {
+    return RhythmGroup(
+      MetronomeParams.getNewKeyID(),
+      List<BeatType>.from(rhythmGroup.beats),
+      List<BeatTypePoly>.from(rhythmGroup.polyBeats),
+      rhythmGroup.noteKey,
+    );
+  }
+
   factory RhythmGroup.fromRhythm(Rhythm rhythm, int beatCount) {
     return RhythmGroup(
       MetronomeParams.getNewKeyID(),
