@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class PianoSettingsButtonGroup extends StatelessWidget {
+  final bool isHolding;
   final VoidCallback onOpenPitch;
   final VoidCallback onOpenVolume;
   final VoidCallback onOpenSound;
+  final Function(bool isHolding) onSetHolding;
 
   const PianoSettingsButtonGroup({
     super.key,
+    required this.isHolding,
     required this.onOpenPitch,
     required this.onOpenVolume,
     required this.onOpenSound,
+    required this.onSetHolding,
   });
 
   @override
@@ -22,6 +26,14 @@ class PianoSettingsButtonGroup extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          IconButton(
+            icon: CircleAvatar(
+              backgroundColor: isHolding ? ColorTheme.tertiary : ColorTheme.primary50,
+              child: Icon(Icons.surround_sound_outlined, color: ColorTheme.onPrimary),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            onPressed: () => onSetHolding(!isHolding),
+          ),
           IconButton(
             icon: const CircleAvatar(
               backgroundColor: ColorTheme.primary50,

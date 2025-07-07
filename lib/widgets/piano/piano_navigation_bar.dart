@@ -7,6 +7,7 @@ import 'package:tiomusic/widgets/tio_icon_button.dart';
 class PianoNavigationBar extends StatelessWidget {
   final GlobalKey keyOctaveSwitch;
   final GlobalKey keySettings;
+  final bool isHolding;
   final Widget? prevToolIcon;
   final Widget? nextToolIcon;
   final Widget? toolOfSameTypeIcon;
@@ -25,10 +26,13 @@ class PianoNavigationBar extends StatelessWidget {
   final VoidCallback onOpenVolume;
   final VoidCallback onOpenSound;
 
+  final Function(bool isHolding) onSetHolding;
+
   const PianoNavigationBar({
     super.key,
     required this.keyOctaveSwitch,
     required this.keySettings,
+    required this.isHolding,
     this.prevToolIcon,
     this.nextToolIcon,
     this.toolOfSameTypeIcon,
@@ -43,6 +47,7 @@ class PianoNavigationBar extends StatelessWidget {
     required this.onOpenPitch,
     required this.onOpenVolume,
     required this.onOpenSound,
+    required this.onSetHolding,
   });
 
   @override
@@ -75,6 +80,8 @@ class PianoNavigationBar extends StatelessWidget {
               onOpenPitch: onOpenPitch,
               onOpenVolume: onOpenVolume,
               onOpenSound: onOpenSound,
+              isHolding: isHolding,
+              onSetHolding: onSetHolding,
             ),
 
             if (!nextToolOfSameTypeExists) Placeholder(),

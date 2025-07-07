@@ -225,6 +225,10 @@ class _PianoState extends State<Piano> {
     setState(() => _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n));
   }
 
+  void handleSetHolding(bool isHolding) {
+    setState(() => _isHolding = isHolding);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -344,6 +348,7 @@ class _PianoState extends State<Piano> {
                     PianoNavigationBar(
                       keyOctaveSwitch: _keyOctaveSwitch,
                       keySettings: _keySettings,
+                      isHolding: _isHolding,
                       onOctaveDown: _pianoBlock.octaveDown,
                       onToneDown: _pianoBlock.toneDown,
                       onToneUp: _pianoBlock.toneUp,
@@ -351,12 +356,14 @@ class _PianoState extends State<Piano> {
                       onOpenPitch: handleOnOpenPitch,
                       onOpenVolume: handleOnOpenVolume,
                       onOpenSound: handleOnOpenSound,
+                      onSetHolding: handleSetHolding,
                     )
                   else
                     PianoToolNavigationBar(
                       project: project!,
                       keyOctaveSwitch: _keyOctaveSwitch,
                       keySettings: _keySettings,
+                      isHolding: _isHolding,
                       toolBlock: _pianoBlock,
                       onOctaveDown: _pianoBlock.octaveDown,
                       onToneDown: _pianoBlock.toneDown,
@@ -365,6 +372,7 @@ class _PianoState extends State<Piano> {
                       onOpenPitch: handleOnOpenPitch,
                       onOpenVolume: handleOnOpenVolume,
                       onOpenSound: handleOnOpenSound,
+                      onSetHolding: handleSetHolding,
                     ),
 
                   Positioned(
