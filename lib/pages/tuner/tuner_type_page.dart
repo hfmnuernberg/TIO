@@ -8,7 +8,7 @@ import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/l10n/tyner_type_extension.dart';
+import 'package:tiomusic/util/l10n/tuner_type_extension.dart';
 
 class TunerTypePage extends StatefulWidget {
   const TunerTypePage({super.key});
