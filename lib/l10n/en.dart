@@ -124,6 +124,9 @@ class English extends AppLocalizations {
   String get mediaPlayerShareAudioFile => 'Share audio file';
   String get mediaPlayerSpeed => 'Tempo';
   String get mediaPlayerTapToTempo => 'Tap to tempo';
+  String get mediaPlayerTooManyFilesDescription =>
+      'Due to technical limitations, only 10 files can be loaded at once.\n\nPlease repeat the process for any files that were not loaded this time.';
+  String get mediaPlayerTooManyFilesTitle => 'Too many files';
   String get mediaPlayerTrim => 'Trim';
   String get mediaPlayerTutorialAdjust =>
       'Tap here to adjust your audio file. You can set the volume and the basic beat, trim your file and set markers, as well as change the pitch and tempo afterwards.';
@@ -190,9 +193,12 @@ class English extends AppLocalizations {
   String get metronomeSoundTypeWood => 'wood';
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome.';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings.';
-  String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted.';
-  String get metronomeTutorialRelocate =>
+  String get metronomeTutorialModeAdvanced =>
       'Hold and drag sideways to relocate a bar, swipe upwards to delete a bar, or tap to edit the selected bar.';
+  String get metronomeTutorialModeChange =>
+      'You can switch between basic and advanced mode using the menu in the top right corner.';
+  String get metronomeTutorialModeSimple => 'Here you can set the basic beats and the rhythm pattern.';
+  String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted.';
   String get metronomeTutorialStartStop => 'Tap here to start and stop the metronome.';
   String get metronomeUnaccented => 'Unaccented';
 

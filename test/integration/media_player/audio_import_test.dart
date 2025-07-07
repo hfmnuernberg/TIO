@@ -7,6 +7,8 @@ import 'package:provider/single_child_widget.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
+import 'package:tiomusic/services/audio_system.dart';
+import 'package:tiomusic/services/decorators/audio_system_log_decorator.dart';
 import 'package:tiomusic/services/decorators/file_picker_log_decorator.dart';
 import 'package:tiomusic/services/decorators/file_references_log_decorator.dart';
 import 'package:tiomusic/services/decorators/file_system_log_decorator.dart';
@@ -22,12 +24,14 @@ import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/services/project_repository.dart';
 
 import '../../mocks/file_picker_mock.dart';
+import '../../mocks/audio_system_mock.dart';
 import '../../mocks/in_memory_file_system_mock.dart';
 import '../../utils/action_utils.dart';
 import '../../utils/project_utils.dart';
 import '../../utils/render_utils.dart';
 
 void main() {
+  late AudioSystem audioSystemMock;
   late FileSystem inMemoryFileSystem;
   late FilePickerMock filePickerMock;
   late List<SingleChildWidget> providers;
@@ -35,8 +39,11 @@ void main() {
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   setUp(() async {
+    audioSystemMock = AudioSystemMock();
     inMemoryFileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
     filePickerMock = FilePickerMock(inMemoryFileSystem);
+
+    final audioSystem = AudioSystemLogDecorator(audioSystemMock);
     final filePicker = FilePickerLogDecorator(filePickerMock);
     final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(inMemoryFileSystem));
     final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(inMemoryFileSystem));
@@ -52,6 +59,7 @@ void main() {
     final project = Project.defaultThumbnail('Test Project');
 
     providers = [
+      Provider<AudioSystem>(create: (_) => audioSystem),
       Provider<FilePicker>(create: (_) => filePicker),
       Provider<FileSystem>(create: (_) => inMemoryFileSystem),
       Provider<MediaRepository>(create: (_) => mediaRepo),
@@ -62,42 +70,37 @@ void main() {
     ];
   });
 
-  group('ImageTool', () {
-    testWidgets('imports image', (tester) async {
-      final imagePath = '${inMemoryFileSystem.tmpFolderPath}/image.jpg';
-      inMemoryFileSystem.saveFileAsBytes(imagePath, File('assets/test/black_circle.jpg').readAsBytesSync());
-      filePickerMock.mockPickImages([imagePath]);
+  group('MediaPlayerTool', () {
+    testWidgets('imports audio file', (tester) async {
+      final filePath = '${inMemoryFileSystem.tmpFolderPath}/audio_file.wav';
+      inMemoryFileSystem.saveFileAsBytes(filePath, File('assets/test/ping.wav').readAsBytesSync());
+      filePickerMock.mockPickAudioFromMediaLibrary([filePath]);
 
       await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
-      await tester.createImageToolInProject();
+      await tester.createMediaPlayerToolInProject();
 
-      await tester.tapAndSettle(find.bySemanticsLabel('Image 1'));
-      await tester.tapAndSettle(find.bySemanticsLabel('Do it later'));
-      expect(find.byTooltip('Pick image(s)'), findsOneWidget);
+      await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Open files'));
 
-      await tester.tapAndSettle(find.byTooltip('Pick image(s)'));
-
-      expect(find.byTooltip('Pick image(s)'), findsNothing);
+      expect(find.textContaining('audio_file'), findsOneWidget);
     });
 
-    testWidgets('imports multiple images', (tester) async {
-      final imagePath1 = '${inMemoryFileSystem.tmpFolderPath}/image1.jpg';
-      final imagePath2 = '${inMemoryFileSystem.tmpFolderPath}/image2.jpg';
-      inMemoryFileSystem.saveFileAsBytes(imagePath1, File('assets/test/black_circle.jpg').readAsBytesSync());
-      inMemoryFileSystem.saveFileAsBytes(imagePath2, File('assets/test/black_circle.jpg').readAsBytesSync());
-      filePickerMock.mockPickImages([imagePath1, imagePath2]);
+    testWidgets('imports multiple audio files', (tester) async {
+      final filePath1 = '${inMemoryFileSystem.tmpFolderPath}/audio_file_01.wav';
+      final filePath2 = '${inMemoryFileSystem.tmpFolderPath}/audio_file_02.wav';
+      inMemoryFileSystem.saveFileAsBytes(filePath1, File('assets/test/ping.wav').readAsBytesSync());
+      inMemoryFileSystem.saveFileAsBytes(filePath2, File('assets/test/ping.wav').readAsBytesSync());
+      filePickerMock.mockPickAudioFromMediaLibrary([filePath1, filePath2]);
 
       await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
 
-      expect(find.bySemanticsLabel('Image 1'), findsNothing);
-
-      await tester.createImageToolInProject();
-      await tester.tapAndSettle(find.bySemanticsLabel('Image 1'));
-      await tester.tapAndSettle(find.bySemanticsLabel('Pick image(s)'));
+      await tester.createMediaPlayerToolInProject();
+      await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Open files'));
       await tester.tapAndSettle(find.bySemanticsLabel('Back'));
 
-      expect(find.bySemanticsLabel('Image 1'), findsOneWidget);
-      expect(find.bySemanticsLabel('Image 1 (1)'), findsOneWidget);
+      expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
+      expect(find.bySemanticsLabel('Media Player 1 (1)'), findsOneWidget);
     });
   });
 }

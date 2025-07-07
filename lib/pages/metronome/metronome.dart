@@ -82,6 +82,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   final Tutorial tutorial = Tutorial();
   final GlobalKey keyStartStop = GlobalKey();
   final GlobalKey keySettings = GlobalKey();
+  final GlobalKey keySimpleMode = GlobalKey();
+  final GlobalKey keyAdvancedMode = GlobalKey();
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
 
@@ -125,12 +127,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (context.read<ProjectLibrary>().showMetronomeTutorial &&
-          !context.read<ProjectLibrary>().showToolTutorial &&
-          !context.read<ProjectLibrary>().showQuickToolTutorial &&
-          !context.read<ProjectLibrary>().showIslandTutorial) {
-        _createTutorial();
-        tutorial.show(context);
+      if (!context.read<ProjectLibrary>().showMetronomeTutorial && !context.read<ProjectLibrary>().showToolTutorial) {
+        showModeTutorial();
       }
 
       await _syncMetronomeSound();
@@ -139,8 +137,22 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   void _toggleSimpleMode() {
     isSimpleModeOn = !isSimpleModeOn;
+
+    showModeTutorial();
+
     if (isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) _clearAllRhythms();
     setState(() {});
+  }
+
+  void showModeTutorial() {
+    if (isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) {
+      _createTutorialSimpleMode();
+      tutorial.show(context);
+    }
+    if (!isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeAdvancedTutorial) {
+      _createTutorialAdvancedMode();
+      tutorial.show(context);
+    }
   }
 
   Future<void> _toggleSimpleModeIfSaveOrUserConfirms() async {
@@ -167,6 +179,14 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
+        isSimpleModeOn ? keySimpleMode : keyAdvancedMode,
+        isSimpleModeOn ? l10n.metronomeTutorialModeSimple : l10n.metronomeTutorialModeAdvanced,
+        alignText: ContentAlign.bottom,
+        pointingDirection: PointingDirection.up,
+        shape: ShapeLightFocus.RRect,
+        pointerPosition: PointerPosition.left,
+      ),
+      CustomTargetFocus(
         keyStartStop,
         l10n.metronomeTutorialStartStop,
         alignText: ContentAlign.top,
@@ -180,9 +200,54 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         buttonsPosition: ButtonsPosition.top,
         shape: ShapeLightFocus.RRect,
       ),
+      CustomTargetFocus(
+        null,
+        context: context,
+        l10n.metronomeTutorialModeChange,
+        customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
+      ),
     ];
+
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showMetronomeTutorial = false;
+      if (isSimpleModeOn) context.read<ProjectLibrary>().showMetronomeSimpleTutorial = false;
+      if (!isSimpleModeOn) context.read<ProjectLibrary>().showMetronomeAdvancedTutorial = false;
+      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }, context);
+  }
+
+  void _createTutorialSimpleMode() {
+    final l10n = context.l10n;
+    var targets = <CustomTargetFocus>[
+      CustomTargetFocus(
+        keySimpleMode,
+        l10n.metronomeTutorialModeSimple,
+        alignText: ContentAlign.bottom,
+        pointingDirection: PointingDirection.up,
+        shape: ShapeLightFocus.RRect,
+        pointerPosition: PointerPosition.left,
+      ),
+    ];
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showMetronomeSimpleTutorial = false;
+      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }, context);
+  }
+
+  void _createTutorialAdvancedMode() {
+    final l10n = context.l10n;
+    var targets = <CustomTargetFocus>[
+      CustomTargetFocus(
+        keyAdvancedMode,
+        l10n.metronomeTutorialModeAdvanced,
+        alignText: ContentAlign.bottom,
+        pointingDirection: PointingDirection.up,
+        shape: ShapeLightFocus.RRect,
+        pointerPosition: PointerPosition.left,
+      ),
+    ];
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showMetronomeAdvancedTutorial = false;
       await projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
@@ -403,6 +468,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             child: Column(
               children: [
                 Rhythms(
+                  key: isSimpleModeOn ? keySimpleMode : keyAdvancedMode,
                   isSimpleModeOn: isSimpleModeOn,
                   currentPrimaryBeat: currentPrimaryBeat,
                   currentSecondaryBeat: currentSecondaryBeat,

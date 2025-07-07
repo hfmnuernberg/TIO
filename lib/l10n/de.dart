@@ -123,6 +123,9 @@ class German extends AppLocalizations {
   String get mediaPlayerShareAudioFile => 'Audio-Datei teilen';
   String get mediaPlayerSpeed => 'Tempo';
   String get mediaPlayerTapToTempo => 'Tippe im Takt';
+  String get mediaPlayerTooManyFilesDescription =>
+      'Aus technischen Gründen werden nur 10 Dateien gleichzeitig geladen.\n\nBitte wiederhole den Vorgang mit den übrigen Dateien, die in diesem Schritt nicht geladen wurden.';
+  String get mediaPlayerTooManyFilesTitle => 'Zu viele Dateien';
   String get mediaPlayerTrim => 'Trimmen';
   String get mediaPlayerTutorialAdjust =>
       'Tippe hier, um deine Audiodatei anzupassen. Du kannst die Lautstärke und den Grundschlag einstellen, deine Datei trimmen und Marker setzen, sowie Tonhöhe und Tempo nachträglich verändern.';
@@ -191,10 +194,13 @@ class German extends AppLocalizations {
   String get metronomeSoundTypeWood => 'wood';
   String get metronomeTutorialAddNew => 'Tippe hier, um ein zweites Metronom hinzuzufügen.';
   String get metronomeTutorialAdjust => 'Tippe hier, um die Metronomeinstellungen anzupassen.';
+  String get metronomeTutorialModeAdvanced =>
+      'Halte und ziehe seitlich, um Takte zu verschieben, wische nach oben, um Takte zu löschen oder tippe, um den ausgewählten Takt zu bearbeiten.';
+  String get metronomeTutorialModeChange =>
+      'Über das Menü oben rechts kannst du zwischen einfachem und erweitertem Modus wechseln.';
+  String get metronomeTutorialModeSimple => 'Hier kannst du die Basic Beats und einen Rhytmus festlegen.';
   String get metronomeTutorialEditBeats =>
       'Tippe auf einen der Schläge, um zwischen betont, unbetont und stumm zu wechseln.';
-  String get metronomeTutorialRelocate =>
-      'Halte und ziehe seitlich, um Takte zu verschieben, wische nach oben, um Takte zu löschen oder tippe, um den ausgewählten Takt zu bearbeiten.';
   String get metronomeTutorialStartStop => 'Tippe hier, um das Metronom zu starten und zu stoppen.';
   String get metronomeUnaccented => 'Unbetont';
 
