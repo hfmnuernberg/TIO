@@ -47,6 +47,8 @@ class _PianoState extends State<Piano> {
   late FileSystem _fs;
   late ProjectRepository _projectRepo;
 
+  bool _isHolding = false;
+
   late PianoBlock _pianoBlock;
   late double _concertPitch = _pianoBlock.concertPitch;
   late String _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n);
@@ -381,6 +383,7 @@ class _PianoState extends State<Piano> {
                           final pianoBlock = projectBlock as PianoBlock;
                           return Keyboard(
                             lowestNote: pianoBlock.keyboardPosition,
+                            isHolding: _isHolding,
                             onPlay: _playNoteOn,
                             onRelease: _playNoteOff,
                           );

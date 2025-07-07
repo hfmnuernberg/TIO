@@ -43,7 +43,7 @@ void main() {
       });
 
       testWidgets('starts with lowest key', (tester) async {
-        final pianoMock = await tester.renderKeyboard(g5);
+        final pianoMock = await tester.renderKeyboard(lowestNote: g5);
 
         await tester.pressAndReleaseWhiteKeyAt(5);
         pianoMock.verifyKeyPlayed(g5);
