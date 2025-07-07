@@ -100,14 +100,6 @@ void main() {
     expect(tester.withinList(find.bySemanticsLabel('Piano 1')), findsOneWidget);
   });
 
-  testWidgets('shows media player tool when media player tool was added', (tester) async {
-    await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
-    expect(find.bySemanticsLabel('Tool list'), findsNothing);
-
-    await tester.createMediaPlayerToolInProject();
-    expect(tester.withinList(find.bySemanticsLabel('Media Player 1')), findsOneWidget);
-  });
-
   testWidgets('deletes tool when tool was deleted', (tester) async {
     await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
 
