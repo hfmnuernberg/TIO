@@ -1,54 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
-import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/projects_page/projects_page.dart';
-import 'package:tiomusic/services/decorators/file_references_log_decorator.dart';
-import 'package:tiomusic/services/decorators/file_system_log_decorator.dart';
-import 'package:tiomusic/services/decorators/media_repository_log_decorator.dart';
-import 'package:tiomusic/services/decorators/project_repository_log_decorator.dart';
-import 'package:tiomusic/services/file_references.dart';
-import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/services/impl/file_based_media_repository.dart';
-import 'package:tiomusic/services/impl/file_based_project_repository.dart';
-import 'package:tiomusic/services/impl/file_references_impl.dart';
-import 'package:tiomusic/services/media_repository.dart';
-import 'package:tiomusic/services/project_repository.dart';
 
-import '../../mocks/in_memory_file_system_mock.dart';
 import '../../utils/action_utils.dart';
 import '../../utils/render_utils.dart';
+import '../../utils/test_context.dart';
+
+extension WidgetTesterPumpExtension on WidgetTester {
+  Future<void> createProjectWithoutTool(String title) async {
+    await tapAndSettle(find.byTooltip('New project'));
+    await enterTextAndSettle(find.bySemanticsLabel('New project'), title);
+    await tapAndSettle(find.bySemanticsLabel('Submit'));
+  }
+
+  Future<void> createAndOpenTool(String tool) async {
+    await tapAndSettle(find.bySemanticsLabel(tool));
+    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), '$tool 1');
+    await tapAndSettle(find.bySemanticsLabel('Submit'));
+  }
+
+  Future<void> completeInitialTutorial() async {
+    await tapAndSettle(find.bySemanticsLabel('Next'));
+    await tapAndSettle(find.bySemanticsLabel('Next'));
+    await tapAndSettle(find.bySemanticsLabel('Next'));
+    await tapAndSettle(find.bySemanticsLabel('Next'));
+    await tapAndSettle(find.bySemanticsLabel('Next'));
+  }
+}
 
 void main() {
-  late List<SingleChildWidget> providers;
+  late TestContext context;
 
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   setUp(() async {
-    final inMemoryFileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
-    final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(inMemoryFileSystem));
-    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(inMemoryFileSystem));
-    final fileReferences = FileReferencesLogDecorator(FileReferencesImpl(mediaRepo));
-
-    await inMemoryFileSystem.init();
-    await mediaRepo.init();
-    final projectLibrary =
-        projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults();
-    await projectRepo.saveLibrary(projectLibrary);
-    await fileReferences.init(projectLibrary);
-
-    providers = [
-      Provider<FileSystem>(create: (_) => inMemoryFileSystem),
-      Provider<MediaRepository>(create: (_) => mediaRepo),
-      Provider<ProjectRepository>(create: (_) => projectRepo),
-      Provider<FileReferences>(create: (_) => fileReferences),
-      ChangeNotifierProvider<ProjectLibrary>.value(value: projectLibrary),
-    ];
+    context = TestContext();
+    await context.init(dismissTutorials: false);
   });
 
   testWidgets('shows projects tutorial initially', (tester) async {
-    await tester.renderScaffold(ProjectsPage(), providers);
+    await tester.renderScaffold(ProjectsPage(), context.providers);
     await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
     expect(find.bySemanticsLabel(RegExp('Welcome! You can use')), findsOneWidget);
@@ -58,5 +49,70 @@ void main() {
 
     await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
     expect(find.bySemanticsLabel('Tap here to create a new project.'), findsNothing);
+  });
+
+  testWidgets('shows project tutorial initially', (tester) async {
+    await tester.renderScaffold(ProjectsPage(), context.providers);
+    await tester.pumpAndSettle(const Duration(milliseconds: 500));
+    await tester.completeInitialTutorial();
+    await tester.createProjectWithoutTool('Project 1');
+
+    await tester.createAndOpenTool('Text');
+    await tester.tapAndSettle(find.bySemanticsLabel('Next'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+
+    expect(find.bySemanticsLabel('Tap here to edit the title of your project.'), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Next'));
+    expect(find.bySemanticsLabel(RegExp('Tap the plus icon to add')), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
+    expect(find.bySemanticsLabel(RegExp('Tap the plus icon to add')), findsNothing);
+  });
+
+  testWidgets('shows text tool tutorial initially', (tester) async {
+    await tester.renderScaffold(ProjectsPage(), context.providers);
+    await tester.pumpAndSettle(const Duration(milliseconds: 500));
+    await tester.completeInitialTutorial();
+    await tester.createProjectWithoutTool('Project 1');
+
+    await tester.createAndOpenTool('Text');
+
+    expect(find.bySemanticsLabel('Tap here to copy your tool to another project.'), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
+    expect(find.bySemanticsLabel('Tap here to copy your tool to another project.'), findsNothing);
+  });
+
+  testWidgets('shows image tool tutorial initially', (tester) async {
+    await tester.renderScaffold(ProjectsPage(), context.providers);
+    await tester.pumpAndSettle(const Duration(milliseconds: 500));
+    await tester.completeInitialTutorial();
+    await tester.createProjectWithoutTool('Project 1');
+
+    await tester.createAndOpenTool('Image');
+
+    expect(find.bySemanticsLabel('Tap here to copy your tool to another project.'), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Next'));
+    expect(find.bySemanticsLabel('Tap here to copy your tool to another project.'), findsNothing);
+  });
+
+  testWidgets('shows media player tool tutorial initially', (tester) async {
+    await tester.renderScaffold(ProjectsPage(), context.providers);
+    await tester.pumpAndSettle(const Duration(milliseconds: 500));
+    await tester.completeInitialTutorial();
+    await tester.createProjectWithoutTool('Project 1');
+
+    await tester.createAndOpenTool('Media Player');
+
+    expect(find.bySemanticsLabel('Tap here to copy your tool to another project.'), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Next'));
+    await tester.pumpAndSettle(const Duration(milliseconds: 500));
+    expect(find.bySemanticsLabel(RegExp('Tap here to start and stop recording')), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
+    expect(find.bySemanticsLabel(RegExp('Tap here to start and stop recording')), findsNothing);
   });
 }

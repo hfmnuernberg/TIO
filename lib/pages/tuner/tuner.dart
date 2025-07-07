@@ -16,10 +16,12 @@ import 'package:tiomusic/pages/tuner/pitch_visualizer.dart';
 import 'package:tiomusic/pages/tuner/play_sound_page.dart';
 import 'package:tiomusic/pages/tuner/set_concert_pitch.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
+import 'package:tiomusic/pages/tuner/tuner_type_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/l10n/tuner_type_extension.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/util_midi.dart';
@@ -37,37 +39,37 @@ class Tuner extends StatefulWidget {
 }
 
 class _TunerState extends State<Tuner> {
-  late TunerBlock _tunerBlock;
+  late TunerBlock tunerBlock;
 
-  bool _isRunning = false;
-  bool _gettingPitchInput = false;
-  bool _isInStartUp = true;
+  bool isRunning = false;
+  bool gettingPitchInput = false;
+  bool isInStartUp = true;
 
-  final _freqText = TextEditingController();
-  final _midiText = TextEditingController();
-  final _midiNameText = TextEditingController();
-  final _centOffsetText = TextEditingController();
+  final freqText = TextEditingController();
+  final midiText = TextEditingController();
+  final midiNameText = TextEditingController();
+  final centOffsetText = TextEditingController();
 
-  final _historyLength = 100;
-  late List<PitchOffset> _history = List.empty(growable: true);
+  final historyLength = 100;
+  late List<PitchOffset> history = List.empty(growable: true);
 
-  late PitchVisualizer _pitchVisualizer;
+  late PitchVisualizer pitchVisualizer;
 
-  final _freqHistory = List<double>.filled(10, 0);
-  var _freqHistoryIndex = 0;
+  final freqHistory = List<double>.filled(10, 0);
+  var freqHistoryIndex = 0;
 
-  bool _processingButtonClick = false;
+  bool processingButtonClick = false;
 
-  Timer? _timerPollFreq;
+  Timer? timerPollFreq;
 
-  final Tutorial _tutorial = Tutorial();
-  final GlobalKey _keyStartStop = GlobalKey();
-  final GlobalKey _keySettings = GlobalKey();
+  final Tutorial tutorial = Tutorial();
+  final GlobalKey keyStartStop = GlobalKey();
+  final GlobalKey keySettings = GlobalKey();
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
 
   Future<bool> startTuner() async {
-    _isRunning = true;
+    isRunning = true;
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) stopTuner();
     });
@@ -76,15 +78,15 @@ class _TunerState extends State<Tuner> {
 
   Future<bool> stopTuner() async {
     await audioInterruptionListener?.cancel();
-    _freqHistory.fillRange(0, _freqHistory.length, 0);
-    _history.fillRange(0, _history.length, PitchOffset.withoutValue());
-    _freqHistoryIndex = 0;
-    _gettingPitchInput = false;
-    _pitchVisualizer = PitchVisualizer(_history, _gettingPitchInput);
-    _midiNameText.text = '';
-    _freqText.text = '';
-    _centOffsetText.text = '';
-    _isRunning = false;
+    freqHistory.fillRange(0, freqHistory.length, 0);
+    history.fillRange(0, history.length, PitchOffset.withoutValue());
+    freqHistoryIndex = 0;
+    gettingPitchInput = false;
+    pitchVisualizer = PitchVisualizer(history, gettingPitchInput);
+    midiNameText.text = '';
+    freqText.text = '';
+    centOffsetText.text = '';
+    isRunning = false;
     return TunerFunctions.stop();
   }
 
@@ -92,38 +94,38 @@ class _TunerState extends State<Tuner> {
   void initState() {
     super.initState();
 
-    _history = List.filled(_historyLength, PitchOffset.withoutValue(), growable: true);
-    _pitchVisualizer = PitchVisualizer(_history, _gettingPitchInput);
+    history = List.filled(historyLength, PitchOffset.withoutValue(), growable: true);
+    pitchVisualizer = PitchVisualizer(history, gettingPitchInput);
 
-    _tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
+    tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
 
-    _tunerBlock.timeLastModified = getCurrentDateTime();
+    tunerBlock.timeLastModified = getCurrentDateTime();
 
     // only allow portrait mode for this tool
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       // start with delay to make sure previous tuner is stopped before new one is started (on copy/save)
-      _processingButtonClick = true;
+      processingButtonClick = true;
       await Future.delayed(const Duration(milliseconds: 400));
       startTuner();
       Future.delayed(const Duration(milliseconds: 1000), () {
         if (mounted) {
           setState(() {
-            _processingButtonClick = false;
+            processingButtonClick = false;
             // after tuner is started, we can set the flag and rebuilt the setting tiles
-            _isInStartUp = false;
+            isInStartUp = false;
           });
         }
       });
 
-      _timerPollFreq = Timer.periodic(const Duration(milliseconds: TunerParams.freqPollMillis), (t) async {
+      timerPollFreq = Timer.periodic(const Duration(milliseconds: TunerParams.freqPollMillis), (t) async {
         if (!mounted) {
           t.cancel();
           return;
         }
-        if (!_isRunning) return;
-        _onNewFrequency(await tunerGetFrequency());
+        if (!isRunning) return;
+        onNewFrequency(await tunerGetFrequency());
       });
 
       if (mounted) {
@@ -131,23 +133,23 @@ class _TunerState extends State<Tuner> {
             !context.read<ProjectLibrary>().showToolTutorial &&
             !context.read<ProjectLibrary>().showQuickToolTutorial &&
             !context.read<ProjectLibrary>().showIslandTutorial) {
-          _createTutorial();
-          _tutorial.show(context);
+          createTutorial();
+          tutorial.show(context);
         }
       }
     });
   }
 
-  void _createTutorial() {
+  void createTutorial() {
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
-        _keyStartStop,
+        keyStartStop,
         context.l10n.tunerTutorialStartStop,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
       ),
       CustomTargetFocus(
-        _keySettings,
+        keySettings,
         context.l10n.tunerTutorialAdjust,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
@@ -155,7 +157,7 @@ class _TunerState extends State<Tuner> {
         shape: ShapeLightFocus.RRect,
       ),
     ];
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showTunerTutorial = false;
       await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     }, context);
@@ -164,7 +166,7 @@ class _TunerState extends State<Tuner> {
   @override
   void deactivate() {
     stopTuner();
-    _timerPollFreq?.cancel();
+    timerPollFreq?.cancel();
     super.deactivate();
   }
 
@@ -173,19 +175,19 @@ class _TunerState extends State<Tuner> {
     final l10n = context.l10n;
 
     return ParentTool(
-      barTitle: _tunerBlock.title,
+      barTitle: tunerBlock.title,
       isQuickTool: widget.isQuickTool,
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
-      toolBlock: _tunerBlock,
+      toolBlock: tunerBlock,
       onParentTutorialFinished: () {
         if (context.read<ProjectLibrary>().showTunerTutorial) {
-          _createTutorial();
-          _tutorial.show(context);
+          createTutorial();
+          tutorial.show(context);
         }
       },
       island: ParentIslandView(
         project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
-        toolBlock: _tunerBlock,
+        toolBlock: tunerBlock,
       ),
       centerModule: Center(
         child: Column(
@@ -197,20 +199,20 @@ class _TunerState extends State<Tuner> {
                   width: MediaQuery.of(context).size.width / 3.1,
                   child: Align(
                     alignment: Alignment.centerRight,
-                    child: Text(_freqText.text, style: const TextStyle(fontSize: 20, color: ColorTheme.primary)),
+                    child: Text(freqText.text, style: const TextStyle(fontSize: 20, color: ColorTheme.primary)),
                   ),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 3,
                   child: Center(
-                    child: Text(_midiNameText.text, style: const TextStyle(fontSize: 40, color: ColorTheme.primary)),
+                    child: Text(midiNameText.text, style: const TextStyle(fontSize: 40, color: ColorTheme.primary)),
                   ),
                 ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width / 3.1,
                   child: Align(
                     alignment: Alignment.centerRight,
-                    child: Text(_centOffsetText.text, style: const TextStyle(fontSize: 20, color: ColorTheme.primary)),
+                    child: Text(centOffsetText.text, style: const TextStyle(fontSize: 20, color: ColorTheme.primary)),
                   ),
                 ),
               ],
@@ -223,7 +225,7 @@ class _TunerState extends State<Tuner> {
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         return CustomPaint(
-                          painter: _pitchVisualizer,
+                          painter: pitchVisualizer,
                           size: Size(constraints.maxWidth, constraints.maxHeight),
                         );
                       },
@@ -232,9 +234,9 @@ class _TunerState extends State<Tuner> {
                   // start stop button
                   Align(
                     child: OnOffButton(
-                      key: _keyStartStop,
-                      isActive: _isRunning,
-                      onTap: _onToggleButtonClicked,
+                      key: keyStartStop,
+                      isActive: isRunning,
+                      onTap: onToggleButtonClicked,
                       iconOff: TunerParams.svgIconPath,
                       iconOn: TIOMusicParams.pauseIcon,
                       buttonSize: TIOMusicParams.sizeBigButtons,
@@ -246,91 +248,101 @@ class _TunerState extends State<Tuner> {
           ],
         ),
       ),
-      keySettingsList: _keySettings,
+      keySettingsList: keySettings,
       settingTiles: [
         SettingsTile(
           title: l10n.tunerConcertPitch,
-          subtitle: '${l10n.formatNumber(_tunerBlock.chamberNoteHz)} Hz',
+          subtitle: '${l10n.formatNumber(tunerBlock.chamberNoteHz)} Hz',
           leadingIcon: Icons.location_searching,
           settingPage: const SetConcertPitch(),
-          block: _tunerBlock,
+          block: tunerBlock,
           callOnReturn: (value) => setState(() {}),
-          inactive: _isInStartUp,
+          inactive: isInStartUp,
         ),
         SettingsTile(
           title: l10n.tunerPlayReference,
           subtitle: '',
           leadingIcon: Icons.music_note,
           settingPage: const PlaySoundPage(),
-          block: _tunerBlock,
+          block: tunerBlock,
           callOnReturn: (value) => setState(() {}),
           callBeforeOpen: () async {
             await stopTuner();
           },
-          inactive: _isInStartUp,
+          inactive: isInStartUp,
+        ),
+        SettingsTile(
+          title: l10n.tunerTypeSelect,
+          subtitle: tunerBlock.tunerType.getLabel(l10n),
+          leadingIcon: Icons.tune,
+          settingPage: const TunerTypePage(),
+          block: tunerBlock,
+          callOnReturn: (value) => setState(() {}),
+          callBeforeOpen: stopTuner,
+          inactive: isInStartUp,
         ),
       ],
     );
   }
 
-  void _onNewFrequency(double? newFreq) {
+  void onNewFrequency(double? newFreq) {
     if (newFreq == null) return;
     if (!mounted) return;
 
     if (newFreq <= 0.0) {
       setState(() {
-        _gettingPitchInput = false;
-        _setNoPitchOffset();
-        _pitchVisualizer = PitchVisualizer(_history, _gettingPitchInput);
+        gettingPitchInput = false;
+        setNoPitchOffset();
+        pitchVisualizer = PitchVisualizer(history, gettingPitchInput);
       });
       return;
     }
 
-    _freqHistory[_freqHistoryIndex] = newFreq;
-    _freqHistoryIndex = (_freqHistoryIndex + 1) % _freqHistory.length;
+    freqHistory[freqHistoryIndex] = newFreq;
+    freqHistoryIndex = (freqHistoryIndex + 1) % freqHistory.length;
 
-    final freqStats = Stats.fromData(_freqHistory);
+    final freqStats = Stats.fromData(freqHistory);
     final freq = freqStats.median.toDouble();
     if (freq.abs() < 0.0001) return;
 
-    var concertPitch = _tunerBlock.chamberNoteHz;
+    var concertPitch = tunerBlock.chamberNoteHz;
 
     var midi = freqToMidi(freq, concertPitch);
     var centOffset = ((midi - midi.round()) * 100.0).round();
 
     setState(() {
-      _freqText.text = '${context.l10n.formatNumber(double.parse(freq.toStringAsFixed(1)))} Hz';
-      _midiText.text = midi.toString();
-      _midiNameText.text = midiToName(midi.round());
-      _centOffsetText.text = '$centOffset Cent';
-      _setPitchOffset(midi - midi.round());
-      _gettingPitchInput = true;
-      _pitchVisualizer = PitchVisualizer(_history, _gettingPitchInput);
+      freqText.text = '${context.l10n.formatNumber(double.parse(freq.toStringAsFixed(1)))} Hz';
+      midiText.text = midi.toString();
+      midiNameText.text = midiToName(midi.round());
+      centOffsetText.text = '$centOffset Cent';
+      setPitchOffset(midi - midi.round());
+      gettingPitchInput = true;
+      pitchVisualizer = PitchVisualizer(history, gettingPitchInput);
     });
   }
 
-  void _setPitchOffset(double pitchOffsetMidi) {
-    _history.add(PitchOffset.withValue(pitchOffsetMidi));
-    _history.removeAt(0);
+  void setPitchOffset(double pitchOffsetMidi) {
+    history.add(PitchOffset.withValue(pitchOffsetMidi));
+    history.removeAt(0);
   }
 
-  void _setNoPitchOffset() {
-    _history.add(_history.last);
-    _history.removeAt(0);
+  void setNoPitchOffset() {
+    history.add(history.last);
+    history.removeAt(0);
   }
 
   // Start/Stop
-  void _onToggleButtonClicked() async {
-    if (_processingButtonClick) return;
-    setState(() => _processingButtonClick = true);
+  void onToggleButtonClicked() async {
+    if (processingButtonClick) return;
+    setState(() => processingButtonClick = true);
 
-    if (_isRunning) {
+    if (isRunning) {
       await stopTuner();
     } else {
       await startTuner();
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
-    setState(() => _processingButtonClick = false);
+    setState(() => processingButtonClick = false);
   }
 }

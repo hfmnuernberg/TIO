@@ -317,6 +317,9 @@ class English extends AppLocalizations {
   String get tunerSetConcertPitch => 'Set concert pitch';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner.';
+  String get tunerTypeChromatic => 'Chromatic Tuner';
+  String get tunerTypeGuitar => 'Guitar';
+  String get tunerTypeSelect => 'Instrument';
 
   String formatDateAndTime(DateTime time) => DateFormat('dd/MM/yyyy - HH:mm:ss').format(time);
 }
