@@ -31,9 +31,10 @@ class PianoSettingsButtonGroup extends StatelessWidget {
               backgroundColor: isHolding ? ColorTheme.tertiary : ColorTheme.primary50,
               child: Icon(Icons.surround_sound_outlined, color: ColorTheme.onPrimary),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: EdgeInsets.zero,
             onPressed: () => onSetHolding(!isHolding),
           ),
+          SizedBox(height: 24, child: VerticalDivider(width: 10, thickness: 1, color: ColorTheme.onPrimary)),
           IconButton(
             icon: const CircleAvatar(
               backgroundColor: ColorTheme.primary50,
