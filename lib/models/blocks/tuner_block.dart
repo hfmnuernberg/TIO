@@ -82,13 +82,20 @@ class TunerBlock extends ProjectBlock {
     return ['${l10n.formatNumber(double.parse(_chamberNoteHz.toStringAsFixed(1)))} Hz'];
   }
 
-  TunerBlock(String title, String id, String? islandToolID, double chamberNoteHz, DateTime timeLastModified) {
+  TunerBlock(
+    String title,
+    String id,
+    String? islandToolID,
+    double chamberNoteHz,
+    DateTime timeLastModified, {
+    TunerType type = TunerType.chromatic,
+  }) {
     _timeLastModified = timeLastModified;
     _chamberNoteHz = chamberNoteHz;
     _title = title;
     _id = ProjectBlock.getIdOrCreateNewId(id);
     _islandToolID = islandToolID;
-    _type = TunerType.chromatic;
+    _type = type;
   }
 
   TunerBlock.withDefaults(AppLocalizations l10n) {
