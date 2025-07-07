@@ -30,10 +30,11 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   void initState() {
     super.initState();
 
-    TunerFunctions.startGenerator();
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await TunerFunctions.stop();
+      await TunerFunctions.startGenerator();
+
+      await _setupAudioInterruptionListener();
     });
   }
 
@@ -51,24 +52,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
     TunerFunctions.stopGenerator();
   }
 
-  void _handleToggle(int midiNumber) async {
-    final isSameButton = midi == midiNumber;
-    final wasOn = midi != null;
-
-    if (wasOn && isSameButton) {
-      generatorNoteOff();
-      setState(() => midi = null);
-      return;
-    }
-
-    if (wasOn && !isSameButton) {
-      generatorNoteOff();
-      setState(() => midi = null);
-      return;
-    }
-
-    if (wasOn && !isSameButton) generatorNoteOff();
-
+  Future<void> _setupAudioInterruptionListener() async {
     audioInterruptionListener?.cancel();
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) {
@@ -76,12 +60,21 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
         setState(() => midi = null);
       }
     });
+  }
 
-    setState(() => midi = midiNumber);
-
-    if (!mounted) return;
+  void _handleToggle(int midiNumber) async {
     final tunerBlock = context.read<ProjectBlock>() as TunerBlock;
-    generatorNoteOn(newFreq: midiToFreq(midiNumber, concertPitch: tunerBlock.chamberNoteHz));
+    final isSameButton = midi == midiNumber;
+    final isOn = midi != null;
+
+    if (isOn && isSameButton) {
+      await generatorNoteOff();
+      setState(() => midi = null);
+      return;
+    }
+
+    await generatorNoteOn(newFreq: midiToFreq(midiNumber, concertPitch: tunerBlock.chamberNoteHz));
+    setState(() => midi = midiNumber);
   }
 
   @override
