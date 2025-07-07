@@ -225,7 +225,7 @@ class MetronomeBlock extends ProjectBlock {
   factory MetronomeBlock.from(MetronomeBlock blockToCopy) {
     return MetronomeBlock(
       blockToCopy.title,
-      blockToCopy.id,
+      ProjectBlock.createNewId(),
       blockToCopy.islandToolID,
       blockToCopy.bpm,
       blockToCopy.randomMute,
