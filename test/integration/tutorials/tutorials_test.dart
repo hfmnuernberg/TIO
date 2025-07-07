@@ -1,30 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
-import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/projects_page/projects_page.dart';
-import 'package:tiomusic/services/audio_system.dart';
-import 'package:tiomusic/services/decorators/audio_system_log_decorator.dart';
-import 'package:tiomusic/services/decorators/file_picker_log_decorator.dart';
-import 'package:tiomusic/services/decorators/file_references_log_decorator.dart';
-import 'package:tiomusic/services/decorators/file_system_log_decorator.dart';
-import 'package:tiomusic/services/decorators/media_repository_log_decorator.dart';
-import 'package:tiomusic/services/decorators/project_repository_log_decorator.dart';
-import 'package:tiomusic/services/file_picker.dart';
-import 'package:tiomusic/services/file_references.dart';
-import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/services/impl/file_based_media_repository.dart';
-import 'package:tiomusic/services/impl/file_based_project_repository.dart';
-import 'package:tiomusic/services/impl/file_references_impl.dart';
-import 'package:tiomusic/services/media_repository.dart';
-import 'package:tiomusic/services/project_repository.dart';
 
-import '../../mocks/audio_system_mock.dart';
-import '../../mocks/file_picker_mock.dart';
-import '../../mocks/in_memory_file_system_mock.dart';
 import '../../utils/action_utils.dart';
 import '../../utils/render_utils.dart';
+import '../../utils/test_context.dart';
 
 extension WidgetTesterPumpExtension on WidgetTester {
   Future<void> createProjectWithoutTool(String title) async {
@@ -49,44 +29,17 @@ extension WidgetTesterPumpExtension on WidgetTester {
 }
 
 void main() {
-  late AudioSystem audioSystemMock;
-  late FileSystem inMemoryFileSystem;
-  late FilePickerMock filePickerMock;
-  late List<SingleChildWidget> providers;
+  late TestContext context;
 
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   setUp(() async {
-    audioSystemMock = AudioSystemMock();
-    inMemoryFileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
-    filePickerMock = FilePickerMock(inMemoryFileSystem);
-
-    final audioSystem = AudioSystemLogDecorator(audioSystemMock);
-    final filePicker = FilePickerLogDecorator(filePickerMock);
-    final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(inMemoryFileSystem));
-    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(inMemoryFileSystem));
-    final fileReferences = FileReferencesLogDecorator(FileReferencesImpl(mediaRepo));
-
-    await inMemoryFileSystem.init();
-    await mediaRepo.init();
-    final projectLibrary =
-        projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults();
-    await projectRepo.saveLibrary(projectLibrary);
-    await fileReferences.init(projectLibrary);
-
-    providers = [
-      Provider<AudioSystem>(create: (_) => audioSystem),
-      Provider<FilePicker>(create: (_) => filePicker),
-      Provider<FileSystem>(create: (_) => inMemoryFileSystem),
-      Provider<MediaRepository>(create: (_) => mediaRepo),
-      Provider<ProjectRepository>(create: (_) => projectRepo),
-      Provider<FileReferences>(create: (_) => fileReferences),
-      ChangeNotifierProvider<ProjectLibrary>.value(value: projectLibrary),
-    ];
+    context = TestContext();
+    await context.init();
   });
 
   testWidgets('shows projects tutorial initially', (tester) async {
-    await tester.renderScaffold(ProjectsPage(), providers);
+    await tester.renderScaffold(ProjectsPage(), context.providers);
     await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
     expect(find.bySemanticsLabel(RegExp('Welcome! You can use')), findsOneWidget);
@@ -99,7 +52,7 @@ void main() {
   });
 
   testWidgets('shows project tutorial initially', (tester) async {
-    await tester.renderScaffold(ProjectsPage(), providers);
+    await tester.renderScaffold(ProjectsPage(), context.providers);
     await tester.pumpAndSettle(const Duration(milliseconds: 500));
     await tester.completeInitialTutorial();
     await tester.createProjectWithoutTool('Project 1');
@@ -118,7 +71,7 @@ void main() {
   });
 
   testWidgets('shows text tool tutorial initially', (tester) async {
-    await tester.renderScaffold(ProjectsPage(), providers);
+    await tester.renderScaffold(ProjectsPage(), context.providers);
     await tester.pumpAndSettle(const Duration(milliseconds: 500));
     await tester.completeInitialTutorial();
     await tester.createProjectWithoutTool('Project 1');
@@ -132,7 +85,7 @@ void main() {
   });
 
   testWidgets('shows image tool tutorial initially', (tester) async {
-    await tester.renderScaffold(ProjectsPage(), providers);
+    await tester.renderScaffold(ProjectsPage(), context.providers);
     await tester.pumpAndSettle(const Duration(milliseconds: 500));
     await tester.completeInitialTutorial();
     await tester.createProjectWithoutTool('Project 1');
@@ -146,7 +99,7 @@ void main() {
   });
 
   testWidgets('shows media player tool tutorial initially', (tester) async {
-    await tester.renderScaffold(ProjectsPage(), providers);
+    await tester.renderScaffold(ProjectsPage(), context.providers);
     await tester.pumpAndSettle(const Duration(milliseconds: 500));
     await tester.completeInitialTutorial();
     await tester.createProjectWithoutTool('Project 1');
