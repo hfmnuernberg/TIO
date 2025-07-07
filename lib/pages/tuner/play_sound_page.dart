@@ -34,7 +34,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
       await TunerFunctions.stop();
       await TunerFunctions.startGenerator();
 
-      await _setupAudioInterruptionListener();
+      await setupAudioInterruptionListener();
     });
   }
 
@@ -52,7 +52,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
     TunerFunctions.stopGenerator();
   }
 
-  Future<void> _setupAudioInterruptionListener() async {
+  Future<void> setupAudioInterruptionListener() async {
     audioInterruptionListener?.cancel();
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) {
@@ -62,7 +62,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
     });
   }
 
-  void _handleToggle(int midiNumber) async {
+  void handleToggle(int midiNumber) async {
     final tunerBlock = context.read<ProjectBlock>() as TunerBlock;
     final isSameButton = midi == midiNumber;
     final isOn = midi != null;
@@ -96,9 +96,9 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (tunerBlock.tunerType == TunerType.chromatic)
-              ChromaticPlayReference(midi: midi, frequency: frequency, onToggle: _handleToggle)
+              ChromaticPlayReference(midi: midi, frequency: frequency, onToggle: handleToggle)
             else
-              GuitarPlayReference(midi: midi, frequency: frequency, onToggle: _handleToggle),
+              GuitarPlayReference(midi: midi, frequency: frequency, onToggle: handleToggle),
           ],
         ),
       ),
