@@ -28,10 +28,10 @@ class GuitarPlayReference extends StatelessWidget {
           children:
               [40, 45, 50, 55, 59, 64]
                   .map(
-                    (midi) => SoundButton(
-                      isActive: midi == midi,
-                      label: midiToNameAndOctave(midi),
-                      onToggle: () => onToggle(midi),
+                    (currentMidi) => SoundButton(
+                      isActive: midi == currentMidi,
+                      label: midiToNameAndOctave(currentMidi),
+                      onToggle: () => onToggle(currentMidi),
                     ),
                   )
                   .toList(),
