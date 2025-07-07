@@ -48,6 +48,7 @@ class _PianoState extends State<Piano> {
   late ProjectRepository _projectRepo;
 
   bool _isHolding = false;
+  bool _showHoldingFeature = false;
 
   late PianoBlock _pianoBlock;
   late double _concertPitch = _pianoBlock.concertPitch;
@@ -184,6 +185,10 @@ class _PianoState extends State<Piano> {
   }
 
   Future<bool> _initPiano(String soundFontPath) async {
+    final isPipeOrgan = soundFontPath == SoundFont.pipeOrgan.file;
+    _showHoldingFeature = isPipeOrgan;
+    _pianoBlock.showHoldingFeature = isPipeOrgan;
+
     // rust cannot access asset files which are not really files on disk, so we need to copy to a temp file
     final tempSoundFontPath = '${_fs.tmpFolderPath}/sound_font.sf2';
     final byteData = await rootBundle.load(soundFontPath);
@@ -349,6 +354,7 @@ class _PianoState extends State<Piano> {
                       keyOctaveSwitch: _keyOctaveSwitch,
                       keySettings: _keySettings,
                       isHolding: _isHolding,
+                      showHoldingFeature: _showHoldingFeature,
                       onOctaveDown: _pianoBlock.octaveDown,
                       onToneDown: _pianoBlock.toneDown,
                       onToneUp: _pianoBlock.toneUp,

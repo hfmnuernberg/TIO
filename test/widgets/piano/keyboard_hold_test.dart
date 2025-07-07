@@ -21,7 +21,7 @@ void main() {
       await tester.pressAndReleaseKey('C4');
       await tester.pressAndReleaseKey('D4');
 
-      pianoMock = await tester.renderKeyboard(isHolding: false);
+      pianoMock = await tester.renderKeyboard();
 
       pianoMock.verifyKeyReleased(c4);
       pianoMock.verifyKeyReleased(d4);

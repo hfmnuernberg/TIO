@@ -3,6 +3,7 @@ import 'package:tiomusic/util/color_constants.dart';
 
 class PianoSettingsButtonGroup extends StatelessWidget {
   final bool isHolding;
+  final bool showHoldingFeature;
   final VoidCallback onOpenPitch;
   final VoidCallback onOpenVolume;
   final VoidCallback onOpenSound;
@@ -11,6 +12,7 @@ class PianoSettingsButtonGroup extends StatelessWidget {
   const PianoSettingsButtonGroup({
     super.key,
     required this.isHolding,
+    required this.showHoldingFeature,
     required this.onOpenPitch,
     required this.onOpenVolume,
     required this.onOpenSound,
@@ -26,15 +28,17 @@ class PianoSettingsButtonGroup extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          IconButton(
-            icon: CircleAvatar(
-              backgroundColor: isHolding ? ColorTheme.tertiary : ColorTheme.primary50,
-              child: Icon(Icons.surround_sound_outlined, color: ColorTheme.onPrimary),
+          if (showHoldingFeature) ...[
+            IconButton(
+              icon: CircleAvatar(
+                backgroundColor: isHolding ? ColorTheme.tertiary : ColorTheme.primary50,
+                child: Icon(Icons.surround_sound_outlined, color: ColorTheme.onPrimary),
+              ),
+              padding: EdgeInsets.zero,
+              onPressed: () => onSetHolding(!isHolding),
             ),
-            padding: EdgeInsets.zero,
-            onPressed: () => onSetHolding(!isHolding),
-          ),
-          SizedBox(height: 24, child: VerticalDivider(width: 10, thickness: 1, color: ColorTheme.onPrimary)),
+            SizedBox(height: 24, child: VerticalDivider(width: 10, thickness: 1, color: ColorTheme.onPrimary)),
+          ],
           IconButton(
             icon: const CircleAvatar(
               backgroundColor: ColorTheme.primary50,

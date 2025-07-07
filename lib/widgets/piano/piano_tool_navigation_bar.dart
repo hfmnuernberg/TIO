@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -6,7 +7,7 @@ import 'package:tiomusic/widgets/piano/piano_navigation_bar.dart';
 
 class PianoToolNavigationBar extends StatelessWidget {
   final Project project;
-  final ProjectBlock toolBlock;
+  final PianoBlock toolBlock;
   final bool isHolding;
   final GlobalKey keyOctaveSwitch;
   final GlobalKey keySettings;
@@ -54,6 +55,7 @@ class PianoToolNavigationBar extends StatelessWidget {
       prevToolIcon: index > 0 ? tools[(index - 1)].icon : null,
       nextToolIcon: index < tools.length - 1 ? tools[index + 1].icon : null,
       isHolding: isHolding,
+      showHoldingFeature: toolBlock.showHoldingFeature,
       toolOfSameTypeIcon: toolBlock.icon,
       keyOctaveSwitch: keyOctaveSwitch,
       keySettings: keySettings,
