@@ -52,6 +52,15 @@ class RhythmGroup extends Equatable {
   Rhythm? get rhythm =>
       Rhythm.values.firstWhereOrNull((rhythm) => RhythmGroup.fromRhythm(rhythm, beats.length) == this);
 
+  factory RhythmGroup.from(RhythmGroup rhythmGroup) {
+    return RhythmGroup(
+      MetronomeParams.getNewKeyID(),
+      List<BeatType>.from(rhythmGroup.beats),
+      List<BeatTypePoly>.from(rhythmGroup.polyBeats),
+      rhythmGroup.noteKey,
+    );
+  }
+
   factory RhythmGroup.fromRhythm(Rhythm rhythm, int beatCount) {
     return RhythmGroup(
       MetronomeParams.getNewKeyID(),
@@ -70,13 +79,4 @@ class RhythmGroup extends Equatable {
   factory RhythmGroup.fromJson(Map<String, dynamic> json) => _$RhythmGroupFromJson(json);
 
   Map<String, dynamic> toJson() => _$RhythmGroupToJson(this);
-
-  RhythmGroup from() {
-    return RhythmGroup(
-      MetronomeParams.getNewKeyID(),
-      List<BeatType>.from(beats),
-      List<BeatTypePoly>.from(polyBeats),
-      noteKey,
-    );
-  }
 }
