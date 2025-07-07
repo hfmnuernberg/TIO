@@ -35,7 +35,7 @@ void main() {
 
   setUp(() async {
     context = TestContext();
-    await context.init();
+    await context.init(dismissTutorials: false);
   });
 
   testWidgets('shows projects tutorial initially', (tester) async {

@@ -38,11 +38,16 @@ class TestContext {
 
   late final List<SingleChildWidget> providers;
 
-  Future<void> init() async {
+  Future<void> init({bool dismissTutorials = true}) async {
     await inMemoryFileSystem.init();
     await mediaRepo.init();
-    final projectLibrary =
-    projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults();
+
+    var projectLibrary = projectRepo.existsLibrary()
+        ? await projectRepo.loadLibrary()
+        : ProjectLibrary.withDefaults();
+
+    if (dismissTutorials) projectLibrary.dismissAllTutorials();
+
     await projectRepo.saveLibrary(projectLibrary);
     await fileReferences.init(projectLibrary);
 
