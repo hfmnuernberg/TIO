@@ -24,7 +24,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   void initState() {
     super.initState();
 
-    _controller = CameraController(widget.camera, ResolutionPreset.medium);
+    _controller = CameraController(widget.camera, ResolutionPreset.max);
 
     _initializeControllerFuture = _controller.initialize();
   }

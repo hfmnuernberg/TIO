@@ -128,13 +128,31 @@ class _ImageToolState extends State<ImageTool> {
       for (int i = 0; i < imagePaths.length; i++) {
         await handleImage(i, imagePaths[i], useAsThumbnail);
       }
-
-      if (!mounted) return;
-
-      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
-      setState(() {});
     } on PlatformException catch (e) {
       logger.e('Unable to pick images.', error: e);
+    }
+  }
+
+  Future<void> takePhotoAndSave(bool useAsThumbnail) async {
+    try {
+      WidgetsFlutterBinding.ensureInitialized();
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) {
+        if (mounted) await showNoCameraFoundDialog(context);
+        return;
+      }
+
+      final firstCamera = cameras.first;
+
+      if (!mounted) return;
+      String? imagePath = await Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (context) => TakePictureScreen(camera: firstCamera)));
+      if (imagePath == null) return;
+
+      await handleImage(0, imagePath, useAsThumbnail);
+    } on PlatformException catch (e) {
+      logger.e('Unable to take photo.', error: e);
     }
   }
 
@@ -158,41 +176,10 @@ class _ImageToolState extends State<ImageTool> {
       final newBlock = ImageBlock.withTitle(title)..relativePath = newRelativePath;
       project.addBlock(newBlock);
     }
-  }
-
-  Future<void> takePhotoAndSave(bool useAsThumbnail) async {
-    WidgetsFlutterBinding.ensureInitialized();
-    final cameras = await availableCameras();
-
-    if (cameras.isEmpty) {
-      if (mounted) await showNoCameraFoundDialog(context);
-      return;
-    }
-
-    final firstCamera = cameras.first;
 
     if (!mounted) return;
-
-    String? imagePath = await Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => TakePictureScreen(camera: firstCamera)));
-    if (imagePath == null) return;
-
-    var newFileName = '${project.title}-${imageBlock.title}';
-
-    final newRelativePath = await mediaRepo.import(imagePath, newFileName);
-    if (newRelativePath == null) return;
-
-    if (!mounted) return;
-
-    if (useAsThumbnail) Provider.of<Project>(context, listen: false).thumbnailPath = newRelativePath;
-
-    fileReferences.dec(imageBlock.relativePath, context.read<ProjectLibrary>());
-    imageBlock.relativePath = newRelativePath;
-    fileReferences.inc(newRelativePath);
 
     await projectRepo.saveLibrary(context.read<ProjectLibrary>());
-
     setState(() {});
   }
 

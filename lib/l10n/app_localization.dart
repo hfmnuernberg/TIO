@@ -187,6 +187,7 @@ abstract class AppLocalizations {
   String get pianoDescription;
   String get pianoInstrumentElectricPiano1;
   String get pianoInstrumentElectricPiano2;
+  String get pianoInstrumentElectricPianoHold;
   String get pianoInstrumentGrandPiano1;
   String get pianoInstrumentGrandPiano2;
   String get pianoInstrumentHarpsichord;
