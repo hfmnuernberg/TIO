@@ -47,9 +47,11 @@ class _PianoState extends State<Piano> {
   late FileSystem _fs;
   late ProjectRepository _projectRepo;
 
+  bool _isHolding = false;
+
   late PianoBlock _pianoBlock;
   late double _concertPitch = _pianoBlock.concertPitch;
-  late String _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n);
+  late SoundFont _soundFont = SoundFont.values[_pianoBlock.soundFontIndex];
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
@@ -220,8 +222,10 @@ class _PianoState extends State<Piano> {
   Future<void> handleOnOpenSound() async {
     await openSettingPage(const ChooseSound(), context, _pianoBlock);
     _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
-    setState(() => _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n));
+    setState(() => _soundFont = SoundFont.values[_pianoBlock.soundFontIndex]);
   }
+
+  void handleToggleHold() => setState(() => _isHolding = !_isHolding);
 
   @override
   Widget build(BuildContext context) {
@@ -297,7 +301,7 @@ class _PianoState extends State<Piano> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        '${l10n.formatNumber(_concertPitch)} Hz – $_instrumentName',
+                        '${l10n.formatNumber(_concertPitch)} Hz – ${_soundFont.getLabel(l10n)}',
                         style: const TextStyle(color: ColorTheme.primary),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -342,6 +346,7 @@ class _PianoState extends State<Piano> {
                     PianoNavigationBar(
                       keyOctaveSwitch: _keyOctaveSwitch,
                       keySettings: _keySettings,
+                      isHolding: _isHolding,
                       onOctaveDown: _pianoBlock.octaveDown,
                       onToneDown: _pianoBlock.toneDown,
                       onToneUp: _pianoBlock.toneUp,
@@ -349,12 +354,14 @@ class _PianoState extends State<Piano> {
                       onOpenPitch: handleOnOpenPitch,
                       onOpenVolume: handleOnOpenVolume,
                       onOpenSound: handleOnOpenSound,
+                      onToggleHold: _soundFont.canHold ? handleToggleHold : null,
                     )
                   else
                     PianoToolNavigationBar(
                       project: project!,
                       keyOctaveSwitch: _keyOctaveSwitch,
                       keySettings: _keySettings,
+                      isHolding: _isHolding,
                       toolBlock: _pianoBlock,
                       onOctaveDown: _pianoBlock.octaveDown,
                       onToneDown: _pianoBlock.toneDown,
@@ -363,6 +370,7 @@ class _PianoState extends State<Piano> {
                       onOpenPitch: handleOnOpenPitch,
                       onOpenVolume: handleOnOpenVolume,
                       onOpenSound: handleOnOpenSound,
+                      onToggleHold: _soundFont.canHold ? handleToggleHold : null,
                     ),
 
                   Positioned(
@@ -381,6 +389,7 @@ class _PianoState extends State<Piano> {
                           final pianoBlock = projectBlock as PianoBlock;
                           return Keyboard(
                             lowestNote: pianoBlock.keyboardPosition,
+                            isHolding: _isHolding,
                             onPlay: _playNoteOn,
                             onRelease: _playNoteOff,
                           );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -6,7 +7,8 @@ import 'package:tiomusic/widgets/piano/piano_navigation_bar.dart';
 
 class PianoToolNavigationBar extends StatelessWidget {
   final Project project;
-  final ProjectBlock toolBlock;
+  final PianoBlock toolBlock;
+  final bool isHolding;
   final GlobalKey keyOctaveSwitch;
   final GlobalKey keySettings;
 
@@ -19,10 +21,13 @@ class PianoToolNavigationBar extends StatelessWidget {
   final VoidCallback onOpenVolume;
   final VoidCallback onOpenSound;
 
+  final VoidCallback? onToggleHold;
+
   const PianoToolNavigationBar({
     super.key,
     required this.project,
     required this.toolBlock,
+    required this.isHolding,
     required this.keyOctaveSwitch,
     required this.keySettings,
     required this.onOctaveDown,
@@ -32,6 +37,7 @@ class PianoToolNavigationBar extends StatelessWidget {
     required this.onOpenPitch,
     required this.onOpenVolume,
     required this.onOpenSound,
+    this.onToggleHold,
   });
 
   @override
@@ -48,6 +54,7 @@ class PianoToolNavigationBar extends StatelessWidget {
     return PianoNavigationBar(
       prevToolIcon: index > 0 ? tools[(index - 1)].icon : null,
       nextToolIcon: index < tools.length - 1 ? tools[index + 1].icon : null,
+      isHolding: isHolding,
       toolOfSameTypeIcon: toolBlock.icon,
       keyOctaveSwitch: keyOctaveSwitch,
       keySettings: keySettings,
@@ -63,6 +70,7 @@ class PianoToolNavigationBar extends StatelessWidget {
       onOpenPitch: onOpenPitch,
       onOpenVolume: onOpenVolume,
       onOpenSound: onOpenSound,
+      onToggleHold: onToggleHold,
     );
   }
 }

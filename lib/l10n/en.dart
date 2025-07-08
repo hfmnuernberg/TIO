@@ -212,6 +212,7 @@ class English extends AppLocalizations {
   String get pianoDescription => 'No piano around? Try out a piece or play some chords.';
   String get pianoInstrumentElectricPiano1 => 'Electric Piano 1';
   String get pianoInstrumentElectricPiano2 => 'Electric Piano 2';
+  String get pianoInstrumentElectricPianoHold => 'E-Piano (Hold)';
   String get pianoInstrumentGrandPiano1 => 'Grand Piano 1';
   String get pianoInstrumentGrandPiano2 => 'Grand Piano 2';
   String get pianoInstrumentHarpsichord => 'Harpsichord';
