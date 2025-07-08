@@ -81,8 +81,8 @@ void main() {
   });
 
   group('TunerTool', () {
-    group('Instrument page', () {
-      testWidgets('default instrument is selected', (tester) async {
+    group('change instrument', () {
+      testWidgets('instrument is selected initially', (tester) async {
         await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
         await tester.createTunerToolInProject();
 
@@ -126,7 +126,7 @@ void main() {
         await tester.tapAndSettle(find.bySemanticsLabel('Guitar'));
         tester.expectSelectedTuner(TunerType.guitar);
 
-        await tester.tapAndSettle(find.bySemanticsLabel('Confirm'));
+        await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
         await tester.ensureVisible(find.bySemanticsLabel('Instrument'));
         await tester.tapAndSettle(find.bySemanticsLabel('Instrument'));
 

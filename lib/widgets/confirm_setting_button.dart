@@ -11,7 +11,7 @@ class ConfirmButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: context.l10n.commonConfirm,
+      label: context.l10n.commonSubmit,
       button: true,
       child: Padding(
         padding: const EdgeInsets.all(TIOMusicParams.edgeInset),

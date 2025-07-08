@@ -31,7 +31,6 @@ class German extends AppLocalizations {
   String get commonBasicBeatSetting => 'Grundschlag einstellen';
   String get commonBpm => 'BPM';
   String get commonCancel => 'Abbrechen';
-  String get commonConfirm => 'Bestätigen';
   String get commonDelete => 'Löschen?';
   String get commonGotIt => 'Verstanden';
   String get commonInput => 'Eingabefeld';
