@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 
@@ -9,15 +10,19 @@ class ConfirmButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
-      child: CircleAvatar(
-        backgroundColor: Colors.white,
-        radius: TIOMusicParams.sizeBigButtons,
-        child: IconButton(
-          onPressed: onTap,
-          iconSize: TIOMusicParams.sizeBigButtons,
-          icon: const Icon(Icons.check, color: ColorTheme.tertiary),
+    return Semantics(
+      label: context.l10n.commonConfirm,
+      button: true,
+      child: Padding(
+        padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
+        child: CircleAvatar(
+          backgroundColor: Colors.white,
+          radius: TIOMusicParams.sizeBigButtons,
+          child: IconButton(
+            onPressed: onTap,
+            iconSize: TIOMusicParams.sizeBigButtons,
+            icon: const Icon(Icons.check, color: ColorTheme.tertiary),
+          ),
         ),
       ),
     );
@@ -31,15 +36,19 @@ class CancelButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
-      child: CircleAvatar(
-        backgroundColor: Colors.white,
-        radius: TIOMusicParams.sizeSmallButtons,
-        child: IconButton(
-          onPressed: onTap,
-          iconSize: TIOMusicParams.sizeSmallButtons,
-          icon: const Icon(Icons.close, color: ColorTheme.primary),
+    return Semantics(
+      label: context.l10n.commonCancel,
+      button: true,
+      child: Padding(
+        padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
+        child: CircleAvatar(
+          backgroundColor: Colors.white,
+          radius: TIOMusicParams.sizeSmallButtons,
+          child: IconButton(
+            onPressed: onTap,
+            iconSize: TIOMusicParams.sizeSmallButtons,
+            icon: const Icon(Icons.close, color: ColorTheme.primary),
+          ),
         ),
       ),
     );

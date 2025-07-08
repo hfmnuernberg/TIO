@@ -116,6 +116,38 @@ void main() {
         await tester.tapAndSettle(find.bySemanticsLabel('Reset'));
         tester.expectSelectedTuner(TunerType.chromatic);
       });
+
+      testWidgets('saves selected instrument on accept button tap', (tester) async {
+        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+        await tester.createTunerToolInProject();
+
+        await tester.openTunerAndInstrumentOption();
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Guitar'));
+        tester.expectSelectedTuner(TunerType.guitar);
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Confirm'));
+        await tester.ensureVisible(find.bySemanticsLabel('Instrument'));
+        await tester.tapAndSettle(find.bySemanticsLabel('Instrument'));
+
+        tester.expectSelectedTuner(TunerType.guitar);
+      });
+
+      testWidgets('cancels selected instrument on cancel button tap', (tester) async {
+        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+        await tester.createTunerToolInProject();
+
+        await tester.openTunerAndInstrumentOption();
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Guitar'));
+        tester.expectSelectedTuner(TunerType.guitar);
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
+        await tester.ensureVisible(find.bySemanticsLabel('Instrument'));
+        await tester.tapAndSettle(find.bySemanticsLabel('Instrument'));
+
+        tester.expectSelectedTuner(TunerType.chromatic);
+      });
     });
   });
 }

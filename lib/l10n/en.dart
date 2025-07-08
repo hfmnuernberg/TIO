@@ -31,6 +31,7 @@ class English extends AppLocalizations {
   String get commonBasicBeatSetting => 'Set basic beat';
   String get commonBpm => 'BPM';
   String get commonCancel => 'Cancel';
+  String get commonConfirm => 'Confirm';
   String get commonDelete => 'Delete?';
   String get commonGotIt => 'Got it';
   String get commonInput => 'Input';
