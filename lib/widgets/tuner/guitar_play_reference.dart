@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/tuner/sound_button.dart';
@@ -26,7 +27,8 @@ class GuitarPlayReference extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children:
-              [40, 45, 50, 55, 59, 64]
+              TunerType.guitar.midis
+                  .toList()
                   .map(
                     (currentMidi) => SoundButton(
                       isActive: midi == currentMidi,
