@@ -185,10 +185,6 @@ class _PianoState extends State<Piano> {
   }
 
   Future<bool> _initPiano(String soundFontPath) async {
-    final isPipeOrgan = soundFontPath == SoundFont.pipeOrgan.file;
-    _showHoldingFeature = isPipeOrgan;
-    _pianoBlock.showHoldingFeature = isPipeOrgan;
-
     // rust cannot access asset files which are not really files on disk, so we need to copy to a temp file
     final tempSoundFontPath = '${_fs.tmpFolderPath}/sound_font.sf2';
     final byteData = await rootBundle.load(soundFontPath);
@@ -230,8 +226,9 @@ class _PianoState extends State<Piano> {
     setState(() => _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n));
   }
 
-  void handleSetHolding(bool isHolding) {
-    setState(() => _isHolding = isHolding);
+  void handleToggleHold() {
+    _isHolding = !_isHolding;
+    setState(() {});
   }
 
   @override
@@ -247,6 +244,8 @@ class _PianoState extends State<Piano> {
     final Project? project = widget.isQuickTool ? null : context.read<Project>();
     final islandWidth = MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width / 1.9);
     final l10n = context.l10n;
+    final isPipeOrgan = _instrumentName == SoundFont.pipeOrgan.getLabel(l10n);
+    _showHoldingFeature = isPipeOrgan;
 
     return SafeArea(
       child: Column(
@@ -354,7 +353,6 @@ class _PianoState extends State<Piano> {
                       keyOctaveSwitch: _keyOctaveSwitch,
                       keySettings: _keySettings,
                       isHolding: _isHolding,
-                      showHoldingFeature: _showHoldingFeature,
                       onOctaveDown: _pianoBlock.octaveDown,
                       onToneDown: _pianoBlock.toneDown,
                       onToneUp: _pianoBlock.toneUp,
@@ -362,7 +360,7 @@ class _PianoState extends State<Piano> {
                       onOpenPitch: handleOnOpenPitch,
                       onOpenVolume: handleOnOpenVolume,
                       onOpenSound: handleOnOpenSound,
-                      onSetHolding: handleSetHolding,
+                      onToggleHold: _showHoldingFeature ? handleToggleHold : null,
                     )
                   else
                     PianoToolNavigationBar(
@@ -378,7 +376,7 @@ class _PianoState extends State<Piano> {
                       onOpenPitch: handleOnOpenPitch,
                       onOpenVolume: handleOnOpenVolume,
                       onOpenSound: handleOnOpenSound,
-                      onSetHolding: handleSetHolding,
+                      onToggleHold: _showHoldingFeature ? handleToggleHold : null,
                     ),
 
                   Positioned(

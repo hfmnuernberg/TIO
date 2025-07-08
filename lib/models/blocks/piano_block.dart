@@ -19,7 +19,7 @@ class PianoBlock extends ProjectBlock {
   // add here all the fields that should be compared when checking if two class instances have the same values
   // for now this check is only used to compare quick tools to the default settings, so some properties are left out here
   @override
-  List<Object> get props => [_id, _volume, _keyboardPosition, _showHoldingFeature, _soundFontIndex];
+  List<Object> get props => [_id, _volume, _keyboardPosition, _soundFontIndex];
 
   @override
   @JsonKey(defaultValue: PianoParams.kind, includeFromJson: false, includeToJson: true)
@@ -81,14 +81,6 @@ class PianoBlock extends ProjectBlock {
     notifyListeners();
   }
 
-  late bool _showHoldingFeature;
-  @JsonKey(defaultValue: false)
-  bool get showHoldingFeature => _showHoldingFeature;
-  set showHoldingFeature(bool value) {
-    _showHoldingFeature = value;
-    notifyListeners();
-  }
-
   late int _soundFontIndex;
   @JsonKey(defaultValue: PianoParams.defaultSoundFontIndex)
   int get soundFontIndex => _soundFontIndex;
@@ -113,7 +105,6 @@ class PianoBlock extends ProjectBlock {
     String? islandToolID,
     double volume,
     int keyboardPosition,
-    bool showHoldingFeature,
     int soundFontIndex,
     DateTime timeLastModified,
   ) {
@@ -121,7 +112,6 @@ class PianoBlock extends ProjectBlock {
     _title = title;
     _volume = volume;
     _keyboardPosition = keyboardPosition;
-    _showHoldingFeature = showHoldingFeature;
     _soundFontIndex = soundFontIndex;
     _islandToolID = islandToolID;
     _id = ProjectBlock.getIdOrCreateNewId(id);
@@ -132,7 +122,6 @@ class PianoBlock extends ProjectBlock {
     _title = l10n.piano;
     _volume = TIOMusicParams.defaultVolume;
     _keyboardPosition = PianoParams.defaultKeyboardPosition;
-    _showHoldingFeature = false;
     _soundFontIndex = PianoParams.defaultSoundFontIndex;
     _islandToolID = null;
     _id = ProjectBlock.createNewId();
@@ -143,7 +132,6 @@ class PianoBlock extends ProjectBlock {
     _title = newTitle;
     _volume = TIOMusicParams.defaultVolume;
     _keyboardPosition = PianoParams.defaultKeyboardPosition;
-    _showHoldingFeature = false;
     _soundFontIndex = PianoParams.defaultSoundFontIndex;
     _islandToolID = null;
     _id = ProjectBlock.createNewId();

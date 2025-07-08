@@ -12,7 +12,6 @@ PianoBlock _$PianoBlockFromJson(Map<String, dynamic> json) => PianoBlock(
   json['islandToolID'] as String?,
   (json['volume'] as num?)?.toDouble() ?? 0.5,
   (json['keyboardPosition'] as num?)?.toInt() ?? 60,
-  json['showHoldingFeature'] as bool? ?? false,
   (json['soundFontIndex'] as num?)?.toInt() ?? 0,
   json['timeLastModified'] == null ? getCurrentDateTime() : DateTime.parse(json['timeLastModified'] as String),
 )..concertPitch = (json['concertPitch'] as num).toDouble();
@@ -25,7 +24,6 @@ Map<String, dynamic> _$PianoBlockToJson(PianoBlock instance) => <String, dynamic
   'islandToolID': instance.islandToolID,
   'volume': instance.volume,
   'keyboardPosition': instance.keyboardPosition,
-  'showHoldingFeature': instance.showHoldingFeature,
   'soundFontIndex': instance.soundFontIndex,
   'concertPitch': instance.concertPitch,
 };

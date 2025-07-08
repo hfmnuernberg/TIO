@@ -8,7 +8,6 @@ class PianoNavigationBar extends StatelessWidget {
   final GlobalKey keyOctaveSwitch;
   final GlobalKey keySettings;
   final bool isHolding;
-  final bool showHoldingFeature;
   final Widget? prevToolIcon;
   final Widget? nextToolIcon;
   final Widget? toolOfSameTypeIcon;
@@ -27,14 +26,13 @@ class PianoNavigationBar extends StatelessWidget {
   final VoidCallback onOpenVolume;
   final VoidCallback onOpenSound;
 
-  final Function(bool isHolding) onSetHolding;
+  final VoidCallback? onToggleHold;
 
   const PianoNavigationBar({
     super.key,
     required this.keyOctaveSwitch,
     required this.keySettings,
     required this.isHolding,
-    required this.showHoldingFeature,
     this.prevToolIcon,
     this.nextToolIcon,
     this.toolOfSameTypeIcon,
@@ -49,7 +47,7 @@ class PianoNavigationBar extends StatelessWidget {
     required this.onOpenPitch,
     required this.onOpenVolume,
     required this.onOpenSound,
-    required this.onSetHolding,
+    this.onToggleHold,
   });
 
   @override
@@ -80,11 +78,10 @@ class PianoNavigationBar extends StatelessWidget {
             PianoSettingsButtonGroup(
               key: keySettings,
               isHolding: isHolding,
-              showHoldingFeature: showHoldingFeature,
               onOpenPitch: onOpenPitch,
               onOpenVolume: onOpenVolume,
               onOpenSound: onOpenSound,
-              onSetHolding: onSetHolding,
+              onToggleHold: onToggleHold,
             ),
 
             if (!nextToolOfSameTypeExists) Placeholder(),
