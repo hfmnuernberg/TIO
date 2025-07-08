@@ -17,8 +17,8 @@ import 'package:tiomusic/pages/tuner/play_sound_page.dart';
 import 'package:tiomusic/pages/tuner/set_concert_pitch.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
 import 'package:tiomusic/pages/tuner/tuner_type_page.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/l10n/tuner_type_extension.dart';
@@ -40,6 +40,8 @@ class Tuner extends StatefulWidget {
 
 class _TunerState extends State<Tuner> {
   late TunerBlock tunerBlock;
+
+  late AudioSystem _as;
 
   bool isRunning = false;
   bool gettingPitchInput = false;
@@ -73,7 +75,7 @@ class _TunerState extends State<Tuner> {
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) stopTuner();
     });
-    return TunerFunctions.start();
+    return TunerFunctions.start(_as);
   }
 
   Future<bool> stopTuner() async {
@@ -87,12 +89,14 @@ class _TunerState extends State<Tuner> {
     freqText.text = '';
     centOffsetText.text = '';
     isRunning = false;
-    return TunerFunctions.stop();
+    return TunerFunctions.stop(_as);
   }
 
   @override
   void initState() {
     super.initState();
+
+    _as = context.read<AudioSystem>();
 
     history = List.filled(historyLength, PitchOffset.withoutValue(), growable: true);
     pitchVisualizer = PitchVisualizer(history, gettingPitchInput);
@@ -125,7 +129,7 @@ class _TunerState extends State<Tuner> {
           return;
         }
         if (!isRunning) return;
-        onNewFrequency(await tunerGetFrequency());
+        onNewFrequency(await _as.tunerGetFrequency());
       });
 
       if (mounted) {
@@ -305,18 +309,28 @@ class _TunerState extends State<Tuner> {
     final freq = freqStats.median.toDouble();
     if (freq.abs() < 0.0001) return;
 
-    var concertPitch = tunerBlock.chamberNoteHz;
+    final concertPitch = tunerBlock.chamberNoteHz;
+    final midi = freqToMidi(freq, concertPitch);
 
-    var midi = freqToMidi(freq, concertPitch);
-    var centOffset = ((midi - midi.round()) * 100.0).round();
+    if (!tunerBlock.tunerType.isSupportedMidi(midi.round())) return deactivatePitch();
+
+    final centOffset = ((midi - midi.round()) * 100.0).round();
 
     setState(() {
       freqText.text = '${context.l10n.formatNumber(double.parse(freq.toStringAsFixed(1)))} Hz';
       midiText.text = midi.toString();
-      midiNameText.text = midiToName(midi.round());
+      midiNameText.text = tunerBlock.tunerType.toName(midi.round());
       centOffsetText.text = '$centOffset Cent';
       setPitchOffset(midi - midi.round());
       gettingPitchInput = true;
+      pitchVisualizer = PitchVisualizer(history, gettingPitchInput);
+    });
+  }
+
+  void deactivatePitch() {
+    setState(() {
+      gettingPitchInput = false;
+      setNoPitchOffset();
       pitchVisualizer = PitchVisualizer(history, gettingPitchInput);
     });
   }

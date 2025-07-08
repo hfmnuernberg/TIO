@@ -3,12 +3,13 @@ import 'dart:ui';
 
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:stats/stats.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/services/audio_system.dart';
 
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -26,6 +27,8 @@ class TunerIslandView extends StatefulWidget {
 class _TunerIslandViewState extends State<TunerIslandView> {
   Timer? _timerPollFreq;
   final _midiNameText = TextEditingController();
+
+  late AudioSystem _as;
 
   late double _pitchFactor = 0.5;
   late String _midiName = 'A';
@@ -45,7 +48,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) stopTuner();
     });
-    return TunerFunctions.start();
+    return TunerFunctions.start(_as);
   }
 
   Future<bool> stopTuner() async {
@@ -55,12 +58,14 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     _pitchFactor = 0.5;
     _freqHistory.fillRange(0, _freqHistory.length, 0);
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
-    return TunerFunctions.stop();
+    return TunerFunctions.stop(_as);
   }
 
   @override
   void initState() {
     super.initState();
+
+    _as = context.read<AudioSystem>();
 
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
 
@@ -70,7 +75,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
         return;
       }
       if (!_isRunning) return;
-      _onNewFrequency(await tunerGetFrequency());
+      _onNewFrequency(await _as.tunerGetFrequency());
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
