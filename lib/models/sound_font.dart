@@ -3,6 +3,7 @@ enum SoundFont {
   piano2('piano_02.sf2'),
   electricPiano1('electric_piano_01.sf2'),
   electricPiano2('electric_piano_02.sf2'),
+  electricPianoHold('electric_piano_hold.sf2', true),
   pipeOrgan('pipe_organ.sf2', true),
   harpsicord('harpsichord.sf2');
 

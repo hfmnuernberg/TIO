@@ -7,6 +7,7 @@ extension SoundFontExtension on SoundFont {
     SoundFont.piano2 => l10n.pianoInstrumentGrandPiano2,
     SoundFont.electricPiano1 => l10n.pianoInstrumentElectricPiano1,
     SoundFont.electricPiano2 => l10n.pianoInstrumentElectricPiano2,
+    SoundFont.electricPianoHold => l10n.pianoInstrumentElectricPianoHold,
     SoundFont.pipeOrgan => l10n.pianoInstrumentPipeOrgan,
     SoundFont.harpsicord => l10n.pianoInstrumentHarpsichord,
   };
