@@ -308,7 +308,7 @@ class _TunerState extends State<Tuner> {
     final concertPitch = tunerBlock.chamberNoteHz;
     final midi = freqToMidi(freq, concertPitch);
 
-    if (tunerBlock.tunerType.isSupportedMidi(midi.round())) return deactivatePitch();
+    if (!tunerBlock.tunerType.isSupportedMidi(midi.round())) return deactivatePitch();
 
     final centOffset = ((midi - midi.round()) * 100.0).round();
 
