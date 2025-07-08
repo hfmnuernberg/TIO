@@ -27,7 +27,7 @@ import '../../utils/project_utils.dart';
 import '../../utils/render_utils.dart';
 
 extension WidgetTesterTunerExtension on WidgetTester {
-  void expectTunerSelected(TunerType expected) {
+  void expectSelectedTuner(TunerType expected) {
     final selected = widget<ToggleButtons>(find.byType(ToggleButtons)).isSelected;
 
     for (int i = 0; i < selected.length; i++) {
@@ -84,7 +84,39 @@ void main() {
         await tester.ensureVisible(find.bySemanticsLabel('Instrument'));
         await tester.tapAndSettle(find.bySemanticsLabel('Instrument'));
 
-        tester.expectTunerSelected(TunerType.chromatic);
+        tester.expectSelectedTuner(TunerType.chromatic);
+      });
+
+      testWidgets('changes instrument on tap', (tester) async {
+        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+        await tester.createTunerToolInProject();
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Tuner 1'));
+        await tester.pumpAndSettle(const Duration(milliseconds: 1100));
+        await tester.ensureVisible(find.bySemanticsLabel('Instrument'));
+        await tester.tapAndSettle(find.bySemanticsLabel('Instrument'));
+
+        tester.expectSelectedTuner(TunerType.chromatic);
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Guitar'));
+
+        tester.expectSelectedTuner(TunerType.guitar);
+      });
+
+      testWidgets('resets instrument on reset button tap', (tester) async {
+        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
+        await tester.createTunerToolInProject();
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Tuner 1'));
+        await tester.pumpAndSettle(const Duration(milliseconds: 1100));
+        await tester.ensureVisible(find.bySemanticsLabel('Instrument'));
+        await tester.tapAndSettle(find.bySemanticsLabel('Instrument'));
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Guitar'));
+        tester.expectSelectedTuner(TunerType.guitar);
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Reset'));
+        tester.expectSelectedTuner(TunerType.chromatic);
       });
     });
   });
