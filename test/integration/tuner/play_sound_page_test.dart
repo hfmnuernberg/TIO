@@ -38,6 +38,13 @@ extension WidgetTesterTunerExtension on WidgetTester {
       }
     }
   }
+
+  Future<void> openTunerAndInstrumentOption() async {
+    await tapAndSettle(find.bySemanticsLabel('Tuner 1'));
+    await pumpAndSettle(const Duration(milliseconds: 1100));
+    await ensureVisible(find.bySemanticsLabel('Instrument'));
+    await tapAndSettle(find.bySemanticsLabel('Instrument'));
+  }
 }
 
 void main() {
@@ -79,10 +86,7 @@ void main() {
         await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
         await tester.createTunerToolInProject();
 
-        await tester.tapAndSettle(find.bySemanticsLabel('Tuner 1'));
-        await tester.pumpAndSettle(const Duration(milliseconds: 1100));
-        await tester.ensureVisible(find.bySemanticsLabel('Instrument'));
-        await tester.tapAndSettle(find.bySemanticsLabel('Instrument'));
+        await tester.openTunerAndInstrumentOption();
 
         tester.expectSelectedTuner(TunerType.chromatic);
       });
@@ -91,10 +95,7 @@ void main() {
         await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
         await tester.createTunerToolInProject();
 
-        await tester.tapAndSettle(find.bySemanticsLabel('Tuner 1'));
-        await tester.pumpAndSettle(const Duration(milliseconds: 1100));
-        await tester.ensureVisible(find.bySemanticsLabel('Instrument'));
-        await tester.tapAndSettle(find.bySemanticsLabel('Instrument'));
+        await tester.openTunerAndInstrumentOption();
 
         tester.expectSelectedTuner(TunerType.chromatic);
 
@@ -107,10 +108,7 @@ void main() {
         await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), providers);
         await tester.createTunerToolInProject();
 
-        await tester.tapAndSettle(find.bySemanticsLabel('Tuner 1'));
-        await tester.pumpAndSettle(const Duration(milliseconds: 1100));
-        await tester.ensureVisible(find.bySemanticsLabel('Instrument'));
-        await tester.tapAndSettle(find.bySemanticsLabel('Instrument'));
+        await tester.openTunerAndInstrumentOption();
 
         await tester.tapAndSettle(find.bySemanticsLabel('Guitar'));
         tester.expectSelectedTuner(TunerType.guitar);
