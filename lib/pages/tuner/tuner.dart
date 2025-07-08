@@ -9,6 +9,7 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
@@ -306,19 +307,38 @@ class _TunerState extends State<Tuner> {
     if (freq.abs() < 0.0001) return;
 
     var concertPitch = tunerBlock.chamberNoteHz;
-
     var midi = freqToMidi(freq, concertPitch);
+
+    if (tunerBlock.tunerType == TunerType.guitar && !isValidGuitarNote(midi.round())) {
+      return deactivateNonValidGuitarNotes();
+    }
+
     var centOffset = ((midi - midi.round()) * 100.0).round();
 
     setState(() {
       freqText.text = '${context.l10n.formatNumber(double.parse(freq.toStringAsFixed(1)))} Hz';
       midiText.text = midi.toString();
-      midiNameText.text = midiToName(midi.round());
+      midiNameText.text = tunerBlock.tunerType == TunerType.guitar
+          ? midiToNameAndOctave(midi.round())
+          : midiToName(midi.round());
       centOffsetText.text = '$centOffset Cent';
       setPitchOffset(midi - midi.round());
       gettingPitchInput = true;
       pitchVisualizer = PitchVisualizer(history, gettingPitchInput);
     });
+  }
+
+  void deactivateNonValidGuitarNotes() {
+    setState(() {
+      gettingPitchInput = false;
+      setNoPitchOffset();
+      pitchVisualizer = PitchVisualizer(history, gettingPitchInput);
+    });
+  }
+
+  bool isValidGuitarNote(int midi) {
+    const guitarMidis = [40, 45, 50, 55, 59, 64];
+    return guitarMidis.contains(midi);
   }
 
   void setPitchOffset(double pitchOffsetMidi) {
