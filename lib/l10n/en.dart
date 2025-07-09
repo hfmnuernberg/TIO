@@ -322,6 +322,7 @@ class English extends AppLocalizations {
   String get tunerTypeChromatic => 'Chromatic Tuner';
   String get tunerTypeElectricAndDoubleBass => 'Electric/Double bass';
   String get tunerTypeGuitar => 'Guitar';
+  String get tunerTypeUkulele => 'Ukulele in C';
 
   String formatDateAndTime(DateTime time) => DateFormat('dd/MM/yyyy - HH:mm:ss').format(time);
 }

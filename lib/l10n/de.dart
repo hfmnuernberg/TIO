@@ -325,6 +325,7 @@ class German extends AppLocalizations {
   String get tunerTypeChromatic => 'Chromatisches Stimmgerät';
   String get tunerTypeElectricAndDoubleBass => 'E-Bass/Kontrabass';
   String get tunerTypeGuitar => 'Gitarre';
+  String get tunerTypeUkulele => 'Ukulele in C';
 
   String formatDateAndTime(DateTime time) => DateFormat('dd.MM.yyyy - HH:mm:ss').format(time);
 }
