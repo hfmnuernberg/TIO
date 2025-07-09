@@ -10,9 +10,9 @@ import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -57,6 +57,7 @@ class AdvancedRhythmGroupEditor extends StatefulWidget {
 class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
   static final logger = createPrefixLogger('AdvancedRhythmGroupEditor');
 
+  late AudioSystem as;
   late FileSystem fs;
 
   late String noteKey;
@@ -81,10 +82,11 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
   void initState() {
     super.initState();
 
+    as = context.read<AudioSystem>();
     fs = context.read<FileSystem>();
 
     if (widget.isSecondMetronome) {
-      MetronomeUtils.loadMetro2SoundsIntoMetro1(fs, widget.metronomeBlock);
+      MetronomeUtils.loadMetro2SoundsIntoMetro1(as, fs, widget.metronomeBlock);
     }
 
     mainBeats.addAll(widget.currentMainBeats);
@@ -103,7 +105,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
       }
       if (!isPlaying) return;
 
-      final event = await metronomePollBeatEventHappened();
+      final event = await as.metronomePollBeatEventHappened();
       if (event != null) {
         onBeatHappened(event);
         setState(() {});
@@ -205,8 +207,8 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
   Future<void> startBeat() async {
     refreshRhythm();
 
-    await MetronomeFunctions.stop();
-    final success = await MetronomeFunctions.start();
+    await MetronomeFunctions.stop(as);
+    final success = await MetronomeFunctions.start(as);
     if (!success) {
       logger.e('Unable to start metronome.');
       return;
@@ -215,7 +217,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
   }
 
   Future<void> stopBeat() async {
-    await metronomeStop();
+    await as.metronomeStop();
     isPlaying = false;
   }
 
@@ -240,7 +242,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
   }
 
   void refreshRhythm() =>
-      metronomeSetRhythm(bars: getRhythmAsMetroBar([RhythmGroup('', mainBeats, polyBeats, noteKey)]), bars2: []);
+      as.metronomeSetRhythm(bars: getRhythmAsMetroBar([RhythmGroup('', mainBeats, polyBeats, noteKey)]), bars2: []);
 
   void selectIcon(String chosenNoteKey) {
     noteKey = chosenNoteKey;
@@ -265,7 +267,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
       group.beatLen = NoteHandler.getBeatLength(noteKey);
     }
 
-    MetronomeUtils.loadSounds(fs, widget.metronomeBlock);
+    MetronomeUtils.loadSounds(as, fs, widget.metronomeBlock);
 
     await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     if (!mounted) return;
@@ -286,7 +288,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
 
   void onCancel() {
     stopBeat();
-    MetronomeUtils.loadSounds(fs, widget.metronomeBlock);
+    MetronomeUtils.loadSounds(as, fs, widget.metronomeBlock);
     Navigator.pop(context);
   }
 
