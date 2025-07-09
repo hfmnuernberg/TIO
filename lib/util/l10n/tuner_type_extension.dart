@@ -5,5 +5,6 @@ extension TunerTypeLabel on TunerType {
   String getLabel(AppLocalizations l10n) => switch (this) {
     TunerType.chromatic => l10n.tunerTypeChromatic,
     TunerType.guitar => l10n.tunerTypeGuitar,
+    TunerType.electricAndDoubleBass => l10n.tunerTypeElectricAndDoubleBass,
   };
 }

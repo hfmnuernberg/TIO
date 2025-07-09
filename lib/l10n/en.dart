@@ -320,6 +320,7 @@ class English extends AppLocalizations {
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner.';
   String get tunerTypeChromatic => 'Chromatic Tuner';
+  String get tunerTypeElectricAndDoubleBass => 'Electric/Double bass';
   String get tunerTypeGuitar => 'Guitar';
 
   String formatDateAndTime(DateTime time) => DateFormat('dd/MM/yyyy - HH:mm:ss').format(time);

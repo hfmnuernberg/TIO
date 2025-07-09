@@ -4,7 +4,8 @@ const Set<int> emptySet = {};
 
 enum TunerType {
   chromatic(midiToName, emptySet),
-  guitar(midiToNameAndOctave, {40, 45, 50, 55, 59, 64});
+  guitar(midiToNameAndOctave, {40, 45, 50, 55, 59, 64}),
+  electricAndDoubleBass(midiToNameAndOctave, {28, 33, 38, 43});
 
   final Set<int> midis;
   final String Function(int midi) toName;

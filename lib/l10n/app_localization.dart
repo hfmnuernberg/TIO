@@ -286,6 +286,7 @@ abstract class AppLocalizations {
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
   String get tunerTypeChromatic;
+  String get tunerTypeElectricAndDoubleBass;
   String get tunerTypeGuitar;
 
   String formatNumber(double number) => NumberFormat.decimalPattern(locale).format(number);
