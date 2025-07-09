@@ -5,29 +5,34 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/tuner/sound_button.dart';
 
-class GuitarPlayReference extends StatelessWidget {
+class InstrumentPlayReference extends StatelessWidget {
+  final TunerType tunerType;
   final int? midi;
   final double frequency;
   final void Function(int midi) onToggle;
 
-  const GuitarPlayReference({super.key, required this.midi, required this.frequency, required this.onToggle});
+  const InstrumentPlayReference({
+    super.key,
+    required this.tunerType,
+    required this.midi,
+    required this.frequency,
+    required this.onToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          '${l10n.tunerFrequency}: ${l10n.formatNumber(double.parse(frequency.toStringAsFixed(1)))} Hz',
+          '${context.l10n.tunerFrequency}: ${context.l10n.formatNumber(double.parse(frequency.toStringAsFixed(1)))} Hz',
           style: const TextStyle(color: ColorTheme.primary),
         ),
         const SizedBox(height: 40),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children:
-              TunerType.guitar.midis
+              tunerType.midis
                   .toList()
                   .map(
                     (currentMidi) => SoundButton(

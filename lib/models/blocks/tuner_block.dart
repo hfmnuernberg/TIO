@@ -4,6 +4,7 @@ import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/l10n/tuner_type_extension.dart';
 import 'package:tiomusic/util/util_functions.dart';
 
 part 'tuner_block.g.dart';
@@ -79,7 +80,10 @@ class TunerBlock extends ProjectBlock {
 
   @override
   List<String> getSettingsFormatted(AppLocalizations l10n) {
-    return ['${l10n.formatNumber(double.parse(_chamberNoteHz.toStringAsFixed(1)))} Hz'];
+    return [
+      '${l10n.formatNumber(double.parse(_chamberNoteHz.toStringAsFixed(1)))} Hz',
+      '${l10n.tunerInstrument}: ${tunerType.getLabel(l10n)}',
+    ];
   }
 
   TunerBlock(

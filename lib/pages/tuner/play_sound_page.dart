@@ -12,7 +12,7 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
 import 'package:tiomusic/widgets/tuner/chromatic_play_reference.dart';
-import 'package:tiomusic/widgets/tuner/guitar_play_reference.dart';
+import 'package:tiomusic/widgets/tuner/instrument_play_reference.dart';
 
 class PlaySoundPage extends StatefulWidget {
   const PlaySoundPage({super.key});
@@ -96,15 +96,15 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
           foregroundColor: ColorTheme.primary,
         ),
         backgroundColor: ColorTheme.primary92,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (tunerBlock.tunerType == TunerType.chromatic)
-              ChromaticPlayReference(midi: midi, frequency: frequency, onToggle: handleToggle)
-            else
-              GuitarPlayReference(midi: midi, frequency: frequency, onToggle: handleToggle),
-          ],
-        ),
+        body:
+            tunerBlock.tunerType == TunerType.chromatic
+                ? ChromaticPlayReference(midi: midi, frequency: frequency, onToggle: handleToggle)
+                : InstrumentPlayReference(
+                  tunerType: tunerBlock.tunerType,
+                  midi: midi,
+                  frequency: frequency,
+                  onToggle: handleToggle,
+                ),
       ),
     );
   }

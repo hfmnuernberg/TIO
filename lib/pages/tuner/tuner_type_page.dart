@@ -54,7 +54,7 @@ class _TunerTypePageState extends State<TunerTypePage> {
   @override
   Widget build(BuildContext context) {
     return ParentSettingPage(
-      title: context.l10n.tunerTypeSelect,
+      title: context.l10n.tunerInstrument,
       confirm: handleConfirm,
       reset: handleReset,
       customWidget: Center(

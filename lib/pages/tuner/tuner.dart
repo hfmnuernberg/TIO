@@ -255,6 +255,16 @@ class _TunerState extends State<Tuner> {
       keySettingsList: keySettings,
       settingTiles: [
         SettingsTile(
+          title: l10n.tunerInstrument,
+          subtitle: tunerBlock.tunerType.getLabel(l10n),
+          leadingIcon: Icons.tune,
+          settingPage: const TunerTypePage(),
+          block: tunerBlock,
+          callOnReturn: (value) => setState(() {}),
+          callBeforeOpen: stopTuner,
+          inactive: isInStartUp,
+        ),
+        SettingsTile(
           title: l10n.tunerConcertPitch,
           subtitle: '${l10n.formatNumber(tunerBlock.chamberNoteHz)} Hz',
           leadingIcon: Icons.location_searching,
@@ -273,16 +283,6 @@ class _TunerState extends State<Tuner> {
           callBeforeOpen: () async {
             await stopTuner();
           },
-          inactive: isInStartUp,
-        ),
-        SettingsTile(
-          title: l10n.tunerTypeSelect,
-          subtitle: tunerBlock.tunerType.getLabel(l10n),
-          leadingIcon: Icons.tune,
-          settingPage: const TunerTypePage(),
-          block: tunerBlock,
-          callOnReturn: (value) => setState(() {}),
-          callBeforeOpen: stopTuner,
           inactive: isInStartUp,
         ),
       ],
