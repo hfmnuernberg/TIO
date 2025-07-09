@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/decorators/audio_system_log_decorator.dart';
@@ -38,11 +39,13 @@ class TestContext {
 
   late final List<SingleChildWidget> providers;
 
-  Future<void> init({bool dismissTutorials = true}) async {
+  Future<void> init({bool dismissTutorials = true, Project? project}) async {
     await inMemoryFileSystem.init();
     await mediaRepo.init();
 
-    var projectLibrary = projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults();
+    var projectLibrary = projectRepo.existsLibrary()
+        ? await projectRepo.loadLibrary()
+        : ProjectLibrary.withDefaults();
 
     if (dismissTutorials) projectLibrary.dismissAllTutorials();
 
@@ -57,6 +60,8 @@ class TestContext {
       Provider<ProjectRepository>(create: (_) => projectRepo),
       Provider<FileReferences>(create: (_) => fileReferences),
       ChangeNotifierProvider<ProjectLibrary>.value(value: projectLibrary),
+      if (project != null)
+        ChangeNotifierProvider<Project>.value(value: project),
     ];
   }
 }
