@@ -48,9 +48,7 @@ class TestContext {
     await inMemoryFileSystem.init();
     await mediaRepo.init();
 
-    var projectLibrary = projectRepo.existsLibrary()
-        ? await projectRepo.loadLibrary()
-        : ProjectLibrary.withDefaults();
+    var projectLibrary = projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults();
 
     if (dismissTutorials) projectLibrary.dismissAllTutorials();
 
@@ -66,8 +64,7 @@ class TestContext {
       Provider<FileReferences>(create: (_) => fileReferences),
       Provider<Archiver>(create: (_) => archiver),
       ChangeNotifierProvider<ProjectLibrary>.value(value: projectLibrary),
-      if (project != null)
-        ChangeNotifierProvider<Project>.value(value: project),
+      if (project != null) ChangeNotifierProvider<Project>.value(value: project),
     ];
   }
 }
