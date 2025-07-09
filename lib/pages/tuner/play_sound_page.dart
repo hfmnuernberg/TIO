@@ -101,7 +101,8 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
           TunerType.guitar ||
           TunerType.electricAndDoubleBass ||
           TunerType.ukulele ||
-          TunerType.violin => InstrumentPlayReference(
+          TunerType.violin ||
+          TunerType.viola => InstrumentPlayReference(
             tunerType: tunerBlock.tunerType,
             midi: midi,
             frequency: frequency,
