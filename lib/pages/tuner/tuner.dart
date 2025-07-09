@@ -276,7 +276,7 @@ class _TunerState extends State<Tuner> {
           inactive: isInStartUp,
         ),
         SettingsTile(
-          title: l10n.tunerTypeSelect,
+          title: l10n.tunerInstrument,
           subtitle: tunerBlock.tunerType.getLabel(l10n),
           leadingIcon: Icons.tune,
           settingPage: const TunerTypePage(),
