@@ -325,7 +325,7 @@ class German extends AppLocalizations {
   String get tunerTypeChromatic => 'Chromatisches Stimmgerät';
   String get tunerTypeElectricAndDoubleBass => 'E-Bass/Kontrabass';
   String get tunerTypeGuitar => 'Gitarre';
-  String get tunerTypeUkulele => 'Ukulele in C';
+  String get tunerTypeUkulele => 'Ukulele';
   String get tunerTypeViola => 'Viola';
   String get tunerTypeViolin => 'Violine';
 

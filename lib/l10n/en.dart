@@ -322,7 +322,7 @@ class English extends AppLocalizations {
   String get tunerTypeChromatic => 'Chromatic Tuner';
   String get tunerTypeElectricAndDoubleBass => 'Electric/Double bass';
   String get tunerTypeGuitar => 'Guitar';
-  String get tunerTypeUkulele => 'Ukulele in C';
+  String get tunerTypeUkulele => 'Ukulele';
   String get tunerTypeViola => 'Viola';
   String get tunerTypeViolin => 'Violin';
 
