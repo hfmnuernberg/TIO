@@ -6,7 +6,8 @@ enum TunerType {
   chromatic(midiToName, emptySet),
   guitar(midiToNameAndOctave, {40, 45, 50, 55, 59, 64}),
   electricAndDoubleBass(midiToNameAndOctave, {28, 33, 38, 43}),
-  ukulele(midiToNameAndOctave, {67, 60, 64, 69});
+  ukulele(midiToNameAndOctave, {67, 60, 64, 69}),
+  violin(midiToNameAndOctave, {55, 62, 69, 76});
 
   final Set<int> midis;
   final String Function(int midi) toName;

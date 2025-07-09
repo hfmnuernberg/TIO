@@ -29,4 +29,5 @@ const _$TunerTypeEnumMap = {
   TunerType.guitar: 'guitar',
   TunerType.electricAndDoubleBass: 'electricAndDoubleBass',
   TunerType.ukulele: 'ukulele',
+  TunerType.violin: 'violin',
 };

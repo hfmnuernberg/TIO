@@ -7,5 +7,6 @@ extension TunerTypeLabel on TunerType {
     TunerType.guitar => l10n.tunerTypeGuitar,
     TunerType.electricAndDoubleBass => l10n.tunerTypeElectricAndDoubleBass,
     TunerType.ukulele => l10n.tunerTypeUkulele,
+    TunerType.violin => l10n.tunerTypeViolin,
   };
 }
