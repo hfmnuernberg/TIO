@@ -8,6 +8,7 @@ import 'package:tiomusic/app.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/metronome_sound.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/util/l10n/metronome_sound_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
@@ -25,7 +26,6 @@ import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
 import 'package:tiomusic/pages/parent_tool/volume.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -56,6 +56,7 @@ class Metronome extends StatefulWidget {
 }
 
 class _MetronomeState extends State<Metronome> with RouteAware {
+  late AudioSystem as;
   late FileSystem fs;
   late ProjectRepository projectRepo;
 
@@ -91,6 +92,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   void initState() {
     super.initState();
 
+    as = context.read<AudioSystem>();
     fs = context.read<FileSystem>();
     projectRepo = context.read<ProjectRepository>();
 
@@ -102,12 +104,12 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-    metronomeSetVolume(volume: metronomeBlock.volume);
-    metronomeSetBpm(bpm: metronomeBlock.bpm.toDouble());
-    metronomeSetBeatMuteChance(muteChance: metronomeBlock.randomMute.toDouble() / 100.0);
+    as.metronomeSetVolume(volume: metronomeBlock.volume);
+    as.metronomeSetBpm(bpm: metronomeBlock.bpm.toDouble());
+    as.metronomeSetBeatMuteChance(muteChance: metronomeBlock.randomMute.toDouble() / 100.0);
 
     _muteMetronome(!sound);
-    MetronomeUtils.loadSounds(fs, metronomeBlock);
+    MetronomeUtils.loadSounds(as, fs, metronomeBlock);
 
     beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
       t,
@@ -118,7 +120,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       }
       if (!isStarted) return;
 
-      var event = await metronomePollBeatEventHappened();
+      var event = await as.metronomePollBeatEventHappened();
       if (event != null) {
         _onBeatHappened(event);
         if (!mounted) return;
@@ -347,7 +349,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     metronomeBlock.resetSecondaryMetronome();
 
     _handleUpdateRhythm();
-    MetronomeUtils.loadSounds(fs, metronomeBlock);
+    MetronomeUtils.loadSounds(as, fs, metronomeBlock);
   }
 
   void _onToggleButtonClicked() async {
@@ -373,8 +375,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       if (event.type == AudioInterruptionType.unknown) _stopMetronome();
     });
 
-    await MetronomeFunctions.stop();
-    final success = await MetronomeFunctions.start();
+    await MetronomeFunctions.stop(as);
+    final success = await MetronomeFunctions.start(as);
     if (!success) {
       logger.e('Unable to start metronome.');
       return;
@@ -384,12 +386,12 @@ class _MetronomeState extends State<Metronome> with RouteAware {
 
   Future<void> _stopMetronome() async {
     await audioInterruptionListener?.cancel();
-    bool success = await metronomeStop();
+    bool success = await as.metronomeStop();
     if (!success) logger.e('Unable to stop metronome.');
     isStarted = false;
   }
 
-  void _muteMetronome(bool isMute) => metronomeSetMuted(muted: isMute);
+  void _muteMetronome(bool isMute) => as.metronomeSetMuted(muted: isMute);
 
   void _onBeatHappened(BeatHappenedEvent event) {
     if (event.isRandomMute) return;
@@ -531,12 +533,12 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
             initialValue: metronomeBlock.volume,
-            onChange: (vol) => metronomeSetVolume(volume: vol),
+            onChange: (vol) => as.metronomeSetVolume(volume: vol),
             onConfirm: (vol) {
               metronomeBlock.volume = vol;
-              metronomeSetVolume(volume: vol);
+              as.metronomeSetVolume(volume: vol);
             },
-            onCancel: () => metronomeSetVolume(volume: metronomeBlock.volume),
+            onCancel: () => as.metronomeSetVolume(volume: metronomeBlock.volume),
           ),
           block: metronomeBlock,
           callOnReturn: (value) => setState(() {}),
@@ -584,7 +586,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
     );
   }
 
-  Future<void> _syncMetronomeSound() => metronomeSetRhythm(
+  Future<void> _syncMetronomeSound() => as.metronomeSetRhythm(
     bars: getRhythmAsMetroBar(metronomeBlock.rhythmGroups),
     bars2: getRhythmAsMetroBar(metronomeBlock.rhythmGroups2),
   );

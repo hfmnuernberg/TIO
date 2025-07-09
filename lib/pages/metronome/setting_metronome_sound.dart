@@ -1,5 +1,3 @@
-// Setting page for metronome sounds
-
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -8,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/metronome_sound.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/util/l10n/metronome_sound_extension.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
@@ -30,56 +29,58 @@ class SetMetronomeSound extends StatefulWidget {
 }
 
 class _SetMetronomeSoundState extends State<SetMetronomeSound> {
-  late FileSystem _fs;
+  late AudioSystem as;
+  late FileSystem fs;
 
-  late MetronomeBlock _metronomeBlock;
+  late MetronomeBlock metronomeBlock;
 
-  final List<bool> _selectedAccSound = List<bool>.filled(MetronomeSound.values.length, false);
-  final List<bool> _selectedUnaccSound = List<bool>.filled(MetronomeSound.values.length, false);
-  final List<bool> _selectedPolyAccSound = List<bool>.filled(MetronomeSound.values.length, false);
-  final List<bool> _selectedPolyUnaccSound = List<bool>.filled(MetronomeSound.values.length, false);
+  final List<bool> selectedAccSound = List<bool>.filled(MetronomeSound.values.length, false);
+  final List<bool> selectedUnaccSound = List<bool>.filled(MetronomeSound.values.length, false);
+  final List<bool> selectedPolyAccSound = List<bool>.filled(MetronomeSound.values.length, false);
+  final List<bool> selectedPolyUnaccSound = List<bool>.filled(MetronomeSound.values.length, false);
 
   @override
   void initState() {
     super.initState();
 
-    _fs = context.read<FileSystem>();
+    as = context.read<AudioSystem>();
+    fs = context.read<FileSystem>();
 
-    _metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
+    metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
 
     if (widget.forSecondMetronome) {
-      _selectedAccSound[max(MetronomeSound.values.indexOf(MetronomeSound.fromFilename(_metronomeBlock.accSound2)), 0)] =
+      selectedAccSound[max(MetronomeSound.values.indexOf(MetronomeSound.fromFilename(metronomeBlock.accSound2)), 0)] =
           true;
-      _selectedUnaccSound[max(
-            MetronomeSound.values.indexOf(MetronomeSound.fromFilename(_metronomeBlock.unaccSound2)),
+      selectedUnaccSound[max(
+            MetronomeSound.values.indexOf(MetronomeSound.fromFilename(metronomeBlock.unaccSound2)),
             0,
           )] =
           true;
-      _selectedPolyAccSound[max(
-            MetronomeSound.values.indexOf(MetronomeSound.fromFilename(_metronomeBlock.polyAccSound2)),
+      selectedPolyAccSound[max(
+            MetronomeSound.values.indexOf(MetronomeSound.fromFilename(metronomeBlock.polyAccSound2)),
             0,
           )] =
           true;
-      _selectedPolyUnaccSound[max(
-            MetronomeSound.values.indexOf(MetronomeSound.fromFilename(_metronomeBlock.polyUnaccSound2)),
+      selectedPolyUnaccSound[max(
+            MetronomeSound.values.indexOf(MetronomeSound.fromFilename(metronomeBlock.polyUnaccSound2)),
             0,
           )] =
           true;
     } else {
-      _selectedAccSound[max(MetronomeSound.values.indexOf(MetronomeSound.fromFilename(_metronomeBlock.accSound)), 0)] =
+      selectedAccSound[max(MetronomeSound.values.indexOf(MetronomeSound.fromFilename(metronomeBlock.accSound)), 0)] =
           true;
-      _selectedUnaccSound[max(
-            MetronomeSound.values.indexOf(MetronomeSound.fromFilename(_metronomeBlock.unaccSound)),
+      selectedUnaccSound[max(
+            MetronomeSound.values.indexOf(MetronomeSound.fromFilename(metronomeBlock.unaccSound)),
             0,
           )] =
           true;
-      _selectedPolyAccSound[max(
-            MetronomeSound.values.indexOf(MetronomeSound.fromFilename(_metronomeBlock.polyAccSound)),
+      selectedPolyAccSound[max(
+            MetronomeSound.values.indexOf(MetronomeSound.fromFilename(metronomeBlock.polyAccSound)),
             0,
           )] =
           true;
-      _selectedPolyUnaccSound[max(
-            MetronomeSound.values.indexOf(MetronomeSound.fromFilename(_metronomeBlock.polyUnaccSound)),
+      selectedPolyUnaccSound[max(
+            MetronomeSound.values.indexOf(MetronomeSound.fromFilename(metronomeBlock.polyUnaccSound)),
             0,
           )] =
           true;
@@ -87,18 +88,18 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
   }
 
   // Play the sound if the corresponding field is tapped
-  void _playSound(SoundType soundType) async {
+  void playSound(SoundType soundType) async {
     AudioPlayer player = AudioPlayer();
 
     String getFilename(int sound) => MetronomeSound.values[sound].filename;
 
     String filepath = switch (soundType) {
-      SoundType.accented => '${MetronomeSound.fromFilename(getFilename(_selectedAccSound.indexOf(true))).file}_a.wav',
-      SoundType.unaccented => '${MetronomeSound.fromFilename(getFilename(_selectedUnaccSound.indexOf(true))).file}.wav',
+      SoundType.accented => '${MetronomeSound.fromFilename(getFilename(selectedAccSound.indexOf(true))).file}_a.wav',
+      SoundType.unaccented => '${MetronomeSound.fromFilename(getFilename(selectedUnaccSound.indexOf(true))).file}.wav',
       SoundType.polyAccented =>
-        '${MetronomeSound.fromFilename(getFilename(_selectedPolyAccSound.indexOf(true))).file}_a.wav',
+        '${MetronomeSound.fromFilename(getFilename(selectedPolyAccSound.indexOf(true))).file}_a.wav',
       SoundType.polyUnaccented =>
-        '${MetronomeSound.fromFilename(getFilename(_selectedPolyUnaccSound.indexOf(true))).file}.wav',
+        '${MetronomeSound.fromFilename(getFilename(selectedPolyUnaccSound.indexOf(true))).file}.wav',
     };
 
     // not sure if the volume parameter has effect here
@@ -111,9 +112,9 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
 
     return ParentSettingPage(
       title: widget.forSecondMetronome ? l10n.metronomeSetSoundsSecondary : l10n.metronomeSetSoundsPrimary,
-      confirm: _onConfirm,
-      reset: _reset,
-      cancel: _onCancel,
+      confirm: handleConfirm,
+      reset: handleReset,
+      cancel: handleCancel,
       mustBeScrollable: true,
       customWidget: Padding(
         padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
@@ -124,8 +125,8 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
               children: <Widget>[
                 Text(l10n.metronomeBeatMain, style: TextStyle(color: ColorTheme.primary)),
                 const SizedBox(width: TIOMusicParams.edgeInset),
-                _buildToggleTable(l10n.metronomeAccented, _selectedAccSound, SoundType.accented),
-                _buildToggleTable(l10n.metronomeUnaccented, _selectedUnaccSound, SoundType.unaccented),
+                buildToggleTable(l10n.metronomeAccented, selectedAccSound, SoundType.accented),
+                buildToggleTable(l10n.metronomeUnaccented, selectedUnaccSound, SoundType.unaccented),
               ],
             ),
             const SizedBox(height: TIOMusicParams.edgeInset),
@@ -134,8 +135,8 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
               children: <Widget>[
                 Text(l10n.metronomeBeatPoly, style: TextStyle(color: ColorTheme.primary)),
                 const SizedBox(width: TIOMusicParams.edgeInset),
-                _buildToggleTable(l10n.metronomeAccented, _selectedPolyAccSound, SoundType.polyAccented),
-                _buildToggleTable(l10n.metronomeUnaccented, _selectedPolyUnaccSound, SoundType.polyUnaccented),
+                buildToggleTable(l10n.metronomeAccented, selectedPolyAccSound, SoundType.polyAccented),
+                buildToggleTable(l10n.metronomeUnaccented, selectedPolyUnaccSound, SoundType.polyUnaccented),
               ],
             ),
           ],
@@ -144,7 +145,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
     );
   }
 
-  Widget _buildToggleTable(String titel, List<bool> selectedSound, SoundType soundType) {
+  Widget buildToggleTable(String titel, List<bool> selectedSound, SoundType soundType) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -159,10 +160,10 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
               }
 
               if (!widget.running) {
-                _playSound(soundType);
+                playSound(soundType);
               } else {
                 String file = MetronomeSound.values[index].file;
-                MetronomeUtils.loadSound(_fs, widget.forSecondMetronome, soundType, file);
+                MetronomeUtils.loadSound(as, fs, widget.forSecondMetronome, soundType, file);
               }
             });
           },
@@ -181,80 +182,86 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
     );
   }
 
-  Future<void> _onConfirm() async {
+  Future<void> handleConfirm() async {
     if (widget.forSecondMetronome) {
-      _metronomeBlock.accSound2 = MetronomeSound.values[_selectedAccSound.indexOf(true)].filename;
-      _metronomeBlock.unaccSound2 = MetronomeSound.values[_selectedUnaccSound.indexOf(true)].filename;
-      _metronomeBlock.polyAccSound2 = MetronomeSound.values[_selectedPolyAccSound.indexOf(true)].filename;
-      _metronomeBlock.polyUnaccSound2 = MetronomeSound.values[_selectedPolyUnaccSound.indexOf(true)].filename;
+      metronomeBlock.accSound2 = MetronomeSound.values[selectedAccSound.indexOf(true)].filename;
+      metronomeBlock.unaccSound2 = MetronomeSound.values[selectedUnaccSound.indexOf(true)].filename;
+      metronomeBlock.polyAccSound2 = MetronomeSound.values[selectedPolyAccSound.indexOf(true)].filename;
+      metronomeBlock.polyUnaccSound2 = MetronomeSound.values[selectedPolyUnaccSound.indexOf(true)].filename;
     } else {
-      _metronomeBlock.accSound = MetronomeSound.values[_selectedAccSound.indexOf(true)].filename;
-      _metronomeBlock.unaccSound = MetronomeSound.values[_selectedUnaccSound.indexOf(true)].filename;
-      _metronomeBlock.polyAccSound = MetronomeSound.values[_selectedPolyAccSound.indexOf(true)].filename;
-      _metronomeBlock.polyUnaccSound = MetronomeSound.values[_selectedPolyUnaccSound.indexOf(true)].filename;
+      metronomeBlock.accSound = MetronomeSound.values[selectedAccSound.indexOf(true)].filename;
+      metronomeBlock.unaccSound = MetronomeSound.values[selectedUnaccSound.indexOf(true)].filename;
+      metronomeBlock.polyAccSound = MetronomeSound.values[selectedPolyAccSound.indexOf(true)].filename;
+      metronomeBlock.polyUnaccSound = MetronomeSound.values[selectedPolyUnaccSound.indexOf(true)].filename;
     }
 
     await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-    MetronomeUtils.loadSounds(_fs, _metronomeBlock);
+    MetronomeUtils.loadSounds(as, fs, metronomeBlock);
 
     if (!mounted) return;
     Navigator.pop(context);
   }
 
-  void _reset() {
-    _selectedAccSound.fillRange(0, MetronomeSound.values.length, false);
-    _selectedUnaccSound.fillRange(0, MetronomeSound.values.length, false);
-    _selectedPolyAccSound.fillRange(0, MetronomeSound.values.length, false);
-    _selectedPolyUnaccSound.fillRange(0, MetronomeSound.values.length, false);
+  void handleReset() {
+    selectedAccSound.fillRange(0, MetronomeSound.values.length, false);
+    selectedUnaccSound.fillRange(0, MetronomeSound.values.length, false);
+    selectedPolyAccSound.fillRange(0, MetronomeSound.values.length, false);
+    selectedPolyUnaccSound.fillRange(0, MetronomeSound.values.length, false);
 
     if (widget.forSecondMetronome) {
-      _selectedAccSound[max(MetronomeSound.values.indexOf(MetronomeSound.fromFilename(defaultMetronomeAccSound2)), 0)] =
+      selectedAccSound[max(MetronomeSound.values.indexOf(MetronomeSound.fromFilename(defaultMetronomeAccSound2)), 0)] =
           true;
-      _selectedUnaccSound[max(
+      selectedUnaccSound[max(
             MetronomeSound.values.indexOf(MetronomeSound.fromFilename(defaultMetronomeUnaccSound2)),
             0,
           )] =
           true;
-      _selectedPolyAccSound[max(
+      selectedPolyAccSound[max(
             MetronomeSound.values.indexOf(MetronomeSound.fromFilename(defaultMetronomePolyAccSound2)),
             0,
           )] =
           true;
-      _selectedPolyUnaccSound[max(
+      selectedPolyUnaccSound[max(
             MetronomeSound.values.indexOf(MetronomeSound.fromFilename(defaultMetronomePolyUnaccSound2)),
             0,
           )] =
           true;
     } else {
-      _selectedAccSound[max(MetronomeSound.values.indexOf(MetronomeSound.fromFilename(defaultMetronomeAccSound)), 0)] =
+      selectedAccSound[max(MetronomeSound.values.indexOf(MetronomeSound.fromFilename(defaultMetronomeAccSound)), 0)] =
           true;
-      _selectedUnaccSound[max(
+      selectedUnaccSound[max(
             MetronomeSound.values.indexOf(MetronomeSound.fromFilename(defaultMetronomeUnaccSound)),
             0,
           )] =
           true;
-      _selectedPolyAccSound[max(
+      selectedPolyAccSound[max(
             MetronomeSound.values.indexOf(MetronomeSound.fromFilename(defaultMetronomePolyAccSound)),
             0,
           )] =
           true;
-      _selectedPolyUnaccSound[max(
+      selectedPolyUnaccSound[max(
             MetronomeSound.values.indexOf(MetronomeSound.fromFilename(defaultMetronomePolyUnaccSound)),
             0,
           )] =
           true;
     }
 
-    MetronomeUtils.loadSound(_fs, widget.forSecondMetronome, SoundType.accented, defaultMetronomeAccSound);
-    MetronomeUtils.loadSound(_fs, widget.forSecondMetronome, SoundType.unaccented, defaultMetronomeUnaccSound);
-    MetronomeUtils.loadSound(_fs, widget.forSecondMetronome, SoundType.polyAccented, defaultMetronomePolyAccSound);
-    MetronomeUtils.loadSound(_fs, widget.forSecondMetronome, SoundType.polyUnaccented, defaultMetronomePolyUnaccSound);
+    MetronomeUtils.loadSound(as, fs, widget.forSecondMetronome, SoundType.accented, defaultMetronomeAccSound);
+    MetronomeUtils.loadSound(as, fs, widget.forSecondMetronome, SoundType.unaccented, defaultMetronomeUnaccSound);
+    MetronomeUtils.loadSound(as, fs, widget.forSecondMetronome, SoundType.polyAccented, defaultMetronomePolyAccSound);
+    MetronomeUtils.loadSound(
+      as,
+      fs,
+      widget.forSecondMetronome,
+      SoundType.polyUnaccented,
+      defaultMetronomePolyUnaccSound,
+    );
 
     setState(() {});
   }
 
-  void _onCancel() {
-    MetronomeUtils.loadSounds(_fs, _metronomeBlock);
+  void handleCancel() {
+    MetronomeUtils.loadSounds(as, fs, metronomeBlock);
     Navigator.pop(context);
   }
 }

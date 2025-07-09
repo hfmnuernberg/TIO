@@ -9,8 +9,8 @@ import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/metronome/metronome_functions.dart';
 import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -30,17 +30,18 @@ class MetronomeIslandView extends StatefulWidget {
 }
 
 class _MetronomeIslandViewState extends State<MetronomeIslandView> {
-  static final _logger = createPrefixLogger('MetronomeIslandView');
+  static final logger = createPrefixLogger('MetronomeIslandView');
 
-  late FileSystem _fs;
+  late AudioSystem as;
+  late FileSystem fs;
 
-  bool _isStarted = false;
-  late Timer _beatDetection;
+  bool isStarted = false;
+  late Timer beatDetection;
 
   CurrentBeat currentPrimaryBeat = CurrentBeat();
   CurrentBeat currentSecondaryBeat = CurrentBeat();
 
-  bool _processingButtonClick = false;
+  bool processingButtonClick = false;
 
   StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
 
@@ -48,27 +49,28 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
   void initState() {
     super.initState();
 
-    _fs = context.read<FileSystem>();
+    as = context.read<AudioSystem>();
+    fs = context.read<FileSystem>();
 
-    metronomeSetVolume(volume: widget.metronomeBlock.volume);
-    metronomeSetRhythm(
+    as.metronomeSetVolume(volume: widget.metronomeBlock.volume);
+    as.metronomeSetRhythm(
       bars: getRhythmAsMetroBar(widget.metronomeBlock.rhythmGroups),
       bars2: getRhythmAsMetroBar(widget.metronomeBlock.rhythmGroups2),
     );
-    metronomeSetBpm(bpm: widget.metronomeBlock.bpm.toDouble());
-    metronomeSetBeatMuteChance(muteChance: widget.metronomeBlock.randomMute.toDouble() / 100.0);
-    metronomeSetMuted(muted: false);
+    as.metronomeSetBpm(bpm: widget.metronomeBlock.bpm.toDouble());
+    as.metronomeSetBeatMuteChance(muteChance: widget.metronomeBlock.randomMute.toDouble() / 100.0);
+    as.metronomeSetMuted(muted: false);
 
-    MetronomeUtils.loadSounds(_fs, widget.metronomeBlock);
+    MetronomeUtils.loadSounds(as, fs, widget.metronomeBlock);
 
-    _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (t) {
+    beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (t) {
       if (!mounted) {
         t.cancel();
         return;
       }
-      if (!_isStarted) return;
+      if (!isStarted) return;
 
-      metronomePollBeatEventHappened().then((event) {
+      as.metronomePollBeatEventHappened().then((event) {
         if (event != null) onBeatHappened(event);
       });
       if (!mounted) return;
@@ -79,7 +81,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
   @override
   void deactivate() {
     stopMetronome();
-    _beatDetection.cancel();
+    beatDetection.cancel();
     super.deactivate();
   }
 
@@ -102,35 +104,35 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
   }
 
   void onMetronomeToggleButtonClicked() async {
-    if (_processingButtonClick) return;
-    setState(() => _processingButtonClick = true);
+    if (processingButtonClick) return;
+    setState(() => processingButtonClick = true);
 
-    if (_isStarted) {
+    if (isStarted) {
       await stopMetronome();
     } else {
       await startMetronome();
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
-    setState(() => _processingButtonClick = false);
+    setState(() => processingButtonClick = false);
   }
 
   Future<void> startMetronome() async {
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) stopMetronome();
     });
-    final success = await MetronomeFunctions.start();
+    final success = await MetronomeFunctions.start(as);
     if (!success) {
-      _logger.e('Unable to start metronome.');
+      logger.e('Unable to start metronome.');
       return;
     }
-    _isStarted = true;
+    isStarted = true;
   }
 
   Future<void> stopMetronome() async {
     await audioInterruptionListener?.cancel();
-    await MetronomeFunctions.stop();
-    _isStarted = false;
+    await MetronomeFunctions.stop(as);
+    isStarted = false;
   }
 
   @override
@@ -138,7 +140,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
     return ParentInnerIsland(
       onMainIconPressed: onMetronomeToggleButtonClicked,
       mainIcon:
-          _isStarted ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.metronomeBlock.icon,
+          isStarted ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.metronomeBlock.icon,
       parameterText: '${widget.metronomeBlock.bpm} ${context.l10n.commonBpm}',
       centerView: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
