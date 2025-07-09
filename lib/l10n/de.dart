@@ -323,7 +323,8 @@ class German extends AppLocalizations {
   String get tunerTutorialAdjust => 'Tippe hier, um den Kammerton anzupassen oder einen Referenzton abzuspielen.';
   String get tunerTutorialStartStop => 'Tippe hier, um das Stimmgerät zu starten und zu stoppen.';
   String get tunerTypeChromatic => 'Chromatisches Stimmgerät';
-  String get tunerTypeElectricAndDoubleBass => 'E-Bass/Kontrabass';
+  String get tunerTypeDoubleBass => 'Kontrabass';
+  String get tunerTypeElectricBass => 'E-Bass';
   String get tunerTypeGuitar => 'Gitarre';
   String get tunerTypeUkulele => 'Ukulele';
   String get tunerTypeViola => 'Viola';

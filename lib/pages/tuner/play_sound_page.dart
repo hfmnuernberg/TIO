@@ -96,19 +96,15 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
           foregroundColor: ColorTheme.primary,
         ),
         backgroundColor: ColorTheme.primary92,
-        body: switch (tunerBlock.tunerType) {
-          TunerType.chromatic => ChromaticPlayReference(midi: midi, frequency: frequency, onToggle: handleToggle),
-          TunerType.guitar ||
-          TunerType.electricAndDoubleBass ||
-          TunerType.ukulele ||
-          TunerType.violin ||
-          TunerType.viola => InstrumentPlayReference(
-            tunerType: tunerBlock.tunerType,
-            midi: midi,
-            frequency: frequency,
-            onToggle: handleToggle,
-          ),
-        },
+        body:
+            tunerBlock.tunerType == TunerType.chromatic
+                ? ChromaticPlayReference(midi: midi, frequency: frequency, onToggle: handleToggle)
+                : InstrumentPlayReference(
+                  tunerType: tunerBlock.tunerType,
+                  midi: midi,
+                  frequency: frequency,
+                  onToggle: handleToggle,
+                ),
       ),
     );
   }

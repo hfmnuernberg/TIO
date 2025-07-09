@@ -286,7 +286,8 @@ abstract class AppLocalizations {
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
   String get tunerTypeChromatic;
-  String get tunerTypeElectricAndDoubleBass;
+  String get tunerTypeDoubleBass;
+  String get tunerTypeElectricBass;
   String get tunerTypeGuitar;
   String get tunerTypeUkulele;
   String get tunerTypeViola;

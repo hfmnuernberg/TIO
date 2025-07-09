@@ -27,7 +27,8 @@ Map<String, dynamic> _$TunerBlockToJson(TunerBlock instance) => <String, dynamic
 const _$TunerTypeEnumMap = {
   TunerType.chromatic: 'chromatic',
   TunerType.guitar: 'guitar',
-  TunerType.electricAndDoubleBass: 'electricAndDoubleBass',
+  TunerType.electricBass: 'electricBass',
+  TunerType.doubleBass: 'doubleBass',
   TunerType.ukulele: 'ukulele',
   TunerType.violin: 'violin',
   TunerType.viola: 'viola',
