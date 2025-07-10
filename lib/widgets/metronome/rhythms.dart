@@ -8,15 +8,15 @@ import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/metronome_beat.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/widgets/metronome/current_beat.dart';
 import 'package:tiomusic/widgets/metronome/group/groups.dart';
 import 'package:tiomusic/widgets/metronome/simple_rhythm_group_editor.dart';
 
 class Rhythms extends StatefulWidget {
   final bool isSimpleModeOn;
-  final CurrentBeat currentPrimaryBeat;
-  final CurrentBeat currentSecondaryBeat;
+  final MetronomeBeat currentPrimaryBeat;
+  final MetronomeBeat currentSecondaryBeat;
   final void Function() onUpdate;
   final void Function(bool isSecondary, int rhythmGroupIndex) onEditRhythmGroup;
   final void Function(bool isSecondary) onAddRhythmGroup;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
@@ -13,7 +12,6 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/image/image_page.dart';
 import 'package:tiomusic/pages/media_player/media_player.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
@@ -21,23 +19,10 @@ import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/text/text.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/services/file_references.dart';
-import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/directional_page_route.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
-
-// ---------------------------------------------------------------
-// copy an asset to a temporary file
-
-Future<String> copyAssetToTemp(FileSystem fs, String assetPath) async {
-  final tempAssetPath = '${fs.tmpFolderPath}/${assetPath.split('/').last}';
-  final byteData = await rootBundle.load(assetPath);
-  final bytes = byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
-  await fs.saveFileAsBytes(tempAssetPath, bytes);
-  return tempAssetPath;
-}
 
 // ---------------------------------------------------------------
 // format the settings into Text that can be displayed
@@ -358,7 +343,7 @@ Future<dynamic> goToTool(
 
     builder: (context, child) {
       if (block is TunerBlock) return const Tuner(isQuickTool: false);
-      if (block is MetronomeBlock) return const Metronome(isQuickTool: false);
+      if (block is MetronomeBlock) return const MetronomePage(isQuickTool: false);
       if (block is MediaPlayerBlock) return const MediaPlayer(isQuickTool: false);
       if (block is ImageBlock) return const ImageTool(isQuickTool: false);
       if (block is PianoBlock) return Piano(isQuickTool: false, withoutInitAndStart: pianoAlreadyOn);
@@ -519,18 +504,6 @@ bool checkIslandPossible(Project? project, ProjectBlock toolBlock) {
     }
   }
   return false;
-}
-
-// convert the RhythmGroup class into the MetroBar class, that is used in Rust
-List<MetroBar> getRhythmAsMetroBar(List<RhythmGroup> rhythm) {
-  return List<MetroBar>.generate(rhythm.length, (index) {
-    return MetroBar(
-      id: 0,
-      beats: rhythm[index].beats,
-      polyBeats: rhythm[index].polyBeats,
-      beatLen: rhythm[index].beatLen,
-    );
-  });
 }
 
 enum IncreaseOrDecrease { increase, decrease }

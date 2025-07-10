@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -8,14 +7,10 @@ import 'package:tiomusic/app.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/metronome_sound.dart';
-import 'package:tiomusic/services/audio_system.dart';
-import 'package:tiomusic/util/l10n/metronome_sound_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/metronome/advanced_rhythm_group_editor.dart';
-import 'package:tiomusic/pages/metronome/metronome_functions.dart';
-import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/metronome/setting_bpm.dart';
 import 'package:tiomusic/pages/metronome/setting_metronome_sound.dart';
 import 'package:tiomusic/pages/metronome/setting_random_mute.dart';
@@ -24,58 +19,49 @@ import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
 import 'package:tiomusic/pages/parent_tool/volume.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/log.dart';
+import 'package:tiomusic/util/l10n/metronome_sound_extension.dart';
+import 'package:tiomusic/util/metronome.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/confirm_dialog.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/metronome/color_painter.dart';
-import 'package:tiomusic/widgets/metronome/current_beat.dart';
 import 'package:tiomusic/widgets/metronome/rhythms.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:volume_controller/volume_controller.dart';
 
-int calcMsUntilNextFlashOn(int eventDelayInMs, int avgRenderTimeInMs) => eventDelayInMs + avgRenderTimeInMs;
-
-int calcMsUntilNextFlashOff(int msUntilNextFlashOn) => msUntilNextFlashOn + MetronomeParams.flashDurationInMs;
-
-class Metronome extends StatefulWidget {
+class MetronomePage extends StatefulWidget {
   final bool isQuickTool;
 
-  const Metronome({super.key, required this.isQuickTool});
+  const MetronomePage({super.key, required this.isQuickTool});
 
   @override
-  State<Metronome> createState() => _MetronomeState();
+  State<MetronomePage> createState() => _MetronomePageState();
 }
 
-class _MetronomeState extends State<Metronome> with RouteAware {
-  late AudioSystem as;
-  late FileSystem fs;
-  late ProjectRepository projectRepo;
+class _MetronomePageState extends State<MetronomePage> with RouteAware {
+  late final ProjectRepository projectRepo;
 
+  late final Metronome metronome;
+
+  int lastBeat = DateTime.now().millisecondsSinceEpoch;
   int lastStateChange = DateTime.now().millisecondsSinceEpoch;
   final List<int> lastRenderTimes = List.empty(growable: true);
-  int _avgRenderTimeInMs = 0;
+  int avgRenderTimeInMs = 0;
 
   late bool isSimpleModeOn;
 
-  bool isStarted = false;
-  bool sound = true;
   bool blink = MetronomeParams.defaultVisualMetronome;
   bool isFlashOn = false;
   VolumeLevel deviceVolumeLevel = VolumeLevel.normal;
 
-  CurrentBeat currentPrimaryBeat = CurrentBeat();
-  CurrentBeat currentSecondaryBeat = CurrentBeat();
-
-  late Timer beatDetection;
   late MetronomeBlock metronomeBlock;
 
   bool processingButtonClick = false;
@@ -86,58 +72,49 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   final GlobalKey keySimpleMode = GlobalKey();
   final GlobalKey keyAdvancedMode = GlobalKey();
 
-  StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
-
   @override
   void initState() {
     super.initState();
 
-    as = context.read<AudioSystem>();
-    fs = context.read<FileSystem>();
-    projectRepo = context.read<ProjectRepository>();
-
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     VolumeController.instance.addListener(handleVolumeChange);
+
+    projectRepo = context.read<ProjectRepository>();
 
     metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
     metronomeBlock.timeLastModified = getCurrentDateTime();
     isSimpleModeOn = metronomeBlock.isSimpleModeSupported;
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
-    as.metronomeSetVolume(volume: metronomeBlock.volume);
-    as.metronomeSetBpm(bpm: metronomeBlock.bpm.toDouble());
-    as.metronomeSetBeatMuteChance(muteChance: metronomeBlock.randomMute.toDouble() / 100.0);
-
-    _muteMetronome(!sound);
-    MetronomeUtils.loadSounds(as, fs, metronomeBlock);
-
-    beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
-      t,
-    ) async {
-      if (!mounted) {
-        t.cancel();
-        return;
-      }
-      if (!isStarted) return;
-
-      var event = await as.metronomePollBeatEventHappened();
-      if (event != null) {
-        _onBeatHappened(event);
-        if (!mounted) return;
-        setState(() {});
-      }
-    });
+    metronome = Metronome(context.read<AudioSystem>(), context.read<FileSystem>(), handleRefresh);
+    metronome.setVolume(metronomeBlock.volume);
+    metronome.setBpm(metronomeBlock.bpm);
+    metronome.setChanceOfMuteBeat(metronomeBlock.randomMute);
+    metronome.sounds.loadAllSounds(metronomeBlock);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!context.read<ProjectLibrary>().showMetronomeTutorial && !context.read<ProjectLibrary>().showToolTutorial) {
         showModeTutorial();
       }
 
-      await _syncMetronomeSound();
+      await syncMetronomeSound();
     });
   }
 
-  void _toggleSimpleMode() {
+  @override
+  void deactivate() {
+    stopMetronome();
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    VolumeController.instance.removeListener();
+    routeObserver.unsubscribe(this);
+    stopMetronome();
+    super.dispose();
+  }
+
+  void toggleSimpleMode() {
     isSimpleModeOn = !isSimpleModeOn;
 
     showModeTutorial();
@@ -168,7 +145,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       if (!shouldReset) return;
     }
 
-    _toggleSimpleMode();
+    toggleSimpleMode();
   }
 
   void handleVolumeChange(double newVolume) {
@@ -255,26 +232,12 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   }
 
   @override
-  void deactivate() {
-    _stopMetronome();
-    beatDetection.cancel();
-    super.deactivate();
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final ModalRoute? route = ModalRoute.of(context);
     if (route is PageRoute) {
       routeObserver.subscribe(this, route);
     }
-  }
-
-  @override
-  void dispose() {
-    VolumeController.instance.removeListener();
-    routeObserver.unsubscribe(this);
-    super.dispose();
   }
 
   @override
@@ -286,11 +249,11 @@ class _MetronomeState extends State<Metronome> with RouteAware {
   void _handleUpdateRhythm() async {
     setState(() {});
     if (mounted) await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-    await _syncMetronomeSound();
+    await syncMetronomeSound();
   }
 
   Future<void> _handleEditRhythmGroup(bool isSecondary, int index) async {
-    if (isStarted) await _stopMetronome();
+    if (metronome.isOn) await stopMetronome();
     if (!mounted) return;
 
     final rhythmGroups = isSecondary ? metronomeBlock.rhythmGroups2 : metronomeBlock.rhythmGroups;
@@ -311,13 +274,13 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         if (editingConfirmed != true) return;
         setState(() {});
         if (mounted) await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-        await _syncMetronomeSound();
+        await syncMetronomeSound();
       },
     );
   }
 
   void _handleAddRhythmGroup(bool isSecondary) async {
-    if (isStarted) await _stopMetronome();
+    if (metronome.isOn) await stopMetronome();
     if (!mounted) return;
 
     openSettingPage(
@@ -336,95 +299,61 @@ class _MetronomeState extends State<Metronome> with RouteAware {
         if (addingConfirmed != true) return;
         setState(() {});
         if (mounted) await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-        await _syncMetronomeSound();
+        await syncMetronomeSound();
       },
     );
   }
 
   void _clearAllRhythms() async {
-    if (isStarted) await _stopMetronome();
+    if (metronome.isOn) await stopMetronome();
 
     metronomeBlock.resetPrimaryMetronome();
     metronomeBlock.rhythmGroups[0].keyID = MetronomeParams.getNewKeyID();
     metronomeBlock.resetSecondaryMetronome();
 
     _handleUpdateRhythm();
-    MetronomeUtils.loadSounds(as, fs, metronomeBlock);
+    metronome.sounds.loadAllSounds(metronomeBlock);
   }
 
   void _onToggleButtonClicked() async {
     if (processingButtonClick) return;
     setState(() => processingButtonClick = true);
 
-    if (isStarted) {
-      await _stopMetronome();
+    if (metronome.isOn) {
+      await stopMetronome();
     } else {
-      await _startMetronome();
+      await startMetronome();
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     setState(() => processingButtonClick = false);
   }
 
-  Future<void> _startMetronome() async {
-    if (sound && [VolumeLevel.muted, VolumeLevel.low].contains(deviceVolumeLevel)) {
+  Future<void> startMetronome() async {
+    if (!metronome.isMute && [VolumeLevel.muted, VolumeLevel.low].contains(deviceVolumeLevel)) {
       showSnackbar(context: context, message: getVolumeInfoText(deviceVolumeLevel, context.l10n))();
     }
-
-    audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
-      if (event.type == AudioInterruptionType.unknown) _stopMetronome();
-    });
-
-    await MetronomeFunctions.stop(as);
-    final success = await MetronomeFunctions.start(as);
-    if (!success) {
-      logger.e('Unable to start metronome.');
-      return;
-    }
-    isStarted = true;
+    await metronome.restart();
   }
 
-  Future<void> _stopMetronome() async {
-    await audioInterruptionListener?.cancel();
-    bool success = await as.metronomeStop();
-    if (!success) logger.e('Unable to stop metronome.');
-    isStarted = false;
+  Future<void> stopMetronome() async {
+    await metronome.stop();
+    isFlashOn = false; // TODO: 1
   }
 
-  void _muteMetronome(bool isMute) => as.metronomeSetMuted(muted: isMute);
-
-  void _onBeatHappened(BeatHappenedEvent event) {
-    if (event.isRandomMute) return;
-
-    final msUntilNextFlashOn = calcMsUntilNextFlashOn(event.millisecondsBeforeStart, _avgRenderTimeInMs);
-    final msUntilNextFlashOff = calcMsUntilNextFlashOff(msUntilNextFlashOn);
-
-    Timer(Duration(milliseconds: msUntilNextFlashOn), () {
-      if (!mounted) return;
-      lastStateChange = DateTime.now().millisecondsSinceEpoch;
-      isFlashOn = true;
-      currentPrimaryBeat = MetronomeUtils.getCurrentPrimaryBeatFromEvent(isOn: true, event: event);
-      currentSecondaryBeat = MetronomeUtils.getCurrentSecondaryBeatFromEvent(isOn: true, event: event);
-      setState(() {});
-
-      WidgetsBinding.instance.addPostFrameCallback(_updateAvgRenderTime);
-    });
-
-    Timer(Duration(milliseconds: msUntilNextFlashOff), () {
-      if (!mounted) return;
-      isFlashOn = false;
-      currentPrimaryBeat = MetronomeUtils.getCurrentPrimaryBeatFromEvent(isOn: false, event: event);
-      currentSecondaryBeat = MetronomeUtils.getCurrentSecondaryBeatFromEvent(isOn: false, event: event);
-      setState(() {});
-    });
+  Future<void> handleRefresh() async {
+    if (!mounted) return metronome.stop();
+    setState(() {});
   }
 
-  void _updateAvgRenderTime(Duration timeStamp) {
+  void updateAvgRenderTime(Duration timeStamp) {
     final renderTime = DateTime.now().millisecondsSinceEpoch - lastStateChange;
     lastRenderTimes.add(renderTime);
-    if (lastRenderTimes.length > 5) lastRenderTimes.removeAt(0);
-    _avgRenderTimeInMs = lastRenderTimes.reduce((a, b) => a + b) ~/ lastRenderTimes.length;
+    if (lastRenderTimes.length > 20) lastRenderTimes.removeAt(0);
+    avgRenderTimeInMs = lastRenderTimes.reduce((a, b) => a + b) ~/ lastRenderTimes.length;
   }
+
+  Future<void> syncMetronomeSound() => metronome.setRhythm(metronomeBlock.rhythmGroups, metronomeBlock.rhythmGroups2);
 
   @override
   Widget build(BuildContext context) {
@@ -462,9 +391,21 @@ class _MetronomeState extends State<Metronome> with RouteAware {
       heightForCenterModule: metronomeBlock.rhythmGroups2.isNotEmpty ? 400 : null,
       centerModule: Stack(
         children: <Widget>[
-          Visibility(
-            visible: blink && isFlashOn,
-            child: CustomPaint(size: MediaQuery.of(context).size, painter: ColorPainter(color: ColorTheme.surfaceTint)),
+          Row(
+            children: [
+              CustomPaint(
+                size: MediaQuery.of(context).size / 2,
+                painter: ColorPainter(
+                  color: metronome.isOn && blink && isFlashOn ? ColorTheme.tertiary : Colors.transparent,
+                ),
+              ),
+              CustomPaint(
+                size: MediaQuery.of(context).size / 2,
+                painter: ColorPainter(
+                  color: metronome.isOn && blink && !isFlashOn ? ColorTheme.tertiary : Colors.transparent,
+                ),
+              ),
+            ],
           ),
           Center(
             child: Column(
@@ -472,8 +413,8 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                 Rhythms(
                   key: isSimpleModeOn ? keySimpleMode : keyAdvancedMode,
                   isSimpleModeOn: isSimpleModeOn,
-                  currentPrimaryBeat: currentPrimaryBeat,
-                  currentSecondaryBeat: currentSecondaryBeat,
+                  currentPrimaryBeat: metronome.currentBeat,
+                  currentSecondaryBeat: metronome.currentSecondaryBeat,
                   onUpdate: _handleUpdateRhythm,
                   onEditRhythmGroup: _handleEditRhythmGroup,
                   onAddRhythmGroup: _handleAddRhythmGroup,
@@ -499,19 +440,16 @@ class _MetronomeState extends State<Metronome> with RouteAware {
                       ),
                       OnOffButton(
                         key: keyStartStop,
-                        isActive: isStarted,
+                        isActive: metronome.isOn,
                         onTap: _onToggleButtonClicked,
                         iconOff: MetronomeParams.svgIconPath,
                         iconOn: TIOMusicParams.pauseIcon,
                         buttonSize: TIOMusicParams.sizeBigButtons,
                       ),
                       OnOffButton(
-                        isActive: sound,
+                        isActive: !metronome.isMute,
                         onTap: () {
-                          setState(() {
-                            sound = !sound;
-                            _muteMetronome(!sound);
-                          });
+                          setState(() => metronome.isMute ? metronome.unmute() : metronome.mute());
                         },
                         iconOff: Icons.volume_off_outlined,
                         iconOn: Icons.volume_up_outlined,
@@ -533,12 +471,12 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
             initialValue: metronomeBlock.volume,
-            onChange: (vol) => as.metronomeSetVolume(volume: vol),
+            onChange: (vol) => metronome.setVolume(vol),
             onConfirm: (vol) {
               metronomeBlock.volume = vol;
-              as.metronomeSetVolume(volume: vol);
+              metronome.setVolume(vol);
             },
-            onCancel: () => as.metronomeSetVolume(volume: metronomeBlock.volume),
+            onCancel: () => metronome.setVolume(metronomeBlock.volume),
           ),
           block: metronomeBlock,
           callOnReturn: (value) => setState(() {}),
@@ -558,7 +496,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           subtitle:
               '${l10n.metronomeSoundMain}: ${MetronomeSound.fromFilename(metronomeBlock.accSound).getLabel(l10n)}, ${MetronomeSound.fromFilename(metronomeBlock.unaccSound).getLabel(l10n)}\n${l10n.metronomeSoundPolyShort}: ${MetronomeSound.fromFilename(metronomeBlock.polyAccSound).getLabel(l10n)}, ${MetronomeSound.fromFilename(metronomeBlock.polyUnaccSound).getLabel(l10n)}',
           leadingIcon: Icons.library_music_outlined,
-          settingPage: SetMetronomeSound(running: sound && isStarted),
+          settingPage: SetMetronomeSound(running: metronome.isOn && !metronome.isMute),
           block: metronomeBlock,
           callOnReturn: (value) => setState(() {}),
         ),
@@ -570,7 +508,7 @@ class _MetronomeState extends State<Metronome> with RouteAware {
             subtitle:
                 '${l10n.metronomeSoundMain}: ${MetronomeSound.fromFilename(metronomeBlock.accSound2).getLabel(l10n)}, ${MetronomeSound.fromFilename(metronomeBlock.unaccSound2).getLabel(l10n)}\n${l10n.metronomeSoundPolyShort}: ${MetronomeSound.fromFilename(metronomeBlock.polyAccSound2).getLabel(l10n)}, ${MetronomeSound.fromFilename(metronomeBlock.polyUnaccSound2).getLabel(l10n)}',
             leadingIcon: Icons.library_music_outlined,
-            settingPage: SetMetronomeSound(running: sound && isStarted, forSecondMetronome: true),
+            settingPage: SetMetronomeSound(running: metronome.isOn && !metronome.isMute, forSecondMetronome: true),
             block: metronomeBlock,
             callOnReturn: (value) => setState(() {}),
           ),
@@ -578,16 +516,11 @@ class _MetronomeState extends State<Metronome> with RouteAware {
           title: l10n.metronomeRandomMute,
           subtitle: '${metronomeBlock.randomMute}%',
           leadingIcon: Icons.question_mark,
-          settingPage: const SetRandomMute(),
+          settingPage: Provider<Metronome>(create: (_) => metronome, child: const SetRandomMute()),
           block: metronomeBlock,
           callOnReturn: (value) => setState(() {}),
         ),
       ],
     );
   }
-
-  Future<void> _syncMetronomeSound() => as.metronomeSetRhythm(
-    bars: getRhythmAsMetroBar(metronomeBlock.rhythmGroups),
-    bars2: getRhythmAsMetroBar(metronomeBlock.rhythmGroups2),
-  );
 }
