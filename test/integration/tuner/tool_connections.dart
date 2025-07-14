@@ -77,6 +77,19 @@ void main() {
 
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome 1')), findsOneWidget);
       });
+
+      testWidgets('connects selected tool to tuner', (tester) async {
+        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+        await tester.createTunerToolInProject();
+        await tester.tapAndSettle(find.byTooltip('Add new tool'));
+        await tester.createMediaPlayerToolInProject();
+
+        await tester.openTunerAndSettle();
+        await tester.openConnectionDialog();
+        await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+
+        expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
+      });
     });
 
     group('connection to new / not existing tools', () {
