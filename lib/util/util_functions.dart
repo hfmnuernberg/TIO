@@ -464,41 +464,6 @@ void saveToolInNewProject(
 enum ReturnAction { goToNewTool, showTutorial }
 
 // ---------------------------------------------------------------
-// our modal bottom sheet
-
-Future<dynamic> ourModalBottomSheet(
-  BuildContext context,
-  String label,
-  List<Widget> titleChildren,
-  List<Widget> contentChildren,
-) {
-  return showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) {
-      return Semantics(
-        label: label,
-        child: FractionallySizedBox(
-          heightFactor: 0.75,
-          child: Column(
-            children: [
-              DecoratedBox(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-                  color: ColorTheme.surface,
-                ),
-                child: Column(children: [const SizedBox(height: 20), Column(children: titleChildren)]),
-              ),
-              Expanded(child: ColoredBox(color: ColorTheme.primary80, child: Column(children: contentChildren))),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
-
-// ---------------------------------------------------------------
 // Circle Icon for displaying the tool icons all with the same color
 
 Widget circleToolIcon(Widget icon) {

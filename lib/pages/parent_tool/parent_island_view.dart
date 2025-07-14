@@ -13,6 +13,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/media_player_island_view.dart';
 import 'package:tiomusic/pages/metronome/metronome_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/empty_island.dart';
+import 'package:tiomusic/pages/parent_tool/modal_bottom_sheet.dart';
 import 'package:tiomusic/pages/tuner/tuner_island_view.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -144,63 +145,70 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
   void _chooseToolForIsland() {
     final label = context.l10n.toolConnectAnother;
-    ourModalBottomSheet(
-      context,
-      label,
-      [
-        CardListTile(
-          title: widget.project!.title,
-          subtitle: context.l10n.formatDateAndTime(widget.project!.timeLastModified),
-          trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
-          leadingPicture:
-              widget.project!.thumbnailPath.isEmpty
-                  ? const AssetImage(TIOMusicParams.tiomusicIconPath)
-                  : FileImage(File(_fs.toAbsoluteFilePath(widget.project!.thumbnailPath))),
-          onTapFunction: () {},
-        ),
-      ],
-      [
-        Padding(
-          padding: const EdgeInsets.only(top: 16, left: 32),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(label, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder:
+          (context) => ModalBottomSheet(
+            label: label,
+            titleChildren: [
+              CardListTile(
+                title: widget.project!.title,
+                subtitle: context.l10n.formatDateAndTime(widget.project!.timeLastModified),
+                trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
+                leadingPicture:
+                    widget.project!.thumbnailPath.isEmpty
+                        ? const AssetImage(TIOMusicParams.tiomusicIconPath)
+                        : FileImage(File(_fs.toAbsoluteFilePath(widget.project!.thumbnailPath))),
+                onTapFunction: () {},
+              ),
+            ],
+            contentChildren: [
+              Padding(
+                padding: const EdgeInsets.only(top: 16, left: 32),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(label, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: widget.project!.blocks.length,
+                    itemBuilder: (context, index) {
+                      if (widget.project!.blocks.length < 2) {
+                        return Card(child: Text(context.l10n.toolNoOtherToolAvailable));
+                      } else {
+                        // don't show tools of the same type that you are currently in and
+                        // don't show the tool that is currently open
+                        if (widget.project!.blocks[index].kind == widget.toolBlock.kind) {
+                          return const SizedBox();
+                          // only allow Tuner, Metronome and Media Player to be used as islands for now
+                        } else if (widget.project!.blocks[index].kind == 'tuner' ||
+                            widget.project!.blocks[index].kind == 'metronome' ||
+                            widget.project!.blocks[index].kind == 'media_player') {
+                          return CardListTile(
+                            title: widget.project!.blocks[index].title,
+                            subtitle: formatSettingValues(
+                              widget.project!.blocks[index].getSettingsFormatted(context.l10n),
+                            ),
+                            trailingIcon: IconButton(onPressed: () => _onToolTap(index), icon: const SizedBox()),
+                            leadingPicture: circleToolIcon(widget.project!.blocks[index].icon),
+                            onTapFunction: () => _onToolTap(index),
+                          );
+                        } else {
+                          return const SizedBox();
+                        }
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: widget.project!.blocks.length,
-              itemBuilder: (context, index) {
-                if (widget.project!.blocks.length < 2) {
-                  return Card(child: Text(context.l10n.toolNoOtherToolAvailable));
-                } else {
-                  // don't show tools of the same type that you are currently in and
-                  // don't show the tool that is currently open
-                  if (widget.project!.blocks[index].kind == widget.toolBlock.kind) {
-                    return const SizedBox();
-                    // only allow Tuner, Metronome and Media Player to be used as islands for now
-                  } else if (widget.project!.blocks[index].kind == 'tuner' ||
-                      widget.project!.blocks[index].kind == 'metronome' ||
-                      widget.project!.blocks[index].kind == 'media_player') {
-                    return CardListTile(
-                      title: widget.project!.blocks[index].title,
-                      subtitle: formatSettingValues(widget.project!.blocks[index].getSettingsFormatted(context.l10n)),
-                      trailingIcon: IconButton(onPressed: () => _onToolTap(index), icon: const SizedBox()),
-                      leadingPicture: circleToolIcon(widget.project!.blocks[index].icon),
-                      onTapFunction: () => _onToolTap(index),
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
-                }
-              },
-            ),
-          ),
-        ),
-      ],
     ).then((_) => setState(() {}));
   }
 

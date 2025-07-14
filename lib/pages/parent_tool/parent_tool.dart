@@ -8,6 +8,7 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/pages/parent_tool/modal_bottom_sheet.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -300,86 +301,92 @@ class _ParentToolState extends State<ParentTool> {
     final l10n = context.l10n;
     final label = widget.isQuickTool ? l10n.toolSave : l10n.toolSaveCopy;
 
-    ourModalBottomSheet(
-      context,
-      label,
-      [
-        CardListTile(
-          title: widget.barTitle,
-          subtitle: formatSettingValues(widget.toolBlock.getSettingsFormatted(context.l10n)),
-          trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
-          leadingPicture: circleToolIcon(widget.toolBlock.icon),
-          onTapFunction: () {},
-        ),
-      ],
-      [
-        Padding(
-          padding: const EdgeInsets.only(top: 16, left: 32),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(label, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
-          ),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: projectLibrary.projects.length,
-              itemBuilder: (context, index) {
-                return StatefulBuilder(
-                  builder: (context, setTileState) {
-                    return CardListTile(
-                      title: projectLibrary.projects[index].title,
-                      subtitle: l10n.formatDateAndTime(projectLibrary.projects[index].timeLastModified),
-                      highlightColor: _highlightColorOnSave,
-                      trailingIcon: IconButton(
-                        onPressed: () {
-                          _onSaveInProjectTap(setTileState, index, widget.toolBlock);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder:
+          (context) => ModalBottomSheet(
+            label: label,
+            titleChildren: [
+              CardListTile(
+                title: widget.barTitle,
+                subtitle: formatSettingValues(widget.toolBlock.getSettingsFormatted(context.l10n)),
+                trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
+                leadingPicture: circleToolIcon(widget.toolBlock.icon),
+                onTapFunction: () {},
+              ),
+            ],
+            contentChildren: [
+              Padding(
+                padding: const EdgeInsets.only(top: 16, left: 32),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(label, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: projectLibrary.projects.length,
+                    itemBuilder: (context, index) {
+                      return StatefulBuilder(
+                        builder: (context, setTileState) {
+                          return CardListTile(
+                            title: projectLibrary.projects[index].title,
+                            subtitle: l10n.formatDateAndTime(projectLibrary.projects[index].timeLastModified),
+                            highlightColor: _highlightColorOnSave,
+                            trailingIcon: IconButton(
+                              onPressed: () {
+                                _onSaveInProjectTap(setTileState, index, widget.toolBlock);
+                              },
+                              icon: _bookmarkIcon,
+                              color: ColorTheme.surfaceTint,
+                            ),
+                            leadingPicture:
+                                projectLibrary.projects[index].thumbnailPath.isEmpty
+                                    ? const AssetImage(TIOMusicParams.tiomusicIconPath)
+                                    : FileImage(
+                                      File(_fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath)),
+                                    ),
+                            onTapFunction: () {
+                              _onSaveInProjectTap(setTileState, index, widget.toolBlock);
+                            },
+                          );
                         },
-                        icon: _bookmarkIcon,
-                        color: ColorTheme.surfaceTint,
-                      ),
-                      leadingPicture:
-                          projectLibrary.projects[index].thumbnailPath.isEmpty
-                              ? const AssetImage(TIOMusicParams.tiomusicIconPath)
-                              : FileImage(File(_fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath))),
-                      onTapFunction: () {
-                        _onSaveInProjectTap(setTileState, index, widget.toolBlock);
-                      },
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ),
-        TIOFlatButton(
-          // creating a new project to save the tool in it
-          onPressed: () async {
-            final newTitles = await editTwoTitles(
-              context,
-              l10n.formatDateAndTime(DateTime.now()),
-              '${widget.toolBlock.title} - ${l10n.toolTitleCopy}',
-            );
-            if (newTitles == null || newTitles.isEmpty) {
-              if (mounted) {
-                // close the bottom up sheet
-                Navigator.of(context).pop();
-              }
-              return;
-            }
-            if (mounted) {
-              // close the bottom up sheet
-              Navigator.of(context).pop();
+                      );
+                    },
+                  ),
+                ),
+              ),
+              TIOFlatButton(
+                // creating a new project to save the tool in it
+                onPressed: () async {
+                  final newTitles = await editTwoTitles(
+                    context,
+                    l10n.formatDateAndTime(DateTime.now()),
+                    '${widget.toolBlock.title} - ${l10n.toolTitleCopy}',
+                  );
+                  if (newTitles == null || newTitles.isEmpty) {
+                    if (mounted) {
+                      // close the bottom up sheet
+                      Navigator.of(context).pop();
+                    }
+                    return;
+                  }
+                  if (mounted) {
+                    // close the bottom up sheet
+                    Navigator.of(context).pop();
 
-              saveToolInNewProject(context, widget.toolBlock, widget.isQuickTool, newTitles[0], newTitles[1]);
-            }
-          },
-          text: l10n.toolSaveInNewProject,
-        ),
-        const SizedBox(height: 16),
-      ],
+                    saveToolInNewProject(context, widget.toolBlock, widget.isQuickTool, newTitles[0], newTitles[1]);
+                  }
+                },
+                text: l10n.toolSaveInNewProject,
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
     );
   }
 
