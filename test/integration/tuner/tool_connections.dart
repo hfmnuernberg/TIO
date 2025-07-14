@@ -92,7 +92,7 @@ void main() {
       });
     });
 
-    group('connection to new / not existing tools', () {
+    group('connection to new/not-existing tools', () {
       testWidgets('shows media-player tools', (tester) async {
         await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
         await tester.createTunerToolInProject();
