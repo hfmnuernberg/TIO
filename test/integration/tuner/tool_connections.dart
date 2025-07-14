@@ -83,6 +83,26 @@ void main() {
 
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Media Player')), findsOneWidget);
       });
+
+      testWidgets('shows metronome tools', (tester) async {
+        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+        await tester.createTunerToolInProject();
+
+        await tester.openTunerAndSettle();
+        await tester.tapAndSettle(find.byTooltip('Connect another tool'));
+
+        expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome')), findsOneWidget);
+      });
+
+      testWidgets('does not show tuner tools because tool is tuner itself', (tester) async {
+        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+        await tester.createTunerToolInProject();
+
+        await tester.openTunerAndSettle();
+        await tester.tapAndSettle(find.byTooltip('Connect another tool'));
+
+        expect(tester.withinConnectionDialog(find.bySemanticsLabel('Tuner')), findsNothing);
+      });
     });
   });
 }
