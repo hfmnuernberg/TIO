@@ -15,6 +15,11 @@ final connectionDialog = find.byWidgetPredicate(
 );
 
 extension WidgetTesterTunerExtension on WidgetTester {
+  Future<void> openTunerAndSettle() async {
+    await tapAndSettle(find.bySemanticsLabel('Tuner 1'));
+    await pumpAndSettle(const Duration(milliseconds: 1100));
+  }
+
   Finder withinConnectionDialog(FinderBase<Element> matching) =>
       find.descendant(of: connectionDialog, matching: matching);
 }
@@ -37,22 +42,9 @@ void main() {
       await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
       await tester.createTunerToolInProject();
 
-      await tester.tapAndSettle(find.bySemanticsLabel('Tuner 1'));
-      await tester.pumpAndSettle(const Duration(milliseconds: 1100));
+      await tester.openTunerAndSettle();
 
       expect(find.byTooltip('Connect another tool'), findsOneWidget);
-    });
-
-    testWidgets('shows connection bottom sheet when connection button pressed', (tester) async {
-      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-      await tester.createTunerToolInProject();
-
-      await tester.tapAndSettle(find.bySemanticsLabel('Tuner 1'));
-      await tester.pumpAndSettle(const Duration(milliseconds: 1100));
-
-      await tester.tapAndSettle(find.byTooltip('Connect another tool'));
-
-      expect(connectionDialog, findsOneWidget);
     });
 
     group('connection to existing tools', () {
@@ -62,8 +54,7 @@ void main() {
         await tester.tapAndSettle(find.byTooltip('Add new tool'));
         await tester.createMediaPlayerToolInProject();
 
-        await tester.tapAndSettle(find.bySemanticsLabel('Tuner 1'));
-        await tester.pumpAndSettle(const Duration(milliseconds: 1100));
+        await tester.openTunerAndSettle();
         await tester.tapAndSettle(find.byTooltip('Connect another tool'));
 
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Media Player 1')), findsOneWidget);
@@ -75,8 +66,7 @@ void main() {
         await tester.tapAndSettle(find.byTooltip('Add new tool'));
         await tester.createMetronomeToolInProject();
 
-        await tester.tapAndSettle(find.bySemanticsLabel('Tuner 1'));
-        await tester.pumpAndSettle(const Duration(milliseconds: 1100));
+        await tester.openTunerAndSettle();
         await tester.tapAndSettle(find.byTooltip('Connect another tool'));
 
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome 1')), findsOneWidget);
