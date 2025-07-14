@@ -144,7 +144,9 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   }
 
   void _chooseToolForIsland() {
-    final label = context.l10n.toolConnectAnother;
+    final l10n = context.l10n;
+    final label = l10n.toolConnectAnother;
+    final connectableTools = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
 
     showModalBottomSheet(
       context: context,
@@ -155,7 +157,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
             titleChildren: [
               CardListTile(
                 title: widget.project!.title,
-                subtitle: context.l10n.formatDateAndTime(widget.project!.timeLastModified),
+                subtitle: l10n.formatDateAndTime(widget.project!.timeLastModified),
                 trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
                 leadingPicture:
                     widget.project!.thumbnailPath.isEmpty
@@ -175,35 +177,62 @@ class _ParentIslandViewState extends State<ParentIslandView> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: widget.project!.blocks.length,
-                    itemBuilder: (context, index) {
-                      if (widget.project!.blocks.length < 2) {
-                        return Card(child: Text(context.l10n.toolNoOtherToolAvailable));
-                      } else {
-                        // don't show tools of the same type that you are currently in and
-                        // don't show the tool that is currently open
-                        if (widget.project!.blocks[index].kind == widget.toolBlock.kind) {
-                          return const SizedBox();
-                          // only allow Tuner, Metronome and Media Player to be used as islands for now
-                        } else if (widget.project!.blocks[index].kind == 'tuner' ||
-                            widget.project!.blocks[index].kind == 'metronome' ||
-                            widget.project!.blocks[index].kind == 'media_player') {
-                          return CardListTile(
-                            title: widget.project!.blocks[index].title,
-                            subtitle: formatSettingValues(
-                              widget.project!.blocks[index].getSettingsFormatted(context.l10n),
-                            ),
-                            trailingIcon: IconButton(onPressed: () => _onToolTap(index), icon: const SizedBox()),
-                            leadingPicture: circleToolIcon(widget.project!.blocks[index].icon),
-                            onTapFunction: () => _onToolTap(index),
-                          );
-                        } else {
-                          return const SizedBox();
-                        }
-                      }
-                    },
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: widget.project!.blocks.length,
+                          itemBuilder: (context, index) {
+                            // don't show tools of the same type that you are currently in and
+                            // don't show the tool that is currently open
+                            if (widget.project!.blocks[index].kind == widget.toolBlock.kind) {
+                              return const SizedBox();
+                              // only allow Tuner, Metronome and Media Player to be used as islands for now
+                            } else if (widget.project!.blocks[index].kind == 'tuner' ||
+                                widget.project!.blocks[index].kind == 'metronome' ||
+                                widget.project!.blocks[index].kind == 'media_player') {
+                              return CardListTile(
+                                title: widget.project!.blocks[index].title,
+                                subtitle: formatSettingValues(
+                                  widget.project!.blocks[index].getSettingsFormatted(context.l10n),
+                                ),
+                                trailingIcon: IconButton(onPressed: () => _onToolTap(index), icon: const SizedBox()),
+                                leadingPicture: circleToolIcon(widget.project!.blocks[index].icon),
+                                onTapFunction: () => _onToolTap(index),
+                              );
+                            } else {
+                              return const SizedBox();
+                            }
+                          },
+                        ),
+                        ListView.builder(
+                          padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList + 2),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: connectableTools.length,
+                          itemBuilder: (context, index) {
+                            // do not show when kind is matching the current tool
+                            if (widget.toolBlock.kind == connectableTools[index].name) {
+                              return const SizedBox();
+                            }
+                            var info = getBlockTypeInfos(l10n)[connectableTools[index]]!;
+                            return CardListTile(
+                              title: info.name,
+                              subtitle: info.description,
+                              trailingIcon: IconButton(
+                                onPressed: () => {},
+                                icon: const Icon(Icons.add),
+                                color: ColorTheme.surfaceTint,
+                              ),
+                              leadingPicture: circleToolIcon(info.icon),
+                              onTapFunction: () => {},
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

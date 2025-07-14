@@ -72,5 +72,17 @@ void main() {
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome 1')), findsOneWidget);
       });
     });
+
+    group('connection to new / not existing tools', () {
+      testWidgets('shows media-player tools', (tester) async {
+        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+        await tester.createTunerToolInProject();
+
+        await tester.openTunerAndSettle();
+        await tester.tapAndSettle(find.byTooltip('Connect another tool'));
+
+        expect(tester.withinConnectionDialog(find.bySemanticsLabel('Media Player')), findsOneWidget);
+      });
+    });
   });
 }
