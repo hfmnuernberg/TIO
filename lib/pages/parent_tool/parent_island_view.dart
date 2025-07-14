@@ -128,10 +128,6 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     );
   }
 
-  Widget _voidView() {
-    return const SizedBox();
-  }
-
   Widget _getCorrectIslandView() {
     if (_loadedTool is TunerBlock) {
       return TunerIslandView(tunerBlock: _loadedTool! as TunerBlock);
@@ -147,8 +143,10 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   }
 
   void _chooseToolForIsland() {
+    final label = context.l10n.toolConnectAnother;
     ourModalBottomSheet(
       context,
+      label,
       [
         CardListTile(
           title: widget.project!.title,
@@ -162,6 +160,13 @@ class _ParentIslandViewState extends State<ParentIslandView> {
         ),
       ],
       [
+        Padding(
+          padding: const EdgeInsets.only(top: 16, left: 32),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(label, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
+          ),
+        ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),

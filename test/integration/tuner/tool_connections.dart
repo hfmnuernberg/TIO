@@ -8,6 +8,10 @@ import '../../utils/project_utils.dart';
 import '../../utils/render_utils.dart';
 import '../../utils/test_context.dart';
 
+final connectionDialog = find.byWidgetPredicate(
+  (widget) => widget is Semantics && widget.properties.label == 'Connect another tool',
+);
+
 void main() {
   late TestContext context;
 
@@ -27,6 +31,18 @@ void main() {
       await tester.pumpAndSettle(const Duration(milliseconds: 1100));
 
       expect(find.byTooltip('Connect another tool'), findsOneWidget);
+    });
+
+    testWidgets('shows connection bottom sheet when connection button pressed', (tester) async {
+      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+      await tester.createTunerToolInProject();
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Tuner 1'));
+      await tester.pumpAndSettle(const Duration(milliseconds: 1100));
+
+      await tester.tapAndSettle(find.byTooltip('Connect another tool'));
+
+      expect(connectionDialog, findsOneWidget);
     });
   });
 }

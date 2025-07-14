@@ -298,9 +298,11 @@ class _ParentToolState extends State<ParentTool> {
   void _openBottomSheetAndSaveTool() {
     var projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
     final l10n = context.l10n;
+    final label = widget.isQuickTool ? l10n.toolSave : l10n.toolSaveCopy;
 
     ourModalBottomSheet(
       context,
+      label,
       [
         CardListTile(
           title: widget.barTitle,
@@ -315,10 +317,7 @@ class _ParentToolState extends State<ParentTool> {
           padding: const EdgeInsets.only(top: 16, left: 32),
           child: Align(
             alignment: Alignment.centerLeft,
-            child:
-                widget.isQuickTool
-                    ? Text(l10n.toolSave, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
-                    : Text(l10n.toolSaveCopy, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
+            child: Text(label, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
           ),
         ),
         Expanded(

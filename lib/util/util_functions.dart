@@ -466,24 +466,32 @@ enum ReturnAction { goToNewTool, showTutorial }
 // ---------------------------------------------------------------
 // our modal bottom sheet
 
-Future<dynamic> ourModalBottomSheet(BuildContext context, List<Widget> titelChildren, List<Widget> contentChildren) {
+Future<dynamic> ourModalBottomSheet(
+  BuildContext context,
+  String label,
+  List<Widget> titleChildren,
+  List<Widget> contentChildren,
+) {
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     builder: (context) {
-      return FractionallySizedBox(
-        heightFactor: 0.75,
-        child: Column(
-          children: [
-            DecoratedBox(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-                color: ColorTheme.surface,
+      return Semantics(
+        label: label,
+        child: FractionallySizedBox(
+          heightFactor: 0.75,
+          child: Column(
+            children: [
+              DecoratedBox(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+                  color: ColorTheme.surface,
+                ),
+                child: Column(children: [const SizedBox(height: 20), Column(children: titleChildren)]),
               ),
-              child: Column(children: [const SizedBox(height: 20), Column(children: titelChildren)]),
-            ),
-            Expanded(child: ColoredBox(color: ColorTheme.primary80, child: Column(children: contentChildren))),
-          ],
+              Expanded(child: ColoredBox(color: ColorTheme.primary80, child: Column(children: contentChildren))),
+            ],
+          ),
         ),
       );
     },
