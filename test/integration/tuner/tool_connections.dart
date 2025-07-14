@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project.dart';
@@ -18,6 +17,10 @@ extension WidgetTesterTunerExtension on WidgetTester {
   Future<void> openTunerAndSettle() async {
     await tapAndSettle(find.bySemanticsLabel('Tuner 1'));
     await pumpAndSettle(const Duration(milliseconds: 1100));
+  }
+
+  Future<void> openConnectionDialog() async {
+    await tapAndSettle(find.byTooltip('Connect another tool'));
   }
 
   Finder withinConnectionDialog(FinderBase<Element> matching) =>
@@ -58,7 +61,7 @@ void main() {
         await tester.createMediaPlayerToolInProject();
 
         await tester.openTunerAndSettle();
-        await tester.tapAndSettle(find.byTooltip('Connect another tool'));
+        await tester.openConnectionDialog();
 
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Media Player 1')), findsOneWidget);
       });
@@ -70,7 +73,7 @@ void main() {
         await tester.createMetronomeToolInProject();
 
         await tester.openTunerAndSettle();
-        await tester.tapAndSettle(find.byTooltip('Connect another tool'));
+        await tester.openConnectionDialog();
 
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome 1')), findsOneWidget);
       });
@@ -82,7 +85,7 @@ void main() {
         await tester.createTunerToolInProject();
 
         await tester.openTunerAndSettle();
-        await tester.tapAndSettle(find.byTooltip('Connect another tool'));
+        await tester.openConnectionDialog();
 
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Media Player')), findsOneWidget);
       });
@@ -92,7 +95,7 @@ void main() {
         await tester.createTunerToolInProject();
 
         await tester.openTunerAndSettle();
-        await tester.tapAndSettle(find.byTooltip('Connect another tool'));
+        await tester.openConnectionDialog();
 
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome')), findsOneWidget);
       });
@@ -102,7 +105,7 @@ void main() {
         await tester.createTunerToolInProject();
 
         await tester.openTunerAndSettle();
-        await tester.tapAndSettle(find.byTooltip('Connect another tool'));
+        await tester.openConnectionDialog();
 
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Tuner')), findsNothing);
       });
@@ -112,7 +115,7 @@ void main() {
         await tester.createTunerToolInProject();
 
         await tester.openTunerAndSettle();
-        await tester.tapAndSettle(find.byTooltip('Connect another tool'));
+        await tester.openConnectionDialog();
 
         await tester.tapAndSettle(find.bySemanticsLabel('Media Player'));
         await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 1');
@@ -120,6 +123,20 @@ void main() {
         await tester.tapAndSettle(find.bySemanticsLabel('Back'));
 
         expect(tester.withinList(find.bySemanticsLabel('Media Player 1')), findsOneWidget);
+      });
+
+      testWidgets('connects added tool to tuner', (tester) async {
+        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+        await tester.createTunerToolInProject();
+
+        await tester.openTunerAndSettle();
+        await tester.openConnectionDialog();
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Media Player'));
+        await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 1');
+        await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
+
+        expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
       });
     });
   });
