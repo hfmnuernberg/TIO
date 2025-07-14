@@ -253,6 +253,7 @@ abstract class AppLocalizations {
   String get textImportSuccess;
 
   String get toolAddNew;
+  String get toolConnectAnother;
   String get toolEmpty;
   String get toolNewProjectTitle;
   String get toolNewTitle;

@@ -499,28 +499,6 @@ Widget circleToolIcon(Widget icon) {
 
 // ---------------------------------------------------------------
 
-bool checkIslandPossible(Project? project, ProjectBlock toolBlock) {
-  if (project != null) {
-    // if we are in a normal tool, check the following
-
-    // check if there is more than one tool in the project
-    if (project.blocks.length > 1) {
-      bool possibleToolFound = false;
-      for (final block in project.blocks) {
-        // don't allow the same kind that is currently open
-        if (block.kind != toolBlock.kind) {
-          // only allow tuner, metronome and media player as islands
-          if (block.kind == 'tuner' || block.kind == 'metronome' || block.kind == 'media_player') {
-            possibleToolFound = true;
-          }
-        }
-      }
-      return possibleToolFound;
-    }
-  }
-  return false;
-}
-
 // convert the RhythmGroup class into the MetroBar class, that is used in Rust
 List<MetroBar> getRhythmAsMetroBar(List<RhythmGroup> rhythm) {
   return List<MetroBar>.generate(rhythm.length, (index) {

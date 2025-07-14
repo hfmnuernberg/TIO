@@ -39,7 +39,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   late ProjectRepository _projectRepo;
 
   bool _empty = true;
-  bool _possibleToolForIslandExists = false;
+  bool _isConnectionToAnotherToolAllowed = false;
   ProjectBlock? _loadedTool;
 
   int? _indexOfChoosenIsland;
@@ -51,10 +51,9 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     _fs = context.read<FileSystem>();
     _projectRepo = context.read<ProjectRepository>();
 
-    // if project is null (if we are in a quick tool), there is no possible tool to open
-    _possibleToolForIslandExists = checkIslandPossible(widget.project, widget.toolBlock);
+    _isConnectionToAnotherToolAllowed = widget.project != null;
 
-    if (_possibleToolForIslandExists) {
+    if (_isConnectionToAnotherToolAllowed) {
       if (widget.toolBlock.islandToolID == null) {
         // if there is no tool as island saved
         _empty = true;
@@ -79,27 +78,9 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
   @override
   Widget build(BuildContext context) {
-    // if possible tool exists
-    if (_possibleToolForIslandExists) {
-      // if island is empty
-      if (_empty) {
-        // show the add button
-        return _addButtonView();
-      } else {
-        // else show the island view
-        return _islandView();
-      }
-      // else if no possible tool exists
-    } else {
-      // if tool is quick tool
-      if (widget.project == null) {
-        // show hint for quick tool
-        return _quickToolHintView();
-      } else {
-        // else show nothing
-        return _voidView();
-      }
-    }
+    if (!_isConnectionToAnotherToolAllowed) return _quickToolHintView();
+    if (_empty) return _addButtonView();
+    return _islandView();
   }
 
   Widget _islandView() {
@@ -129,7 +110,11 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: IconButton(onPressed: _chooseToolForIsland, icon: const Icon(Icons.add_circle, color: ColorTheme.primary)),
+      child: IconButton(
+        onPressed: _chooseToolForIsland,
+        icon: const Icon(Icons.add_circle, color: ColorTheme.primary),
+        tooltip: context.l10n.toolConnectAnother,
+      ),
     );
   }
 

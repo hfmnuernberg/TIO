@@ -98,8 +98,7 @@ class _ParentToolState extends State<ParentTool> {
           Future.delayed(Duration.zero, () {
             if (mounted) _tutorialQuickTool.show(context);
           });
-        } else if (context.read<ProjectLibrary>().showIslandTutorial &&
-            checkIslandPossible(widget.project, widget.toolBlock)) {
+        } else if (context.read<ProjectLibrary>().showIslandTutorial && widget.project != null) {
           _createTutorialIsland();
           Future.delayed(Duration.zero, () {
             if (mounted) _tutorialIsland.show(context);
@@ -115,8 +114,7 @@ class _ParentToolState extends State<ParentTool> {
           Future.delayed(Duration.zero, () {
             if (mounted) _tutorialTool.show(context);
           });
-        } else if (context.read<ProjectLibrary>().showIslandTutorial &&
-            checkIslandPossible(widget.project, widget.toolBlock)) {
+        } else if (context.read<ProjectLibrary>().showIslandTutorial && widget.project != null) {
           _createTutorialIsland();
           Future.delayed(Duration.zero, () {
             if (mounted) _tutorialIsland.show(context);
@@ -146,7 +144,7 @@ class _ParentToolState extends State<ParentTool> {
       await _projectRepo.saveLibrary(projectLibrary);
 
       // start island tutorial
-      if (projectLibrary.showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
+      if (projectLibrary.showIslandTutorial && widget.project != null) {
         _createTutorialIsland();
         Future.delayed(Duration.zero, () {
           if (mounted) _tutorialIsland.show(context);
@@ -179,7 +177,7 @@ class _ParentToolState extends State<ParentTool> {
       await _projectRepo.saveLibrary(projectLibrary);
 
       // start island tutorial
-      if (projectLibrary.showIslandTutorial && checkIslandPossible(widget.project, widget.toolBlock)) {
+      if (projectLibrary.showIslandTutorial && widget.project != null) {
         _createTutorialIsland();
         Future.delayed(Duration.zero, () {
           if (mounted) _tutorialIsland.show(context);
