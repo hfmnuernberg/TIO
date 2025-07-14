@@ -22,6 +22,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
+import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 
 class ParentIslandView extends StatefulWidget {
   final Project? project;
@@ -43,7 +44,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   bool _isConnectionToAnotherToolAllowed = false;
   ProjectBlock? _loadedTool;
 
-  int? _indexOfChoosenIsland;
+  int? _indexOfChosenIsland;
 
   @override
   void initState() {
@@ -137,7 +138,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     } else if (_loadedTool is MediaPlayerBlock) {
       return MediaPlayerIslandView(mediaPlayerBlock: _loadedTool! as MediaPlayerBlock);
     } else if (_loadedTool is EmptyBlock) {
-      return EmptyIsland(callOnInit: _setChoosenIsland);
+      return EmptyIsland(callOnInit: _setChosenIsland);
     } else {
       return Text(context.l10n.toolHasNoIslandView(_loadedTool.toString()));
     }
@@ -198,9 +199,12 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                                 subtitle: formatSettingValues(
                                   widget.project!.blocks[index].getSettingsFormatted(context.l10n),
                                 ),
-                                trailingIcon: IconButton(onPressed: () => _onToolTap(index), icon: const SizedBox()),
+                                trailingIcon: IconButton(
+                                  onPressed: () => _handleConnectExistingTool(index),
+                                  icon: const SizedBox(),
+                                ),
                                 leadingPicture: circleToolIcon(widget.project!.blocks[index].icon),
-                                onTapFunction: () => _onToolTap(index),
+                                onTapFunction: () => _handleConnectExistingTool(index),
                               );
                             } else {
                               return const SizedBox();
@@ -222,12 +226,12 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                               title: info.name,
                               subtitle: info.description,
                               trailingIcon: IconButton(
-                                onPressed: () => {},
+                                onPressed: () => _handleConnectNewTool(info, widget.project!.blocks.length),
                                 icon: const Icon(Icons.add),
                                 color: ColorTheme.surfaceTint,
                               ),
                               leadingPicture: circleToolIcon(info.icon),
-                              onTapFunction: () => {},
+                              onTapFunction: () => _handleConnectNewTool(info, widget.project!.blocks.length),
                             );
                           },
                         ),
@@ -241,8 +245,35 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     ).then((_) => setState(() {}));
   }
 
-  void _onToolTap(int index) async {
-    _indexOfChoosenIsland = index;
+  Future<void> _handleConnectExistingTool(int index) async {
+    _connectSelectedTool(index);
+  }
+
+  Future<void> _handleConnectNewTool(BlockTypeInfo blockTypeInfo, int index) async {
+    await _addNewToolToProject(blockTypeInfo);
+    // it would be better to refactor this to use the tool id instead of the index
+    _connectSelectedTool(0);
+  }
+
+  Future<void> _addNewToolToProject(BlockTypeInfo blockTypeInfo) async {
+    final project = widget.project!;
+    final newTitle = await showEditTextDialog(
+      context: context,
+      label: context.l10n.projectNewTool,
+      value: '${blockTypeInfo.name} ${project.toolCounter[blockTypeInfo.kind]! + 1}',
+      isNew: true,
+    );
+    if (newTitle == null) return;
+
+    project.increaseCounter(blockTypeInfo.kind);
+
+    final newBlock = blockTypeInfo.createWithTitle(newTitle);
+    project.addBlock(newBlock);
+    if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+  }
+
+  void _connectSelectedTool(int index) async {
+    _indexOfChosenIsland = index;
     // to force calling the initState of the new island, first open an empty island
     // and then in init of empty island open the new island
     _loadedTool = EmptyBlock(context.l10n.toolEmpty);
@@ -256,10 +287,10 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     setState(() {});
   }
 
-  void _setChoosenIsland() async {
-    if (_indexOfChoosenIsland != null) {
-      _loadedTool = widget.project!.blocks[_indexOfChoosenIsland!];
-      widget.toolBlock.islandToolID = widget.project!.blocks[_indexOfChoosenIsland!].id;
+  void _setChosenIsland() async {
+    if (_indexOfChosenIsland != null) {
+      _loadedTool = widget.project!.blocks[_indexOfChosenIsland!];
+      widget.toolBlock.islandToolID = widget.project!.blocks[_indexOfChosenIsland!].id;
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
       setState(() {});

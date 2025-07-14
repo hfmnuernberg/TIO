@@ -22,6 +22,9 @@ extension WidgetTesterTunerExtension on WidgetTester {
 
   Finder withinConnectionDialog(FinderBase<Element> matching) =>
       find.descendant(of: connectionDialog, matching: matching);
+
+  Finder withinList(FinderBase<Element> matching) =>
+      find.descendant(of: find.bySemanticsLabel('Tool list'), matching: matching);
 }
 
 void main() {
@@ -102,6 +105,21 @@ void main() {
         await tester.tapAndSettle(find.byTooltip('Connect another tool'));
 
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Tuner')), findsNothing);
+      });
+
+      testWidgets('adds selected tool to the project', (tester) async {
+        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+        await tester.createTunerToolInProject();
+
+        await tester.openTunerAndSettle();
+        await tester.tapAndSettle(find.byTooltip('Connect another tool'));
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Media Player'));
+        await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 1');
+        await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
+        await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+
+        expect(tester.withinList(find.bySemanticsLabel('Media Player 1')), findsOneWidget);
       });
     });
   });
