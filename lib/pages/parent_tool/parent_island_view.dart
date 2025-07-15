@@ -84,46 +84,14 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     if (!_isConnectionToAnotherToolAllowed) {
       return NoIslandView(alignment: widget.toolBlock.kind == 'piano' ? Alignment.centerRight : Alignment.center);
     }
+
     if (_empty) return EmptyIslandView(onPressed: _showToolSelectionBottomSheet);
-    return _islandView();
-  }
 
-  // TODO: refactor all methods that return a widget
-  Widget _islandView() {
-    return Card(
-      color: ColorTheme.surface,
-      margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _getCorrectIslandView(),
-            IconButton(
-              onPressed: _showToolSelectionBottomSheet,
-              icon: const Icon(Icons.more_vert, color: ColorTheme.primary),
-            ),
-          ],
-        ),
-      ),
+    return SelectedIslandView(
+      loadedTool: _loadedTool,
+      onShowToolSelection: _showToolSelectionBottomSheet,
+      onEmptyIslandInit: _setChosenIsland,
     );
-  }
-
-  Widget _getCorrectIslandView() {
-    if (_loadedTool is TunerBlock) {
-      return TunerIslandView(tunerBlock: _loadedTool! as TunerBlock);
-    } else if (_loadedTool is MetronomeBlock) {
-      return MetronomeIslandView(metronomeBlock: _loadedTool! as MetronomeBlock);
-    } else if (_loadedTool is MediaPlayerBlock) {
-      return MediaPlayerIslandView(mediaPlayerBlock: _loadedTool! as MediaPlayerBlock);
-    } else if (_loadedTool is EmptyBlock) {
-      return EmptyIsland(callOnInit: _setChosenIsland);
-    } else {
-      return Text(context.l10n.toolHasNoIslandView(_loadedTool.toString()));
-    }
   }
 
   void _showToolSelectionBottomSheet() {
@@ -290,6 +258,54 @@ class EmptyIslandView extends StatelessWidget {
         onPressed: onPressed,
         icon: const Icon(Icons.add_circle, color: ColorTheme.primary),
         tooltip: context.l10n.toolConnectAnother,
+      ),
+    );
+  }
+}
+
+class SelectedIslandView extends StatelessWidget {
+  final ProjectBlock? loadedTool;
+  final VoidCallback onShowToolSelection;
+  final VoidCallback onEmptyIslandInit;
+
+  const SelectedIslandView({
+    super.key,
+    required this.loadedTool,
+    required this.onShowToolSelection,
+    required this.onEmptyIslandInit,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Widget child;
+
+    if (loadedTool is TunerBlock) {
+      child = TunerIslandView(tunerBlock: loadedTool! as TunerBlock);
+    } else if (loadedTool is MetronomeBlock) {
+      child = MetronomeIslandView(metronomeBlock: loadedTool! as MetronomeBlock);
+    } else if (loadedTool is MediaPlayerBlock) {
+      child = MediaPlayerIslandView(mediaPlayerBlock: loadedTool! as MediaPlayerBlock);
+    } else if (loadedTool is EmptyBlock) {
+      child = EmptyIsland(callOnInit: onEmptyIslandInit);
+    } else {
+      child = Text(context.l10n.toolHasNoIslandView(loadedTool.toString()));
+    }
+
+    return Card(
+      color: ColorTheme.surface,
+      margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            child,
+            IconButton(onPressed: onShowToolSelection, icon: const Icon(Icons.more_vert, color: ColorTheme.primary)),
+          ],
+        ),
       ),
     );
   }
