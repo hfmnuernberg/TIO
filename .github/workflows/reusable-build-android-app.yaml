@@ -88,7 +88,7 @@ jobs:
         working-directory: android
         bundler-cache: true
 
-    - name: Decrypt release properties file
+    - name: Decrypt key.properties file
       uses: timheuer/base64-to-file@v1.2.4
       with:
         fileName: key.properties

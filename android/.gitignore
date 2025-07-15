@@ -11,7 +11,7 @@ GeneratedPluginRegistrant.java
 **/*key.properties*
 !**/key.properties.debug
 **/*keystore*
-!**/keystore.debug
+!**/debug.keystore
 **/*.jks.*
 *service*account*.json
 
