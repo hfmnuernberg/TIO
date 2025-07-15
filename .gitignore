@@ -70,7 +70,6 @@ devtools_options.yaml
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
 **/android/*key.properties*
-!**/android/debug.key.properties
 **/android/app/src/main/jniLibs/**/librust_lib_tiomusic.so
 
 # iOS/XCode related
