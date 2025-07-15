@@ -7,17 +7,25 @@ on:
         required: true
         type: string
         description: The commit SHA, tag or release
-      version:
+      semver:
         required: true
         type: string
-        description: The version
-      appIdentifier:
+        description: The semantic version to use (e.g., 1.2.3)
+      build_number:
         required: true
         type: string
-        description: The ID of the app
+        description: The build number to use (e.g., 456)
+      target_env:
+        required: true
+        type: string
+        description: The target environment to build for (e.g. dev, prd)
+      apple_app_store_url:
+        required: true
+        type: string
+        description: The Apple App Store URL
 
 concurrency:
-  group: ios-${{ inputs.version }}
+  group: ios-${{ inputs.target_env }}-${{ inputs.semver }}+${{ inputs.build_number }}
   cancel-in-progress: true
 
 jobs:
@@ -25,16 +33,15 @@ jobs:
     name: Upload iOS App
     runs-on: macos-latest
     timeout-minutes: 20
-    environment: production
+    environment: ${{ inputs.target_env }}
     permissions:
       deployments: write
       id-token: write
       contents: read
     env:
-      APPLE_APP_STORE_CONNECT_API_KEY_ID: '${{ vars.APPLE_APP_STORE_CONNECT_API_KEY_ID }}'
-      APPLE_APP_STORE_CONNECT_API_ISSUER_ID: '${{ vars.APPLE_APP_STORE_CONNECT_API_ISSUER_ID }}'
-      APPLE_APP_STORE_CONNECT_API_KEY_SECRET: '${{ secrets.APPLE_APP_STORE_CONNECT_API_KEY_SECRET }}'
-      APPLE_APP_STORE_URL: 'https://testflight.apple.com/v1/app/${{ inputs.appIdentifier }}'
+      APPLE_APP_STORE_CONNECT_API_KEY_ID: ${{ vars.APPLE_APP_STORE_CONNECT_API_KEY_ID }}
+      APPLE_APP_STORE_CONNECT_API_ISSUER_ID: ${{ vars.APPLE_APP_STORE_CONNECT_API_ISSUER_ID }}
+      APPLE_APP_STORE_CONNECT_API_KEY_SECRET: ${{ secrets.APPLE_APP_STORE_CONNECT_API_KEY_SECRET }}
 
     steps:
     - name: Checkout code
@@ -42,16 +49,19 @@ jobs:
       with:
         ref: ${{ inputs.ref }}
 
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+
     - name: Restore bundle
       uses: actions/download-artifact@v4.3.0
       with:
-        name: ios-${{ inputs.version }}
+        name: ios-${{ inputs.target_env }}-${{ inputs.semver }}+${{ inputs.build_number }}
         path: build/ios/ipa
 
     - name: Setup ruby
       uses: ruby/setup-ruby@v1.245.0
       with:
-        ruby-version: '3.3'
+        ruby-version: 3.3
         working-directory: ios
         bundler-cache: true
 
@@ -59,33 +69,33 @@ jobs:
       uses: chrnorm/deployment-action@v2.0.7
       id: deployment
       with:
-        token: '${{ github.token }}'
-        environment-url: ${{ env.APPLE_APP_STORE_URL }}
-        environment: production
+        token: ${{ github.token }}
+        environment-url: ${{ inputs.apple_app_store_url }}
+        environment: ${{ inputs.target_env }}
 
     - name: Prepare version
-      run: scripts/set-version-in-pubspec.sh ${{ inputs.version }}
+      run: scripts/set-version-in-pubspec.sh "${{ inputs.semver }}+${{ inputs.build_number }}"
 
     - name: Upload bundle
       uses: maierj/fastlane-action@v3.1.0
       with:
-        lane: push_to_store
+        lane: ${{ inputs.target_env }}_push_to_store
         subdirectory: ios
 
     - name: Update deployment status (success)
       if: success()
       uses: chrnorm/deployment-status@v2.0.3
       with:
-        token: '${{ github.token }}'
-        environment-url: ${{ env.APPLE_APP_STORE_URL }}
-        state: 'success'
+        token: ${{ github.token }}
+        environment-url: ${{ inputs.apple_app_store_url }}
+        state: success
         deployment-id: ${{ steps.deployment.outputs.deployment_id }}
 
     - name: Update deployment status (failure)
       if: failure()
       uses: chrnorm/deployment-status@v2.0.3
       with:
-        token: '${{ github.token }}'
-        environment-url: ${{ env.APPLE_APP_STORE_URL }}
-        state: 'failure'
+        token: ${{ github.token }}
+        environment-url: ${{ inputs.apple_app_store_url }}
+        state: failure
         deployment-id: ${{ steps.deployment.outputs.deployment_id }}

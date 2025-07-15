@@ -3,55 +3,10 @@ name: Release
 on:
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4.2.2
-      with:
-        ref: main
-        fetch-depth: 0
-
-    - name: Make scripts executable
-      run: chmod +x scripts/*.sh
-
-    - name: Create GitHub release
-      id: semantic_release
-      uses: cycjimmy/semantic-release-action@v4.2.2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Assert new release created
-      if: steps.semantic_release.outputs.new_release_published == 'false'
-      run: |
-        echo "❌ No new release created! See workflow logs for details." >> $GITHUB_STEP_SUMMARY
-        exit 1
-
-    - name: Load current build number
-      if: steps.semantic_release.outputs.new_release_published == 'true'
-      id: old
-      run: |
-        source scripts/load-version-from-latest-tag.sh
-        echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-
-    - name: Bump SemVer
-      if: steps.semantic_release.outputs.new_release_published == 'true'
-      id: new
-      run: |
-        source scripts/bump-semver-and-tag.sh \
-          ${{ steps.semantic_release.outputs.new_release_version }} \
-          ${{ steps.old.outputs.buildNumber }}
-        echo "semver=$NEW_SEMVER" >> "$GITHUB_OUTPUT"
-
-    - name: Create summary
-      if: steps.semantic_release.outputs.new_release_published == 'true'
-      run: |
-        echo "New Release: **${{ steps.semantic_release.outputs.new_release_version }}**" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "Next SemVer: **${{ steps.new.outputs.semver }}**" >> $GITHUB_STEP_SUMMARY
+  semantic-release:
+    name: Semantic Release
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-semantic-release.yaml@main
+    secrets: inherit
+    with:
+      ref: ${{ github.sha }}
