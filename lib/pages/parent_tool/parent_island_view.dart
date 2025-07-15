@@ -276,14 +276,17 @@ class NewToolsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final connectableTools = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
+    final filteredTools =
+        connectableTools.where((blockType) => toolBlock.kind != blockType.name.toSnakeCase()).toList();
 
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: connectableTools.length,
+      itemCount: filteredTools.length,
       itemBuilder: (context, index) {
-        if (toolBlock.kind == connectableTools[index].name.toSnakeCase()) return const SizedBox();
-        var info = getBlockTypeInfos(context.l10n)[connectableTools[index]]!;
+        final blockType = filteredTools[index];
+        final info = getBlockTypeInfos(context.l10n)[blockType]!;
+
         return CardListTile(
           title: info.name,
           subtitle: info.description,
@@ -309,31 +312,31 @@ class ExistingToolsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final allowedTools = ['tuner', 'metronome', 'media_player'];
+    final filteredBlocks =
+        project.blocks
+            .asMap()
+            .entries
+            .where((entry) => entry.value.kind != toolBlock.kind && allowedTools.contains(entry.value.kind))
+            .toList();
+
     return ListView.builder(
       shrinkWrap: true,
       padding: EdgeInsets.zero,
       physics: NeverScrollableScrollPhysics(),
-      itemCount: project.blocks.length,
+      itemCount: filteredBlocks.length,
       itemBuilder: (context, index) {
-        // TODO: get items to show first
-        // don't show tools of the same type that you are currently in and
-        // don't show the tool that is currently open
-        if (project.blocks[index].kind == toolBlock.kind) {
-          return const SizedBox();
-          // only allow Tuner, Metronome and Media Player to be used as islands for now
-        } else if (project.blocks[index].kind == 'tuner' ||
-            project.blocks[index].kind == 'metronome' ||
-            project.blocks[index].kind == 'media_player') {
-          return CardListTile(
-            title: project.blocks[index].title,
-            subtitle: formatSettingValues(project.blocks[index].getSettingsFormatted(context.l10n)),
-            trailingIcon: IconButton(onPressed: () => onSelectTool(index), icon: const SizedBox()),
-            leadingPicture: circleToolIcon(project.blocks[index].icon),
-            onTapFunction: () => onSelectTool(index),
-          );
-        } else {
-          return const SizedBox();
-        }
+        final blockEntry = filteredBlocks[index];
+        final block = blockEntry.value;
+        final originalIndex = blockEntry.key;
+
+        return CardListTile(
+          title: block.title,
+          subtitle: formatSettingValues(block.getSettingsFormatted(context.l10n)),
+          trailingIcon: IconButton(onPressed: () => onSelectTool(originalIndex), icon: const SizedBox()),
+          leadingPicture: circleToolIcon(block.icon),
+          onTapFunction: () => onSelectTool(originalIndex),
+        );
       },
     );
   }
