@@ -79,11 +79,11 @@ jobs:
     - name: Prepare version
       run: scripts/set-version-in-pubspec.sh "${{ inputs.semver }}+${{ inputs.build_number }}"
 
-    #    - name: Upload bundle
-    #      uses: maierj/fastlane-action@v3.1.0
-    #      with:
-    #        lane: ${{ inputs.target_env }}_push_to_store
-    #        subdirectory: android
+    - name: Upload bundle
+      uses: maierj/fastlane-action@v3.1.0
+      with:
+        lane: ${{ inputs.target_env }}_push_to_store
+        subdirectory: android
 
     - name: Update deployment status (success)
       if: success()
