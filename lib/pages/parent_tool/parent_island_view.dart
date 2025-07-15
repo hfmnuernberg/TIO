@@ -9,7 +9,9 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/empty_island_view.dart';
+import 'package:tiomusic/pages/parent_tool/existing_tools_list.dart';
 import 'package:tiomusic/pages/parent_tool/modal_bottom_sheet.dart';
+import 'package:tiomusic/pages/parent_tool/new_tools_list.dart';
 import 'package:tiomusic/pages/parent_tool/no_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/selected_island_view.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -17,7 +19,6 @@ import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
-import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 
@@ -69,21 +70,6 @@ class _ParentIslandViewState extends State<ParentIslandView> {
         }
       }
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_isConnectionToAnotherToolAllowed) {
-      return NoIslandView(alignment: widget.toolBlock.kind == 'piano' ? Alignment.centerRight : Alignment.center);
-    }
-
-    if (_empty) return EmptyIslandView(onPressed: _showToolSelectionBottomSheet);
-
-    return SelectedIslandView(
-      loadedTool: _loadedTool,
-      onShowToolSelection: _showToolSelectionBottomSheet,
-      onEmptyIslandInit: _setChosenIsland,
-    );
   }
 
   void _showToolSelectionBottomSheet() {
@@ -214,66 +200,19 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       setState(() {});
     }
   }
-}
-
-class ExistingToolsList extends StatelessWidget {
-  final List<MapEntry<int, ProjectBlock>> tools;
-  final void Function(int) onSelectTool;
-
-  const ExistingToolsList({super.key, required this.tools, required this.onSelectTool});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      padding: EdgeInsets.zero,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: tools.length,
-      itemBuilder: (context, index) {
-        final toolEntry = tools[index];
-        final tool = toolEntry.value;
-        final originalIndex = toolEntry.key;
+    if (!_isConnectionToAnotherToolAllowed) {
+      return NoIslandView(alignment: widget.toolBlock.kind == 'piano' ? Alignment.centerRight : Alignment.center);
+    }
 
-        return CardListTile(
-          title: tool.title,
-          subtitle: formatSettingValues(tool.getSettingsFormatted(context.l10n)),
-          trailingIcon: IconButton(onPressed: () => onSelectTool(originalIndex), icon: const SizedBox()),
-          leadingPicture: circleToolIcon(tool.icon),
-          onTapFunction: () => onSelectTool(originalIndex),
-        );
-      },
-    );
-  }
-}
+    if (_empty) return EmptyIslandView(onPressed: _showToolSelectionBottomSheet);
 
-class NewToolsList extends StatelessWidget {
-  final List<BlockType> toolTypes;
-  final void Function(BlockTypeInfo) onSelectTool;
-
-  const NewToolsList({super.key, required this.toolTypes, required this.onSelectTool});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: toolTypes.length,
-      itemBuilder: (context, index) {
-        final blockType = toolTypes[index];
-        final info = getBlockTypeInfos(context.l10n)[blockType]!;
-
-        return CardListTile(
-          title: info.name,
-          subtitle: info.description,
-          trailingIcon: IconButton(
-            onPressed: () => onSelectTool(info),
-            icon: const Icon(Icons.add),
-            color: ColorTheme.surfaceTint,
-          ),
-          leadingPicture: circleToolIcon(info.icon),
-          onTapFunction: () => onSelectTool(info),
-        );
-      },
+    return SelectedIslandView(
+      loadedTool: _loadedTool,
+      onShowToolSelection: _showToolSelectionBottomSheet,
+      onEmptyIslandInit: _setChosenIsland,
     );
   }
 }
