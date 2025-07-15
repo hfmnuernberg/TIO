@@ -18,7 +18,7 @@ import 'package:tiomusic/pages/media_player/setting_pitch.dart';
 import 'package:tiomusic/pages/media_player/setting_speed.dart';
 import 'package:tiomusic/pages/media_player/setting_trim.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
-import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
+import 'package:tiomusic/widgets/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';

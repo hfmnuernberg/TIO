@@ -253,6 +253,9 @@ abstract class AppLocalizations {
   String get textImportSuccess;
 
   String get toolAddNew;
+  String get toolConnectAnother;
+  String get toolConnectExistingTool;
+  String get toolConnectNewTool;
   String get toolEmpty;
   String get toolNewProjectTitle;
   String get toolNewTitle;
@@ -286,12 +289,12 @@ abstract class AppLocalizations {
   String get tunerTutorialAdjust;
   String get tunerTutorialStartStop;
   String get tunerTypeChromatic;
-  String get tunerTypeDoubleBass;
-  String get tunerTypeElectricBass;
+  String get tunerTypeBass;
   String get tunerTypeGuitar;
   String get tunerTypeUkulele;
   String get tunerTypeViola;
   String get tunerTypeViolin;
+  String get tunerTypeVioloncello;
 
   String formatNumber(double number) => NumberFormat.decimalPattern(locale).format(number);
 

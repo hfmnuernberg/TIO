@@ -15,7 +15,7 @@ CURRENT_SCRIPT=$(basename "$0")  # Get the name of the current script
 
 FILE_TYPES="*.txt *.md *.html *.js *.mjs *.jsx *.ts *.tsx *.dart *.java *.kt *.css *.scss *.json *.yml *.yaml *.sh"
 
-IGNORED_FOLDERS=".dart_tool .fvm .git .idea build coverage android/.gradle ios/.symlinks ios/Pods"
+IGNORED_FOLDERS=".dart_tool .fvm .git .idea .expo android/.gradle build coverage ios/.symlinks ios/Pods node_modules"
 
 # ===== business logic =====
 

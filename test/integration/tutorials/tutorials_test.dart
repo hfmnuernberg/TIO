@@ -95,6 +95,7 @@ void main() {
     expect(find.bySemanticsLabel('Tap here to copy your tool to another project.'), findsOneWidget);
 
     await tester.tapAndSettle(find.bySemanticsLabel('Next'));
+    await tester.pumpAndSettle(const Duration(milliseconds: 500));
     expect(find.bySemanticsLabel('Tap here to copy your tool to another project.'), findsNothing);
   });
 
@@ -110,9 +111,9 @@ void main() {
 
     await tester.tapAndSettle(find.bySemanticsLabel('Next'));
     await tester.pumpAndSettle(const Duration(milliseconds: 500));
-    expect(find.bySemanticsLabel(RegExp('Tap here to start and stop recording')), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('Tap here to combine your tool')), findsOneWidget);
 
     await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
-    expect(find.bySemanticsLabel(RegExp('Tap here to start and stop recording')), findsNothing);
+    expect(find.bySemanticsLabel(RegExp('Tap here to combine your tool')), findsNothing);
   });
 }

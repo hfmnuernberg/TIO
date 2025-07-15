@@ -1,0 +1,51 @@
+name: Load Build Number
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release
+    outputs:
+      build_number:
+        description: The current build number (e.g., 456)
+        value: ${{ jobs.load-build-number.outputs.build_number }}
+
+jobs:
+  load-build-number:
+    name: Load build number
+    runs-on: ubuntu-latest
+    outputs:
+      build_number: ${{ steps.build_number.outputs.build_number }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4.2.2
+      with:
+        ref: ${{ inputs.ref }}
+        fetch-depth: 0
+
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+
+    - name: Configure Git user
+      run: |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "GitHub Actions"
+
+    - name: Load build number
+      id: build_number
+      run: |
+        source scripts/load-build-number-from-latest-tag.sh
+        echo "build_number=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+
+    - name: Report build number
+      run: |
+        echo "Current Build Number: **${{ steps.build_number.outputs.build_number }}**" >> $GITHUB_STEP_SUMMARY

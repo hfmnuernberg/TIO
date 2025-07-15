@@ -39,6 +39,13 @@ extension WidgetTesterProjectExtension on WidgetTester {
     await tapAndSettle(find.bySemanticsLabel('Back'));
   }
 
+  Future<void> createMetronomeToolInProject() async {
+    await tapAndSettle(find.bySemanticsLabel('Metronome'));
+    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Metronome 1');
+    await tapAndSettle(find.bySemanticsLabel('Submit'));
+    await tapAndSettle(find.bySemanticsLabel('Back'));
+  }
+
   Future<void> createPianoToolInProject() async {
     await tapAndSettle(find.bySemanticsLabel('Piano'));
     await enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Piano 1');

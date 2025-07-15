@@ -69,9 +69,8 @@ devtools_options.yaml
 # **/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
-**/android/key.properties
+**/android/*key.properties*
 **/android/app/src/main/jniLibs/**/librust_lib_tiomusic.so
-# *.jks
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
@@ -246,10 +245,11 @@ Dependencies/
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/#source-control
 
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
+**/fastlane/README.md
+**/fastlane/report.xml
+**/fastlane/Preview.html
+**/fastlane/screenshots/**/*.png
+**/fastlane/test_output
 
 # Code Injection
 #
@@ -440,7 +440,6 @@ pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 pom.xml.next
-release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties

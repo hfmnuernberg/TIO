@@ -14,27 +14,19 @@ on:
         type: string
         description: The commit SHA, tag or release
     outputs:
-      semver:
-        description: 'The current semantic version (e.g., 1.2.3)'
-        value: ${{ jobs.bump-build-number.outputs.semver }}
-      buildNumber:
-        description: 'The new build number (e.g., 42)'
-        value: ${{ jobs.bump-build-number.outputs.buildNumber }}
-      tag:
-        description: 'The new tag (e.g., 1.2.3+42)'
-        value: ${{ jobs.bump-build-number.outputs.tag }}
+      new_build_number:
+        description: The new build number (e.g., 456)
+        value: ${{ jobs.bump-build-number.outputs.new_build_number }}
 
 permissions:
   contents: write
 
 jobs:
   bump-build-number:
-    name: Bump Build Number
+    name: Bump build number
     runs-on: ubuntu-latest
     outputs:
-      semver: ${{ steps.old.outputs.semver }}
-      buildNumber: ${{ steps.new.outputs.buildNumber }}
-      tag: ${{ steps.new.outputs.tag }}
+      new_build_number: ${{ steps.build_number.outputs.new_build_number }}
 
     steps:
     - name: Checkout repository
@@ -43,31 +35,22 @@ jobs:
         ref: ${{ inputs.ref }}
         fetch-depth: 0
 
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+
     - name: Configure Git user
       run: |
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git config --global user.name "GitHub Actions"
 
-    - name: Make scripts executable
-      run: chmod +x scripts/*.sh
-
-    - name: Load current version
-      id: old
-      run: |
-        source scripts/load-version-from-latest-tag.sh
-        echo "semver=$SEMVER" >> "$GITHUB_OUTPUT"
-        echo "buildNumber=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-
     - name: Bump build number
-      id: new
+      id: build_number
       run: |
-        source scripts/bump-build-number-and-tag.sh ${{ steps.old.outputs.semver }} ${{ steps.old.outputs.buildNumber }}
-        echo "buildNumber=$NEW_BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-        echo "tag=$NEW_TAG" >> "$GITHUB_OUTPUT"
+        source scripts/bump-build-number-and-tag.sh
+        echo "old_build_number=$OLD_BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+        echo "new_build_number=$NEW_BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
-    - name: Create summary
+    - name: Report build number
       run: |
-        echo "Current SemVer: **${{ steps.old.outputs.semver }}**" >> $GITHUB_STEP_SUMMARY
-        echo "Build Number:   **${{ steps.old.outputs.buildNumber }} -> ${{ steps.new.outputs.buildNumber }}**" >> \
-          $GITHUB_STEP_SUMMARY
-        echo "New Tag:        **${{ steps.new.outputs.tag }}**" >> $GITHUB_STEP_SUMMARY
+        echo "Old Build Number: **${{ steps.build_number.outputs.old_build_number }}**" >> $GITHUB_STEP_SUMMARY
+        echo "New Build Number: **${{ steps.build_number.outputs.new_build_number }}**" >> $GITHUB_STEP_SUMMARY

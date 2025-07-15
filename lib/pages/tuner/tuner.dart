@@ -9,7 +9,7 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
+import 'package:tiomusic/widgets/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
 import 'package:tiomusic/pages/tuner/pitch_visualizer.dart';
@@ -257,7 +257,7 @@ class _TunerState extends State<Tuner> {
         SettingsTile(
           title: l10n.tunerInstrument,
           subtitle: tunerBlock.tunerType.getLabel(l10n),
-          leadingIcon: Icons.tune,
+          leadingIcon: Icons.piano,
           settingPage: const TunerTypePage(),
           block: tunerBlock,
           callOnReturn: (value) => setState(() {}),

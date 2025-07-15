@@ -22,14 +22,8 @@ if (flutterVersionName == null) {
     flutterVersionName = '0.0.1'
 }
 
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('key.properties')
-if (!keystorePropertiesFile.exists()) {
-    keystorePropertiesFile = rootProject.file('key.properties.debug')
-}
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-
 android {
+    namespace 'de.hfmnuernberg.tiomusic'
     compileSdkVersion 35
     ndkVersion "26.3.11579264"
 
@@ -50,7 +44,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.studiofluffy.tonica"
+        applicationId "de.hfmnuernberg.tiomusic"
         minSdkVersion 31
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
@@ -58,19 +52,34 @@ android {
     }
 
     signingConfigs {
-        release {
-            storeFile file(keystoreProperties['storeFile'] ? keystoreProperties['storeFile'] : System.getenv('ANDROID_KEYSTORE_STORE_FILE'))
-            storePassword keystoreProperties['storePassword'] ? keystoreProperties['storePassword'] : System.getenv('ANDROID_KEYSTORE_STORE_PASSWORD')
-            keyAlias keystoreProperties['keyAlias'] ? keystoreProperties['keyAlias'] : System.getenv('ANDROID_KEYSTORE_KEY_ALIAS')
-            keyPassword keystoreProperties['keyPassword'] ? keystoreProperties['keyPassword'] : System.getenv('ANDROID_KEYSTORE_KEY_PASSWORD')
-        }
         debug {
-            storeFile file(keystoreProperties['storeFile'] ? keystoreProperties['storeFile'] : System.getenv('ANDROID_KEYSTORE_STORE_FILE'))
-            storePassword keystoreProperties['storePassword'] ? keystoreProperties['storePassword'] : System.getenv('ANDROID_KEYSTORE_STORE_PASSWORD')
-            keyAlias keystoreProperties['keyAlias'] ? keystoreProperties['keyAlias'] : System.getenv('ANDROID_KEYSTORE_KEY_ALIAS')
-            keyPassword keystoreProperties['keyPassword'] ? keystoreProperties['keyPassword'] : System.getenv('ANDROID_KEYSTORE_KEY_PASSWORD')
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+        release {
+            storeFile file(System.getenv('ANDROID_KEYSTORE_PATH'))
+            storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+            keyAlias System.getenv('ANDROID_KEY_ALIAS')
+            keyPassword System.getenv('ANDROID_KEY_PASSWORD')
         }
     }
+
+    flavorDimensions "default"
+    productFlavors {
+        dev {
+            dimension "default"
+            applicationIdSuffix ".dev"
+            manifestPlaceholders = [appName: "[DEV] TIO Music"]
+        }
+        prd {
+            dimension "default"
+            applicationIdSuffix ".prd"
+            manifestPlaceholders = [appName: "TIO Music"]
+        }
+    }
+
     buildTypes {
         release {
             signingConfig signingConfigs.release
@@ -87,7 +96,6 @@ android {
             }
         }
     }
-    namespace 'com.studiofluffy.tonica'
 }
 
 flutter {

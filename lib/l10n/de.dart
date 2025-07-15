@@ -214,11 +214,11 @@ class German extends AppLocalizations {
   String get pianoDescription => 'Spiele ein Stück an oder teste ein paar Akkorde.';
   String get pianoInstrumentElectricPiano1 => 'E-Piano 1';
   String get pianoInstrumentElectricPiano2 => 'E-Piano 2';
-  String get pianoInstrumentElectricPianoHold => 'E-Piano (Hold)';
+  String get pianoInstrumentElectricPianoHold => 'E-Piano (H)';
   String get pianoInstrumentGrandPiano1 => 'Piano 1';
   String get pianoInstrumentGrandPiano2 => 'Piano 2';
   String get pianoInstrumentHarpsichord => 'Cembalo';
-  String get pianoInstrumentPipeOrgan => 'Orgel';
+  String get pianoInstrumentPipeOrgan => 'Orgel (H)';
   String get pianoLowestKey => 'Tiefste Taste';
   String get pianoSetConcertPitch => 'Kammerton einstellen';
   String get pianoSetSound => 'Piano-Sound einstellen';
@@ -288,6 +288,9 @@ class German extends AppLocalizations {
   String get textImportSuccess => 'Text erfolgreich importiert!';
 
   String get toolAddNew => 'Tool hinzufügen';
+  String get toolConnectAnother => 'Verbinde ein anderes Tool';
+  String get toolConnectExistingTool => 'Verbinde ein Tool';
+  String get toolConnectNewTool => 'Verbinde ein neues Tool';
   String get toolEmpty => 'Leerer Block';
   String get toolNewProjectTitle => 'Projekttitel';
   String get toolNewTitle => 'Tool-Titel';
@@ -323,12 +326,12 @@ class German extends AppLocalizations {
   String get tunerTutorialAdjust => 'Tippe hier, um den Kammerton anzupassen oder einen Referenzton abzuspielen.';
   String get tunerTutorialStartStop => 'Tippe hier, um das Stimmgerät zu starten und zu stoppen.';
   String get tunerTypeChromatic => 'Chromatisches Stimmgerät';
-  String get tunerTypeDoubleBass => 'Kontrabass';
-  String get tunerTypeElectricBass => 'E-Bass';
+  String get tunerTypeBass => 'Bass';
   String get tunerTypeGuitar => 'Gitarre';
   String get tunerTypeUkulele => 'Ukulele';
   String get tunerTypeViola => 'Viola';
   String get tunerTypeViolin => 'Violine';
+  String get tunerTypeVioloncello => 'Violoncello';
 
   String formatDateAndTime(DateTime time) => DateFormat('dd.MM.yyyy - HH:mm:ss').format(time);
 }

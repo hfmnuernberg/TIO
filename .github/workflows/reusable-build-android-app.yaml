@@ -7,16 +7,25 @@ on:
         required: true
         type: string
         description: The commit SHA, tag or release
-      version:
+      semver:
         required: true
         type: string
-        description: The version
+        description: The semantic version to use (e.g., 1.2.3)
+      build_number:
+        required: true
+        type: string
+        description: The build number to use (e.g., 456)
+      target_env:
+        required: true
+        type: string
+        description: The target environment to build for (e.g. dev, prd)
 
 jobs:
   build-android-app:
     name: Build Android App
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
+    environment: ${{ inputs.target_env }}
 
     steps:
     - name: Checkout code
@@ -24,11 +33,14 @@ jobs:
       with:
         ref: ${{ inputs.ref }}
 
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+
     - name: Setup Java
       uses: actions/setup-java@v4.7.1
       with:
-        java-version: '21'
-        distribution: 'temurin'
+        java-version: 21
+        distribution: temurin
 
     - name: Setup Flutter
       uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
@@ -72,37 +84,34 @@ jobs:
     - name: Setup ruby
       uses: ruby/setup-ruby@v1.245.0
       with:
-        ruby-version: '3.3'
+        ruby-version: 3.3
         working-directory: android
         bundler-cache: true
 
-    - name: Decrypt key.properties file
+    - name: Decrypt keystore file
       uses: timheuer/base64-to-file@v1.2.4
       with:
-        fileName: 'key.properties'
-        fileDir: './android'
-        encodedString: ${{ secrets.ANDROID_KEYSTORE_PROPERTIES }}
-
-    - name: Decrypt keystore.jks file
-      uses: timheuer/base64-to-file@v1.2.4
-      with:
-        fileName: 'upload.keystore.jks'
-        fileDir: './android/app/keystore'
+        fileName: keystore
+        fileDir: ./android/app
         encodedString: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_JKS }}
 
     - name: Prepare version
-      run: scripts/set-version-in-pubspec.sh ${{ inputs.version }}
+      run: scripts/set-version-in-pubspec.sh "${{ inputs.semver }}+${{ inputs.build_number }}"
 
     - name: Build bundle
-      run: scripts/app.sh build android release
+      run: scripts/app.sh build android ${{ inputs.target_env }} ${{ inputs.target_env }} release
       env:
         ANDROID_NDK_HOME: ${{ steps.setup_ndk.outputs.ndk-path }}
         ANDROID_NDK_ROOT: ${{ steps.setup_ndk.outputs.ndk-path }}
+        ANDROID_KEYSTORE_PATH: release.keystore
+        ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_PASSWORD }}
+        ANDROID_KEY_ALIAS: upload
+        ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_PASSWORD }}
 
     - name: Save bundle
       uses: actions/upload-artifact@v4.6.2
       with:
-        name: android-${{ inputs.version }}
-        path: build/app/outputs/bundle/release
+        name: android-${{ inputs.target_env }}-${{ inputs.semver }}+${{ inputs.build_number }}
+        path: build/app/outputs/bundle/${{ inputs.target_env }}Release
         retention-days: 1
         if-no-files-found: error

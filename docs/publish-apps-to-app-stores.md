@@ -7,7 +7,7 @@ _Note: The following steps involve generating secrets and keys. Make sure to sec
 ## Steps
 
 1. [Install fastlane](#install-fastlane)
-2. iOS
+2. [iOS](#ios)
    1. [Add Identifier to Apple Developer Account](#add-identifiers-to-apple-developer-account)
    2. [Add App to Apple App Store Connect](#add-apps-to-apple-app-store-connect)
    3. [Create fastlane GitHub repo](#create-fastlane-github-repo)
@@ -15,18 +15,22 @@ _Note: The following steps involve generating secrets and keys. Make sure to sec
    5. (optional) [Delete distribution Profiles and Certificates](#delete-distribution-profiles-and-certificates)
    6. [Create GitHub Deploy Key](#create-github-deploy-key)
    7. [Create Apple App Store Connect API Key](#create-apple-app-store-connect-api-key)
-   8. [Add GitHub Action repository variables and secrets for iOS](#add-github-action-repository-variables-and-secrets-for-ios)
-3. Android
+   8. [Add GitHub Actions repository variables and secrets for iOS](#add-github-actions-repository-variables-and-secrets-for-ios)
+3. [Android](#android)
    1. [Create Google Service Account](#create-google-service-account)
-   2. [Create Android Keystore Upload JKS](#create-android-keystore-upload-jks)
-   3. [Create Android Keystore Properties](#create-android-keystore-properties)
-   4. [Add GitHub Action repository variables and secrets for Android](#add-github-action-repository-variables-and-secrets-for-android)
+   2. [Create Android uplaod keystore](#create-android-uplaod-keystore)
+   3. [Add release config to build.gradle](#add-release-config-to-buildgradle)
+   4. [Build signed Android app locally](#build-signed-android-app-locally)
+   5. [Upload bundle to Google Play Store](#upload-bundle-to-google-play-store)
+   6. [Add GitHub Actions repository variables and secrets for Android](#add-github-actions-repository-variables-and-secrets-for-android)
 
 ## Install fastlane
 
 Install [fastlane](https://fastlane.tools/) – e.g., with [Brew](https://formulae.brew.sh/formula/fastlane).
 
-## Add Identifiers to Apple Developer Account
+## iOS
+
+### Add Identifiers to Apple Developer Account
 
 1. Login to your [Apple developer account](https://developer.apple.com/account) as member of `Hochschule fuer Musik Nuernberg`
 2. Open [Certificates, Identifiers & Profiles of your developer account](https://developer.apple.com/account/resources/identifiers/list)
@@ -42,7 +46,7 @@ Install [fastlane](https://fastlane.tools/) – e.g., with [Brew](https://formul
 11. Click on `Continue`
 12. Click on `Register`
 
-## Add Apps to Apple App Store Connect
+### Add Apps to Apple App Store Connect
 
 1. Login to your [Apple App Store Connect](https://appstoreconnect.apple.com) as member of `Hochschule fuer Musik Nuernberg`
 2. Open [Apps](https://appstoreconnect.apple.com/apps)
@@ -55,7 +59,7 @@ Install [fastlane](https://fastlane.tools/) – e.g., with [Brew](https://formul
 9. Use the `Bundle ID` as `SKU`
 10. Select `Limited Access` under `User Access`
 
-## Create fastlane GitHub repo
+### Create fastlane GitHub repo
 
 1. Create a new GitHub repository: `TIO-fastlane`
    - _Note: Use `master` as trunk instead of `main`._
@@ -72,7 +76,7 @@ Install [fastlane](https://fastlane.tools/) – e.g., with [Brew](https://formul
    1. `git remote add origin git@github.com:hfmnuernberg/TIO-fastlane.git`
    2. `git push -u origin master`
 
-## Create or update distribution Profiles and Certificates
+### Create or update distribution Profiles and Certificates
 
 The following step will **create** distribution [Profiles](https://developer.apple.com/account/resources/profiles/list)
 and [Certificates](https://developer.apple.com/account/resources/certificates/list) to
@@ -82,6 +86,8 @@ the [fastlane repo](https://github.com/hfmnuernberg/TIO-fastlane), and update/ad
 Clone the [fastlane repo](https://github.com/hfmnuernberg/TIO-fastlane) and switch into the cloned directory.
 
 Execute the following command to generate the development certificates and profiles:
+
+_Note: A Device has to be registered in the Apple developer account to be able to create a development profile. If creating fails in the first place consider to [nuke](#delete-distribution-profiles-and-certificates) the profile first before you try the command again._
 
 ```shell
 fastlane match development
@@ -113,7 +119,7 @@ Pull the latest changes:
 git pull
 ```
 
-## Delete distribution Profiles and Certificates
+### Delete distribution Profiles and Certificates
 
 The following step will **delete** distribution [Profiles](https://developer.apple.com/account/resources/profiles/list)
 and [Certificates](https://developer.apple.com/account/resources/certificates/list) from
@@ -144,7 +150,7 @@ Pull the latest changes:
 git pull
 ```
 
-## Create GitHub Deploy Key
+### Create GitHub Deploy Key
 
 1. Generate a new ssh key
    1. `cd ~/.ssh`
@@ -159,7 +165,7 @@ git pull
 7. Paste the public key as 'Key' into the form
 8. Click `Add key`
 
-## Create Apple App Store Connect API Key
+### Create Apple App Store Connect API Key
 
 1. Navigate to the [Integrations](https://appstoreconnect.apple.com/access/integrations/api) tab under `Users and Access`
 2. Click on `Generate API Key`
@@ -170,7 +176,7 @@ git pull
 7. Note the `Issuer ID`
 8. Note the `KEY ID`
 
-## Add GitHub Action repository variables and secrets for iOS
+### Add GitHub Actions repository variables and secrets for iOS
 
 1. Open the [TIO repo](https://github.com/hfmnuernberg/TIO)
 2. Navigate to `Settings` > `Secrets and variables`
@@ -187,7 +193,9 @@ git pull
 8. Add a secret `FASTLANE_GITHUB_MATCH_STORAGE_PASSWORD`
    - As value, use the passphrase, generated when [creating distribution Profiles and Certificates](#create-or-update-distribution-profiles-and-certificates)
 
-## Create Google Service Account
+## Android
+
+### Create Google Service Account
 
 _Note: The following steps follow the instructions, outlined [here](https://docs.fastlane.tools/getting-started/android/setup/)._
 
@@ -198,7 +206,7 @@ _Note: The following steps follow the instructions, outlined [here](https://docs
    4. Click on `CREATE SERVICE ACCOUNT` at the top
    5. Enter a `Service account name`: `fastlane`
    6. Enter a `Service account ID`: `fastlane`
-   7. Enter a `Service account description`: `Used by GitHub action workflows to upload Android build bundles to Google PlayStore`
+   7. Enter a `Service account description`: `Used by GitHub Actions workflows to upload Android build bundles to Google PlayStore`
    8. Do **not** click on `CREATE AND CONTINUE` (ignore the granting steps)
    9. Click on `DONE`
    10. Copy the generated service account email address (first column of table, e.g., `fastlane@hfm-nuernberg.iam.gserviceaccount.com`)
@@ -224,7 +232,7 @@ _Note: The following steps follow the instructions, outlined [here](https://docs
       - `Manage testing tracks and edit tester lists`
    7. Click on `Invite User`
 
-## Create Android Keystore Upload JKS
+### Create Android uplaod keystore
 
 _Note: The following steps follow the instructions, outlined [here](https://docs.flutter.dev/deployment/android#signing-the-app)._
 
@@ -232,7 +240,7 @@ _Note: The following steps follow the instructions, outlined [here](https://docs
 
    ```shell
    keytool -genkey \
-     -keystore android/app/keystore/upload.keystore.jks \
+     -keystore android/app/release.keystore \
      -keyalg RSA \
      -keysize 2048 \
      -validity 10000 \
@@ -243,8 +251,8 @@ _Note: The following steps follow the instructions, outlined [here](https://docs
 2. Generate, securely store, and provide a keystore password when prompted:
 
    ```
-   Enter keystore password:  
-   
+   Enter keystore password:
+
    Re-enter new password:
    ```
 
@@ -256,7 +264,7 @@ _Note: The following steps follow the instructions, outlined [here](https://docs
    What is your first and last name?
    [Unknown]:  <your-name>
    What is the name of your organizational unit?
-   [Unknown]:  IT         
+   [Unknown]:  IT
    What is the name of your organization?
    [Unknown]:  Hochschule fuer Musik Nuernberg
    What is the name of your City or Locality?
@@ -267,39 +275,83 @@ _Note: The following steps follow the instructions, outlined [here](https://docs
    [Unknown]:  DE
    Is CN=<your-name>, OU=IT, O=Hochschule fuer Musik Nuernberg, L=Nuernberg, ST=Bayern, C=DE correct?
    [no]:  yes
-   
+
    Generating 2,048 bit RSA key pair and self-signed certificate (SHA384withRSA) with a validity of 10,000 days
    for: CN=<your-name>, OU=IT, O=Hochschule fuer Musik Nuernberg, L=Nuernberg, ST=Bayern, C=DE
-   [Storing android/app/keystore/upload.keystore.jks]
+   [Storing android/app/release.keystore]
    ```
 
 4. Securely store the generated upload keystore file  (do **not** commit this file to git).
 
-## Create Android Keystore Properties
+### Add release config to build.gradle
 
-1. Create a `key.properties` file according to the following scheme (consider copying [`key.properties.debug`](../android/key.properties.debug)):
+Ensure your `build.gradle` file contains the following code to read the release config properties from environment variables:
 
-   ```properties
-   storeFile=keystore/upload.keystore.jks
-   storePassword=<keystore-password>
-   keyAlias=upload
-   keyPassword=<keystore-password>
+```shell
+cripts/prepare-android-config.sh
+```
+
+```gradle
+// ...
+android {
+    // ...
+    signingConfigs {
+        // ...
+        release {
+            storeFile file(System.getenv('ANDROID_KEYSTORE_PATH'))
+            storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+            keyAlias System.getenv('ANDROID_KEY_ALIAS')
+            keyPassword System.getenv('ANDROID_KEY_PASSWORD')
+        }
+    }
+    // ...
+    buildTypes {
+        // ...
+        release {
+            signingConfig signingConfigs.release
+            // ...
+        }
+        // ...
+    }
+    // ...
+}
+// ...
+```
+
+### Build signed Android app locally
+
+1. Place the `release.keystore` created earlier in the `android/app` directory of your project.
+
+2. Export the following environment variables in your terminal session:
+
+   ```shell
+   export ANDROID_KEYSTORE_PATH=release.keystore
+   export ANDROID_KEYSTORE_PASSWORD="<keystore password>"
+   export ANDROID_KEY_ALIAS=upload
+   export ANDROID_KEY_PASSWORD="<keystore password>"
    ```
 
-2. Replace `<keystore-password>` with the keystore password generated earlier.
+3. Build the Android app bundle:
 
-3. Securely store the `key.properties` file  (do **not** commit this file to git).
+   ```shell
+   scripts/app.sh build android prd prd release
+   ```
 
-## Add GitHub Action repository variables and secrets for Android
+The generated bundle can be found in `android/app/build/outputs/bundle/release/prdRelease.aab`.
+
+### Upload bundle to Google Play Store
+
+Manually upload the generated bundle to the [Google Play Console](https://play.google.com/console/u/0/developers/5714373015903983742/app/4973379546348383768/tracks/4701416554573694906/releases) by creating a release in the Internal Testing track and uploading the generated bundle file.
+
+### Add GitHub Actions repository variables and secrets for Android
 
 1. Open the [TIO repo](https://github.com/hfmnuernberg/TIO)
 2. Navigate to `Settings` > `Secrets and variables`
-3. Add a secret `ANDROID_KEYSTORE_PROPERTIES`
-   - As value, use the Base64-encoded content of the `key.properties` file, created earlier
-   - `cat key.properties | base64 | pbcopy`
+3. Add a secret `ANDROID_KEYSTORE_UPLOAD_PASSWORD`
+   - As value, use the keystore password generated earlier
 4. Add a secret `ANDROID_KEYSTORE_UPLOAD_JKS`
    - As value, use the Base64-encoded content of the upload keystore file, generated earlier
-   - `cat upload.keystore.jks | base64 | pbcopy`
+   - `cat android/app/release.keystore | base64 | pbcopy`
 5. Add a secret `GOOGLE_SERVICE_ACCOUNT`
    - As value, use the Base64-encoded content of the Google service account json file, generated earlier
-   - `cat tio-music-<123456789>.json | base64 | pbcopy`
+   - `cat tio-music-123456789.json | base64 | pbcopy`

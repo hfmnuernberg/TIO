@@ -212,11 +212,11 @@ class English extends AppLocalizations {
   String get pianoDescription => 'No piano around? Try out a piece or play some chords.';
   String get pianoInstrumentElectricPiano1 => 'Electric Piano 1';
   String get pianoInstrumentElectricPiano2 => 'Electric Piano 2';
-  String get pianoInstrumentElectricPianoHold => 'E-Piano (Hold)';
+  String get pianoInstrumentElectricPianoHold => 'Electric Piano (H)';
   String get pianoInstrumentGrandPiano1 => 'Grand Piano 1';
   String get pianoInstrumentGrandPiano2 => 'Grand Piano 2';
   String get pianoInstrumentHarpsichord => 'Harpsichord';
-  String get pianoInstrumentPipeOrgan => 'Pipe Organ';
+  String get pianoInstrumentPipeOrgan => 'Pipe Organ (H)';
   String get pianoLowestKey => 'Lowest piano key';
   String get pianoSetConcertPitch => 'Set concert pitch';
   String get pianoSetSound => 'Set piano sound';
@@ -285,6 +285,9 @@ class English extends AppLocalizations {
   String get textImportSuccess => 'Text imported successfully!';
 
   String get toolAddNew => 'Add new tool';
+  String get toolConnectAnother => 'Connect another tool';
+  String get toolConnectExistingTool => 'Connect a tool';
+  String get toolConnectNewTool => 'Connect a new tool';
   String get toolEmpty => 'Empty';
   String get toolNewProjectTitle => 'Project title';
   String get toolNewTitle => 'Tool title';
@@ -320,12 +323,12 @@ class English extends AppLocalizations {
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner.';
   String get tunerTypeChromatic => 'Chromatic Tuner';
-  String get tunerTypeDoubleBass => 'Double bass';
-  String get tunerTypeElectricBass => 'Electric bass';
+  String get tunerTypeBass => 'Bass';
   String get tunerTypeGuitar => 'Guitar';
   String get tunerTypeUkulele => 'Ukulele';
   String get tunerTypeViola => 'Viola';
   String get tunerTypeViolin => 'Violin';
+  String get tunerTypeVioloncello => 'Violoncello';
 
   String formatDateAndTime(DateTime time) => DateFormat('dd/MM/yyyy - HH:mm:ss').format(time);
 }
