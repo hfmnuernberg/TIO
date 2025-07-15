@@ -228,11 +228,11 @@ _Note: The following steps follow the instructions, outlined [here](https://docs
 
 _Note: The following steps follow the instructions, outlined [here](https://docs.flutter.dev/deployment/android#signing-the-app)._
 
-1. Generate an upload keystore file:
+1. Generate a keystore file:
 
    ```shell
    keytool -genkey \
-     -keystore android/app/keystore/upload.keystore.jks \
+     -keystore android/app/keystore \
      -keyalg RSA \
      -keysize 2048 \
      -validity 10000 \
@@ -270,17 +270,17 @@ _Note: The following steps follow the instructions, outlined [here](https://docs
    
    Generating 2,048 bit RSA key pair and self-signed certificate (SHA384withRSA) with a validity of 10,000 days
    for: CN=<your-name>, OU=IT, O=Hochschule fuer Musik Nuernberg, L=Nuernberg, ST=Bayern, C=DE
-   [Storing android/app/keystore/upload.keystore.jks]
+   [Storing android/app/keystore]
    ```
 
-4. Securely store the generated upload keystore file  (do **not** commit this file to git).
+4. Securely store the generated keystore file  (do **not** commit this file to git).
 
 ## Create Android Keystore Properties
 
-1. Create a `key.properties` file according to the following scheme (consider copying [`key.properties.debug`](../android/key.properties.debug)):
+1. Create a `key.properties` file according to the following scheme (consider copying [`debug.key.properties`](../android/debug.key.properties)):
 
    ```properties
-   storeFile=keystore/upload.keystore.jks
+   storeFile=keystore
    storePassword=<keystore-password>
    keyAlias=upload
    keyPassword=<keystore-password>
@@ -298,8 +298,8 @@ _Note: The following steps follow the instructions, outlined [here](https://docs
    - As value, use the Base64-encoded content of the `key.properties` file, created earlier
    - `cat key.properties | base64 | pbcopy`
 4. Add a secret `ANDROID_KEYSTORE_UPLOAD_JKS`
-   - As value, use the Base64-encoded content of the upload keystore file, generated earlier
-   - `cat upload.keystore.jks | base64 | pbcopy`
+   - As value, use the Base64-encoded content of the keystore file, generated earlier
+   - `cat keystore | base64 | pbcopy`
 5. Add a secret `GOOGLE_SERVICE_ACCOUNT`
    - As value, use the Base64-encoded content of the Google service account json file, generated earlier
    - `cat tio-music-<123456789>.json | base64 | pbcopy`

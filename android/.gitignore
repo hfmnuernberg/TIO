@@ -8,11 +8,11 @@ GeneratedPluginRegistrant.java
 
 # Remember to never publicly share your keystore.
 # See https://flutter.dev/docs/deployment/android#reference-the-keystore-from-the-app
-key.properties*
-!key.properties.debug
-**/*.keystore
-**/*.jks
-!app/keystore/debug.keystore.jks
+**/*key.properties*
+!**/key.properties.debug
+**/*keystore*
+!**/keystore.debug
+**/*.jks.*
 *service*account*.json
 
 vendor/

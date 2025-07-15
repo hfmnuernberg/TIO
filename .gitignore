@@ -69,9 +69,9 @@ devtools_options.yaml
 # **/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
-**/android/key.properties
+**/android/*key.properties*
+!**/android/debug.key.properties
 **/android/app/src/main/jniLibs/**/librust_lib_tiomusic.so
-# *.jks
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
@@ -441,7 +441,6 @@ pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
 pom.xml.next
-release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
