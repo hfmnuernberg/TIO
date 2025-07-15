@@ -323,12 +323,12 @@ class English extends AppLocalizations {
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
   String get tunerTutorialStartStop => 'Tap here to start and stop the tuner.';
   String get tunerTypeChromatic => 'Chromatic Tuner';
-  String get tunerTypeDoubleBass => 'Double bass';
-  String get tunerTypeElectricBass => 'Electric bass';
+  String get tunerTypeBass => 'Bass';
   String get tunerTypeGuitar => 'Guitar';
   String get tunerTypeUkulele => 'Ukulele';
   String get tunerTypeViola => 'Viola';
   String get tunerTypeViolin => 'Violin';
+  String get tunerTypeVioloncello => 'Violoncello';
 
   String formatDateAndTime(DateTime time) => DateFormat('dd/MM/yyyy - HH:mm:ss').format(time);
 }
