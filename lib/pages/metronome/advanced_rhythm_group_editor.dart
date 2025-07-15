@@ -66,7 +66,12 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
   void initState() {
     super.initState();
 
-    metronome = Metronome(context.read<AudioSystem>(), context.read<FileSystem>(), handleRefresh);
+    metronome = Metronome(
+      context.read<AudioSystem>(),
+      context.read<FileSystem>(),
+      onBeatStart: refresh,
+      onBeatStop: refresh,
+    );
 
     if (widget.isSecondMetronome) metronome.sounds.loadSecondarySoundsAsPrimary(widget.metronomeBlock);
 
@@ -83,18 +88,18 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
   }
 
   @override
-  void dispose() {
-    stopMetronome();
-    super.dispose();
-  }
-
-  @override
   void deactivate() {
-    stopMetronome();
+    metronome.stop();
     super.deactivate();
   }
 
-  Future<void> handleRefresh() async {
+  @override
+  void dispose() {
+    metronome.stop();
+    super.dispose();
+  }
+
+  Future<void> refresh(_) async {
     if (!mounted) return metronome.stop();
     setState(() {});
   }
@@ -138,7 +143,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
     });
   }
 
-  void startStopBeatPlayback() async {
+  Future<void> startStopBeatPlayback() async {
     if (processingButtonClick) return;
     setState(() => processingButtonClick = true);
 

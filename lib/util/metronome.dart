@@ -7,17 +7,25 @@ import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/audio_util.dart';
-import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/metronome_beat.dart';
+import 'package:tiomusic/util/metronome_beat_event.dart';
 import 'package:tiomusic/util/metronome_sounds.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+
+const int beatSamplingIntervalInMs = 10;
+const int beatDurationInMs = 100;
+
+typedef BeatCallback = void Function(MetronomeBeatEvent beat);
 
 class Metronome {
   static final logger = createPrefixLogger('Metronome');
 
   final AudioSystem _as;
-  final Future<void> Function() _onRefresh;
+
+  final BeatCallback _onBeatEvent;
+  final BeatCallback _onBeatStart;
+  final BeatCallback _onBeatStop;
 
   bool _isOn = false;
   bool get isOn => _isOn;
@@ -37,7 +45,11 @@ class Metronome {
   StreamSubscription<AudioInterruptionEvent>? _audioInterruptionListener;
   Timer? _beatDetection;
 
-  Metronome(this._as, FileSystem fs, this._onRefresh) : _sounds = MetronomeSounds(_as, fs);
+  Metronome(this._as, FileSystem fs, {BeatCallback? onBeatEvent, BeatCallback? onBeatStart, BeatCallback? onBeatStop})
+    : _sounds = MetronomeSounds(_as, fs),
+      _onBeatEvent = onBeatEvent ?? ((_) {}),
+      _onBeatStart = onBeatStart ?? ((_) {}),
+      _onBeatStop = onBeatStop ?? ((_) {});
 
   Future<void> start() async {
     if (_isOn) return;
@@ -48,13 +60,11 @@ class Metronome {
 
     await configureAudioSession(AudioSessionType.playback);
 
-    _beatDetection = Timer.periodic(
-      const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis),
-      (_) => _handleEvent,
-    );
+    _beatDetection = Timer.periodic(const Duration(milliseconds: beatSamplingIntervalInMs), (t) => _checkForBeats());
 
     final success = await _as.metronomeStart();
     if (!success) return logger.e('Unable to start Metronome.');
+
     if (success) await WakelockPlus.enable();
 
     _isOn = true;
@@ -63,20 +73,21 @@ class Metronome {
   Future<void> stop() async {
     if (!_isOn) return;
 
-    await _audioInterruptionListener?.cancel();
-    _audioInterruptionListener = null;
-
     await WakelockPlus.disable();
+
     final success = await _as.metronomeStop();
     if (!success) return logger.e('Unable to stop Metronome.');
 
     _beatDetection?.cancel();
     _beatDetection = null;
 
-    _isOn = false;
+    await _audioInterruptionListener?.cancel();
+    _audioInterruptionListener = null;
 
     _currentBeat = MetronomeBeat();
     _currentSecondaryBeat = MetronomeBeat();
+
+    _isOn = false;
   }
 
   Future<void> restart() async {
@@ -104,52 +115,58 @@ class Metronome {
           .map((group) => MetroBar(id: 0, beats: group.beats, polyBeats: group.polyBeats, beatLen: group.beatLen))
           .toList();
 
-  Future<void> _handleEvent(BeatHappenedEvent event) async {
+  Future<void> _checkForBeats() async {
+    if (!_isOn) return;
+
     final event = await _as.metronomePollBeatEventHappened();
     if (event == null) return;
     if (event.isRandomMute) return;
 
-    Timer(Duration(milliseconds: event.millisecondsBeforeStart), () => _startBeat(event));
-    Timer(
-      Duration(milliseconds: event.millisecondsBeforeStart + MetronomeParams.flashDurationInMs),
-      () => _stopBeat(event),
-    );
+    final msUntilStart = event.millisecondsBeforeStart;
+    final msUntilStop = event.millisecondsBeforeStart + beatDurationInMs;
+
+    Timer(Duration(milliseconds: msUntilStart), () => _startBeat(event));
+    Timer(Duration(milliseconds: msUntilStop), () => _stopBeat(event));
   }
 
   void _startBeat(BeatHappenedEvent event) {
-    if (!isOn) _currentBeat = MetronomeBeat();
+    if (!isOn) return;
+
     if (event.isSecondary) {
-      _currentBeat = MetronomeBeat(
-        segmentIndex: event.barIndex,
-        mainBeatIndex: event.isPoly ? _currentBeat.mainBeatIndex : event.beatIndex,
-        polyBeatIndex: event.isPoly ? event.beatIndex : _currentBeat.polyBeatIndex,
-      );
-    } else {
       _currentSecondaryBeat = MetronomeBeat(
         segmentIndex: event.barIndex,
         mainBeatIndex: event.isPoly ? _currentSecondaryBeat.mainBeatIndex : event.beatIndex,
         polyBeatIndex: event.isPoly ? event.beatIndex : _currentSecondaryBeat.polyBeatIndex,
       );
+    } else {
+      _currentBeat = MetronomeBeat(
+        segmentIndex: event.barIndex,
+        mainBeatIndex: event.isPoly ? _currentBeat.mainBeatIndex : event.beatIndex,
+        polyBeatIndex: event.isPoly ? event.beatIndex : _currentBeat.polyBeatIndex,
+      );
     }
-    _onRefresh();
+    _onBeatEvent(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary));
+    _onBeatStart(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary));
   }
 
   void _stopBeat(BeatHappenedEvent event) {
-    if (!isOn) _currentBeat = MetronomeBeat();
+    if (!isOn) return;
+
     if (event.isSecondary) {
-      _currentBeat = MetronomeBeat(
-        segmentIndex: event.barIndex,
-        mainBeatIndex: event.isPoly ? _currentBeat.mainBeatIndex : null,
-        polyBeatIndex: event.isPoly ? null : _currentBeat.polyBeatIndex,
-      );
-    } else {
       _currentSecondaryBeat = MetronomeBeat(
         segmentIndex: event.barIndex,
         mainBeatIndex: event.isPoly ? _currentSecondaryBeat.mainBeatIndex : null,
         polyBeatIndex: event.isPoly ? null : _currentSecondaryBeat.polyBeatIndex,
       );
+    } else {
+      _currentBeat = MetronomeBeat(
+        segmentIndex: event.barIndex,
+        mainBeatIndex: event.isPoly ? _currentBeat.mainBeatIndex : null,
+        polyBeatIndex: event.isPoly ? null : _currentBeat.polyBeatIndex,
+      );
     }
-    _onRefresh();
+    _onBeatEvent(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary));
+    _onBeatStop(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary));
   }
 
   // Future<void> onBeat(BeatHappenedEvent event) async {
@@ -186,6 +203,8 @@ class Metronome {
   //
   //     if (!event.isPoly) WidgetsBinding.instance.addPostFrameCallback(updateAvgRenderTime);
   //   });
+  //
+  //   // TODO: stop stopping when BPM is too high
   //
   //   // TODO: do nothing when beats come fast
   //   // Timer(Duration(milliseconds: msUntilNextFlashOff), () {

@@ -34,9 +34,14 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
   void initState() {
     super.initState();
 
-    metronome = Metronome(context.read<AudioSystem>(), context.read<FileSystem>(), handleRefresh);
+    metronome = Metronome(
+      context.read<AudioSystem>(),
+      context.read<FileSystem>(),
+      onBeatStart: refresh,
+      onBeatStop: refresh,
+    );
 
-    metronome.mute();
+    // metronome.mute();
     metronome.setVolume(widget.metronomeBlock.volume);
     metronome.setBpm(widget.metronomeBlock.bpm);
     metronome.setChanceOfMuteBeat(widget.metronomeBlock.randomMute);
@@ -45,23 +50,23 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
   }
 
   @override
-  void dispose() {
-    metronome.stop();
-    super.dispose();
-  }
-
-  @override
   void deactivate() {
     metronome.stop();
     super.deactivate();
   }
 
-  Future<void> handleRefresh() async {
+  @override
+  void dispose() {
+    metronome.stop();
+    super.dispose();
+  }
+
+  Future<void> refresh(_) async {
     if (!mounted) return metronome.stop();
     setState(() {});
   }
 
-  void onMetronomeToggleButtonClicked() async {
+  Future<void> onMetronomeToggleButtonClicked() async {
     if (processingButtonClick) return;
     setState(() => processingButtonClick = true);
 

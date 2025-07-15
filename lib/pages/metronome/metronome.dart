@@ -14,7 +14,6 @@ import 'package:tiomusic/pages/metronome/advanced_rhythm_group_editor.dart';
 import 'package:tiomusic/pages/metronome/setting_bpm.dart';
 import 'package:tiomusic/pages/metronome/setting_metronome_sound.dart';
 import 'package:tiomusic/pages/metronome/setting_random_mute.dart';
-import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
@@ -27,6 +26,7 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/l10n/metronome_sound_extension.dart';
 import 'package:tiomusic/util/metronome.dart';
+import 'package:tiomusic/util/metronome_beat_event.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/confirm_dialog.dart';
@@ -34,6 +34,7 @@ import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/metronome/color_painter.dart';
 import 'package:tiomusic/widgets/metronome/rhythms.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
+import 'package:tiomusic/widgets/parent_tool/parent_island_view.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:volume_controller/volume_controller.dart';
 
@@ -51,15 +52,11 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
 
   late final Metronome metronome;
 
-  int lastBeat = DateTime.now().millisecondsSinceEpoch;
-  int lastStateChange = DateTime.now().millisecondsSinceEpoch;
-  final List<int> lastRenderTimes = List.empty(growable: true);
-  int avgRenderTimeInMs = 0;
-
   late bool isSimpleModeOn;
 
-  bool blink = MetronomeParams.defaultVisualMetronome;
-  bool isFlashOn = false;
+  bool isFlashingOn = false;
+  bool isFlashing = false;
+
   VolumeLevel deviceVolumeLevel = VolumeLevel.normal;
 
   late MetronomeBlock metronomeBlock;
@@ -85,7 +82,12 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     metronomeBlock.timeLastModified = getCurrentDateTime();
     isSimpleModeOn = metronomeBlock.isSimpleModeSupported;
 
-    metronome = Metronome(context.read<AudioSystem>(), context.read<FileSystem>(), handleRefresh);
+    metronome = Metronome(
+      context.read<AudioSystem>(),
+      context.read<FileSystem>(),
+      onBeatEvent: refresh,
+      onBeatStart: flash,
+    );
     metronome.setVolume(metronomeBlock.volume);
     metronome.setBpm(metronomeBlock.bpm);
     metronome.setChanceOfMuteBeat(metronomeBlock.randomMute);
@@ -102,7 +104,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
 
   @override
   void deactivate() {
-    stopMetronome();
+    metronome.stop();
     super.deactivate();
   }
 
@@ -110,7 +112,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
   void dispose() {
     VolumeController.instance.removeListener();
     routeObserver.unsubscribe(this);
-    stopMetronome();
+    metronome.stop();
     super.dispose();
   }
 
@@ -119,22 +121,22 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
 
     showModeTutorial();
 
-    if (isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) _clearAllRhythms();
+    if (isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) clearAllRhythms();
     setState(() {});
   }
 
   void showModeTutorial() {
     if (isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) {
-      _createTutorialSimpleMode();
+      createTutorialSimpleMode();
       tutorial.show(context);
     }
     if (!isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeAdvancedTutorial) {
-      _createTutorialAdvancedMode();
+      createTutorialAdvancedMode();
       tutorial.show(context);
     }
   }
 
-  Future<void> _toggleSimpleModeIfSaveOrUserConfirms() async {
+  Future<void> toggleSimpleModeIfSaveOrUserConfirms() async {
     if (!isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) {
       final shouldReset = await showConfirmDialog(
         context: context,
@@ -154,7 +156,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     });
   }
 
-  void _createTutorial() {
+  void createTutorial() {
     final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
@@ -195,7 +197,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     }, context);
   }
 
-  void _createTutorialSimpleMode() {
+  void createTutorialSimpleMode() {
     final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
@@ -213,7 +215,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     }, context);
   }
 
-  void _createTutorialAdvancedMode() {
+  void createTutorialAdvancedMode() {
     final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
@@ -246,13 +248,13 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     VolumeController.instance.addListener(handleVolumeChange);
   }
 
-  void _handleUpdateRhythm() async {
+  Future<void> handleUpdateRhythm() async {
     setState(() {});
     if (mounted) await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     await syncMetronomeSound();
   }
 
-  Future<void> _handleEditRhythmGroup(bool isSecondary, int index) async {
+  Future<void> handleEditRhythmGroup(bool isSecondary, int index) async {
     if (metronome.isOn) await stopMetronome();
     if (!mounted) return;
 
@@ -279,7 +281,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     );
   }
 
-  void _handleAddRhythmGroup(bool isSecondary) async {
+  Future<void> handleAddRhythmGroup(bool isSecondary) async {
     if (metronome.isOn) await stopMetronome();
     if (!mounted) return;
 
@@ -304,18 +306,18 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     );
   }
 
-  void _clearAllRhythms() async {
+  Future<void> clearAllRhythms() async {
     if (metronome.isOn) await stopMetronome();
 
     metronomeBlock.resetPrimaryMetronome();
     metronomeBlock.rhythmGroups[0].keyID = MetronomeParams.getNewKeyID();
     metronomeBlock.resetSecondaryMetronome();
 
-    _handleUpdateRhythm();
+    handleUpdateRhythm();
     metronome.sounds.loadAllSounds(metronomeBlock);
   }
 
-  void _onToggleButtonClicked() async {
+  Future<void> onToggleButtonClicked() async {
     if (processingButtonClick) return;
     setState(() => processingButtonClick = true);
 
@@ -338,19 +340,18 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
 
   Future<void> stopMetronome() async {
     await metronome.stop();
-    isFlashOn = false; // TODO: 1
+    setState(() => isFlashing = false);
   }
 
-  Future<void> handleRefresh() async {
+  Future<void> refresh(MetronomeBeatEvent event) async {
     if (!mounted) return metronome.stop();
     setState(() {});
   }
 
-  void updateAvgRenderTime(Duration timeStamp) {
-    final renderTime = DateTime.now().millisecondsSinceEpoch - lastStateChange;
-    lastRenderTimes.add(renderTime);
-    if (lastRenderTimes.length > 20) lastRenderTimes.removeAt(0);
-    avgRenderTimeInMs = lastRenderTimes.reduce((a, b) => a + b) ~/ lastRenderTimes.length;
+  Future<void> flash(MetronomeBeatEvent event) async {
+    if (!mounted) return metronome.stop();
+    if (event.isPoly || event.isSecondary) return;
+    setState(() => isFlashing = !isFlashing);
   }
 
   Future<void> syncMetronomeSound() => metronome.setRhythm(metronomeBlock.rhythmGroups, metronomeBlock.rhythmGroups2);
@@ -367,11 +368,11 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
       menuItems: <MenuItemButton>[
         if (!isSimpleModeOn)
           MenuItemButton(
-            onPressed: _clearAllRhythms,
+            onPressed: clearAllRhythms,
             child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
           ),
         MenuItemButton(
-          onPressed: _toggleSimpleModeIfSaveOrUserConfirms,
+          onPressed: toggleSimpleModeIfSaveOrUserConfirms,
           child: Text(
             isSimpleModeOn ? l10n.metronomeSimpleModeOff : l10n.metronomeSimpleModeOn,
             style: const TextStyle(color: ColorTheme.primary),
@@ -380,7 +381,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
       ],
       onParentTutorialFinished: () {
         if (context.read<ProjectLibrary>().showMetronomeTutorial) {
-          _createTutorial();
+          createTutorial();
           tutorial.show(context);
         }
       },
@@ -396,13 +397,13 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
               CustomPaint(
                 size: MediaQuery.of(context).size / 2,
                 painter: ColorPainter(
-                  color: metronome.isOn && blink && isFlashOn ? ColorTheme.tertiary : Colors.transparent,
+                  color: metronome.isOn && isFlashingOn && isFlashing ? ColorTheme.tertiary : Colors.transparent,
                 ),
               ),
               CustomPaint(
                 size: MediaQuery.of(context).size / 2,
                 painter: ColorPainter(
-                  color: metronome.isOn && blink && !isFlashOn ? ColorTheme.tertiary : Colors.transparent,
+                  color: metronome.isOn && isFlashingOn && !isFlashing ? ColorTheme.tertiary : Colors.transparent,
                 ),
               ),
             ],
@@ -415,9 +416,9 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
                   isSimpleModeOn: isSimpleModeOn,
                   currentPrimaryBeat: metronome.currentBeat,
                   currentSecondaryBeat: metronome.currentSecondaryBeat,
-                  onUpdate: _handleUpdateRhythm,
-                  onEditRhythmGroup: _handleEditRhythmGroup,
-                  onAddRhythmGroup: _handleAddRhythmGroup,
+                  onUpdate: handleUpdateRhythm,
+                  onEditRhythmGroup: handleEditRhythmGroup,
+                  onAddRhythmGroup: handleAddRhythmGroup,
                 ),
 
                 const SizedBox(height: TIOMusicParams.edgeInset),
@@ -428,12 +429,8 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       OnOffButton(
-                        isActive: blink,
-                        onTap: () {
-                          setState(() {
-                            blink = !blink;
-                          });
-                        },
+                        isActive: isFlashingOn,
+                        onTap: () => setState(() => isFlashingOn = !isFlashingOn),
                         iconOff: Icons.visibility_off_outlined,
                         iconOn: Icons.visibility_outlined,
                         buttonSize: TIOMusicParams.sizeSmallButtons,
@@ -441,7 +438,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
                       OnOffButton(
                         key: keyStartStop,
                         isActive: metronome.isOn,
-                        onTap: _onToggleButtonClicked,
+                        onTap: onToggleButtonClicked,
                         iconOff: MetronomeParams.svgIconPath,
                         iconOn: TIOMusicParams.pauseIcon,
                         buttonSize: TIOMusicParams.sizeBigButtons,
