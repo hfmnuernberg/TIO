@@ -1,7 +1,6 @@
 name: Pipeline [PRD]
 
 on:
-  pull_request:
   push:
     branches:
     - main
@@ -18,21 +17,21 @@ concurrency:
 jobs:
   verify:
     name: Verify
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-verify.yaml@TIO-000_upgrade-pipeline
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-verify.yaml@main
     secrets: inherit
     with:
       ref: ${{ github.sha }}
 
   load-semver:
     name: Load Semantic Version
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-load-semver.yaml@TIO-000_upgrade-pipeline
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-load-semver.yaml@main
     secrets: inherit
     with:
       ref: ${{ github.sha }}
 
   bump-build-number:
     name: Bump Build Number
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-bump-build-number.yaml@TIO-000_upgrade-pipeline
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-bump-build-number.yaml@main
     secrets: inherit
     permissions:
       contents: write
@@ -42,7 +41,7 @@ jobs:
   build-ios-app:
     name: Build iOS App
     needs: [load-semver, bump-build-number]
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-ios-app.yaml@TIO-000_upgrade-pipeline
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-ios-app.yaml@main
     secrets: inherit
     with:
       ref: ${{ github.sha }}
@@ -53,7 +52,7 @@ jobs:
   build-android-app:
     name: Build Android App
     needs: [load-semver, bump-build-number]
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-android-app.yaml@TIO-000_upgrade-pipeline
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-build-android-app.yaml@main
     secrets: inherit
     with:
       ref: ${{ github.sha }}
@@ -64,7 +63,7 @@ jobs:
   upload-ios-app:
     needs: [load-semver, bump-build-number, verify, build-ios-app]
     name: Upload iOS App
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-ios-app.yaml@TIO-000_upgrade-pipeline
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-ios-app.yaml@main
     secrets: inherit
     permissions:
       deployments: write
@@ -80,7 +79,7 @@ jobs:
   upload-android-app:
     needs: [load-semver, bump-build-number, verify, build-android-app]
     name: Upload Android App
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-android-app.yaml@TIO-000_upgrade-pipeline
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-android-app.yaml@main
     secrets: inherit
     permissions:
       deployments: write
