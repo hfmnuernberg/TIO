@@ -257,7 +257,7 @@ class _TunerState extends State<Tuner> {
         SettingsTile(
           title: l10n.tunerInstrument,
           subtitle: tunerBlock.tunerType.getLabel(l10n),
-          leadingIcon: Icons.tune,
+          leadingIcon: Icons.piano,
           settingPage: const TunerTypePage(),
           block: tunerBlock,
           callOnReturn: (value) => setState(() {}),
