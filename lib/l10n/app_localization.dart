@@ -254,6 +254,8 @@ abstract class AppLocalizations {
 
   String get toolAddNew;
   String get toolConnectAnother;
+  String get toolConnectExistingTool;
+  String get toolConnectNewTool;
   String get toolEmpty;
   String get toolNewProjectTitle;
   String get toolNewTitle;

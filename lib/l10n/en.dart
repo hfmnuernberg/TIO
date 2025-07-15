@@ -286,6 +286,8 @@ class English extends AppLocalizations {
 
   String get toolAddNew => 'Add new tool';
   String get toolConnectAnother => 'Connect another tool';
+  String get toolConnectExistingTool => 'Connect a tool';
+  String get toolConnectNewTool => 'Connect a new tool';
   String get toolEmpty => 'Empty';
   String get toolNewProjectTitle => 'Project title';
   String get toolNewTitle => 'Tool title';

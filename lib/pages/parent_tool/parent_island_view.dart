@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:change_case/change_case.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -85,6 +86,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     return _islandView();
   }
 
+  // TODO: refactor all methods that return a widget
   Widget _islandView() {
     return Card(
       color: ColorTheme.surface,
@@ -144,9 +146,9 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     }
   }
 
+  // TODO: add tool-display tests for other tools than tuner
   void _chooseToolForIsland() {
     final l10n = context.l10n;
-    final label = l10n.toolConnectAnother;
     final connectableTools = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
 
     showModalBottomSheet(
@@ -154,7 +156,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       isScrollControlled: true,
       builder:
           (context) => ModalBottomSheet(
-            label: label,
+            label: l10n.toolConnectAnother,
             titleChildren: [
               CardListTile(
                 title: widget.project!.title,
@@ -168,75 +170,89 @@ class _ParentIslandViewState extends State<ParentIslandView> {
               ),
             ],
             contentChildren: [
-              Padding(
-                padding: const EdgeInsets.only(top: 16, left: 32),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(label, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
-                ),
-              ),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: widget.project!.blocks.length,
-                          itemBuilder: (context, index) {
-                            // don't show tools of the same type that you are currently in and
-                            // don't show the tool that is currently open
-                            if (widget.project!.blocks[index].kind == widget.toolBlock.kind) {
-                              return const SizedBox();
-                              // only allow Tuner, Metronome and Media Player to be used as islands for now
-                            } else if (widget.project!.blocks[index].kind == 'tuner' ||
-                                widget.project!.blocks[index].kind == 'metronome' ||
-                                widget.project!.blocks[index].kind == 'media_player') {
-                              return CardListTile(
-                                title: widget.project!.blocks[index].title,
-                                subtitle: formatSettingValues(
-                                  widget.project!.blocks[index].getSettingsFormatted(context.l10n),
-                                ),
-                                trailingIcon: IconButton(
-                                  onPressed: () => _handleConnectExistingTool(index),
-                                  icon: const SizedBox(),
-                                ),
-                                leadingPicture: circleToolIcon(widget.project!.blocks[index].icon),
-                                onTapFunction: () => _handleConnectExistingTool(index),
-                              );
-                            } else {
-                              return const SizedBox();
-                            }
-                          },
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // TODO: show only when existing tools to show
+                      Padding(
+                        padding: const EdgeInsets.only(left: 32, top: 16, bottom: 8),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            l10n.toolConnectExistingTool,
+                            style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
+                          ),
                         ),
-                        ListView.builder(
-                          padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList + 2),
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: connectableTools.length,
-                          itemBuilder: (context, index) {
-                            // do not show when kind is matching the current tool
-                            if (widget.toolBlock.kind == connectableTools[index].name) {
-                              return const SizedBox();
-                            }
-                            var info = getBlockTypeInfos(l10n)[connectableTools[index]]!;
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.zero,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: widget.project!.blocks.length,
+                        itemBuilder: (context, index) {
+                          // TODO: refactor to sub-widget and get items to show first
+                          // don't show tools of the same type that you are currently in and
+                          // don't show the tool that is currently open
+                          if (widget.project!.blocks[index].kind == widget.toolBlock.kind) {
+                            return const SizedBox();
+                            // only allow Tuner, Metronome and Media Player to be used as islands for now
+                          } else if (widget.project!.blocks[index].kind == 'tuner' ||
+                              widget.project!.blocks[index].kind == 'metronome' ||
+                              widget.project!.blocks[index].kind == 'media_player') {
                             return CardListTile(
-                              title: info.name,
-                              subtitle: info.description,
-                              trailingIcon: IconButton(
-                                onPressed: () => _handleConnectNewTool(info, widget.project!.blocks.length),
-                                icon: const Icon(Icons.add),
-                                color: ColorTheme.surfaceTint,
+                              title: widget.project!.blocks[index].title,
+                              subtitle: formatSettingValues(
+                                widget.project!.blocks[index].getSettingsFormatted(context.l10n),
                               ),
-                              leadingPicture: circleToolIcon(info.icon),
-                              onTapFunction: () => _handleConnectNewTool(info, widget.project!.blocks.length),
+                              trailingIcon: IconButton(
+                                onPressed: () => _handleConnectExistingTool(index),
+                                icon: const SizedBox(),
+                              ),
+                              leadingPicture: circleToolIcon(widget.project!.blocks[index].icon),
+                              onTapFunction: () => _handleConnectExistingTool(index),
                             );
-                          },
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 32, top: 8, bottom: 8),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            l10n.toolConnectNewTool,
+                            style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                      // TODO: refactor to sub-widget
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: connectableTools.length,
+                        itemBuilder: (context, index) {
+                          // do not show when kind is matching the current tool
+                          // TODO: check for every tool
+                          if (widget.toolBlock.kind == connectableTools[index].name.toSnakeCase()) {
+                            return const SizedBox();
+                          }
+                          var info = getBlockTypeInfos(l10n)[connectableTools[index]]!;
+                          return CardListTile(
+                            title: info.name,
+                            subtitle: info.description,
+                            trailingIcon: IconButton(
+                              onPressed: () => _handleConnectNewTool(info, widget.project!.blocks.length),
+                              icon: const Icon(Icons.add),
+                              color: ColorTheme.surfaceTint,
+                            ),
+                            leadingPicture: circleToolIcon(info.icon),
+                            onTapFunction: () => _handleConnectNewTool(info, widget.project!.blocks.length),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -251,10 +267,10 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
   Future<void> _handleConnectNewTool(BlockTypeInfo blockTypeInfo, int index) async {
     await _addNewToolToProject(blockTypeInfo);
-    // it would be better to refactor this to use the tool id instead of the index
     _connectSelectedTool(0);
   }
 
+  // TODO: check if can be merges with method from project page
   Future<void> _addNewToolToProject(BlockTypeInfo blockTypeInfo) async {
     final project = widget.project!;
     final newTitle = await showEditTextDialog(
