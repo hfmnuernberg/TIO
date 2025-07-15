@@ -88,13 +88,6 @@ jobs:
         working-directory: android
         bundler-cache: true
 
-    - name: Decrypt key.properties file
-      uses: timheuer/base64-to-file@v1.2.4
-      with:
-        fileName: key.properties
-        fileDir: ./android
-        encodedString: ${{ secrets.ANDROID_KEYSTORE_PROPERTIES }}
-
     - name: Decrypt keystore file
       uses: timheuer/base64-to-file@v1.2.4
       with:
@@ -110,6 +103,10 @@ jobs:
       env:
         ANDROID_NDK_HOME: ${{ steps.setup_ndk.outputs.ndk-path }}
         ANDROID_NDK_ROOT: ${{ steps.setup_ndk.outputs.ndk-path }}
+        ANDROID_KEYSTORE_PATH: release.keystore
+        ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_PASSWORD }}
+        ANDROID_KEY_ALIAS: upload
+        ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_PASSWORD }}
 
     - name: Save bundle
       uses: actions/upload-artifact@v4.6.2
