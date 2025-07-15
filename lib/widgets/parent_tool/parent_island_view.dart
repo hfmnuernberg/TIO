@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:change_case/change_case.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -32,7 +31,6 @@ class ParentIslandView extends StatefulWidget {
   State<ParentIslandView> createState() => _ParentIslandViewState();
 }
 
-// underscore weg
 class _ParentIslandViewState extends State<ParentIslandView> {
   static final logger = createPrefixLogger('ParentIslandView');
 
@@ -146,7 +144,9 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
   List<BlockType> getFilteredNewToolTypes() {
     final connectableToolTypes = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
-    return connectableToolTypes.where((blockType) => widget.toolBlock.kind != blockType.name.toSnakeCase()).toList();
+    return connectableToolTypes
+        .where((blockType) => widget.toolBlock.kind != getBlockTypeInfos(context.l10n)[blockType]!.kind)
+        .toList();
   }
 
   Future<void> handleConnectExistingTool(int projectToolIndex) async {

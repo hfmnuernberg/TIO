@@ -236,6 +236,7 @@ class TextParams {
 
 enum BlockType { tuner, metronome, mediaPlayer, image, piano, text }
 
+// TODO(TIO-278): merge into BlockType enum
 class BlockTypeInfo {
   BlockTypeInfo(
     this.name,

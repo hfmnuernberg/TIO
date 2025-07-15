@@ -13,7 +13,6 @@ dependencies:
   audio_session: 0.2.2
   audioplayers: 6.4.0
   camera: 0.11.1
-  change_case: 2.2.0
   circular_widgets: 3.0.0
   collection: 1.19.1
   equatable: 2.0.7
