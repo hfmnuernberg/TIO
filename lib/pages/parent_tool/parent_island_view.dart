@@ -183,37 +183,10 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                           ),
                         ),
                       ),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: widget.project!.blocks.length,
-                        itemBuilder: (context, index) {
-                          // TODO: refactor to sub-widget and get items to show first
-                          // don't show tools of the same type that you are currently in and
-                          // don't show the tool that is currently open
-                          if (widget.project!.blocks[index].kind == widget.toolBlock.kind) {
-                            return const SizedBox();
-                            // only allow Tuner, Metronome and Media Player to be used as islands for now
-                          } else if (widget.project!.blocks[index].kind == 'tuner' ||
-                              widget.project!.blocks[index].kind == 'metronome' ||
-                              widget.project!.blocks[index].kind == 'media_player') {
-                            return CardListTile(
-                              title: widget.project!.blocks[index].title,
-                              subtitle: formatSettingValues(
-                                widget.project!.blocks[index].getSettingsFormatted(context.l10n),
-                              ),
-                              trailingIcon: IconButton(
-                                onPressed: () => _handleConnectExistingTool(index),
-                                icon: const SizedBox(),
-                              ),
-                              leadingPicture: circleToolIcon(widget.project!.blocks[index].icon),
-                              onTapFunction: () => _handleConnectExistingTool(index),
-                            );
-                          } else {
-                            return const SizedBox();
-                          }
-                        },
+                      ExistingToolsList(
+                        project: widget.project!,
+                        toolBlock: widget.toolBlock,
+                        onSelectTool: _handleConnectExistingTool,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 32, top: 8, bottom: 8),
@@ -225,9 +198,9 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                           ),
                         ),
                       ),
-                      NewItemsList(
-                        toolBlock: widget.toolBlock,
+                      NewToolsList(
                         project: widget.project!,
+                        toolBlock: widget.toolBlock,
                         onSelectTool:
                             (blockTypeInfo) => _handleConnectNewTool(blockTypeInfo, widget.project!.blocks.length),
                       ),
@@ -293,12 +266,12 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   }
 }
 
-class NewItemsList extends StatelessWidget {
-  final ProjectBlock toolBlock;
+class NewToolsList extends StatelessWidget {
   final Project project;
+  final ProjectBlock toolBlock;
   final void Function(BlockTypeInfo) onSelectTool;
 
-  const NewItemsList({super.key, required this.toolBlock, required this.project, required this.onSelectTool});
+  const NewToolsList({super.key, required this.project, required this.toolBlock, required this.onSelectTool});
 
   @override
   Widget build(BuildContext context) {
@@ -309,10 +282,7 @@ class NewItemsList extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: connectableTools.length,
       itemBuilder: (context, index) {
-        // do not show when kind is matching the current tool
-        if (toolBlock.kind == connectableTools[index].name.toSnakeCase()) {
-          return const SizedBox();
-        }
+        if (toolBlock.kind == connectableTools[index].name.toSnakeCase()) return const SizedBox();
         var info = getBlockTypeInfos(context.l10n)[connectableTools[index]]!;
         return CardListTile(
           title: info.name,
@@ -325,6 +295,45 @@ class NewItemsList extends StatelessWidget {
           leadingPicture: circleToolIcon(info.icon),
           onTapFunction: () => onSelectTool(info),
         );
+      },
+    );
+  }
+}
+
+class ExistingToolsList extends StatelessWidget {
+  final Project project;
+  final ProjectBlock toolBlock;
+  final void Function(int) onSelectTool;
+
+  const ExistingToolsList({super.key, required this.project, required this.toolBlock, required this.onSelectTool});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: project.blocks.length,
+      itemBuilder: (context, index) {
+        // TODO: get items to show first
+        // don't show tools of the same type that you are currently in and
+        // don't show the tool that is currently open
+        if (project.blocks[index].kind == toolBlock.kind) {
+          return const SizedBox();
+          // only allow Tuner, Metronome and Media Player to be used as islands for now
+        } else if (project.blocks[index].kind == 'tuner' ||
+            project.blocks[index].kind == 'metronome' ||
+            project.blocks[index].kind == 'media_player') {
+          return CardListTile(
+            title: project.blocks[index].title,
+            subtitle: formatSettingValues(project.blocks[index].getSettingsFormatted(context.l10n)),
+            trailingIcon: IconButton(onPressed: () => onSelectTool(index), icon: const SizedBox()),
+            leadingPicture: circleToolIcon(project.blocks[index].icon),
+            onTapFunction: () => onSelectTool(index),
+          );
+        } else {
+          return const SizedBox();
+        }
       },
     );
   }
