@@ -1,6 +1,6 @@
 json_key_file("service_account.json")
 
-package_name("de.hfm-nuernberg.tiomusic")
+package_name("de.hfm_nuernberg.tiomusic")
 
 app_identifier("de.hfm-nuernberg.tiomusic.dev")
 
