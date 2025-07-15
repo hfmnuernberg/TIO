@@ -360,34 +360,29 @@ class _ParentToolState extends State<ParentTool> {
                   ),
                 ),
               ),
-              TIOFlatButton(
-                // creating a new project to save the tool in it
-                onPressed: () async {
-                  final newTitles = await editTwoTitles(
-                    context,
-                    l10n.formatDateAndTime(DateTime.now()),
-                    '${widget.toolBlock.title} - ${l10n.toolTitleCopy}',
-                  );
-                  if (newTitles == null || newTitles.isEmpty) {
-                    if (mounted) {
-                      // close the bottom up sheet
-                      Navigator.of(context).pop();
-                    }
-                    return;
-                  }
-                  if (mounted) {
-                    // close the bottom up sheet
-                    Navigator.of(context).pop();
-
-                    saveToolInNewProject(context, widget.toolBlock, widget.isQuickTool, newTitles[0], newTitles[1]);
-                  }
-                },
-                text: l10n.toolSaveInNewProject,
-              ),
+              TIOFlatButton(onPressed: _handleSaveTool, text: l10n.toolSaveInNewProject),
               const SizedBox(height: 16),
             ],
           ),
     );
+  }
+
+  Future<void> _handleSaveTool() async {
+    final newTitles = await editTwoTitles(
+      context,
+      context.l10n.formatDateAndTime(DateTime.now()),
+      '${widget.toolBlock.title} - ${context.l10n.toolTitleCopy}',
+    );
+
+    if (!mounted) return;
+
+    if (newTitles == null || newTitles.isEmpty) {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    Navigator.of(context).pop();
+    saveToolInNewProject(context, widget.toolBlock, widget.isQuickTool, newTitles[0], newTitles[1]);
   }
 
   void _onSaveInProjectTap(StateSetter setTileState, int index, ProjectBlock toolBlock) async {
