@@ -214,11 +214,11 @@ class German extends AppLocalizations {
   String get pianoDescription => 'Spiele ein Stück an oder teste ein paar Akkorde.';
   String get pianoInstrumentElectricPiano1 => 'E-Piano 1';
   String get pianoInstrumentElectricPiano2 => 'E-Piano 2';
-  String get pianoInstrumentElectricPianoHold => 'E-Piano (Hold)';
+  String get pianoInstrumentElectricPianoHold => 'E-Piano (H)';
   String get pianoInstrumentGrandPiano1 => 'Piano 1';
   String get pianoInstrumentGrandPiano2 => 'Piano 2';
   String get pianoInstrumentHarpsichord => 'Cembalo';
-  String get pianoInstrumentPipeOrgan => 'Orgel';
+  String get pianoInstrumentPipeOrgan => 'Orgel (H)';
   String get pianoLowestKey => 'Tiefste Taste';
   String get pianoSetConcertPitch => 'Kammerton einstellen';
   String get pianoSetSound => 'Piano-Sound einstellen';
