@@ -81,8 +81,10 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isConnectionToAnotherToolAllowed) return _quickToolHintView();
-    if (_empty) return _addButtonView();
+    if (!_isConnectionToAnotherToolAllowed) {
+      return NoIslandView(alignment: widget.toolBlock.kind == 'piano' ? Alignment.centerRight : Alignment.center);
+    }
+    if (_empty) return EmptyIslandView(onPressed: _showToolSelectionBottomSheet);
     return _islandView();
   }
 
@@ -106,31 +108,6 @@ class _ParentIslandViewState extends State<ParentIslandView> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _addButtonView() {
-    return Card(
-      color: ColorTheme.surface,
-      margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: IconButton(
-        onPressed: _showToolSelectionBottomSheet,
-        icon: const Icon(Icons.add_circle, color: ColorTheme.primary),
-        tooltip: context.l10n.toolConnectAnother,
-      ),
-    );
-  }
-
-  Widget _quickToolHintView() {
-    return Padding(
-      padding: const EdgeInsets.only(left: TIOMusicParams.edgeInset, right: TIOMusicParams.edgeInset),
-      child: Align(
-        alignment: widget.toolBlock.kind == 'piano' ? Alignment.centerRight : Alignment.center,
-        child: Text(context.l10n.toolUseBookmarkToSave, style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 16)),
       ),
     );
   }
@@ -276,6 +253,45 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
       setState(() {});
     }
+  }
+}
+
+class NoIslandView extends StatelessWidget {
+  final Alignment alignment;
+
+  const NoIslandView({super.key, required this.alignment});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: TIOMusicParams.edgeInset, right: TIOMusicParams.edgeInset),
+      child: Align(
+        alignment: alignment,
+        child: Text(context.l10n.toolUseBookmarkToSave, style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 16)),
+      ),
+    );
+  }
+}
+
+class EmptyIslandView extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const EmptyIslandView({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: ColorTheme.surface,
+      margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      child: IconButton(
+        onPressed: onPressed,
+        icon: const Icon(Icons.add_circle, color: ColorTheme.primary),
+        tooltip: context.l10n.toolConnectAnother,
+      ),
+    );
   }
 }
 
