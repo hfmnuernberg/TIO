@@ -146,10 +146,8 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     }
   }
 
-  // TODO: add tool-display tests for other tools than tuner
   void _chooseToolForIsland() {
     final l10n = context.l10n;
-    final connectableTools = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
 
     showModalBottomSheet(
       context: context,
@@ -227,30 +225,11 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                           ),
                         ),
                       ),
-                      // TODO: refactor to sub-widget
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: connectableTools.length,
-                        itemBuilder: (context, index) {
-                          // do not show when kind is matching the current tool
-                          // TODO: check for every tool
-                          if (widget.toolBlock.kind == connectableTools[index].name.toSnakeCase()) {
-                            return const SizedBox();
-                          }
-                          var info = getBlockTypeInfos(l10n)[connectableTools[index]]!;
-                          return CardListTile(
-                            title: info.name,
-                            subtitle: info.description,
-                            trailingIcon: IconButton(
-                              onPressed: () => _handleConnectNewTool(info, widget.project!.blocks.length),
-                              icon: const Icon(Icons.add),
-                              color: ColorTheme.surfaceTint,
-                            ),
-                            leadingPicture: circleToolIcon(info.icon),
-                            onTapFunction: () => _handleConnectNewTool(info, widget.project!.blocks.length),
-                          );
-                        },
+                      NewItemsList(
+                        toolBlock: widget.toolBlock,
+                        project: widget.project!,
+                        onSelectTool:
+                            (blockTypeInfo) => _handleConnectNewTool(blockTypeInfo, widget.project!.blocks.length),
                       ),
                     ],
                   ),
@@ -311,5 +290,42 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
       setState(() {});
     }
+  }
+}
+
+class NewItemsList extends StatelessWidget {
+  final ProjectBlock toolBlock;
+  final Project project;
+  final void Function(BlockTypeInfo) onSelectTool;
+
+  const NewItemsList({super.key, required this.toolBlock, required this.project, required this.onSelectTool});
+
+  @override
+  Widget build(BuildContext context) {
+    final connectableTools = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: connectableTools.length,
+      itemBuilder: (context, index) {
+        // do not show when kind is matching the current tool
+        if (toolBlock.kind == connectableTools[index].name.toSnakeCase()) {
+          return const SizedBox();
+        }
+        var info = getBlockTypeInfos(context.l10n)[connectableTools[index]]!;
+        return CardListTile(
+          title: info.name,
+          subtitle: info.description,
+          trailingIcon: IconButton(
+            onPressed: () => onSelectTool(info),
+            icon: const Icon(Icons.add),
+            color: ColorTheme.surfaceTint,
+          ),
+          leadingPicture: circleToolIcon(info.icon),
+          onTapFunction: () => onSelectTool(info),
+        );
+      },
+    );
   }
 }
