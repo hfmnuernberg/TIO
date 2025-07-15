@@ -464,33 +464,6 @@ void saveToolInNewProject(
 enum ReturnAction { goToNewTool, showTutorial }
 
 // ---------------------------------------------------------------
-// our modal bottom sheet
-
-Future<dynamic> ourModalBottomSheet(BuildContext context, List<Widget> titelChildren, List<Widget> contentChildren) {
-  return showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) {
-      return FractionallySizedBox(
-        heightFactor: 0.75,
-        child: Column(
-          children: [
-            DecoratedBox(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-                color: ColorTheme.surface,
-              ),
-              child: Column(children: [const SizedBox(height: 20), Column(children: titelChildren)]),
-            ),
-            Expanded(child: ColoredBox(color: ColorTheme.primary80, child: Column(children: contentChildren))),
-          ],
-        ),
-      );
-    },
-  );
-}
-
-// ---------------------------------------------------------------
 // Circle Icon for displaying the tool icons all with the same color
 
 Widget circleToolIcon(Widget icon) {
@@ -498,28 +471,6 @@ Widget circleToolIcon(Widget icon) {
 }
 
 // ---------------------------------------------------------------
-
-bool checkIslandPossible(Project? project, ProjectBlock toolBlock) {
-  if (project != null) {
-    // if we are in a normal tool, check the following
-
-    // check if there is more than one tool in the project
-    if (project.blocks.length > 1) {
-      bool possibleToolFound = false;
-      for (final block in project.blocks) {
-        // don't allow the same kind that is currently open
-        if (block.kind != toolBlock.kind) {
-          // only allow tuner, metronome and media player as islands
-          if (block.kind == 'tuner' || block.kind == 'metronome' || block.kind == 'media_player') {
-            possibleToolFound = true;
-          }
-        }
-      }
-      return possibleToolFound;
-    }
-  }
-  return false;
-}
 
 // convert the RhythmGroup class into the MetroBar class, that is used in Rust
 List<MetroBar> getRhythmAsMetroBar(List<RhythmGroup> rhythm) {
