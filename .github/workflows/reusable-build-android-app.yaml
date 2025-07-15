@@ -91,7 +91,7 @@ jobs:
     - name: Decrypt keystore file
       uses: timheuer/base64-to-file@v1.2.4
       with:
-        fileName: keystore
+        fileName: release.keystore
         fileDir: ./android/app
         encodedString: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_JKS }}
 
