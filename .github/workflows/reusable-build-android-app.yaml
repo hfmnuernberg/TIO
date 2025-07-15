@@ -88,17 +88,17 @@ jobs:
         working-directory: android
         bundler-cache: true
 
-    - name: Decrypt key.properties file
+    - name: Decrypt release properties file
       uses: timheuer/base64-to-file@v1.2.4
       with:
         fileName: key.properties
         fileDir: ./android
         encodedString: ${{ secrets.ANDROID_KEYSTORE_PROPERTIES }}
 
-    - name: Decrypt keystore.jks file
+    - name: Decrypt keystore file
       uses: timheuer/base64-to-file@v1.2.4
       with:
-        fileName: upload-keystore.jks
+        fileName: keystore
         fileDir: ./android/app
         encodedString: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_JKS }}
 
