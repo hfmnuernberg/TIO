@@ -15,9 +15,9 @@ import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
 import 'package:tiomusic/pages/piano/set_concert_pitch.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -44,6 +44,7 @@ class Piano extends StatefulWidget {
 }
 
 class _PianoState extends State<Piano> {
+  late AudioSystem _as;
   late FileSystem _fs;
   late ProjectRepository _projectRepo;
 
@@ -76,6 +77,7 @@ class _PianoState extends State<Piano> {
   void initState() {
     super.initState();
 
+    _as = context.read<AudioSystem>();
     _fs = context.read<FileSystem>();
     _projectRepo = context.read<ProjectRepository>();
 
@@ -106,9 +108,9 @@ class _PianoState extends State<Piano> {
     });
   }
 
-  void _playNoteOn(int note) => pianoNoteOn(note: note);
+  void _playNoteOn(int note) => _as.pianoNoteOn(note: note);
 
-  void _playNoteOff(int note) => pianoNoteOff(note: note);
+  void _playNoteOff(int note) => _as.pianoNoteOff(note: note);
 
   Future<void> _pianoStart() async {
     if (_isPlaying) return;
@@ -122,20 +124,20 @@ class _PianoState extends State<Piano> {
 
     _pianoSetConcertPitch(_pianoBlock.concertPitch);
 
-    bool success = await pianoStart();
+    bool success = await _as.pianoStart();
     _isPlaying = success;
   }
 
   Future<void> _pianoStop() async {
     await audioInterruptionListener?.cancel();
     if (_isPlaying) {
-      await pianoStop();
+      await _as.pianoStop();
     }
     _isPlaying = false;
   }
 
   Future<void> _pianoSetConcertPitch(double concertPitch) async {
-    bool success = await pianoSetConcertPitch(newConcertPitch: concertPitch);
+    bool success = await _as.pianoSetConcertPitch(newConcertPitch: concertPitch);
 
     if (!success) {
       throw 'Rust library failed to update new concert pitch: $concertPitch';
@@ -189,7 +191,7 @@ class _PianoState extends State<Piano> {
     final byteData = await rootBundle.load(soundFontPath);
     final bytes = byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
     await _fs.saveFileAsBytes(tempSoundFontPath, bytes);
-    return pianoSetup(soundFontPath: tempSoundFontPath);
+    return _as.pianoSetup(soundFontPath: tempSoundFontPath);
   }
 
   Future<void> handleOnOpenPitch() async {
@@ -208,10 +210,10 @@ class _PianoState extends State<Piano> {
         initialValue: _pianoBlock.volume,
         onConfirm: (vol) {
           _pianoBlock.volume = vol;
-          pianoSetVolume(volume: vol);
+          _as.pianoSetVolume(volume: vol);
         },
-        onChange: (vol) => pianoSetVolume(volume: vol),
-        onCancel: () => pianoSetVolume(volume: _pianoBlock.volume),
+        onChange: (vol) => _as.pianoSetVolume(volume: vol),
+        onCancel: () => _as.pianoSetVolume(volume: _pianoBlock.volume),
       ),
       callbackOnReturn: (_) => setState(() {}),
       context,
