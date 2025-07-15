@@ -1,0 +1,22 @@
+name: PR
+
+on:
+  pull_request:
+
+jobs:
+  verify:
+    name: Verify
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-verify.yaml@main
+    secrets: inherit
+    with:
+      ref: ${{ github.sha }}
+
+  auto-merge:
+    name: Auto-merge
+    uses: hfmnuernberg/TIO/.github/workflows/reusable-auto-merge.yaml@main
+    secrets: inherit
+    permissions:
+      contents: write
+      pull-requests: write
+    with:
+      ref: ${{ github.sha }}

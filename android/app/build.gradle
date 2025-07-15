@@ -30,6 +30,7 @@ if (!keystorePropertiesFile.exists()) {
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
+    namespace 'de.hfm-nuernberg.tiomusic'
     compileSdkVersion 35
     ndkVersion "26.3.11579264"
 
@@ -50,7 +51,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.studiofluffy.tonica"
+        applicationId "de.hfm-nuernberg.tiomusic.dev"
         minSdkVersion 31
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
@@ -87,7 +88,6 @@ android {
             }
         }
     }
-    namespace 'com.studiofluffy.tonica'
 }
 
 flutter {

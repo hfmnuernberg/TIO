@@ -15,8 +15,8 @@ def api_key
 end
 
 platform :ios do
-  desc "Sign prod build"
-  lane :get_certs_and_profiles do
+  desc "Get prd certificates and profiles"
+  lane :prd_get_certs_and_profiles do
       setup_ci()
 
       match(
@@ -26,18 +26,18 @@ platform :ios do
       )
     end
 
-  desc "Upload prod build to App Store"
-  lane :push_to_store do
+  desc "Upload prd build to AppStore"
+  lane :prd_push_to_store do
       changelog_from_git_commits()
 
       pilot(
-        app_identifier: CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier),
-        api_key: api_key(),
-        ipa: "../build/ios/ipa/TIO Music.ipa",
-        skip_waiting_for_build_processing: false,
+        app_identifier: PRD_APP_ID,
+        api_key: api_key()
         distribute_external: true,
         groups: ["HfMN Small Test Group"],
-        notify_external_testers: true
+        ipa: "../build/ios/ipa/TIO Music.ipa",
+        notify_external_testers: true,
+        skip_waiting_for_build_processing: true,
       )
     end
 end

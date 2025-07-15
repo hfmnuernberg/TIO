@@ -1,4 +1,4 @@
-name: Bump Build Number
+name: Load Build Number
 
 on:
   workflow_dispatch:
@@ -14,19 +14,16 @@ on:
         type: string
         description: The commit SHA, tag or release
     outputs:
-      new_build_number:
-        description: The new build number (e.g., 456)
-        value: ${{ jobs.bump-build-number.outputs.new_build_number }}
-
-permissions:
-  contents: write
+      build_number:
+        description: The current build number (e.g., 456)
+        value: ${{ jobs.load-build-number.outputs.build_number }}
 
 jobs:
-  bump-build-number:
-    name: Bump build number
+  load-build-number:
+    name: Load build number
     runs-on: ubuntu-latest
     outputs:
-      new_build_number: ${{ steps.build_number.outputs.new_build_number }}
+      build_number: ${{ steps.build_number.outputs.build_number }}
 
     steps:
     - name: Checkout repository
@@ -43,14 +40,12 @@ jobs:
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git config --global user.name "GitHub Actions"
 
-    - name: Bump build number
+    - name: Load build number
       id: build_number
       run: |
-        source scripts/bump-build-number-and-tag.sh
-        echo "old_build_number=$OLD_BUILD_NUMBER" >> "$GITHUB_OUTPUT"
-        echo "new_build_number=$NEW_BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+        source scripts/load-build-number-from-latest-tag.sh
+        echo "build_number=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
     - name: Report build number
       run: |
-        echo "Old Build Number: **${{ steps.build_number.outputs.old_build_number }}**" >> $GITHUB_STEP_SUMMARY
-        echo "New Build Number: **${{ steps.build_number.outputs.new_build_number }}**" >> $GITHUB_STEP_SUMMARY
+        echo "Current Build Number: **${{ steps.build_number.outputs.build_number }}**" >> $GITHUB_STEP_SUMMARY
