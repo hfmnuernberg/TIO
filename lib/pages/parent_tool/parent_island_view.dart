@@ -100,7 +100,10 @@ class _ParentIslandViewState extends State<ParentIslandView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             _getCorrectIslandView(),
-            IconButton(onPressed: _chooseToolForIsland, icon: const Icon(Icons.more_vert, color: ColorTheme.primary)),
+            IconButton(
+              onPressed: _showToolSelectionBottomSheet,
+              icon: const Icon(Icons.more_vert, color: ColorTheme.primary),
+            ),
           ],
         ),
       ),
@@ -115,7 +118,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       clipBehavior: Clip.antiAliasWithSaveLayer,
       child: IconButton(
-        onPressed: _chooseToolForIsland,
+        onPressed: _showToolSelectionBottomSheet,
         icon: const Icon(Icons.add_circle, color: ColorTheme.primary),
         tooltip: context.l10n.toolConnectAnother,
       ),
@@ -146,8 +149,22 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     }
   }
 
-  void _chooseToolForIsland() {
+  void _showToolSelectionBottomSheet() {
     final l10n = context.l10n;
+
+    // filter existing tools
+    final allowedKinds = ['tuner', 'metronome', 'media_player'];
+    final filteredExistingTools =
+        widget.project!.blocks
+            .asMap()
+            .entries
+            .where((entry) => entry.value.kind != widget.toolBlock.kind && allowedKinds.contains(entry.value.kind))
+            .toList();
+
+    // filter new/not-existing tools
+    final connectableToolTypes = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
+    final filteredNewToolTypes =
+        connectableToolTypes.where((blockType) => widget.toolBlock.kind != blockType.name.toSnakeCase()).toList();
 
     showModalBottomSheet(
       context: context,
@@ -172,22 +189,19 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      // TODO: show only when existing tools to show
-                      Padding(
-                        padding: const EdgeInsets.only(left: 32, top: 16, bottom: 8),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            l10n.toolConnectExistingTool,
-                            style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
+                      if (filteredExistingTools.isNotEmpty) ...[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 32, top: 16, bottom: 8),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              l10n.toolConnectExistingTool,
+                              style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
+                            ),
                           ),
                         ),
-                      ),
-                      ExistingToolsList(
-                        project: widget.project!,
-                        toolBlock: widget.toolBlock,
-                        onSelectTool: _handleConnectExistingTool,
-                      ),
+                        ExistingToolsList(tools: filteredExistingTools, onSelectTool: _handleConnectExistingTool),
+                      ],
                       Padding(
                         padding: const EdgeInsets.only(left: 32, top: 8, bottom: 8),
                         child: Align(
@@ -199,8 +213,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                         ),
                       ),
                       NewToolsList(
-                        project: widget.project!,
-                        toolBlock: widget.toolBlock,
+                        toolTypes: filteredNewToolTypes,
                         onSelectTool:
                             (blockTypeInfo) => _handleConnectNewTool(blockTypeInfo, widget.project!.blocks.length),
                       ),
@@ -266,25 +279,50 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   }
 }
 
-class NewToolsList extends StatelessWidget {
-  final Project project;
-  final ProjectBlock toolBlock;
-  final void Function(BlockTypeInfo) onSelectTool;
+class ExistingToolsList extends StatelessWidget {
+  final List<MapEntry<int, ProjectBlock>> tools;
+  final void Function(int) onSelectTool;
 
-  const NewToolsList({super.key, required this.project, required this.toolBlock, required this.onSelectTool});
+  const ExistingToolsList({super.key, required this.tools, required this.onSelectTool});
 
   @override
   Widget build(BuildContext context) {
-    final connectableTools = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
-    final filteredTools =
-        connectableTools.where((blockType) => toolBlock.kind != blockType.name.toSnakeCase()).toList();
+    return ListView.builder(
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: tools.length,
+      itemBuilder: (context, index) {
+        final toolEntry = tools[index];
+        final tool = toolEntry.value;
+        final originalIndex = toolEntry.key;
 
+        return CardListTile(
+          title: tool.title,
+          subtitle: formatSettingValues(tool.getSettingsFormatted(context.l10n)),
+          trailingIcon: IconButton(onPressed: () => onSelectTool(originalIndex), icon: const SizedBox()),
+          leadingPicture: circleToolIcon(tool.icon),
+          onTapFunction: () => onSelectTool(originalIndex),
+        );
+      },
+    );
+  }
+}
+
+class NewToolsList extends StatelessWidget {
+  final List<BlockType> toolTypes;
+  final void Function(BlockTypeInfo) onSelectTool;
+
+  const NewToolsList({super.key, required this.toolTypes, required this.onSelectTool});
+
+  @override
+  Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: filteredTools.length,
+      itemCount: toolTypes.length,
       itemBuilder: (context, index) {
-        final blockType = filteredTools[index];
+        final blockType = toolTypes[index];
         final info = getBlockTypeInfos(context.l10n)[blockType]!;
 
         return CardListTile(
@@ -297,45 +335,6 @@ class NewToolsList extends StatelessWidget {
           ),
           leadingPicture: circleToolIcon(info.icon),
           onTapFunction: () => onSelectTool(info),
-        );
-      },
-    );
-  }
-}
-
-class ExistingToolsList extends StatelessWidget {
-  final Project project;
-  final ProjectBlock toolBlock;
-  final void Function(int) onSelectTool;
-
-  const ExistingToolsList({super.key, required this.project, required this.toolBlock, required this.onSelectTool});
-
-  @override
-  Widget build(BuildContext context) {
-    final allowedTools = ['tuner', 'metronome', 'media_player'];
-    final filteredBlocks =
-        project.blocks
-            .asMap()
-            .entries
-            .where((entry) => entry.value.kind != toolBlock.kind && allowedTools.contains(entry.value.kind))
-            .toList();
-
-    return ListView.builder(
-      shrinkWrap: true,
-      padding: EdgeInsets.zero,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: filteredBlocks.length,
-      itemBuilder: (context, index) {
-        final blockEntry = filteredBlocks[index];
-        final block = blockEntry.value;
-        final originalIndex = blockEntry.key;
-
-        return CardListTile(
-          title: block.title,
-          subtitle: formatSettingValues(block.getSettingsFormatted(context.l10n)),
-          trailingIcon: IconButton(onPressed: () => onSelectTool(originalIndex), icon: const SizedBox()),
-          leadingPicture: circleToolIcon(block.icon),
-          onTapFunction: () => onSelectTool(originalIndex),
         );
       },
     );
