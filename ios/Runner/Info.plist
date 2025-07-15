@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
-		<key>ITSAppUsesNonExemptEncryption</key>
-		<false/>
 		<key>CADisableMinimumFrameDurationOnPhone</key>
 		<true/>
 		<key>CFBundleDevelopmentRegion</key>
@@ -26,16 +24,18 @@
 		<string>????</string>
 		<key>CFBundleVersion</key>
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<key>ITSAppUsesNonExemptEncryption</key>
+		<false/>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
+		<key>NSAppleMusicUsageDescription</key>
+		<string>The app uses the Music App so you can pick music from your phone.</string>
 		<key>NSCameraUsageDescription</key>
 		<string>The app uses the camera for taking pictures.</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>The app uses the microphone for the tuner and media player recordings.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>The app uses the photo library so you can pick photos from your phone.</string>
-		<key>NSAppleMusicUsageDescription</key>
-		<string>The app uses the Music App so you can pick music from your phone.</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 		<key>UIBackgroundModes</key>

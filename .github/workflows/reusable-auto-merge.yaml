@@ -1,0 +1,67 @@
+name: Auto-merge
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag, or release to verify
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag, or release to verify
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+
+  auto-merge:
+    name: Auto-merge
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v4.2.2
+      with:
+        ref: ${{ inputs.ref }}
+
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+
+    - name: Load semver from PR title
+      id: semver
+      run: |
+        source scripts/load-semver-from-pr-title.sh "${{ github.event.pull_request.title }}"
+        echo "BUMP_TYPE=$BUMP_TYPE" >> "$GITHUB_OUTPUT"
+
+    - name: Print actor and bump type
+      run: |
+        echo "actor: '${{ github.actor }}'"
+        echo "bump type: '${{ steps.semver.outputs.BUMP_TYPE }}'"
+
+    - name: Auto-approve (if actor is Dependabot and version bump is Minor or Patch)
+      if: >
+        github.actor == 'dependabot[bot]' &&
+        (steps.semver.outputs.BUMP_TYPE == 'minor' || steps.semver.outputs.BUMP_TYPE == 'patch')
+      run: |
+        gh pr review --approve "${{ github.event.pull_request.number }}"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Auto-merge (if actor is Dependabot and version bump is Minor or Patch)
+      if: >
+        github.actor == 'dependabot[bot]' &&
+        (steps.semver.outputs.BUMP_TYPE == 'minor' || steps.semver.outputs.BUMP_TYPE == 'patch')
+      run: |
+        gh pr merge --auto --squash --delete-branch "${{ github.event.pull_request.number }}"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
