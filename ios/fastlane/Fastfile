@@ -35,7 +35,7 @@ platform :ios do
         api_key: api_key(),
         distribute_external: true,
         groups: ["HfMN Small Test Group"],
-        ipa: "../build/ios/ipa/TIO Music.ipa",
+        ipa: "../build/ios/ipa/app.ipa",
         notify_external_testers: true,
         skip_waiting_for_build_processing: true,
       )
