@@ -5,17 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/empty_block.dart';
-import 'package:tiomusic/models/blocks/media_player_block.dart';
-import 'package:tiomusic/models/blocks/metronome_block.dart';
-import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/media_player/media_player_island_view.dart';
-import 'package:tiomusic/pages/metronome/metronome_island_view.dart';
-import 'package:tiomusic/pages/parent_tool/empty_island.dart';
+import 'package:tiomusic/pages/parent_tool/empty_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/modal_bottom_sheet.dart';
-import 'package:tiomusic/pages/tuner/tuner_island_view.dart';
+import 'package:tiomusic/pages/parent_tool/no_island_view.dart';
+import 'package:tiomusic/pages/parent_tool/selected_island_view.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -217,93 +213,6 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
       setState(() {});
     }
-  }
-}
-
-class NoIslandView extends StatelessWidget {
-  final Alignment alignment;
-
-  const NoIslandView({super.key, required this.alignment});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: TIOMusicParams.edgeInset, right: TIOMusicParams.edgeInset),
-      child: Align(
-        alignment: alignment,
-        child: Text(context.l10n.toolUseBookmarkToSave, style: TextStyle(color: ColorTheme.surfaceTint, fontSize: 16)),
-      ),
-    );
-  }
-}
-
-class EmptyIslandView extends StatelessWidget {
-  final VoidCallback onPressed;
-
-  const EmptyIslandView({super.key, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: ColorTheme.surface,
-      margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: IconButton(
-        onPressed: onPressed,
-        icon: const Icon(Icons.add_circle, color: ColorTheme.primary),
-        tooltip: context.l10n.toolConnectAnother,
-      ),
-    );
-  }
-}
-
-class SelectedIslandView extends StatelessWidget {
-  final ProjectBlock? loadedTool;
-  final VoidCallback onShowToolSelection;
-  final VoidCallback onEmptyIslandInit;
-
-  const SelectedIslandView({
-    super.key,
-    required this.loadedTool,
-    required this.onShowToolSelection,
-    required this.onEmptyIslandInit,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    Widget child;
-
-    if (loadedTool is TunerBlock) {
-      child = TunerIslandView(tunerBlock: loadedTool! as TunerBlock);
-    } else if (loadedTool is MetronomeBlock) {
-      child = MetronomeIslandView(metronomeBlock: loadedTool! as MetronomeBlock);
-    } else if (loadedTool is MediaPlayerBlock) {
-      child = MediaPlayerIslandView(mediaPlayerBlock: loadedTool! as MediaPlayerBlock);
-    } else if (loadedTool is EmptyBlock) {
-      child = EmptyIsland(callOnInit: onEmptyIslandInit);
-    } else {
-      child = Text(context.l10n.toolHasNoIslandView(loadedTool.toString()));
-    }
-
-    return Card(
-      color: ColorTheme.surface,
-      margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 8, TIOMusicParams.edgeInset, 0),
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            child,
-            IconButton(onPressed: onShowToolSelection, icon: const Icon(Icons.more_vert, color: ColorTheme.primary)),
-          ],
-        ),
-      ),
-    );
   }
 }
 
