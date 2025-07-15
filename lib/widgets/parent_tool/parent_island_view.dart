@@ -32,30 +32,31 @@ class ParentIslandView extends StatefulWidget {
   State<ParentIslandView> createState() => _ParentIslandViewState();
 }
 
+// underscore weg
 class _ParentIslandViewState extends State<ParentIslandView> {
-  static final _logger = createPrefixLogger('ParentIslandView');
+  static final logger = createPrefixLogger('ParentIslandView');
 
-  late FileSystem _fs;
-  late ProjectRepository _projectRepo;
+  late FileSystem fs;
+  late ProjectRepository projectRepo;
 
-  bool _empty = true;
-  bool _isConnectionToAnotherToolAllowed = false;
-  ProjectBlock? _loadedTool;
+  bool empty = true;
+  bool isConnectionToAnotherToolAllowed = false;
+  ProjectBlock? loadedTool;
 
-  int? _indexOfChosenIsland;
+  int? indexOfChosenIsland;
 
   @override
   void initState() {
     super.initState();
 
-    _fs = context.read<FileSystem>();
-    _projectRepo = context.read<ProjectRepository>();
+    fs = context.read<FileSystem>();
+    projectRepo = context.read<ProjectRepository>();
 
-    _isConnectionToAnotherToolAllowed = widget.project != null;
+    isConnectionToAnotherToolAllowed = widget.project != null;
 
-    if (_isConnectionToAnotherToolAllowed) {
+    if (isConnectionToAnotherToolAllowed) {
       if (widget.toolBlock.islandToolID == null) {
-        _empty = true;
+        empty = true;
       } else {
         try {
           final foundTools = widget.project!.blocks.where((block) => block.id == widget.toolBlock.islandToolID);
@@ -63,20 +64,20 @@ class _ParentIslandViewState extends State<ParentIslandView> {
             throw 'WARNING: When looking for the tool of an island view, there where more than one tool found! But there should only be one tool found.';
           }
 
-          _loadedTool = foundTools.first;
-          _empty = false;
+          loadedTool = foundTools.first;
+          empty = false;
         } catch (e) {
-          _logger.e('Unable to find right tool for island view. Does the tool still exist?', error: e);
+          logger.e('Unable to find right tool for island view. Does the tool still exist?', error: e);
         }
       }
     }
   }
 
-  void _showToolSelectionBottomSheet() {
+  void showToolSelectionBottomSheet() {
     final l10n = context.l10n;
     final project = widget.project!;
-    final filteredExistingTools = _getFilteredExistingTools();
-    final filteredNewToolTypes = _getFilteredNewToolTypes();
+    final filteredExistingTools = getFilteredExistingTools();
+    final filteredNewToolTypes = getFilteredNewToolTypes();
 
     showModalBottomSheet(
       context: context,
@@ -92,7 +93,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                 leadingPicture:
                     project.thumbnailPath.isEmpty
                         ? const AssetImage(TIOMusicParams.tiomusicIconPath)
-                        : FileImage(File(_fs.toAbsoluteFilePath(project.thumbnailPath))),
+                        : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
                 onTapFunction: () {},
               ),
             ],
@@ -112,7 +113,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                             ),
                           ),
                         ),
-                        ExistingToolsList(tools: filteredExistingTools, onSelect: _handleConnectExistingTool),
+                        ExistingToolsList(tools: filteredExistingTools, onSelect: handleConnectExistingTool),
                       ],
                       Padding(
                         padding: const EdgeInsets.only(left: 32, top: 8, bottom: 8),
@@ -124,7 +125,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                           ),
                         ),
                       ),
-                      NewToolsList(tools: filteredNewToolTypes, onSelect: _handleConnectNewTool),
+                      NewToolsList(tools: filteredNewToolTypes, onSelect: handleConnectNewTool),
                     ],
                   ),
                 ),
@@ -134,7 +135,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     ).then((_) => setState(() {}));
   }
 
-  List<MapEntry<int, ProjectBlock>> _getFilteredExistingTools() {
+  List<MapEntry<int, ProjectBlock>> getFilteredExistingTools() {
     final allowedKinds = ['tuner', 'metronome', 'media_player'];
     return widget.project!.blocks
         .asMap()
@@ -143,21 +144,21 @@ class _ParentIslandViewState extends State<ParentIslandView> {
         .toList();
   }
 
-  List<BlockType> _getFilteredNewToolTypes() {
+  List<BlockType> getFilteredNewToolTypes() {
     final connectableToolTypes = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
     return connectableToolTypes.where((blockType) => widget.toolBlock.kind != blockType.name.toSnakeCase()).toList();
   }
 
-  Future<void> _handleConnectExistingTool(int projectToolIndex) async {
-    _connectSelectedTool(projectToolIndex);
+  Future<void> handleConnectExistingTool(int projectToolIndex) async {
+    connectSelectedTool(projectToolIndex);
   }
 
-  Future<void> _handleConnectNewTool(BlockType blockType) async {
-    await _addNewToolToProject(blockType);
-    _connectSelectedTool(0);
+  Future<void> handleConnectNewTool(BlockType blockType) async {
+    await addNewToolToProject(blockType);
+    connectSelectedTool(0);
   }
 
-  Future<void> _addNewToolToProject(BlockType blockType) async {
+  Future<void> addNewToolToProject(BlockType blockType) async {
     final project = widget.project!;
     final info = getBlockTypeInfos(context.l10n)[blockType]!;
     final newTitle = await showEditTextDialog(
@@ -171,17 +172,17 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     project.increaseCounter(info.kind);
 
     project.addBlock(info.createWithTitle(newTitle));
-    if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    if (mounted) await projectRepo.saveLibrary(context.read<ProjectLibrary>());
   }
 
-  void _connectSelectedTool(int projectToolIndex) async {
-    _indexOfChosenIsland = projectToolIndex;
+  void connectSelectedTool(int projectToolIndex) async {
+    indexOfChosenIsland = projectToolIndex;
     // to force calling the initState of the new island, first open an empty island
     // and then in init of empty island open the new island
-    _loadedTool = EmptyBlock(context.l10n.toolEmpty);
+    loadedTool = EmptyBlock(context.l10n.toolEmpty);
     widget.toolBlock.islandToolID = 'empty';
-    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    _empty = false;
+    await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    empty = false;
 
     if (!mounted) return;
     Navigator.of(context).pop();
@@ -189,11 +190,11 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     setState(() {});
   }
 
-  void _setChosenIsland() async {
-    if (_indexOfChosenIsland != null) {
-      _loadedTool = widget.project!.blocks[_indexOfChosenIsland!];
-      widget.toolBlock.islandToolID = widget.project!.blocks[_indexOfChosenIsland!].id;
-      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+  void setChosenIsland() async {
+    if (indexOfChosenIsland != null) {
+      loadedTool = widget.project!.blocks[indexOfChosenIsland!];
+      widget.toolBlock.islandToolID = widget.project!.blocks[indexOfChosenIsland!].id;
+      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
 
       setState(() {});
     }
@@ -201,16 +202,16 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_isConnectionToAnotherToolAllowed) {
+    if (!isConnectionToAnotherToolAllowed) {
       return NoIslandView(alignment: widget.toolBlock.kind == 'piano' ? Alignment.centerRight : Alignment.center);
     }
 
-    if (_empty) return EmptyIslandView(onPressed: _showToolSelectionBottomSheet);
+    if (empty) return EmptyIslandView(onPressed: showToolSelectionBottomSheet);
 
     return SelectedIslandView(
-      loadedTool: _loadedTool,
-      onShowToolSelection: _showToolSelectionBottomSheet,
-      onEmptyIslandInit: _setChosenIsland,
+      loadedTool: loadedTool,
+      onShowToolSelection: showToolSelectionBottomSheet,
+      onEmptyIslandInit: setChosenIsland,
     );
   }
 }
