@@ -58,18 +58,14 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
     if (_isConnectionToAnotherToolAllowed) {
       if (widget.toolBlock.islandToolID == null) {
-        // if there is no tool as island saved
         _empty = true;
       } else {
-        // if there is a tool as island saved
         try {
-          // search for the tool using the hashCode and the hashCode saved in the current tool
           final foundTools = widget.project!.blocks.where((block) => block.id == widget.toolBlock.islandToolID);
-
-          // there should always only one to be found, because the id should be individual for each block
           if (foundTools.length > 1) {
             throw 'WARNING: When looking for the tool of an island view, there where more than one tool found! But there should only be one tool found.';
           }
+
           _loadedTool = foundTools.first;
           _empty = false;
         } catch (e) {
@@ -96,20 +92,9 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
   void _showToolSelectionBottomSheet() {
     final l10n = context.l10n;
-
-    // filter existing tools
-    final allowedKinds = ['tuner', 'metronome', 'media_player'];
-    final filteredExistingTools =
-        widget.project!.blocks
-            .asMap()
-            .entries
-            .where((entry) => entry.value.kind != widget.toolBlock.kind && allowedKinds.contains(entry.value.kind))
-            .toList();
-
-    // filter new/not-existing tools
-    final connectableToolTypes = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
-    final filteredNewToolTypes =
-        connectableToolTypes.where((blockType) => widget.toolBlock.kind != blockType.name.toSnakeCase()).toList();
+    final project = widget.project!;
+    final filteredExistingTools = _getFilteredExistingTools();
+    final filteredNewToolTypes = _getFilteredNewToolTypes();
 
     showModalBottomSheet(
       context: context,
@@ -119,13 +104,13 @@ class _ParentIslandViewState extends State<ParentIslandView> {
             label: l10n.toolConnectAnother,
             titleChildren: [
               CardListTile(
-                title: widget.project!.title,
-                subtitle: l10n.formatDateAndTime(widget.project!.timeLastModified),
+                title: project.title,
+                subtitle: l10n.formatDateAndTime(project.timeLastModified),
                 trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
                 leadingPicture:
-                    widget.project!.thumbnailPath.isEmpty
+                    project.thumbnailPath.isEmpty
                         ? const AssetImage(TIOMusicParams.tiomusicIconPath)
-                        : FileImage(File(_fs.toAbsoluteFilePath(widget.project!.thumbnailPath))),
+                        : FileImage(File(_fs.toAbsoluteFilePath(project.thumbnailPath))),
                 onTapFunction: () {},
               ),
             ],
@@ -159,8 +144,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                       ),
                       NewToolsList(
                         toolTypes: filteredNewToolTypes,
-                        onSelectTool:
-                            (blockTypeInfo) => _handleConnectNewTool(blockTypeInfo, widget.project!.blocks.length),
+                        onSelectTool: (blockTypeInfo) => _handleConnectNewTool(blockTypeInfo, project.blocks.length),
                       ),
                     ],
                   ),
@@ -169,6 +153,20 @@ class _ParentIslandViewState extends State<ParentIslandView> {
             ],
           ),
     ).then((_) => setState(() {}));
+  }
+
+  List<MapEntry<int, ProjectBlock>> _getFilteredExistingTools() {
+    final allowedKinds = ['tuner', 'metronome', 'media_player'];
+    return widget.project!.blocks
+        .asMap()
+        .entries
+        .where((entry) => entry.value.kind != widget.toolBlock.kind && allowedKinds.contains(entry.value.kind))
+        .toList();
+  }
+
+  List<BlockType> _getFilteredNewToolTypes() {
+    final connectableToolTypes = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
+    return connectableToolTypes.where((blockType) => widget.toolBlock.kind != blockType.name.toSnakeCase()).toList();
   }
 
   Future<void> _handleConnectExistingTool(int index) async {
@@ -180,7 +178,6 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     _connectSelectedTool(0);
   }
 
-  // TODO: check if can be merges with method from project page
   Future<void> _addNewToolToProject(BlockTypeInfo blockTypeInfo) async {
     final project = widget.project!;
     final newTitle = await showEditTextDialog(
@@ -193,8 +190,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
     project.increaseCounter(blockTypeInfo.kind);
 
-    final newBlock = blockTypeInfo.createWithTitle(newTitle);
-    project.addBlock(newBlock);
+    project.addBlock(blockTypeInfo.createWithTitle(newTitle));
     if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
   }
 
