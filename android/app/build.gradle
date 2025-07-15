@@ -88,6 +88,19 @@ android {
             }
         }
     }
+    flavorDimensions "default"
+    productFlavors {
+      dev {
+        dimension "default"
+        applicationIdSuffix ".dev"
+        manifestPlaceholders = [appName: "[DEV] TIO Music"]
+      }
+      prd {
+        dimension "default"
+        applicationIdSuffix ".prd"
+        manifestPlaceholders = [appName: "TIO Music"]
+      }
+    }
 }
 
 flutter {
