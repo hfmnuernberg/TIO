@@ -1,4 +1,4 @@
-package de.hfm_nuernberg.tiomusic
+package de.hfmnuernberg.tiomusic
 
 import io.flutter.embedding.android.FlutterActivity
 
