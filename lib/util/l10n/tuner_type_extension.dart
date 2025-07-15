@@ -9,5 +9,6 @@ extension TunerTypeLabel on TunerType {
     TunerType.ukulele => l10n.tunerTypeUkulele,
     TunerType.violin => l10n.tunerTypeViolin,
     TunerType.viola => l10n.tunerTypeViola,
+    TunerType.violoncello => l10n.tunerTypeVioloncello,
   };
 }

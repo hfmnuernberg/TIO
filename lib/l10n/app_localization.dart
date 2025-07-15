@@ -294,6 +294,7 @@ abstract class AppLocalizations {
   String get tunerTypeUkulele;
   String get tunerTypeViola;
   String get tunerTypeViolin;
+  String get tunerTypeVioloncello;
 
   String formatNumber(double number) => NumberFormat.decimalPattern(locale).format(number);
 
