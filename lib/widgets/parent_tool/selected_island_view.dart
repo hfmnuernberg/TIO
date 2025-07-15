@@ -7,10 +7,10 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/pages/media_player/media_player_island_view.dart';
 import 'package:tiomusic/pages/metronome/metronome_island_view.dart';
-import 'package:tiomusic/pages/parent_tool/empty_island.dart';
 import 'package:tiomusic/pages/tuner/tuner_island_view.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/widgets/parent_tool/empty_island.dart';
 
 class SelectedIslandView extends StatelessWidget {
   final ProjectBlock? loadedTool;
