@@ -112,7 +112,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                             ),
                           ),
                         ),
-                        ExistingToolsList(tools: filteredExistingTools, onSelectTool: _handleConnectExistingTool),
+                        ExistingToolsList(tools: filteredExistingTools, onSelect: _handleConnectExistingTool),
                       ],
                       Padding(
                         padding: const EdgeInsets.only(left: 32, top: 8, bottom: 8),
@@ -124,10 +124,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
                           ),
                         ),
                       ),
-                      NewToolsList(
-                        toolTypes: filteredNewToolTypes,
-                        onSelectTool: (blockTypeInfo) => _handleConnectNewTool(blockTypeInfo, project.blocks.length),
-                      ),
+                      NewToolsList(tools: filteredNewToolTypes, onSelect: _handleConnectNewTool),
                     ],
                   ),
                 ),
@@ -151,33 +148,34 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     return connectableToolTypes.where((blockType) => widget.toolBlock.kind != blockType.name.toSnakeCase()).toList();
   }
 
-  Future<void> _handleConnectExistingTool(int index) async {
-    _connectSelectedTool(index);
+  Future<void> _handleConnectExistingTool(int projectToolIndex) async {
+    _connectSelectedTool(projectToolIndex);
   }
 
-  Future<void> _handleConnectNewTool(BlockTypeInfo blockTypeInfo, int index) async {
-    await _addNewToolToProject(blockTypeInfo);
+  Future<void> _handleConnectNewTool(BlockType blockType) async {
+    await _addNewToolToProject(blockType);
     _connectSelectedTool(0);
   }
 
-  Future<void> _addNewToolToProject(BlockTypeInfo blockTypeInfo) async {
+  Future<void> _addNewToolToProject(BlockType blockType) async {
     final project = widget.project!;
+    final info = getBlockTypeInfos(context.l10n)[blockType]!;
     final newTitle = await showEditTextDialog(
       context: context,
       label: context.l10n.projectNewTool,
-      value: '${blockTypeInfo.name} ${project.toolCounter[blockTypeInfo.kind]! + 1}',
+      value: '${info.name} ${project.toolCounter[info.kind]! + 1}',
       isNew: true,
     );
     if (newTitle == null) return;
 
-    project.increaseCounter(blockTypeInfo.kind);
+    project.increaseCounter(info.kind);
 
-    project.addBlock(blockTypeInfo.createWithTitle(newTitle));
+    project.addBlock(info.createWithTitle(newTitle));
     if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
   }
 
-  void _connectSelectedTool(int index) async {
-    _indexOfChosenIsland = index;
+  void _connectSelectedTool(int projectToolIndex) async {
+    _indexOfChosenIsland = projectToolIndex;
     // to force calling the initState of the new island, first open an empty island
     // and then in init of empty island open the new island
     _loadedTool = EmptyBlock(context.l10n.toolEmpty);

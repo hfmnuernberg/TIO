@@ -6,31 +6,31 @@ import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 
 class NewToolsList extends StatelessWidget {
-  final List<BlockType> toolTypes;
-  final void Function(BlockTypeInfo) onSelectTool;
+  final List<BlockType> tools;
+  final void Function(BlockType) onSelect;
 
-  const NewToolsList({super.key, required this.toolTypes, required this.onSelectTool});
+  const NewToolsList({super.key, required this.tools, required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: toolTypes.length,
+      itemCount: tools.length,
       itemBuilder: (context, index) {
-        final blockType = toolTypes[index];
+        final blockType = tools[index];
         final info = getBlockTypeInfos(context.l10n)[blockType]!;
 
         return CardListTile(
           title: info.name,
           subtitle: info.description,
           trailingIcon: IconButton(
-            onPressed: () => onSelectTool(info),
+            onPressed: () => onSelect(blockType),
             icon: const Icon(Icons.add),
             color: ColorTheme.surfaceTint,
           ),
           leadingPicture: circleToolIcon(info.icon),
-          onTapFunction: () => onSelectTool(info),
+          onTapFunction: () => onSelect(blockType),
         );
       },
     );

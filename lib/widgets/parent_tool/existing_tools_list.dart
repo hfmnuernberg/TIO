@@ -6,9 +6,9 @@ import 'package:tiomusic/widgets/card_list_tile.dart';
 
 class ExistingToolsList extends StatelessWidget {
   final List<MapEntry<int, ProjectBlock>> tools;
-  final void Function(int) onSelectTool;
+  final void Function(int projectToolIndex) onSelect;
 
-  const ExistingToolsList({super.key, required this.tools, required this.onSelectTool});
+  const ExistingToolsList({super.key, required this.tools, required this.onSelect});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +25,9 @@ class ExistingToolsList extends StatelessWidget {
         return CardListTile(
           title: tool.title,
           subtitle: formatSettingValues(tool.getSettingsFormatted(context.l10n)),
-          trailingIcon: IconButton(onPressed: () => onSelectTool(originalIndex), icon: const SizedBox()),
+          trailingIcon: IconButton(onPressed: () => onSelect(originalIndex), icon: const SizedBox()),
           leadingPicture: circleToolIcon(tool.icon),
-          onTapFunction: () => onSelectTool(originalIndex),
+          onTapFunction: () => onSelect(originalIndex),
         );
       },
     );
