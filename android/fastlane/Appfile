@@ -2,7 +2,7 @@ json_key_file('service_account.json')
 
 package_name('de.hfmnuernberg.tiomusic')
 
-app_identifier("de.hfmnuernberg.tiomusic.dev")
+app_identifier('com.studiofluffy.tonica.dev')
 
 for_platform :android do
   for_lane :prd_push_to_store do
