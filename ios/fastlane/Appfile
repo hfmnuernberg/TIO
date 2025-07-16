@@ -1,6 +1,6 @@
-team_id("Y8827VPNZ5")
+team_id('Y8827VPNZ5')
 
-app_identifier("de.hfm-nuernberg.tiomusic.dev")
+app_identifier('de.hfm-nuernberg.tiomusic.dev')
 
 for_platform :ios do
   for_lane :prd_get_certs_and_profiles do

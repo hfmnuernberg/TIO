@@ -1,8 +1,8 @@
 default_platform(:ios)
 
-APPLE_APP_STORE_CONNECT_API_ISSUER_ID = ENV["APPLE_APP_STORE_CONNECT_API_ISSUER_ID"]
-APPLE_APP_STORE_CONNECT_API_KEY_ID = ENV["APPLE_APP_STORE_CONNECT_API_KEY_ID"]
-APPLE_APP_STORE_CONNECT_API_KEY_SECRET = ENV["APPLE_APP_STORE_CONNECT_API_KEY_SECRET"]
+APPLE_APP_STORE_CONNECT_API_ISSUER_ID = ENV['APPLE_APP_STORE_CONNECT_API_ISSUER_ID']
+APPLE_APP_STORE_CONNECT_API_KEY_ID = ENV['APPLE_APP_STORE_CONNECT_API_KEY_ID']
+APPLE_APP_STORE_CONNECT_API_KEY_SECRET = ENV['APPLE_APP_STORE_CONNECT_API_KEY_SECRET']
 
 def api_key
   app_store_connect_api_key(
@@ -15,7 +15,7 @@ def api_key
 end
 
 platform :ios do
-  desc "Get prd certificates and profiles"
+  desc 'Get prd certificates and profiles'
   lane :prd_get_certs_and_profiles do
       setup_ci()
 
@@ -26,7 +26,7 @@ platform :ios do
       )
     end
 
-  desc "Upload prd build to AppStore"
+  desc 'Upload prd build to AppStore'
   lane :prd_push_to_store do
       changelog_from_git_commits()
 
@@ -34,8 +34,8 @@ platform :ios do
         app_identifier: CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier),
         api_key: api_key(),
         distribute_external: true,
-        groups: ["HfMN Small Test Group"],
-        ipa: "../build/ios/ipa/app.ipa",
+        groups: ['HfMN Small Test Group'],
+        ipa: '../build/ios/ipa/app.ipa',
         notify_external_testers: true,
         skip_waiting_for_build_processing: true,
       )

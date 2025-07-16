@@ -44,7 +44,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "de.hfmnuernberg.tiomusic"
+        applicationId "com.studiofluffy.tonica"
         minSdkVersion 31
         targetSdkVersion 35
         versionCode flutterVersionCode.toInteger()
@@ -75,7 +75,7 @@ android {
         }
         prd {
             dimension "default"
-            applicationIdSuffix ".prd"
+            applicationIdSuffix ""
             manifestPlaceholders = [appName: "TIO Music"]
         }
     }
