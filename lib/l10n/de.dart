@@ -307,7 +307,8 @@ class German extends AppLocalizations {
   String get toolSaveInNewProject => 'In neuem Projekt speichern';
   String get toolTitleCopy => 'Kopie';
   String get toolTutorialEditTitle => 'Tippe hier, um den Titel deines Tools zu bearbeiten.';
-  String get toolTutorialSave => 'Tippe hier, um das Tool in einem Projekt zu speichern.';
+  String get toolTutorialSave =>
+      'Tippe hier, um das Tool in einem Projekt zu speichern.\n\nSobald sich dieses Tool in einem Projekt befindet, kannst du es mit anderen Tools verknüpfen.';
   String get toolUseBookmarkToSave => 'Verwende das Lesezeichen, um das Tool zu speichern.';
 
   String toolHasNoIslandView(String tool) => '$tool hat keine Kompaktansicht!';

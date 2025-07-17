@@ -304,7 +304,8 @@ class English extends AppLocalizations {
   String get toolSaveInNewProject => 'Save in new project';
   String get toolTitleCopy => 'Copy';
   String get toolTutorialEditTitle => 'Tap here to edit the title of your tool.';
-  String get toolTutorialSave => 'Tap here to save the tool to a project.';
+  String get toolTutorialSave =>
+      'Tap here to save the tool to a project.\n\nOnce this tool is part of a project, you can link it with other tools.';
   String get toolUseBookmarkToSave => 'Use bookmark to save a tool.';
 
   String toolHasNoIslandView(String tool) => '$tool has no compact view!';
