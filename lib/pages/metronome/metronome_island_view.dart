@@ -9,6 +9,7 @@ import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/domain/metronome/metronome.dart';
@@ -37,6 +38,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
     metronome = Metronome(
       context.read<AudioSystem>(),
       context.read<FileSystem>(),
+      context.read<Wakelock>(),
       onBeatStart: refresh,
       onBeatStop: refresh,
     );

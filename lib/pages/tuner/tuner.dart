@@ -9,6 +9,7 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/widgets/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
@@ -42,6 +43,7 @@ class _TunerState extends State<Tuner> {
   late TunerBlock tunerBlock;
 
   late AudioSystem _as;
+  late Wakelock _wl;
 
   bool isRunning = false;
   bool gettingPitchInput = false;
@@ -75,7 +77,7 @@ class _TunerState extends State<Tuner> {
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) stopTuner();
     });
-    return TunerFunctions.start(_as);
+    return TunerFunctions.start(_as, _wl);
   }
 
   Future<bool> stopTuner() async {
@@ -89,7 +91,7 @@ class _TunerState extends State<Tuner> {
     freqText.text = '';
     centOffsetText.text = '';
     isRunning = false;
-    return TunerFunctions.stop(_as);
+    return TunerFunctions.stop(_as, _wl);
   }
 
   @override
@@ -97,6 +99,7 @@ class _TunerState extends State<Tuner> {
     super.initState();
 
     _as = context.read<AudioSystem>();
+    _wl = context.read<Wakelock>();
 
     history = List.filled(historyLength, PitchOffset.withoutValue(), growable: true);
     pitchVisualizer = PitchVisualizer(history, gettingPitchInput);

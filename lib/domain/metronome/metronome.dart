@@ -1,17 +1,17 @@
 import 'dart:async';
 
 import 'package:audio_session/audio_session.dart';
+import 'package:tiomusic/domain/metronome/metronome_beat.dart';
+import 'package:tiomusic/domain/metronome/metronome_beat_event.dart';
+import 'package:tiomusic/domain/metronome/metronome_sounds.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/log.dart';
-import 'package:tiomusic/domain/metronome/metronome_beat.dart';
-import 'package:tiomusic/domain/metronome/metronome_beat_event.dart';
-import 'package:tiomusic/domain/metronome/metronome_sounds.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 
 const int beatSamplingIntervalInMs = 10;
 const int beatDurationInMs = 100;
@@ -21,6 +21,7 @@ typedef BeatCallback = void Function(MetronomeBeatEvent beat);
 class Metronome {
   static final logger = createPrefixLogger('Metronome');
 
+  final Wakelock _wakelock;
   final AudioSystem _as;
 
   final BeatCallback _onBeatEvent;
@@ -45,11 +46,17 @@ class Metronome {
   StreamSubscription<AudioInterruptionEvent>? _audioInterruptionListener;
   Timer? _beatDetection;
 
-  Metronome(this._as, FileSystem fs, {BeatCallback? onBeatEvent, BeatCallback? onBeatStart, BeatCallback? onBeatStop})
-    : _sounds = MetronomeSounds(_as, fs),
-      _onBeatEvent = onBeatEvent ?? ((_) {}),
-      _onBeatStart = onBeatStart ?? ((_) {}),
-      _onBeatStop = onBeatStop ?? ((_) {});
+  Metronome(
+    this._as,
+    FileSystem fs,
+    this._wakelock, {
+    BeatCallback? onBeatEvent,
+    BeatCallback? onBeatStart,
+    BeatCallback? onBeatStop,
+  }) : _sounds = MetronomeSounds(_as, fs),
+       _onBeatEvent = onBeatEvent ?? ((_) {}),
+       _onBeatStart = onBeatStart ?? ((_) {}),
+       _onBeatStop = onBeatStop ?? ((_) {});
 
   Future<void> start() async {
     if (_isOn) return;
@@ -60,12 +67,12 @@ class Metronome {
 
     await configureAudioSession(AudioSessionType.playback);
 
-    _beatDetection = Timer.periodic(const Duration(milliseconds: beatSamplingIntervalInMs), (t) => _checkForBeats());
+    // _beatDetection = Timer.periodic(const Duration(milliseconds: beatSamplingIntervalInMs), (t) => _checkForBeats());
 
     final success = await _as.metronomeStart();
     if (!success) return logger.e('Unable to start Metronome.');
 
-    if (success) await WakelockPlus.enable();
+    if (success) await _wakelock.enable();
 
     _isOn = true;
   }
@@ -73,7 +80,7 @@ class Metronome {
   Future<void> stop() async {
     if (!_isOn) return;
 
-    await WakelockPlus.disable();
+    await _wakelock.disable();
 
     final success = await _as.metronomeStop();
     if (!success) return logger.e('Unable to stop Metronome.');

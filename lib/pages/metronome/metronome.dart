@@ -21,6 +21,7 @@ import 'package:tiomusic/pages/parent_tool/volume.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -85,6 +86,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     metronome = Metronome(
       context.read<AudioSystem>(),
       context.read<FileSystem>(),
+      context.read<Wakelock>(),
       onBeatEvent: refresh,
       onBeatStart: flash,
     );

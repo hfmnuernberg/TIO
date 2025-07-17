@@ -16,6 +16,7 @@ import 'package:tiomusic/services/decorators/file_references_log_decorator.dart'
 import 'package:tiomusic/services/decorators/file_system_log_decorator.dart';
 import 'package:tiomusic/services/decorators/media_repository_log_decorator.dart';
 import 'package:tiomusic/services/decorators/project_repository_log_decorator.dart';
+import 'package:tiomusic/services/decorators/wakelock_decorator.dart';
 import 'package:tiomusic/services/file_picker.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -26,8 +27,10 @@ import 'package:tiomusic/services/impl/file_picker_impl.dart';
 import 'package:tiomusic/services/impl/file_references_impl.dart';
 import 'package:tiomusic/services/impl/file_system_impl.dart';
 import 'package:tiomusic/services/impl/rust_based_audio_system.dart';
+import 'package:tiomusic/services/impl/wakelock_plus_delegate.dart';
 import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/services/project_repository.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/splash_app.dart';
 
 Future<void> main() async {
@@ -58,6 +61,7 @@ List<SingleChildWidget> _getProviders() {
   final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(fileSystem));
   final fileReferences = FileReferencesLogDecorator(FileReferencesImpl(mediaRepo));
   final archiver = ArchiverLogDecorator(FileBasedArchiver(fileSystem, mediaRepo));
+  final wakelock = WakelockDecorator(WakelockPlusDelegate());
 
   return [
     Provider<AudioSystem>(create: (_) => audioSystem),
@@ -67,5 +71,6 @@ List<SingleChildWidget> _getProviders() {
     Provider<MediaRepository>(create: (_) => mediaRepo),
     Provider<FileReferences>(create: (_) => fileReferences),
     Provider<Archiver>(create: (_) => archiver),
+    Provider<Wakelock>(create: (_) => wakelock),
   ];
 }

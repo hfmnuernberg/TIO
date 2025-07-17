@@ -10,6 +10,7 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
 import 'package:tiomusic/services/audio_system.dart';
+import 'package:tiomusic/services/wakelock.dart';
 
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -29,6 +30,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
   final _midiNameText = TextEditingController();
 
   late AudioSystem _as;
+  late Wakelock _wl;
 
   late double _pitchFactor = 0.5;
   late String _midiName = 'A';
@@ -48,7 +50,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) stopTuner();
     });
-    return TunerFunctions.start(_as);
+    return TunerFunctions.start(_as, _wl);
   }
 
   Future<bool> stopTuner() async {
@@ -58,7 +60,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     _pitchFactor = 0.5;
     _freqHistory.fillRange(0, _freqHistory.length, 0);
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
-    return TunerFunctions.stop(_as);
+    return TunerFunctions.stop(_as, _wl);
   }
 
   @override
@@ -66,6 +68,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     super.initState();
 
     _as = context.read<AudioSystem>();
+    _wl = context.read<Wakelock>();
 
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
 

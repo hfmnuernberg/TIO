@@ -12,6 +12,7 @@ import 'package:tiomusic/services/decorators/file_references_log_decorator.dart'
 import 'package:tiomusic/services/decorators/file_system_log_decorator.dart';
 import 'package:tiomusic/services/decorators/media_repository_log_decorator.dart';
 import 'package:tiomusic/services/decorators/project_repository_log_decorator.dart';
+import 'package:tiomusic/services/decorators/wakelock_decorator.dart';
 import 'package:tiomusic/services/file_picker.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -21,10 +22,12 @@ import 'package:tiomusic/services/impl/file_based_project_repository.dart';
 import 'package:tiomusic/services/impl/file_references_impl.dart';
 import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/services/project_repository.dart';
+import 'package:tiomusic/services/wakelock.dart';
 
 import '../mocks/audio_system_mock.dart';
 import '../mocks/file_picker_mock.dart';
 import '../mocks/in_memory_file_system_mock.dart';
+import '../mocks/wakelock_mock.dart';
 
 class TestContext {
   final FileSystem inMemoryFileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
@@ -41,6 +44,9 @@ class TestContext {
   late final archiver = ArchiverLogDecorator(FileBasedArchiver(inMemoryFileSystem, mediaRepo));
 
   late final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(inMemoryFileSystem));
+
+  final WakelockMock wakelockMock = WakelockMock();
+  late final wakelock = WakelockDecorator(wakelockMock);
 
   late final List<SingleChildWidget> providers;
 
@@ -63,6 +69,7 @@ class TestContext {
       Provider<ProjectRepository>(create: (_) => projectRepo),
       Provider<FileReferences>(create: (_) => fileReferences),
       Provider<Archiver>(create: (_) => archiver),
+      Provider<Wakelock>(create: (_) => wakelock),
       ChangeNotifierProvider<ProjectLibrary>.value(value: projectLibrary),
       if (project != null) ChangeNotifierProvider<Project>.value(value: project),
     ];

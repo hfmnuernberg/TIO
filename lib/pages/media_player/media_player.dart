@@ -18,6 +18,7 @@ import 'package:tiomusic/pages/media_player/setting_pitch.dart';
 import 'package:tiomusic/pages/media_player/setting_speed.dart';
 import 'package:tiomusic/pages/media_player/setting_trim.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/widgets/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
@@ -51,6 +52,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   static final _logger = createPrefixLogger('MediaPlayer');
 
   late AudioSystem _as;
+  late Wakelock _wl;
   late FileSystem _fs;
   late FilePicker _filePicker;
   late FileReferences _fileReferences;
@@ -98,6 +100,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     super.initState();
 
     _as = context.read<AudioSystem>();
+    _wl = context.read<Wakelock>();
     _fs = context.read<FileSystem>();
     _filePicker = context.read<FilePicker>();
     _fileReferences = context.read<FileReferences>();
@@ -286,8 +289,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   @override
   void deactivate() async {
-    MediaPlayerFunctions.stopPlaying(_as);
-    MediaPlayerFunctions.stopRecording(_as);
+    MediaPlayerFunctions.stopPlaying(_as, _wl);
+    MediaPlayerFunctions.stopRecording(_as, _wl);
 
     await playInterruptionListener?.cancel();
     await recordInterruptionListener?.cancel();
@@ -797,7 +800,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       return;
     }
 
-    var success = await MediaPlayerFunctions.startPlaying(_as, _mediaPlayerBlock.looping);
+    var success = await MediaPlayerFunctions.startPlaying(_as, _wl, _mediaPlayerBlock.looping);
     playInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _stopPlaying();
     });
@@ -805,7 +808,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   Future<void> _stopPlaying() async {
-    bool success = await MediaPlayerFunctions.stopPlaying(_as);
+    bool success = await MediaPlayerFunctions.stopPlaying(_as, _wl);
     if (!success) _logger.e('Unable to stop playing.');
     if (mounted) setState(() => _isPlaying = false);
   }
@@ -833,7 +836,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   Future<void> _startRecording() async {
-    var success = await MediaPlayerFunctions.startRecording(_as, _isPlaying);
+    var success = await MediaPlayerFunctions.startRecording(_as, _wl, _isPlaying);
     setState(() {
       _isPlaying = false;
       _isRecording = true;
@@ -848,7 +851,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   Future<void> _stopRecording() async {
     await recordInterruptionListener?.cancel();
 
-    var success = await MediaPlayerFunctions.stopRecording(_as);
+    var success = await MediaPlayerFunctions.stopRecording(_as, _wl);
     if (mounted) {
       setState(() => _isRecording = false);
     }
@@ -932,7 +935,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   Future _askForKeepRecordingOnExit() async {
-    MediaPlayerFunctions.stopRecording(_as).then((success) async {
+    MediaPlayerFunctions.stopRecording(_as, _wl).then((success) async {
       if (success && mounted) {
         final projectTitle = widget.isQuickTool ? context.l10n.toolQuickTool : _project!.title;
         final newName = '$projectTitle-${_mediaPlayerBlock.title}';

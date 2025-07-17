@@ -10,6 +10,7 @@ import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
@@ -28,6 +29,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   static final _logger = createPrefixLogger('MediaPlayerIslandView');
 
   late AudioSystem _as;
+  late Wakelock _wl;
   late WaveformVisualizer _waveformVisualizer;
 
   Float32List _rmsValues = Float32List(100);
@@ -49,6 +51,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     super.initState();
 
     _as = context.read<AudioSystem>();
+    _wl = context.read<Wakelock>();
     _as.mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
 
     _waveformVisualizer = WaveformVisualizer(
@@ -143,7 +146,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   @override
   void deactivate() {
     playInterruptionListener?.cancel();
-    MediaPlayerFunctions.stopPlaying(_as).then((value) => MediaPlayerFunctions.stopRecording(_as));
+    MediaPlayerFunctions.stopPlaying(_as, _wl).then((value) => MediaPlayerFunctions.stopRecording(_as, _wl));
 
     _timerPollPlaybackPosition?.cancel();
     super.deactivate();
@@ -185,7 +188,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
   Future<void> _stopPlaying() async {
     await playInterruptionListener?.cancel();
-    await MediaPlayerFunctions.stopPlaying(_as);
+    await MediaPlayerFunctions.stopPlaying(_as, _wl);
     if (mounted) setState(() => _isPlaying = false);
   }
 
@@ -193,7 +196,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     playInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _stopPlaying();
     });
-    var success = await MediaPlayerFunctions.startPlaying(_as, widget.mediaPlayerBlock.looping);
+    var success = await MediaPlayerFunctions.startPlaying(_as, _wl, widget.mediaPlayerBlock.looping);
     if (mounted) setState(() => _isPlaying = success);
   }
 }

@@ -11,6 +11,7 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -69,6 +70,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
     metronome = Metronome(
       context.read<AudioSystem>(),
       context.read<FileSystem>(),
+      context.read<Wakelock>(),
       onBeatStart: refresh,
       onBeatStop: refresh,
     );
