@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tiomusic/pages/projects_page/projects_page.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
-import 'package:tiomusic/util/audio_util.dart';
+import 'package:tiomusic/services/audio_session.dart';
+import 'package:tiomusic/services/audio_system.dart';
+import 'package:tiomusic/util/log.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,17 +16,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  static final logger = createPrefixLogger('HomePage');
+
   @override
   void initState() {
     super.initState();
 
+    final audioSystem = context.read<AudioSystem>();
+    final audioSession = context.read<AudioSession>();
+
     if (Platform.isIOS) {
-      startAudioSession()
-          .then((_) async => configureAudioSession(AudioSessionType.playback))
-          .then((_) async => Future.delayed(const Duration(milliseconds: 500)))
-          .then((_) => initAudio());
+      audioSession.start().then((success) async {
+        if (!success) {
+          logger.e('Unable to start audio session.');
+          return;
+        }
+        await audioSession.preparePlayback();
+        await Future.delayed(const Duration(milliseconds: 500));
+        await audioSystem.initAudio();
+      });
     } else {
-      initAudio();
+      audioSystem.initAudio();
     }
   }
 

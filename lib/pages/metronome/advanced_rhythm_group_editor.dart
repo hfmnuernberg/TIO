@@ -8,6 +8,7 @@ import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -69,6 +70,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
 
     metronome = Metronome(
       context.read<AudioSystem>(),
+      context.read<AudioSession>(),
       context.read<FileSystem>(),
       context.read<Wakelock>(),
       onBeatStart: refresh,

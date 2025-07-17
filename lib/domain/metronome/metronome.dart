@@ -1,16 +1,15 @@
 import 'dart:async';
 
-import 'package:audio_session/audio_session.dart';
 import 'package:tiomusic/domain/metronome/metronome_beat.dart';
 import 'package:tiomusic/domain/metronome/metronome_beat_event.dart';
 import 'package:tiomusic/domain/metronome/metronome_sounds.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
+import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
-import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/log.dart';
 
 const int beatSamplingIntervalInMs = 10;
@@ -21,8 +20,9 @@ typedef BeatCallback = void Function(MetronomeBeatEvent beat);
 class Metronome {
   static final logger = createPrefixLogger('Metronome');
 
-  final Wakelock _wakelock;
   final AudioSystem _as;
+  final AudioSession _audioSession;
+  final Wakelock _wakelock;
 
   final BeatCallback _onBeatEvent;
   final BeatCallback _onBeatStart;
@@ -43,11 +43,13 @@ class Metronome {
   MetronomeBeat _currentSecondaryBeat = MetronomeBeat();
   MetronomeBeat get currentSecondaryBeat => _currentSecondaryBeat;
 
-  StreamSubscription<AudioInterruptionEvent>? _audioInterruptionListener;
+  AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
+
   Timer? _beatDetection;
 
   Metronome(
     this._as,
+    this._audioSession,
     FileSystem fs,
     this._wakelock, {
     BeatCallback? onBeatEvent,
@@ -61,13 +63,11 @@ class Metronome {
   Future<void> start() async {
     if (_isOn) return;
 
-    _audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
-      if (event.type == AudioInterruptionType.unknown) stop();
-    });
+    _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(stop);
 
-    await configureAudioSession(AudioSessionType.playback);
+    await _audioSession.preparePlayback();
 
-    // _beatDetection = Timer.periodic(const Duration(milliseconds: beatSamplingIntervalInMs), (t) => _checkForBeats());
+    _beatDetection = Timer.periodic(const Duration(milliseconds: beatSamplingIntervalInMs), (t) => _checkForBeats());
 
     final success = await _as.metronomeStart();
     if (!success) return logger.e('Unable to start Metronome.');
@@ -88,8 +88,10 @@ class Metronome {
     _beatDetection?.cancel();
     _beatDetection = null;
 
-    await _audioInterruptionListener?.cancel();
-    _audioInterruptionListener = null;
+    if (_audioSessionInterruptionListenerHandle != null) {
+      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
+      _audioSessionInterruptionListenerHandle = null;
+    }
 
     _currentBeat = MetronomeBeat();
     _currentSecondaryBeat = MetronomeBeat();

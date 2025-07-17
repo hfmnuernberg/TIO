@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +10,7 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/sound_font.dart';
+import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/widgets/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
@@ -18,7 +18,6 @@ import 'package:tiomusic/pages/piano/set_concert_pitch.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
@@ -45,6 +44,7 @@ class Piano extends StatefulWidget {
 
 class _PianoState extends State<Piano> {
   late AudioSystem _as;
+  late AudioSession _audioSession;
   late FileSystem _fs;
   late ProjectRepository _projectRepo;
 
@@ -68,7 +68,7 @@ class _PianoState extends State<Piano> {
   final GlobalKey _keyOctaveSwitch = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
 
-  StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
+  AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
   bool _isPlaying = false;
 
   bool _dontStopOnLeave = false;
@@ -114,12 +114,10 @@ class _PianoState extends State<Piano> {
 
   Future<void> _pianoStart() async {
     if (_isPlaying) return;
-    audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
-      if (event.type == AudioInterruptionType.unknown) _pianoStop();
-    });
+    _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(_pianoStop);
 
     bool initSuccess = await _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
-    await configureAudioSession(AudioSessionType.playback);
+    await _audioSession.preparePlayback();
     if (!initSuccess) return;
 
     _pianoSetConcertPitch(_pianoBlock.concertPitch);
@@ -129,7 +127,10 @@ class _PianoState extends State<Piano> {
   }
 
   Future<void> _pianoStop() async {
-    await audioInterruptionListener?.cancel();
+    if (_audioSessionInterruptionListenerHandle != null) {
+      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
+      _audioSessionInterruptionListenerHandle = null;
+    }
     if (_isPlaying) {
       await _as.pianoStop();
     }

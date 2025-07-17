@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
+import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/wakelock.dart';
-import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
@@ -64,25 +64,30 @@ abstract class MediaPlayerFunctions {
     return newList;
   }
 
-  static Future<bool> startPlaying(AudioSystem as, Wakelock wl, bool looping) async {
-    await stopRecording(as, wl);
+  static Future<bool> startPlaying(AudioSystem as, AudioSession audioSession, Wakelock wakelock, bool looping) async {
+    await stopRecording(as, wakelock);
     await as.mediaPlayerSetLoop(looping: looping);
-    await configureAudioSession(AudioSessionType.playback);
+    await audioSession.preparePlayback();
     var success = await as.mediaPlayerStart();
     if (success) {
-      await wl.enable();
+      await wakelock.enable();
     }
     return success;
   }
 
-  static Future<bool> stopPlaying(AudioSystem as, Wakelock wl) async {
-    await wl.disable();
+  static Future<bool> stopPlaying(AudioSystem as, Wakelock wakelock) async {
+    await wakelock.disable();
     return as.mediaPlayerStop();
   }
 
-  static Future<bool> startRecording(AudioSystem as, Wakelock wl, bool isPlaying) async {
+  static Future<bool> startRecording(
+    AudioSystem as,
+    AudioSession audioSession,
+    Wakelock wakelock,
+    bool isPlaying,
+  ) async {
     if (isPlaying) {
-      await stopPlaying(as, wl);
+      await stopPlaying(as, wakelock);
       await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     }
 
@@ -91,16 +96,16 @@ abstract class MediaPlayerFunctions {
       return false;
     }
 
-    await configureAudioSession(AudioSessionType.record);
+    await audioSession.prepareRecording();
     var success = await as.mediaPlayerStartRecording();
     if (success) {
-      await wl.enable();
+      await wakelock.enable();
     }
     return success;
   }
 
-  static Future<bool> stopRecording(AudioSystem as, Wakelock wl) async {
-    await wl.disable();
+  static Future<bool> stopRecording(AudioSystem as, Wakelock wakelock) async {
+    await wakelock.disable();
     return as.mediaPlayerStopRecording();
   }
 
