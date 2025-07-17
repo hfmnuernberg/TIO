@@ -322,7 +322,8 @@ class English extends AppLocalizations {
   String get tunerPlayReference => 'Play reference';
   String get tunerSetConcertPitch => 'Set concert pitch';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
-  String get tunerTutorialStartStop => 'Tap here to start and stop the tuner.';
+  String get tunerTutorialStartStop =>
+      'Tap here to start and stop the tuner.\n\nWhen the note fades out, overtones may cause incorrect readings. It’s best to strike the note again.';
   String get tunerTypeChromatic => 'Chromatic Tuner';
   String get tunerTypeBass => 'Bass';
   String get tunerTypeGuitar => 'Guitar';
