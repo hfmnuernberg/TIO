@@ -7,6 +7,7 @@ import 'package:tiomusic/models/blocks/empty_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/widgets/input/flat_edit_text_dialog.dart';
 import 'package:tiomusic/widgets/parent_tool/empty_island_view.dart';
 import 'package:tiomusic/widgets/parent_tool/existing_tools_list.dart';
 import 'package:tiomusic/widgets/parent_tool/modal_bottom_sheet.dart';
@@ -161,18 +162,24 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   Future<void> addNewToolToProject(BlockType blockType) async {
     final project = widget.project!;
     final info = getBlockTypeInfos(context.l10n)[blockType]!;
-    final newTitle = await showEditTextDialog(
-      context: context,
-      label: context.l10n.projectNewTool,
-      value: '${info.name} ${project.toolCounter[info.kind]! + 1}',
-      isNew: true,
-    );
+
+    final newTitle = await _buildTextDialog(info);
     if (newTitle == null) return;
 
     project.increaseCounter(info.kind);
 
     project.addBlock(info.createWithTitle(newTitle));
     if (mounted) await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+  }
+
+  Future<String?> _buildTextDialog(BlockTypeInfo info) {
+    final label = context.l10n.projectNewTool;
+    final initialTitle = '${info.name} ${widget.project!.toolCounter[info.kind]! + 1}';
+    if (widget.toolBlock.kind == BlockType.piano.name) {
+      return showFlatEditTextDialog(context: context, label: label, value: initialTitle, isNew: true);
+    } else {
+      return showEditTextDialog(context: context, label: label, value: initialTitle, isNew: true);
+    }
   }
 
   void connectSelectedTool(int projectToolIndex) async {
