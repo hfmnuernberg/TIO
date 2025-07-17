@@ -78,6 +78,7 @@ class _PianoState extends State<Piano> {
     super.initState();
 
     _as = context.read<AudioSystem>();
+    _audioSession = context.read<AudioSession>();
     _fs = context.read<FileSystem>();
     _projectRepo = context.read<ProjectRepository>();
 

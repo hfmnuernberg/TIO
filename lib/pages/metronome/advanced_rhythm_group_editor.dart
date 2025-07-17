@@ -73,8 +73,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
       context.read<AudioSession>(),
       context.read<FileSystem>(),
       context.read<Wakelock>(),
-      onBeatStart: refresh,
-      onBeatStop: refresh,
+      onBeatEvent: refresh,
     );
 
     if (widget.isSecondMetronome) metronome.sounds.loadSecondarySoundsAsPrimary(widget.metronomeBlock);

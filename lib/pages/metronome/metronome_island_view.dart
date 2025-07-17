@@ -41,11 +41,10 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
       context.read<AudioSession>(),
       context.read<FileSystem>(),
       context.read<Wakelock>(),
-      onBeatStart: refresh,
-      onBeatStop: refresh,
+      onBeatEvent: refresh,
     );
 
-    // metronome.mute();
+    // metronome.mute(); // TODO
     metronome.setVolume(widget.metronomeBlock.volume);
     metronome.setBpm(widget.metronomeBlock.bpm);
     metronome.setChanceOfMuteBeat(widget.metronomeBlock.randomMute);

@@ -21,8 +21,8 @@ abstract class TunerFunctions {
     }
   }
 
-  static Future<bool> stop(AudioSystem as, Wakelock wl) async {
-    await wl.disable();
+  static Future<bool> stop(AudioSystem as, Wakelock wakelock) async {
+    await wakelock.disable();
     return as.tunerStop();
   }
 
