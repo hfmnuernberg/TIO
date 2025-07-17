@@ -7,7 +7,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/metronome.dart';
+import 'package:tiomusic/domain/metronome/metronome.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
 import 'package:tiomusic/widgets/input/tap_to_tempo.dart';
 

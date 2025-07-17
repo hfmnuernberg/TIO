@@ -14,7 +14,7 @@ import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/metronome.dart';
+import 'package:tiomusic/domain/metronome/metronome.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';

@@ -13,7 +13,7 @@ import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/l10n/metronome_sound_extension.dart';
-import 'package:tiomusic/util/metronome.dart';
+import 'package:tiomusic/domain/metronome/metronome.dart';
 
 enum SoundType { accented, unaccented, polyAccented, polyUnaccented }
 

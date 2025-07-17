@@ -8,7 +8,7 @@ import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/metronome_beat.dart';
+import 'package:tiomusic/domain/metronome/metronome_beat.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/metronome/group/groups.dart';
 import 'package:tiomusic/widgets/metronome/simple_rhythm_group_editor.dart';

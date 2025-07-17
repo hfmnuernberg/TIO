@@ -8,9 +8,9 @@ import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/log.dart';
-import 'package:tiomusic/util/metronome_beat.dart';
-import 'package:tiomusic/util/metronome_beat_event.dart';
-import 'package:tiomusic/util/metronome_sounds.dart';
+import 'package:tiomusic/domain/metronome/metronome_beat.dart';
+import 'package:tiomusic/domain/metronome/metronome_beat_event.dart';
+import 'package:tiomusic/domain/metronome/metronome_sounds.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 const int beatSamplingIntervalInMs = 10;
