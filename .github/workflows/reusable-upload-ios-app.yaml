@@ -59,7 +59,7 @@ jobs:
         path: build/ios/ipa
 
     - name: Setup ruby
-      uses: ruby/setup-ruby@v1.245.0
+      uses: ruby/setup-ruby@v1.247.0
       with:
         ruby-version: 3.3
         working-directory: ios
@@ -76,11 +76,11 @@ jobs:
     - name: Prepare version
       run: scripts/set-version-in-pubspec.sh "${{ inputs.semver }}+${{ inputs.build_number }}"
 
-    #    - name: Upload bundle
-    #      uses: maierj/fastlane-action@v3.1.0
-    #      with:
-    #        lane: ${{ inputs.target_env }}_push_to_store
-    #        subdirectory: ios
+    - name: Upload bundle
+      uses: maierj/fastlane-action@v3.1.0
+      with:
+        lane: ${{ inputs.target_env }}_push_to_store
+        subdirectory: ios
 
     - name: Update deployment status (success)
       if: success()

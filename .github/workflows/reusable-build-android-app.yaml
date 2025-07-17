@@ -82,7 +82,7 @@ jobs:
       run: scripts/app.sh generate:json
 
     - name: Setup ruby
-      uses: ruby/setup-ruby@v1.245.0
+      uses: ruby/setup-ruby@v1.247.0
       with:
         ruby-version: 3.3
         working-directory: android
@@ -91,7 +91,7 @@ jobs:
     - name: Decrypt keystore file
       uses: timheuer/base64-to-file@v1.2.4
       with:
-        fileName: keystore
+        fileName: release.keystore
         fileDir: ./android/app
         encodedString: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_JKS }}
 
