@@ -37,7 +37,7 @@ platform :ios do
         groups: ['HfMN Small Test Group'],
         ipa: '../build/ios/ipa/app.ipa',
         notify_external_testers: true,
-        skip_waiting_for_build_processing: true,
+        skip_waiting_for_build_processing: false, # needs to be false for successful distribution to external testers
       )
     end
 end
