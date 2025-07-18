@@ -5,9 +5,9 @@ import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
-import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/domain/metronome/metronome.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
 import 'package:tiomusic/widgets/input/tap_to_tempo.dart';
 
@@ -19,28 +19,23 @@ class SetBPM extends StatefulWidget {
 }
 
 class _SetBPMState extends State<SetBPM> {
-  late AudioSystem as;
+  late final Metronome metronome;
+
   late int bpm;
+
   late MetronomeBlock metronomeBlock;
 
   @override
   void initState() {
     super.initState();
-    as = context.read<AudioSystem>();
+    metronome = context.read<Metronome>();
     metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
     bpm = metronomeBlock.bpm;
   }
 
-  Future<void> updateBpm(newPitch) async {
-    final success = await as.metronomeSetBpm(bpm: bpm.toDouble());
-    if (!success) {
-      throw 'Setting bpm failed using value: $bpm';
-    }
-  }
-
   Future<void> handleChange(int newBpm) async {
     setState(() => bpm = newBpm.clamp(MetronomeParams.minBPM, MetronomeParams.maxBPM));
-    await updateBpm(bpm);
+    await metronome.setBpm(bpm);
   }
 
   Future<void> handleReset() async => handleChange(MetronomeParams.defaultBPM);

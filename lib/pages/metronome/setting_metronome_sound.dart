@@ -6,16 +6,14 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/metronome_sound.dart';
-import 'package:tiomusic/services/audio_system.dart';
-import 'package:tiomusic/util/l10n/metronome_sound_extension.dart';
-import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/models/project_block.dart';
+import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
-import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/l10n/metronome_sound_extension.dart';
+import 'package:tiomusic/domain/metronome/metronome.dart';
 
 enum SoundType { accented, unaccented, polyAccented, polyUnaccented }
 
@@ -29,8 +27,7 @@ class SetMetronomeSound extends StatefulWidget {
 }
 
 class _SetMetronomeSoundState extends State<SetMetronomeSound> {
-  late AudioSystem as;
-  late FileSystem fs;
+  late final Metronome metronome;
 
   late MetronomeBlock metronomeBlock;
 
@@ -43,8 +40,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
   void initState() {
     super.initState();
 
-    as = context.read<AudioSystem>();
-    fs = context.read<FileSystem>();
+    metronome = context.read<Metronome>();
 
     metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
 
@@ -163,7 +159,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
                 playSound(soundType);
               } else {
                 String file = MetronomeSound.values[index].file;
-                MetronomeUtils.loadSound(as, fs, widget.forSecondMetronome, soundType, file);
+                metronome.sounds.loadSound(widget.forSecondMetronome, soundType, file);
               }
             });
           },
@@ -196,7 +192,7 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
     }
 
     await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-    MetronomeUtils.loadSounds(as, fs, metronomeBlock);
+    metronome.sounds.loadAllSounds(metronomeBlock);
 
     if (!mounted) return;
     Navigator.pop(context);
@@ -246,22 +242,16 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
           true;
     }
 
-    MetronomeUtils.loadSound(as, fs, widget.forSecondMetronome, SoundType.accented, defaultMetronomeAccSound);
-    MetronomeUtils.loadSound(as, fs, widget.forSecondMetronome, SoundType.unaccented, defaultMetronomeUnaccSound);
-    MetronomeUtils.loadSound(as, fs, widget.forSecondMetronome, SoundType.polyAccented, defaultMetronomePolyAccSound);
-    MetronomeUtils.loadSound(
-      as,
-      fs,
-      widget.forSecondMetronome,
-      SoundType.polyUnaccented,
-      defaultMetronomePolyUnaccSound,
-    );
+    metronome.sounds.loadSound(widget.forSecondMetronome, SoundType.accented, defaultMetronomeAccSound);
+    metronome.sounds.loadSound(widget.forSecondMetronome, SoundType.unaccented, defaultMetronomeUnaccSound);
+    metronome.sounds.loadSound(widget.forSecondMetronome, SoundType.polyAccented, defaultMetronomePolyAccSound);
+    metronome.sounds.loadSound(widget.forSecondMetronome, SoundType.polyUnaccented, defaultMetronomePolyUnaccSound);
 
     setState(() {});
   }
 
   void handleCancel() {
-    MetronomeUtils.loadSounds(as, fs, metronomeBlock);
+    metronome.sounds.loadAllSounds(metronomeBlock);
     Navigator.pop(context);
   }
 }

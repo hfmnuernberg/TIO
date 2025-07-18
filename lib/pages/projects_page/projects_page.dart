@@ -195,7 +195,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
     switch (blockType) {
       case BlockType.metronome:
         block = MetronomeBlock.withDefaults(context.l10n);
-        toolPage = const Metronome(isQuickTool: true);
+        toolPage = const MetronomePage(isQuickTool: true);
       case BlockType.tuner:
         block = TunerBlock.withDefaults(context.l10n);
         toolPage = const Tuner(isQuickTool: true);

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stats/stats.dart';
@@ -9,8 +8,9 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
+import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
-
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
@@ -29,6 +29,8 @@ class _TunerIslandViewState extends State<TunerIslandView> {
   final _midiNameText = TextEditingController();
 
   late AudioSystem _as;
+  late AudioSession _audioSession;
+  late Wakelock _wakelock;
 
   late double _pitchFactor = 0.5;
   late String _midiName = 'A';
@@ -41,24 +43,25 @@ class _TunerIslandViewState extends State<TunerIslandView> {
 
   bool _processingButtonClick = false;
 
-  StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
+  AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
   Future<bool> startTuner() async {
     _isRunning = true;
-    audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
-      if (event.type == AudioInterruptionType.unknown) stopTuner();
-    });
-    return TunerFunctions.start(_as);
+    _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(stopTuner);
+    return TunerFunctions.start(_as, _audioSession, _wakelock);
   }
 
   Future<bool> stopTuner() async {
-    await audioInterruptionListener?.cancel();
+    if (_audioSessionInterruptionListenerHandle != null) {
+      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
+      _audioSessionInterruptionListenerHandle = null;
+    }
     _isRunning = false;
     _midiNameText.text = '';
     _pitchFactor = 0.5;
     _freqHistory.fillRange(0, _freqHistory.length, 0);
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
-    return TunerFunctions.stop(_as);
+    return TunerFunctions.stop(_as, _wakelock);
   }
 
   @override
@@ -66,6 +69,8 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     super.initState();
 
     _as = context.read<AudioSystem>();
+    _audioSession = context.read<AudioSession>();
+    _wakelock = context.read<Wakelock>();
 
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
 

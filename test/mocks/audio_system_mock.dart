@@ -163,4 +163,18 @@ class AudioSystemMock extends Mock implements AudioSystem {
   void mockGetSampleRate([int result = 44100]) => when(getSampleRate).thenAnswer((_) async => result);
 
   void mockDebugTestFunction([bool result = true]) => when(debugTestFunction).thenAnswer((_) async => result);
+
+  void verifyMetronomeStartCalled() => verify(metronomeStart).called(1);
+
+  void verifyMetronomeStopCalled() => verify(metronomeStop).called(1);
+
+  void verifyMetronomeSetVolumeCalledWith(double volume) => verify(() => metronomeSetVolume(volume: volume)).called(1);
+
+  void verifyMetronomeSetBpmCalledWith(double bpm) => verify(() => metronomeSetBpm(bpm: bpm)).called(1);
+
+  void verifyMetronomeSetBeatMuteChanceCalledWith(double muteChance) =>
+      verify(() => metronomeSetBeatMuteChance(muteChance: muteChance)).called(1);
+
+  void verifyMetronomeSetRhythmCalledWith(List<MetroBar> bars, [List<MetroBar> bars2 = const []]) =>
+      verify(() => metronomeSetRhythm(bars: bars, bars2: bars2)).called(1);
 }
