@@ -12,6 +12,7 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/edit_markers_page.dart';
+import 'package:tiomusic/pages/media_player/handle_reached_markers.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/pages/media_player/setting_bpm.dart';
 import 'package:tiomusic/pages/media_player/setting_pitch.dart';
@@ -63,6 +64,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
   var _isLoading = false;
 
   var _playbackPositionFactor = 0.0;
+  double? _previousPlaybackPositionFactor;
+  late MarkerHandler _markerHandler;
 
   Timer? _timerPollPlaybackPosition;
 
@@ -108,6 +111,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
     _mediaPlayerBlock.timeLastModified = getCurrentDateTime();
+
+    _markerHandler = MarkerHandler();
 
     if (!widget.isQuickTool) {
       _project = context.read<Project>();
@@ -282,6 +287,22 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _numOfBins,
       );
     });
+
+    final prev = _previousPlaybackPositionFactor ?? mediaPlayerStateRust.playbackPositionFactor;
+    if (prev > mediaPlayerStateRust.playbackPositionFactor) {
+      _markerHandler.reset();
+      _previousPlaybackPositionFactor = mediaPlayerStateRust.playbackPositionFactor;
+      return;
+    }
+    _markerHandler.checkMarkers(
+      previousPosition: prev,
+      currentPosition: mediaPlayerStateRust.playbackPositionFactor,
+      markers: _mediaPlayerBlock.markerPositions,
+      onPeep: (marker) {
+        SystemSound.play(SystemSoundType.click);
+      },
+    );
+    _previousPlaybackPositionFactor = mediaPlayerStateRust.playbackPositionFactor;
   }
 
   @override
@@ -730,6 +751,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _setFileDuration();
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
+        _markerHandler.reset();
         if (mounted) await _projectRepo.saveLibrary(projectLibrary);
       }
       setState(() => _isLoading = false);
@@ -904,6 +926,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _setFileDuration();
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
+        _markerHandler.reset();
         if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       }
       setState(() => _isLoading = false);
@@ -926,6 +949,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _setFileDuration();
       _addShareOptionToMenu();
       _mediaPlayerBlock.markerPositions.clear();
+      _markerHandler.reset();
       if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }
     setState(() => _isLoading = false);
