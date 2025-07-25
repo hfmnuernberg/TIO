@@ -92,6 +92,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyStartStop = GlobalKey();
+  final GlobalKey _keyLooping = GlobalKey();
+  final GlobalKey _keyLoopingAll = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
   final GlobalKey _keyWaveform = GlobalKey();
 
@@ -224,6 +226,18 @@ class _MediaPlayerState extends State<MediaPlayer> {
       CustomTargetFocus(
         _keyStartStop,
         l10n.mediaPlayerTutorialStartStop,
+        alignText: ContentAlign.top,
+        pointingDirection: PointingDirection.down,
+      ),
+      CustomTargetFocus(
+        _keyLooping,
+        l10n.mediaPlayerTutorialLooping,
+        alignText: ContentAlign.top,
+        pointingDirection: PointingDirection.down,
+      ),
+      CustomTargetFocus(
+        _keyLoopingAll,
+        l10n.mediaPlayerTutorialLoopingAll,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
       ),
@@ -415,26 +429,28 @@ class _MediaPlayerState extends State<MediaPlayer> {
               children: [
                 TextButton(onPressed: () => _jump10Seconds(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
                 IconButton(
+                  key: _keyLooping,
+                  icon:
+                      _mediaPlayerBlock.looping
+                          ? const Icon(Icons.repeat_one, color: ColorTheme.tertiary)
+                          : const Icon(Icons.repeat_one, color: ColorTheme.surfaceTint),
                   onPressed: () async {
                     setState(() => _mediaPlayerBlock.looping = !_mediaPlayerBlock.looping);
                     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
                     _as.mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
                   },
-                  icon:
-                      _mediaPlayerBlock.looping
-                          ? const Icon(Icons.repeat_one, color: ColorTheme.tertiary)
-                          : const Icon(Icons.repeat_one, color: ColorTheme.surfaceTint),
                 ),
                 IconButton(
-                  onPressed: () async {
-                    setState(() => _mediaPlayerBlock.loopingAll = !_mediaPlayerBlock.loopingAll);
-                    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-                  },
+                  key: _keyLoopingAll,
                   tooltip: l10n.mediaPlayerLoopingAll,
                   icon:
                       _mediaPlayerBlock.loopingAll
                           ? const Icon(Icons.repeat, color: ColorTheme.tertiary)
                           : const Icon(Icons.repeat, color: ColorTheme.surfaceTint),
+                  onPressed: () async {
+                    setState(() => _mediaPlayerBlock.loopingAll = !_mediaPlayerBlock.loopingAll);
+                    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+                  },
                 ),
                 TextButton(onPressed: () => _jump10Seconds(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
               ],
