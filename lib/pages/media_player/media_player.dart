@@ -63,9 +63,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
   var _fileLoaded = false;
   var _isLoading = false;
 
+  late MarkerHandler _markerHandler;
   var _playbackPositionFactor = 0.0;
   double? _previousPlaybackPositionFactor;
-  late MarkerHandler _markerHandler;
+  final double _markerSoundFrequency = 2000;
+  final int _markerSoundDurationInMilliseconds = 80;
 
   Timer? _timerPollPlaybackPosition;
 
@@ -298,8 +300,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
       previousPosition: prev,
       currentPosition: mediaPlayerStateRust.playbackPositionFactor,
       markers: _mediaPlayerBlock.markerPositions,
-      onPeep: (marker) {
-        SystemSound.play(SystemSoundType.click);
+      onPeep: (marker) async {
+        if (_isPlaying) {
+          await _as.generatorNoteOn(newFreq: _markerSoundFrequency);
+          Future.delayed(Duration(milliseconds: _markerSoundDurationInMilliseconds), () => _as.generatorNoteOff());
+        }
       },
     );
     _previousPlaybackPositionFactor = mediaPlayerStateRust.playbackPositionFactor;
