@@ -267,10 +267,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
   Future<void> _queryAndUpdateStateFromRust() async {
     var mediaPlayerStateRust = await _as.mediaPlayerGetState();
     if (!mounted || mediaPlayerStateRust == null) return;
-    if (_isPlaying == mediaPlayerStateRust.playing &&
-        _playbackPositionFactor == mediaPlayerStateRust.playbackPositionFactor) {
-      return;
-    }
+
+    final wasPlaying = _isPlaying;
+
     setState(() {
       _isPlaying = mediaPlayerStateRust.playing;
       _playbackPositionFactor = mediaPlayerStateRust.playbackPositionFactor;
@@ -282,6 +281,21 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _numOfBins,
       );
     });
+
+    if (_mediaPlayerBlock.loopingAll && wasPlaying && !_isPlaying && _fileLoaded) {
+      final project = Provider.of<Project>(context, listen: false);
+      final blocks = project.blocks;
+      final currentIndex = blocks.indexOf(_mediaPlayerBlock);
+
+      for (int offset = 1; offset < blocks.length; offset++) {
+        final index = (currentIndex + offset) % blocks.length;
+        final block = blocks[index];
+        if (block is MediaPlayerBlock && block.relativePath != MediaPlayerParams.defaultPath) {
+          await goToTool(context, project, block, replace: true);
+          return;
+        }
+      }
+    }
   }
 
   @override
