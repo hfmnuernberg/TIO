@@ -12,6 +12,7 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/edit_markers_page.dart';
+import 'package:tiomusic/pages/media_player/handle_reached_markers.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/pages/media_player/setting_bpm.dart';
 import 'package:tiomusic/pages/media_player/setting_pitch.dart';
@@ -63,6 +64,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
   late bool _fileLoaded = false;
   late bool _isLoading = false;
 
+  late MarkerHandler _markerHandler;
+  double? _previousPlaybackPositionFactor;
+  final double _markerSoundFrequency = 2000;
+  final int _markerSoundDurationInMilliseconds = 80;
+
   Timer? _timerPollPlaybackPosition;
 
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
@@ -107,6 +113,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
     _mediaPlayerBlock.timeLastModified = getCurrentDateTime();
+
+    _markerHandler = MarkerHandler();
 
     if (!widget.isQuickTool) {
       _project = context.read<Project>();
@@ -267,7 +275,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   Future<void> _autoplayAfterDelay() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    final success = await MediaPlayerFunctions.startPlaying(_as, false);
+    final success = await MediaPlayerFunctions.startPlaying(_as, false, _mediaPlayerBlock.markerPositions.isNotEmpty);
     if (success && mounted) setState(() => _isPlaying = true);
   }
 
@@ -289,6 +297,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
     });
 
     if (_mediaPlayerBlock.loopingAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) _goToNextLoopingMediaBlock();
+
+    if (_mediaPlayerBlock.markerPositions.isNotEmpty) _handleMarkers(mediaPlayerStateRust.playbackPositionFactor);
   }
 
   Future<void> _goToNextLoopingMediaBlock() async {
@@ -304,6 +314,27 @@ class _MediaPlayerState extends State<MediaPlayer> {
         return;
       }
     }
+  }
+
+  void _handleMarkers(double currentPosition) {
+    final previousPosition = _previousPlaybackPositionFactor ?? currentPosition;
+    if (previousPosition > currentPosition) {
+      _markerHandler.reset();
+      _previousPlaybackPositionFactor = currentPosition;
+      return;
+    }
+    _markerHandler.checkMarkers(
+      previousPosition: previousPosition,
+      currentPosition: currentPosition,
+      markers: _mediaPlayerBlock.markerPositions,
+      onPeep: (marker) async {
+        if (_isPlaying) {
+          await _as.generatorNoteOn(newFreq: _markerSoundFrequency);
+          Future.delayed(Duration(milliseconds: _markerSoundDurationInMilliseconds), () => _as.generatorNoteOff());
+        }
+      },
+    );
+    _previousPlaybackPositionFactor = currentPosition;
   }
 
   @override
@@ -606,6 +637,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
       iconOff: (_mediaPlayerBlock.icon as Icon).icon!,
       iconOn: TIOMusicParams.pauseIcon,
       isDisabled: _isLoading,
+      tooltipOff: context.l10n.mediaPlayerPause,
+      tooltipOn: context.l10n.mediaPlayerPlay,
     );
   }
 
@@ -761,6 +794,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _setFileDuration();
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
+        _markerHandler.reset();
         if (mounted) await _projectRepo.saveLibrary(projectLibrary);
       }
       setState(() => _isLoading = false);
@@ -828,7 +862,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
       return;
     }
 
-    var success = await MediaPlayerFunctions.startPlaying(_as, _mediaPlayerBlock.looping);
+    var success = await MediaPlayerFunctions.startPlaying(
+      _as,
+      _mediaPlayerBlock.looping,
+      _mediaPlayerBlock.markerPositions.isNotEmpty,
+    );
     playInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _stopPlaying();
     });
@@ -836,8 +874,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   Future<void> _stopPlaying() async {
-    bool success = await MediaPlayerFunctions.stopPlaying(_as);
-    if (!success) _logger.e('Unable to stop playing.');
+    await MediaPlayerFunctions.stopPlaying(_as);
     if (mounted) setState(() => _isPlaying = false);
   }
 
@@ -935,6 +972,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _setFileDuration();
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
+        _markerHandler.reset();
         if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       }
       setState(() => _isLoading = false);
@@ -957,6 +995,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _setFileDuration();
       _addShareOptionToMenu();
       _mediaPlayerBlock.markerPositions.clear();
+      _markerHandler.reset();
       if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }
     setState(() => _isLoading = false);

@@ -97,7 +97,9 @@ abstract class AppLocalizations {
   String get mediaPlayerOpenMediaLibrary;
   String get mediaPlayerOverwriteSound;
   String get mediaPlayerOverwriteSoundQuestion;
+  String get mediaPlayerPause;
   String get mediaPlayerPitch;
+  String get mediaPlayerPlay;
   String get mediaPlayerRecording;
   String get mediaPlayerRemoveMarker;
   String get mediaPlayerSecShort;

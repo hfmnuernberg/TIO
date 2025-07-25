@@ -193,7 +193,11 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     playInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _stopPlaying();
     });
-    var success = await MediaPlayerFunctions.startPlaying(_as, widget.mediaPlayerBlock.looping);
+    var success = await MediaPlayerFunctions.startPlaying(
+      _as,
+      widget.mediaPlayerBlock.looping,
+      widget.mediaPlayerBlock.markerPositions.isNotEmpty,
+    );
     if (mounted) setState(() => _isPlaying = success);
   }
 }
