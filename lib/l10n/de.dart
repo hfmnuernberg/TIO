@@ -106,6 +106,7 @@ class German extends AppLocalizations {
   String get mediaPlayerFactorAndBpm => 'Faktor und BPM-Regler';
   String get mediaPlayerFile => 'Datei';
   String get mediaPlayerLooping => 'Loopen';
+  String get mediaPlayerLoopingAll => 'Alle Media Player loopen';
   String get mediaPlayerMarkers => 'Marker';
   String get mediaPlayerOpenFileSystem => 'Öffne Dateien';
   String get mediaPlayerOpenMediaLibrary => 'Öffne Mediathek';

@@ -18,6 +18,7 @@ MediaPlayerBlock _$MediaPlayerBlockFromJson(Map<String, dynamic> json) => MediaP
   (json['rangeStart'] as num?)?.toDouble() ?? 0.0,
   (json['rangeEnd'] as num?)?.toDouble() ?? 1.0,
   json['looping'] as bool? ?? false,
+  json['loopingAll'] as bool? ?? false,
   json['timeLastModified'] == null ? getCurrentDateTime() : DateTime.parse(json['timeLastModified'] as String),
   (json['markerPositions'] as List<dynamic>?)?.map((e) => (e as num).toDouble()).toList() ?? [],
 );
@@ -35,6 +36,7 @@ Map<String, dynamic> _$MediaPlayerBlockToJson(MediaPlayerBlock instance) => <Str
   'rangeStart': instance.rangeStart,
   'rangeEnd': instance.rangeEnd,
   'looping': instance.looping,
+  'loopingAll': instance.loopingAll,
   'relativePath': instance.relativePath,
   'markerPositions': instance.markerPositions,
 };

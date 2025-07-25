@@ -23,6 +23,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _rangeStart,
     _rangeEnd,
     _looping,
+    _loopingAll,
     _markerPositions,
     _relativePath,
   ];
@@ -121,6 +122,14 @@ class MediaPlayerBlock extends ProjectBlock {
     notifyListeners();
   }
 
+  late bool _loopingAll;
+  @JsonKey(defaultValue: MediaPlayerParams.defaultLooping)
+  bool get loopingAll => _loopingAll;
+  set loopingAll(bool newValue) {
+    _loopingAll = newValue;
+    notifyListeners();
+  }
+
   late String _relativePath;
   @JsonKey(defaultValue: MediaPlayerParams.defaultPath)
   String get relativePath => _relativePath;
@@ -151,6 +160,9 @@ class MediaPlayerBlock extends ProjectBlock {
     if (_looping) {
       settings.add(l10n.mediaPlayerLooping);
     }
+    if (_loopingAll) {
+      settings.add(l10n.mediaPlayerLoopingAll);
+    }
     settings.add('$bpm ${l10n.commonBpm}');
     return settings;
   }
@@ -167,6 +179,7 @@ class MediaPlayerBlock extends ProjectBlock {
     double rangeStart,
     double rangeEnd,
     bool looping,
+    bool loopingAll,
     DateTime timeLastModified,
     List<double> markerPositions,
   ) {
@@ -180,6 +193,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _rangeStart = rangeStart;
     _rangeEnd = rangeEnd;
     _looping = looping;
+    _loopingAll = loopingAll;
     _relativePath = relativePath;
     _markerPositions = markerPositions;
   }
@@ -197,6 +211,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _rangeStart = MediaPlayerParams.defaultRangeStart;
     _rangeEnd = MediaPlayerParams.defaultRangeEnd;
     _looping = MediaPlayerParams.defaultLooping;
+    _loopingAll = MediaPlayerParams.defaultLoopingAll;
     _markerPositions = [];
   }
 
@@ -213,6 +228,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _rangeStart = MediaPlayerParams.defaultRangeStart;
     _rangeEnd = MediaPlayerParams.defaultRangeEnd;
     _looping = MediaPlayerParams.defaultLooping;
+    _loopingAll = MediaPlayerParams.defaultLoopingAll;
     _markerPositions = [];
   }
 

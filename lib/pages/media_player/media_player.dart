@@ -363,16 +363,22 @@ class _MediaPlayerState extends State<MediaPlayer> {
                 TextButton(onPressed: () => _jump10Seconds(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
                 IconButton(
                   onPressed: () async {
-                    setState(() {
-                      _mediaPlayerBlock.looping = !_mediaPlayerBlock.looping;
-                    });
+                    setState(() => _mediaPlayerBlock.looping = !_mediaPlayerBlock.looping);
                     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
                     _as.mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
                   },
-                  icon:
-                      _mediaPlayerBlock.looping
-                          ? const Icon(Icons.all_inclusive, color: ColorTheme.tertiary)
-                          : const Icon(Icons.all_inclusive, color: ColorTheme.surfaceTint),
+                  icon: _mediaPlayerBlock.looping
+                    ? const Icon(Icons.repeat_one, color: ColorTheme.tertiary)
+                    : const Icon(Icons.repeat_one, color: ColorTheme.surfaceTint),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    setState(() => _mediaPlayerBlock.loopingAll = !_mediaPlayerBlock.loopingAll);
+                    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+                  },
+                  icon: _mediaPlayerBlock.loopingAll
+                    ? const Icon(Icons.repeat, color: ColorTheme.tertiary)
+                    : const Icon(Icons.repeat, color: ColorTheme.surfaceTint),
                 ),
                 TextButton(onPressed: () => _jump10Seconds(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
               ],
