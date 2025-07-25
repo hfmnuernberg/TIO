@@ -69,7 +69,10 @@ abstract class MediaPlayerFunctions {
     await as.mediaPlayerSetLoop(looping: looping);
     await configureAudioSession(AudioSessionType.playback);
 
-    if (hasMarkers) await as.generatorStart();
+    if (hasMarkers) {
+      await as.generatorStop();
+      await as.generatorStart();
+    }
 
     var success = await as.mediaPlayerStart();
     if (success) await WakelockPlus.enable();
