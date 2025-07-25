@@ -62,8 +62,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
   late bool _fileLoaded = false;
   late bool _isLoading = false;
 
-  var _playbackPositionFactor = 0.0;
-
   Timer? _timerPollPlaybackPosition;
 
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
@@ -272,7 +270,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     setState(() {
       _isPlaying = mediaPlayerStateRust.playing;
-      _playbackPositionFactor = mediaPlayerStateRust.playbackPositionFactor;
       _waveformVisualizer = WaveformVisualizer(
         mediaPlayerStateRust.playbackPositionFactor,
         _mediaPlayerBlock.rangeStart,
