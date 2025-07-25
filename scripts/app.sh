@@ -193,7 +193,7 @@ case "$1" in
   install:cocoa:pods)        $FLUTTER precache --ios; cd ios; pod install --repo-update; cd ..; ;;
   install:fastlane)          cd android; bundle install; cd ..; cd ios; bundle install; cd ..; ;;
   install:flutter:packages)  $FLUTTER pub get; ;;
-  install:rust:flutter-rust-bridge-codegen) cargo install flutter_rust_bridge_codegen --version 2.9.0; ;;
+  install:rust:flutter-rust-bridge-codegen) cargo install flutter_rust_bridge_codegen --version 2.11.1; ;;
   install:rust:packages)     installRustPackages; ;;
   install:rust:targets)      installRustTargets; ;;
   outdated)                  $FLUTTER pub outdated; bash "$0" widgetbook outdated; ;;
