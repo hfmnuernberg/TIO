@@ -309,7 +309,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     for (int offset = 1; offset < blocks.length; offset++) {
       final index = (currentIndex + offset) % blocks.length;
       final block = blocks[index];
-      if (block is MediaPlayerBlock && block.relativePath != MediaPlayerParams.defaultPath) {
+      if (block is MediaPlayerBlock && block.loopingAll && block.relativePath != MediaPlayerParams.defaultPath) {
         await goToTool(context, project, block, replace: true, shouldAutoplay: true);
         return;
       }
