@@ -290,15 +290,19 @@ class _MediaPlayerState extends State<MediaPlayer> {
       );
     });
 
-    final prev = _previousPlaybackPositionFactor ?? mediaPlayerStateRust.playbackPositionFactor;
-    if (prev > mediaPlayerStateRust.playbackPositionFactor) {
+    if (_mediaPlayerBlock.markerPositions.isNotEmpty) _handleMarkers(mediaPlayerStateRust.playbackPositionFactor);
+  }
+
+  void _handleMarkers(double currentPosition) {
+    final previousPosition = _previousPlaybackPositionFactor ?? currentPosition;
+    if (previousPosition > currentPosition) {
       _markerHandler.reset();
-      _previousPlaybackPositionFactor = mediaPlayerStateRust.playbackPositionFactor;
+      _previousPlaybackPositionFactor = currentPosition;
       return;
     }
     _markerHandler.checkMarkers(
-      previousPosition: prev,
-      currentPosition: mediaPlayerStateRust.playbackPositionFactor,
+      previousPosition: previousPosition,
+      currentPosition: currentPosition,
       markers: _mediaPlayerBlock.markerPositions,
       onPeep: (marker) async {
         if (_isPlaying) {
@@ -307,7 +311,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         }
       },
     );
-    _previousPlaybackPositionFactor = mediaPlayerStateRust.playbackPositionFactor;
+    _previousPlaybackPositionFactor = currentPosition;
   }
 
   @override

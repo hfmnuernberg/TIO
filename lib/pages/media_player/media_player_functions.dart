@@ -79,8 +79,7 @@ abstract class MediaPlayerFunctions {
   static Future<void> stopPlaying(AudioSystem as) async {
     await WakelockPlus.disable();
 
-    final generatorStopSuccess = await as.generatorStop();
-    if (!generatorStopSuccess) _logger.e('Unable to stop generator.');
+    await as.generatorStop();
 
     final mediaPlayerStopSuccess = await as.mediaPlayerStop();
     if (!mediaPlayerStopSuccess) _logger.e('Unable to stop playing.');
