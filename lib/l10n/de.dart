@@ -106,6 +106,7 @@ class German extends AppLocalizations {
   String get mediaPlayerFactorAndBpm => 'Faktor und BPM-Regler';
   String get mediaPlayerFile => 'Datei';
   String get mediaPlayerLooping => 'Loopen';
+  String get mediaPlayerLoopingAll => 'Alle Media Player loopen';
   String get mediaPlayerMarkers => 'Marker';
   String get mediaPlayerOpenFileSystem => 'Öffne Dateien';
   String get mediaPlayerOpenMediaLibrary => 'Öffne Mediathek';
@@ -133,6 +134,9 @@ class German extends AppLocalizations {
       'Tippe hier, um deine Audiodatei anzupassen. Du kannst die Lautstärke und den Grundschlag einstellen, deine Datei trimmen und Marker setzen, sowie Tonhöhe und Tempo nachträglich verändern.';
   String get mediaPlayerTutorialJumpTo =>
       'Tippe auf eine beliebige Stelle, um zu diesem Teil deiner Audiodatei zu springen.';
+  String get mediaPlayerTutorialLooping => 'Aktiviere das Loopen, um die aktuelle Wiedergabe zu wiederholen.';
+  String get mediaPlayerTutorialLoopingAll =>
+      'Aktiviere den generellen Loop für diesen Media Player. Hast du weitere Media Player mit aktiviertem Loop und abspielbarem Titel, wechselt der Media Player nach dem Abspielen zum nächsten Media Player.';
   String get mediaPlayerTutorialStartStop =>
       'Tippe hier, um die Aufnahme zu starten und zu stoppen oder um eine Audiodatei abzuspielen.';
 

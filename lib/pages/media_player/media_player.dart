@@ -41,8 +41,9 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class MediaPlayer extends StatefulWidget {
   final bool isQuickTool;
+  final bool shouldAutoplay;
 
-  const MediaPlayer({super.key, required this.isQuickTool});
+  const MediaPlayer({super.key, required this.isQuickTool, this.shouldAutoplay = false});
 
   @override
   State<MediaPlayer> createState() => _MediaPlayerState();
@@ -58,13 +59,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
   late MediaRepository _mediaRepo;
   late ProjectRepository _projectRepo;
 
-  var _isPlaying = false;
-  var _isRecording = false;
-  var _fileLoaded = false;
-  var _isLoading = false;
+  late bool _isPlaying = false;
+  late bool _isRecording = false;
+  late bool _fileLoaded = false;
+  late bool _isLoading = false;
 
   late MarkerHandler _markerHandler;
-  var _playbackPositionFactor = 0.0;
   double? _previousPlaybackPositionFactor;
   final double _markerSoundFrequency = 2000;
   final int _markerSoundDurationInMilliseconds = 80;
@@ -92,6 +92,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyStartStop = GlobalKey();
+  final GlobalKey _keyLooping = GlobalKey();
+  final GlobalKey _keyLoopingAll = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
   final GlobalKey _keyWaveform = GlobalKey();
 
@@ -172,6 +174,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
       await _queryAndUpdateStateFromRust();
 
+      if (mounted && widget.shouldAutoplay && _fileLoaded) _autoplayAfterDelay();
+
       if (mounted) {
         if (context.read<ProjectLibrary>().showMediaPlayerTutorial &&
             !context.read<ProjectLibrary>().showToolTutorial &&
@@ -226,6 +230,18 @@ class _MediaPlayerState extends State<MediaPlayer> {
         pointingDirection: PointingDirection.down,
       ),
       CustomTargetFocus(
+        _keyLooping,
+        l10n.mediaPlayerTutorialLooping,
+        alignText: ContentAlign.top,
+        pointingDirection: PointingDirection.down,
+      ),
+      CustomTargetFocus(
+        _keyLoopingAll,
+        l10n.mediaPlayerTutorialLoopingAll,
+        alignText: ContentAlign.top,
+        pointingDirection: PointingDirection.down,
+      ),
+      CustomTargetFocus(
         _keySettings,
         l10n.mediaPlayerTutorialAdjust,
         alignText: ContentAlign.custom,
@@ -271,16 +287,20 @@ class _MediaPlayerState extends State<MediaPlayer> {
     }, context);
   }
 
+  Future<void> _autoplayAfterDelay() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    final success = await MediaPlayerFunctions.startPlaying(_as, false, _mediaPlayerBlock.markerPositions.isNotEmpty);
+    if (success && mounted) setState(() => _isPlaying = true);
+  }
+
   Future<void> _queryAndUpdateStateFromRust() async {
     var mediaPlayerStateRust = await _as.mediaPlayerGetState();
     if (!mounted || mediaPlayerStateRust == null) return;
-    if (_isPlaying == mediaPlayerStateRust.playing &&
-        _playbackPositionFactor == mediaPlayerStateRust.playbackPositionFactor) {
-      return;
-    }
+
+    final wasPreviousPlaying = _isPlaying;
+
     setState(() {
       _isPlaying = mediaPlayerStateRust.playing;
-      _playbackPositionFactor = mediaPlayerStateRust.playbackPositionFactor;
       _waveformVisualizer = WaveformVisualizer(
         mediaPlayerStateRust.playbackPositionFactor,
         _mediaPlayerBlock.rangeStart,
@@ -290,7 +310,24 @@ class _MediaPlayerState extends State<MediaPlayer> {
       );
     });
 
+    if (_mediaPlayerBlock.loopingAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) _goToNextLoopingMediaPlayer();
+
     if (_mediaPlayerBlock.markerPositions.isNotEmpty) _handleMarkers(mediaPlayerStateRust.playbackPositionFactor);
+  }
+
+  Future<void> _goToNextLoopingMediaPlayer() async {
+    final project = Provider.of<Project>(context, listen: false);
+    final blocks = project.blocks;
+    final currentIndex = blocks.indexOf(_mediaPlayerBlock);
+
+    for (int offset = 1; offset < blocks.length; offset++) {
+      final index = (currentIndex + offset) % blocks.length;
+      final block = blocks[index];
+      if (block is MediaPlayerBlock && block.loopingAll && block.relativePath != MediaPlayerParams.defaultPath) {
+        await goToTool(context, project, block, replace: true, shouldAutoplay: true);
+        return;
+      }
+    }
   }
 
   void _handleMarkers(double currentPosition) {
@@ -392,17 +429,28 @@ class _MediaPlayerState extends State<MediaPlayer> {
               children: [
                 TextButton(onPressed: () => _jump10Seconds(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
                 IconButton(
+                  key: _keyLooping,
+                  icon:
+                      _mediaPlayerBlock.looping
+                          ? const Icon(Icons.repeat_one, color: ColorTheme.tertiary)
+                          : const Icon(Icons.repeat_one, color: ColorTheme.surfaceTint),
                   onPressed: () async {
-                    setState(() {
-                      _mediaPlayerBlock.looping = !_mediaPlayerBlock.looping;
-                    });
+                    setState(() => _mediaPlayerBlock.looping = !_mediaPlayerBlock.looping);
                     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
                     _as.mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
                   },
+                ),
+                IconButton(
+                  key: _keyLoopingAll,
+                  tooltip: l10n.mediaPlayerLoopingAll,
                   icon:
-                      _mediaPlayerBlock.looping
-                          ? const Icon(Icons.all_inclusive, color: ColorTheme.tertiary)
-                          : const Icon(Icons.all_inclusive, color: ColorTheme.surfaceTint),
+                      _mediaPlayerBlock.loopingAll
+                          ? const Icon(Icons.repeat, color: ColorTheme.tertiary)
+                          : const Icon(Icons.repeat, color: ColorTheme.surfaceTint),
+                  onPressed: () async {
+                    setState(() => _mediaPlayerBlock.loopingAll = !_mediaPlayerBlock.loopingAll);
+                    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+                  },
                 ),
                 TextButton(onPressed: () => _jump10Seconds(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
               ],
