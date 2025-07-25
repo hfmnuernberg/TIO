@@ -40,8 +40,9 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class MediaPlayer extends StatefulWidget {
   final bool isQuickTool;
+  final bool shouldAutoplay;
 
-  const MediaPlayer({super.key, required this.isQuickTool});
+  const MediaPlayer({super.key, required this.isQuickTool, this.shouldAutoplay = false});
 
   @override
   State<MediaPlayer> createState() => _MediaPlayerState();
@@ -162,6 +163,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
       }
 
       await _queryAndUpdateStateFromRust();
+
+      if (mounted && widget.shouldAutoplay && _fileLoaded) {
+        final success = await MediaPlayerFunctions.startPlaying(_as, _mediaPlayerBlock.loopingAll);
+        if (success) setState(() => _isPlaying = true);
+      }
+
 
       if (mounted) {
         if (context.read<ProjectLibrary>().showMediaPlayerTutorial &&
@@ -288,7 +295,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         final index = (currentIndex + offset) % blocks.length;
         final block = blocks[index];
         if (block is MediaPlayerBlock && block.relativePath != MediaPlayerParams.defaultPath) {
-          await goToTool(context, project, block, replace: true);
+          await goToTool(context, project, block, replace: true, shouldAutoplay: true);
           return;
         }
       }
