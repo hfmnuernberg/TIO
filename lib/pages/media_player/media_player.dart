@@ -234,12 +234,14 @@ class _MediaPlayerState extends State<MediaPlayer> {
         l10n.mediaPlayerTutorialLooping,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
+        pointerOffset: -45,
       ),
       CustomTargetFocus(
         _keyLoopingAll,
         l10n.mediaPlayerTutorialLoopingAll,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
+        pointerOffset: 45,
       ),
       CustomTargetFocus(
         _keySettings,
