@@ -57,10 +57,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
   late MediaRepository _mediaRepo;
   late ProjectRepository _projectRepo;
 
-  var _isPlaying = false;
-  var _isRecording = false;
-  var _fileLoaded = false;
-  var _isLoading = false;
+  late bool _isPlaying = false;
+  late bool _isRecording = false;
+  late bool _fileLoaded = false;
+  late bool _isLoading = false;
 
   var _playbackPositionFactor = 0.0;
 
