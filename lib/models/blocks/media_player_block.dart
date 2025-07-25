@@ -123,7 +123,7 @@ class MediaPlayerBlock extends ProjectBlock {
   }
 
   late bool _loopingAll;
-  @JsonKey(defaultValue: MediaPlayerParams.defaultLooping)
+  @JsonKey(defaultValue: MediaPlayerParams.defaultLoopingAll)
   bool get loopingAll => _loopingAll;
   set loopingAll(bool newValue) {
     _loopingAll = newValue;

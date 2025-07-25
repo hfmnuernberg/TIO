@@ -296,12 +296,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
       );
     });
 
-    if (_mediaPlayerBlock.loopingAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) _goToNextLoopingMediaBlock();
+    if (_mediaPlayerBlock.loopingAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) _goToNextLoopingMediaPlayer();
 
     if (_mediaPlayerBlock.markerPositions.isNotEmpty) _handleMarkers(mediaPlayerStateRust.playbackPositionFactor);
   }
 
-  Future<void> _goToNextLoopingMediaBlock() async {
+  Future<void> _goToNextLoopingMediaPlayer() async {
     final project = Provider.of<Project>(context, listen: false);
     final blocks = project.blocks;
     final currentIndex = blocks.indexOf(_mediaPlayerBlock);
