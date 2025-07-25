@@ -164,11 +164,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
       await _queryAndUpdateStateFromRust();
 
-      if (mounted && widget.shouldAutoplay && _fileLoaded) {
-        final success = await MediaPlayerFunctions.startPlaying(_as, _mediaPlayerBlock.loopingAll);
-        if (success) setState(() => _isPlaying = true);
-      }
-
+      if (mounted && widget.shouldAutoplay && _fileLoaded) _autoplayAfterDelay();
 
       if (mounted) {
         if (context.read<ProjectLibrary>().showMediaPlayerTutorial &&
@@ -269,11 +265,17 @@ class _MediaPlayerState extends State<MediaPlayer> {
     }, context);
   }
 
+  Future<void> _autoplayAfterDelay() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    final success = await MediaPlayerFunctions.startPlaying(_as, false);
+    if (success && mounted) setState(() => _isPlaying = true);
+  }
+
   Future<void> _queryAndUpdateStateFromRust() async {
     var mediaPlayerStateRust = await _as.mediaPlayerGetState();
     if (!mounted || mediaPlayerStateRust == null) return;
 
-    final wasPlaying = _isPlaying;
+    final wasPreviousPlaying = _isPlaying;
 
     setState(() {
       _isPlaying = mediaPlayerStateRust.playing;
@@ -286,18 +288,20 @@ class _MediaPlayerState extends State<MediaPlayer> {
       );
     });
 
-    if (_mediaPlayerBlock.loopingAll && wasPlaying && !_isPlaying && _fileLoaded) {
-      final project = Provider.of<Project>(context, listen: false);
-      final blocks = project.blocks;
-      final currentIndex = blocks.indexOf(_mediaPlayerBlock);
+    if (_mediaPlayerBlock.loopingAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) _goToNextLoopingMediaBlock();
+  }
 
-      for (int offset = 1; offset < blocks.length; offset++) {
-        final index = (currentIndex + offset) % blocks.length;
-        final block = blocks[index];
-        if (block is MediaPlayerBlock && block.relativePath != MediaPlayerParams.defaultPath) {
-          await goToTool(context, project, block, replace: true, shouldAutoplay: true);
-          return;
-        }
+  Future<void> _goToNextLoopingMediaBlock() async {
+    final project = Provider.of<Project>(context, listen: false);
+    final blocks = project.blocks;
+    final currentIndex = blocks.indexOf(_mediaPlayerBlock);
+
+    for (int offset = 1; offset < blocks.length; offset++) {
+      final index = (currentIndex + offset) % blocks.length;
+      final block = blocks[index];
+      if (block is MediaPlayerBlock && block.relativePath != MediaPlayerParams.defaultPath) {
+        await goToTool(context, project, block, replace: true, shouldAutoplay: true);
+        return;
       }
     }
   }
@@ -385,18 +389,21 @@ class _MediaPlayerState extends State<MediaPlayer> {
                     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
                     _as.mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
                   },
-                  icon: _mediaPlayerBlock.looping
-                    ? const Icon(Icons.repeat_one, color: ColorTheme.tertiary)
-                    : const Icon(Icons.repeat_one, color: ColorTheme.surfaceTint),
+                  icon:
+                      _mediaPlayerBlock.looping
+                          ? const Icon(Icons.repeat_one, color: ColorTheme.tertiary)
+                          : const Icon(Icons.repeat_one, color: ColorTheme.surfaceTint),
                 ),
                 IconButton(
                   onPressed: () async {
                     setState(() => _mediaPlayerBlock.loopingAll = !_mediaPlayerBlock.loopingAll);
                     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
                   },
-                  icon: _mediaPlayerBlock.loopingAll
-                    ? const Icon(Icons.repeat, color: ColorTheme.tertiary)
-                    : const Icon(Icons.repeat, color: ColorTheme.surfaceTint),
+                  tooltip: l10n.mediaPlayerLoopingAll,
+                  icon:
+                      _mediaPlayerBlock.loopingAll
+                          ? const Icon(Icons.repeat, color: ColorTheme.tertiary)
+                          : const Icon(Icons.repeat, color: ColorTheme.surfaceTint),
                 ),
                 TextButton(onPressed: () => _jump10Seconds(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
               ],
