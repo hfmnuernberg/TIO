@@ -1,6 +1,6 @@
 typedef MarkerPeepCallback = void Function(double marker);
 
-const epsilon = 0.005;
+const epsilon = 0.02;
 
 class MarkerHandler {
   final Set<double> _triggered = {};
