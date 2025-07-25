@@ -601,6 +601,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
       iconOff: (_mediaPlayerBlock.icon as Icon).icon!,
       iconOn: TIOMusicParams.pauseIcon,
       isDisabled: _isLoading,
+      tooltipOff: context.l10n.mediaPlayerPause,
+      tooltipOn: context.l10n.mediaPlayerPlay,
     );
   }
 
