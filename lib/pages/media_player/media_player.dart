@@ -824,7 +824,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
       return;
     }
 
-    var success = await MediaPlayerFunctions.startPlaying(_as, _mediaPlayerBlock.looping);
+    var success = await MediaPlayerFunctions.startPlaying(
+      _as,
+      _mediaPlayerBlock.looping,
+      _mediaPlayerBlock.markerPositions.isNotEmpty,
+    );
     playInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
       if (event.type == AudioInterruptionType.unknown) _stopPlaying();
     });
@@ -832,8 +836,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   Future<void> _stopPlaying() async {
-    bool success = await MediaPlayerFunctions.stopPlaying(_as);
-    if (!success) _logger.e('Unable to stop playing.');
+    await MediaPlayerFunctions.stopPlaying(_as);
     if (mounted) setState(() => _isPlaying = false);
   }
 

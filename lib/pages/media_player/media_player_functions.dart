@@ -64,20 +64,26 @@ abstract class MediaPlayerFunctions {
     return newList;
   }
 
-  static Future<bool> startPlaying(AudioSystem as, bool looping) async {
+  static Future<bool> startPlaying(AudioSystem as, bool looping, bool hasMarkers) async {
     await stopRecording(as);
     await as.mediaPlayerSetLoop(looping: looping);
     await configureAudioSession(AudioSessionType.playback);
+
+    if (hasMarkers) await as.generatorStart();
+
     var success = await as.mediaPlayerStart();
-    if (success) {
-      await WakelockPlus.enable();
-    }
+    if (success) await WakelockPlus.enable();
     return success;
   }
 
-  static Future<bool> stopPlaying(AudioSystem as) async {
+  static Future<void> stopPlaying(AudioSystem as) async {
     await WakelockPlus.disable();
-    return as.mediaPlayerStop();
+
+    final generatorStopSuccess = await as.generatorStop();
+    if (!generatorStopSuccess) _logger.e('Unable to stop generator.');
+
+    final mediaPlayerStopSuccess = await as.mediaPlayerStop();
+    if (!mediaPlayerStopSuccess) _logger.e('Unable to stop playing.');
   }
 
   static Future<bool> startRecording(AudioSystem as, bool isPlaying) async {
