@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:tiomusic/domain/metronome/metronome_beat.dart';
 import 'package:tiomusic/domain/metronome/metronome_beat_event.dart';
+import 'package:tiomusic/domain/metronome/metronome_beat_event_utils.dart';
 import 'package:tiomusic/domain/metronome/metronome_sounds.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/services/audio_session.dart';
@@ -33,6 +34,9 @@ class Metronome {
 
   bool _isMute = false;
   bool get isMute => _isMute;
+
+  List<RhythmGroup> _rhythms = [];
+  List<RhythmGroup> _secondaryRhythms = [];
 
   final MetronomeSounds _sounds;
   MetronomeSounds get sounds => _sounds;
@@ -116,6 +120,8 @@ class Metronome {
       _as.metronomeSetBeatMuteChance(muteChance: chanceInPercent.toDouble() / 100.0);
 
   Future<void> setRhythm(List<RhythmGroup> rhythmGroups, [List<RhythmGroup> secondaryRhythmGroups = const []]) async {
+    _rhythms = rhythmGroups;
+    _secondaryRhythms = secondaryRhythmGroups;
     _as.metronomeSetRhythm(bars: _toMetroBars(rhythmGroups), bars2: _toMetroBars(secondaryRhythmGroups));
   }
 
@@ -142,18 +148,11 @@ class Metronome {
     if (!isOn) return;
 
     if (event.isSecondary) {
-      _currentSecondaryBeat = MetronomeBeat(
-        segmentIndex: event.barIndex,
-        mainBeatIndex: event.isPoly ? _currentSecondaryBeat.mainBeatIndex : event.beatIndex,
-        polyBeatIndex: event.isPoly ? event.beatIndex : _currentSecondaryBeat.polyBeatIndex,
-      );
+      _currentSecondaryBeat = getNextBeatOnStart(event, _currentSecondaryBeat, _secondaryRhythms);
     } else {
-      _currentBeat = MetronomeBeat(
-        segmentIndex: event.barIndex,
-        mainBeatIndex: event.isPoly ? _currentBeat.mainBeatIndex : event.beatIndex,
-        polyBeatIndex: event.isPoly ? event.beatIndex : _currentBeat.polyBeatIndex,
-      );
+      _currentBeat = getNextBeatOnStart(event, _currentBeat, _rhythms);
     }
+
     _onBeatEvent(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary));
     _onBeatStart(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary));
   }
@@ -162,18 +161,11 @@ class Metronome {
     if (!isOn) return;
 
     if (event.isSecondary) {
-      _currentSecondaryBeat = MetronomeBeat(
-        segmentIndex: event.barIndex,
-        mainBeatIndex: event.isPoly ? _currentSecondaryBeat.mainBeatIndex : null,
-        polyBeatIndex: event.isPoly ? null : _currentSecondaryBeat.polyBeatIndex,
-      );
+      _currentSecondaryBeat = getNextBeatOnStop(event, _currentSecondaryBeat);
     } else {
-      _currentBeat = MetronomeBeat(
-        segmentIndex: event.barIndex,
-        mainBeatIndex: event.isPoly ? _currentBeat.mainBeatIndex : null,
-        polyBeatIndex: event.isPoly ? null : _currentBeat.polyBeatIndex,
-      );
+      _currentBeat = getNextBeatOnStop(event, _currentBeat);
     }
+
     _onBeatEvent(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary));
     _onBeatStop(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary));
   }
