@@ -212,6 +212,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       _audioSession,
       _wakelock,
       widget.mediaPlayerBlock.looping,
+      widget.mediaPlayerBlock.markerPositions.isNotEmpty,
     );
     if (mounted) setState(() => _isPlaying = success);
   }

@@ -106,13 +106,16 @@ class German extends AppLocalizations {
   String get mediaPlayerFactorAndBpm => 'Faktor und BPM-Regler';
   String get mediaPlayerFile => 'Datei';
   String get mediaPlayerLooping => 'Loopen';
+  String get mediaPlayerLoopingAll => 'Alle Media Player loopen';
   String get mediaPlayerMarkers => 'Marker';
   String get mediaPlayerOpenFileSystem => 'Öffne Dateien';
   String get mediaPlayerOpenMediaLibrary => 'Öffne Mediathek';
   String get mediaPlayerOverwriteSound => 'Audio-Datei überschreiben?';
   String get mediaPlayerOverwriteSoundQuestion =>
       'Möchtest du die aktuelle Audio-Datei überschreiben und die Aufnahme starten?';
+  String get mediaPlayerPause => 'Pause';
   String get mediaPlayerPitch => 'Tonhöhe';
+  String get mediaPlayerPlay => 'Play';
   String get mediaPlayerRecording => 'Aufnahme läuft...';
   String get mediaPlayerRemoveMarker => 'Ausgewählten Marker entfernen';
   String get mediaPlayerSecShort => 'Sek.';
@@ -131,6 +134,9 @@ class German extends AppLocalizations {
       'Tippe hier, um deine Audiodatei anzupassen. Du kannst die Lautstärke und den Grundschlag einstellen, deine Datei trimmen und Marker setzen, sowie Tonhöhe und Tempo nachträglich verändern.';
   String get mediaPlayerTutorialJumpTo =>
       'Tippe auf eine beliebige Stelle, um zu diesem Teil deiner Audiodatei zu springen.';
+  String get mediaPlayerTutorialLooping => 'Aktiviere das Loopen, um die aktuelle Wiedergabe zu wiederholen.';
+  String get mediaPlayerTutorialLoopingAll =>
+      'Aktiviere den generellen Loop für diesen Media Player. Hast du weitere Media Player mit aktiviertem Loop und abspielbarem Titel, wechselt der Media Player nach dem Abspielen zum nächsten Media Player.';
   String get mediaPlayerTutorialStartStop =>
       'Tippe hier, um die Aufnahme zu starten und zu stoppen oder um eine Audiodatei abzuspielen.';
 
@@ -307,7 +313,8 @@ class German extends AppLocalizations {
   String get toolSaveInNewProject => 'In neuem Projekt speichern';
   String get toolTitleCopy => 'Kopie';
   String get toolTutorialEditTitle => 'Tippe hier, um den Titel deines Tools zu bearbeiten.';
-  String get toolTutorialSave => 'Tippe hier, um das Tool in einem Projekt zu speichern.';
+  String get toolTutorialSave =>
+      'Tippe hier, um das Tool in einem Projekt zu speichern.\n\nSobald sich dieses Tool in einem Projekt befindet, kannst du es mit anderen Tools verknüpfen.';
   String get toolUseBookmarkToSave => 'Verwende das Lesezeichen, um das Tool zu speichern.';
 
   String toolHasNoIslandView(String tool) => '$tool hat keine Kompaktansicht!';
@@ -324,7 +331,8 @@ class German extends AppLocalizations {
   String get tunerPlayReference => 'Referenzton abspielen';
   String get tunerSetConcertPitch => 'Kammerton einstellen';
   String get tunerTutorialAdjust => 'Tippe hier, um den Kammerton anzupassen oder einen Referenzton abzuspielen.';
-  String get tunerTutorialStartStop => 'Tippe hier, um das Stimmgerät zu starten und zu stoppen.';
+  String get tunerTutorialStartStop =>
+      'Tippe hier, um das Stimmgerät zu starten und zu stoppen.\n\nWenn der Ton ausklingt, können Obertöne das Stimmgerät irritieren – schlage den Ton daher besser neu an.';
   String get tunerTypeChromatic => 'Chromatisches Stimmgerät';
   String get tunerTypeBass => 'Bass';
   String get tunerTypeGuitar => 'Gitarre';

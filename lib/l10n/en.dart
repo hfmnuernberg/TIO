@@ -107,13 +107,16 @@ class English extends AppLocalizations {
   String get mediaPlayerFactorAndBpm => 'Factor and BPM slider';
   String get mediaPlayerFile => 'File';
   String get mediaPlayerLooping => 'Looping';
+  String get mediaPlayerLoopingAll => 'Loop all media player';
   String get mediaPlayerMarkers => 'Markers';
   String get mediaPlayerOpenFileSystem => 'Open files';
   String get mediaPlayerOpenMediaLibrary => 'Open media library';
   String get mediaPlayerOverwriteSound => 'Overwrite?';
   String get mediaPlayerOverwriteSoundQuestion =>
       'Do you want to overwrite the current audio file and start recording?';
+  String get mediaPlayerPause => 'Pause';
   String get mediaPlayerPitch => 'Pitch';
+  String get mediaPlayerPlay => 'Play';
   String get mediaPlayerRecording => 'Recording...';
   String get mediaPlayerRemoveMarker => 'Remove selected marker';
   String get mediaPlayerSecShort => 'Sec';
@@ -131,6 +134,9 @@ class English extends AppLocalizations {
   String get mediaPlayerTutorialAdjust =>
       'Tap here to adjust your audio file. You can set the volume and the basic beat, trim your file and set markers, as well as change the pitch and tempo afterwards.';
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file.';
+  String get mediaPlayerTutorialLooping => 'Enable looping to repeat the current playback.';
+  String get mediaPlayerTutorialLoopingAll =>
+      'Enable the general loop for this media player. If you have other media players with looping enabled and a playable track, the media player will switch to the next one after playback.';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file.';
 
   String mediaPlayerErrorFileFormatDescription(String format) =>
@@ -304,7 +310,8 @@ class English extends AppLocalizations {
   String get toolSaveInNewProject => 'Save in new project';
   String get toolTitleCopy => 'Copy';
   String get toolTutorialEditTitle => 'Tap here to edit the title of your tool.';
-  String get toolTutorialSave => 'Tap here to save the tool to a project.';
+  String get toolTutorialSave =>
+      'Tap here to save the tool to a project.\n\nOnce this tool is part of a project, you can link it with other tools.';
   String get toolUseBookmarkToSave => 'Use bookmark to save a tool.';
 
   String toolHasNoIslandView(String tool) => '$tool has no compact view!';
@@ -321,7 +328,8 @@ class English extends AppLocalizations {
   String get tunerPlayReference => 'Play reference';
   String get tunerSetConcertPitch => 'Set concert pitch';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
-  String get tunerTutorialStartStop => 'Tap here to start and stop the tuner.';
+  String get tunerTutorialStartStop =>
+      'Tap here to start and stop the tuner.\n\nWhen the note fades out, overtones may cause incorrect readings. It’s best to strike the note again.';
   String get tunerTypeChromatic => 'Chromatic Tuner';
   String get tunerTypeBass => 'Bass';
   String get tunerTypeGuitar => 'Guitar';

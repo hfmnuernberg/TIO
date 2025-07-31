@@ -8,5 +8,9 @@ jobs:
     name: Semantic Release
     uses: hfmnuernberg/TIO/.github/workflows/reusable-semantic-release.yaml@main
     secrets: inherit
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     with:
       ref: ${{ github.sha }}
