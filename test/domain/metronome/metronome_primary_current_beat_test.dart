@@ -62,7 +62,7 @@ void main() {
           await stopMetronome(tester);
         });
 
-        testWidgets('resets current segment index when metronome was stopped', (tester) async {
+        testWidgets('resets current segment index when metronome is stopped', (tester) async {
           final event = TestBeatHappenedEvent.make(barIndex: 1);
           await startMetronomeAndMockMetronomePollBeatEventHappened(tester, event);
 
@@ -94,7 +94,7 @@ void main() {
           await stopMetronome(tester);
         });
 
-        testWidgets('resets current main beat index when metronome was stopped', (tester) async {
+        testWidgets('resets current main beat index when metronome is stopped', (tester) async {
           final event = TestBeatHappenedEvent.make(beatIndex: 2);
           await startMetronomeAndMockMetronomePollBeatEventHappened(tester, event);
 
@@ -127,7 +127,7 @@ void main() {
         await stopMetronome(tester);
       });
 
-      testWidgets('resets current poly beat index when metronome was stopped', (tester) async {
+      testWidgets('resets current poly beat index when metronome is stopped', (tester) async {
         final event = TestBeatHappenedEvent.make(beatIndex: 3, isPoly: true);
         await startMetronomeAndMockMetronomePollBeatEventHappened(tester, event);
 
