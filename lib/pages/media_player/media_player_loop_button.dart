@@ -79,10 +79,6 @@ class _MediaPlayerLoopButtonState extends State<MediaPlayerLoopButton> {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      tooltip: _loopTooltip(context),
-      icon: _loopIcon(),
-      onPressed: _onLoopPressed,
-    );
+    return IconButton(tooltip: _loopTooltip(context), icon: _loopIcon(), onPressed: _onLoopPressed);
   }
 }
