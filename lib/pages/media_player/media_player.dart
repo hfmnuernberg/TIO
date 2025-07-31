@@ -366,7 +366,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     super.deactivate();
   }
 
-  Future<void> _handleLoopToggle () async {
+  Future<void> _handleLoopToggle() async {
     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     _as.mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
   }
