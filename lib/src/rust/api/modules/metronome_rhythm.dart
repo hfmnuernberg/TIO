@@ -47,9 +47,4 @@ class MetroBar {
           beats == other.beats &&
           polyBeats == other.polyBeats &&
           beatLen == other.beatLen;
-
-  @override
-  String toString() {
-    return 'MetroBar{id: $id, beats: $beats, polyBeats: $polyBeats, beatLen: $beatLen}';
-  }
 }
