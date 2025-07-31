@@ -3,40 +3,34 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/services/audio_system.dart';
-import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class MediaPlayerLoopButton extends StatefulWidget {
-  const MediaPlayerLoopButton({super.key});
+  final Function() onToggle;
+
+  const MediaPlayerLoopButton({super.key, required this.onToggle});
 
   @override
   State<MediaPlayerLoopButton> createState() => _MediaPlayerLoopButtonState();
 }
 
 class _MediaPlayerLoopButtonState extends State<MediaPlayerLoopButton> {
-  late AudioSystem _as;
-  late ProjectRepository _projectRepo;
   late MediaPlayerBlock _mediaPlayerBlock;
 
   @override
   void initState() {
     super.initState();
-
-    _as = context.read<AudioSystem>();
-    _projectRepo = context.read<ProjectRepository>();
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
   }
 
-  String _loopTooltip(BuildContext context) {
+  String _getTooltip(BuildContext context) {
     final l10n = context.l10n;
     if (_mediaPlayerBlock.looping) return l10n.mediaPlayerLooping;
     if (_mediaPlayerBlock.loopingAll) return l10n.mediaPlayerLoopingAll;
     return l10n.mediaPlayerLoopingNothing;
   }
 
-  Icon _loopIcon() {
+  Icon _getIcon() {
     if (_mediaPlayerBlock.looping) {
       return const Icon(Icons.repeat_one, color: ColorTheme.tertiary);
     } else if (_mediaPlayerBlock.loopingAll) {
@@ -73,12 +67,11 @@ class _MediaPlayerLoopButtonState extends State<MediaPlayerLoopButton> {
 
   Future<void> _onLoopPressed() async {
     setState(_cycleLoopState);
-    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    _as.mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
+    widget.onToggle();
   }
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(tooltip: _loopTooltip(context), icon: _loopIcon(), onPressed: _onLoopPressed);
+    return IconButton(tooltip: _getTooltip(context), icon: _getIcon(), onPressed: _onLoopPressed);
   }
 }

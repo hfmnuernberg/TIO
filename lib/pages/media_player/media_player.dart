@@ -366,6 +366,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
     super.deactivate();
   }
 
+  Future<void> _handleLoopToggle () async {
+    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    _as.mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
+  }
+
   @override
   Widget build(BuildContext context) {
     var waveformHeight = 200.0;
@@ -431,7 +436,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 TextButton(onPressed: () => _jump10Seconds(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
-                MediaPlayerLoopButton(),
+                MediaPlayerLoopButton(onToggle: _handleLoopToggle),
                 TextButton(onPressed: () => _jump10Seconds(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
               ],
             ),
