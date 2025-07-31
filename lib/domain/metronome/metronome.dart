@@ -67,10 +67,10 @@ class Metronome {
 
     await _audioSession.preparePlayback();
 
-    _beatDetection = Timer.periodic(const Duration(milliseconds: beatSamplingIntervalInMs), (t) => _checkForBeats());
-
     final success = await _as.metronomeStart();
     if (!success) return logger.e('Unable to start Metronome.');
+
+    _beatDetection = Timer.periodic(const Duration(milliseconds: beatSamplingIntervalInMs), (t) => _checkForBeats());
 
     if (success) await _wakelock.enable();
 
@@ -82,11 +82,11 @@ class Metronome {
 
     await _wakelock.disable();
 
-    final success = await _as.metronomeStop();
-    if (!success) return logger.e('Unable to stop Metronome.');
-
     _beatDetection?.cancel();
     _beatDetection = null;
+
+    final success = await _as.metronomeStop();
+    if (!success) return logger.e('Unable to stop Metronome.');
 
     if (_audioSessionInterruptionListenerHandle != null) {
       _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
