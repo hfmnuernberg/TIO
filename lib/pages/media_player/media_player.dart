@@ -14,6 +14,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/edit_markers_page.dart';
 import 'package:tiomusic/pages/media_player/handle_reached_markers.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
+import 'package:tiomusic/pages/media_player/media_player_loop_button.dart';
 import 'package:tiomusic/pages/media_player/setting_bpm.dart';
 import 'package:tiomusic/pages/media_player/setting_pitch.dart';
 import 'package:tiomusic/pages/media_player/setting_speed.dart';
@@ -365,6 +366,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
     super.deactivate();
   }
 
+  Future<void> _handleLoopToggle() async {
+    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    _as.mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
+  }
+
   @override
   Widget build(BuildContext context) {
     var waveformHeight = 200.0;
@@ -430,30 +436,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 TextButton(onPressed: () => _jump10Seconds(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
-                IconButton(
-                  key: _keyLooping,
-                  icon:
-                      _mediaPlayerBlock.looping
-                          ? const Icon(Icons.repeat_one, color: ColorTheme.tertiary)
-                          : const Icon(Icons.repeat_one, color: ColorTheme.surfaceTint),
-                  onPressed: () async {
-                    setState(() => _mediaPlayerBlock.looping = !_mediaPlayerBlock.looping);
-                    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-                    _as.mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
-                  },
-                ),
-                IconButton(
-                  key: _keyLoopingAll,
-                  tooltip: l10n.mediaPlayerLoopingAll,
-                  icon:
-                      _mediaPlayerBlock.loopingAll
-                          ? const Icon(Icons.repeat, color: ColorTheme.tertiary)
-                          : const Icon(Icons.repeat, color: ColorTheme.surfaceTint),
-                  onPressed: () async {
-                    setState(() => _mediaPlayerBlock.loopingAll = !_mediaPlayerBlock.loopingAll);
-                    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-                  },
-                ),
+                MediaPlayerLoopButton(onToggle: _handleLoopToggle),
                 TextButton(onPressed: () => _jump10Seconds(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
               ],
             ),
