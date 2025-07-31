@@ -488,7 +488,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
           title: l10n.commonBasicBeat,
           subtitle: '${metronomeBlock.bpm} ${l10n.commonBpm}',
           leadingIcon: Icons.speed,
-          settingPage: const SetBPM(),
+          settingPage: Provider<Metronome>(create: (_) => metronome, child: const SetBPM()),
           block: metronomeBlock,
           callOnReturn: (value) => setState(() {}),
         ),
@@ -497,7 +497,10 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
           subtitle:
               '${l10n.metronomeSoundMain}: ${MetronomeSound.fromFilename(metronomeBlock.accSound).getLabel(l10n)}, ${MetronomeSound.fromFilename(metronomeBlock.unaccSound).getLabel(l10n)}\n${l10n.metronomeSoundPolyShort}: ${MetronomeSound.fromFilename(metronomeBlock.polyAccSound).getLabel(l10n)}, ${MetronomeSound.fromFilename(metronomeBlock.polyUnaccSound).getLabel(l10n)}',
           leadingIcon: Icons.library_music_outlined,
-          settingPage: SetMetronomeSound(running: metronome.isOn && !metronome.isMute),
+          settingPage: Provider<Metronome>(
+            create: (_) => metronome,
+            child: SetMetronomeSound(running: metronome.isOn && !metronome.isMute),
+          ),
           block: metronomeBlock,
           callOnReturn: (value) => setState(() {}),
         ),
@@ -509,7 +512,10 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
             subtitle:
                 '${l10n.metronomeSoundMain}: ${MetronomeSound.fromFilename(metronomeBlock.accSound2).getLabel(l10n)}, ${MetronomeSound.fromFilename(metronomeBlock.unaccSound2).getLabel(l10n)}\n${l10n.metronomeSoundPolyShort}: ${MetronomeSound.fromFilename(metronomeBlock.polyAccSound2).getLabel(l10n)}, ${MetronomeSound.fromFilename(metronomeBlock.polyUnaccSound2).getLabel(l10n)}',
             leadingIcon: Icons.library_music_outlined,
-            settingPage: SetMetronomeSound(running: metronome.isOn && !metronome.isMute, forSecondMetronome: true),
+            settingPage: Provider<Metronome>(
+              create: (_) => metronome,
+              child: SetMetronomeSound(running: metronome.isOn && !metronome.isMute, forSecondMetronome: true),
+            ),
             block: metronomeBlock,
             callOnReturn: (value) => setState(() {}),
           ),
