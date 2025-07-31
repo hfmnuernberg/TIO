@@ -7,24 +7,21 @@ import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
-import 'package:tiomusic/pages/metronome/metronome_functions.dart';
-import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/modules/metronome.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/log.dart';
+import 'package:tiomusic/domain/metronome/metronome.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
-import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
 import 'package:tiomusic/widgets/metronome/beat/beat_button_type.dart';
 import 'package:tiomusic/widgets/metronome/beat/beat_circle.dart';
-import 'package:tiomusic/widgets/metronome/current_beat.dart';
 import 'package:tiomusic/widgets/metronome/note/note_table.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -55,25 +52,14 @@ class AdvancedRhythmGroupEditor extends StatefulWidget {
 }
 
 class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
-  static final logger = createPrefixLogger('AdvancedRhythmGroupEditor');
-
-  late AudioSystem as;
-  late FileSystem fs;
+  late final Metronome metronome;
 
   late String noteKey;
-
-  int mainBeatCount = 0;
-  int polyBeatCount = 0;
 
   final List<BeatType> mainBeats = List.empty(growable: true);
   final List<BeatTypePoly> polyBeats = List.empty(growable: true);
 
-  CurrentBeat currentBeat = CurrentBeat();
-
-  bool isPlaying = false;
   bool processingButtonClick = false;
-
-  late Timer beatDetection;
 
   final Tutorial tutorial = Tutorial();
   final GlobalKey keyToggleBeats = GlobalKey();
@@ -82,35 +68,19 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
   void initState() {
     super.initState();
 
-    as = context.read<AudioSystem>();
-    fs = context.read<FileSystem>();
+    metronome = Metronome(
+      context.read<AudioSystem>(),
+      context.read<AudioSession>(),
+      context.read<FileSystem>(),
+      context.read<Wakelock>(),
+      onBeatEvent: refresh,
+    );
 
-    if (widget.isSecondMetronome) {
-      MetronomeUtils.loadMetro2SoundsIntoMetro1(as, fs, widget.metronomeBlock);
-    }
+    if (widget.isSecondMetronome) metronome.sounds.loadSecondarySoundsAsPrimary(widget.metronomeBlock);
 
     mainBeats.addAll(widget.currentMainBeats);
     polyBeats.addAll(widget.currentPolyBeats);
     noteKey = widget.currentNoteKey;
-
-    mainBeatCount = mainBeats.length;
-    polyBeatCount = polyBeats.length;
-
-    beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (
-      t,
-    ) async {
-      if (!mounted) {
-        t.cancel();
-        return;
-      }
-      if (!isPlaying) return;
-
-      final event = await as.metronomePollBeatEventHappened();
-      if (event != null) {
-        onBeatHappened(event);
-        setState(() {});
-      }
-    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (context.read<ProjectLibrary>().showBeatToggleTip) {
@@ -121,30 +91,20 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
   }
 
   @override
-  void dispose() {
-    stopBeat();
-    beatDetection.cancel();
-    super.dispose();
-  }
-
-  @override
   void deactivate() {
-    stopBeat();
-    beatDetection.cancel();
+    metronome.stop();
     super.deactivate();
   }
 
-  void onBeatHappened(BeatHappenedEvent event) {
-    Timer(Duration(milliseconds: event.millisecondsBeforeStart), () {
-      currentBeat = MetronomeUtils.getCurrentPrimaryBeatFromEvent(isOn: true, event: event);
-      setState(() {});
-    });
+  @override
+  void dispose() {
+    metronome.stop();
+    super.dispose();
+  }
 
-    Timer(Duration(milliseconds: event.millisecondsBeforeStart + MetronomeParams.flashDurationInMs), () {
-      if (!mounted) return;
-      currentBeat = MetronomeUtils.getCurrentPrimaryBeatFromEvent(isOn: false, event: event);
-      setState(() {});
-    });
+  Future<void> refresh(_) async {
+    if (!mounted) return metronome.stop();
+    setState(() {});
   }
 
   void createTutorial() {
@@ -164,8 +124,6 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
 
   void onBeatCountChange(int newBeatCount) {
     setState(() {
-      mainBeatCount = newBeatCount;
-
       if (newBeatCount > mainBeats.length) {
         mainBeats.addAll(List.filled(newBeatCount - mainBeats.length, BeatType.Unaccented));
       } else if (newBeatCount < mainBeats.length) {
@@ -178,8 +136,6 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
 
   void onPolyBeatCountChange(int newPolyBeatCount) {
     setState(() {
-      polyBeatCount = newPolyBeatCount;
-
       if (newPolyBeatCount > polyBeats.length) {
         polyBeats.addAll(List.filled(newPolyBeatCount - polyBeats.length, BeatTypePoly.Unaccented));
       } else if (newPolyBeatCount < polyBeats.length) {
@@ -190,36 +146,28 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
     });
   }
 
-  void startStopBeatPlayback() async {
+  Future<void> startStopBeatPlayback() async {
     if (processingButtonClick) return;
     setState(() => processingButtonClick = true);
 
-    if (isPlaying) {
-      await stopBeat();
+    if (metronome.isOn) {
+      await stopMetronome();
     } else {
-      await startBeat();
+      await startMetronome();
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     setState(() => processingButtonClick = false);
   }
 
-  Future<void> startBeat() async {
+  void refreshRhythm() => metronome.setRhythm([RhythmGroup('', mainBeats, polyBeats, noteKey)]);
+
+  Future<void> startMetronome() async {
     refreshRhythm();
-
-    await MetronomeFunctions.stop(as);
-    final success = await MetronomeFunctions.start(as);
-    if (!success) {
-      logger.e('Unable to start metronome.');
-      return;
-    }
-    isPlaying = true;
+    await metronome.restart();
   }
 
-  Future<void> stopBeat() async {
-    await as.metronomeStop();
-    isPlaying = false;
-  }
+  Future<void> stopMetronome() async => metronome.stop();
 
   BeatType getBeatTypeOnTap(BeatType currentType) {
     if (currentType == BeatType.Accented) {
@@ -241,9 +189,6 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
     }
   }
 
-  void refreshRhythm() =>
-      as.metronomeSetRhythm(bars: getRhythmAsMetroBar([RhythmGroup('', mainBeats, polyBeats, noteKey)]), bars2: []);
-
   void selectIcon(String chosenNoteKey) {
     noteKey = chosenNoteKey;
     refreshRhythm();
@@ -251,7 +196,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
   }
 
   Future<void> onConfirm() async {
-    stopBeat();
+    stopMetronome();
 
     if (widget.isAddingNewRhythmGroup) {
       widget.rhythmGroups.add(RhythmGroup(MetronomeParams.getNewKeyID(), mainBeats, polyBeats, noteKey));
@@ -267,7 +212,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
       group.beatLen = NoteHandler.getBeatLength(noteKey);
     }
 
-    MetronomeUtils.loadSounds(as, fs, widget.metronomeBlock);
+    metronome.sounds.loadAllSounds(widget.metronomeBlock);
 
     await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     if (!mounted) return;
@@ -276,19 +221,17 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
 
   void reset() {
     selectIcon(MetronomeParams.defaultNoteKey);
-    mainBeatCount = MetronomeParams.defaultBeats.length;
-    polyBeatCount = MetronomeParams.defaultPolyBeats.length;
-
     for (int i = 0; i < mainBeats.length; i++) {
       mainBeats[i] = MetronomeParams.defaultBeats[i];
     }
+    polyBeats.clear();
 
     refreshRhythm();
   }
 
   void onCancel() {
-    stopBeat();
-    MetronomeUtils.loadSounds(as, fs, widget.metronomeBlock);
+    stopMetronome();
+    metronome.sounds.loadAllSounds(widget.metronomeBlock);
     Navigator.pop(context);
   }
 
@@ -313,8 +256,8 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
                 BeatCircle(
                   beatCount: mainBeats.length,
                   beatTypes: BeatButtonType.fromMainBeatTypes(mainBeats),
-                  currentBeatIndex: currentBeat.mainBeatIndex,
-                  isPlaying: isPlaying,
+                  currentBeatIndex: metronome.currentBeat.mainBeatIndex,
+                  isPlaying: metronome.isOn,
                   centerWidgetRadius: MediaQuery.of(context).size.width / 3,
                   buttonSize: TIOMusicParams.beatButtonSizeBig,
                   beatButtonColor: ColorTheme.surfaceTint,
@@ -330,8 +273,8 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
                 BeatCircle(
                   beatCount: polyBeats.length,
                   beatTypes: BeatButtonType.fromPolyBeatTypes(polyBeats),
-                  currentBeatIndex: currentBeat.polyBeatIndex,
-                  isPlaying: isPlaying,
+                  currentBeatIndex: metronome.currentBeat.polyBeatIndex,
+                  isPlaying: metronome.isOn,
                   centerWidgetRadius: MediaQuery.of(context).size.width / 5,
                   buttonSize: TIOMusicParams.beatButtonSizeSmall,
                   beatButtonColor: ColorTheme.primary60,
@@ -351,7 +294,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SmallNumberInputInt(
-                  value: mainBeatCount,
+                  value: mainBeats.length,
                   onChange: onBeatCountChange,
                   min: 1,
                   max: MetronomeParams.maxBeatCount,
@@ -361,7 +304,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
                   textFontSize: MetronomeParams.popupTextFontSize,
                 ),
                 SmallNumberInputInt(
-                  value: polyBeatCount,
+                  value: polyBeats.length,
                   onChange: onPolyBeatCountChange,
                   max: MetronomeParams.maxBeatCount,
                   decrementStep: 1,

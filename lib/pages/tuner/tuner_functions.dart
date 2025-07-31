@@ -1,18 +1,18 @@
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
-import 'package:tiomusic/util/audio_util.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/log.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 
 abstract class TunerFunctions {
   static final _logger = createPrefixLogger('TunerFunctions');
 
-  static Future<bool> start(AudioSystem as) async {
+  static Future<bool> start(AudioSystem as, AudioSession audioSession, Wakelock wakelock) async {
     if (await Permission.microphone.request().isGranted) {
-      await configureAudioSession(AudioSessionType.record);
+      await audioSession.prepareRecording();
       var success = await as.tunerStart();
       if (success) {
-        await WakelockPlus.enable();
+        await wakelock.enable();
       }
       return success;
     } else {
@@ -21,13 +21,13 @@ abstract class TunerFunctions {
     }
   }
 
-  static Future<bool> stop(AudioSystem as) async {
-    await WakelockPlus.disable();
+  static Future<bool> stop(AudioSystem as, Wakelock wakelock) async {
+    await wakelock.disable();
     return as.tunerStop();
   }
 
-  static Future<bool> startGenerator(AudioSystem as) async {
-    await configureAudioSession(AudioSessionType.playback);
+  static Future<bool> startGenerator(AudioSystem as, AudioSession audioSession) async {
+    await audioSession.preparePlayback();
     return as.generatorStart();
   }
 

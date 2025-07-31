@@ -1,15 +1,16 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
+import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
@@ -28,6 +29,8 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   static final _logger = createPrefixLogger('MediaPlayerIslandView');
 
   late AudioSystem _as;
+  late AudioSession _audioSession;
+  late Wakelock _wakelock;
   late WaveformVisualizer _waveformVisualizer;
 
   Float32List _rmsValues = Float32List(100);
@@ -42,13 +45,15 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
   bool _processingButtonClick = false;
 
-  StreamSubscription<AudioInterruptionEvent>? playInterruptionListener;
+  AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
   @override
   void initState() {
     super.initState();
 
     _as = context.read<AudioSystem>();
+    _audioSession = context.read<AudioSession>();
+    _wakelock = context.read<Wakelock>();
     _as.mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
 
     _waveformVisualizer = WaveformVisualizer(
@@ -142,8 +147,15 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
   @override
   void deactivate() {
-    playInterruptionListener?.cancel();
-    MediaPlayerFunctions.stopPlaying(_as).then((value) => MediaPlayerFunctions.stopRecording(_as));
+    if (_audioSessionInterruptionListenerHandle != null) {
+      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
+      _audioSessionInterruptionListenerHandle = null;
+    }
+
+    MediaPlayerFunctions.stopPlaying(
+      _as,
+      _wakelock,
+    ).then((value) => MediaPlayerFunctions.stopRecording(_as, _wakelock));
 
     _timerPollPlaybackPosition?.cancel();
     super.deactivate();
@@ -184,17 +196,21 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   }
 
   Future<void> _stopPlaying() async {
-    await playInterruptionListener?.cancel();
-    await MediaPlayerFunctions.stopPlaying(_as);
+    if (_audioSessionInterruptionListenerHandle != null) {
+      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
+      _audioSessionInterruptionListenerHandle = null;
+    }
+
+    await MediaPlayerFunctions.stopPlaying(_as, _wakelock);
     if (mounted) setState(() => _isPlaying = false);
   }
 
   Future<void> _startPlaying() async {
-    playInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
-      if (event.type == AudioInterruptionType.unknown) _stopPlaying();
-    });
+    _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(_stopPlaying);
     var success = await MediaPlayerFunctions.startPlaying(
       _as,
+      _audioSession,
+      _wakelock,
       widget.mediaPlayerBlock.looping,
       widget.mediaPlayerBlock.markerPositions.isNotEmpty,
     );

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:audio_session/audio_session.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -7,7 +7,9 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
+import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
@@ -25,18 +27,21 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   int? midi;
 
   late AudioSystem _as;
+  late AudioSession _audioSession;
 
-  StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
+  AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
   @override
   void initState() {
     super.initState();
 
     _as = context.read<AudioSystem>();
+    _audioSession = context.read<AudioSession>();
+    final wakelock = context.read<Wakelock>();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await TunerFunctions.stop(_as);
-      await TunerFunctions.startGenerator(_as);
+      await TunerFunctions.stop(_as, wakelock);
+      await TunerFunctions.startGenerator(_as, _audioSession);
 
       await setupAudioInterruptionListener();
     });
@@ -44,7 +49,10 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
 
   @override
   void dispose() {
-    audioInterruptionListener?.cancel();
+    if (_audioSessionInterruptionListenerHandle != null) {
+      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
+      _audioSessionInterruptionListenerHandle = null;
+    }
     TunerFunctions.stopGenerator(_as);
     super.dispose();
   }
@@ -52,17 +60,22 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
   @override
   void deactivate() {
     super.deactivate();
-    audioInterruptionListener?.cancel();
+    if (_audioSessionInterruptionListenerHandle != null) {
+      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
+      _audioSessionInterruptionListenerHandle = null;
+    }
     TunerFunctions.stopGenerator(_as);
   }
 
   Future<void> setupAudioInterruptionListener() async {
-    audioInterruptionListener?.cancel();
-    audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
-      if (event.type == AudioInterruptionType.unknown) {
-        TunerFunctions.stopGenerator(_as);
-        setState(() => midi = null);
-      }
+    if (_audioSessionInterruptionListenerHandle != null) {
+      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
+      _audioSessionInterruptionListenerHandle = null;
+    }
+
+    _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(() {
+      TunerFunctions.stopGenerator(_as);
+      setState(() => midi = null);
     });
   }
 
