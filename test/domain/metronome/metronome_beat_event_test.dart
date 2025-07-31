@@ -4,9 +4,11 @@ import 'package:tiomusic/domain/metronome/metronome.dart';
 import 'package:tiomusic/domain/metronome/metronome_beat_event.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
+import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 
 import '../../mocks/beat_handler_mock.dart';
 import '../../utils/entities/test_beat_happened_event.dart';
+import '../../utils/entities/test_rhythm_group.dart';
 import '../../utils/test_context.dart';
 
 void main() {
@@ -27,6 +29,14 @@ void main() {
       onBeatEvent: beatHandlerMock.onBeatEvent,
       onBeatStart: beatHandlerMock.onBeatStartEvent,
       onBeatStop: beatHandlerMock.onBeatStopEvent,
+    );
+    metronome.setRhythm(
+      [
+        TestRhythmGroup.make(beats: [BeatType.Unaccented], polyBeats: [BeatTypePoly.Accented]),
+      ],
+      [
+        TestRhythmGroup.make(beats: [BeatType.Unaccented], polyBeats: [BeatTypePoly.Accented]),
+      ],
     );
   });
 
