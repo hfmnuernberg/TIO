@@ -92,6 +92,7 @@ abstract class AppLocalizations {
   String get mediaPlayerFile;
   String get mediaPlayerLooping;
   String get mediaPlayerLoopingAll;
+  String get mediaPlayerLoopingNothing;
   String get mediaPlayerMarkers;
   String get mediaPlayerOpenFileSystem;
   String get mediaPlayerOpenMediaLibrary;
