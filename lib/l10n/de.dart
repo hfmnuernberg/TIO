@@ -116,9 +116,9 @@ class German extends AppLocalizations {
   String get mediaPlayerPlay => 'Play';
   String get mediaPlayerRecording => 'Aufnahme läuft...';
   String get mediaPlayerRemoveMarker => 'Ausgewählten Marker entfernen';
-  String get mediaPlayerRepeatAll => 'Alle Media Player loopen';
-  String get mediaPlayerRepeatOff => 'Keinen Media Player loopen';
-  String get mediaPlayerRepeatOne => 'Media Player loopen';
+  String get mediaPlayerRepeatAll => 'Alle Media Player wiederholen';
+  String get mediaPlayerRepeatOff => 'Keinen Media Player wiederholen';
+  String get mediaPlayerRepeatOne => 'Media Player wiederholen';
   String get mediaPlayerSecShort => 'Sek.';
   String get mediaPlayerSemitonesLabel => 'Halbtöne';
   String get mediaPlayerSetPitch => 'Tonhöhe einstellen';
