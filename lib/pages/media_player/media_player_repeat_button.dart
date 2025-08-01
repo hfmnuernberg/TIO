@@ -17,9 +17,9 @@ class MediaPlayerRepeatButton extends StatefulWidget {
 
 class _MediaPlayerRepeatButtonState extends State<MediaPlayerRepeatButton> {
   late MediaPlayerBlock _mediaPlayerBlock;
-  Project? _project;
-
   late bool hasProject;
+
+  Project? _project;
 
   @override
   void initState() {
@@ -31,6 +31,13 @@ class _MediaPlayerRepeatButtonState extends State<MediaPlayerRepeatButton> {
 
   bool _isRepeatAll() => hasProject && _project!.mediaPlayerRepeatAll;
   bool _isRepeatOne() => !_isRepeatAll() && _mediaPlayerBlock.looping;
+  bool _isRepeatOff() => !_isRepeatAll() && !_isRepeatOne();
+
+  bool _checkIfMultipleMediaPlayerBlockExists() {
+    if (!hasProject) return false;
+    final mediaPlayerBlocks = _project!.blocks.whereType<MediaPlayerBlock>().toList();
+    return mediaPlayerBlocks.length > 1;
+  }
 
   String _getTooltip(BuildContext context) {
     final l10n = context.l10n;
@@ -62,8 +69,9 @@ class _MediaPlayerRepeatButtonState extends State<MediaPlayerRepeatButton> {
 
   void _cycleRepeatState() {
     if (_isRepeatAll()) return _setRepeatOff();
-    if (_isRepeatOne()) return _setRepeatAll();
-    _setRepeatOne();
+    if (_isRepeatOne() && _checkIfMultipleMediaPlayerBlockExists()) return _setRepeatAll();
+    if(_isRepeatOff()) return _setRepeatOne();
+    _setRepeatOff();
   }
 
   Future<void> _onRepeatPressed() async {
