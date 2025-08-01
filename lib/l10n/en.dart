@@ -106,9 +106,6 @@ class English extends AppLocalizations {
   String get mediaPlayerFactor => 'Factor';
   String get mediaPlayerFactorAndBpm => 'Factor and BPM slider';
   String get mediaPlayerFile => 'File';
-  String get mediaPlayerLooping => 'Loop media player';
-  String get mediaPlayerLoopingAll => 'Loop all media player';
-  String get mediaPlayerLoopingNothing => 'Loop no media player';
   String get mediaPlayerMarkers => 'Markers';
   String get mediaPlayerOpenFileSystem => 'Open files';
   String get mediaPlayerOpenMediaLibrary => 'Open media library';
@@ -120,6 +117,9 @@ class English extends AppLocalizations {
   String get mediaPlayerPlay => 'Play';
   String get mediaPlayerRecording => 'Recording...';
   String get mediaPlayerRemoveMarker => 'Remove selected marker';
+  String get mediaPlayerRepeatAll => 'Loop all media player';
+  String get mediaPlayerRepeatOff => 'Loop no media player';
+  String get mediaPlayerRepeatOne => 'Loop media player';
   String get mediaPlayerSecShort => 'Sec';
   String get mediaPlayerSemitonesLabel => 'Semitones';
   String get mediaPlayerSetPitch => 'Set pitch';

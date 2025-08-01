@@ -105,9 +105,6 @@ class German extends AppLocalizations {
   String get mediaPlayerFactor => 'Faktor';
   String get mediaPlayerFactorAndBpm => 'Faktor und BPM-Regler';
   String get mediaPlayerFile => 'Datei';
-  String get mediaPlayerLooping => 'Media Player loopen';
-  String get mediaPlayerLoopingAll => 'Alle Media Player loopen';
-  String get mediaPlayerLoopingNothing => 'Keinen Media Player loopen';
   String get mediaPlayerMarkers => 'Marker';
   String get mediaPlayerOpenFileSystem => 'Öffne Dateien';
   String get mediaPlayerOpenMediaLibrary => 'Öffne Mediathek';
@@ -119,6 +116,9 @@ class German extends AppLocalizations {
   String get mediaPlayerPlay => 'Play';
   String get mediaPlayerRecording => 'Aufnahme läuft...';
   String get mediaPlayerRemoveMarker => 'Ausgewählten Marker entfernen';
+  String get mediaPlayerRepeatAll => 'Alle Media Player loopen';
+  String get mediaPlayerRepeatOff => 'Keinen Media Player loopen';
+  String get mediaPlayerRepeatOne => 'Media Player loopen';
   String get mediaPlayerSecShort => 'Sek.';
   String get mediaPlayerSemitonesLabel => 'Halbtöne';
   String get mediaPlayerSetPitch => 'Tonhöhe einstellen';

@@ -149,7 +149,7 @@ class MediaPlayerBlock extends ProjectBlock {
       settings.add('${l10n.mediaPlayerTrim} ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%');
     }
     if (_looping) {
-      settings.add(l10n.mediaPlayerLooping);
+      settings.add(l10n.mediaPlayerRepeatOne);
     }
     settings.add('$bpm ${l10n.commonBpm}');
     return settings;

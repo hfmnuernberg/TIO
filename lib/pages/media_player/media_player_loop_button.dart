@@ -17,51 +17,53 @@ class MediaPlayerLoopButton extends StatefulWidget {
 
 class _MediaPlayerLoopButtonState extends State<MediaPlayerLoopButton> {
   late MediaPlayerBlock _mediaPlayerBlock;
-  late Project _project;
+  Project? _project;
+
+  late bool hasProject;
 
   @override
   void initState() {
     super.initState();
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
-    _project = context.read<Project>();
+    _project = context.read<Project?>();
+    hasProject = _project != null;
   }
+
+  bool _isRepeatAll() => hasProject && _project!.mediaPlayerRepeatAll;
+  bool _isRepeatOne() => !_isRepeatAll() && _mediaPlayerBlock.looping;
 
   String _getTooltip(BuildContext context) {
     final l10n = context.l10n;
-    if (_project.mediaPlayerRepeatAll) return l10n.mediaPlayerLoopingAll;
-    if (_mediaPlayerBlock.looping) return l10n.mediaPlayerLooping;
-    return l10n.mediaPlayerLoopingNothing;
+    if (_isRepeatAll()) return l10n.mediaPlayerRepeatAll;
+    if (_isRepeatOne()) return l10n.mediaPlayerRepeatOne;
+    return l10n.mediaPlayerRepeatOff;
   }
 
   Icon _getIcon() {
-    if (_project.mediaPlayerRepeatAll) return const Icon(Icons.repeat, color: ColorTheme.tertiary);
-    if (_mediaPlayerBlock.looping) return const Icon(Icons.repeat_one, color: ColorTheme.tertiary);
+    if (_isRepeatAll()) return const Icon(Icons.repeat, color: ColorTheme.tertiary);
+    if (_isRepeatOne()) return const Icon(Icons.repeat_one, color: ColorTheme.tertiary);
     return const Icon(Icons.repeat, color: ColorTheme.surfaceTint);
   }
 
-  void _setNoLoop() {
+  void _setRepeatOff() {
     _mediaPlayerBlock.looping = false;
-    _project.mediaPlayerRepeatAll = false;
+    if (hasProject) _project!.mediaPlayerRepeatAll = false;
   }
 
-  void _setLoopOne() {
+  void _setRepeatOne() {
     _mediaPlayerBlock.looping = true;
-    _project.mediaPlayerRepeatAll = false;
+    if (hasProject) _project!.mediaPlayerRepeatAll = false;
   }
 
-  void _setLoopAll() {
+  void _setRepeatAll() {
     _mediaPlayerBlock.looping = false;
-    _project.mediaPlayerRepeatAll = true;
+    if (hasProject) _project!.mediaPlayerRepeatAll = true;
   }
 
   void _cycleLoopState() {
-    if (!_mediaPlayerBlock.looping && !_project.mediaPlayerRepeatAll) {
-      _setLoopOne();
-    } else if (_mediaPlayerBlock.looping && !_project.mediaPlayerRepeatAll) {
-      _setLoopAll();
-    } else {
-      _setNoLoop();
-    }
+    if (_isRepeatAll()) return _setRepeatOff();
+    if (_isRepeatOne()) return _setRepeatAll();
+    _setRepeatOne();
   }
 
   Future<void> _onLoopPressed() async {

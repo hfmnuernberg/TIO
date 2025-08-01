@@ -81,7 +81,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   Duration _fileDuration = Duration.zero;
 
   late MediaPlayerBlock _mediaPlayerBlock;
-  late Project? _project;
+  Project? _project;
 
   Float32List _rmsValues = Float32List(100);
   int _numOfBins = 0;
@@ -324,7 +324,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       );
     });
 
-    if (_project!.mediaPlayerRepeatAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) {
+    if (_project != null && _project!.mediaPlayerRepeatAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) {
       _goToNextLoopingMediaPlayer();
     }
 
@@ -339,9 +339,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     for (int offset = 1; offset < blocks.length; offset++) {
       final index = (currentIndex + offset) % blocks.length;
       final block = blocks[index];
-      if (block is MediaPlayerBlock &&
-          _project!.mediaPlayerRepeatAll &&
-          block.relativePath != MediaPlayerParams.defaultPath) {
+      if (block is MediaPlayerBlock && block.relativePath != MediaPlayerParams.defaultPath) {
         await goToTool(context, project, block, replace: true, shouldAutoplay: true);
         return;
       }
