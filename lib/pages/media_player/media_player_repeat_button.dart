@@ -70,7 +70,7 @@ class _MediaPlayerRepeatButtonState extends State<MediaPlayerRepeatButton> {
   void _cycleRepeatState() {
     if (_isRepeatAll()) return _setRepeatOff();
     if (_isRepeatOne() && _checkIfMultipleMediaPlayerBlockExists()) return _setRepeatAll();
-    if(_isRepeatOff()) return _setRepeatOne();
+    if (_isRepeatOff()) return _setRepeatOne();
     _setRepeatOff();
   }
 
