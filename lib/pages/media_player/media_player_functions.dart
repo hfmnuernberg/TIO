@@ -68,11 +68,11 @@ abstract class MediaPlayerFunctions {
     AudioSystem as,
     AudioSession audioSession,
     Wakelock wakelock,
-    bool looping,
+    bool repeating,
     bool hasMarkers,
   ) async {
     await stopRecording(as, wakelock);
-    await as.mediaPlayerSetLoop(looping: looping);
+    await as.mediaPlayerSetRepeat(repeatOne: repeating);
     await audioSession.preparePlayback();
 
     if (hasMarkers) {

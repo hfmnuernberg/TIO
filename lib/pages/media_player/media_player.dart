@@ -13,7 +13,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/edit_markers_page.dart';
 import 'package:tiomusic/pages/media_player/handle_reached_markers.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
-import 'package:tiomusic/pages/media_player/media_player_loop_button.dart';
+import 'package:tiomusic/pages/media_player/media_player_repeat_button.dart';
 import 'package:tiomusic/pages/media_player/setting_bpm.dart';
 import 'package:tiomusic/pages/media_player/setting_pitch.dart';
 import 'package:tiomusic/pages/media_player/setting_speed.dart';
@@ -96,8 +96,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyStartStop = GlobalKey();
-  final GlobalKey _keyLooping = GlobalKey();
-  final GlobalKey _keyLoopingAll = GlobalKey();
+  final GlobalKey _keyRepeat = GlobalKey();
+  final GlobalKey _keyRepeatAll = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
   final GlobalKey _keyWaveform = GlobalKey();
 
@@ -236,15 +236,15 @@ class _MediaPlayerState extends State<MediaPlayer> {
         pointingDirection: PointingDirection.down,
       ),
       CustomTargetFocus(
-        _keyLooping,
-        l10n.mediaPlayerTutorialLooping,
+        _keyRepeat,
+        l10n.mediaPlayerTutorialRepeatOne,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         pointerOffset: -45,
       ),
       CustomTargetFocus(
-        _keyLoopingAll,
-        l10n.mediaPlayerTutorialLoopingAll,
+        _keyRepeatAll,
+        l10n.mediaPlayerTutorialRepeatAll,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         pointerOffset: 45,
@@ -325,13 +325,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
     });
 
     if (_project != null && _project!.mediaPlayerRepeatAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) {
-      _goToNextLoopingMediaPlayer();
+      _goToNextMediaPlayerWithLoadedFile();
     }
 
     if (_mediaPlayerBlock.markerPositions.isNotEmpty) _handleMarkers(mediaPlayerStateRust.playbackPositionFactor);
   }
 
-  Future<void> _goToNextLoopingMediaPlayer() async {
+  Future<void> _goToNextMediaPlayerWithLoadedFile() async {
     final project = Provider.of<Project>(context, listen: false);
     final blocks = project.blocks;
     final currentIndex = blocks.indexOf(_mediaPlayerBlock);
@@ -385,9 +385,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
     super.deactivate();
   }
 
-  Future<void> _handleLoopToggle() async {
+  Future<void> _handleRepeatToggle() async {
     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    _as.mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
+    _as.mediaPlayerSetRepeat(repeatOne: _mediaPlayerBlock.looping);
   }
 
   @override
@@ -455,7 +455,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 TextButton(onPressed: () => _jump10Seconds(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
-                MediaPlayerLoopButton(onToggle: _handleLoopToggle),
+                MediaPlayerRepeatButton(onToggle: _handleRepeatToggle),
                 TextButton(onPressed: () => _jump10Seconds(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
               ],
             ),

@@ -6,16 +6,16 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
-class MediaPlayerLoopButton extends StatefulWidget {
+class MediaPlayerRepeatButton extends StatefulWidget {
   final Function() onToggle;
 
-  const MediaPlayerLoopButton({super.key, required this.onToggle});
+  const MediaPlayerRepeatButton({super.key, required this.onToggle});
 
   @override
-  State<MediaPlayerLoopButton> createState() => _MediaPlayerLoopButtonState();
+  State<MediaPlayerRepeatButton> createState() => _MediaPlayerRepeatButtonState();
 }
 
-class _MediaPlayerLoopButtonState extends State<MediaPlayerLoopButton> {
+class _MediaPlayerRepeatButtonState extends State<MediaPlayerRepeatButton> {
   late MediaPlayerBlock _mediaPlayerBlock;
   Project? _project;
 
@@ -60,19 +60,19 @@ class _MediaPlayerLoopButtonState extends State<MediaPlayerLoopButton> {
     if (hasProject) _project!.mediaPlayerRepeatAll = true;
   }
 
-  void _cycleLoopState() {
+  void _cycleRepeatState() {
     if (_isRepeatAll()) return _setRepeatOff();
     if (_isRepeatOne()) return _setRepeatAll();
     _setRepeatOne();
   }
 
-  Future<void> _onLoopPressed() async {
-    setState(_cycleLoopState);
+  Future<void> _onRepeatPressed() async {
+    setState(_cycleRepeatState);
     widget.onToggle();
   }
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(tooltip: _getTooltip(context), icon: _getIcon(), onPressed: _onLoopPressed);
+    return IconButton(tooltip: _getTooltip(context), icon: _getIcon(), onPressed: _onRepeatPressed);
   }
 }

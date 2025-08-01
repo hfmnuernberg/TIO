@@ -109,7 +109,7 @@ class AudioSystemMock extends Mock implements AudioSystem {
       when(() => mediaPlayerGetRms(nBins: any(named: 'nBins'))).thenAnswer((_) async => rmsValues);
 
   void mockMediaPlayerSetLoop([void result]) =>
-      when(() => mediaPlayerSetLoop(looping: any(named: 'looping'))).thenAnswer((_) async => result);
+      when(() => mediaPlayerSetRepeat(repeatOne: any(named: 'looping'))).thenAnswer((_) async => result);
 
   void mockMediaPlayerGetState([MediaPlayerState? state]) => when(mediaPlayerGetState).thenAnswer((_) async => state);
 
