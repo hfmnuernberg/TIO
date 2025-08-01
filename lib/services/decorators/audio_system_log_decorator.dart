@@ -147,7 +147,7 @@ class AudioSystemLogDecorator implements AudioSystem {
   @override
   Future<void> mediaPlayerSetRepeat({required bool repeatOne}) async {
     await _as.mediaPlayerSetRepeat(repeatOne: repeatOne);
-    _logger.t('mediaPlayerSetLoop(repeatOne: $repeatOne)');
+    _logger.t('mediaPlayerSetRepeat(repeatOne: $repeatOne)');
   }
 
   @override

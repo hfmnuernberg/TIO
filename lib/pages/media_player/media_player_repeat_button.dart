@@ -31,13 +31,8 @@ class _MediaPlayerRepeatButtonState extends State<MediaPlayerRepeatButton> {
 
   bool _isRepeatAll() => hasProject && _project!.mediaPlayerRepeatAll;
   bool _isRepeatOne() => !_isRepeatAll() && _mediaPlayerBlock.looping;
-  bool _isRepeatOff() => !_isRepeatAll() && !_isRepeatOne();
 
-  bool _checkIfMultipleMediaPlayerBlockExists() {
-    if (!hasProject) return false;
-    final mediaPlayerBlocks = _project!.blocks.whereType<MediaPlayerBlock>().toList();
-    return mediaPlayerBlocks.length > 1;
-  }
+  bool _hasProjectMultipleMediaPlayers() => (_project?.blocks.whereType<MediaPlayerBlock>().toList().length ?? 0) > 1;
 
   String _getTooltip(BuildContext context) {
     final l10n = context.l10n;
@@ -69,9 +64,8 @@ class _MediaPlayerRepeatButtonState extends State<MediaPlayerRepeatButton> {
 
   void _cycleRepeatState() {
     if (_isRepeatAll()) return _setRepeatOff();
-    if (_isRepeatOne() && _checkIfMultipleMediaPlayerBlockExists()) return _setRepeatAll();
-    if (_isRepeatOff()) return _setRepeatOne();
-    _setRepeatOff();
+    if (_isRepeatOne()) return _hasProjectMultipleMediaPlayers() ? _setRepeatAll() : _setRepeatOff();
+    _setRepeatOne();
   }
 
   Future<void> _onRepeatPressed() async {
