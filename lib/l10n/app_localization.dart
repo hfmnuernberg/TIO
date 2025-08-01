@@ -116,8 +116,7 @@ abstract class AppLocalizations {
   String get mediaPlayerTrim;
   String get mediaPlayerTutorialAdjust;
   String get mediaPlayerTutorialJumpTo;
-  String get mediaPlayerTutorialRepeatAll;
-  String get mediaPlayerTutorialRepeatOne;
+  String get mediaPlayerTutorialRepeat;
   String get mediaPlayerTutorialStartStop;
 
   String mediaPlayerErrorFileFormatDescription(String format);

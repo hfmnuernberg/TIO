@@ -97,7 +97,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyStartStop = GlobalKey();
   final GlobalKey _keyRepeat = GlobalKey();
-  final GlobalKey _keyRepeatAll = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
   final GlobalKey _keyWaveform = GlobalKey();
 
@@ -237,17 +236,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
       ),
       CustomTargetFocus(
         _keyRepeat,
-        l10n.mediaPlayerTutorialRepeatOne,
+        l10n.mediaPlayerTutorialRepeat,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
-        pointerOffset: -45,
-      ),
-      CustomTargetFocus(
-        _keyRepeatAll,
-        l10n.mediaPlayerTutorialRepeatAll,
-        alignText: ContentAlign.top,
-        pointingDirection: PointingDirection.down,
-        pointerOffset: 45,
       ),
       CustomTargetFocus(
         _keySettings,
@@ -455,7 +446,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 TextButton(onPressed: () => _jump10Seconds(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
-                MediaPlayerRepeatButton(onToggle: _handleRepeatToggle),
+                Container(key: _keyRepeat, child: MediaPlayerRepeatButton(onToggle: _handleRepeatToggle)),
                 TextButton(onPressed: () => _jump10Seconds(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
               ],
             ),

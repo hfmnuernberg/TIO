@@ -137,7 +137,8 @@ class English extends AppLocalizations {
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file.';
   String get mediaPlayerTutorialRepeatAll =>
       'Enable the general loop for this media player. If you have other media players with looping enabled and a playable track, the media player will switch to the next one after playback.';
-  String get mediaPlayerTutorialRepeatOne => 'Enable looping to repeat the current playback.';
+  String get mediaPlayerTutorialRepeat =>
+      'Enable repeated playback for this media player. By tapping again, you can also play all media players in this project that contain a sound file one after another.';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file.';
 
   String mediaPlayerErrorFileFormatDescription(String format) =>
