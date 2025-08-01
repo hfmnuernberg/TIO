@@ -17,8 +17,7 @@ MediaPlayerBlock _$MediaPlayerBlockFromJson(Map<String, dynamic> json) => MediaP
   json['relativePath'] as String? ?? '',
   (json['rangeStart'] as num?)?.toDouble() ?? 0.0,
   (json['rangeEnd'] as num?)?.toDouble() ?? 1.0,
-  json['looping'] as bool? ?? false,
-  json['loopingAll'] as bool? ?? false,
+  $enumDecodeNullable(_$LoopModeEnumMap, json['loopMode']) ?? LoopMode.none,
   json['timeLastModified'] == null ? getCurrentDateTime() : DateTime.parse(json['timeLastModified'] as String),
   (json['markerPositions'] as List<dynamic>?)?.map((e) => (e as num).toDouble()).toList() ?? [],
 );
@@ -35,8 +34,9 @@ Map<String, dynamic> _$MediaPlayerBlockToJson(MediaPlayerBlock instance) => <Str
   'speedFactor': instance.speedFactor,
   'rangeStart': instance.rangeStart,
   'rangeEnd': instance.rangeEnd,
-  'looping': instance.looping,
-  'loopingAll': instance.loopingAll,
+  'loopMode': _$LoopModeEnumMap[instance.loopMode]!,
   'relativePath': instance.relativePath,
   'markerPositions': instance.markerPositions,
 };
+
+const _$LoopModeEnumMap = {LoopMode.none: 'none', LoopMode.one: 'one', LoopMode.all: 'all'};

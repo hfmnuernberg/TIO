@@ -195,7 +195,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     });
     var success = await MediaPlayerFunctions.startPlaying(
       _as,
-      widget.mediaPlayerBlock.looping,
+      widget.mediaPlayerBlock.loopMode,
       widget.mediaPlayerBlock.markerPositions.isNotEmpty,
     );
     if (mounted) setState(() => _isPlaying = success);

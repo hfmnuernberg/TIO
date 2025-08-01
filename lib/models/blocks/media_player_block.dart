@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:path/path.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
+import 'package:tiomusic/models/loop_mode.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -22,8 +23,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _speedFactor,
     _rangeStart,
     _rangeEnd,
-    _looping,
-    _loopingAll,
+    _loopMode,
     _markerPositions,
     _relativePath,
   ];
@@ -114,19 +114,11 @@ class MediaPlayerBlock extends ProjectBlock {
     notifyListeners();
   }
 
-  late bool _looping;
-  @JsonKey(defaultValue: MediaPlayerParams.defaultLooping)
-  bool get looping => _looping;
-  set looping(bool newValue) {
-    _looping = newValue;
-    notifyListeners();
-  }
-
-  late bool _loopingAll;
-  @JsonKey(defaultValue: MediaPlayerParams.defaultLoopingAll)
-  bool get loopingAll => _loopingAll;
-  set loopingAll(bool newValue) {
-    _loopingAll = newValue;
+  late LoopMode _loopMode;
+  @JsonKey(defaultValue: LoopMode.none)
+  LoopMode get loopMode => _loopMode;
+  set loopMode(LoopMode newValue) {
+    _loopMode = newValue;
     notifyListeners();
   }
 
@@ -157,10 +149,13 @@ class MediaPlayerBlock extends ProjectBlock {
     if (_rangeStart.abs() >= 0.001 || (_rangeEnd - 1.0).abs() >= 0.001) {
       settings.add('${l10n.mediaPlayerTrim} ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%');
     }
-    if (_looping) {
+    if (_loopMode == LoopMode.none) {
+      settings.add(l10n.mediaPlayerLoopingNothing);
+    }
+    if (_loopMode == LoopMode.one) {
       settings.add(l10n.mediaPlayerLooping);
     }
-    if (_loopingAll) {
+    if (_loopMode == LoopMode.all) {
       settings.add(l10n.mediaPlayerLoopingAll);
     }
     settings.add('$bpm ${l10n.commonBpm}');
@@ -178,8 +173,7 @@ class MediaPlayerBlock extends ProjectBlock {
     String relativePath,
     double rangeStart,
     double rangeEnd,
-    bool looping,
-    bool loopingAll,
+    LoopMode loopMode,
     DateTime timeLastModified,
     List<double> markerPositions,
   ) {
@@ -192,8 +186,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _speedFactor = speedFactor;
     _rangeStart = rangeStart;
     _rangeEnd = rangeEnd;
-    _looping = looping;
-    _loopingAll = loopingAll;
+    _loopMode = loopMode;
     _relativePath = relativePath;
     _markerPositions = markerPositions;
   }
@@ -210,8 +203,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _relativePath = MediaPlayerParams.defaultPath;
     _rangeStart = MediaPlayerParams.defaultRangeStart;
     _rangeEnd = MediaPlayerParams.defaultRangeEnd;
-    _looping = MediaPlayerParams.defaultLooping;
-    _loopingAll = MediaPlayerParams.defaultLoopingAll;
+    _loopMode = LoopMode.none;
     _markerPositions = [];
   }
 
@@ -227,8 +219,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _relativePath = MediaPlayerParams.defaultPath;
     _rangeStart = MediaPlayerParams.defaultRangeStart;
     _rangeEnd = MediaPlayerParams.defaultRangeEnd;
-    _looping = MediaPlayerParams.defaultLooping;
-    _loopingAll = MediaPlayerParams.defaultLoopingAll;
+    _loopMode = LoopMode.none;
     _markerPositions = [];
   }
 

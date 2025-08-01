@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
+import 'package:tiomusic/models/loop_mode.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
@@ -292,7 +293,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   Future<void> _autoplayAfterDelay() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    final success = await MediaPlayerFunctions.startPlaying(_as, false, _mediaPlayerBlock.markerPositions.isNotEmpty);
+    final success = await MediaPlayerFunctions.startPlaying(
+      _as,
+      LoopMode.none,
+      _mediaPlayerBlock.markerPositions.isNotEmpty,
+    );
     if (success && mounted) setState(() => _isPlaying = true);
   }
 
@@ -313,7 +318,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
       );
     });
 
-    if (_mediaPlayerBlock.loopingAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) _goToNextLoopingMediaPlayer();
+    if (_mediaPlayerBlock.loopMode == LoopMode.all && wasPreviousPlaying && !_isPlaying && _fileLoaded) {
+      _goToNextLoopingMediaPlayer();
+    }
 
     if (_mediaPlayerBlock.markerPositions.isNotEmpty) _handleMarkers(mediaPlayerStateRust.playbackPositionFactor);
   }
@@ -326,7 +333,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
     for (int offset = 1; offset < blocks.length; offset++) {
       final index = (currentIndex + offset) % blocks.length;
       final block = blocks[index];
-      if (block is MediaPlayerBlock && block.loopingAll && block.relativePath != MediaPlayerParams.defaultPath) {
+      if (block is MediaPlayerBlock &&
+          block.loopMode == LoopMode.all &&
+          block.relativePath != MediaPlayerParams.defaultPath) {
         await goToTool(context, project, block, replace: true, shouldAutoplay: true);
         return;
       }
@@ -368,7 +377,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   Future<void> _handleLoopToggle() async {
     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    _as.mediaPlayerSetLoop(looping: _mediaPlayerBlock.looping);
+    _as.mediaPlayerSetLoopOne(looping: _mediaPlayerBlock.loopMode == LoopMode.one);
   }
 
   @override
@@ -865,7 +874,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     var success = await MediaPlayerFunctions.startPlaying(
       _as,
-      _mediaPlayerBlock.looping,
+      _mediaPlayerBlock.loopMode,
       _mediaPlayerBlock.markerPositions.isNotEmpty,
     );
     playInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {

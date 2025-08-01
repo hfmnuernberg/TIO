@@ -30,7 +30,7 @@ class AudioSystemMock extends Mock implements AudioSystem {
     mockMediaPlayerSetSpeedFactor();
     mockMediaPlayerSetTrim();
     mockMediaPlayerGetRms(Float32List(1));
-    mockMediaPlayerSetLoop();
+    mockMediaPlayerSetLoopOne();
     mockMediaPlayerGetState();
     mockMediaPlayerSetPlaybackPosFactor();
     mockMediaPlayerSetVolume();
@@ -106,8 +106,8 @@ class AudioSystemMock extends Mock implements AudioSystem {
   void mockMediaPlayerGetRms(Float32List rmsValues) =>
       when(() => mediaPlayerGetRms(nBins: any(named: 'nBins'))).thenAnswer((_) async => rmsValues);
 
-  void mockMediaPlayerSetLoop([void result]) =>
-      when(() => mediaPlayerSetLoop(looping: any(named: 'looping'))).thenAnswer((_) async => result);
+  void mockMediaPlayerSetLoopOne([void result]) =>
+      when(() => mediaPlayerSetLoopOne(looping: any(named: 'looping'))).thenAnswer((_) async => result);
 
   void mockMediaPlayerGetState([MediaPlayerState? state]) => when(mediaPlayerGetState).thenAnswer((_) async => state);
 

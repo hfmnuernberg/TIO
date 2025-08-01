@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
+import 'package:tiomusic/models/loop_mode.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
@@ -25,45 +26,30 @@ class _MediaPlayerLoopButtonState extends State<MediaPlayerLoopButton> {
 
   String _getTooltip(BuildContext context) {
     final l10n = context.l10n;
-    if (_mediaPlayerBlock.looping) return l10n.mediaPlayerLooping;
-    if (_mediaPlayerBlock.loopingAll) return l10n.mediaPlayerLoopingAll;
+    if (_mediaPlayerBlock.loopMode == LoopMode.one) return l10n.mediaPlayerLooping;
+    if (_mediaPlayerBlock.loopMode == LoopMode.all) return l10n.mediaPlayerLoopingAll;
     return l10n.mediaPlayerLoopingNothing;
   }
 
   Icon _getIcon() {
-    if (_mediaPlayerBlock.looping) {
+    if (_mediaPlayerBlock.loopMode == LoopMode.one) {
       return const Icon(Icons.repeat_one, color: ColorTheme.tertiary);
-    } else if (_mediaPlayerBlock.loopingAll) {
+    } else if (_mediaPlayerBlock.loopMode == LoopMode.all) {
       return const Icon(Icons.repeat, color: ColorTheme.tertiary);
     } else {
       return const Icon(Icons.repeat, color: ColorTheme.surfaceTint);
     }
   }
 
-  void _setLoopOne() {
-    _mediaPlayerBlock.looping = true;
-    _mediaPlayerBlock.loopingAll = false;
-  }
+  void _setNoLoop() => _mediaPlayerBlock.loopMode = LoopMode.none;
+  void _setLoopOne() => _mediaPlayerBlock.loopMode = LoopMode.one;
+  void _setLoopAll() => _mediaPlayerBlock.loopMode = LoopMode.all;
 
-  void _setLoopAll() {
-    _mediaPlayerBlock.looping = false;
-    _mediaPlayerBlock.loopingAll = true;
-  }
-
-  void _setNoLoop() {
-    _mediaPlayerBlock.looping = false;
-    _mediaPlayerBlock.loopingAll = false;
-  }
-
-  void _cycleLoopState() {
-    if (!_mediaPlayerBlock.looping && !_mediaPlayerBlock.loopingAll) {
-      _setLoopOne();
-    } else if (_mediaPlayerBlock.looping && !_mediaPlayerBlock.loopingAll) {
-      _setLoopAll();
-    } else {
-      _setNoLoop();
-    }
-  }
+  void _cycleLoopState() => switch (_mediaPlayerBlock.loopMode) {
+    LoopMode.none => _setLoopOne(),
+    LoopMode.one => _setLoopAll(),
+    LoopMode.all => _setNoLoop(),
+  };
 
   Future<void> _onLoopPressed() async {
     setState(_cycleLoopState);

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
+import 'package:tiomusic/models/loop_mode.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/util/audio_util.dart';
@@ -64,9 +65,9 @@ abstract class MediaPlayerFunctions {
     return newList;
   }
 
-  static Future<bool> startPlaying(AudioSystem as, bool looping, bool hasMarkers) async {
+  static Future<bool> startPlaying(AudioSystem as, LoopMode loopMode, bool hasMarkers) async {
     await stopRecording(as);
-    await as.mediaPlayerSetLoop(looping: looping);
+    await as.mediaPlayerSetLoopOne(looping: loopMode == LoopMode.one);
     await configureAudioSession(AudioSessionType.playback);
 
     if (hasMarkers) {
