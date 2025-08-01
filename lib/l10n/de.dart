@@ -105,9 +105,6 @@ class German extends AppLocalizations {
   String get mediaPlayerFactor => 'Faktor';
   String get mediaPlayerFactorAndBpm => 'Faktor und BPM-Regler';
   String get mediaPlayerFile => 'Datei';
-  String get mediaPlayerLooping => 'Media Player loopen';
-  String get mediaPlayerLoopingAll => 'Alle Media Player loopen';
-  String get mediaPlayerLoopingNothing => 'Keinen Media Player loopen';
   String get mediaPlayerMarkers => 'Marker';
   String get mediaPlayerOpenFileSystem => 'Öffne Dateien';
   String get mediaPlayerOpenMediaLibrary => 'Öffne Mediathek';
@@ -119,6 +116,9 @@ class German extends AppLocalizations {
   String get mediaPlayerPlay => 'Play';
   String get mediaPlayerRecording => 'Aufnahme läuft...';
   String get mediaPlayerRemoveMarker => 'Ausgewählten Marker entfernen';
+  String get mediaPlayerRepeatAll => 'Alle Media Player wiederholen';
+  String get mediaPlayerRepeatOff => 'Keinen Media Player wiederholen';
+  String get mediaPlayerRepeatOne => 'Media Player wiederholen';
   String get mediaPlayerSecShort => 'Sek.';
   String get mediaPlayerSemitonesLabel => 'Halbtöne';
   String get mediaPlayerSetPitch => 'Tonhöhe einstellen';
@@ -135,9 +135,8 @@ class German extends AppLocalizations {
       'Tippe hier, um deine Audiodatei anzupassen. Du kannst die Lautstärke und den Grundschlag einstellen, deine Datei trimmen und Marker setzen, sowie Tonhöhe und Tempo nachträglich verändern.';
   String get mediaPlayerTutorialJumpTo =>
       'Tippe auf eine beliebige Stelle, um zu diesem Teil deiner Audiodatei zu springen.';
-  String get mediaPlayerTutorialLooping => 'Aktiviere das Loopen, um die aktuelle Wiedergabe zu wiederholen.';
-  String get mediaPlayerTutorialLoopingAll =>
-      'Aktiviere den generellen Loop für diesen Media Player. Hast du weitere Media Player mit aktiviertem Loop und abspielbarem Titel, wechselt der Media Player nach dem Abspielen zum nächsten Media Player.';
+  String get mediaPlayerTutorialRepeat =>
+      'Aktiviere die wiederholte Wiedergabe für diesen Media Player. Durch erneutes antippen kannst du auch alle Media Player in diesem Projekt, die eine Sound-Datei beinhalten, hintereinander abspielen.';
   String get mediaPlayerTutorialStartStop =>
       'Tippe hier, um die Aufnahme zu starten und zu stoppen oder um eine Audiodatei abzuspielen.';
 

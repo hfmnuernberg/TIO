@@ -90,9 +90,6 @@ abstract class AppLocalizations {
   String get mediaPlayerFactor;
   String get mediaPlayerFactorAndBpm;
   String get mediaPlayerFile;
-  String get mediaPlayerLooping;
-  String get mediaPlayerLoopingAll;
-  String get mediaPlayerLoopingNothing;
   String get mediaPlayerMarkers;
   String get mediaPlayerOpenFileSystem;
   String get mediaPlayerOpenMediaLibrary;
@@ -103,6 +100,9 @@ abstract class AppLocalizations {
   String get mediaPlayerPlay;
   String get mediaPlayerRecording;
   String get mediaPlayerRemoveMarker;
+  String get mediaPlayerRepeatAll;
+  String get mediaPlayerRepeatOff;
+  String get mediaPlayerRepeatOne;
   String get mediaPlayerSecShort;
   String get mediaPlayerSemitonesLabel;
   String get mediaPlayerSetPitch;
@@ -116,8 +116,7 @@ abstract class AppLocalizations {
   String get mediaPlayerTrim;
   String get mediaPlayerTutorialAdjust;
   String get mediaPlayerTutorialJumpTo;
-  String get mediaPlayerTutorialLooping;
-  String get mediaPlayerTutorialLoopingAll;
+  String get mediaPlayerTutorialRepeat;
   String get mediaPlayerTutorialStartStop;
 
   String mediaPlayerErrorFileFormatDescription(String format);
