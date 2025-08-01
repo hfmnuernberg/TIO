@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
+import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
@@ -16,49 +17,47 @@ class MediaPlayerLoopButton extends StatefulWidget {
 
 class _MediaPlayerLoopButtonState extends State<MediaPlayerLoopButton> {
   late MediaPlayerBlock _mediaPlayerBlock;
+  late Project _project;
 
   @override
   void initState() {
     super.initState();
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
+    _project = context.read<Project>();
   }
 
   String _getTooltip(BuildContext context) {
     final l10n = context.l10n;
+    if (_project.mediaPlayerRepeatAll) return l10n.mediaPlayerLoopingAll;
     if (_mediaPlayerBlock.looping) return l10n.mediaPlayerLooping;
-    if (_mediaPlayerBlock.loopingAll) return l10n.mediaPlayerLoopingAll;
     return l10n.mediaPlayerLoopingNothing;
   }
 
   Icon _getIcon() {
-    if (_mediaPlayerBlock.looping) {
-      return const Icon(Icons.repeat_one, color: ColorTheme.tertiary);
-    } else if (_mediaPlayerBlock.loopingAll) {
-      return const Icon(Icons.repeat, color: ColorTheme.tertiary);
-    } else {
-      return const Icon(Icons.repeat, color: ColorTheme.surfaceTint);
-    }
-  }
-
-  void _setLoopOne() {
-    _mediaPlayerBlock.looping = true;
-    _mediaPlayerBlock.loopingAll = false;
-  }
-
-  void _setLoopAll() {
-    _mediaPlayerBlock.looping = false;
-    _mediaPlayerBlock.loopingAll = true;
+    if (_project.mediaPlayerRepeatAll) return const Icon(Icons.repeat, color: ColorTheme.tertiary);
+    if (_mediaPlayerBlock.looping) return const Icon(Icons.repeat_one, color: ColorTheme.tertiary);
+    return const Icon(Icons.repeat, color: ColorTheme.surfaceTint);
   }
 
   void _setNoLoop() {
     _mediaPlayerBlock.looping = false;
-    _mediaPlayerBlock.loopingAll = false;
+    _project.mediaPlayerRepeatAll = false;
+  }
+
+  void _setLoopOne() {
+    _mediaPlayerBlock.looping = true;
+    _project.mediaPlayerRepeatAll = false;
+  }
+
+  void _setLoopAll() {
+    _mediaPlayerBlock.looping = false;
+    _project.mediaPlayerRepeatAll = true;
   }
 
   void _cycleLoopState() {
-    if (!_mediaPlayerBlock.looping && !_mediaPlayerBlock.loopingAll) {
+    if (!_mediaPlayerBlock.looping && !_project.mediaPlayerRepeatAll) {
       _setLoopOne();
-    } else if (_mediaPlayerBlock.looping && !_mediaPlayerBlock.loopingAll) {
+    } else if (_mediaPlayerBlock.looping && !_project.mediaPlayerRepeatAll) {
       _setLoopAll();
     } else {
       _setNoLoop();

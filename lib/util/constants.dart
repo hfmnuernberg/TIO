@@ -86,7 +86,6 @@ class MediaPlayerParams {
   static const double defaultRangeEnd = 1;
   static const String defaultPath = '';
   static const bool defaultLooping = false;
-  static const bool defaultLoopingAll = false;
 
   static const double binWidth = 8;
 

@@ -324,7 +324,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
       );
     });
 
-    if (_mediaPlayerBlock.loopingAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) _goToNextLoopingMediaPlayer();
+    if (_project!.mediaPlayerRepeatAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) {
+      _goToNextLoopingMediaPlayer();
+    }
 
     if (_mediaPlayerBlock.markerPositions.isNotEmpty) _handleMarkers(mediaPlayerStateRust.playbackPositionFactor);
   }
@@ -337,7 +339,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
     for (int offset = 1; offset < blocks.length; offset++) {
       final index = (currentIndex + offset) % blocks.length;
       final block = blocks[index];
-      if (block is MediaPlayerBlock && block.loopingAll && block.relativePath != MediaPlayerParams.defaultPath) {
+      if (block is MediaPlayerBlock &&
+          _project!.mediaPlayerRepeatAll &&
+          block.relativePath != MediaPlayerParams.defaultPath) {
         await goToTool(context, project, block, replace: true, shouldAutoplay: true);
         return;
       }
