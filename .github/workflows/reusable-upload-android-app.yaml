@@ -49,7 +49,7 @@ jobs:
       run: chmod +x scripts/*.sh
 
     - name: Restore bundle
-      uses: actions/download-artifact@v4.3.0
+      uses: actions/download-artifact@v5.0.0
       with:
         name: android-${{ inputs.target_env }}-${{ inputs.semver }}+${{ inputs.build_number }}
         path: build/app/outputs/bundle/${{ inputs.target_env }}Release
