@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Assert PR title is semantic and includes JIRA ticket number
-      uses: amannn/action-semantic-pull-request@v5.5.3
+      uses: amannn/action-semantic-pull-request@v6.0.1
       with:
         subjectPattern: '${{ inputs.jira_key }}-\d+: .+'
         subjectPatternError: >
