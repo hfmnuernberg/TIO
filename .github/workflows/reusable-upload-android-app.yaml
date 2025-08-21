@@ -55,7 +55,7 @@ jobs:
         path: build/app/outputs/bundle/${{ inputs.target_env }}Release
 
     - name: Setup ruby
-      uses: ruby/setup-ruby@v1.255.0
+      uses: ruby/setup-ruby@v1.256.0
       with:
         ruby-version: 3.3
         working-directory: android
