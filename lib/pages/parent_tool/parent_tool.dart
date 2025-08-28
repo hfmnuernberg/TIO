@@ -229,6 +229,7 @@ class _ParentToolState extends State<ParentTool> {
     return AppBar(
       leading: backButton,
       title: GestureDetector(
+        key: _keyChangeTitle,
         onTap: () async {
           final newTitle = await showEditTextDialog(
             context: context,
