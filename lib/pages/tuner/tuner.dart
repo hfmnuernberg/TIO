@@ -138,63 +138,47 @@ class _TunerState extends State<Tuner> {
         if (!isRunning) return;
         onNewFrequency(await _as.tunerGetFrequency());
       });
-
-      if (mounted) {
-        if (context.read<ProjectLibrary>().showTunerTutorial &&
-            !context.read<ProjectLibrary>().showToolTutorial &&
-            !context.read<ProjectLibrary>().showQuickToolTutorial) {
-          createTutorial();
-          tutorial.show(context);
-        } else if (context.read<ProjectLibrary>().showTunerIslandTutorial &&
-            !widget.isQuickTool &&
-            !context.read<ProjectLibrary>().showToolTutorial &&
-            !context.read<ProjectLibrary>().showQuickToolTutorial) {
-          createTutorialIslandTip();
-          tutorial.show(context);
-        }
-      }
     });
   }
 
   void createTutorial() {
     var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        keyStartStop,
-        context.l10n.tunerTutorialStartStop,
-        alignText: ContentAlign.top,
-        pointingDirection: PointingDirection.down,
-      ),
-      CustomTargetFocus(
-        keySettings,
-        context.l10n.tunerTutorialAdjust,
-        alignText: ContentAlign.top,
-        pointingDirection: PointingDirection.down,
-        buttonsPosition: ButtonsPosition.top,
-        shape: ShapeLightFocus.RRect,
-      ),
+      if (context.read<ProjectLibrary>().showTunerTutorial)
+        CustomTargetFocus(
+          keyStartStop,
+          context.l10n.tunerTutorialStartStop,
+          alignText: ContentAlign.top,
+          pointingDirection: PointingDirection.down,
+        ),
+      if (context.read<ProjectLibrary>().showTunerTutorial)
+        CustomTargetFocus(
+          keySettings,
+          context.l10n.tunerTutorialAdjust,
+          alignText: ContentAlign.top,
+          pointingDirection: PointingDirection.down,
+          buttonsPosition: ButtonsPosition.top,
+          shape: ShapeLightFocus.RRect,
+        ),
+      if (context.read<ProjectLibrary>().showTunerIslandTutorial && !widget.isQuickTool)
+        CustomTargetFocus(
+          ParentTool.keyIslandTutorial,
+          context.l10n.tunerTutorialIslandTool,
+          pointingDirection: PointingDirection.up,
+          alignText: ContentAlign.bottom,
+          shape: ShapeLightFocus.RRect,
+        ),
     ];
 
-    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showTunerTutorial = false;
-      await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-    }, context);
-  }
+    if (targets.isNotEmpty) {
+      tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+        if (context.read<ProjectLibrary>().showTunerTutorial) context.read<ProjectLibrary>().showTunerTutorial = false;
 
-  void createTutorialIslandTip() {
-    var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        ParentTool.keyIslandTutorial,
-        context.l10n.tunerTutorialIslandTool,
-        pointingDirection: PointingDirection.up,
-        alignText: ContentAlign.bottom,
-        shape: ShapeLightFocus.RRect,
-      ),
-    ];
-
-    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showTunerIslandTutorial = false;
-      await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-    }, context);
+        if (context.read<ProjectLibrary>().showTunerIslandTutorial && !widget.isQuickTool) {
+          context.read<ProjectLibrary>().showTunerIslandTutorial = false;
+        }
+        await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+      }, context);
+    }
   }
 
   @override
@@ -214,13 +198,8 @@ class _TunerState extends State<Tuner> {
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: tunerBlock,
       onParentTutorialFinished: () {
-        if (context.read<ProjectLibrary>().showTunerTutorial) {
-          createTutorial();
-          tutorial.show(context);
-        } else if (context.read<ProjectLibrary>().showTunerIslandTutorial && !widget.isQuickTool) {
-          createTutorialIslandTip();
-          tutorial.show(context);
-        }
+        createTutorial();
+        tutorial.show(context);
       },
       island: ParentIslandView(
         project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
