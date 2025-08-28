@@ -111,9 +111,9 @@ void main() {
 
     await tester.tapAndSettle(find.bySemanticsLabel('Next'));
     await tester.pumpAndSettle(const Duration(milliseconds: 500));
-    expect(find.bySemanticsLabel(RegExp('Tap here to combine your tool')), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('Tap here to start and stop recording')), findsOneWidget);
 
     await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
-    expect(find.bySemanticsLabel(RegExp('Tap here to combine your tool')), findsNothing);
+    expect(find.bySemanticsLabel(RegExp('Tap here to start and stop recording')), findsNothing);
   });
 }
