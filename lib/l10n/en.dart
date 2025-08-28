@@ -134,7 +134,7 @@ class English extends AppLocalizations {
   String get mediaPlayerTutorialAdjust =>
       'Tap here to adjust your audio file. You can set the volume and the basic beat, trim your file and set markers, as well as change the pitch and tempo afterwards.';
   String get mediaPlayerTutorialIslandTool =>
-      'Tap here to combine your tool with other Tuner or Metronome tools. You can create new tools or link existing ones.';
+      'Tap here to combine your Media Player with a Tuner or Metronome.\n\nYou can link your Media Player with an existing tool or create a new tool and link it.';
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file.';
   String get mediaPlayerTutorialRepeat =>
       'Enable repeated playback for this media player. By tapping again, you can also play all media players in this project that contain a sound file one after another.';
@@ -201,7 +201,7 @@ class English extends AppLocalizations {
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome.';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings.';
   String get metronomeTutorialIslandTool =>
-      'Tap here to combine your tool with other Tuner or Media Player tools. You can create new tools or link existing ones.';
+      'Tap here to combine your Metronome with a Tuner or Media Player.\n\nYou can link your Metronome with an existing tool or create a new tool and link it.';
   String get metronomeTutorialModeAdvanced =>
       'Hold and drag sideways to relocate a bar, swipe upwards to delete a bar, or tap to edit the selected bar.';
   String get metronomeTutorialModeChange =>
@@ -232,7 +232,7 @@ class English extends AppLocalizations {
   String get pianoTutorialAdjust => 'Tap here to adjust concert pitch, volume, and sound.';
   String get pianoTutorialChangeKeyOrOctave => 'Tap the left or right arrows to move up or down per key or per octave.';
   String get pianoTutorialIslandTool =>
-      'Tap here to combine your tool with other Tuner, Media Player, or Metronome tools. You can create new tools or link existing ones.';
+      'Tap here to combine your Piano with a Tuner, Media Player, or Metronome.\n\nYou can link your Piano with an existing tool or create a new tool and link it.';
 
   String get projectDelete => 'Delete project';
   String get projectDeleteTool => 'Delete tool';
@@ -334,7 +334,7 @@ class English extends AppLocalizations {
   String get tunerSetConcertPitch => 'Set concert pitch';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
   String get tunerTutorialIslandTool =>
-      'Tap here to combine your tool with other Metronome or Media Player tools. You can create new tools or link existing ones.';
+      'Tap here to combine your Tuner with a Metronome or Media Player.\n\nYou can link your Tuner with an existing tool or create a new tool and link it.';
   String get tunerTutorialStartStop =>
       'Tap here to start and stop the tuner.\n\nWhen the note fades out, overtones may cause incorrect readings. It’s best to strike the note again.';
   String get tunerTypeChromatic => 'Chromatic Tuner';
