@@ -48,9 +48,6 @@ class ProjectLibrary extends ChangeNotifier {
   late bool showToolTutorial; // on parent tool if not quick tool
 
   @JsonKey(defaultValue: true)
-  late bool showIslandTutorial; // on parent tool
-
-  @JsonKey(defaultValue: true)
   late bool showTunerTutorial;
   @JsonKey(defaultValue: true)
   late bool showMetronomeTutorial;
@@ -79,7 +76,6 @@ class ProjectLibrary extends ChangeNotifier {
     this.showProjectPageTutorial,
     this.showToolTutorial,
     this.showQuickToolTutorial,
-    this.showIslandTutorial,
     this.showTunerTutorial,
     this.showMetronomeTutorial,
     this.showMediaPlayerTutorial,
@@ -103,7 +99,6 @@ class ProjectLibrary extends ChangeNotifier {
     showProjectPageTutorial = true;
     showToolTutorial = true;
     showQuickToolTutorial = true;
-    showIslandTutorial = true;
     showTunerTutorial = true;
     showMetronomeTutorial = true;
     showMetronomeAdvancedTutorial = true;
@@ -124,7 +119,6 @@ class ProjectLibrary extends ChangeNotifier {
     showProjectPageTutorial = true;
     showToolTutorial = true;
     showQuickToolTutorial = true;
-    showIslandTutorial = true;
     showTunerTutorial = true;
     showMetronomeTutorial = true;
     showMetronomeAdvancedTutorial = true;
@@ -141,7 +135,6 @@ class ProjectLibrary extends ChangeNotifier {
     showProjectPageTutorial = false;
     showToolTutorial = false;
     showQuickToolTutorial = false;
-    showIslandTutorial = false;
     showTunerTutorial = false;
     showMetronomeTutorial = false;
     showMetronomeAdvancedTutorial = false;

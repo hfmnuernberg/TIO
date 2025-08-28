@@ -191,6 +191,13 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
         l10n.metronomeTutorialModeChange,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
+      CustomTargetFocus(
+        ParentTool.keyIslandTutorial,
+        context.l10n.appTutorialToolIsland,
+        pointingDirection: PointingDirection.up,
+        alignText: ContentAlign.bottom,
+        shape: ShapeLightFocus.RRect,
+      ),
     ];
 
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {

@@ -184,15 +184,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
       if (mounted) {
         if (context.read<ProjectLibrary>().showMediaPlayerTutorial &&
             !context.read<ProjectLibrary>().showToolTutorial &&
-            !context.read<ProjectLibrary>().showQuickToolTutorial &&
-            !context.read<ProjectLibrary>().showIslandTutorial) {
+            !context.read<ProjectLibrary>().showQuickToolTutorial) {
           _createTutorial();
           _tutorial.show(context);
         } else if (context.read<ProjectLibrary>().showWaveformTip &&
             _fileLoaded &&
             !context.read<ProjectLibrary>().showToolTutorial &&
-            !context.read<ProjectLibrary>().showQuickToolTutorial &&
-            !context.read<ProjectLibrary>().showIslandTutorial) {
+            !context.read<ProjectLibrary>().showQuickToolTutorial) {
           _createTutorialWaveformTip();
           _tutorial.show(context);
         }
@@ -247,6 +245,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,
+        shape: ShapeLightFocus.RRect,
+      ),
+      CustomTargetFocus(
+        ParentTool.keyIslandTutorial,
+        context.l10n.appTutorialToolIsland,
+        pointingDirection: PointingDirection.up,
+        alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
       ),
     ];

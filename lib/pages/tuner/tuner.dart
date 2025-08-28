@@ -142,8 +142,7 @@ class _TunerState extends State<Tuner> {
       if (mounted) {
         if (context.read<ProjectLibrary>().showTunerTutorial &&
             !context.read<ProjectLibrary>().showToolTutorial &&
-            !context.read<ProjectLibrary>().showQuickToolTutorial &&
-            !context.read<ProjectLibrary>().showIslandTutorial) {
+            !context.read<ProjectLibrary>().showQuickToolTutorial) {
           createTutorial();
           tutorial.show(context);
         }
@@ -167,7 +166,15 @@ class _TunerState extends State<Tuner> {
         buttonsPosition: ButtonsPosition.top,
         shape: ShapeLightFocus.RRect,
       ),
+      CustomTargetFocus(
+        ParentTool.keyIslandTutorial,
+        context.l10n.appTutorialToolIsland,
+        pointingDirection: PointingDirection.up,
+        alignText: ContentAlign.bottom,
+        shape: ShapeLightFocus.RRect,
+      ),
     ];
+
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showTunerTutorial = false;
       await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());

@@ -67,6 +67,7 @@ class _PianoState extends State<Piano> {
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyOctaveSwitch = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
+  final GlobalKey _keyIsland = GlobalKey();
 
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
   bool _isPlaying = false;
@@ -165,7 +166,22 @@ class _PianoState extends State<Piano> {
         shape: ShapeLightFocus.RRect,
         buttonsPosition: ButtonsPosition.bottomright,
       ),
+      CustomTargetFocus(
+        _keyIsland,
+        context.l10n.appTutorialToolIsland,
+        alignText: ContentAlign.custom,
+        customTextPosition: CustomTargetContentPosition(
+          top: MediaQuery.of(context).size.height / 8,
+          left: MediaQuery.of(context).size.width / 3,
+          right: MediaQuery.of(context).size.width / 3,
+        ),
+        pointingDirection: PointingDirection.up,
+        pointerOffset: 120,
+        shape: ShapeLightFocus.RRect,
+        buttonsPosition: ButtonsPosition.bottomright,
+      ),
     ];
+
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showPianoTutorial = false;
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
@@ -317,6 +333,7 @@ class _PianoState extends State<Piano> {
 
               // island
               SizedBox(
+                key: _keyIsland,
                 height: ParentToolParams.islandHeight,
                 width: islandWidth,
                 child: ParentIslandView(project: project, toolBlock: _pianoBlock),
