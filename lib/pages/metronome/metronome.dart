@@ -100,6 +100,10 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!context.read<ProjectLibrary>().showMetronomeTutorial && !context.read<ProjectLibrary>().showToolTutorial) {
         showModeTutorial();
+      } else if (context.read<ProjectLibrary>().showMetronomeIslandTutorial &&
+          !context.read<ProjectLibrary>().showToolTutorial) {
+        createTutorialIslandTip();
+        tutorial.show(context);
       }
 
       await syncMetronomeSound();
@@ -191,6 +195,18 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
         l10n.metronomeTutorialModeChange,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
+    ];
+
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showMetronomeTutorial = false;
+      if (isSimpleModeOn) context.read<ProjectLibrary>().showMetronomeSimpleTutorial = false;
+      if (!isSimpleModeOn) context.read<ProjectLibrary>().showMetronomeAdvancedTutorial = false;
+      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }, context);
+  }
+
+  void createTutorialIslandTip() {
+    var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         ParentTool.keyIslandTutorial,
         context.l10n.metronomeTutorialIslandTool,
@@ -201,9 +217,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     ];
 
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showMetronomeTutorial = false;
-      if (isSimpleModeOn) context.read<ProjectLibrary>().showMetronomeSimpleTutorial = false;
-      if (!isSimpleModeOn) context.read<ProjectLibrary>().showMetronomeAdvancedTutorial = false;
+      context.read<ProjectLibrary>().showPianoIslandTutorial = false;
       await projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
@@ -393,6 +407,9 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
       onParentTutorialFinished: () {
         if (context.read<ProjectLibrary>().showMetronomeTutorial) {
           createTutorial();
+          tutorial.show(context);
+        } else if (context.read<ProjectLibrary>().showMetronomeIslandTutorial && !widget.isQuickTool) {
+          createTutorialIslandTip();
           tutorial.show(context);
         }
       },

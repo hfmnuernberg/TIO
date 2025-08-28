@@ -145,6 +145,12 @@ class _TunerState extends State<Tuner> {
             !context.read<ProjectLibrary>().showQuickToolTutorial) {
           createTutorial();
           tutorial.show(context);
+        } else if (context.read<ProjectLibrary>().showTunerIslandTutorial &&
+            !widget.isQuickTool &&
+            !context.read<ProjectLibrary>().showToolTutorial &&
+            !context.read<ProjectLibrary>().showQuickToolTutorial) {
+          createTutorialIslandTip();
+          tutorial.show(context);
         }
       }
     });
@@ -166,6 +172,16 @@ class _TunerState extends State<Tuner> {
         buttonsPosition: ButtonsPosition.top,
         shape: ShapeLightFocus.RRect,
       ),
+    ];
+
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showTunerTutorial = false;
+      await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    }, context);
+  }
+
+  void createTutorialIslandTip() {
+    var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         ParentTool.keyIslandTutorial,
         context.l10n.tunerTutorialIslandTool,
@@ -176,7 +192,7 @@ class _TunerState extends State<Tuner> {
     ];
 
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showTunerTutorial = false;
+      context.read<ProjectLibrary>().showTunerIslandTutorial = false;
       await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
@@ -200,6 +216,9 @@ class _TunerState extends State<Tuner> {
       onParentTutorialFinished: () {
         if (context.read<ProjectLibrary>().showTunerTutorial) {
           createTutorial();
+          tutorial.show(context);
+        } else if (context.read<ProjectLibrary>().showTunerIslandTutorial && !widget.isQuickTool) {
+          createTutorialIslandTip();
           tutorial.show(context);
         }
       },

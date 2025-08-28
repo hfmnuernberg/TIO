@@ -187,6 +187,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
             !context.read<ProjectLibrary>().showQuickToolTutorial) {
           _createTutorial();
           _tutorial.show(context);
+        } else if (context.read<ProjectLibrary>().showMediaPlayerIslandTutorial &&
+            !widget.isQuickTool &&
+            !context.read<ProjectLibrary>().showToolTutorial &&
+            !context.read<ProjectLibrary>().showQuickToolTutorial) {
+          _createTutorialIslandTip();
+          _tutorial.show(context);
         } else if (context.read<ProjectLibrary>().showWaveformTip &&
             _fileLoaded &&
             !context.read<ProjectLibrary>().showToolTutorial &&
@@ -247,6 +253,16 @@ class _MediaPlayerState extends State<MediaPlayer> {
         buttonsPosition: ButtonsPosition.top,
         shape: ShapeLightFocus.RRect,
       ),
+    ];
+
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }, context);
+  }
+
+  void _createTutorialIslandTip() {
+    var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         ParentTool.keyIslandTutorial,
         context.l10n.mediaPlayerTutorialIslandTool,
@@ -256,20 +272,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
       ),
     ];
 
-    if (_fileLoaded) {
-      targets.add(
-        CustomTargetFocus(
-          _keyWaveform,
-          l10n.mediaPlayerTutorialJumpTo,
-          alignText: ContentAlign.bottom,
-          pointingDirection: PointingDirection.up,
-          shape: ShapeLightFocus.RRect,
-        ),
-      );
-    }
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
-      if (_fileLoaded) context.read<ProjectLibrary>().showWaveformTip = false;
+      context.read<ProjectLibrary>().showMediaPlayerIslandTutorial = false;
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
@@ -406,6 +410,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
       onParentTutorialFinished: () {
         if (context.read<ProjectLibrary>().showMediaPlayerTutorial) {
           _createTutorial();
+          _tutorial.show(context);
+        } else if (context.read<ProjectLibrary>().showMediaPlayerIslandTutorial && !widget.isQuickTool) {
+          _createTutorialIslandTip();
           _tutorial.show(context);
         } else if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
           _createTutorialWaveformTip();
