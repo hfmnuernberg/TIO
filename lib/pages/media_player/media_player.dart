@@ -249,7 +249,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       ),
       CustomTargetFocus(
         ParentTool.keyIslandTutorial,
-        context.l10n.appTutorialToolIsland,
+        context.l10n.mediaPlayerTutorialIslandTool,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,

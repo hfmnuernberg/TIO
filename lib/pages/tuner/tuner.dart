@@ -168,7 +168,7 @@ class _TunerState extends State<Tuner> {
       ),
       CustomTargetFocus(
         ParentTool.keyIslandTutorial,
-        context.l10n.appTutorialToolIsland,
+        context.l10n.tunerTutorialIslandTool,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,

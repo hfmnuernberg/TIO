@@ -193,7 +193,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
       ),
       CustomTargetFocus(
         ParentTool.keyIslandTutorial,
-        context.l10n.appTutorialToolIsland,
+        context.l10n.metronomeTutorialIslandTool,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,

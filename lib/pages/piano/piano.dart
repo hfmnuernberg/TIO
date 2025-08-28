@@ -168,7 +168,7 @@ class _PianoState extends State<Piano> {
       ),
       CustomTargetFocus(
         _keyIsland,
-        context.l10n.appTutorialToolIsland,
+        context.l10n.pianoTutorialIslandTool,
         alignText: ContentAlign.custom,
         customTextPosition: CustomTargetContentPosition(
           top: MediaQuery.of(context).size.height / 8,
