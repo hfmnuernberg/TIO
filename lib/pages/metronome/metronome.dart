@@ -98,14 +98,6 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     metronome.sounds.loadAllSounds(metronomeBlock);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!context.read<ProjectLibrary>().showMetronomeTutorial && !context.read<ProjectLibrary>().showToolTutorial) {
-        showModeTutorial();
-      } else if (context.read<ProjectLibrary>().showMetronomeIslandTutorial &&
-          !context.read<ProjectLibrary>().showToolTutorial) {
-        createTutorialIslandTip();
-        tutorial.show(context);
-      }
-
       await syncMetronomeSound();
     });
   }
@@ -127,21 +119,11 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
   void toggleSimpleMode() {
     isSimpleModeOn = !isSimpleModeOn;
 
-    showModeTutorial();
+    createTutorial();
+    tutorial.show(context);
 
     if (isSimpleModeOn && !metronomeBlock.isSimpleModeSupported) clearAllRhythms();
     setState(() {});
-  }
-
-  void showModeTutorial() {
-    if (isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeSimpleTutorial) {
-      createTutorialSimpleMode();
-      tutorial.show(context);
-    }
-    if (!isSimpleModeOn && context.read<ProjectLibrary>().showMetronomeAdvancedTutorial) {
-      createTutorialAdvancedMode();
-      tutorial.show(context);
-    }
   }
 
   Future<void> toggleSimpleModeIfSaveOrUserConfirms() async {
@@ -167,93 +149,75 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
   void createTutorial() {
     final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        isSimpleModeOn ? keySimpleMode : keyAdvancedMode,
-        isSimpleModeOn ? l10n.metronomeTutorialModeSimple : l10n.metronomeTutorialModeAdvanced,
-        alignText: ContentAlign.bottom,
-        pointingDirection: PointingDirection.up,
-        shape: ShapeLightFocus.RRect,
-        pointerPosition: PointerPosition.left,
-      ),
-      CustomTargetFocus(
-        keyStartStop,
-        l10n.metronomeTutorialStartStop,
-        alignText: ContentAlign.top,
-        pointingDirection: PointingDirection.down,
-      ),
-      CustomTargetFocus(
-        keySettings,
-        l10n.metronomeTutorialAdjust,
-        alignText: ContentAlign.top,
-        pointingDirection: PointingDirection.down,
-        buttonsPosition: ButtonsPosition.top,
-        shape: ShapeLightFocus.RRect,
-      ),
-      CustomTargetFocus(
-        null,
-        context: context,
-        l10n.metronomeTutorialModeChange,
-        customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
-      ),
+      if (context.read<ProjectLibrary>().showMetronomeTutorial)
+        CustomTargetFocus(
+          keyStartStop,
+          l10n.metronomeTutorialStartStop,
+          alignText: ContentAlign.top,
+          pointingDirection: PointingDirection.down,
+        ),
+      if (context.read<ProjectLibrary>().showMetronomeTutorial)
+        CustomTargetFocus(
+          keySettings,
+          l10n.metronomeTutorialAdjust,
+          alignText: ContentAlign.top,
+          pointingDirection: PointingDirection.down,
+          buttonsPosition: ButtonsPosition.top,
+          shape: ShapeLightFocus.RRect,
+        ),
+      if (context.read<ProjectLibrary>().showMetronomeTutorial)
+        CustomTargetFocus(
+          null,
+          context: context,
+          l10n.metronomeTutorialModeChange,
+          customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
+        ),
+      if (context.read<ProjectLibrary>().showMetronomeSimpleTutorial && isSimpleModeOn)
+        CustomTargetFocus(
+          keySimpleMode,
+          l10n.metronomeTutorialModeSimple,
+          alignText: ContentAlign.bottom,
+          pointingDirection: PointingDirection.up,
+          shape: ShapeLightFocus.RRect,
+          pointerPosition: PointerPosition.left,
+        ),
+      if (context.read<ProjectLibrary>().showMetronomeAdvancedTutorial && !isSimpleModeOn)
+        CustomTargetFocus(
+          keyAdvancedMode,
+          l10n.metronomeTutorialModeAdvanced,
+          alignText: ContentAlign.bottom,
+          pointingDirection: PointingDirection.up,
+          shape: ShapeLightFocus.RRect,
+          pointerPosition: PointerPosition.left,
+        ),
+      if (context.read<ProjectLibrary>().showMetronomeIslandTutorial && !widget.isQuickTool)
+        CustomTargetFocus(
+          ParentTool.keyIslandTutorial,
+          context.l10n.metronomeTutorialIslandTool,
+          pointingDirection: PointingDirection.up,
+          alignText: ContentAlign.bottom,
+          shape: ShapeLightFocus.RRect,
+        ),
     ];
 
+    if (targets.isEmpty) return;
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showMetronomeTutorial = false;
-      if (isSimpleModeOn) context.read<ProjectLibrary>().showMetronomeSimpleTutorial = false;
-      if (!isSimpleModeOn) context.read<ProjectLibrary>().showMetronomeAdvancedTutorial = false;
-      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    }, context);
-  }
+      if (context.read<ProjectLibrary>().showMetronomeTutorial) {
+        context.read<ProjectLibrary>().showMetronomeTutorial = false;
+      }
 
-  void createTutorialIslandTip() {
-    var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        ParentTool.keyIslandTutorial,
-        context.l10n.metronomeTutorialIslandTool,
-        pointingDirection: PointingDirection.up,
-        alignText: ContentAlign.bottom,
-        shape: ShapeLightFocus.RRect,
-      ),
-    ];
+      if (context.read<ProjectLibrary>().showMetronomeIslandTutorial && !widget.isQuickTool) {
+        context.read<ProjectLibrary>().showMetronomeIslandTutorial = false;
+      }
 
-    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showPianoIslandTutorial = false;
-      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    }, context);
-  }
+      if (context.read<ProjectLibrary>().showMetronomeSimpleTutorial && isSimpleModeOn) {
+        context.read<ProjectLibrary>().showMetronomeSimpleTutorial = false;
+      }
 
-  void createTutorialSimpleMode() {
-    final l10n = context.l10n;
-    var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        keySimpleMode,
-        l10n.metronomeTutorialModeSimple,
-        alignText: ContentAlign.bottom,
-        pointingDirection: PointingDirection.up,
-        shape: ShapeLightFocus.RRect,
-        pointerPosition: PointerPosition.left,
-      ),
-    ];
-    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showMetronomeSimpleTutorial = false;
-      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    }, context);
-  }
+      if (context.read<ProjectLibrary>().showMetronomeAdvancedTutorial && !isSimpleModeOn) {
+        context.read<ProjectLibrary>().showMetronomeAdvancedTutorial = false;
+      }
 
-  void createTutorialAdvancedMode() {
-    final l10n = context.l10n;
-    var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        keyAdvancedMode,
-        l10n.metronomeTutorialModeAdvanced,
-        alignText: ContentAlign.bottom,
-        pointingDirection: PointingDirection.up,
-        shape: ShapeLightFocus.RRect,
-        pointerPosition: PointerPosition.left,
-      ),
-    ];
-    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showMetronomeAdvancedTutorial = false;
       await projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
@@ -405,13 +369,8 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
         ),
       ],
       onParentTutorialFinished: () {
-        if (context.read<ProjectLibrary>().showMetronomeTutorial) {
-          createTutorial();
-          tutorial.show(context);
-        } else if (context.read<ProjectLibrary>().showMetronomeIslandTutorial && !widget.isQuickTool) {
-          createTutorialIslandTip();
-          tutorial.show(context);
-        }
+        createTutorial();
+        tutorial.show(context);
       },
       island: ParentIslandView(
         project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
