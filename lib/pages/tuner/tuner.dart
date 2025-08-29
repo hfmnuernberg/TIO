@@ -169,16 +169,18 @@ class _TunerState extends State<Tuner> {
         ),
     ];
 
-    if (targets.isNotEmpty) {
-      tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-        if (context.read<ProjectLibrary>().showTunerTutorial) context.read<ProjectLibrary>().showTunerTutorial = false;
+    if (targets.isEmpty) return;
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      if (context.read<ProjectLibrary>().showTunerTutorial) {
+        context.read<ProjectLibrary>().showTunerTutorial = false;
+      }
 
-        if (context.read<ProjectLibrary>().showTunerIslandTutorial && !widget.isQuickTool) {
-          context.read<ProjectLibrary>().showTunerIslandTutorial = false;
-        }
-        await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-      }, context);
-    }
+      if (context.read<ProjectLibrary>().showTunerIslandTutorial && !widget.isQuickTool) {
+        context.read<ProjectLibrary>().showTunerIslandTutorial = false;
+      }
+
+      await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    }, context);
   }
 
   @override
