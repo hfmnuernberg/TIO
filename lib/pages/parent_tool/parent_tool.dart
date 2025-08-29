@@ -70,8 +70,7 @@ class _ParentToolState extends State<ParentTool> {
   Color? _highlightColorOnSave;
   final TextEditingController _toolTitle = TextEditingController();
 
-  final Tutorial _tutorialQuickTool = Tutorial();
-  final Tutorial _tutorialTool = Tutorial();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyBookmarkSave = GlobalKey();
   final GlobalKey _keyChangeTitle = GlobalKey();
 
@@ -92,73 +91,51 @@ class _ParentToolState extends State<ParentTool> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.isQuickTool) {
-        if (context.read<ProjectLibrary>().showQuickToolTutorial) {
-          _createTutorialQuickTool();
-          Future.delayed(Duration.zero, () {
-            if (mounted) _tutorialQuickTool.show(context);
-          });
-        } else {
-          if (widget.onParentTutorialFinished != null) {
-            widget.onParentTutorialFinished!();
-          }
-        }
-      } else {
-        if (context.read<ProjectLibrary>().showToolTutorial) {
-          _createTutorialTool();
-          Future.delayed(Duration.zero, () {
-            if (mounted) _tutorialTool.show(context);
-          });
-        } else {
-          if (widget.onParentTutorialFinished != null) {
-            widget.onParentTutorialFinished!();
-          }
-        }
-      }
+      _createTutorial();
+      _tutorial.show(context);
     });
   }
 
-  void _createTutorialQuickTool() {
+  void _createTutorial() {
     var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        _keyBookmarkSave,
-        context.l10n.toolTutorialSave,
-        alignText: ContentAlign.left,
-        pointingDirection: PointingDirection.right,
-      ),
+      if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool)
+        CustomTargetFocus(
+          _keyBookmarkSave,
+          context.l10n.toolTutorialSave,
+          alignText: ContentAlign.left,
+          pointingDirection: PointingDirection.right,
+          pointerOffset: -25,
+        ),
+      if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool)
+        CustomTargetFocus(
+          _keyBookmarkSave,
+          context.l10n.appTutorialToolSave,
+          alignText: ContentAlign.left,
+          pointingDirection: PointingDirection.right,
+        ),
+      if (context.read<ProjectLibrary>().showToolTutorial && context.read<ProjectLibrary>().showQuickToolTutorial)
+        CustomTargetFocus(
+          _keyChangeTitle,
+          context.l10n.toolTutorialEditTitle,
+          alignText: ContentAlign.bottom,
+          pointingDirection: PointingDirection.up,
+          pointerOffset: -80,
+          shape: ShapeLightFocus.RRect,
+        ),
     ];
 
-    _tutorialQuickTool.create(targets.map((e) => e.targetFocus).toList(), () async {
+    if (targets.isEmpty) return;
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       final projectLibrary = context.read<ProjectLibrary>();
-      projectLibrary.showQuickToolTutorial = false;
-      await _projectRepo.saveLibrary(projectLibrary);
 
-      if (widget.onParentTutorialFinished != null) {
-        widget.onParentTutorialFinished!();
+      if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool) {
+        projectLibrary.showQuickToolTutorial = false;
       }
-    }, context);
-  }
 
-  void _createTutorialTool() {
-    var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        _keyBookmarkSave,
-        context.l10n.appTutorialToolSave,
-        alignText: ContentAlign.left,
-        pointingDirection: PointingDirection.right,
-      ),
-      CustomTargetFocus(
-        _keyChangeTitle,
-        context.l10n.toolTutorialEditTitle,
-        pointingDirection: PointingDirection.up,
-        alignText: ContentAlign.bottom,
-        shape: ShapeLightFocus.RRect,
-      ),
-    ];
+      if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool) {
+        projectLibrary.showToolTutorial = false;
+      }
 
-    _tutorialTool.create(targets.map((e) => e.targetFocus).toList(), () async {
-      final projectLibrary = context.read<ProjectLibrary>();
-      projectLibrary.showToolTutorial = false;
       await _projectRepo.saveLibrary(projectLibrary);
 
       if (widget.onParentTutorialFinished != null) {

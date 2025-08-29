@@ -179,7 +179,6 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
           alignText: ContentAlign.bottom,
           pointingDirection: PointingDirection.up,
           shape: ShapeLightFocus.RRect,
-          pointerPosition: PointerPosition.left,
         ),
       if (context.read<ProjectLibrary>().showMetronomeAdvancedTutorial && !isSimpleModeOn)
         CustomTargetFocus(
@@ -188,7 +187,6 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
           alignText: ContentAlign.bottom,
           pointingDirection: PointingDirection.up,
           shape: ShapeLightFocus.RRect,
-          pointerPosition: PointerPosition.left,
         ),
       if (context.read<ProjectLibrary>().showMetronomeIslandTutorial && !widget.isQuickTool)
         CustomTargetFocus(
