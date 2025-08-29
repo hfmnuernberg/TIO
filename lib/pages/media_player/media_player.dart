@@ -180,27 +180,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
       await _queryAndUpdateStateFromRust();
 
       if (mounted && widget.shouldAutoplay && _fileLoaded) _autoplayAfterDelay();
-
-      if (mounted) {
-        if (context.read<ProjectLibrary>().showMediaPlayerTutorial &&
-            !context.read<ProjectLibrary>().showToolTutorial &&
-            !context.read<ProjectLibrary>().showQuickToolTutorial) {
-          _createTutorial();
-          _tutorial.show(context);
-        } else if (context.read<ProjectLibrary>().showMediaPlayerIslandTutorial &&
-            !widget.isQuickTool &&
-            !context.read<ProjectLibrary>().showToolTutorial &&
-            !context.read<ProjectLibrary>().showQuickToolTutorial) {
-          _createTutorialIslandTip();
-          _tutorial.show(context);
-        } else if (context.read<ProjectLibrary>().showWaveformTip &&
-            _fileLoaded &&
-            !context.read<ProjectLibrary>().showToolTutorial &&
-            !context.read<ProjectLibrary>().showQuickToolTutorial) {
-          _createTutorialWaveformTip();
-          _tutorial.show(context);
-        }
-      }
     });
 
     _timerPollPlaybackPosition = Timer.periodic(const Duration(milliseconds: 120), (t) async {
@@ -232,65 +211,62 @@ class _MediaPlayerState extends State<MediaPlayer> {
   void _createTutorial() {
     final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        _keyStartStop,
-        l10n.mediaPlayerTutorialStartStop,
-        alignText: ContentAlign.top,
-        pointingDirection: PointingDirection.down,
-      ),
-      CustomTargetFocus(
-        _keyRepeat,
-        l10n.mediaPlayerTutorialRepeat,
-        alignText: ContentAlign.top,
-        pointingDirection: PointingDirection.down,
-      ),
-      CustomTargetFocus(
-        _keySettings,
-        l10n.mediaPlayerTutorialAdjust,
-        alignText: ContentAlign.custom,
-        customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
-        pointingDirection: PointingDirection.down,
-        buttonsPosition: ButtonsPosition.top,
-        shape: ShapeLightFocus.RRect,
-      ),
+      if (context.read<ProjectLibrary>().showMediaPlayerTutorial)
+        CustomTargetFocus(
+          _keyStartStop,
+          l10n.mediaPlayerTutorialStartStop,
+          alignText: ContentAlign.top,
+          pointingDirection: PointingDirection.down,
+        ),
+      if (context.read<ProjectLibrary>().showMediaPlayerTutorial)
+        CustomTargetFocus(
+          _keyRepeat,
+          l10n.mediaPlayerTutorialRepeat,
+          alignText: ContentAlign.top,
+          pointingDirection: PointingDirection.down,
+        ),
+      if (context.read<ProjectLibrary>().showMediaPlayerTutorial)
+        CustomTargetFocus(
+          _keySettings,
+          l10n.mediaPlayerTutorialAdjust,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
+          pointingDirection: PointingDirection.down,
+          buttonsPosition: ButtonsPosition.top,
+          shape: ShapeLightFocus.RRect,
+        ),
+      if (context.read<ProjectLibrary>().showMediaPlayerIslandTutorial && !widget.isQuickTool)
+        CustomTargetFocus(
+          ParentTool.keyIslandTutorial,
+          context.l10n.mediaPlayerTutorialIslandTool,
+          pointingDirection: PointingDirection.up,
+          alignText: ContentAlign.bottom,
+          shape: ShapeLightFocus.RRect,
+        ),
+      if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded)
+        CustomTargetFocus(
+          _keyWaveform,
+          context.l10n.mediaPlayerTutorialJumpTo,
+          alignText: ContentAlign.bottom,
+          pointingDirection: PointingDirection.up,
+          shape: ShapeLightFocus.RRect,
+        ),
     ];
 
+    if (targets.isEmpty) return;
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
-      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    }, context);
-  }
+      if (context.read<ProjectLibrary>().showMediaPlayerTutorial) {
+        context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
+      }
 
-  void _createTutorialIslandTip() {
-    var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        ParentTool.keyIslandTutorial,
-        context.l10n.mediaPlayerTutorialIslandTool,
-        pointingDirection: PointingDirection.up,
-        alignText: ContentAlign.bottom,
-        shape: ShapeLightFocus.RRect,
-      ),
-    ];
+      if (context.read<ProjectLibrary>().showMediaPlayerIslandTutorial && !widget.isQuickTool) {
+        context.read<ProjectLibrary>().showMediaPlayerIslandTutorial = false;
+      }
 
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showMediaPlayerIslandTutorial = false;
-      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    }, context);
-  }
+      if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
+        context.read<ProjectLibrary>().showWaveformTip = false;
+      }
 
-  void _createTutorialWaveformTip() {
-    var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        _keyWaveform,
-        context.l10n.mediaPlayerTutorialJumpTo,
-        alignText: ContentAlign.bottom,
-        pointingDirection: PointingDirection.up,
-        shape: ShapeLightFocus.RRect,
-      ),
-    ];
-
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showWaveformTip = false;
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
@@ -408,16 +384,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
       toolBlock: _mediaPlayerBlock,
       menuItems: _menuItems,
       onParentTutorialFinished: () {
-        if (context.read<ProjectLibrary>().showMediaPlayerTutorial) {
-          _createTutorial();
-          _tutorial.show(context);
-        } else if (context.read<ProjectLibrary>().showMediaPlayerIslandTutorial && !widget.isQuickTool) {
-          _createTutorialIslandTip();
-          _tutorial.show(context);
-        } else if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
-          _createTutorialWaveformTip();
-          _tutorial.show(context);
-        }
+        _createTutorial();
+        _tutorial.show(context);
       },
       island: ParentIslandView(project: widget.isQuickTool ? null : _project, toolBlock: _mediaPlayerBlock),
       centerModule: Center(
@@ -491,7 +459,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                         await _pickAudioFilesAndSave(isMultipleAllowed: isMultiImportEnabled);
                         if (!context.mounted) return;
                         if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
-                          _createTutorialWaveformTip();
+                          _createTutorial();
                           _tutorial.show(context);
                         }
                       },
@@ -510,7 +478,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
                           );
                           if (!context.mounted) return;
                           if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
-                            _createTutorialWaveformTip();
+                            _createTutorial();
                             _tutorial.show(context);
                           }
                         },
@@ -640,7 +608,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         await _toggleRecording();
         if (!mounted) return;
         if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
-          _createTutorialWaveformTip();
+          _createTutorial();
           _tutorial.show(context);
         }
       },
