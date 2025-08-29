@@ -16,7 +16,6 @@ abstract class AppLocalizations {
   String get appAboutTitle;
   String get appAboutVersion;
   String get appAboutVersionError;
-  String get appTutorialToolIsland;
   String get appTutorialToolSave;
 
   String get commonBasicBeat;
@@ -115,6 +114,7 @@ abstract class AppLocalizations {
   String get mediaPlayerTooManyFilesTitle;
   String get mediaPlayerTrim;
   String get mediaPlayerTutorialAdjust;
+  String get mediaPlayerTutorialIslandTool;
   String get mediaPlayerTutorialJumpTo;
   String get mediaPlayerTutorialRepeat;
   String get mediaPlayerTutorialStartStop;
@@ -176,6 +176,7 @@ abstract class AppLocalizations {
   String get metronomeSoundTypeWood;
   String get metronomeTutorialAddNew;
   String get metronomeTutorialAdjust;
+  String get metronomeTutorialIslandTool;
   String get metronomeTutorialModeAdvanced;
   String get metronomeTutorialModeChange;
   String get metronomeTutorialModeSimple;
@@ -202,6 +203,7 @@ abstract class AppLocalizations {
   String get pianoSetSound;
   String get pianoTutorialAdjust;
   String get pianoTutorialChangeKeyOrOctave;
+  String get pianoTutorialIslandTool;
 
   String get projectDelete;
   String get projectDeleteTool;
@@ -292,6 +294,7 @@ abstract class AppLocalizations {
   String get tunerPlayReference;
   String get tunerSetConcertPitch;
   String get tunerTutorialAdjust;
+  String get tunerTutorialIslandTool;
   String get tunerTutorialStartStop;
   String get tunerTypeChromatic;
   String get tunerTypeBass;

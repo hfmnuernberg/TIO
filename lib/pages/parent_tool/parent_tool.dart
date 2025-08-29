@@ -56,6 +56,8 @@ class ParentTool extends StatefulWidget {
     this.deactivateScroll = false,
   });
 
+  static final GlobalKey keyIslandTutorial = GlobalKey();
+
   @override
   State<ParentTool> createState() => _ParentToolState();
 }
@@ -68,13 +70,9 @@ class _ParentToolState extends State<ParentTool> {
   Color? _highlightColorOnSave;
   final TextEditingController _toolTitle = TextEditingController();
 
-  final Tutorial _tutorialQuickTool = Tutorial();
-  final Tutorial _tutorialTool = Tutorial();
+  final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyBookmarkSave = GlobalKey();
   final GlobalKey _keyChangeTitle = GlobalKey();
-
-  final Tutorial _tutorialIsland = Tutorial();
-  final GlobalKey _keyIsland = GlobalKey();
 
   @override
   void initState() {
@@ -93,117 +91,53 @@ class _ParentToolState extends State<ParentTool> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.isQuickTool) {
-        if (context.read<ProjectLibrary>().showQuickToolTutorial) {
-          _createTutorialQuickTool();
-          Future.delayed(Duration.zero, () {
-            if (mounted) _tutorialQuickTool.show(context);
-          });
-        } else if (context.read<ProjectLibrary>().showIslandTutorial && widget.project != null) {
-          _createTutorialIsland();
-          Future.delayed(Duration.zero, () {
-            if (mounted) _tutorialIsland.show(context);
-          });
-        } else {
-          if (widget.onParentTutorialFinished != null) {
-            widget.onParentTutorialFinished!();
-          }
-        }
-      } else {
-        if (context.read<ProjectLibrary>().showToolTutorial) {
-          _createTutorialTool();
-          Future.delayed(Duration.zero, () {
-            if (mounted) _tutorialTool.show(context);
-          });
-        } else if (context.read<ProjectLibrary>().showIslandTutorial && widget.project != null) {
-          _createTutorialIsland();
-          Future.delayed(Duration.zero, () {
-            if (mounted) _tutorialIsland.show(context);
-          });
-        } else {
-          if (widget.onParentTutorialFinished != null) {
-            widget.onParentTutorialFinished!();
-          }
-        }
-      }
+      _createTutorial();
+      _tutorial.show(context);
     });
   }
 
-  void _createTutorialQuickTool() {
-    // add the targets here
+  void _createTutorial() {
     var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        _keyBookmarkSave,
-        context.l10n.toolTutorialSave,
-        alignText: ContentAlign.left,
-        pointingDirection: PointingDirection.right,
-      ),
+      if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool)
+        CustomTargetFocus(
+          _keyBookmarkSave,
+          context.l10n.toolTutorialSave,
+          alignText: ContentAlign.left,
+          pointingDirection: PointingDirection.right,
+          pointerOffset: -25,
+        ),
+      if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool)
+        CustomTargetFocus(
+          _keyBookmarkSave,
+          context.l10n.appTutorialToolSave,
+          alignText: ContentAlign.left,
+          pointingDirection: PointingDirection.right,
+        ),
+      if (context.read<ProjectLibrary>().showToolTutorial && context.read<ProjectLibrary>().showQuickToolTutorial)
+        CustomTargetFocus(
+          _keyChangeTitle,
+          context.l10n.toolTutorialEditTitle,
+          alignText: ContentAlign.bottom,
+          pointingDirection: PointingDirection.up,
+          pointerOffset: -80,
+          shape: ShapeLightFocus.RRect,
+        ),
     ];
-    _tutorialQuickTool.create(targets.map((e) => e.targetFocus).toList(), () async {
+
+    if (targets.isEmpty) return;
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       final projectLibrary = context.read<ProjectLibrary>();
-      projectLibrary.showQuickToolTutorial = false;
+
+      if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool) {
+        projectLibrary.showQuickToolTutorial = false;
+      }
+
+      if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool) {
+        projectLibrary.showToolTutorial = false;
+      }
+
       await _projectRepo.saveLibrary(projectLibrary);
 
-      // start island tutorial
-      if (projectLibrary.showIslandTutorial && widget.project != null) {
-        _createTutorialIsland();
-        Future.delayed(Duration.zero, () {
-          if (mounted) _tutorialIsland.show(context);
-        });
-      } else if (widget.onParentTutorialFinished != null) {
-        widget.onParentTutorialFinished!();
-      }
-    }, context);
-  }
-
-  void _createTutorialTool() {
-    var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        _keyBookmarkSave,
-        context.l10n.appTutorialToolSave,
-        alignText: ContentAlign.left,
-        pointingDirection: PointingDirection.right,
-      ),
-      CustomTargetFocus(
-        _keyChangeTitle,
-        context.l10n.toolTutorialEditTitle,
-        pointingDirection: PointingDirection.up,
-        alignText: ContentAlign.bottom,
-        shape: ShapeLightFocus.RRect,
-      ),
-    ];
-    _tutorialTool.create(targets.map((e) => e.targetFocus).toList(), () async {
-      final projectLibrary = context.read<ProjectLibrary>();
-      projectLibrary.showToolTutorial = false;
-      await _projectRepo.saveLibrary(projectLibrary);
-
-      // start island tutorial
-      if (projectLibrary.showIslandTutorial && widget.project != null) {
-        _createTutorialIsland();
-        Future.delayed(Duration.zero, () {
-          if (mounted) _tutorialIsland.show(context);
-        });
-      } else if (widget.onParentTutorialFinished != null) {
-        widget.onParentTutorialFinished!();
-      }
-    }, context);
-  }
-
-  void _createTutorialIsland() {
-    var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        _keyIsland,
-        context.l10n.appTutorialToolIsland,
-        pointingDirection: PointingDirection.up,
-        alignText: ContentAlign.bottom,
-        shape: ShapeLightFocus.RRect,
-      ),
-    ];
-    _tutorialIsland.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showIslandTutorial = false;
-      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-
-      // start specific tool tutorial
       if (widget.onParentTutorialFinished != null) {
         widget.onParentTutorialFinished!();
       }
@@ -272,6 +206,7 @@ class _ParentToolState extends State<ParentTool> {
     return AppBar(
       leading: backButton,
       title: GestureDetector(
+        key: _keyChangeTitle,
         onTap: () async {
           final newTitle = await showEditTextDialog(
             context: context,
@@ -463,7 +398,7 @@ class _ParentToolState extends State<ParentTool> {
           const SizedBox()
         else
           SizedBox(
-            key: _keyIsland,
+            key: ParentTool.keyIslandTutorial,
             height: ParentToolParams.islandHeight,
             width: MediaQuery.of(context).size.width,
             child: widget.island,
