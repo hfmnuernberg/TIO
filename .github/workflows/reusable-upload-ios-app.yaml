@@ -31,7 +31,7 @@ concurrency:
 jobs:
   upload-ios-app:
     name: Upload iOS App
-    runs-on: macos-latest
+    runs-on: macos-14
     timeout-minutes: 20
     environment: ${{ inputs.target_env }}
     permissions:
