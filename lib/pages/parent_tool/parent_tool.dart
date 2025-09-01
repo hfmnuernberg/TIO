@@ -125,7 +125,13 @@ class _ParentToolState extends State<ParentTool> {
         ),
     ];
 
-    if (targets.isEmpty) return;
+    if (targets.isEmpty) {
+      if (widget.onParentTutorialFinished != null) {
+        widget.onParentTutorialFinished!();
+      }
+      return;
+    }
+
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       final projectLibrary = context.read<ProjectLibrary>();
 
