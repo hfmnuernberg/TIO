@@ -149,11 +149,12 @@ class _PianoState extends State<Piano> {
   }
 
   void _createTutorial() {
+    final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool)
         CustomTargetFocus(
           _keyBookmarkSave,
-          context.l10n.toolTutorialSave,
+          l10n.toolTutorialSave,
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             left: MediaQuery.of(context).size.width / 3,
@@ -166,7 +167,7 @@ class _PianoState extends State<Piano> {
       if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool)
         CustomTargetFocus(
           _keyBookmarkShare,
-          context.l10n.appTutorialToolSave,
+          l10n.appTutorialToolSave,
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             left: MediaQuery.of(context).size.width / 3,
@@ -179,7 +180,7 @@ class _PianoState extends State<Piano> {
       if (context.read<ProjectLibrary>().showPianoTutorial)
         CustomTargetFocus(
           _keyChangeTitle,
-          context.l10n.toolTutorialEditTitle,
+          l10n.toolTutorialEditTitle,
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             top: MediaQuery.of(context).size.height / 10,
@@ -194,7 +195,7 @@ class _PianoState extends State<Piano> {
       if (context.read<ProjectLibrary>().showPianoTutorial)
         CustomTargetFocus(
           _keyOctaveSwitch,
-          context.l10n.pianoTutorialChangeKeyOrOctave,
+          l10n.pianoTutorialChangeKeyOrOctave,
           alignText: ContentAlign.right,
           pointerPosition: PointerPosition.right,
           pointingDirection: PointingDirection.left,
@@ -204,7 +205,7 @@ class _PianoState extends State<Piano> {
       if (context.read<ProjectLibrary>().showPianoTutorial)
         CustomTargetFocus(
           _keySettings,
-          context.l10n.pianoTutorialAdjust,
+          l10n.pianoTutorialAdjust,
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             top: MediaQuery.of(context).size.height / 5,
@@ -218,7 +219,7 @@ class _PianoState extends State<Piano> {
       if (context.read<ProjectLibrary>().showPianoIslandTutorial && !widget.isQuickTool)
         CustomTargetFocus(
           _keyIsland,
-          context.l10n.pianoTutorialIslandTool,
+          l10n.pianoTutorialIslandTool,
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             top: MediaQuery.of(context).size.height / 8,

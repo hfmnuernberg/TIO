@@ -239,7 +239,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       if (context.read<ProjectLibrary>().showMediaPlayerIslandTutorial && !widget.isQuickTool)
         CustomTargetFocus(
           islandToolTutorialKey,
-          context.l10n.mediaPlayerTutorialIslandTool,
+          l10n.mediaPlayerTutorialIslandTool,
           pointingDirection: PointingDirection.up,
           alignText: ContentAlign.bottom,
           shape: ShapeLightFocus.RRect,
@@ -247,7 +247,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded)
         CustomTargetFocus(
           _keyWaveform,
-          context.l10n.mediaPlayerTutorialJumpTo,
+          l10n.mediaPlayerTutorialJumpTo,
           alignText: ContentAlign.bottom,
           pointingDirection: PointingDirection.up,
           shape: ShapeLightFocus.RRect,

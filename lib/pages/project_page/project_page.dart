@@ -106,23 +106,25 @@ class _ProjectPageState extends State<ProjectPage> {
   void _toggleEditingMode() => setState(() => _isEditing = !_isEditing);
 
   void _createTutorial() {
+    final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyChangeTitle,
-        context.l10n.projectTutorialEditTitle,
+        l10n.projectTutorialEditTitle,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
       ),
       CustomTargetFocus(
         _keyChangeToolOrder,
-        context.l10n.projectTutorialChangeToolOrder,
+        l10n.projectTutorialChangeToolOrder,
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
         shape: ShapeLightFocus.RRect,
       ),
     ];
+
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showProjectPageTutorial = false;
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());

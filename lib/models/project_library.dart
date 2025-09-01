@@ -150,24 +150,6 @@ class ProjectLibrary extends ChangeNotifier {
     showImageTutorial = true;
     showWaveformTip = true;
     showBeatToggleTip = true;
-
-    print('showHomepageTutorial: $showHomepageTutorial');
-    print('showProjectPageTutorial: $showProjectPageTutorial');
-    print('showToolTutorial: $showToolTutorial');
-    print('showQuickToolTutorial: $showQuickToolTutorial');
-    print('showTunerIslandTutorial: $showTunerIslandTutorial');
-    print('showTunerTutorial: $showTunerTutorial');
-    print('showMetronomeIslandTutorial: $showMetronomeIslandTutorial');
-    print('showMetronomeTutorial: $showMetronomeTutorial');
-    print('showMetronomeAdvancedTutorial: $showMetronomeAdvancedTutorial');
-    print('showMetronomeSimpleTutorial: $showMetronomeSimpleTutorial');
-    print('showMediaPlayerIslandTutorial: $showMediaPlayerIslandTutorial');
-    print('showMediaPlayerTutorial: $showMediaPlayerTutorial');
-    print('showPianoIslandTutorial: $showPianoIslandTutorial');
-    print('showPianoTutorial: $showPianoTutorial');
-    print('showImageTutorial: $showImageTutorial');
-    print('showWaveformTip: $showWaveformTip');
-    print('showBeatToggleTip: $showBeatToggleTip');
   }
 
   void dismissAllTutorials() {

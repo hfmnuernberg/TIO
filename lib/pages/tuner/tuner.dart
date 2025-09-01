@@ -143,18 +143,19 @@ class _TunerState extends State<Tuner> {
   }
 
   void createTutorial() {
+    final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       if (context.read<ProjectLibrary>().showTunerTutorial)
         CustomTargetFocus(
           keyStartStop,
-          context.l10n.tunerTutorialStartStop,
+          l10n.tunerTutorialStartStop,
           alignText: ContentAlign.top,
           pointingDirection: PointingDirection.down,
         ),
       if (context.read<ProjectLibrary>().showTunerTutorial)
         CustomTargetFocus(
           keySettings,
-          context.l10n.tunerTutorialAdjust,
+          l10n.tunerTutorialAdjust,
           alignText: ContentAlign.top,
           pointingDirection: PointingDirection.down,
           buttonsPosition: ButtonsPosition.top,
@@ -163,7 +164,7 @@ class _TunerState extends State<Tuner> {
       if (context.read<ProjectLibrary>().showTunerIslandTutorial && !widget.isQuickTool)
         CustomTargetFocus(
           islandToolTutorialKey,
-          context.l10n.tunerTutorialIslandTool,
+          l10n.tunerTutorialIslandTool,
           pointingDirection: PointingDirection.up,
           alignText: ContentAlign.bottom,
           shape: ShapeLightFocus.RRect,
