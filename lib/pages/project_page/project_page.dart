@@ -94,7 +94,7 @@ class _ProjectPageState extends State<ProjectPage> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_project.blocks.isNotEmpty && context.read<ProjectLibrary>().showProjectPageTutorial) {
+      if (!widget.goStraightToTool && _project.blocks.isNotEmpty && context.read<ProjectLibrary>().showProjectPageTutorial) {
         _createTutorial();
         _tutorial.show(context);
       }
