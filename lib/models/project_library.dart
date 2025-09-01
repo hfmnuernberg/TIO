@@ -48,10 +48,11 @@ class ProjectLibrary extends ChangeNotifier {
   late bool showToolTutorial; // on parent tool if not quick tool
 
   @JsonKey(defaultValue: true)
-  late bool showIslandTutorial; // on parent tool
-
+  late bool showTunerIslandTutorial;
   @JsonKey(defaultValue: true)
   late bool showTunerTutorial;
+  @JsonKey(defaultValue: true)
+  late bool showMetronomeIslandTutorial;
   @JsonKey(defaultValue: true)
   late bool showMetronomeTutorial;
   @JsonKey(defaultValue: true)
@@ -59,7 +60,11 @@ class ProjectLibrary extends ChangeNotifier {
   @JsonKey(defaultValue: true)
   late bool showMetronomeSimpleTutorial;
   @JsonKey(defaultValue: true)
+  late bool showMediaPlayerIslandTutorial;
+  @JsonKey(defaultValue: true)
   late bool showMediaPlayerTutorial;
+  @JsonKey(defaultValue: true)
+  late bool showPianoIslandTutorial;
   @JsonKey(defaultValue: true)
   late bool showPianoTutorial;
   @JsonKey(defaultValue: true)
@@ -79,10 +84,15 @@ class ProjectLibrary extends ChangeNotifier {
     this.showProjectPageTutorial,
     this.showToolTutorial,
     this.showQuickToolTutorial,
-    this.showIslandTutorial,
+    this.showTunerIslandTutorial,
     this.showTunerTutorial,
+    this.showMetronomeIslandTutorial,
+    this.showMetronomeSimpleTutorial,
+    this.showMetronomeAdvancedTutorial,
     this.showMetronomeTutorial,
+    this.showMediaPlayerIslandTutorial,
     this.showMediaPlayerTutorial,
+    this.showPianoIslandTutorial,
     this.showPianoTutorial,
     this.showImageTutorial,
     this.showWaveformTip,
@@ -103,12 +113,15 @@ class ProjectLibrary extends ChangeNotifier {
     showProjectPageTutorial = true;
     showToolTutorial = true;
     showQuickToolTutorial = true;
-    showIslandTutorial = true;
+    showTunerIslandTutorial = true;
     showTunerTutorial = true;
+    showMetronomeIslandTutorial = true;
     showMetronomeTutorial = true;
     showMetronomeAdvancedTutorial = true;
     showMetronomeSimpleTutorial = true;
+    showMediaPlayerIslandTutorial = true;
     showMediaPlayerTutorial = true;
+    showPianoIslandTutorial = true;
     showPianoTutorial = true;
     showImageTutorial = true;
     showWaveformTip = true;
@@ -124,12 +137,15 @@ class ProjectLibrary extends ChangeNotifier {
     showProjectPageTutorial = true;
     showToolTutorial = true;
     showQuickToolTutorial = true;
-    showIslandTutorial = true;
+    showTunerIslandTutorial = true;
     showTunerTutorial = true;
+    showMetronomeIslandTutorial = true;
     showMetronomeTutorial = true;
     showMetronomeAdvancedTutorial = true;
     showMetronomeSimpleTutorial = true;
+    showMediaPlayerIslandTutorial = true;
     showMediaPlayerTutorial = true;
+    showPianoIslandTutorial = true;
     showPianoTutorial = true;
     showImageTutorial = true;
     showWaveformTip = true;
@@ -141,12 +157,15 @@ class ProjectLibrary extends ChangeNotifier {
     showProjectPageTutorial = false;
     showToolTutorial = false;
     showQuickToolTutorial = false;
-    showIslandTutorial = false;
+    showTunerIslandTutorial = false;
     showTunerTutorial = false;
+    showMetronomeIslandTutorial = false;
     showMetronomeTutorial = false;
     showMetronomeAdvancedTutorial = false;
     showMetronomeSimpleTutorial = false;
+    showMediaPlayerIslandTutorial = false;
     showMediaPlayerTutorial = false;
+    showPianoIslandTutorial = false;
     showPianoTutorial = false;
     showImageTutorial = false;
     showWaveformTip = false;

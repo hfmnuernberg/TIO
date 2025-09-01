@@ -80,22 +80,23 @@ class _ProjectsPageState extends State<ProjectsPage> {
   }
 
   void _createTutorial() {
+    final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         null,
         context: context,
-        context.l10n.projectsTutorialHowToUseTio,
+        l10n.projectsTutorialHowToUseTio,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
       CustomTargetFocus(
         _keyAddProjectButton,
-        context.l10n.projectsTutorialAddProject,
+        l10n.projectsTutorialAddProject,
         alignText: ContentAlign.right,
         pointingDirection: PointingDirection.left,
       ),
       CustomTargetFocus(
         _keyQuickTools,
-        context.l10n.projectsTutorialStartUsingTool,
+        l10n.projectsTutorialStartUsingTool,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,
@@ -103,7 +104,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
       ),
       CustomTargetFocus(
         _keyChangeProjectOrder,
-        context.l10n.projectsTutorialChangeProjectOrder,
+        l10n.projectsTutorialChangeProjectOrder,
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
@@ -112,10 +113,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
       CustomTargetFocus(
         null,
         context: context,
-        context.l10n.projectsTutorialCanIncludeMultipleTools,
+        l10n.projectsTutorialCanIncludeMultipleTools,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
     ];
+
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showHomepageTutorial = false;
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());

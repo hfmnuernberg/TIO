@@ -19,12 +19,29 @@ extension WidgetTesterPumpExtension on WidgetTester {
     await tapAndSettle(find.bySemanticsLabel('Submit'));
   }
 
+  Future<void> createAndOpenQuickTool(String tool) async {
+    await tapAndSettle(find.bySemanticsLabel(tool));
+  }
+
   Future<void> completeInitialTutorial() async {
     await tapAndSettle(find.bySemanticsLabel('Next'));
     await tapAndSettle(find.bySemanticsLabel('Next'));
     await tapAndSettle(find.bySemanticsLabel('Next'));
     await tapAndSettle(find.bySemanticsLabel('Next'));
     await tapAndSettle(find.bySemanticsLabel('Next'));
+  }
+
+  Future<void> completeParentToolTutorial() async {
+    await tapAndSettle(find.bySemanticsLabel('Next'));
+    await tapAndSettle(find.bySemanticsLabel('Next'));
+    await pumpAndSettle(const Duration(milliseconds: 500));
+  }
+
+  Future<void> goBackAndSaveQuickToolInNewProject() async {
+    await tapAndSettle(find.bySemanticsLabel('Back'));
+    await tapAndSettle(find.bySemanticsLabel('Yes'));
+    await tapAndSettle(find.bySemanticsLabel('Save in new project'));
+    await tapAndSettle(find.bySemanticsLabel('Submit'));
   }
 }
 
@@ -58,6 +75,7 @@ void main() {
     await tester.createProjectWithoutTool('Project 1');
 
     await tester.createAndOpenTool('Text');
+    await tester.tapAndSettle(find.bySemanticsLabel('Next'));
     await tester.tapAndSettle(find.bySemanticsLabel('Next'));
     await tester.tapAndSettle(find.bySemanticsLabel('Back'));
 
@@ -109,11 +127,44 @@ void main() {
 
     expect(find.bySemanticsLabel('Tap here to copy your tool to another project.'), findsOneWidget);
 
-    await tester.tapAndSettle(find.bySemanticsLabel('Next'));
-    await tester.pumpAndSettle(const Duration(milliseconds: 500));
-    expect(find.bySemanticsLabel(RegExp('Tap here to combine your tool')), findsOneWidget);
+    await tester.completeParentToolTutorial();
+    expect(find.bySemanticsLabel(RegExp('Tap here to start and stop recording')), findsOneWidget);
 
     await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
-    expect(find.bySemanticsLabel(RegExp('Tap here to combine your tool')), findsNothing);
+    expect(find.bySemanticsLabel(RegExp('Tap here to start and stop recording')), findsNothing);
+  });
+
+  testWidgets('shows quick tool tutorial before tool tutorial', (tester) async {
+    await tester.renderScaffold(ProjectsPage(), context.providers);
+    await tester.pumpAndSettle(const Duration(milliseconds: 500));
+    await tester.completeInitialTutorial();
+
+    await tester.createAndOpenQuickTool('Tuner');
+    expect(find.bySemanticsLabel(RegExp('Tap here to save the tool to a project.')), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Next'));
+    expect(find.bySemanticsLabel('Tap here to edit the title of your tool.'), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Next'));
+    await tester.pumpAndSettle(const Duration(milliseconds: 500));
+    expect(find.bySemanticsLabel(RegExp('Tap here to start and stop the tuner.')), findsOneWidget);
+  });
+
+  testWidgets('shows specific tutorial steps after quick tool is saved in project', (tester) async {
+    await tester.renderScaffold(ProjectsPage(), context.providers);
+    await tester.pumpAndSettle(const Duration(milliseconds: 500));
+    await tester.completeInitialTutorial();
+
+    await tester.createAndOpenQuickTool('Tuner');
+    await tester.completeParentToolTutorial();
+    await tester.tapAndSettle(find.bySemanticsLabel('Next'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Next'));
+
+    await tester.goBackAndSaveQuickToolInNewProject();
+
+    expect(find.bySemanticsLabel('Tap here to copy your tool to another project.'), findsOneWidget);
+    await tester.tapAndSettle(find.bySemanticsLabel('Next'));
+    await tester.pumpAndSettle(const Duration(milliseconds: 500));
+    expect(find.bySemanticsLabel(RegExp('Tap here to combine your Tuner with a')), findsOneWidget);
   });
 }

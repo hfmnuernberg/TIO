@@ -67,6 +67,10 @@ class _PianoState extends State<Piano> {
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyOctaveSwitch = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
+  final GlobalKey _keyIsland = GlobalKey();
+  final GlobalKey _keyBookmarkSave = GlobalKey();
+  final GlobalKey _keyChangeTitle = GlobalKey();
+  final GlobalKey _keyBookmarkShare = GlobalKey();
 
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
   bool _isPlaying = false;
@@ -102,10 +106,8 @@ class _PianoState extends State<Piano> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.read<ProjectLibrary>().showPianoTutorial) {
-        _createTutorial();
-        _tutorial.show(context);
-      }
+      _createTutorial();
+      _tutorial.show(context);
     });
   }
 
@@ -147,27 +149,108 @@ class _PianoState extends State<Piano> {
   }
 
   void _createTutorial() {
+    final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        _keyOctaveSwitch,
-        context.l10n.pianoTutorialChangeKeyOrOctave,
-        alignText: ContentAlign.right,
-        pointingDirection: PointingDirection.left,
-        shape: ShapeLightFocus.RRect,
-        pointerPosition: PointerPosition.left,
-        buttonsPosition: ButtonsPosition.bottomright,
-      ),
-      CustomTargetFocus(
-        _keySettings,
-        context.l10n.pianoTutorialAdjust,
-        alignText: ContentAlign.left,
-        pointingDirection: PointingDirection.right,
-        shape: ShapeLightFocus.RRect,
-        buttonsPosition: ButtonsPosition.bottomright,
-      ),
+      if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool)
+        CustomTargetFocus(
+          _keyBookmarkSave,
+          l10n.toolTutorialSave,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(
+            left: MediaQuery.of(context).size.width / 3,
+            right: MediaQuery.of(context).size.width / 3,
+          ),
+          pointingDirection: PointingDirection.right,
+          pointerOffset: -25,
+          buttonsPosition: ButtonsPosition.bottomright,
+        ),
+      if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool)
+        CustomTargetFocus(
+          _keyBookmarkShare,
+          l10n.appTutorialToolSave,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(
+            left: MediaQuery.of(context).size.width / 3,
+            right: MediaQuery.of(context).size.width / 3,
+          ),
+          pointingDirection: PointingDirection.right,
+          pointerOffset: -5,
+          buttonsPosition: ButtonsPosition.bottomright,
+        ),
+      if (context.read<ProjectLibrary>().showPianoTutorial)
+        CustomTargetFocus(
+          _keyChangeTitle,
+          l10n.toolTutorialEditTitle,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(
+            top: MediaQuery.of(context).size.height / 10,
+            left: MediaQuery.of(context).size.width / 4,
+            right: MediaQuery.of(context).size.width,
+          ),
+          pointingDirection: PointingDirection.up,
+          pointerOffset: -120,
+          shape: ShapeLightFocus.RRect,
+          buttonsPosition: ButtonsPosition.bottomright,
+        ),
+      if (context.read<ProjectLibrary>().showPianoTutorial)
+        CustomTargetFocus(
+          _keyOctaveSwitch,
+          l10n.pianoTutorialChangeKeyOrOctave,
+          alignText: ContentAlign.right,
+          pointerPosition: PointerPosition.right,
+          pointingDirection: PointingDirection.left,
+          shape: ShapeLightFocus.RRect,
+          buttonsPosition: ButtonsPosition.bottomright,
+        ),
+      if (context.read<ProjectLibrary>().showPianoTutorial)
+        CustomTargetFocus(
+          _keySettings,
+          l10n.pianoTutorialAdjust,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(
+            top: MediaQuery.of(context).size.height / 5,
+            left: MediaQuery.of(context).size.width / 3,
+            right: MediaQuery.of(context).size.width / 3,
+          ),
+          pointingDirection: PointingDirection.up,
+          shape: ShapeLightFocus.RRect,
+          buttonsPosition: ButtonsPosition.bottomright,
+        ),
+      if (context.read<ProjectLibrary>().showPianoIslandTutorial && !widget.isQuickTool)
+        CustomTargetFocus(
+          _keyIsland,
+          l10n.pianoTutorialIslandTool,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(
+            top: MediaQuery.of(context).size.height / 8,
+            left: MediaQuery.of(context).size.width / 2,
+            right: MediaQuery.of(context).size.width / 2,
+          ),
+          pointingDirection: PointingDirection.up,
+          pointerOffset: 120,
+          shape: ShapeLightFocus.RRect,
+          buttonsPosition: ButtonsPosition.bottomright,
+        ),
     ];
+
+    if (targets.isEmpty) return;
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showPianoTutorial = false;
+      if (context.read<ProjectLibrary>().showPianoTutorial) {
+        context.read<ProjectLibrary>().showPianoTutorial = false;
+      }
+
+      if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool) {
+        context.read<ProjectLibrary>().showQuickToolTutorial = false;
+      }
+
+      if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool) {
+        context.read<ProjectLibrary>().showToolTutorial = false;
+      }
+
+      if (context.read<ProjectLibrary>().showPianoIslandTutorial && !widget.isQuickTool) {
+        context.read<ProjectLibrary>().showPianoIslandTutorial = false;
+      }
+
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
@@ -295,6 +378,7 @@ class _PianoState extends State<Piano> {
                     setState(() {});
                   },
                   child: Column(
+                    key: _keyChangeTitle,
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -317,6 +401,7 @@ class _PianoState extends State<Piano> {
 
               // island
               SizedBox(
+                key: _keyIsland,
                 height: ParentToolParams.islandHeight,
                 width: islandWidth,
                 child: ParentIslandView(project: project, toolBlock: _pianoBlock),
@@ -325,6 +410,7 @@ class _PianoState extends State<Piano> {
                 children: [
                   // save button
                   IconButton(
+                    key: widget.isQuickTool ? _keyBookmarkSave : _keyBookmarkShare,
                     onPressed: () {
                       setState(() {
                         _showSavingPage = true;
