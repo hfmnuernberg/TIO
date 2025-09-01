@@ -70,6 +70,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
   final GlobalKey keySettings = GlobalKey();
   final GlobalKey keySimpleMode = GlobalKey();
   final GlobalKey keyAdvancedMode = GlobalKey();
+  final GlobalKey islandToolTutorialKey = GlobalKey();
 
   @override
   void initState() {
@@ -190,7 +191,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
         ),
       if (context.read<ProjectLibrary>().showMetronomeIslandTutorial && !widget.isQuickTool)
         CustomTargetFocus(
-          ParentTool.keyIslandTutorial,
+          islandToolTutorialKey,
           context.l10n.metronomeTutorialIslandTool,
           pointingDirection: PointingDirection.up,
           alignText: ContentAlign.bottom,
@@ -352,6 +353,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
       isQuickTool: widget.isQuickTool,
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: metronomeBlock,
+      islandToolTutorialKey: islandToolTutorialKey,
       menuItems: <MenuItemButton>[
         if (!isSimpleModeOn)
           MenuItemButton(

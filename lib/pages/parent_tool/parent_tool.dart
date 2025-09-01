@@ -37,6 +37,7 @@ class ParentTool extends StatefulWidget {
   final GlobalKey? keySettingsList;
   final Function()? onParentTutorialFinished;
   final bool deactivateScroll;
+  final GlobalKey? islandToolTutorialKey;
 
   const ParentTool({
     super.key,
@@ -54,9 +55,8 @@ class ParentTool extends StatefulWidget {
     this.onParentTutorialFinished,
     this.project,
     this.deactivateScroll = false,
+    this.islandToolTutorialKey,
   });
-
-  static final GlobalKey keyIslandTutorial = GlobalKey();
 
   @override
   State<ParentTool> createState() => _ParentToolState();
@@ -72,6 +72,7 @@ class _ParentToolState extends State<ParentTool> {
 
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyBookmarkSave = GlobalKey();
+  final GlobalKey _keyBookmarkSaveEmpty = GlobalKey();
   final GlobalKey _keyChangeTitle = GlobalKey();
 
   @override
@@ -100,7 +101,7 @@ class _ParentToolState extends State<ParentTool> {
     var targets = <CustomTargetFocus>[
       if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool)
         CustomTargetFocus(
-          _keyBookmarkSave,
+          _keyBookmarkSaveEmpty,
           context.l10n.toolTutorialSave,
           alignText: ContentAlign.left,
           pointingDirection: PointingDirection.right,
@@ -153,7 +154,7 @@ class _ParentToolState extends State<ParentTool> {
     List<Widget> appBarActions = [
       // Icon Button for saving the tool
       IconButton(
-        key: _keyBookmarkSave,
+        key: widget.isQuickTool ? _keyBookmarkSaveEmpty : _keyBookmarkSave,
         onPressed: _openBottomSheetAndSaveTool,
         icon: Icon(widget.isQuickTool ? Icons.bookmark_outline : Icons.bookmark_add_outlined),
       ),
@@ -398,7 +399,7 @@ class _ParentToolState extends State<ParentTool> {
           const SizedBox()
         else
           SizedBox(
-            key: ParentTool.keyIslandTutorial,
+            key: widget.islandToolTutorialKey,
             height: ParentToolParams.islandHeight,
             width: MediaQuery.of(context).size.width,
             child: widget.island,

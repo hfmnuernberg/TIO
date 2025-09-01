@@ -99,6 +99,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   final GlobalKey _keyRepeat = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
   final GlobalKey _keyWaveform = GlobalKey();
+  final GlobalKey islandToolTutorialKey = GlobalKey();
 
   AudioSessionInterruptionListenerHandle? playInterruptionListenerHandle;
   AudioSessionInterruptionListenerHandle? recordInterruptionListenerHandle;
@@ -237,7 +238,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         ),
       if (context.read<ProjectLibrary>().showMediaPlayerIslandTutorial && !widget.isQuickTool)
         CustomTargetFocus(
-          ParentTool.keyIslandTutorial,
+          islandToolTutorialKey,
           context.l10n.mediaPlayerTutorialIslandTool,
           pointingDirection: PointingDirection.up,
           alignText: ContentAlign.bottom,
@@ -383,6 +384,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: _mediaPlayerBlock,
       menuItems: _menuItems,
+      islandToolTutorialKey: islandToolTutorialKey,
       onParentTutorialFinished: () {
         _createTutorial();
         _tutorial.show(context);

@@ -71,6 +71,7 @@ class _TunerState extends State<Tuner> {
   final Tutorial tutorial = Tutorial();
   final GlobalKey keyStartStop = GlobalKey();
   final GlobalKey keySettings = GlobalKey();
+  final GlobalKey islandToolTutorialKey = GlobalKey();
 
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
@@ -161,7 +162,7 @@ class _TunerState extends State<Tuner> {
         ),
       if (context.read<ProjectLibrary>().showTunerIslandTutorial && !widget.isQuickTool)
         CustomTargetFocus(
-          ParentTool.keyIslandTutorial,
+          islandToolTutorialKey,
           context.l10n.tunerTutorialIslandTool,
           pointingDirection: PointingDirection.up,
           alignText: ContentAlign.bottom,
@@ -199,6 +200,7 @@ class _TunerState extends State<Tuner> {
       isQuickTool: widget.isQuickTool,
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: tunerBlock,
+      islandToolTutorialKey: islandToolTutorialKey,
       onParentTutorialFinished: () {
         createTutorial();
         tutorial.show(context);
