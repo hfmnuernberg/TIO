@@ -23,7 +23,7 @@ on:
 jobs:
   build-ios-app:
     name: Build iOS App
-    runs-on: macos-latest
+    runs-on: macos-14
     timeout-minutes: 20
     environment: ${{ inputs.target_env }}
     env:
