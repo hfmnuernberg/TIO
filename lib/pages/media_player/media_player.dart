@@ -640,7 +640,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     for (final pos in _mediaPlayerBlock.markerPositions) {
       var marker = Positioned(
-        left: TIOMusicParams.edgeInset + ((pos * _waveFormWidth) - (MediaPlayerParams.markerIconSize / 2)),
+        left: TIOMusicParams.edgeInset + ((pos * _waveFormWidth) - (MediaPlayerParams.markerButton / 2)),
         top: 4,
         child: IconButton(
           onPressed: () async {
