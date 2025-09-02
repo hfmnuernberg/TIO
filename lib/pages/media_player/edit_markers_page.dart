@@ -160,8 +160,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         }
       }
 
-      var marker = Positioned(
-        left: TIOMusicParams.edgeInset + ((pos * _waveFormWidth) - (MediaPlayerParams.markerIconSize / 1.4)),
+      final marker = Positioned(
+        left: TIOMusicParams.edgeInset + ((pos * _waveFormWidth) - (MediaPlayerParams.markerButton / 2)),
         top: (_waveFormHeight / 2) - MediaPlayerParams.markerIconSize - 20,
         child: IconButton(
           onPressed: () {

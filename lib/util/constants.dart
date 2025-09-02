@@ -90,6 +90,7 @@ class MediaPlayerParams {
   static const double binWidth = 8;
 
   static const double markerIconSize = 36;
+  static const double markerButton = 52;
 
   static const Icon icon = Icon(Icons.play_arrow, color: ColorTheme.primary);
 }
