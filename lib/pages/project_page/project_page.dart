@@ -103,6 +103,13 @@ class _ProjectPageState extends State<ProjectPage> {
     });
   }
 
+  @override
+  void dispose() {
+    _tutorial.dispose();
+    _titleController.dispose();
+    super.dispose();
+  }
+
   void _toggleEditingMode() => setState(() => _isEditing = !_isEditing);
 
   void _createTutorial() {

@@ -65,6 +65,12 @@ class _ProjectsPageState extends State<ProjectsPage> {
     _showTutorial();
   }
 
+  @override
+  void dispose() {
+    _tutorial.dispose();
+    super.dispose();
+  }
+
   void _showTutorial() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final projectLibrary = context.read<ProjectLibrary>();

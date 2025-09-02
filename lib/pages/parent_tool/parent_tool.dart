@@ -153,6 +153,8 @@ class _ParentToolState extends State<ParentTool> {
 
   @override
   void dispose() {
+    _tutorial.dispose();
+    _toolTitle.dispose();
     super.dispose();
   }
 

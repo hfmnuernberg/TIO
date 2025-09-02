@@ -362,6 +362,14 @@ class _MediaPlayerState extends State<MediaPlayer> {
     super.deactivate();
   }
 
+  @override
+  void dispose() {
+    _tutorial.dispose();
+    _recordingTimer?.cancel();
+    _timerPollPlaybackPosition?.cancel();
+    super.dispose();
+  }
+
   Future<void> _handleRepeatToggle() async {
     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     _as.mediaPlayerSetRepeat(repeatOne: _mediaPlayerBlock.looping);

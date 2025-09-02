@@ -12,6 +12,7 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class Tutorial {
   TutorialCoachMark? _tutorialCoachMark;
+  bool _isDisposing = false;
 
   Tutorial();
 
@@ -34,16 +35,26 @@ class Tutorial {
       pulseEnable: false,
       onFinish: () {
         _tutorialCoachMark = null;
-        onFinish();
+        if (!_isDisposing) onFinish();
       },
       onSkip: () {
         _tutorialCoachMark = null;
+        if (_isDisposing) return true;
         final projectLibrary = context.read<ProjectLibrary>();
         projectLibrary.dismissAllTutorials();
         unawaited(context.read<ProjectRepository>().saveLibrary(projectLibrary));
         return true;
       },
     );
+  }
+
+  void dispose() {
+    _isDisposing = true;
+    try {
+      _tutorialCoachMark?.finish();
+    } catch (_) {}
+    _tutorialCoachMark = null;
+    _isDisposing = false;
   }
 }
 

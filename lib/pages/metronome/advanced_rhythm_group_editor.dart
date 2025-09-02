@@ -99,6 +99,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
   @override
   void dispose() {
     metronome.stop();
+    tutorial.dispose();
     super.dispose();
   }
 

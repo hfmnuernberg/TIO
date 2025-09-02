@@ -193,6 +193,13 @@ class _TunerState extends State<Tuner> {
   }
 
   @override
+  void dispose() {
+    tutorial.dispose();
+    timerPollFreq?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
