@@ -7,10 +7,13 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class Tutorial {
+  static final _logger = createPrefixLogger('Tutorial');
+
   TutorialCoachMark? _tutorialCoachMark;
   bool _isDisposing = false;
 
@@ -49,12 +52,15 @@ class Tutorial {
   }
 
   void dispose() {
-    _isDisposing = true;
     try {
+      _isDisposing = true;
       _tutorialCoachMark?.finish();
-    } catch (_) {}
-    _tutorialCoachMark = null;
-    _isDisposing = false;
+    } catch (error) {
+      _logger.e('Unable to finish tutorial.', error: error);
+    } finally {
+      _tutorialCoachMark = null;
+      _isDisposing = false;
+    }
   }
 }
 
