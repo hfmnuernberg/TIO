@@ -44,9 +44,8 @@ void main() {
 
     await inMemoryFileSystem.init();
     await mediaRepo.init();
-    final projectLibrary =
-        projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults()
-          ..dismissAllTutorials();
+    final projectLibrary = projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults()
+      ..dismissAllTutorials();
     await projectRepo.saveLibrary(projectLibrary);
     await fileReferences.init(projectLibrary);
     final project = Project.defaultThumbnail('Test Project');

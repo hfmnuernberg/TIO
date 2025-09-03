@@ -106,14 +106,13 @@ class _RhythmsState extends State<Rhythms> with RouteAware {
               onDelete: (index) => _handleDeleteRhythmGroup(index, false),
               onEdit: (index) => widget.onEditRhythmGroup(false, index),
               onReorder: (oldIndex, newIndex) => _handleReorderRhythmSegments(oldIndex, newIndex, false),
-              addSecondaryAction:
-                  metronomeBlock.rhythmGroups2.isEmpty
-                      ? IconButton(
-                        iconSize: TIOMusicParams.rhythmPlusButtonSize,
-                        onPressed: () => widget.onAddRhythmGroup(true),
-                        icon: const Icon(Icons.add, color: ColorTheme.primary),
-                      )
-                      : const SizedBox(),
+              addSecondaryAction: metronomeBlock.rhythmGroups2.isEmpty
+                  ? IconButton(
+                      iconSize: TIOMusicParams.rhythmPlusButtonSize,
+                      onPressed: () => widget.onAddRhythmGroup(true),
+                      icon: const Icon(Icons.add, color: ColorTheme.primary),
+                    )
+                  : const SizedBox(),
             ),
             if (metronomeBlock.rhythmGroups2.isNotEmpty)
               Groups(

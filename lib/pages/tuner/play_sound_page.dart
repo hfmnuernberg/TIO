@@ -109,15 +109,14 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
           foregroundColor: ColorTheme.primary,
         ),
         backgroundColor: ColorTheme.primary92,
-        body:
-            tunerBlock.tunerType == TunerType.chromatic
-                ? ChromaticPlayReference(midi: midi, frequency: frequency, onToggle: handleToggle)
-                : InstrumentPlayReference(
-                  tunerType: tunerBlock.tunerType,
-                  midi: midi,
-                  frequency: frequency,
-                  onToggle: handleToggle,
-                ),
+        body: tunerBlock.tunerType == TunerType.chromatic
+            ? ChromaticPlayReference(midi: midi, frequency: frequency, onToggle: handleToggle)
+            : InstrumentPlayReference(
+                tunerType: tunerBlock.tunerType,
+                midi: midi,
+                frequency: frequency,
+                onToggle: handleToggle,
+              ),
       ),
     );
   }

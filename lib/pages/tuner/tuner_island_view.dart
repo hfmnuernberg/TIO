@@ -181,21 +181,18 @@ class PitchIslandViewVisualizer extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     dirty = false;
 
-    var paintCircle =
-        Paint()
-          ..color = ColorTheme.primary
-          ..strokeWidth = 2;
+    var paintCircle = Paint()
+      ..color = ColorTheme.primary
+      ..strokeWidth = 2;
 
-    var paintLine =
-        Paint()
-          ..color = ColorTheme.primaryFixedDim
-          ..strokeWidth = 2;
+    var paintLine = Paint()
+      ..color = ColorTheme.primaryFixedDim
+      ..strokeWidth = 2;
 
-    var paintEmptyCircle =
-        Paint()
-          ..color = ColorTheme.primary
-          ..strokeWidth = 2
-          ..style = PaintingStyle.stroke;
+    var paintEmptyCircle = Paint()
+      ..color = ColorTheme.primary
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
 
     var xPositionFactor = ((size.width - (radiusSideCircles * 2)) * _pitchFactor) + radiusSideCircles;
     var factorPosition = Offset(xPositionFactor, size.height / 2);

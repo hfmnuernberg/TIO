@@ -185,10 +185,9 @@ class _ProjectPageState extends State<ProjectPage> {
 
       return AlertDialog(
         title: Text(l10n.commonDelete, style: TextStyle(color: ColorTheme.primary)),
-        content:
-            deleteAll
-                ? Text(l10n.projectDeleteAllToolsConfirmation, style: TextStyle(color: ColorTheme.primary))
-                : Text(l10n.projectDeleteToolConfirmation, style: TextStyle(color: ColorTheme.primary)),
+        content: deleteAll
+            ? Text(l10n.projectDeleteAllToolsConfirmation, style: TextStyle(color: ColorTheme.primary))
+            : Text(l10n.projectDeleteToolConfirmation, style: TextStyle(color: ColorTheme.primary)),
         actions: [
           TextButton(
             onPressed: () {
@@ -306,11 +305,10 @@ class _ProjectPageState extends State<ProjectPage> {
                 child: Text(context.l10n.projectExport, style: TextStyle(color: ColorTheme.primary)),
               ),
               MenuItemButton(
-                onPressed:
-                    () => setState(() {
-                      _showBlocks = false;
-                      _isEditing = false;
-                    }),
+                onPressed: () => setState(() {
+                  _showBlocks = false;
+                  _isEditing = false;
+                }),
                 child: Text(context.l10n.toolAddNew, style: TextStyle(color: ColorTheme.primary)),
               ),
               MenuItemButton(
@@ -348,11 +346,10 @@ class _ProjectPageState extends State<ProjectPage> {
       bottomNavigationBar: EditProjectBar(
         key: _keyChangeToolOrder,
         isEditing: _isEditing,
-        onAddTool:
-            () => setState(() {
-              _showBlocks = false;
-              _isEditing = false;
-            }),
+        onAddTool: () => setState(() {
+          _showBlocks = false;
+          _isEditing = false;
+        }),
         onToggleEditing: _toggleEditingMode,
       ),
     );

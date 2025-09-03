@@ -411,22 +411,21 @@ class _MediaPlayerState extends State<MediaPlayer> {
                     Padding(
                       key: _keyWaveform,
                       padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
-                      child:
-                          _isRecording
-                              ? MediaPlayerFunctions.displayRecordingTimer(
-                                context.l10n.mediaPlayerRecording,
-                                context.l10n.formatDuration(_recordingDuration),
-                                waveformHeight,
-                              )
-                              : GestureDetector(
-                                onTapDown: (details) => _fileLoaded ? _onWaveGesture(details.localPosition) : null,
-                                onHorizontalDragUpdate:
-                                    (details) => _fileLoaded ? _onWaveGesture(details.localPosition) : null,
-                                child: CustomPaint(
-                                  painter: _waveformVisualizer,
-                                  size: Size(_waveFormWidth, waveformHeight),
-                                ),
+                      child: _isRecording
+                          ? MediaPlayerFunctions.displayRecordingTimer(
+                              context.l10n.mediaPlayerRecording,
+                              context.l10n.formatDuration(_recordingDuration),
+                              waveformHeight,
+                            )
+                          : GestureDetector(
+                              onTapDown: (details) => _fileLoaded ? _onWaveGesture(details.localPosition) : null,
+                              onHorizontalDragUpdate: (details) =>
+                                  _fileLoaded ? _onWaveGesture(details.localPosition) : null,
+                              child: CustomPaint(
+                                painter: _waveformVisualizer,
+                                size: Size(_waveFormWidth, waveformHeight),
                               ),
+                            ),
                     ),
                   Stack(children: _isRecording ? [] : _buildMarkers()),
                 ],
@@ -436,7 +435,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 TextButton(onPressed: () => _jump10Seconds(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
-                Container(key: _keyRepeat, child: MediaPlayerRepeatButton(onToggle: _handleRepeatToggle)),
+                Container(
+                  key: _keyRepeat,
+                  child: MediaPlayerRepeatButton(onToggle: _handleRepeatToggle),
+                ),
                 TextButton(onPressed: () => _jump10Seconds(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
               ],
             ),

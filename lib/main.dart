@@ -53,7 +53,12 @@ Future<void> main() async {
 }
 
 void runMainApp(ProjectLibrary projectLibrary, ThemeData? theme) {
-  runApp(MultiProvider(providers: _getProviders(), child: App(projectLibrary: projectLibrary, ourTheme: theme)));
+  runApp(
+    MultiProvider(
+      providers: _getProviders(),
+      child: App(projectLibrary: projectLibrary, ourTheme: theme),
+    ),
+  );
 }
 
 List<SingleChildWidget> _getProviders() {

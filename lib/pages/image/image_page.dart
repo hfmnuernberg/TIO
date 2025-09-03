@@ -113,11 +113,10 @@ class _ImageToolState extends State<ImageTool> {
 
   Future addImageDialog(BuildContext context) => showDialog(
     context: context,
-    builder:
-        (context) => AddImageDialog(
-          pickImageFunction: (useAsThumbnail) => pickImagesAndSave(useAsThumbnail),
-          takePhotoFunction: (useAsThumbnail) => takePhotoAndSave(useAsThumbnail),
-        ),
+    builder: (context) => AddImageDialog(
+      pickImageFunction: (useAsThumbnail) => pickImagesAndSave(useAsThumbnail),
+      takePhotoFunction: (useAsThumbnail) => takePhotoAndSave(useAsThumbnail),
+    ),
   );
 
   Future<void> pickImagesAndSave(bool useAsThumbnail) async {
@@ -193,27 +192,26 @@ class _ImageToolState extends State<ImageTool> {
       isQuickTool: widget.isQuickTool,
       project: project,
       toolBlock: imageBlock,
-      menuItems:
-          imageBlock.relativePath.isNotEmpty
-              ? [
-                MenuItemButton(
-                  onPressed: shareFilePressed,
-                  child: Text(context.l10n.imageShare, style: const TextStyle(color: ColorTheme.primary)),
-                ),
-                MenuItemButton(
-                  onPressed: setAsThumbnail,
-                  child: Text(context.l10n.imageSetAsThumbnail, style: const TextStyle(color: ColorTheme.primary)),
-                ),
-                MenuItemButton(
-                  onPressed: () => pickImagesAndSave(isUsedAsThumbnail),
-                  child: Text(context.l10n.imagePickNewImage, style: const TextStyle(color: ColorTheme.primary)),
-                ),
-                MenuItemButton(
-                  onPressed: () => takePhotoAndSave(isUsedAsThumbnail),
-                  child: Text(context.l10n.imageTakeNewPhoto, style: const TextStyle(color: ColorTheme.primary)),
-                ),
-              ]
-              : null,
+      menuItems: imageBlock.relativePath.isNotEmpty
+          ? [
+              MenuItemButton(
+                onPressed: shareFilePressed,
+                child: Text(context.l10n.imageShare, style: const TextStyle(color: ColorTheme.primary)),
+              ),
+              MenuItemButton(
+                onPressed: setAsThumbnail,
+                child: Text(context.l10n.imageSetAsThumbnail, style: const TextStyle(color: ColorTheme.primary)),
+              ),
+              MenuItemButton(
+                onPressed: () => pickImagesAndSave(isUsedAsThumbnail),
+                child: Text(context.l10n.imagePickNewImage, style: const TextStyle(color: ColorTheme.primary)),
+              ),
+              MenuItemButton(
+                onPressed: () => takePhotoAndSave(isUsedAsThumbnail),
+                child: Text(context.l10n.imageTakeNewPhoto, style: const TextStyle(color: ColorTheme.primary)),
+              ),
+            ]
+          : null,
       centerModule: Padding(
         padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
         child: Center(

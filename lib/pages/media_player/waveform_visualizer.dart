@@ -23,20 +23,17 @@ class WaveformVisualizer extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     var midAxisHeight = size.height / 2;
 
-    var blueBrush =
-        Paint()
-          ..color = ColorTheme.primary80
-          ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
+    var blueBrush = Paint()
+      ..color = ColorTheme.primary80
+      ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
 
-    var redBrush =
-        Paint()
-          ..color = ColorTheme.tertiary60
-          ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
+    var redBrush = Paint()
+      ..color = ColorTheme.tertiary60
+      ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
 
-    var lightBlueBrush =
-        Paint()
-          ..color = ColorTheme.primary95
-          ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
+    var lightBlueBrush = Paint()
+      ..color = ColorTheme.primary95
+      ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
 
     double stepSize = MediaPlayerParams.binWidth / 2.0;
 

@@ -90,22 +90,20 @@ class CustomTargetFocus {
       case ButtonsPosition.bottom:
         positionNextButton = CustomTargetContentPosition(bottom: edgeSpace);
       case ButtonsPosition.left:
-        positionNextButton =
-            context == null
-                ? CustomTargetContentPosition(left: edgeSpace, top: 100)
-                : CustomTargetContentPosition(
-                  left: edgeSpace,
-                  top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons,
-                );
+        positionNextButton = context == null
+            ? CustomTargetContentPosition(left: edgeSpace, top: 100)
+            : CustomTargetContentPosition(
+                left: edgeSpace,
+                top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons,
+              );
         buttonsColumnCrossAlign = CrossAxisAlignment.start;
       case ButtonsPosition.right:
-        positionNextButton =
-            context == null
-                ? CustomTargetContentPosition(right: edgeSpace, top: 100)
-                : CustomTargetContentPosition(
-                  right: edgeSpace,
-                  top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons,
-                );
+        positionNextButton = context == null
+            ? CustomTargetContentPosition(right: edgeSpace, top: 100)
+            : CustomTargetContentPosition(
+                right: edgeSpace,
+                top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons,
+              );
         buttonsColumnCrossAlign = CrossAxisAlignment.end;
       case ButtonsPosition.bottomright:
         positionNextButton = CustomTargetContentPosition(bottom: edgeSpace);
@@ -146,7 +144,10 @@ class CustomTargetFocus {
             ),
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: Text(description, style: const TextStyle(color: ColorTheme.tertiary, fontWeight: FontWeight.bold)),
+              child: Text(
+                description,
+                style: const TextStyle(color: ColorTheme.tertiary, fontWeight: FontWeight.bold),
+              ),
             ),
           );
         },

@@ -53,13 +53,11 @@ class _ChooseSoundState extends State<ChooseSound> {
         },
         constraints: const BoxConstraints(minHeight: 30, minWidth: 200),
         isSelected: _selectedSounds,
-        children:
-            SoundFont.values
-                .map(
-                  (soundFont) =>
-                      Text(soundFont.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)),
-                )
-                .toList(),
+        children: SoundFont.values
+            .map(
+              (soundFont) => Text(soundFont.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)),
+            )
+            .toList(),
       ),
     );
   }

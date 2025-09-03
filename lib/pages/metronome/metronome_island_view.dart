@@ -87,8 +87,9 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
   Widget build(BuildContext context) {
     return ParentInnerIsland(
       onMainIconPressed: onMetronomeToggleButtonClicked,
-      mainIcon:
-          metronome.isOn ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.metronomeBlock.icon,
+      mainIcon: metronome.isOn
+          ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary)
+          : widget.metronomeBlock.icon,
       parameterText: '${widget.metronomeBlock.bpm} ${context.l10n.commonBpm}',
       centerView: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -115,10 +116,9 @@ class Beats extends StatelessWidget {
 
   bool get isPolyBeatHighlighted => currentBeat.polyBeatIndex != null;
 
-  String get beatsText =>
-      rhythmGroup.beats.isEmpty && rhythmGroup.polyBeats.isEmpty
-          ? '${rhythmGroup.beats.length}'
-          : '${rhythmGroup.beats.length}:${rhythmGroup.polyBeats.length}';
+  String get beatsText => rhythmGroup.beats.isEmpty && rhythmGroup.polyBeats.isEmpty
+      ? '${rhythmGroup.beats.length}'
+      : '${rhythmGroup.beats.length}:${rhythmGroup.polyBeats.length}';
 
   @override
   Widget build(BuildContext context) {

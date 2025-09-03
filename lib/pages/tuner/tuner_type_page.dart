@@ -63,10 +63,9 @@ class _TunerTypePageState extends State<TunerTypePage> {
           constraints: const BoxConstraints(minHeight: 30, minWidth: 200),
           onPressed: handleSelect,
           isSelected: selectedTuners,
-          children:
-              TunerType.values
-                  .map((type) => Text(type.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)))
-                  .toList(),
+          children: TunerType.values
+              .map((type) => Text(type.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)))
+              .toList(),
         ),
       ),
     );

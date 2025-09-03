@@ -11,11 +11,13 @@ Check what is the latest available fvm version ([available fvm versions](https:/
 fvm --version
 ```
 
-Check what is the latest available Flutter version ([available Flutter versions](https://flutter-ko.dev/development/tools/sdk/releases?tab=macos)) and check which Flutter versions are already installed:
+Check what is the latest available Flutter version ([available Flutter versions](https://docs.flutter.dev/install/archive)) and check which Flutter versions are already installed:
 
 ```shell
 fvm list
 ```
+
+For breaking changes and release notes see here: [Flutter Release Notes](https://docs.flutter.dev/release/release-notes).
 
 If you want to install a new available Flutter version you need to change the Flutter version in the `.fvmrc` and the Flutter SDK version in the `pubspec.yaml` first.
 

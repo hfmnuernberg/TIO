@@ -4,7 +4,10 @@ const level = Level.warning;
 
 final logger = Logger(level: level, printer: SimplePrinter(colors: false));
 
-Logger createPrefixLogger(String prefix) => Logger(level: level, printer: PrefixPrinter(prefix: prefix));
+Logger createPrefixLogger(String prefix) => Logger(
+  level: level,
+  printer: PrefixPrinter(prefix: prefix),
+);
 
 class PrefixPrinter extends LogPrinter {
   final String prefix;

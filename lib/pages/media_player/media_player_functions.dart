@@ -138,8 +138,14 @@ abstract class MediaPlayerFunctions {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(label, style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10)),
-          Text(duration, style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 6)),
+          Text(
+            label,
+            style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 10),
+          ),
+          Text(
+            duration,
+            style: TextStyle(color: ColorTheme.tertiary, fontSize: height / 6),
+          ),
         ],
       ),
     );

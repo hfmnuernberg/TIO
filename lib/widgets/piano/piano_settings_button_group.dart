@@ -28,10 +28,9 @@ class PianoSettingsButtonGroup extends StatelessWidget {
         children: [
           IconButton(
             icon: CircleAvatar(
-              backgroundColor:
-                  onToggleHold == null
-                      ? ColorTheme.secondary.withValues(alpha: 0.3)
-                      : (isHolding ? ColorTheme.tertiary : ColorTheme.primary50),
+              backgroundColor: onToggleHold == null
+                  ? ColorTheme.secondary.withValues(alpha: 0.3)
+                  : (isHolding ? ColorTheme.tertiary : ColorTheme.primary50),
               child: Text('H', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 20)),
             ),
             padding: EdgeInsets.zero,

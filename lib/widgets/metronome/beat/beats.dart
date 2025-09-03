@@ -22,26 +22,24 @@ class Beats extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
-      child:
-          beatTypes.isEmpty
-              ? const SizedBox(height: TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2)
-              : Row(
-                children:
-                    beatTypes
-                        .expandIndexed(
-                          (i, beatType) => [
-                            if (spaceBetweenBeats != null && i > 0)
-                              SizedBox(
-                                width:
-                                    spaceBetweenBeats! -
-                                    TIOMusicParams.beatButtonSizeMainPage -
-                                    TIOMusicParams.beatButtonPadding * 2,
-                              ),
-                            Beat(beatType: beatType, isHighlighted: i == highlightedBeatIndex),
-                          ],
-                        )
-                        .toList(),
-              ),
+      child: beatTypes.isEmpty
+          ? const SizedBox(height: TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2)
+          : Row(
+              children: beatTypes
+                  .expandIndexed(
+                    (i, beatType) => [
+                      if (spaceBetweenBeats != null && i > 0)
+                        SizedBox(
+                          width:
+                              spaceBetweenBeats! -
+                              TIOMusicParams.beatButtonSizeMainPage -
+                              TIOMusicParams.beatButtonPadding * 2,
+                        ),
+                      Beat(beatType: beatType, isHighlighted: i == highlightedBeatIndex),
+                    ],
+                  )
+                  .toList(),
+            ),
     );
   }
 }

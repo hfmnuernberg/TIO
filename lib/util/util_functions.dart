@@ -257,24 +257,23 @@ Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) 
 
   return showDialog<void>(
     context: context,
-    builder:
-        (context) => AlertDialog(
-          title: Text(l10n.mediaPlayerErrorFileOpen, style: TextStyle(color: ColorTheme.primary)),
-          content: Column(
-            children: [
-              Text(l10n.mediaPlayerErrorFileOpenDescription, style: const TextStyle(color: ColorTheme.primary)),
-              if (fileName != null)
-                Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
-                    style: const TextStyle(color: ColorTheme.primary),
-                  ),
-                ),
-            ],
-          ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
-        ),
+    builder: (context) => AlertDialog(
+      title: Text(l10n.mediaPlayerErrorFileOpen, style: TextStyle(color: ColorTheme.primary)),
+      content: Column(
+        children: [
+          Text(l10n.mediaPlayerErrorFileOpenDescription, style: const TextStyle(color: ColorTheme.primary)),
+          if (fileName != null)
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              child: Text(
+                '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
+                style: const TextStyle(color: ColorTheme.primary),
+              ),
+            ),
+        ],
+      ),
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
+    ),
   );
 }
 
@@ -287,24 +286,23 @@ Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName
 
   return showDialog<void>(
     context: context,
-    builder:
-        (context) => AlertDialog(
-          title: Text(l10n.mediaPlayerErrorFileAccessible, style: TextStyle(color: ColorTheme.primary)),
-          content: Column(
-            children: [
-              Text(l10n.mediaPlayerErrorFileAccessibleDescription, style: const TextStyle(color: ColorTheme.primary)),
-              if (fileName != null)
-                Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
-                    style: const TextStyle(color: ColorTheme.primary),
-                  ),
-                ),
-            ],
-          ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
-        ),
+    builder: (context) => AlertDialog(
+      title: Text(l10n.mediaPlayerErrorFileAccessible, style: TextStyle(color: ColorTheme.primary)),
+      content: Column(
+        children: [
+          Text(l10n.mediaPlayerErrorFileAccessibleDescription, style: const TextStyle(color: ColorTheme.primary)),
+          if (fileName != null)
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              child: Text(
+                '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
+                style: const TextStyle(color: ColorTheme.primary),
+              ),
+            ),
+        ],
+      ),
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
+    ),
   );
 }
 
@@ -315,12 +313,11 @@ Future<void> showNoCameraFoundDialog(BuildContext context) {
   final l10n = context.l10n;
   return showDialog<void>(
     context: context,
-    builder:
-        (context) => AlertDialog(
-          title: Text(l10n.imageNoCameraFound, style: TextStyle(color: ColorTheme.primary)),
-          content: Text(l10n.imageNoCameraFoundHint, style: TextStyle(color: ColorTheme.primary)),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
-        ),
+    builder: (context) => AlertDialog(
+      title: Text(l10n.imageNoCameraFound, style: TextStyle(color: ColorTheme.primary)),
+      content: Text(l10n.imageNoCameraFoundHint, style: TextStyle(color: ColorTheme.primary)),
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
+    ),
   );
 }
 

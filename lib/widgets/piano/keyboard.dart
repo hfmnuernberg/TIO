@@ -142,35 +142,33 @@ class _KeyboardState extends State<Keyboard> {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children:
-                          widget._naturals
-                              .map(
-                                (key) => WhiteKey(
-                                  isPlayed: isPlayed(key.note),
-                                  width: keyWidth,
-                                  height: keyHeight,
-                                  borderWidth: 4,
-                                  semanticsLabel: key.name,
-                                  label: key.note % PianoParams.numberOfWhiteKeys == 0 ? key.name : null,
-                                ),
-                              )
-                              .toList(),
+                      children: widget._naturals
+                          .map(
+                            (key) => WhiteKey(
+                              isPlayed: isPlayed(key.note),
+                              width: keyWidth,
+                              height: keyHeight,
+                              borderWidth: 4,
+                              semanticsLabel: key.name,
+                              label: key.note % PianoParams.numberOfWhiteKeys == 0 ? key.name : null,
+                            ),
+                          )
+                          .toList(),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SizedBox(width: keyWidth / 2),
                         ...widget._sharpsWithSpacing.map(
-                          (key) =>
-                              key == null
-                                  ? SizedBox(width: keyWidth)
-                                  : BlackKey(
-                                    isPlayed: isPlayed(key.note),
-                                    width: keyWidth,
-                                    height: keyHeight / 2,
-                                    borderWidth: 4,
-                                    semanticsLabel: key.name,
-                                  ),
+                          (key) => key == null
+                              ? SizedBox(width: keyWidth)
+                              : BlackKey(
+                                  isPlayed: isPlayed(key.note),
+                                  width: keyWidth,
+                                  height: keyHeight / 2,
+                                  borderWidth: 4,
+                                  semanticsLabel: key.name,
+                                ),
                         ),
                         SizedBox(width: keyWidth / 2),
                       ],
