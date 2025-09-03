@@ -130,7 +130,7 @@ void main() {
       await tester.enterTextAndSettle(tester.withinAlert(find.bySemanticsLabel('Title input')), '');
 
       final submitButton = tester.withinAlert(find.bySemanticsLabel('Submit'));
-      expect(tester.getSemantics(submitButton).hasFlag(SemanticsFlag.isEnabled), isFalse);
+      expect(tester.getSemantics(submitButton).flagsCollection.isEnabled, isFalse);
     });
 
     testWidgets('disables submit button when title has not changed', (tester) async {
@@ -139,7 +139,7 @@ void main() {
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
 
       final submitButton = tester.withinAlert(find.bySemanticsLabel('Submit'));
-      expect(tester.getSemantics(submitButton).hasFlag(SemanticsFlag.isEnabled), isFalse);
+      expect(tester.getSemantics(submitButton).flagsCollection.isEnabled, isFalse);
     });
 
     testWidgets('submits title when title has not changed but is marked as new', (tester) async {
