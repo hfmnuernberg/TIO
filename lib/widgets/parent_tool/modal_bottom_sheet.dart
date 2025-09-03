@@ -22,9 +22,19 @@ class ModalBottomSheet extends StatelessWidget {
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
                 color: ColorTheme.surface,
               ),
-              child: Column(children: [const SizedBox(height: 20), Column(children: titleChildren)]),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  Column(children: titleChildren),
+                ],
+              ),
             ),
-            Expanded(child: ColoredBox(color: ColorTheme.primary80, child: Column(children: contentChildren))),
+            Expanded(
+              child: ColoredBox(
+                color: ColorTheme.primary80,
+                child: Column(children: contentChildren),
+              ),
+            ),
           ],
         ),
       ),

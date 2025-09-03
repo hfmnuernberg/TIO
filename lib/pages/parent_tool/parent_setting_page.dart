@@ -51,21 +51,20 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
             automaticallyImplyLeading: false,
           ),
           backgroundColor: ColorTheme.primary92,
-          body:
-              widget.mustBeScrollable
-                  ? LayoutBuilder(
-                    builder: (context, viewportConstraints) {
-                      return SingleChildScrollView(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
-                          child: isPortrait ? _buildPortrait() : _buildLandscape(),
-                        ),
-                      );
-                    },
-                  )
-                  : isPortrait
-                  ? _buildPortrait()
-                  : _buildLandscape(),
+          body: widget.mustBeScrollable
+              ? LayoutBuilder(
+                  builder: (context, viewportConstraints) {
+                    return SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+                        child: isPortrait ? _buildPortrait() : _buildLandscape(),
+                      ),
+                    );
+                  },
+                )
+              : isPortrait
+              ? _buildPortrait()
+              : _buildLandscape(),
           bottomSheet: _bottomSheet(),
         ),
       ),
@@ -103,7 +102,11 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
         children: [
           Positioned(left: padding * 12, top: padding, child: widget.numberInput ?? const SizedBox()),
           Positioned(left: padding * 12, top: padding * 12, child: widget.customWidget ?? const SizedBox()),
-          Positioned(right: padding, bottom: padding, child: ConfirmButton(onTap: widget.confirm)),
+          Positioned(
+            right: padding,
+            bottom: padding,
+            child: ConfirmButton(onTap: widget.confirm),
+          ),
           Positioned(
             right: padding + TIOMusicParams.sizeBigButtons * 2.5,
             bottom: padding + TIOMusicParams.sizeBigButtons / 2.5,
@@ -123,23 +126,23 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
     return MediaQuery.of(context).orientation == Orientation.landscape
         ? null
         : Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ColoredBox(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
-            ColoredBox(
-              color: ColorTheme.primary80,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
-                    ConfirmButton(onTap: widget.confirm),
-                  ],
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ColoredBox(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
+              ColoredBox(
+                color: ColorTheme.primary80,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
+                      ConfirmButton(onTap: widget.confirm),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        );
+            ],
+          );
   }
 }

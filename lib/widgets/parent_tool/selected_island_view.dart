@@ -52,7 +52,10 @@ class SelectedIslandView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             child,
-            IconButton(onPressed: onShowToolSelection, icon: const Icon(Icons.more_vert, color: ColorTheme.primary)),
+            IconButton(
+              onPressed: onShowToolSelection,
+              icon: const Icon(Icons.more_vert, color: ColorTheme.primary),
+            ),
           ],
         ),
       ),

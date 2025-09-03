@@ -264,10 +264,9 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
       return AlertDialog(
         title: Text(l10n.commonDelete, style: const TextStyle(color: ColorTheme.primary)),
-        content:
-            deleteAll
-                ? Text(l10n.projectsDeleteAllConfirmation, style: TextStyle(color: ColorTheme.primary))
-                : Text(l10n.projectsDeleteConfirmation, style: TextStyle(color: ColorTheme.primary)),
+        content: deleteAll
+            ? Text(l10n.projectsDeleteAllConfirmation, style: TextStyle(color: ColorTheme.primary))
+            : Text(l10n.projectsDeleteConfirmation, style: TextStyle(color: ColorTheme.primary)),
         actions: [
           TextButton(
             onPressed: () {
@@ -349,11 +348,10 @@ class _ProjectsPageState extends State<ProjectsPage> {
   Future<void> _handleGoToProject(Project project, bool withoutRealProject) async {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder:
-            (context) => ChangeNotifierProvider<Project>.value(
-              value: project,
-              child: ProjectPage(goStraightToTool: false, withoutRealProject: withoutRealProject),
-            ),
+        builder: (context) => ChangeNotifierProvider<Project>.value(
+          value: project,
+          child: ProjectPage(goStraightToTool: false, withoutRealProject: withoutRealProject),
+        ),
       ),
     );
     doActionOnReturn(result);
@@ -447,42 +445,41 @@ class _ProjectsPageState extends State<ProjectsPage> {
             children: [
               Expanded(
                 child: Consumer<ProjectLibrary>(
-                  builder:
-                      (context, projectLibrary, child) => Stack(
-                        children: [
-                          if (projectLibrary.projects.isEmpty)
-                            Padding(
-                              padding: const EdgeInsets.all(40),
-                              child: Text(
-                                l10n.projectsNoProjects,
-                                style: const TextStyle(color: Colors.white, fontSize: 42),
-                              ),
-                            )
-                          else if (_isEditing)
-                            EditableProjectList(
-                              projectLibrary: projectLibrary,
-                              onDelete: _handleDelete,
-                              onReorder: _handleReorder,
-                            )
-                          else
-                            ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
-
-                          Positioned(
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
-                              child: EditProjectsBar(
-                                key: _keyChangeProjectOrder,
-                                isEditing: _isEditing,
-                                onAddProject: _handleNew,
-                                onToggleEditing: _toggleEditingMode,
-                              ),
-                            ),
+                  builder: (context, projectLibrary, child) => Stack(
+                    children: [
+                      if (projectLibrary.projects.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.all(40),
+                          child: Text(
+                            l10n.projectsNoProjects,
+                            style: const TextStyle(color: Colors.white, fontSize: 42),
                           ),
-                        ],
+                        )
+                      else if (_isEditing)
+                        EditableProjectList(
+                          projectLibrary: projectLibrary,
+                          onDelete: _handleDelete,
+                          onReorder: _handleReorder,
+                        )
+                      else
+                        ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
+
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
+                          child: EditProjectsBar(
+                            key: _keyChangeProjectOrder,
+                            isEditing: _isEditing,
+                            onAddProject: _handleNew,
+                            onToggleEditing: _toggleEditingMode,
+                          ),
+                        ),
                       ),
+                    ],
+                  ),
                 ),
               ),
               Container(

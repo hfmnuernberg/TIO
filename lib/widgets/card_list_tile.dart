@@ -50,7 +50,10 @@ class CardListTile extends StatelessWidget {
           enabled: !disableTap,
           title: Semantics(
             excludeSemantics: true,
-            child: Text(title, style: TextStyle(color: textColor, fontWeight: FontWeight.w500)),
+            child: Text(
+              title,
+              style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
+            ),
           ),
           subtitle: Text(subtitle ?? '', style: TextStyle(color: textColor)),
           leading: _showPicture(leadingPicture),
@@ -68,7 +71,10 @@ class CardListTile extends StatelessWidget {
   Widget _showPicture(picture) {
     if (picture is ImageProvider) {
       // if picture is an image provider
-      return AspectRatio(aspectRatio: 1, child: Image(image: picture, fit: BoxFit.cover));
+      return AspectRatio(
+        aspectRatio: 1,
+        child: Image(image: picture, fit: BoxFit.cover),
+      );
     } else if (picture is String) {
       // if picture is a string to an svg file
       return CircleAvatar(

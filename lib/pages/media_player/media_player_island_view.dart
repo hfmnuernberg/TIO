@@ -165,16 +165,16 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   Widget build(BuildContext context) {
     return ParentInnerIsland(
       onMainIconPressed: _togglePlaying,
-      mainIcon:
-          _isPlaying ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.mediaPlayerBlock.icon,
+      mainIcon: _isPlaying
+          ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary)
+          : widget.mediaPlayerBlock.icon,
       mainButtonIsDisabled: _isLoading,
       parameterText: widget.mediaPlayerBlock.title,
-      centerView:
-          _isLoading
-              // loading spinner
-              ? const Center(child: CircularProgressIndicator())
-              // waveform visualizer
-              : _waveformVisualizer,
+      centerView: _isLoading
+          // loading spinner
+          ? const Center(child: CircularProgressIndicator())
+          // waveform visualizer
+          : _waveformVisualizer,
       customPaintKey: globalKeyCustomPaint,
       textSpaceWidth: 70,
     );

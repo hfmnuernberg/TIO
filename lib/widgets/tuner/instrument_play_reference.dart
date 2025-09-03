@@ -31,17 +31,16 @@ class InstrumentPlayReference extends StatelessWidget {
         const SizedBox(height: 40),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children:
-              tunerType.midis
-                  .toList()
-                  .map(
-                    (currentMidi) => SoundButton(
-                      isActive: midi == currentMidi,
-                      label: midiToNameAndOctave(currentMidi),
-                      onToggle: () => onToggle(currentMidi),
-                    ),
-                  )
-                  .toList(),
+          children: tunerType.midis
+              .toList()
+              .map(
+                (currentMidi) => SoundButton(
+                  isActive: midi == currentMidi,
+                  label: midiToNameAndOctave(currentMidi),
+                  onToggle: () => onToggle(currentMidi),
+                ),
+              )
+              .toList(),
         ),
       ],
     );

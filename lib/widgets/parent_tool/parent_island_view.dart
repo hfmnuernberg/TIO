@@ -81,56 +81,54 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder:
-          (context) => ModalBottomSheet(
-            label: l10n.toolConnectAnother,
-            titleChildren: [
-              CardListTile(
-                title: project.title,
-                subtitle: l10n.formatDateAndTime(project.timeLastModified),
-                trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
-                leadingPicture:
-                    project.thumbnailPath.isEmpty
-                        ? const AssetImage(TIOMusicParams.tiomusicIconPath)
-                        : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
-                onTapFunction: () {},
-              ),
-            ],
-            contentChildren: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      if (filteredExistingTools.isNotEmpty) ...[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 32, top: 16, bottom: 8),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              l10n.toolConnectExistingTool,
-                              style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
-                            ),
-                          ),
-                        ),
-                        ExistingToolsList(tools: filteredExistingTools, onSelect: handleConnectExistingTool),
-                      ],
-                      Padding(
-                        padding: const EdgeInsets.only(left: 32, top: 8, bottom: 8),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            l10n.toolConnectNewTool,
-                            style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
-                          ),
+      builder: (context) => ModalBottomSheet(
+        label: l10n.toolConnectAnother,
+        titleChildren: [
+          CardListTile(
+            title: project.title,
+            subtitle: l10n.formatDateAndTime(project.timeLastModified),
+            trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
+            leadingPicture: project.thumbnailPath.isEmpty
+                ? const AssetImage(TIOMusicParams.tiomusicIconPath)
+                : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
+            onTapFunction: () {},
+          ),
+        ],
+        contentChildren: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  if (filteredExistingTools.isNotEmpty) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(left: 32, top: 16, bottom: 8),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          l10n.toolConnectExistingTool,
+                          style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
                         ),
                       ),
-                      NewToolsList(tools: filteredNewToolTypes, onSelect: handleConnectNewTool),
-                    ],
+                    ),
+                    ExistingToolsList(tools: filteredExistingTools, onSelect: handleConnectExistingTool),
+                  ],
+                  Padding(
+                    padding: const EdgeInsets.only(left: 32, top: 8, bottom: 8),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        l10n.toolConnectNewTool,
+                        style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint),
+                      ),
+                    ),
                   ),
-                ),
+                  NewToolsList(tools: filteredNewToolTypes, onSelect: handleConnectNewTool),
+                ],
               ),
-            ],
+            ),
           ),
+        ],
+      ),
     ).then((_) => setState(() {}));
   }
 

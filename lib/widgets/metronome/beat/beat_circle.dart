@@ -36,37 +36,37 @@ class BeatCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: ColorTheme.primary80)),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: ColorTheme.primary80),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: CircularWidgets(
-          itemBuilder:
-              (context, index) => BeatButton(
-                color: beatButtonColor,
-                type: beatTypes[index],
-                buttonSize: buttonSize,
-                isHighlighted: index == currentBeatIndex,
-                onTap: () => onTap(index),
-              ),
+          itemBuilder: (context, index) => BeatButton(
+            color: beatButtonColor,
+            type: beatTypes[index],
+            buttonSize: buttonSize,
+            isHighlighted: index == currentBeatIndex,
+            onTap: () => onTap(index),
+          ),
           itemsLength: beatCount,
           config: CircularWidgetConfig(itemRadius: 16, centerWidgetRadius: centerWidgetRadius),
-          centerWidgetBuilder:
-              (context) =>
-                  noInnerBorder
-                      ? Container()
-                      : DecoratedBox(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: ColorTheme.primary80),
-                        ),
-                        child: OnOffButton(
-                          isActive: isPlaying,
-                          buttonSize: TIOMusicParams.sizeBigButtons,
-                          iconOff: Icons.play_arrow,
-                          iconOn: TIOMusicParams.pauseIcon,
-                          onTap: onStartStop,
-                        ),
-                      ),
+          centerWidgetBuilder: (context) => noInnerBorder
+              ? Container()
+              : DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: ColorTheme.primary80),
+                  ),
+                  child: OnOffButton(
+                    isActive: isPlaying,
+                    buttonSize: TIOMusicParams.sizeBigButtons,
+                    iconOff: Icons.play_arrow,
+                    iconOn: TIOMusicParams.pauseIcon,
+                    onTap: onStartStop,
+                  ),
+                ),
         ),
       ),
     );

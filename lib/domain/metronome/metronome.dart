@@ -125,10 +125,9 @@ class Metronome {
     _as.metronomeSetRhythm(bars: _toMetroBars(rhythmGroups), bars2: _toMetroBars(secondaryRhythmGroups));
   }
 
-  List<MetroBar> _toMetroBars(List<RhythmGroup> rhythmGroups) =>
-      rhythmGroups
-          .map((group) => MetroBar(id: 0, beats: group.beats, polyBeats: group.polyBeats, beatLen: group.beatLen))
-          .toList();
+  List<MetroBar> _toMetroBars(List<RhythmGroup> rhythmGroups) => rhythmGroups
+      .map((group) => MetroBar(id: 0, beats: group.beats, polyBeats: group.polyBeats, beatLen: group.beatLen))
+      .toList();
 
   Future<void> _checkForBeats() async {
     if (!_isOn) return;

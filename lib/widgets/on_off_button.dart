@@ -47,12 +47,11 @@ class _OnOffButtonState extends State<OnOffButton> {
             backgroundColor: Colors.white,
             radius: widget.buttonSize,
             child: IconButton(
-              onPressed:
-                  widget.isDisabled
-                      ? null
-                      : () {
-                        widget.onTap();
-                      },
+              onPressed: widget.isDisabled
+                  ? null
+                  : () {
+                      widget.onTap();
+                    },
               iconSize: widget.buttonSize,
               icon: widget.isActive ? _getIconOn() : _getIconOff(),
               tooltip: widget.isActive ? widget.tooltipOff : widget.tooltipOn,

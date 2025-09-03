@@ -300,6 +300,10 @@ class ShiftKeyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(icon: Icon(icon, color: ColorTheme.primary), padding: EdgeInsets.zero, onPressed: onPressed);
+    return IconButton(
+      icon: Icon(icon, color: ColorTheme.primary),
+      padding: EdgeInsets.zero,
+      onPressed: onPressed,
+    );
   }
 }

@@ -102,7 +102,10 @@ class AudioSystemMock extends Mock implements AudioSystem {
       when(() => mediaPlayerSetSpeedFactor(speedFactor: any(named: 'speedFactor'))).thenAnswer((_) async => result);
 
   void mockMediaPlayerSetTrim([bool result = true]) => when(
-    () => mediaPlayerSetTrim(startFactor: any(named: 'startFactor'), endFactor: any(named: 'endFactor')),
+    () => mediaPlayerSetTrim(
+      startFactor: any(named: 'startFactor'),
+      endFactor: any(named: 'endFactor'),
+    ),
   ).thenAnswer((_) async => result);
 
   void mockMediaPlayerGetRms(Float32List rmsValues) =>
@@ -127,11 +130,17 @@ class AudioSystemMock extends Mock implements AudioSystem {
       when(() => metronomeSetBpm(bpm: any(named: 'bpm'))).thenAnswer((_) async => result);
 
   void mockMetronomeLoadFile([bool result = true]) => when(
-    () => metronomeLoadFile(beatType: any(named: 'beatType'), wavFilePath: any(named: 'wavFilePath')),
+    () => metronomeLoadFile(
+      beatType: any(named: 'beatType'),
+      wavFilePath: any(named: 'wavFilePath'),
+    ),
   ).thenAnswer((_) async => result);
 
   void mockMetronomeSetRhythm([bool result = true]) => when(
-    () => metronomeSetRhythm(bars: any(named: 'bars'), bars2: any(named: 'bars2')),
+    () => metronomeSetRhythm(
+      bars: any(named: 'bars'),
+      bars2: any(named: 'bars2'),
+    ),
   ).thenAnswer((_) async => result);
 
   void mockMetronomePollBeatEventHappened([BeatHappenedEvent? event]) =>
