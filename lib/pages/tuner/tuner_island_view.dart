@@ -3,7 +3,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stats/stats.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
@@ -112,6 +111,13 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     );
   }
 
+  double _medianOf(Iterable<double> values) {
+    final list = values.toList()..sort();
+    if (list.isEmpty) return 0;
+    final mid = list.length ~/ 2;
+    return list.length.isOdd ? list[mid] : (list[mid - 1] + list[mid]) / 2.0;
+  }
+
   void _onNewFrequency(double? newFreq) {
     if (!mounted) return;
     if (newFreq == null) return;
@@ -127,8 +133,7 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     _freqHistory[_freqHistoryIndex] = newFreq;
     _freqHistoryIndex = (_freqHistoryIndex + 1) % _freqHistory.length;
 
-    final freqStats = Stats.fromData(_freqHistory);
-    final freq = freqStats.median.toDouble();
+    final freq = _medianOf(_freqHistory.where((e) => e > 0));
     if (freq.abs() < 0.0001) return;
 
     var midi = freqToMidi(freq, widget.tunerBlock.chamberNoteHz);
