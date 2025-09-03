@@ -114,6 +114,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     VolumeController.instance.removeListener();
     routeObserver.unsubscribe(this);
     metronome.stop();
+    tutorial.dispose();
     super.dispose();
   }
 

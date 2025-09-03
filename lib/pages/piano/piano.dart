@@ -267,6 +267,7 @@ class _PianoState extends State<Piano> {
   @override
   void dispose() {
     _toolTitleFieldFocus.dispose();
+    _tutorial.dispose();
     super.dispose();
   }
 
