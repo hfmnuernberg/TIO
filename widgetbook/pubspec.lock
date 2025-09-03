@@ -1005,10 +1005,10 @@ packages:
     dependency: transitive
     description:
       name: stats
-      sha256: a64d41328dc1332a02ce4acc8830e240e10ac14b19c9bb256466737b792f22aa
+      sha256: f08a0b8dcf95cc68960e85eaa21c80e8837fb816c719a99a0edd36c44831d403
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.0"
+    version: "3.0.0"
   stream_channel:
     dependency: transitive
     description:

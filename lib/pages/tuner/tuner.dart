@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:stats/stats.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project.dart';
@@ -313,6 +312,13 @@ class _TunerState extends State<Tuner> {
     );
   }
 
+  double _medianOf(Iterable<double> values) {
+    final list = values.toList()..sort();
+    if (list.isEmpty) return 0;
+    final mid = list.length ~/ 2;
+    return list.length.isOdd ? list[mid] : (list[mid - 1] + list[mid]) / 2.0;
+  }
+
   void onNewFrequency(double? newFreq) {
     if (newFreq == null) return;
     if (!mounted) return;
@@ -329,8 +335,9 @@ class _TunerState extends State<Tuner> {
     freqHistory[freqHistoryIndex] = newFreq;
     freqHistoryIndex = (freqHistoryIndex + 1) % freqHistory.length;
 
-    final freqStats = Stats.fromData(freqHistory);
-    final freq = freqStats.median.toDouble();
+    // final freqStats = Stats.fromData(freqHistory);
+    // final freq = freqStats.median.toDouble();
+    final freq = _medianOf(freqHistory.where((e) => e > 0));
     if (freq.abs() < 0.0001) return;
 
     final concertPitch = tunerBlock.chamberNoteHz;
