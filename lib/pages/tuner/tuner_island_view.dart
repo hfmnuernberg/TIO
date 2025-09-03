@@ -133,8 +133,6 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     _freqHistory[_freqHistoryIndex] = newFreq;
     _freqHistoryIndex = (_freqHistoryIndex + 1) % _freqHistory.length;
 
-    // final freqStats = Stats.fromData(_freqHistory);
-    // final freq = freqStats.median.toDouble();
     final freq = _medianOf(_freqHistory.where((e) => e > 0));
     if (freq.abs() < 0.0001) return;
 

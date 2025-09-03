@@ -335,8 +335,6 @@ class _TunerState extends State<Tuner> {
     freqHistory[freqHistoryIndex] = newFreq;
     freqHistoryIndex = (freqHistoryIndex + 1) % freqHistory.length;
 
-    // final freqStats = Stats.fromData(freqHistory);
-    // final freq = freqStats.median.toDouble();
     final freq = _medianOf(freqHistory.where((e) => e > 0));
     if (freq.abs() < 0.0001) return;
 
