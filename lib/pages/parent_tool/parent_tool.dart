@@ -214,6 +214,7 @@ class _ParentToolState extends State<ParentTool> {
 
     return AppBar(
       leading: backButton,
+      centerTitle: false,
       title: GestureDetector(
         key: _keyChangeTitle,
         onTap: () async {
