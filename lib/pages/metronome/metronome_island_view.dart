@@ -1,22 +1,22 @@
 import 'dart:async';
-import 'package:audio_session/audio_session.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/note_handler.dart';
-import 'package:tiomusic/pages/metronome/beat_button.dart';
-import 'package:tiomusic/pages/metronome/metronome_functions.dart';
-import 'package:tiomusic/pages/metronome/metronome_utils.dart';
-import 'package:tiomusic/pages/metronome/rhythm/rhythm_segment.dart';
+import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
+import 'package:tiomusic/services/audio_session.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
-import 'package:tiomusic/src/rust/api/modules/metronome.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/log.dart';
-import 'package:tiomusic/util/util_functions.dart';
+import 'package:tiomusic/domain/metronome/metronome.dart';
+import 'package:tiomusic/domain/metronome/metronome_beat.dart';
+import 'package:tiomusic/widgets/metronome/beat/beat_button.dart';
+import 'package:tiomusic/widgets/metronome/beat/beat_button_type.dart';
 
 class MetronomeIslandView extends StatefulWidget {
   final MetronomeBlock metronomeBlock;
@@ -28,204 +28,135 @@ class MetronomeIslandView extends StatefulWidget {
 }
 
 class _MetronomeIslandViewState extends State<MetronomeIslandView> {
-  static final _logger = createPrefixLogger('MetronomeIslandView');
+  late final Metronome metronome;
 
-  late FileSystem _fs;
-
-  bool _isStarted = false;
-  late Timer _beatDetection;
-
-  final ActiveBeatsModel _activeBeatsModel = ActiveBeatsModel();
-
-  bool _processingButtonClick = false;
-
-  StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
+  bool processingButtonClick = false;
 
   @override
   void initState() {
     super.initState();
 
-    _fs = context.read<FileSystem>();
-
-    metronomeSetVolume(volume: widget.metronomeBlock.volume);
-    metronomeSetRhythm(
-      bars: getRhythmAsMetroBar(widget.metronomeBlock.rhythmGroups),
-      bars2: getRhythmAsMetroBar(widget.metronomeBlock.rhythmGroups2),
+    metronome = Metronome(
+      context.read<AudioSystem>(),
+      context.read<AudioSession>(),
+      context.read<FileSystem>(),
+      context.read<Wakelock>(),
+      onBeatEvent: refresh,
     );
-    metronomeSetBpm(bpm: widget.metronomeBlock.bpm.toDouble());
-    metronomeSetBeatMuteChance(muteChance: widget.metronomeBlock.randomMute.toDouble() / 100.0);
-    metronomeSetMuted(muted: false);
 
-    MetronomeUtils.loadSounds(_fs, widget.metronomeBlock);
-
-    // Start beat detection timer
-    _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (t) {
-      if (!mounted) {
-        t.cancel();
-        return;
-      }
-      if (!_isStarted) return;
-
-      metronomePollBeatEventHappened().then((event) {
-        if (event != null) _onBeatHappened(event);
-      });
-      if (!mounted) return;
-      setState(() {});
-    });
+    // metronome.mute(); // TODO
+    metronome.setVolume(widget.metronomeBlock.volume);
+    metronome.setBpm(widget.metronomeBlock.bpm);
+    metronome.setChanceOfMuteBeat(widget.metronomeBlock.randomMute);
+    metronome.setRhythm(widget.metronomeBlock.rhythmGroups, widget.metronomeBlock.rhythmGroups2);
+    metronome.sounds.loadAllSounds(widget.metronomeBlock);
   }
 
   @override
   void deactivate() {
-    _stopMetronome();
-    _beatDetection.cancel();
+    metronome.stop();
     super.deactivate();
   }
 
-  // React to beat signal
-  void _onBeatHappened(BeatHappenedEvent event) {
-    if (!event.isRandomMute) {
-      Timer(Duration(milliseconds: event.millisecondsBeforeStart), () {
-        if (!mounted) return;
-        setState(() {
-          _activeBeatsModel.setBeatOnOff(true, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
-        });
-      });
-
-      Timer(Duration(milliseconds: event.millisecondsBeforeStart + MetronomeParams.flashDurationInMs), () {
-        if (!mounted) return;
-        setState(() {
-          _activeBeatsModel.setBeatOnOff(false, event.barIndex, event.beatIndex, event.isPoly, event.isSecondary);
-        });
-      });
-    }
+  @override
+  void dispose() {
+    metronome.stop();
+    super.dispose();
   }
 
-  void _onMetronomeToggleButtonClicked() async {
-    if (_processingButtonClick) return;
-    setState(() => _processingButtonClick = true);
+  Future<void> refresh(_) async {
+    if (!mounted) return metronome.stop();
+    setState(() {});
+  }
 
-    if (_isStarted) {
-      await _stopMetronome();
+  Future<void> onMetronomeToggleButtonClicked() async {
+    if (processingButtonClick) return;
+    setState(() => processingButtonClick = true);
+
+    if (metronome.isOn) {
+      await metronome.stop();
     } else {
-      await _startMetronome();
+      await metronome.start();
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
-    setState(() => _processingButtonClick = false);
-  }
-
-  Future<void> _startMetronome() async {
-    audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
-      if (event.type == AudioInterruptionType.unknown) _stopMetronome();
-    });
-    final success = await MetronomeFunctions.start();
-    if (!success) {
-      _logger.e('Unable to start metronome.');
-      return;
-    }
-    _isStarted = true;
-  }
-
-  Future<void> _stopMetronome() async {
-    await audioInterruptionListener?.cancel();
-    await MetronomeFunctions.stop();
-    _isStarted = false;
+    setState(() => processingButtonClick = false);
   }
 
   @override
   Widget build(BuildContext context) {
     return ParentInnerIsland(
-      onMainIconPressed: _onMetronomeToggleButtonClicked,
+      onMainIconPressed: onMetronomeToggleButtonClicked,
       mainIcon:
-          _isStarted ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.metronomeBlock.icon,
+          metronome.isOn ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.metronomeBlock.icon,
       parameterText: '${widget.metronomeBlock.bpm} ${context.l10n.commonBpm}',
-      centerView: _centerView(),
+      centerView: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Beats(rhythmGroups: widget.metronomeBlock.rhythmGroups, currentBeat: metronome.currentBeat),
+          if (widget.metronomeBlock.rhythmGroups2.isNotEmpty)
+            Beats(rhythmGroups: widget.metronomeBlock.rhythmGroups2, currentBeat: metronome.currentSecondaryBeat),
+        ],
+      ),
       textSpaceWidth: 60,
     );
   }
+}
 
-  Widget _centerView() {
-    var children = [_metronome()];
-    if (widget.metronomeBlock.rhythmGroups2.isNotEmpty) {
-      children.add(_metronome(isSecondMetronome: true));
-    }
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: children);
-  }
+class Beats extends StatelessWidget {
+  final List<RhythmGroup> rhythmGroups;
+  final MetronomeBeat currentBeat;
 
-  Widget _metronome({bool isSecondMetronome = false}) {
-    var rhythmGroups = widget.metronomeBlock.rhythmGroups;
-    if (isSecondMetronome) {
-      rhythmGroups = widget.metronomeBlock.rhythmGroups2;
-    }
+  const Beats({super.key, required this.rhythmGroups, required this.currentBeat});
 
-    return ListenableBuilder(
-      listenable: _activeBeatsModel,
-      builder: (context, child) {
-        String beatsText =
-            rhythmGroups[isSecondMetronome ? _activeBeatsModel.mainBar2 : _activeBeatsModel.mainBar].beats.length
-                .toString();
+  RhythmGroup get rhythmGroup => rhythmGroups[currentBeat.segmentIndex ?? 0];
 
-        // we need to check if this main beat still has a poly beat, otherwise the poly beat from last bar will still be shown
-        if (rhythmGroups[isSecondMetronome ? _activeBeatsModel.mainBar2 : _activeBeatsModel.mainBar]
-            .polyBeats
-            .isNotEmpty) {
-          // and we also need to check if the poly beat listener changed
-          if (rhythmGroups[isSecondMetronome ? _activeBeatsModel.polyBar2 : _activeBeatsModel.polyBar]
-              .polyBeats
-              .isNotEmpty) {
-            beatsText +=
-                ':${rhythmGroups[isSecondMetronome ? _activeBeatsModel.polyBar2 : _activeBeatsModel.polyBar].polyBeats.length}';
-          }
-        }
+  bool get isMainBeatHighlighted => currentBeat.mainBeatIndex != null;
 
-        return Row(
+  bool get isPolyBeatHighlighted => currentBeat.polyBeatIndex != null;
+
+  String get beatsText =>
+      rhythmGroup.beats.isEmpty && rhythmGroup.polyBeats.isEmpty
+          ? '${rhythmGroup.beats.length}'
+          : '${rhythmGroup.beats.length}:${rhythmGroup.polyBeats.length}';
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // main beat
-                BeatButton(
-                  color: ColorTheme.surfaceTint,
-                  beatTypes: const [BeatButtonType.unaccented],
-                  beatTypeIndex: 0,
-                  buttonSize: TIOMusicParams.beatButtonSizeIsland,
-                  beatHighlighted: isSecondMetronome ? _activeBeatsModel.mainBeatOn2 : _activeBeatsModel.mainBeatOn,
-                ),
-
-                // poly beat
-                BeatButton(
-                  color: ColorTheme.surfaceTint,
-                  beatTypes: const [BeatButtonType.unaccented],
-                  beatTypeIndex: 0,
-                  buttonSize: TIOMusicParams.beatButtonSizeIsland,
-                  beatHighlighted: isSecondMetronome ? _activeBeatsModel.polyBeatOn2 : _activeBeatsModel.polyBeatOn,
-                ),
-              ],
+            BeatButton(
+              type: BeatButtonType.unaccented,
+              buttonSize: TIOMusicParams.beatButtonSizeIsland,
+              color: ColorTheme.surfaceTint,
+              isHighlighted: isMainBeatHighlighted,
             ),
-            const SizedBox(width: 2),
-            SizedBox(
-              width: 38, // this prevents the widgets in the island from moving, when the text size changes
-              child: Column(
-                children: [
-                  const SizedBox(height: 4),
-
-                  // note symbol
-                  CircleAvatar(
-                    radius: MetronomeParams.rhythmSegmentSize / 4,
-                    backgroundColor: Colors.transparent,
-                    child: NoteHandler.getNoteSvg(
-                      rhythmGroups[isSecondMetronome ? _activeBeatsModel.mainBar2 : _activeBeatsModel.mainBar].noteKey,
-                    ),
-                  ),
-
-                  // beat as number
-                  Text(beatsText, style: const TextStyle(color: ColorTheme.surfaceTint)),
-                ],
-              ),
+            BeatButton(
+              type: BeatButtonType.unaccented,
+              buttonSize: TIOMusicParams.beatButtonSizeIsland,
+              color: ColorTheme.surfaceTint,
+              isHighlighted: isPolyBeatHighlighted,
             ),
           ],
-        );
-      },
+        ),
+        const SizedBox(width: 2),
+        SizedBox(
+          width: 38,
+          child: Column(
+            children: [
+              const SizedBox(height: 4),
+              CircleAvatar(
+                radius: MetronomeParams.rhythmSegmentSize / 4,
+                backgroundColor: Colors.transparent,
+                child: NoteHandler.getNoteSvg(rhythmGroup.noteKey),
+              ),
+              Text(beatsText, style: const TextStyle(color: ColorTheme.surfaceTint)),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

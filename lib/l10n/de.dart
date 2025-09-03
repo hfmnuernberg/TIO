@@ -24,7 +24,6 @@ class German extends AppLocalizations {
   String get appAboutTitle => 'Über TIO Music';
   String get appAboutVersion => 'App Version';
   String get appAboutVersionError => 'Konnte die App-Version nicht laden.';
-  String get appTutorialToolIsland => 'Tippe hier, um dein Tool mit anderen Tools zu kombinieren.';
   String get appTutorialToolSave => 'Tippe hier, um dein Tool in ein anderes Projekt zu kopieren.';
 
   String get commonBasicBeat => 'Grundschlag';
@@ -39,6 +38,7 @@ class German extends AppLocalizations {
   String get commonNo => 'Nein';
   String get commonOctave => 'Oktave';
   String get commonPlus => 'Plus-Schaltfläche';
+  String get commonProceed => 'Fortfahren';
   String get commonReorder => 'Verschieben';
   String get commonReset => 'Zurücksetzen';
   String get commonSetVolume => 'Lautstärke einstellen';
@@ -69,17 +69,18 @@ class German extends AppLocalizations {
   String get imageDoLater => 'Später';
   String get imageNoCameraFound => 'Keine Kamera gefunden';
   String get imageNoCameraFoundHint => 'Es ist keine Kamera auf diesem Gerät verfügbar.';
-  String get imageNoImage => 'Bitte lade ein Foto hoch oder mache ein neues Foto.';
-  String get imagePickImage => 'Bild auswählen';
-  String get imagePickNewImage => 'Neues Bild auswählen';
+  String get imagePickImage => 'Bild(er) auswählen';
+  String get imagePickNewImage => 'Neue(s) Bild(er) auswählen';
+  String get imagePickOrTakeImage => 'Bitte lade ein Foto hoch oder mache ein neues Foto.';
   String get imageSetAsProjectThumbnail => 'Projektbild festlegen';
   String get imageSetAsThumbnail => 'Als Projektbild festlegen';
   String get imageSetAsThumbnailQuestion => 'Möchtest du das Bild als Projektbild verwenden?';
   String get imageShare => 'Bild teilen';
   String get imageTakePhoto => 'Foto aufnehmen';
   String get imageTakeNewPhoto => 'Neues Foto aufnehmen';
-  String get imageUploadHint => 'Wähle ein Bild von deinem Gerät aus oder mache ein Foto mit der Kamera.';
-  String get imageUseAsThumbnailQuestion => 'Bild als Projektbild verwenden';
+  String get imageUploadHint =>
+      'Wähle ein oder mehrere Bilder von deinem Gerät aus oder mache ein Foto mit der Kamera.\n\nDu kannst bis zu 10 Bilder gleichzeitig hochladen. Das erste Bild wird hier gespeichert und für alle weiteren Bilder wird ein separates Bild-Tool angelegt.';
+  String get imageUseAsThumbnailQuestion => 'Das erste Bild als Projektbild verwenden?';
 
   String get mainErrorDataLoading => 'Benutzerdaten konnten nicht geladen werden!';
   String get mainOpenAnyway => 'Trotzdem öffnen (alle Daten gehen verloren!)';
@@ -103,15 +104,20 @@ class German extends AppLocalizations {
   String get mediaPlayerFactor => 'Faktor';
   String get mediaPlayerFactorAndBpm => 'Faktor und BPM-Regler';
   String get mediaPlayerFile => 'Datei';
-  String get mediaPlayerLoadAudioFile => 'Audio-Datei laden';
-  String get mediaPlayerLooping => 'Loopen';
   String get mediaPlayerMarkers => 'Marker';
+  String get mediaPlayerOpenFileSystem => 'Öffne Dateien';
+  String get mediaPlayerOpenMediaLibrary => 'Öffne Mediathek';
   String get mediaPlayerOverwriteSound => 'Audio-Datei überschreiben?';
   String get mediaPlayerOverwriteSoundQuestion =>
       'Möchtest du die aktuelle Audio-Datei überschreiben und die Aufnahme starten?';
+  String get mediaPlayerPause => 'Pause';
   String get mediaPlayerPitch => 'Tonhöhe';
+  String get mediaPlayerPlay => 'Play';
   String get mediaPlayerRecording => 'Aufnahme läuft...';
   String get mediaPlayerRemoveMarker => 'Ausgewählten Marker entfernen';
+  String get mediaPlayerRepeatAll => 'Alle Media Player wiederholen';
+  String get mediaPlayerRepeatOff => 'Keinen Media Player wiederholen';
+  String get mediaPlayerRepeatOne => 'Media Player wiederholen';
   String get mediaPlayerSecShort => 'Sek.';
   String get mediaPlayerSemitonesLabel => 'Halbtöne';
   String get mediaPlayerSetPitch => 'Tonhöhe einstellen';
@@ -120,10 +126,18 @@ class German extends AppLocalizations {
   String get mediaPlayerShareAudioFile => 'Audio-Datei teilen';
   String get mediaPlayerSpeed => 'Tempo';
   String get mediaPlayerTapToTempo => 'Tippe im Takt';
+  String get mediaPlayerTooManyFilesDescription =>
+      'Aus technischen Gründen werden nur 10 Dateien gleichzeitig geladen.\n\nBitte wiederhole den Vorgang mit den übrigen Dateien, die in diesem Schritt nicht geladen wurden.';
+  String get mediaPlayerTooManyFilesTitle => 'Zu viele Dateien';
   String get mediaPlayerTrim => 'Trimmen';
-  String get mediaPlayerTutorialAdjust => 'Tippe hier, um deine Audiodatei anzupassen.';
+  String get mediaPlayerTutorialAdjust =>
+      'Tippe hier, um deine Audiodatei anzupassen. Du kannst die Lautstärke und den Grundschlag einstellen, deine Datei trimmen und Marker setzen, sowie Tonhöhe und Tempo nachträglich verändern.';
+  String get mediaPlayerTutorialIslandTool =>
+      'Tippe hier um deinen Media Player mit einem Tuner oder Metronom zu kombinieren.\n\nDu kannst deinen Media Player mit einem bestehenden Tool verknüpfen oder ein neues Tool erstellen und damit verknüpfen.';
   String get mediaPlayerTutorialJumpTo =>
       'Tippe auf eine beliebige Stelle, um zu diesem Teil deiner Audiodatei zu springen.';
+  String get mediaPlayerTutorialRepeat =>
+      'Aktiviere die wiederholte Wiedergabe für diesen Media Player. Durch erneutes antippen kannst du auch alle Media Player in diesem Projekt, die eine Sound-Datei beinhalten, hintereinander abspielen.';
   String get mediaPlayerTutorialStartStop =>
       'Tippe hier, um die Aufnahme zu starten und zu stoppen oder um eine Audiodatei abzuspielen.';
 
@@ -147,10 +161,23 @@ class German extends AppLocalizations {
   String get metronomeRandomMute => 'Random mute';
   String get metronomeRandomMuteChance => 'Aussetzen';
   String get metronomeRandomMuteProbability => 'Wahrscheinlichkeit in %';
+  String get metronomeResetDialogHint =>
+      'ACHTUNG: Dadurch werden der Metronomrhythmus und -sound auf die Standardeinstellungen zurückgesetzt. Alle deine aktuellen Einstellungen gehen verloren. Möchtest du fortfahren?';
+  String get metronomeResetDialogTitle => 'Metronome zurücksetzen?';
+  String get metronomeRhythmDottedEighthFollowedBySixteenth => 'Punktierte Achtel gefolgt von Sechzehntel';
+  String get metronomeRhythmEighthRestFollowedByEighth => 'Achtelpause gefolgt von Achtel';
+  String get metronomeRhythmEighths => 'Achtel';
+  String get metronomeRhythmPattern => 'Rhythmus-Pattern';
+  String get metronomeRhythmQuarter => 'Viertel';
+  String get metronomeRhythmSixteenthFollowedByDottedEighth => 'Sechzehntel gefolgt von punktierter Achtel';
+  String get metronomeRhythmSixteenths => 'Sechzehntel';
+  String get metronomeRhythmTriplets => 'Triole';
   String get metronomeSetBpm => 'BPM einstellen';
   String get metronomeSetRandomMute => 'Random mute einstellen';
   String get metronomeSetSoundsPrimary => 'Sounds einstellen';
   String get metronomeSetSoundsSecondary => 'Sounds einstellen (Metronom 2)';
+  String get metronomeSimpleModeOff => 'Wechsel zu erweitertem Modus';
+  String get metronomeSimpleModeOn => 'Wechsel zu einfachem Modus';
   String get metronomeSound => 'Sound';
   String get metronomeSoundMain => 'Main';
   String get metronomeSoundPoly => 'Poly Sound';
@@ -174,10 +201,15 @@ class German extends AppLocalizations {
   String get metronomeSoundTypeWood => 'wood';
   String get metronomeTutorialAddNew => 'Tippe hier, um ein zweites Metronom hinzuzufügen.';
   String get metronomeTutorialAdjust => 'Tippe hier, um die Metronomeinstellungen anzupassen.';
+  String get metronomeTutorialIslandTool =>
+      'Tippe hier um dein Metronom mit einem Tuner oder Media-Player zu kombinieren.\n\nDu kannst dein Metronom mit einem bestehenden Tool verknüpfen oder ein neues Tool erstellen und damit verknüpfen.';
+  String get metronomeTutorialModeAdvanced =>
+      'Halte und ziehe seitlich, um Takte zu verschieben, wische nach oben, um Takte zu löschen oder tippe, um den ausgewählten Takt zu bearbeiten.';
+  String get metronomeTutorialModeChange =>
+      'Über das Menü oben rechts kannst du zwischen einfachem und erweitertem Modus wechseln.';
+  String get metronomeTutorialModeSimple => 'Hier kannst du die Basic Beats und einen Rhytmus festlegen.';
   String get metronomeTutorialEditBeats =>
       'Tippe auf einen der Schläge, um zwischen betont, unbetont und stumm zu wechseln.';
-  String get metronomeTutorialRelocate =>
-      'Halte und ziehe seitlich, um Takte zu verschieben, wische nach oben, um Takte zu löschen oder tippe, um den ausgewählten Takt zu bearbeiten.';
   String get metronomeTutorialStartStop => 'Tippe hier, um das Metronom zu starten und zu stoppen.';
   String get metronomeUnaccented => 'Unbetont';
 
@@ -191,16 +223,19 @@ class German extends AppLocalizations {
   String get pianoDescription => 'Spiele ein Stück an oder teste ein paar Akkorde.';
   String get pianoInstrumentElectricPiano1 => 'E-Piano 1';
   String get pianoInstrumentElectricPiano2 => 'E-Piano 2';
+  String get pianoInstrumentElectricPianoHold => 'E-Piano (H)';
   String get pianoInstrumentGrandPiano1 => 'Piano 1';
   String get pianoInstrumentGrandPiano2 => 'Piano 2';
   String get pianoInstrumentHarpsichord => 'Cembalo';
-  String get pianoInstrumentPipeOrgan => 'Orgel';
+  String get pianoInstrumentPipeOrgan => 'Orgel (H)';
   String get pianoLowestKey => 'Tiefste Taste';
   String get pianoSetConcertPitch => 'Kammerton einstellen';
   String get pianoSetSound => 'Piano-Sound einstellen';
   String get pianoTutorialAdjust => 'Tippe hier, um den Kammerton, die Lautstärke oder den Klang anzupassen.';
   String get pianoTutorialChangeKeyOrOctave =>
       'Tippe auf die Pfeile links oder rechts, um die Tastatur um eine Taste oder um eine Oktave nach oben oder unten zu verschieben.';
+  String get pianoTutorialIslandTool =>
+      'Tippe hier um dein Piano mit einem Tuner, Media Player oder Metronom zu kombinieren.\n\nDu kannst dein Piano mit einem bestehenden Tool verknüpfen oder ein neues Tool erstellen und damit verknüpfen.';
 
   String get projectDelete => 'Project löschen';
   String get projectDeleteTool => 'Tool löschen';
@@ -220,6 +255,8 @@ class German extends AppLocalizations {
   String get projectNewTool => 'Tool-Titel';
   String get projectToolList => 'Tool-Liste';
   String get projectToolListEmpty => 'Leere Tool-Liste';
+  String get projectTutorialChangeToolOrder =>
+      'Tippe auf das Plus-Symbol um ein neues Tool hinzuzufügen oder auf das Stift-Symbol um die Tools zu bearbeiten.';
   String get projectTutorialEditTitle => 'Tippe hier, um den Projekttitel zu bearbeiten.';
 
   String get projectsAbout => 'Projekte';
@@ -241,6 +278,8 @@ class German extends AppLocalizations {
   String get projectsTutorialAddProject => 'Tippe hier, um ein neues Projekt zu erstellen.';
   String get projectsTutorialCanIncludeMultipleTools =>
       'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Piano, Media Player, Bild und Text),\nund sogar mehrere Tools desselben Typs.';
+  String get projectsTutorialChangeProjectOrder =>
+      'Tippe auf das Plus-Symbol um ein neues Projekt hinzuzufügen oder auf das Stift-Symbol um die Projekte zu bearbeiten.';
   String get projectsTutorialHowToUseTio =>
       'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
   String get projectsTutorialStart => 'Tutorial anzeigen';
@@ -252,7 +291,6 @@ class German extends AppLocalizations {
       'Über dein Endgerät kannst du Notizen in Textform erstellen, z. B. für Spielanweisungen, Hintergrundinformationen, Songtexte etc.';
   String get textDescription => 'Mach dir Notizen.';
   String get textImport => 'Text importieren';
-  String get textImportDialogConfirm => 'Importieren';
   String get textImportDialogHint =>
       'ACHTUNG: Wenn du einen Text importierst, wird der aktuelle Inhalt des Text-Tools überschrieben.';
   String get textImportDialogTitle => 'Text importieren?';
@@ -261,6 +299,9 @@ class German extends AppLocalizations {
   String get textImportSuccess => 'Text erfolgreich importiert!';
 
   String get toolAddNew => 'Tool hinzufügen';
+  String get toolConnectAnother => 'Verbinde ein anderes Tool';
+  String get toolConnectExistingTool => 'Verbinde ein Tool';
+  String get toolConnectNewTool => 'Verbinde ein neues Tool';
   String get toolEmpty => 'Leerer Block';
   String get toolNewProjectTitle => 'Projekttitel';
   String get toolNewTitle => 'Tool-Titel';
@@ -277,7 +318,8 @@ class German extends AppLocalizations {
   String get toolSaveInNewProject => 'In neuem Projekt speichern';
   String get toolTitleCopy => 'Kopie';
   String get toolTutorialEditTitle => 'Tippe hier, um den Titel deines Tools zu bearbeiten.';
-  String get toolTutorialSave => 'Tippe hier, um das Tool in einem Projekt zu speichern.';
+  String get toolTutorialSave =>
+      'Tippe hier, um das Tool in einem Projekt zu speichern.\n\nSobald sich dieses Tool in einem Projekt befindet, kannst du es mit anderen Tools verknüpfen.';
   String get toolUseBookmarkToSave => 'Verwende das Lesezeichen, um das Tool zu speichern.';
 
   String toolHasNoIslandView(String tool) => '$tool hat keine Kompaktansicht!';
@@ -290,10 +332,21 @@ class German extends AppLocalizations {
   String get tunerConcertPitchInHz => 'Kammerton in Hz';
   String get tunerDescription => 'Stimme dein Instrument oder nutze Referenztöne.';
   String get tunerFrequency => 'Frequenz';
+  String get tunerInstrument => 'Instrument';
   String get tunerPlayReference => 'Referenzton abspielen';
   String get tunerSetConcertPitch => 'Kammerton einstellen';
   String get tunerTutorialAdjust => 'Tippe hier, um den Kammerton anzupassen oder einen Referenzton abzuspielen.';
-  String get tunerTutorialStartStop => 'Tippe hier, um das Stimmgerät zu starten und zu stoppen.';
+  String get tunerTutorialIslandTool =>
+      'Tippe hier um deinen Tuner mit einem Metronom oder Media-Player zu kombinieren.\n\nDu kannst deinen Tuner mit einem bestehenden Tool verknüpfen oder ein neues Tool erstellen und damit verknüpfen.';
+  String get tunerTutorialStartStop =>
+      'Tippe hier, um das Stimmgerät zu starten und zu stoppen.\n\nWenn der Ton ausklingt, können Obertöne das Stimmgerät irritieren – schlage den Ton daher besser neu an.';
+  String get tunerTypeChromatic => 'Chromatisches Stimmgerät';
+  String get tunerTypeBass => 'Bass';
+  String get tunerTypeGuitar => 'Gitarre';
+  String get tunerTypeUkulele => 'Ukulele';
+  String get tunerTypeViola => 'Viola';
+  String get tunerTypeViolin => 'Violine';
+  String get tunerTypeVioloncello => 'Violoncello';
 
   String formatDateAndTime(DateTime time) => DateFormat('dd.MM.yyyy - HH:mm:ss').format(time);
 }

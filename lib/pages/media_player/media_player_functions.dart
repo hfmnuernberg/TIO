@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
@@ -8,41 +7,46 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
+import 'package:tiomusic/services/audio_session.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
-import 'package:tiomusic/util/audio_util.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 
 abstract class MediaPlayerFunctions {
   static final _logger = createPrefixLogger('MediaPlayerFunctions');
 
-  static void setSpeedAndPitchInRust(double speedFactor, double pitchSemitones) {
-    mediaPlayerSetSpeedFactor(speedFactor: speedFactor).then(
-      (success) => {
-        if (!success) {throw 'Setting speed factor in rust failed using this value: $speedFactor'},
-      },
-    );
-    mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones).then(
-      (success) => {
-        if (!success) {throw 'Setting pitch semitones in rust failed using this value: $pitchSemitones'},
-      },
-    );
+  static void setSpeedAndPitchInRust(AudioSystem as, double speedFactor, double pitchSemitones) {
+    as
+        .mediaPlayerSetSpeedFactor(speedFactor: speedFactor)
+        .then(
+          (success) => {
+            if (!success) {throw 'Setting speed factor in rust failed using this value: $speedFactor'},
+          },
+        );
+    as
+        .mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones)
+        .then(
+          (success) => {
+            if (!success) {throw 'Setting pitch semitones in rust failed using this value: $pitchSemitones'},
+          },
+        );
   }
 
   static Future<Float32List?> _setAudioFileAndTrimInRust(
+    AudioSystem as,
     String absoluteFilePath,
     double startFactor,
     double endFactor,
     int numberOfBins,
   ) async {
-    var success = await mediaPlayerLoadWav(wavFilePath: absoluteFilePath);
+    var success = await as.mediaPlayerLoadWav(wavFilePath: absoluteFilePath);
     if (success) {
-      mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor);
+      as.mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor);
 
-      var tempRmsList = await mediaPlayerGetRms(nBins: numberOfBins);
+      var tempRmsList = await as.mediaPlayerGetRms(nBins: numberOfBins);
       return _normalizeRms(tempRmsList);
     }
     return null;
@@ -52,31 +56,50 @@ abstract class MediaPlayerFunctions {
     Float32List newList = Float32List(rmsList.length);
     var minValue = rmsList.reduce(min);
     var maxValue = rmsList.reduce(max);
+    if (minValue == maxValue) return newList;
+
     for (int i = 0; i < rmsList.length; i++) {
       newList[i] = (rmsList[i] - minValue) / (maxValue - minValue);
     }
     return newList;
   }
 
-  static Future<bool> startPlaying(bool looping) async {
-    await stopRecording();
-    await mediaPlayerSetLoop(looping: looping);
-    await configureAudioSession(AudioSessionType.playback);
-    var success = await mediaPlayerStart();
+  static Future<bool> startPlaying(
+    AudioSystem as,
+    AudioSession audioSession,
+    Wakelock wakelock,
+    bool repeatOne,
+    bool hasMarkers,
+  ) async {
+    await stopRecording(as, wakelock);
+    await as.mediaPlayerSetRepeat(repeatOne: repeatOne);
+    await audioSession.preparePlayback();
+
+    if (hasMarkers) {
+      await as.generatorStop();
+      await as.generatorStart();
+    }
+
+    var success = await as.mediaPlayerStart();
     if (success) {
-      await WakelockPlus.enable();
+      await wakelock.enable();
     }
     return success;
   }
 
-  static Future<bool> stopPlaying() async {
-    await WakelockPlus.disable();
-    return mediaPlayerStop();
+  static Future<bool> stopPlaying(AudioSystem as, Wakelock wakelock) async {
+    await wakelock.disable();
+    return as.mediaPlayerStop();
   }
 
-  static Future<bool> startRecording(bool isPlaying) async {
+  static Future<bool> startRecording(
+    AudioSystem as,
+    AudioSession audioSession,
+    Wakelock wakelock,
+    bool isPlaying,
+  ) async {
     if (isPlaying) {
-      await stopPlaying();
+      await stopPlaying(as, wakelock);
       await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     }
 
@@ -85,27 +108,29 @@ abstract class MediaPlayerFunctions {
       return false;
     }
 
-    await configureAudioSession(AudioSessionType.record);
-    var success = await mediaPlayerStartRecording();
+    await audioSession.prepareRecording();
+    var success = await as.mediaPlayerStartRecording();
     if (success) {
-      await WakelockPlus.enable();
+      await wakelock.enable();
     }
     return success;
   }
 
-  static Future<bool> stopRecording() async {
-    await WakelockPlus.disable();
-    return mediaPlayerStopRecording();
+  static Future<bool> stopRecording(AudioSystem as, Wakelock wakelock) async {
+    await wakelock.disable();
+    return as.mediaPlayerStopRecording();
   }
 
   static Future<Float32List?> openAudioFileInRustAndGetRMSValues(
+    AudioSystem as,
     FileSystem fs,
     MediaPlayerBlock block,
     int numOfBins,
   ) async {
-    var absolutePath = fs.toAbsoluteFilePath(block.relativePath);
-    if (!File(absolutePath).existsSync()) return null;
-    return _setAudioFileAndTrimInRust(absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
+    final absolutePath = fs.toAbsoluteFilePath(block.relativePath);
+    if (!fs.existsFile(absolutePath)) return null;
+
+    return _setAudioFileAndTrimInRust(as, absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }
 
   static Widget displayRecordingTimer(String label, String duration, double height) {

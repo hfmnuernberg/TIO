@@ -7,6 +7,7 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 Widget keyboard(BuildContext context) {
   return Keyboard(
     lowestNote: context.knobs.int.input(label: 'lowestNote', initialValue: 60),
+    isHolding: context.knobs.boolean(label: 'isHolding'),
     onPlay: (note) => debugPrint('▶️ onPlay - note: $note'),
     onRelease: (note) => debugPrint('⏸️ onRelease - note: $note'),
   );

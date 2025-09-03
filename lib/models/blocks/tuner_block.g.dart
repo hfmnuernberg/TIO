@@ -12,7 +12,7 @@ TunerBlock _$TunerBlockFromJson(Map<String, dynamic> json) => TunerBlock(
   json['islandToolID'] as String?,
   (json['chamberNoteHz'] as num?)?.toDouble() ?? 440.0,
   json['timeLastModified'] == null ? getCurrentDateTime() : DateTime.parse(json['timeLastModified'] as String),
-);
+)..tunerType = $enumDecodeNullable(_$TunerTypeEnumMap, json['tunerType']) ?? TunerType.chromatic;
 
 Map<String, dynamic> _$TunerBlockToJson(TunerBlock instance) => <String, dynamic>{
   'kind': instance.kind,
@@ -20,5 +20,16 @@ Map<String, dynamic> _$TunerBlockToJson(TunerBlock instance) => <String, dynamic
   'timeLastModified': instance.timeLastModified.toIso8601String(),
   'id': instance.id,
   'islandToolID': instance.islandToolID,
+  'tunerType': _$TunerTypeEnumMap[instance.tunerType]!,
   'chamberNoteHz': instance.chamberNoteHz,
+};
+
+const _$TunerTypeEnumMap = {
+  TunerType.chromatic: 'chromatic',
+  TunerType.guitar: 'guitar',
+  TunerType.bass: 'bass',
+  TunerType.ukulele: 'ukulele',
+  TunerType.violin: 'violin',
+  TunerType.viola: 'viola',
+  TunerType.violoncello: 'violoncello',
 };

@@ -5,7 +5,7 @@ import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/sound_font.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/sound_font_extension.dart';
+import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/util_midi.dart';
 

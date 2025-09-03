@@ -21,7 +21,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v5.0.0
       with:
         ref: ${{ inputs.ref }}
 
@@ -37,15 +37,18 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v5.0.0
       with:
         ref: ${{ inputs.ref }}
 
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+
     - name: Setup Java
-      uses: actions/setup-java@v4.7.1
+      uses: actions/setup-java@v5.0.0
       with:
-        java-version: '21'
-        distribution: 'temurin'
+        java-version: 21
+        distribution: temurin
 
     - name: Setup Flutter
       uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
@@ -54,7 +57,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y libasound2-dev
 
     - name: Setup Rust
-      uses: actions-rust-lang/setup-rust-toolchain@v1.12.0
+      uses: actions-rust-lang/setup-rust-toolchain@v1.14.1
 
     - name: Install Flutter dependencies
       run: scripts/app.sh install:flutter:packages
@@ -105,15 +108,15 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v5.0.0
       with:
         ref: ${{ inputs.ref }}
 
     - name: Setup Java
-      uses: actions/setup-java@v4.7.1
+      uses: actions/setup-java@v5.0.0
       with:
-        java-version: '21'
-        distribution: 'temurin'
+        java-version: 21
+        distribution: temurin
 
     - name: Setup Flutter
       uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
@@ -130,4 +133,4 @@ jobs:
       run: scripts/app.sh coverage:print
 
     - name: Validate coverage
-      run: scripts/app.sh coverage:validate 22.4
+      run: scripts/app.sh coverage:validate 44.8

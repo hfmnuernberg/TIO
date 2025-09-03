@@ -70,5 +70,13 @@ class FileSystemImpl implements FileSystem {
   Future<void> deleteFile(String absoluteFilePath) => File(absoluteFilePath).delete();
 
   @override
+  Future<void> deleteIfTmpFile(String absoluteSourceFilePath) async {
+    final isTemporaryFile = absoluteSourceFilePath.contains('/tmp') || absoluteSourceFilePath.contains('/cache/');
+    if (isTemporaryFile && existsFile(absoluteSourceFilePath)) {
+      await deleteFile(absoluteSourceFilePath);
+    }
+  }
+
+  @override
   Future<void> createFolder(String absoluteFolderPath) => Directory(absoluteFolderPath).create(recursive: true);
 }

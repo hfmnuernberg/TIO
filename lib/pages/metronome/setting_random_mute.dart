@@ -6,8 +6,8 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/domain/metronome/metronome.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
 
 class SetRandomMute extends StatefulWidget {
@@ -18,33 +18,37 @@ class SetRandomMute extends StatefulWidget {
 }
 
 class _SetRandomMuteState extends State<SetRandomMute> {
+  late final Metronome metronome;
+
   late int value;
-  late MetronomeBlock _metronomeBlock;
+
+  late MetronomeBlock metronomeBlock;
 
   @override
   void initState() {
     super.initState();
-    _metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
-    value = _metronomeBlock.randomMute;
+    metronome = context.read<Metronome>();
+    metronomeBlock = Provider.of<ProjectBlock>(context, listen: false) as MetronomeBlock;
+    value = metronomeBlock.randomMute;
   }
 
-  void _handleChange(newValue) async {
+  void handleChange(newValue) async {
     setState(() => value = newValue);
-    metronomeSetBeatMuteChance(muteChance: newValue / 100.0).then((success) => null);
+    metronome.setChanceOfMuteBeat(newValue).then((success) => null);
   }
 
-  void _handleReset() => value = MetronomeParams.defaultRandomMute;
+  void handleReset() => value = MetronomeParams.defaultRandomMute;
 
-  void _handleConfirm() async {
-    _metronomeBlock.randomMute = value;
-    metronomeSetBeatMuteChance(muteChance: value / 100.0).then((success) => null);
+  void handleConfirm() async {
+    metronomeBlock.randomMute = value;
+    metronome.setChanceOfMuteBeat(value).then((success) => null);
     await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     if (!mounted) return;
     Navigator.pop(context);
   }
 
   void _handleCancel() {
-    metronomeSetBeatMuteChance(muteChance: _metronomeBlock.randomMute / 100.0).then((success) => null);
+    metronome.setChanceOfMuteBeat(metronomeBlock.randomMute).then((success) => null);
     Navigator.pop(context);
   }
 
@@ -54,7 +58,7 @@ class _SetRandomMuteState extends State<SetRandomMute> {
       title: context.l10n.metronomeSetRandomMute,
       numberInput: NumberInputAndSliderInt(
         value: value,
-        onChange: _handleChange,
+        onChange: handleChange,
         max: 100,
         min: 0,
         step: 1,
@@ -63,8 +67,8 @@ class _SetRandomMuteState extends State<SetRandomMute> {
         textFieldWidth: TIOMusicParams.textFieldWidth2Digits,
         textFontSize: MetronomeParams.numInputTextFontSize,
       ),
-      confirm: _handleConfirm,
-      reset: _handleReset,
+      confirm: handleConfirm,
+      reset: handleReset,
       cancel: _handleCancel,
     );
   }

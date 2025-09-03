@@ -114,7 +114,7 @@ class MediaPlayerBlock extends ProjectBlock {
   }
 
   late bool _looping;
-  @JsonKey(defaultValue: MediaPlayerParams.defaultLooping)
+  @JsonKey(defaultValue: MediaPlayerParams.defaultRepeat)
   bool get looping => _looping;
   set looping(bool newValue) {
     _looping = newValue;
@@ -147,9 +147,6 @@ class MediaPlayerBlock extends ProjectBlock {
     }
     if (_rangeStart.abs() >= 0.001 || (_rangeEnd - 1.0).abs() >= 0.001) {
       settings.add('${l10n.mediaPlayerTrim} ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%');
-    }
-    if (_looping) {
-      settings.add(l10n.mediaPlayerLooping);
     }
     settings.add('$bpm ${l10n.commonBpm}');
     return settings;
@@ -196,7 +193,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _relativePath = MediaPlayerParams.defaultPath;
     _rangeStart = MediaPlayerParams.defaultRangeStart;
     _rangeEnd = MediaPlayerParams.defaultRangeEnd;
-    _looping = MediaPlayerParams.defaultLooping;
+    _looping = MediaPlayerParams.defaultRepeat;
     _markerPositions = [];
   }
 
@@ -212,7 +209,7 @@ class MediaPlayerBlock extends ProjectBlock {
     _relativePath = MediaPlayerParams.defaultPath;
     _rangeStart = MediaPlayerParams.defaultRangeStart;
     _rangeEnd = MediaPlayerParams.defaultRangeEnd;
-    _looping = MediaPlayerParams.defaultLooping;
+    _looping = MediaPlayerParams.defaultRepeat;
     _markerPositions = [];
   }
 

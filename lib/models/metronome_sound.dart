@@ -5,8 +5,8 @@ const String _soundCowbell = 'cowbell';
 
 const String defaultMetronomeAccSound = _soundClick;
 const String defaultMetronomeUnaccSound = _soundClick;
-const String defaultMetronomePolyAccSound = _soundPing;
-const String defaultMetronomePolyUnaccSound = _soundPing;
+const String defaultMetronomePolyAccSound = _soundClick;
+const String defaultMetronomePolyUnaccSound = _soundClick;
 const String defaultMetronomeAccSound2 = _soundClock;
 const String defaultMetronomeUnaccSound2 = _soundClock;
 const String defaultMetronomePolyAccSound2 = _soundCowbell;

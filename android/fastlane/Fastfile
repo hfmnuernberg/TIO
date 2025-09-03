@@ -1,15 +1,15 @@
 default_platform(:android)
 
 platform :android do
-  desc "Upload build to PlayStore"
-    lane :push_to_store do
-      changelog_from_git_commits()
+  desc 'Upload prd build to PlayStore'
+  lane :prd_push_to_store do
+    changelog_from_git_commits()
 
-      upload_to_play_store(
-        package_name: CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier),
-        track: "internal",
-        release_status: "completed",
-        aab: "../build/app/outputs/bundle/release/app-release.aab",
-      )
-    end
+    upload_to_play_store(
+      package_name: CredentialsManager::AppfileConfig.try_fetch_value(:app_identifier),
+      track: 'internal',
+      release_status: 'completed',
+      aab: '../build/app/outputs/bundle/prdRelease/app-prd-release.aab',
+    )
   end
+end

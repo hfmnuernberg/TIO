@@ -50,7 +50,8 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyAddProjectButton = GlobalKey();
-  final GlobalKey _keyNavigationBar = GlobalKey();
+  final GlobalKey _keyChangeProjectOrder = GlobalKey();
+  final GlobalKey _keyQuickTools = GlobalKey();
 
   @override
   void initState() {
@@ -79,16 +80,31 @@ class _ProjectsPageState extends State<ProjectsPage> {
   }
 
   void _createTutorial() {
+    final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
+        null,
+        context: context,
+        l10n.projectsTutorialHowToUseTio,
+        customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
+      ),
+      CustomTargetFocus(
         _keyAddProjectButton,
-        context.l10n.projectsTutorialAddProject,
+        l10n.projectsTutorialAddProject,
         alignText: ContentAlign.right,
         pointingDirection: PointingDirection.left,
       ),
       CustomTargetFocus(
-        _keyNavigationBar,
-        context.l10n.projectsTutorialStartUsingTool,
+        _keyQuickTools,
+        l10n.projectsTutorialStartUsingTool,
+        alignText: ContentAlign.top,
+        pointingDirection: PointingDirection.down,
+        buttonsPosition: ButtonsPosition.top,
+        shape: ShapeLightFocus.RRect,
+      ),
+      CustomTargetFocus(
+        _keyChangeProjectOrder,
+        l10n.projectsTutorialChangeProjectOrder,
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
@@ -97,16 +113,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
       CustomTargetFocus(
         null,
         context: context,
-        context.l10n.projectsTutorialHowToUseTio,
-        customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
-      ),
-      CustomTargetFocus(
-        null,
-        context: context,
-        context.l10n.projectsTutorialCanIncludeMultipleTools,
+        l10n.projectsTutorialCanIncludeMultipleTools,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
     ];
+
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showHomepageTutorial = false;
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
@@ -186,7 +197,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
     switch (blockType) {
       case BlockType.metronome:
         block = MetronomeBlock.withDefaults(context.l10n);
-        toolPage = const Metronome(isQuickTool: true);
+        toolPage = const MetronomePage(isQuickTool: true);
       case BlockType.tuner:
         block = TunerBlock.withDefaults(context.l10n);
         toolPage = const Tuner(isQuickTool: true);
@@ -431,47 +442,48 @@ class _ProjectsPageState extends State<ProjectsPage> {
               Expanded(
                 child: Consumer<ProjectLibrary>(
                   builder:
-                      (context, projectLibrary, child) =>
-                          projectLibrary.projects.isEmpty
-                              ? Padding(
-                                padding: const EdgeInsets.all(40),
-                                child: Text(
-                                  l10n.projectsNoProjects,
-                                  style: const TextStyle(color: Colors.white, fontSize: 42),
-                                ),
-                              )
-                              : Stack(
-                                children: [
-                                  if (_isEditing)
-                                    EditableProjectList(
-                                      projectLibrary: projectLibrary,
-                                      onDelete: _handleDelete,
-                                      onReorder: _handleReorder,
-                                    )
-                                  else
-                                    ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
-                                  Positioned(
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
-                                      child: EditProjectsBar(
-                                        isEditing: _isEditing,
-                                        onAddProject: _handleNew,
-                                        onToggleEditing: _toggleEditingMode,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                      (context, projectLibrary, child) => Stack(
+                        children: [
+                          if (projectLibrary.projects.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(40),
+                              child: Text(
+                                l10n.projectsNoProjects,
+                                style: const TextStyle(color: Colors.white, fontSize: 42),
                               ),
+                            )
+                          else if (_isEditing)
+                            EditableProjectList(
+                              projectLibrary: projectLibrary,
+                              onDelete: _handleDelete,
+                              onReorder: _handleReorder,
+                            )
+                          else
+                            ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
+
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
+                              child: EditProjectsBar(
+                                key: _keyChangeProjectOrder,
+                                isEditing: _isEditing,
+                                onAddProject: _handleNew,
+                                onToggleEditing: _toggleEditingMode,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.only(top: TIOMusicParams.edgeInset, bottom: TIOMusicParams.edgeInset),
                 color: ColorTheme.surface,
                 child: Column(
-                  key: _keyNavigationBar,
+                  key: _keyQuickTools,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Row(

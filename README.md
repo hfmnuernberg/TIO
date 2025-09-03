@@ -97,21 +97,3 @@ Rust Bridge is responsible for generating the code that handles the FFI. All pub
 ```
 python3 ./generate.py rust
 ```
-
-## Build for iOS
-
--   make sure you installed all rust targets like described above
--   open the xcode workspace at `ios/Runner.xcworkspace`
-    -   press `Cmd + comma` to open the settings
-        -   go to accounts
-        -   log into the necessary account for codesigning (check the certificates)
--   restart your mac - **don't skip, this is important**
--   run `fvm flutter build ipa`
-
-## Build for Android
-
--   make sure you installed all rust targets like described above
--   generate or get your personal upload key ready (see https://developer.android.com/studio/publish/app-signing#generate-key)
-    -   doing this you should get a `key.jks` file and a `key.properties` file. (If you choose other names for those files, adjust the names in `android/app/build.gradle`)
-    -   put those two files in your android folder (Don't check them into source control!!!)
--   run `fvm flutter build appbundle`

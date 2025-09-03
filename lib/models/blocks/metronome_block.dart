@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/metronome_sound.dart';
-import 'package:tiomusic/models/metronome_sound_extension.dart';
+import 'package:tiomusic/util/l10n/metronome_sound_extension.dart';
 
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
@@ -202,23 +202,8 @@ class MetronomeBlock extends ProjectBlock {
     _volume = TIOMusicParams.defaultVolume;
     bpm = MetronomeParams.defaultBPM;
     randomMute = MetronomeParams.defaultRandomMute;
-    _rhythmGroups = [
-      RhythmGroup(
-        MetronomeParams.defaultId,
-        MetronomeParams.defaultBeats,
-        MetronomeParams.defaultPolyBeats,
-        MetronomeParams.defaultNoteKey,
-      ),
-    ];
-    _rhythmGroups2 = [];
-    accSound = defaultMetronomeAccSound;
-    unaccSound = defaultMetronomeUnaccSound;
-    polyAccSound = defaultMetronomePolyAccSound;
-    polyUnaccSound = defaultMetronomePolyUnaccSound;
-    accSound2 = defaultMetronomeAccSound2;
-    unaccSound2 = defaultMetronomeUnaccSound2;
-    polyAccSound2 = defaultMetronomePolyAccSound2;
-    polyUnaccSound2 = defaultMetronomePolyUnaccSound2;
+    resetPrimaryMetronome();
+    resetSecondaryMetronome();
     _id = ProjectBlock.createNewId();
   }
 
@@ -229,23 +214,8 @@ class MetronomeBlock extends ProjectBlock {
     _volume = TIOMusicParams.defaultVolume;
     bpm = MetronomeParams.defaultBPM;
     randomMute = MetronomeParams.defaultRandomMute;
-    _rhythmGroups = [
-      RhythmGroup(
-        MetronomeParams.defaultId,
-        MetronomeParams.defaultBeats,
-        MetronomeParams.defaultPolyBeats,
-        MetronomeParams.defaultNoteKey,
-      ),
-    ];
-    _rhythmGroups2 = [];
-    accSound = defaultMetronomeAccSound;
-    unaccSound = defaultMetronomeUnaccSound;
-    polyAccSound = defaultMetronomePolyAccSound;
-    polyUnaccSound = defaultMetronomePolyUnaccSound;
-    accSound2 = defaultMetronomeAccSound2;
-    unaccSound2 = defaultMetronomeUnaccSound2;
-    polyAccSound2 = defaultMetronomePolyAccSound2;
-    polyUnaccSound2 = defaultMetronomePolyUnaccSound2;
+    resetPrimaryMetronome();
+    resetSecondaryMetronome();
     _id = ProjectBlock.createNewId();
   }
 
@@ -255,12 +225,12 @@ class MetronomeBlock extends ProjectBlock {
   factory MetronomeBlock.from(MetronomeBlock blockToCopy) {
     return MetronomeBlock(
       blockToCopy.title,
-      blockToCopy.id,
+      ProjectBlock.createNewId(),
       blockToCopy.islandToolID,
       blockToCopy.bpm,
       blockToCopy.randomMute,
-      blockToCopy._rhythmGroups,
-      blockToCopy._rhythmGroups2,
+      blockToCopy.rhythmGroups.map(RhythmGroup.from).toList(),
+      blockToCopy.rhythmGroups2.map(RhythmGroup.from).toList(),
       blockToCopy.accSound,
       blockToCopy.unaccSound,
       blockToCopy.polyAccSound,
@@ -274,8 +244,34 @@ class MetronomeBlock extends ProjectBlock {
     );
   }
 
+  void resetPrimaryMetronome() {
+    _rhythmGroups = [
+      RhythmGroup(
+        MetronomeParams.defaultId,
+        MetronomeParams.defaultBeats,
+        MetronomeParams.defaultPolyBeats,
+        MetronomeParams.defaultNoteKey,
+      ),
+    ];
+    accSound = defaultMetronomeAccSound;
+    unaccSound = defaultMetronomeUnaccSound;
+    polyAccSound = defaultMetronomePolyAccSound;
+    polyUnaccSound = defaultMetronomePolyUnaccSound;
+  }
+
+  void resetSecondaryMetronome() {
+    rhythmGroups2 = [];
+    accSound2 = defaultMetronomeAccSound2;
+    unaccSound2 = defaultMetronomeUnaccSound2;
+    polyAccSound2 = defaultMetronomePolyAccSound2;
+    polyUnaccSound2 = defaultMetronomePolyUnaccSound2;
+  }
+
   @override
   Widget get icon => MetronomeParams.icon;
+
+  bool get isSimpleModeSupported =>
+      _rhythmGroups2.isEmpty && _rhythmGroups.length == 1 && rhythmGroups[0].rhythm != null;
 
   factory MetronomeBlock.fromJson(Map<String, dynamic> json) => _$MetronomeBlockFromJson(json);
 

@@ -1,0 +1,51 @@
+name: Load Semantic Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release
+    outputs:
+      semver:
+        description: The current semantic version (e.g., 1.2.3)
+        value: ${{ jobs.load-semver.outputs.semver }}
+
+jobs:
+  load-semver:
+    name: Load semantic version
+    runs-on: ubuntu-latest
+    outputs:
+      semver: ${{ steps.semver.outputs.semver }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5.0.0
+      with:
+        ref: ${{ inputs.ref }}
+        fetch-depth: 0
+
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+
+    - name: Configure Git user
+      run: |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "GitHub Actions"
+
+    - name: Load semantic version
+      id: semver
+      run: |
+        source scripts/load-semver-from-latest-tag.sh
+        echo "semver=$SEMVER" >> "$GITHUB_OUTPUT"
+
+    - name: Report semantic version
+      run: |
+        echo "Current Semantic Version: **${{ steps.semver.outputs.semver }}**" >> $GITHUB_STEP_SUMMARY

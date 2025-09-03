@@ -17,17 +17,24 @@ class FilePickerLogDecorator implements FilePicker {
   }
 
   @override
-  Future<String?> pickAudio() async {
-    final absoluteFilePath = await _filePicker.pickAudio();
-    _logger.t('pickAudio(): ${shortenPath(absoluteFilePath)}');
-    return absoluteFilePath;
+  Future<List<String?>?> pickAudioFromFileSystem({required bool isMultipleAllowed}) async {
+    final absoluteFilePaths = await _filePicker.pickAudioFromFileSystem(isMultipleAllowed: isMultipleAllowed);
+    _logger.t('pickAudioFromAppFileSystem(): ${absoluteFilePaths?.map(shortenPath).join(", ")}');
+    return absoluteFilePaths;
   }
 
   @override
-  Future<String?> pickImage() async {
-    final absoluteFilePath = await _filePicker.pickImage();
-    _logger.t('pickImage(): ${shortenPath(absoluteFilePath)}');
-    return absoluteFilePath;
+  Future<List<String?>?> pickAudioFromMediaLibrary({required bool isMultipleAllowed}) async {
+    final absoluteFilePaths = await _filePicker.pickAudioFromMediaLibrary(isMultipleAllowed: isMultipleAllowed);
+    _logger.t('pickAudioFromMediaLibrary(): ${absoluteFilePaths?.map(shortenPath).join(", ")}');
+    return absoluteFilePaths;
+  }
+
+  @override
+  Future<List<String>> pickImages({required int limit}) async {
+    final absoluteFilePaths = await _filePicker.pickImages(limit: limit);
+    _logger.t('pickImages(): ${absoluteFilePaths.map(shortenPath).join(", ")}');
+    return absoluteFilePaths;
   }
 
   @override

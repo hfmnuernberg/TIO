@@ -1,23 +1,20 @@
 import 'dart:async';
-import 'package:audio_session/audio_session.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
+import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/pages/tuner/tuner_functions.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/services/audio_session.dart';
+import 'package:tiomusic/services/audio_system.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
-import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
-
-const double buttonWidth = 40;
-const double buttonPadding = 4;
-const defaultOctave = 4;
-const minOctave = 1;
-const maxOctave = 7;
+import 'package:tiomusic/widgets/tuner/chromatic_play_reference.dart';
+import 'package:tiomusic/widgets/tuner/instrument_play_reference.dart';
 
 class PlaySoundPage extends StatefulWidget {
   const PlaySoundPage({super.key});
@@ -27,89 +24,81 @@ class PlaySoundPage extends StatefulWidget {
 }
 
 class _PlaySoundPageState extends State<PlaySoundPage> {
-  final ActiveReferenceSoundButton _buttonListener = ActiveReferenceSoundButton();
-  int _octave = defaultOctave;
-  double _frequency = 0;
-  bool _running = false;
+  int? midi;
 
-  StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
+  late AudioSystem _as;
+  late AudioSession _audioSession;
+
+  AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
   @override
   void initState() {
     super.initState();
 
+    _as = context.read<AudioSystem>();
+    _audioSession = context.read<AudioSession>();
+    final wakelock = context.read<Wakelock>();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await TunerFunctions.stop();
-      _buttonListener.addListener(_onButtonsChanged);
+      await TunerFunctions.stop(_as, wakelock);
+      await TunerFunctions.startGenerator(_as, _audioSession);
+
+      await setupAudioInterruptionListener();
     });
   }
 
   @override
   void dispose() {
-    _buttonListener.removeListener(_onButtonsChanged);
-    audioInterruptionListener?.cancel();
-    TunerFunctions.stopGenerator();
+    if (_audioSessionInterruptionListenerHandle != null) {
+      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
+      _audioSessionInterruptionListenerHandle = null;
+    }
+    TunerFunctions.stopGenerator(_as);
     super.dispose();
   }
 
   @override
   void deactivate() {
     super.deactivate();
-    audioInterruptionListener?.cancel();
-    TunerFunctions.stopGenerator();
+    if (_audioSessionInterruptionListenerHandle != null) {
+      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
+      _audioSessionInterruptionListenerHandle = null;
+    }
+    TunerFunctions.stopGenerator(_as);
   }
 
-  List<Widget> _buildSoundButtons(List<int> midiNumbers, int startIdx, int offset) {
-    return List.generate(midiNumbers.length, (index) {
-      return SoundButton(
-        midiNumber: midiNumbers[index] + offset,
-        idx: startIdx + index,
-        buttonListener: _buttonListener,
-      );
+  Future<void> setupAudioInterruptionListener() async {
+    if (_audioSessionInterruptionListenerHandle != null) {
+      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
+      _audioSessionInterruptionListenerHandle = null;
+    }
+
+    _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(() {
+      TunerFunctions.stopGenerator(_as);
+      setState(() => midi = null);
     });
   }
 
-  void _onButtonsChanged() async {
-    if (_buttonListener.buttonOn) {
-      if (!_running) {
-        await TunerFunctions.startGenerator();
-        _running = true;
+  void handleToggle(int midiNumber) async {
+    final tunerBlock = context.read<ProjectBlock>() as TunerBlock;
+    final isSameButton = midi == midiNumber;
+    final isOn = midi != null;
 
-        audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
-          if (event.type == AudioInterruptionType.unknown) {
-            TunerFunctions.stopGenerator();
-            setState(() {
-              _running = false;
-              _buttonListener.turnOff();
-            });
-          }
-        });
-      }
-
-      if (_running) {
-        generatorNoteOn(newFreq: _buttonListener.freq);
-        setState(() => _frequency = _buttonListener.freq);
-      }
-    } else {
-      generatorNoteOff();
-      setState(() => _frequency = 0);
-    }
-  }
-
-  void _handleChange(newOctave) {
-    if (newOctave > _octave) {
-      setState(() => _frequency = _frequency * 2);
-    } else if (newOctave < _octave) {
-      setState(() => _frequency = _frequency / 2);
+    if (isOn && isSameButton) {
+      await _as.generatorNoteOff();
+      setState(() => midi = null);
+      return;
     }
 
-    setState(() => _octave = newOctave);
+    await _as.generatorNoteOn(newFreq: midiToFreq(midiNumber, concertPitch: tunerBlock.chamberNoteHz));
+    setState(() => midi = midiNumber);
   }
 
   @override
   Widget build(BuildContext context) {
-    int offset = (_octave - 1) * 12;
     final l10n = context.l10n;
+    final tunerBlock = context.read<ProjectBlock>() as TunerBlock;
+    final frequency = midi != null ? midiToFreq(midi!, concertPitch: tunerBlock.chamberNoteHz) : 0.0;
 
     return DismissKeyboard(
       child: Scaffold(
@@ -120,129 +109,16 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
           foregroundColor: ColorTheme.primary,
         ),
         backgroundColor: ColorTheme.primary92,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            NumberInputAndSliderInt(
-              value: _octave,
-              onChange: _handleChange,
-              min: minOctave,
-              max: maxOctave,
-              step: 1,
-              label: l10n.commonOctave,
-              textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
-            ),
-            const SizedBox(height: 40),
-
-            Text(
-              '${l10n.tunerFrequency}: ${l10n.formatNumber(double.parse(_frequency.toStringAsFixed(1)))} Hz',
-              style: const TextStyle(color: ColorTheme.primary),
-            ),
-            const SizedBox(height: 40),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ..._buildSoundButtons([25, 27], 0, offset),
-                SizedBox(width: buttonWidth + buttonPadding * 2),
-                ..._buildSoundButtons([30, 32, 34], 2, offset),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _buildSoundButtons([24, 26, 28, 29, 31, 33, 35], 5, offset),
-            ),
-          ],
-        ),
+        body:
+            tunerBlock.tunerType == TunerType.chromatic
+                ? ChromaticPlayReference(midi: midi, frequency: frequency, onToggle: handleToggle)
+                : InstrumentPlayReference(
+                  tunerType: tunerBlock.tunerType,
+                  midi: midi,
+                  frequency: frequency,
+                  onToggle: handleToggle,
+                ),
       ),
     );
-  }
-}
-
-class SoundButton extends StatefulWidget {
-  final int midiNumber;
-  final int idx;
-  final ActiveReferenceSoundButton buttonListener;
-
-  const SoundButton({super.key, required this.midiNumber, required this.idx, required this.buttonListener});
-
-  @override
-  State<SoundButton> createState() => _SoundButtonState();
-}
-
-class _SoundButtonState extends State<SoundButton> {
-  late double _concertPitch;
-
-  @override
-  void initState() {
-    super.initState();
-    _concertPitch = (Provider.of<ProjectBlock>(context, listen: false) as TunerBlock).chamberNoteHz;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: widget.buttonListener,
-      builder: (context, child) {
-        return Listener(
-          onPointerDown: (details) async {
-            setState(() {
-              if (widget.buttonListener.buttonOn) {
-                widget.buttonListener.turnOff();
-
-                if (widget.buttonListener.buttonIdx != widget.idx) {
-                  widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
-                }
-              } else {
-                widget.buttonListener.turnOn(widget.idx, midiToFreq(widget.midiNumber, concertPitch: _concertPitch));
-              }
-            });
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(buttonPadding),
-            child: Container(
-              width: buttonWidth,
-              height: 60,
-              decoration: BoxDecoration(
-                color:
-                    widget.buttonListener.buttonIdx == widget.idx && widget.buttonListener.buttonOn
-                        ? ColorTheme.primary
-                        : ColorTheme.surface,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Center(
-                child: Text(
-                  midiToNameOneChar(widget.midiNumber),
-                  style: TextStyle(
-                    color:
-                        widget.buttonListener.buttonIdx == widget.idx && widget.buttonListener.buttonOn
-                            ? ColorTheme.surface
-                            : ColorTheme.primary,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class ActiveReferenceSoundButton with ChangeNotifier {
-  int buttonIdx = 0;
-  bool buttonOn = false;
-  double freq = 0;
-
-  void turnOff() {
-    buttonOn = false;
-    notifyListeners();
-  }
-
-  void turnOn(int idx, double frequency) {
-    buttonOn = true;
-    buttonIdx = idx;
-    freq = frequency;
-    notifyListeners();
   }
 }

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -11,17 +10,17 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/sound_font.dart';
-import 'package:tiomusic/pages/parent_tool/parent_island_view.dart';
+import 'package:tiomusic/services/audio_session.dart';
+import 'package:tiomusic/widgets/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
 import 'package:tiomusic/pages/piano/set_concert_pitch.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
-import 'package:tiomusic/util/audio_util.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/sound_font_extension.dart';
+import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
@@ -44,12 +43,16 @@ class Piano extends StatefulWidget {
 }
 
 class _PianoState extends State<Piano> {
+  late AudioSystem _as;
+  late AudioSession _audioSession;
   late FileSystem _fs;
   late ProjectRepository _projectRepo;
 
+  bool _isHolding = false;
+
   late PianoBlock _pianoBlock;
   late double _concertPitch = _pianoBlock.concertPitch;
-  late String _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n);
+  late SoundFont _soundFont = SoundFont.values[_pianoBlock.soundFontIndex];
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
@@ -64,8 +67,12 @@ class _PianoState extends State<Piano> {
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyOctaveSwitch = GlobalKey();
   final GlobalKey _keySettings = GlobalKey();
+  final GlobalKey _keyIsland = GlobalKey();
+  final GlobalKey _keyBookmarkSave = GlobalKey();
+  final GlobalKey _keyChangeTitle = GlobalKey();
+  final GlobalKey _keyBookmarkShare = GlobalKey();
 
-  StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
+  AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
   bool _isPlaying = false;
 
   bool _dontStopOnLeave = false;
@@ -74,6 +81,8 @@ class _PianoState extends State<Piano> {
   void initState() {
     super.initState();
 
+    _as = context.read<AudioSystem>();
+    _audioSession = context.read<AudioSession>();
     _fs = context.read<FileSystem>();
     _projectRepo = context.read<ProjectRepository>();
 
@@ -97,43 +106,42 @@ class _PianoState extends State<Piano> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (context.read<ProjectLibrary>().showPianoTutorial) {
-        _createTutorial();
-        _tutorial.show(context);
-      }
+      _createTutorial();
+      _tutorial.show(context);
     });
   }
 
-  void _playNoteOn(int note) => pianoNoteOn(note: note);
+  void _playNoteOn(int note) => _as.pianoNoteOn(note: note);
 
-  void _playNoteOff(int note) => pianoNoteOff(note: note);
+  void _playNoteOff(int note) => _as.pianoNoteOff(note: note);
 
   Future<void> _pianoStart() async {
     if (_isPlaying) return;
-    audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
-      if (event.type == AudioInterruptionType.unknown) _pianoStop();
-    });
+    _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(_pianoStop);
 
     bool initSuccess = await _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
-    await configureAudioSession(AudioSessionType.playback);
+    await _audioSession.preparePlayback();
     if (!initSuccess) return;
 
     _pianoSetConcertPitch(_pianoBlock.concertPitch);
 
-    bool success = await pianoStart();
+    bool success = await _as.pianoStart();
     _isPlaying = success;
   }
 
   Future<void> _pianoStop() async {
-    await audioInterruptionListener?.cancel();
+    if (_audioSessionInterruptionListenerHandle != null) {
+      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
+      _audioSessionInterruptionListenerHandle = null;
+    }
     if (_isPlaying) {
-      await pianoStop();
+      await _as.pianoStop();
     }
     _isPlaying = false;
   }
 
   Future<void> _pianoSetConcertPitch(double concertPitch) async {
-    bool success = await pianoSetConcertPitch(newConcertPitch: concertPitch);
+    bool success = await _as.pianoSetConcertPitch(newConcertPitch: concertPitch);
 
     if (!success) {
       throw 'Rust library failed to update new concert pitch: $concertPitch';
@@ -141,27 +149,108 @@ class _PianoState extends State<Piano> {
   }
 
   void _createTutorial() {
+    final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
-      CustomTargetFocus(
-        _keyOctaveSwitch,
-        context.l10n.pianoTutorialChangeKeyOrOctave,
-        alignText: ContentAlign.right,
-        pointingDirection: PointingDirection.left,
-        shape: ShapeLightFocus.RRect,
-        pointerPosition: PointerPosition.left,
-        buttonsPosition: ButtonsPosition.bottomright,
-      ),
-      CustomTargetFocus(
-        _keySettings,
-        context.l10n.pianoTutorialAdjust,
-        alignText: ContentAlign.top,
-        pointingDirection: PointingDirection.down,
-        shape: ShapeLightFocus.RRect,
-        buttonsPosition: ButtonsPosition.bottomright,
-      ),
+      if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool)
+        CustomTargetFocus(
+          _keyBookmarkSave,
+          l10n.toolTutorialSave,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(
+            left: MediaQuery.of(context).size.width / 3,
+            right: MediaQuery.of(context).size.width / 3,
+          ),
+          pointingDirection: PointingDirection.right,
+          pointerOffset: -25,
+          buttonsPosition: ButtonsPosition.bottomright,
+        ),
+      if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool)
+        CustomTargetFocus(
+          _keyBookmarkShare,
+          l10n.appTutorialToolSave,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(
+            left: MediaQuery.of(context).size.width / 3,
+            right: MediaQuery.of(context).size.width / 3,
+          ),
+          pointingDirection: PointingDirection.right,
+          pointerOffset: -5,
+          buttonsPosition: ButtonsPosition.bottomright,
+        ),
+      if (context.read<ProjectLibrary>().showPianoTutorial)
+        CustomTargetFocus(
+          _keyChangeTitle,
+          l10n.toolTutorialEditTitle,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(
+            top: MediaQuery.of(context).size.height / 10,
+            left: MediaQuery.of(context).size.width / 4,
+            right: MediaQuery.of(context).size.width,
+          ),
+          pointingDirection: PointingDirection.up,
+          pointerOffset: -120,
+          shape: ShapeLightFocus.RRect,
+          buttonsPosition: ButtonsPosition.bottomright,
+        ),
+      if (context.read<ProjectLibrary>().showPianoTutorial)
+        CustomTargetFocus(
+          _keyOctaveSwitch,
+          l10n.pianoTutorialChangeKeyOrOctave,
+          alignText: ContentAlign.right,
+          pointerPosition: PointerPosition.right,
+          pointingDirection: PointingDirection.left,
+          shape: ShapeLightFocus.RRect,
+          buttonsPosition: ButtonsPosition.bottomright,
+        ),
+      if (context.read<ProjectLibrary>().showPianoTutorial)
+        CustomTargetFocus(
+          _keySettings,
+          l10n.pianoTutorialAdjust,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(
+            top: MediaQuery.of(context).size.height / 5,
+            left: MediaQuery.of(context).size.width / 3,
+            right: MediaQuery.of(context).size.width / 3,
+          ),
+          pointingDirection: PointingDirection.up,
+          shape: ShapeLightFocus.RRect,
+          buttonsPosition: ButtonsPosition.bottomright,
+        ),
+      if (context.read<ProjectLibrary>().showPianoIslandTutorial && !widget.isQuickTool)
+        CustomTargetFocus(
+          _keyIsland,
+          l10n.pianoTutorialIslandTool,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(
+            top: MediaQuery.of(context).size.height / 8,
+            left: MediaQuery.of(context).size.width / 2,
+            right: MediaQuery.of(context).size.width / 2,
+          ),
+          pointingDirection: PointingDirection.up,
+          pointerOffset: 120,
+          shape: ShapeLightFocus.RRect,
+          buttonsPosition: ButtonsPosition.bottomright,
+        ),
     ];
+
+    if (targets.isEmpty) return;
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showPianoTutorial = false;
+      if (context.read<ProjectLibrary>().showPianoTutorial) {
+        context.read<ProjectLibrary>().showPianoTutorial = false;
+      }
+
+      if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool) {
+        context.read<ProjectLibrary>().showQuickToolTutorial = false;
+      }
+
+      if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool) {
+        context.read<ProjectLibrary>().showToolTutorial = false;
+      }
+
+      if (context.read<ProjectLibrary>().showPianoIslandTutorial && !widget.isQuickTool) {
+        context.read<ProjectLibrary>().showPianoIslandTutorial = false;
+      }
+
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
@@ -187,7 +276,7 @@ class _PianoState extends State<Piano> {
     final byteData = await rootBundle.load(soundFontPath);
     final bytes = byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
     await _fs.saveFileAsBytes(tempSoundFontPath, bytes);
-    return pianoSetup(soundFontPath: tempSoundFontPath);
+    return _as.pianoSetup(soundFontPath: tempSoundFontPath);
   }
 
   Future<void> handleOnOpenPitch() async {
@@ -206,10 +295,10 @@ class _PianoState extends State<Piano> {
         initialValue: _pianoBlock.volume,
         onConfirm: (vol) {
           _pianoBlock.volume = vol;
-          pianoSetVolume(volume: vol);
+          _as.pianoSetVolume(volume: vol);
         },
-        onChange: (vol) => pianoSetVolume(volume: vol),
-        onCancel: () => pianoSetVolume(volume: _pianoBlock.volume),
+        onChange: (vol) => _as.pianoSetVolume(volume: vol),
+        onCancel: () => _as.pianoSetVolume(volume: _pianoBlock.volume),
       ),
       callbackOnReturn: (_) => setState(() {}),
       context,
@@ -220,8 +309,10 @@ class _PianoState extends State<Piano> {
   Future<void> handleOnOpenSound() async {
     await openSettingPage(const ChooseSound(), context, _pianoBlock);
     _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
-    setState(() => _instrumentName = SoundFont.values[_pianoBlock.soundFontIndex].getLabel(context.l10n));
+    setState(() => _soundFont = SoundFont.values[_pianoBlock.soundFontIndex]);
   }
+
+  void handleToggleHold() => setState(() => _isHolding = !_isHolding);
 
   @override
   Widget build(BuildContext context) {
@@ -287,6 +378,7 @@ class _PianoState extends State<Piano> {
                     setState(() {});
                   },
                   child: Column(
+                    key: _keyChangeTitle,
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -297,7 +389,7 @@ class _PianoState extends State<Piano> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        '${l10n.formatNumber(_concertPitch)} Hz – $_instrumentName',
+                        '${l10n.formatNumber(_concertPitch)} Hz – ${_soundFont.getLabel(l10n)}',
                         style: const TextStyle(color: ColorTheme.primary),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -309,6 +401,7 @@ class _PianoState extends State<Piano> {
 
               // island
               SizedBox(
+                key: _keyIsland,
                 height: ParentToolParams.islandHeight,
                 width: islandWidth,
                 child: ParentIslandView(project: project, toolBlock: _pianoBlock),
@@ -317,6 +410,7 @@ class _PianoState extends State<Piano> {
                 children: [
                   // save button
                   IconButton(
+                    key: widget.isQuickTool ? _keyBookmarkSave : _keyBookmarkShare,
                     onPressed: () {
                       setState(() {
                         _showSavingPage = true;
@@ -340,6 +434,9 @@ class _PianoState extends State<Piano> {
                 children: [
                   if (widget.isQuickTool)
                     PianoNavigationBar(
+                      keyOctaveSwitch: _keyOctaveSwitch,
+                      keySettings: _keySettings,
+                      isHolding: _isHolding,
                       onOctaveDown: _pianoBlock.octaveDown,
                       onToneDown: _pianoBlock.toneDown,
                       onToneUp: _pianoBlock.toneUp,
@@ -347,10 +444,14 @@ class _PianoState extends State<Piano> {
                       onOpenPitch: handleOnOpenPitch,
                       onOpenVolume: handleOnOpenVolume,
                       onOpenSound: handleOnOpenSound,
+                      onToggleHold: _soundFont.canHold ? handleToggleHold : null,
                     )
                   else
                     PianoToolNavigationBar(
                       project: project!,
+                      keyOctaveSwitch: _keyOctaveSwitch,
+                      keySettings: _keySettings,
+                      isHolding: _isHolding,
                       toolBlock: _pianoBlock,
                       onOctaveDown: _pianoBlock.octaveDown,
                       onToneDown: _pianoBlock.toneDown,
@@ -359,6 +460,7 @@ class _PianoState extends State<Piano> {
                       onOpenPitch: handleOnOpenPitch,
                       onOpenVolume: handleOnOpenVolume,
                       onOpenSound: handleOnOpenSound,
+                      onToggleHold: _soundFont.canHold ? handleToggleHold : null,
                     ),
 
                   Positioned(
@@ -377,6 +479,7 @@ class _PianoState extends State<Piano> {
                           final pianoBlock = projectBlock as PianoBlock;
                           return Keyboard(
                             lowestNote: pianoBlock.keyboardPosition,
+                            isHolding: _isHolding,
                             onPlay: _playNoteOn,
                             onRelease: _playNoteOff,
                           );

@@ -16,12 +16,6 @@ extension WidgetTesterPumpExtension on WidgetTester {
     await testTextInput.receiveAction(TextInputAction.done);
     await pumpAndSettle();
   }
-
-  Future<void> dragFromCenterToTargetAndSettle(FinderBase<Element> finder, Offset to) async {
-    final Offset widgetCenter = getCenter(finder);
-    await dragFrom(widgetCenter, to);
-    await pumpAndSettle();
-  }
 }
 
 class TestWrapper extends StatefulWidget {

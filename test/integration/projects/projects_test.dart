@@ -1,70 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
-import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/projects_page/projects_page.dart';
-import 'package:tiomusic/services/decorators/file_references_log_decorator.dart';
-import 'package:tiomusic/services/decorators/file_system_log_decorator.dart';
-import 'package:tiomusic/services/decorators/media_repository_log_decorator.dart';
-import 'package:tiomusic/services/decorators/project_repository_log_decorator.dart';
-import 'package:tiomusic/services/file_references.dart';
-import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/services/impl/file_based_media_repository.dart';
-import 'package:tiomusic/services/impl/file_based_project_repository.dart';
-import 'package:tiomusic/services/impl/file_references_impl.dart';
-import 'package:tiomusic/services/media_repository.dart';
-import 'package:tiomusic/services/project_repository.dart';
+import 'package:tiomusic/widgets/card_list_tile.dart';
 
-import '../../mocks/in_memory_file_system_mock.dart';
 import '../../utils/action_utils.dart';
 import '../../utils/render_utils.dart';
 import '../../utils/project_utils.dart';
-
-extension WidgetTesterPumpExtension on WidgetTester {
-  Future<void> dragFromCenterToTargetAndSettle(FinderBase<Element> finder, Offset to) async {
-    final Offset widgetCenter = getCenter(finder);
-    await dragFrom(widgetCenter, to);
-    await pumpAndSettle();
-  }
-}
+import '../../utils/test_context.dart';
 
 void main() {
-  late List<SingleChildWidget> providers;
+  late TestContext context;
 
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   setUp(() async {
-    final fileSystem = FileSystemLogDecorator(InMemoryFileSystemMock());
-    final mediaRepo = MediaRepositoryLogDecorator(FileBasedMediaRepository(fileSystem));
-    final projectRepo = ProjectRepositoryLogDecorator(FileBasedProjectRepository(fileSystem));
-    final fileReferences = FileReferencesLogDecorator(FileReferencesImpl(mediaRepo));
-
-    await fileSystem.init();
-    await mediaRepo.init();
-    final projectLibrary =
-        projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults()
-          ..dismissAllTutorials();
-    await projectRepo.saveLibrary(projectLibrary);
-    await fileReferences.init(projectLibrary);
-
-    providers = [
-      Provider<FileSystem>(create: (_) => fileSystem),
-      Provider<MediaRepository>(create: (_) => mediaRepo),
-      Provider<ProjectRepository>(create: (_) => projectRepo),
-      Provider<FileReferences>(create: (_) => fileReferences),
-      ChangeNotifierProvider<ProjectLibrary>.value(value: projectLibrary),
-    ];
+    context = TestContext();
+    await context.init();
   });
 
   testWidgets('shows no projects initially', (tester) async {
-    await tester.renderScaffold(ProjectsPage(), providers);
+    await tester.renderScaffold(ProjectsPage(), context.providers);
 
     expect(find.bySemanticsLabel('Please click on "+" to create a new project.'), findsOneWidget);
   });
 
   testWidgets('shows one project when one project was added', (tester) async {
-    await tester.renderScaffold(ProjectsPage(), providers);
+    await tester.renderScaffold(ProjectsPage(), context.providers);
 
     await tester.createProject('Project 1');
 
@@ -73,7 +34,7 @@ void main() {
   });
 
   testWidgets('deletes project when project was deleted', (tester) async {
-    await tester.renderScaffold(ProjectsPage(), providers);
+    await tester.renderScaffold(ProjectsPage(), context.providers);
 
     await tester.createProject('Project 1');
     await tester.tapAndSettle(find.byTooltip('Projects menu'));
@@ -86,27 +47,26 @@ void main() {
   });
 
   testWidgets('changes order when project is moved during editing', (tester) async {
-    await tester.renderScaffold(ProjectsPage(), providers);
+    await tester.renderScaffold(ProjectsPage(), context.providers);
     await tester.createProject('Project 1');
     await tester.createProject('Project 2');
 
-    final projectList = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
-    final projectTitles = projectList.map((project) => (project.title! as Text).data).toList();
-
+    final projects = tester.widgetList<CardListTile>(find.byType(CardListTile)).toList();
+    final projectTitles = projects.map((tile) => tile.title).toList();
     expect(projectTitles, equals(['Project 2', 'Project 1']));
 
     await tester.tapAndSettle(find.byTooltip('Projects menu'));
     await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
     await tester.dragFromCenterToTargetAndSettle(find.byTooltip('Reorder').first, const Offset(0, 500));
 
-    final updatedProjectList = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
-    final updatedProjectTitles = updatedProjectList.map((project) => (project.title! as Text).data).toList();
+    final updatedProjects = tester.widgetList<CardListTile>(find.byType(CardListTile)).toList();
+    final updatedProjectTitles = updatedProjects.map((tile) => tile.title).toList();
 
     expect(updatedProjectTitles, equals(['Project 1', 'Project 2']));
   });
 
   testWidgets('does not change order when project is moved too less during editing', (tester) async {
-    await tester.renderScaffold(ProjectsPage(), providers);
+    await tester.renderScaffold(ProjectsPage(), context.providers);
     await tester.createProject('Project 1');
     await tester.createProject('Project 2');
 
@@ -114,8 +74,8 @@ void main() {
     await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
     await tester.dragFromCenterToTargetAndSettle(find.byTooltip('Reorder').first, const Offset(0, 10));
 
-    final projectList = tester.widgetList<ListTile>(find.byType(ListTile)).toList();
-    final projectTitles = projectList.map((project) => (project.title! as Text).data).toList();
+    final projects = tester.widgetList<CardListTile>(find.byType(CardListTile)).toList();
+    final projectTitles = projects.map((tile) => tile.title).toList();
 
     expect(projectTitles, equals(['Project 2', 'Project 1']));
   });

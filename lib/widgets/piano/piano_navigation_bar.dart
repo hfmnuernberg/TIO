@@ -5,6 +5,9 @@ import 'package:tiomusic/widgets/piano/piano_settings_button_group.dart';
 import 'package:tiomusic/widgets/tio_icon_button.dart';
 
 class PianoNavigationBar extends StatelessWidget {
+  final GlobalKey keyOctaveSwitch;
+  final GlobalKey keySettings;
+  final bool isHolding;
   final Widget? prevToolIcon;
   final Widget? nextToolIcon;
   final Widget? toolOfSameTypeIcon;
@@ -23,8 +26,13 @@ class PianoNavigationBar extends StatelessWidget {
   final VoidCallback onOpenVolume;
   final VoidCallback onOpenSound;
 
+  final VoidCallback? onToggleHold;
+
   const PianoNavigationBar({
     super.key,
+    required this.keyOctaveSwitch,
+    required this.keySettings,
+    required this.isHolding,
     this.prevToolIcon,
     this.nextToolIcon,
     this.toolOfSameTypeIcon,
@@ -39,6 +47,7 @@ class PianoNavigationBar extends StatelessWidget {
     required this.onOpenPitch,
     required this.onOpenVolume,
     required this.onOpenSound,
+    this.onToggleHold,
   });
 
   @override
@@ -61,12 +70,19 @@ class PianoNavigationBar extends StatelessWidget {
               onPrevToolOfSameType: onPrevToolOfSameType,
             ),
 
-            ShiftKeysLeftButtonGroup(onToneDown: onToneDown, onOctaveDown: onOctaveDown),
+            ShiftKeysLeftButtonGroup(key: keyOctaveSwitch, onToneDown: onToneDown, onOctaveDown: onOctaveDown),
 
             if (!prevToolExists) Placeholder(),
             if (!prevToolOfSameTypeExists) Placeholder(),
 
-            PianoSettingsButtonGroup(onOpenPitch: onOpenPitch, onOpenVolume: onOpenVolume, onOpenSound: onOpenSound),
+            PianoSettingsButtonGroup(
+              key: keySettings,
+              isHolding: isHolding,
+              onOpenPitch: onOpenPitch,
+              onOpenVolume: onOpenVolume,
+              onOpenSound: onOpenSound,
+              onToggleHold: onToggleHold,
+            ),
 
             if (!nextToolOfSameTypeExists) Placeholder(),
             if (!nextToolExists) Placeholder(),

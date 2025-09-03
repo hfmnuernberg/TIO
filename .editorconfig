@@ -3,18 +3,18 @@ root = true
 
 [*]
 charset = utf-8
-indent_style = space
-indent_size = 2
-tab_width = 2
-max_line_length = 120
-trim_trailing_whitespace = true
-insert_final_newline = true
 end_of_line = lf
+indent_size = 2
+indent_style = space
+insert_final_newline = true
+max_line_length = 120
+tab_width = 2
+trim_trailing_whitespace = true
 
 [*.md]
 trim_trailing_whitespace = false
 
-[{*.yaml,*.yml,pubspec.lock}]
+[{*.yaml,*.yml}]
 ij_yaml_align_values_properties = do_not_align
 ij_yaml_autoinsert_sequence_marker = true
 ij_yaml_block_mapping_on_new_line = false

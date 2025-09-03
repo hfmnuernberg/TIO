@@ -33,9 +33,11 @@ class Tutorial {
       hideSkip: true,
       pulseEnable: false,
       onFinish: () {
+        _tutorialCoachMark = null;
         onFinish();
       },
       onSkip: () {
+        _tutorialCoachMark = null;
         final projectLibrary = context.read<ProjectLibrary>();
         projectLibrary.dismissAllTutorials();
         unawaited(context.read<ProjectRepository>().saveLibrary(projectLibrary));

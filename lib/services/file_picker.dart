@@ -1,7 +1,8 @@
 mixin FilePicker {
-  Future<String?> pickAudio();
+  Future<List<String?>?> pickAudioFromFileSystem({required bool isMultipleAllowed});
+  Future<List<String?>?> pickAudioFromMediaLibrary({required bool isMultipleAllowed});
   Future<String?> pickArchive();
-  Future<String?> pickImage();
+  Future<List<String>> pickImages({required int limit});
   Future<String?> pickTextFile();
 
   Future<bool> shareFile(String absoluteFilePath);

@@ -85,11 +85,12 @@ class MediaPlayerParams {
   static const double defaultRangeStart = 0;
   static const double defaultRangeEnd = 1;
   static const String defaultPath = '';
-  static const bool defaultLooping = false;
+  static const bool defaultRepeat = false;
 
   static const double binWidth = 8;
 
   static const double markerIconSize = 36;
+  static const double markerButton = 52;
 
   static const Icon icon = Icon(Icons.play_arrow, color: ColorTheme.primary);
 }
@@ -117,8 +118,6 @@ class MetronomeParams {
 
   static const String svgIconPath = 'assets/icons/Metronome.svg';
 
-  static const int beatDetectionDurationMillis = 10;
-
   // General parameters
 
   // Default BPM value
@@ -141,15 +140,10 @@ class MetronomeParams {
   static const List<BeatTypePoly> defaultPolyBeats = [];
   static const String defaultNoteKey = NoteValues.quarter;
 
-  // Turn visual metronome on/off by default
-  static const bool defaultVisualMetronome = false;
-
   // Maximum BPM value
   static const int maxBPM = 500;
   // Minimum BPM value
   static const int minBPM = 10;
-  // Duration of Blackscreen in ms when visual metronome is enabled
-  static const int flashDurationInMs = 100;
 
   // BPM input
 
@@ -236,6 +230,7 @@ class TextParams {
 
 enum BlockType { tuner, metronome, mediaPlayer, image, piano, text }
 
+// TODO(TIO-278): merge into BlockType enum
 class BlockTypeInfo {
   BlockTypeInfo(
     this.name,

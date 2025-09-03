@@ -7,17 +7,25 @@ on:
         required: true
         type: string
         description: The commit SHA, tag or release
-      version:
+      semver:
         required: true
         type: string
-        description: The version
-      googlePlayStoreUrl:
+        description: The semantic version to use (e.g., 1.2.3)
+      build_number:
         required: true
         type: string
-        description: The google play store URL
+        description: The build number to use (e.g., 456)
+      target_env:
+        required: true
+        type: string
+        description: The target environment to build for (e.g. dev, prd)
+      google_play_store_url:
+        required: true
+        type: string
+        description: The Google Play Store URL
 
 concurrency:
-  group: android-${{ inputs.version }}
+  group: android-${{ inputs.target_env }}-${{ inputs.semver }}+${{ inputs.build_number }}
   cancel-in-progress: true
 
 jobs:
@@ -25,30 +33,31 @@ jobs:
     name: Upload Android App
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    environment: production
+    environment: ${{ inputs.target_env }}
     permissions:
       deployments: write
       id-token: write
       contents: read
-    env:
-      GOOGLE_PLAY_STORE_URL: ${{ inputs.googlePlayStoreUrl }}
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v5.0.0
       with:
         ref: ${{ inputs.ref }}
 
+    - name: Make scripts executable
+      run: chmod +x scripts/*.sh
+
     - name: Restore bundle
-      uses: actions/download-artifact@v4.3.0
+      uses: actions/download-artifact@v5.0.0
       with:
-        name: android-${{ inputs.version }}
-        path: build/app/outputs/bundle/release
+        name: android-${{ inputs.target_env }}-${{ inputs.semver }}+${{ inputs.build_number }}
+        path: build/app/outputs/bundle/${{ inputs.target_env }}Release
 
     - name: Setup ruby
-      uses: ruby/setup-ruby@v1.244.0
+      uses: ruby/setup-ruby@v1.257.0
       with:
-        ruby-version: '3.3'
+        ruby-version: 3.3
         working-directory: android
         bundler-cache: true
 
@@ -56,40 +65,40 @@ jobs:
       uses: chrnorm/deployment-action@v2.0.7
       id: deployment
       with:
-        token: '${{ github.token }}'
-        environment-url: ${{ env.GOOGLE_PLAY_STORE_URL }}
-        environment: production
+        token: ${{ github.token }}
+        environment-url: ${{ inputs.google_play_store_url }}
+        environment: ${{ inputs.target_env }}
 
     - name: Decrypt service-account.json file
       uses: timheuer/base64-to-file@v1.2.4
       with:
-        fileName: 'service_account.json'
-        fileDir: './android'
+        fileName: service_account.json
+        fileDir: ./android
         encodedString: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
 
     - name: Prepare version
-      run: scripts/set-version-in-pubspec.sh ${{ inputs.version }}
+      run: scripts/set-version-in-pubspec.sh "${{ inputs.semver }}+${{ inputs.build_number }}"
 
     - name: Upload bundle
       uses: maierj/fastlane-action@v3.1.0
       with:
-        lane: push_to_store
+        lane: ${{ inputs.target_env }}_push_to_store
         subdirectory: android
 
     - name: Update deployment status (success)
       if: success()
       uses: chrnorm/deployment-status@v2.0.3
       with:
-        token: '${{ github.token }}'
-        environment-url: ${{ env.GOOGLE_PLAY_STORE_URL }}
-        state: 'success'
+        token: ${{ github.token }}
+        environment-url: ${{ inputs.google_play_store_url }}
+        state: success
         deployment-id: ${{ steps.deployment.outputs.deployment_id }}
 
     - name: Update deployment status (failure)
       if: failure()
       uses: chrnorm/deployment-status@v2.0.3
       with:
-        token: '${{ github.token }}'
-        environment-url: ${{ env.GOOGLE_PLAY_STORE_URL }}
-        state: 'failure'
+        token: ${{ github.token }}
+        environment-url: ${{ inputs.google_play_store_url }}
+        state: failure
         deployment-id: ${{ steps.deployment.outputs.deployment_id }}
