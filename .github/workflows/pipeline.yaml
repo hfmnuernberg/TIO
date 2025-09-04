@@ -58,8 +58,10 @@ jobs:
     secrets: inherit
     with:
       ref: ${{ github.sha }}
-      semver: ${{ needs.load-semver.outputs.semver }}
-      build_number: ${{ needs.bump-build-number.outputs.new_build_number }}
+#      semver: ${{ needs.load-semver.outputs.semver }}
+      semver: 1.2.3
+#      build_number: ${{ needs.bump-build-number.outputs.new_build_number }}
+      build_number: 42
       target_env: prd
 
 #  upload-ios-app:
