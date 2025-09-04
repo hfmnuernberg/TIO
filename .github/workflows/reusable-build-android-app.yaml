@@ -110,10 +110,10 @@ jobs:
         GRADLE_OPTS: -Xmx4g -Dorg.gradle.jvmargs='-Xmx4g -XX:MaxMetaspaceSize=512m'
         JAVA_TOOL_OPTIONS: -Xmx4g
 
-#    - name: Save bundle
-#      uses: actions/upload-artifact@v4.6.2
-#      with:
-#        name: android-${{ inputs.target_env }}-${{ inputs.semver }}+${{ inputs.build_number }}
-#        path: build/app/outputs/bundle/${{ inputs.target_env }}Release
-#        retention-days: 1
-#        if-no-files-found: error
+    - name: Save bundle
+      uses: actions/upload-artifact@v4.6.2
+      with:
+        name: android-${{ inputs.target_env }}-${{ inputs.semver }}+${{ inputs.build_number }}
+        path: build/app/outputs/bundle/${{ inputs.target_env }}Release
+        retention-days: 1
+        if-no-files-found: error
