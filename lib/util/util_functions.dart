@@ -44,7 +44,7 @@ String formatSettingValues(List<Object> settingValues) {
 // ---------------------------------------------------------------
 // open setting page with the correct provider
 
-void _emptyFunction(value) {}
+void _emptyFunction() {}
 
 Future<dynamic> openSettingPage(
   Widget settingPage,
