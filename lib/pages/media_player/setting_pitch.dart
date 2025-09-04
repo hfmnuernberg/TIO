@@ -31,7 +31,7 @@ class _SetPitchState extends State<SetPitch> {
     pitch = _mediaPlayerBlock.pitchSemitones;
   }
 
-  Future<void> _updatePitch(newPitch) async {
+  Future<void> _updatePitch(double newPitch) async {
     final success = await mediaPlayerSetPitchSemitones(pitchSemitones: newPitch);
     if (!success) {
       throw 'Setting pitch semitones in rust failed using value: $newPitch';

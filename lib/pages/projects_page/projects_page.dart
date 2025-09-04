@@ -235,7 +235,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         .then(doActionOnReturn);
   }
 
-  void doActionOnReturn(returnValue) {
+  void doActionOnReturn(Object? returnValue) {
     setState(() {});
 
     if (returnValue is Map) {

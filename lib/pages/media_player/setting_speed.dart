@@ -17,7 +17,7 @@ const minSpeedFactor = 0.1;
 const maxSpeedFactor = 10.0;
 const step = 0.1;
 
-double getSpeedForBpm(bpm, baseBpm) =>
+double getSpeedForBpm(int bpm, int baseBpm) =>
     ((bpm / baseBpm).clamp(minSpeedFactor, maxSpeedFactor) * 10).roundToDouble() / 10;
 
 int getBpmForSpeed(double speedFactor, int baseBpm) =>
