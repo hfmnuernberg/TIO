@@ -288,7 +288,7 @@ _Note: The following steps follow the instructions, outlined [here](https://docs
 Ensure your `build.gradle` file contains the following code to read the release config properties from environment variables:
 
 ```shell
-cripts/prepare-android-config.sh
+  scripts/prepare-android-config.sh
 ```
 
 ```gradle
