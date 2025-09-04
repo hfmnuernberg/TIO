@@ -27,7 +27,7 @@ import 'package:tiomusic/widgets/confirm_setting_button.dart';
 // ---------------------------------------------------------------
 // format the settings into Text that can be displayed
 
-String formatSettingValues(List settingValues) {
+String formatSettingValues(List<Object> settingValues) {
   final buffer = StringBuffer();
   bool firstTime = true;
   for (final settingValue in settingValues) {
@@ -44,7 +44,7 @@ String formatSettingValues(List settingValues) {
 // ---------------------------------------------------------------
 // open setting page with the correct provider
 
-void _emptyFunction(value) {}
+void _emptyFunction() {}
 
 Future<dynamic> openSettingPage(
   Widget settingPage,

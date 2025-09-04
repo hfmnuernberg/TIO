@@ -16,7 +16,8 @@ class OnRhythmUpdateMock extends Mock {
   void verifyCalledWith({required RhythmGroup rhythmGroup}) => verify(() => onUpdate(rhythmGroup)).called(1);
 }
 
-RhythmGroup rhythmGroup(beats, polyBeats) => RhythmGroup('', beats, polyBeats, NoteValues.quarter);
+RhythmGroup rhythmGroup(List<BeatType> beats, List<BeatTypePoly> polyBeats) =>
+    RhythmGroup('', beats, polyBeats, NoteValues.quarter);
 
 void main() {
   setUpAll(() async {
