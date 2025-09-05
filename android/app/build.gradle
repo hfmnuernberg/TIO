@@ -109,23 +109,27 @@ flutter {
 ].each {
     def taskPostfix = it.key
     def profileMode = it.value
-    tasks.whenTaskAdded { task ->
-        if (task.name == "javaPreCompile$taskPostfix") {
-            task.dependsOn "cargoBuild$taskPostfix"
-        }
+    tasks.register("cargoBuild${taskPostfix}", Exec) {
+      workingDir "../../rust"
+      commandLine 'cargo',
+              'ndk',
+              '-t', 'armeabi-v7a',
+              '-t', 'arm64-v8a',
+              '-t', 'x86_64',
+              '-o', '../android/app/src/main/jniLibs',
+              'build'
+      if (profileMode != null) {
+          args profileMode
+      }
     }
-    tasks.register("cargoBuild$taskPostfix", Exec) {
-        workingDir "../../rust"
-        commandLine 'cargo',
-                'ndk',
-                '-t', 'armeabi-v7a',
-                '-t', 'arm64-v8a',
-                '-t', 'x86',
-                '-t', 'x86_64',
-                '-o', '../android/app/src/main/jniLibs',
-                'build'
-        if (profileMode != null) {
-            args profileMode
-        }
+
+  afterEvaluate {
+    android.applicationVariants.all { variant ->
+      def variantCap = variant.name.capitalize()
+      def btCap = variant.buildType.name.capitalize()
+      tasks.named("pre${variantCap}Build").configure {
+        dependsOn "cargoBuild${btCap}"
+      }
     }
+  }
 }

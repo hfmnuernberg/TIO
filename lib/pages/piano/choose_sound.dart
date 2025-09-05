@@ -29,11 +29,7 @@ class _ChooseSoundState extends State<ChooseSound> {
 
     _pianoBlock = Provider.of<ProjectBlock>(context, listen: false) as PianoBlock;
 
-    for (var i = 0; i < _selectedSounds.length; i++) {
-      if (i == _pianoBlock.soundFontIndex) {
-        _selectedSounds[i] = true;
-      }
-    }
+    _selectedSounds[_pianoBlock.soundFontIndex] = true;
   }
 
   @override
