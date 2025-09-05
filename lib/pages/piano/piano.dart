@@ -148,6 +148,19 @@ class _PianoState extends State<Piano> {
     }
   }
 
+  Future<void> _reloadSoundFont() async {
+    await _pianoStop();
+
+    final newSf = SoundFont.values[_pianoBlock.soundFontIndex];
+    if (!await _initPiano(newSf.file)) return;
+
+    await _audioSession.preparePlayback();
+    await _pianoSetConcertPitch(_pianoBlock.concertPitch);
+    _isPlaying = await _as.pianoStart();
+
+    if (mounted) setState(() => _soundFont = newSf);
+  }
+
   void _createTutorial() {
     final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
@@ -283,9 +296,9 @@ class _PianoState extends State<Piano> {
   Future<void> handleOnOpenPitch() async {
     await openSettingPage(
       SetConcertPitch(),
-      callbackOnReturn: (_) => _pianoSetConcertPitch(_pianoBlock.concertPitch),
       context,
       _pianoBlock,
+      callbackOnReturn: (_) => _pianoSetConcertPitch(_pianoBlock.concertPitch),
     );
     setState(() => _concertPitch = _pianoBlock.concertPitch);
   }
@@ -301,16 +314,14 @@ class _PianoState extends State<Piano> {
         onChange: (vol) => _as.pianoSetVolume(volume: vol),
         onCancel: () => _as.pianoSetVolume(volume: _pianoBlock.volume),
       ),
-      callbackOnReturn: (_) => setState(() {}),
       context,
       _pianoBlock,
+      callbackOnReturn: (_) => setState(() {}),
     );
   }
 
   Future<void> handleOnOpenSound() async {
-    await openSettingPage(const ChooseSound(), context, _pianoBlock);
-    _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
-    setState(() => _soundFont = SoundFont.values[_pianoBlock.soundFontIndex]);
+    await openSettingPage(const ChooseSound(), context, _pianoBlock, callbackOnReturn: (_) => _reloadSoundFont());
   }
 
   void handleToggleHold() => setState(() => _isHolding = !_isHolding);
