@@ -5,7 +5,7 @@
 
 1. [Important notes](#important-notes)
 2. [Which version to choose?](#latest-stable-or-latest-stable-with-edition-support)
-   - [Updating MSRV to latest stable](#updating-msrv-to-latest-stable-example-1890-upcoming-edition-202425) VS [latest stable with Edition support](#update-to-latest-stable-or-latest-stable-with-edition-support)
+   - Updating MSRV to [latest stable](#updating-msrv-to-latest-stable-example-1890-upcoming-edition-202425) VS [latest stable with Edition support](#updating-msrv-to-latest-stable-with-edition-support-example-1850-for-edition-2024)
    - [Rule of thumb](#rule-of-thumb)
 3. [Update Rust (Rust version, Edition, Toolchain, Flutter/FRB side, re-resolve deps)](#update-rust)
 
@@ -53,7 +53,7 @@ Cons
 2. Check the latest edition of Rust on the [Rust editions page](https://doc.rust-lang.org/edition-guide/editions/index.html).
 
 _Note:_
-- The edition matters because crates using e.g., edition = "2024" require a compiler ≥1.85.
+- The edition is updated as last step, after updating the Rust version. This is because the edition can be updated independently of the Rust version, but newer editions require a minimum Rust version (e.g., edition = "2024" require a compiler ≥1.85).
 - Rust editions are mostly about syntax and linting changes. The edition can be specified in the `Cargo.toml` file.
 
 3. Check the currently installed Rust version by running:
@@ -155,22 +155,19 @@ cargo +1.85.0 test --workspace
 
 13. Flutter/FRB side
 
-- No changes required just for MSRV. Regenerate FRB bindings only if you changed Rust APIs (e.g., linting, changed function signatures, added/removed functions):
-
-In root folder run:
+In rust folder, run this to install the CLIs (one-time / when upgrading):
 
 ```shell
-fvm dart run flutter_rust_bridge:frb_codegen
+cargo install flutter_rust_bridge_codegen cargo-ndk
 ```
 
-or in rust folder run:
+Then run this, to actually create/update the bindings:
 
 ```shell
-cd rust
-cargo +1.85.0 run --bin generate_bindings
+flutter_rust_bridge_codegen generate
 ```
 
-14. Update Edition (if you haven’t already and new Edition is desired):
+14. Update Edition (when new Edition is available):
 
 **Important:**
 - Commit first, because it throws an error if uncommitted changes are present.

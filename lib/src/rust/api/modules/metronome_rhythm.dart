@@ -12,20 +12,20 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 // These functions are ignored (category: IgnoreBecauseExplicitAttribute): `get_next_events`, `new`, `reset_playhead`
 
 enum BeatSound {
-  Accented,
-  Accented2,
-  Unaccented,
-  Unaccented2,
-  PolyAccented,
-  PolyAccented2,
-  PolyUnaccented,
-  PolyUnaccented2,
-  Muted,
+  accented,
+  accented2,
+  unaccented,
+  unaccented2,
+  polyAccented,
+  polyAccented2,
+  polyUnaccented,
+  polyUnaccented2,
+  muted,
 }
 
-enum BeatType { Accented, Unaccented, Muted }
+enum BeatType { accented, unaccented, muted }
 
-enum BeatTypePoly { Accented, Unaccented, Muted }
+enum BeatTypePoly { accented, unaccented, muted }
 
 class MetroBar {
   final int id;
@@ -33,10 +33,16 @@ class MetroBar {
   final List<BeatTypePoly> polyBeats;
   final double beatLen;
 
-  const MetroBar({required this.id, required this.beats, required this.polyBeats, required this.beatLen});
+  const MetroBar({
+    required this.id,
+    required this.beats,
+    required this.polyBeats,
+    required this.beatLen,
+  });
 
   @override
-  int get hashCode => id.hashCode ^ beats.hashCode ^ polyBeats.hashCode ^ beatLen.hashCode;
+  int get hashCode =>
+      id.hashCode ^ beats.hashCode ^ polyBeats.hashCode ^ beatLen.hashCode;
 
   @override
   bool operator ==(Object other) =>

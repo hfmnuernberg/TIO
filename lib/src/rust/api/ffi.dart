@@ -9,98 +9,98 @@ import 'modules/metronome.dart';
 import 'modules/metronome_rhythm.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-Future<void> initAudio() => RustLib.instance.api.crateApiApiInitAudio();
+Future<void> initAudio() => RustLib.instance.api.crateApiFfiInitAudio();
 
 Future<double?> tunerGetFrequency() =>
-    RustLib.instance.api.crateApiApiTunerGetFrequency();
+    RustLib.instance.api.crateApiFfiTunerGetFrequency();
 
-Future<bool> tunerStart() => RustLib.instance.api.crateApiApiTunerStart();
+Future<bool> tunerStart() => RustLib.instance.api.crateApiFfiTunerStart();
 
-Future<bool> tunerStop() => RustLib.instance.api.crateApiApiTunerStop();
+Future<bool> tunerStop() => RustLib.instance.api.crateApiFfiTunerStop();
 
 Future<bool> generatorStart() =>
-    RustLib.instance.api.crateApiApiGeneratorStart();
+    RustLib.instance.api.crateApiFfiGeneratorStart();
 
-Future<bool> generatorStop() => RustLib.instance.api.crateApiApiGeneratorStop();
+Future<bool> generatorStop() => RustLib.instance.api.crateApiFfiGeneratorStop();
 
 Future<bool> generatorNoteOn({required double newFreq}) =>
-    RustLib.instance.api.crateApiApiGeneratorNoteOn(newFreq: newFreq);
+    RustLib.instance.api.crateApiFfiGeneratorNoteOn(newFreq: newFreq);
 
 Future<bool> generatorNoteOff() =>
-    RustLib.instance.api.crateApiApiGeneratorNoteOff();
+    RustLib.instance.api.crateApiFfiGeneratorNoteOff();
 
 Future<bool> pianoSetConcertPitch({required double newConcertPitch}) => RustLib
     .instance
     .api
-    .crateApiApiPianoSetConcertPitch(newConcertPitch: newConcertPitch);
+    .crateApiFfiPianoSetConcertPitch(newConcertPitch: newConcertPitch);
 
 Future<bool> mediaPlayerLoadWav({required String wavFilePath}) => RustLib
     .instance
     .api
-    .crateApiApiMediaPlayerLoadWav(wavFilePath: wavFilePath);
+    .crateApiFfiMediaPlayerLoadWav(wavFilePath: wavFilePath);
 
 Future<bool> mediaPlayerStart() =>
-    RustLib.instance.api.crateApiApiMediaPlayerStart();
+    RustLib.instance.api.crateApiFfiMediaPlayerStart();
 
 Future<bool> mediaPlayerStop() =>
-    RustLib.instance.api.crateApiApiMediaPlayerStop();
+    RustLib.instance.api.crateApiFfiMediaPlayerStop();
 
 Future<bool> mediaPlayerStartRecording() =>
-    RustLib.instance.api.crateApiApiMediaPlayerStartRecording();
+    RustLib.instance.api.crateApiFfiMediaPlayerStartRecording();
 
 Future<bool> mediaPlayerStopRecording() =>
-    RustLib.instance.api.crateApiApiMediaPlayerStopRecording();
+    RustLib.instance.api.crateApiFfiMediaPlayerStopRecording();
 
 Future<Float64List> mediaPlayerGetRecordingSamples() =>
-    RustLib.instance.api.crateApiApiMediaPlayerGetRecordingSamples();
+    RustLib.instance.api.crateApiFfiMediaPlayerGetRecordingSamples();
 
 Future<bool> mediaPlayerSetPitchSemitones({required double pitchSemitones}) =>
-    RustLib.instance.api.crateApiApiMediaPlayerSetPitchSemitones(
+    RustLib.instance.api.crateApiFfiMediaPlayerSetPitchSemitones(
       pitchSemitones: pitchSemitones,
     );
 
 Future<bool> mediaPlayerSetSpeedFactor({required double speedFactor}) => RustLib
     .instance
     .api
-    .crateApiApiMediaPlayerSetSpeedFactor(speedFactor: speedFactor);
+    .crateApiFfiMediaPlayerSetSpeedFactor(speedFactor: speedFactor);
 
 Future<void> mediaPlayerSetTrim({
   required double startFactor,
   required double endFactor,
-}) => RustLib.instance.api.crateApiApiMediaPlayerSetTrim(
+}) => RustLib.instance.api.crateApiFfiMediaPlayerSetTrim(
   startFactor: startFactor,
   endFactor: endFactor,
 );
 
 Future<Float32List> mediaPlayerGetRms({required int nBins}) =>
-    RustLib.instance.api.crateApiApiMediaPlayerGetRms(nBins: nBins);
+    RustLib.instance.api.crateApiFfiMediaPlayerGetRms(nBins: nBins);
 
 Future<void> mediaPlayerSetLoop({required bool looping}) =>
-    RustLib.instance.api.crateApiApiMediaPlayerSetLoop(looping: looping);
+    RustLib.instance.api.crateApiFfiMediaPlayerSetLoop(looping: looping);
 
 Future<MediaPlayerState?> mediaPlayerGetState() =>
-    RustLib.instance.api.crateApiApiMediaPlayerGetState();
+    RustLib.instance.api.crateApiFfiMediaPlayerGetState();
 
 Future<bool> mediaPlayerSetPlaybackPosFactor({required double posFactor}) =>
-    RustLib.instance.api.crateApiApiMediaPlayerSetPlaybackPosFactor(
+    RustLib.instance.api.crateApiFfiMediaPlayerSetPlaybackPosFactor(
       posFactor: posFactor,
     );
 
 Future<bool> mediaPlayerSetVolume({required double volume}) =>
-    RustLib.instance.api.crateApiApiMediaPlayerSetVolume(volume: volume);
+    RustLib.instance.api.crateApiFfiMediaPlayerSetVolume(volume: volume);
 
 Future<bool> metronomeStart() =>
-    RustLib.instance.api.crateApiApiMetronomeStart();
+    RustLib.instance.api.crateApiFfiMetronomeStart();
 
-Future<bool> metronomeStop() => RustLib.instance.api.crateApiApiMetronomeStop();
+Future<bool> metronomeStop() => RustLib.instance.api.crateApiFfiMetronomeStop();
 
 Future<bool> metronomeSetBpm({required double bpm}) =>
-    RustLib.instance.api.crateApiApiMetronomeSetBpm(bpm: bpm);
+    RustLib.instance.api.crateApiFfiMetronomeSetBpm(bpm: bpm);
 
 Future<bool> metronomeLoadFile({
   required BeatSound beatType,
   required String wavFilePath,
-}) => RustLib.instance.api.crateApiApiMetronomeLoadFile(
+}) => RustLib.instance.api.crateApiFfiMetronomeLoadFile(
   beatType: beatType,
   wavFilePath: wavFilePath,
 );
@@ -108,42 +108,42 @@ Future<bool> metronomeLoadFile({
 Future<bool> metronomeSetRhythm({
   required List<MetroBar> bars,
   required List<MetroBar> bars2,
-}) => RustLib.instance.api.crateApiApiMetronomeSetRhythm(
+}) => RustLib.instance.api.crateApiFfiMetronomeSetRhythm(
   bars: bars,
   bars2: bars2,
 );
 
 Future<BeatHappenedEvent?> metronomePollBeatEventHappened() =>
-    RustLib.instance.api.crateApiApiMetronomePollBeatEventHappened();
+    RustLib.instance.api.crateApiFfiMetronomePollBeatEventHappened();
 
 Future<bool> metronomeSetMuted({required bool muted}) =>
-    RustLib.instance.api.crateApiApiMetronomeSetMuted(muted: muted);
+    RustLib.instance.api.crateApiFfiMetronomeSetMuted(muted: muted);
 
 Future<bool> metronomeSetBeatMuteChance({required double muteChance}) => RustLib
     .instance
     .api
-    .crateApiApiMetronomeSetBeatMuteChance(muteChance: muteChance);
+    .crateApiFfiMetronomeSetBeatMuteChance(muteChance: muteChance);
 
 Future<bool> metronomeSetVolume({required double volume}) =>
-    RustLib.instance.api.crateApiApiMetronomeSetVolume(volume: volume);
+    RustLib.instance.api.crateApiFfiMetronomeSetVolume(volume: volume);
 
 Future<bool> pianoSetup({required String soundFontPath}) =>
-    RustLib.instance.api.crateApiApiPianoSetup(soundFontPath: soundFontPath);
+    RustLib.instance.api.crateApiFfiPianoSetup(soundFontPath: soundFontPath);
 
-Future<bool> pianoStart() => RustLib.instance.api.crateApiApiPianoStart();
+Future<bool> pianoStart() => RustLib.instance.api.crateApiFfiPianoStart();
 
-Future<bool> pianoStop() => RustLib.instance.api.crateApiApiPianoStop();
+Future<bool> pianoStop() => RustLib.instance.api.crateApiFfiPianoStop();
 
 Future<bool> pianoNoteOn({required int note}) =>
-    RustLib.instance.api.crateApiApiPianoNoteOn(note: note);
+    RustLib.instance.api.crateApiFfiPianoNoteOn(note: note);
 
 Future<bool> pianoNoteOff({required int note}) =>
-    RustLib.instance.api.crateApiApiPianoNoteOff(note: note);
+    RustLib.instance.api.crateApiFfiPianoNoteOff(note: note);
 
 Future<bool> pianoSetVolume({required double volume}) =>
-    RustLib.instance.api.crateApiApiPianoSetVolume(volume: volume);
+    RustLib.instance.api.crateApiFfiPianoSetVolume(volume: volume);
 
-Future<int> getSampleRate() => RustLib.instance.api.crateApiApiGetSampleRate();
+Future<int> getSampleRate() => RustLib.instance.api.crateApiFfiGetSampleRate();
 
 Future<bool> debugTestFunction() =>
-    RustLib.instance.api.crateApiApiDebugTestFunction();
+    RustLib.instance.api.crateApiFfiDebugTestFunction();
