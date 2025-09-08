@@ -169,7 +169,6 @@ pub fn piano_set_concert_pitch(new_concert_pitch: f32) -> bool {
     }
 }
 
-
 // media player
 
 pub fn media_player_load_wav(wav_file_path: String) -> bool {

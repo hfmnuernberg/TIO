@@ -1,7 +1,6 @@
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use lazy_static::__Deref;
 use pitch_shift::PitchShifter;
-use std::f32::EPSILON;
 use std::mem::MaybeUninit;
 use std::ops::DerefMut;
 use std::sync::mpsc::{channel, Receiver, Sender};
@@ -218,40 +217,37 @@ fn on_audio_callback(samples_out: &mut [f32], _: &cpal::OutputCallbackInfo) {
         .lock()
         .expect("Could not lock mutex to VOLUME to get it in on_audio_out_callback");
 
-    match RING_CONSUMER
+    if let Some(ring_consumer) = RING_CONSUMER
         .lock()
         .expect("Could not lock mutex to RING_CONSUMER")
         .deref_mut()
     {
-        Some(ring_consumer) => {
-            if ring_consumer.len() < MEDIA_PLAYER_PLAYBACK_MIN_BUFFERING.max(samples_out.len()) {
-                log::info!("buffering...");
-                return;
-            }
+        if ring_consumer.len() < MEDIA_PLAYER_PLAYBACK_MIN_BUFFERING.max(samples_out.len()) {
+            log::info!("buffering...");
+            return;
+        }
 
-            // write to output
-            for i in 0..samples_out.len() / NUM_CHANNELS {
-                match ring_consumer.pop() {
-                    Some(sample) => {
-                        for channel in 0..NUM_CHANNELS {
-                            let index_out = i * NUM_CHANNELS + channel;
-                            samples_out[index_out] = sample * vol * 4.0;
-                        }
+        // write to output
+        for i in 0..samples_out.len() / NUM_CHANNELS {
+            match ring_consumer.pop() {
+                Some(sample) => {
+                    for channel in 0..NUM_CHANNELS {
+                        let index_out = i * NUM_CHANNELS + channel;
+                        samples_out[index_out] = sample * vol * 4.0;
                     }
-                    None => {
-                        log::info!("Mediaplayer ring buffer empty - cannot write to audio output");
-                        break;
-                    }
+                }
+                None => {
+                    log::info!("Mediaplayer ring buffer empty - cannot write to audio output");
+                    break;
                 }
             }
         }
-        None => {}
     }
 }
 
 fn pitch_shift(audio_processing_data: &mut AudioProcessingData) {
-    if (audio_processing_data.speed_change_factor - 1.0).abs() < EPSILON
-        && audio_processing_data.pitch_change_semitones.abs() < EPSILON
+    if (audio_processing_data.speed_change_factor - 1.0).abs() < f32::EPSILON
+        && audio_processing_data.pitch_change_semitones.abs() < f32::EPSILON
     {
         // no pitch shift needed
         for (i, sample) in audio_processing_data
