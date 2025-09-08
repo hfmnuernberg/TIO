@@ -70,7 +70,7 @@ fn wire__crate__api__api__debug_test_function_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::debug_test_function())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::debug_test_function())?;
                     Ok(output_ok)
                 })())
             }
@@ -102,7 +102,7 @@ fn wire__crate__api__api__generator_note_off_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::generator_note_off())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::generator_note_off())?;
                     Ok(output_ok)
                 })())
             }
@@ -136,7 +136,7 @@ fn wire__crate__api__api__generator_note_on_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::generator_note_on(api_new_freq))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::generator_note_on(api_new_freq))?;
                     Ok(output_ok)
                 })())
             }
@@ -168,7 +168,7 @@ fn wire__crate__api__api__generator_start_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::generator_start())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::generator_start())?;
                     Ok(output_ok)
                 })())
             }
@@ -200,7 +200,7 @@ fn wire__crate__api__api__generator_stop_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::generator_stop())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::generator_stop())?;
                     Ok(output_ok)
                 })())
             }
@@ -232,7 +232,7 @@ fn wire__crate__api__api__get_sample_rate_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::get_sample_rate())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::get_sample_rate())?;
                     Ok(output_ok)
                 })())
             }
@@ -265,7 +265,7 @@ fn wire__crate__api__api__init_audio_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::api::init_audio();
+                        crate::api::ffi::init_audio();
                     })?;
                     Ok(output_ok)
                 })())
@@ -333,7 +333,7 @@ fn wire__crate__api__api__media_player_get_recording_samples_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::media_player_get_recording_samples())?;
+                        Result::<_, ()>::Ok(crate::api::ffi::media_player_get_recording_samples())?;
                     Ok(output_ok)
                 })())
             }
@@ -367,7 +367,7 @@ fn wire__crate__api__api__media_player_get_rms_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::media_player_get_rms(api_n_bins))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::media_player_get_rms(api_n_bins))?;
                     Ok(output_ok)
                 })())
             }
@@ -399,7 +399,7 @@ fn wire__crate__api__api__media_player_get_state_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::media_player_get_state())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::media_player_get_state())?;
                     Ok(output_ok)
                 })())
             }
@@ -432,7 +432,7 @@ fn wire__crate__api__api__media_player_load_wav_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::media_player_load_wav(
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::media_player_load_wav(
                         api_wav_file_path,
                     ))?;
                     Ok(output_ok)
@@ -468,7 +468,7 @@ fn wire__crate__api__api__media_player_set_loop_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::api::media_player_set_loop(api_looping);
+                        crate::api::ffi::media_player_set_loop(api_looping);
                     })?;
                     Ok(output_ok)
                 })())
@@ -503,7 +503,7 @@ fn wire__crate__api__api__media_player_set_pitch_semitones_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(
-                        crate::api::api::media_player_set_pitch_semitones(api_pitch_semitones),
+                        crate::api::ffi::media_player_set_pitch_semitones(api_pitch_semitones),
                     )?;
                     Ok(output_ok)
                 })())
@@ -538,7 +538,7 @@ fn wire__crate__api__api__media_player_set_playback_pos_factor_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(
-                        crate::api::api::media_player_set_playback_pos_factor(api_pos_factor),
+                        crate::api::ffi::media_player_set_playback_pos_factor(api_pos_factor),
                     )?;
                     Ok(output_ok)
                 })())
@@ -573,7 +573,7 @@ fn wire__crate__api__api__media_player_set_speed_factor_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(
-                        crate::api::api::media_player_set_speed_factor(api_speed_factor),
+                        crate::api::ffi::media_player_set_speed_factor(api_speed_factor),
                     )?;
                     Ok(output_ok)
                 })())
@@ -609,7 +609,7 @@ fn wire__crate__api__api__media_player_set_trim_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::api::media_player_set_trim(api_start_factor, api_end_factor);
+                        crate::api::ffi::media_player_set_trim(api_start_factor, api_end_factor);
                     })?;
                     Ok(output_ok)
                 })())
@@ -644,7 +644,7 @@ fn wire__crate__api__api__media_player_set_volume_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::media_player_set_volume(api_volume))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::media_player_set_volume(api_volume))?;
                     Ok(output_ok)
                 })())
             }
@@ -676,7 +676,7 @@ fn wire__crate__api__api__media_player_start_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::media_player_start())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::media_player_start())?;
                     Ok(output_ok)
                 })())
             }
@@ -709,7 +709,7 @@ fn wire__crate__api__api__media_player_start_recording_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::media_player_start_recording())?;
+                        Result::<_, ()>::Ok(crate::api::ffi::media_player_start_recording())?;
                     Ok(output_ok)
                 })())
             }
@@ -741,7 +741,7 @@ fn wire__crate__api__api__media_player_stop_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::media_player_stop())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::media_player_stop())?;
                     Ok(output_ok)
                 })())
             }
@@ -774,7 +774,7 @@ fn wire__crate__api__api__media_player_stop_recording_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::media_player_stop_recording())?;
+                        Result::<_, ()>::Ok(crate::api::ffi::media_player_stop_recording())?;
                     Ok(output_ok)
                 })())
             }
@@ -809,7 +809,7 @@ fn wire__crate__api__api__metronome_load_file_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::metronome_load_file(
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::metronome_load_file(
                         api_beat_type,
                         api_wav_file_path,
                     ))?;
@@ -845,7 +845,7 @@ fn wire__crate__api__api__metronome_poll_beat_event_happened_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::metronome_poll_beat_event_happened())?;
+                        Result::<_, ()>::Ok(crate::api::ffi::metronome_poll_beat_event_happened())?;
                     Ok(output_ok)
                 })())
             }
@@ -879,7 +879,7 @@ fn wire__crate__api__api__metronome_set_beat_mute_chance_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(
-                        crate::api::api::metronome_set_beat_mute_chance(api_mute_chance),
+                        crate::api::ffi::metronome_set_beat_mute_chance(api_mute_chance),
                     )?;
                     Ok(output_ok)
                 })())
@@ -914,7 +914,7 @@ fn wire__crate__api__api__metronome_set_bpm_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::metronome_set_bpm(api_bpm))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::metronome_set_bpm(api_bpm))?;
                     Ok(output_ok)
                 })())
             }
@@ -948,7 +948,7 @@ fn wire__crate__api__api__metronome_set_muted_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::metronome_set_muted(api_muted))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::metronome_set_muted(api_muted))?;
                     Ok(output_ok)
                 })())
             }
@@ -986,7 +986,7 @@ fn wire__crate__api__api__metronome_set_rhythm_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::metronome_set_rhythm(
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::metronome_set_rhythm(
                         api_bars, api_bars_2,
                     ))?;
                     Ok(output_ok)
@@ -1022,7 +1022,7 @@ fn wire__crate__api__api__metronome_set_volume_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::metronome_set_volume(api_volume))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::metronome_set_volume(api_volume))?;
                     Ok(output_ok)
                 })())
             }
@@ -1054,7 +1054,7 @@ fn wire__crate__api__api__metronome_start_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::metronome_start())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::metronome_start())?;
                     Ok(output_ok)
                 })())
             }
@@ -1086,7 +1086,7 @@ fn wire__crate__api__api__metronome_stop_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::metronome_stop())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::metronome_stop())?;
                     Ok(output_ok)
                 })())
             }
@@ -1119,7 +1119,7 @@ fn wire__crate__api__api__piano_note_off_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::piano_note_off(api_note))?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::piano_note_off(api_note))?;
                     Ok(output_ok)
                 })())
             }
@@ -1152,7 +1152,7 @@ fn wire__crate__api__api__piano_note_on_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::piano_note_on(api_note))?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::piano_note_on(api_note))?;
                     Ok(output_ok)
                 })())
             }
@@ -1185,7 +1185,7 @@ fn wire__crate__api__api__piano_set_concert_pitch_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::piano_set_concert_pitch(
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::piano_set_concert_pitch(
                         api_new_concert_pitch,
                     ))?;
                     Ok(output_ok)
@@ -1221,7 +1221,7 @@ fn wire__crate__api__api__piano_set_volume_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::piano_set_volume(api_volume))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::piano_set_volume(api_volume))?;
                     Ok(output_ok)
                 })())
             }
@@ -1255,7 +1255,7 @@ fn wire__crate__api__api__piano_setup_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::piano_setup(api_sound_font_path))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::piano_setup(api_sound_font_path))?;
                     Ok(output_ok)
                 })())
             }
@@ -1287,7 +1287,7 @@ fn wire__crate__api__api__piano_start_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::piano_start())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::piano_start())?;
                     Ok(output_ok)
                 })())
             }
@@ -1319,7 +1319,7 @@ fn wire__crate__api__api__piano_stop_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::piano_stop())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::piano_stop())?;
                     Ok(output_ok)
                 })())
             }
@@ -1351,7 +1351,7 @@ fn wire__crate__api__api__tuner_get_frequency_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::tuner_get_frequency())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::tuner_get_frequency())?;
                     Ok(output_ok)
                 })())
             }
@@ -1383,7 +1383,7 @@ fn wire__crate__api__api__tuner_start_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::tuner_start())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::tuner_start())?;
                     Ok(output_ok)
                 })())
             }
@@ -1415,7 +1415,7 @@ fn wire__crate__api__api__tuner_stop_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::tuner_stop())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::tuner_stop())?;
                     Ok(output_ok)
                 })())
             }
