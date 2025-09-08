@@ -86,9 +86,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MetroBar dco_decode_metro_bar(dynamic raw);
 
   @protected
-  BeatHappenedEvent? dco_decode_opt_box_autoadd_beat_happened_event(
-    dynamic raw,
-  );
+  BeatHappenedEvent? dco_decode_opt_box_autoadd_beat_happened_event(dynamic raw);
 
   @protected
   double? dco_decode_opt_box_autoadd_f_32(dynamic raw);
@@ -112,9 +110,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
-  BeatHappenedEvent sse_decode_beat_happened_event(
-    SseDeserializer deserializer,
-  );
+  BeatHappenedEvent sse_decode_beat_happened_event(SseDeserializer deserializer);
 
   @protected
   BeatSound sse_decode_beat_sound(SseDeserializer deserializer);
@@ -129,17 +125,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
-  BeatHappenedEvent sse_decode_box_autoadd_beat_happened_event(
-    SseDeserializer deserializer,
-  );
+  BeatHappenedEvent sse_decode_box_autoadd_beat_happened_event(SseDeserializer deserializer);
 
   @protected
   double sse_decode_box_autoadd_f_32(SseDeserializer deserializer);
 
   @protected
-  MediaPlayerState sse_decode_box_autoadd_media_player_state(
-    SseDeserializer deserializer,
-  );
+  MediaPlayerState sse_decode_box_autoadd_media_player_state(SseDeserializer deserializer);
 
   @protected
   double sse_decode_f_32(SseDeserializer deserializer);
@@ -154,9 +146,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<BeatType> sse_decode_list_beat_type(SseDeserializer deserializer);
 
   @protected
-  List<BeatTypePoly> sse_decode_list_beat_type_poly(
-    SseDeserializer deserializer,
-  );
+  List<BeatTypePoly> sse_decode_list_beat_type_poly(SseDeserializer deserializer);
 
   @protected
   List<MetroBar> sse_decode_list_metro_bar(SseDeserializer deserializer);
@@ -177,17 +167,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MetroBar sse_decode_metro_bar(SseDeserializer deserializer);
 
   @protected
-  BeatHappenedEvent? sse_decode_opt_box_autoadd_beat_happened_event(
-    SseDeserializer deserializer,
-  );
+  BeatHappenedEvent? sse_decode_opt_box_autoadd_beat_happened_event(SseDeserializer deserializer);
 
   @protected
   double? sse_decode_opt_box_autoadd_f_32(SseDeserializer deserializer);
 
   @protected
-  MediaPlayerState? sse_decode_opt_box_autoadd_media_player_state(
-    SseDeserializer deserializer,
-  );
+  MediaPlayerState? sse_decode_opt_box_autoadd_media_player_state(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_8(SseDeserializer deserializer);
@@ -205,10 +191,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
-  void sse_encode_beat_happened_event(
-    BeatHappenedEvent self,
-    SseSerializer serializer,
-  );
+  void sse_encode_beat_happened_event(BeatHappenedEvent self, SseSerializer serializer);
 
   @protected
   void sse_encode_beat_sound(BeatSound self, SseSerializer serializer);
@@ -223,19 +206,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_beat_happened_event(
-    BeatHappenedEvent self,
-    SseSerializer serializer,
-  );
+  void sse_encode_box_autoadd_beat_happened_event(BeatHappenedEvent self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_f_32(double self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_media_player_state(
-    MediaPlayerState self,
-    SseSerializer serializer,
-  );
+  void sse_encode_box_autoadd_media_player_state(MediaPlayerState self, SseSerializer serializer);
 
   @protected
   void sse_encode_f_32(double self, SseSerializer serializer);
@@ -250,55 +227,34 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_list_beat_type(List<BeatType> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_beat_type_poly(
-    List<BeatTypePoly> self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_beat_type_poly(List<BeatTypePoly> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_metro_bar(List<MetroBar> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_prim_f_32_strict(
-    Float32List self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_prim_f_32_strict(Float32List self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_prim_f_64_strict(
-    Float64List self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_prim_f_64_strict(Float64List self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_prim_u_8_strict(
-    Uint8List self,
-    SseSerializer serializer,
-  );
+  void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer);
 
   @protected
-  void sse_encode_media_player_state(
-    MediaPlayerState self,
-    SseSerializer serializer,
-  );
+  void sse_encode_media_player_state(MediaPlayerState self, SseSerializer serializer);
 
   @protected
   void sse_encode_metro_bar(MetroBar self, SseSerializer serializer);
 
   @protected
-  void sse_encode_opt_box_autoadd_beat_happened_event(
-    BeatHappenedEvent? self,
-    SseSerializer serializer,
-  );
+  void sse_encode_opt_box_autoadd_beat_happened_event(BeatHappenedEvent? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_f_32(double? self, SseSerializer serializer);
 
   @protected
-  void sse_encode_opt_box_autoadd_media_player_state(
-    MediaPlayerState? self,
-    SseSerializer serializer,
-  );
+  void sse_encode_opt_box_autoadd_media_player_state(MediaPlayerState? self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_8(int self, SseSerializer serializer);
@@ -313,14 +269,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 // Section: wire_class
 
 class RustLibWire implements BaseWire {
-  factory RustLibWire.fromExternalLibrary(ExternalLibrary lib) =>
-      RustLibWire(lib.ffiDynamicLibrary);
+  factory RustLibWire.fromExternalLibrary(ExternalLibrary lib) => RustLibWire(lib.ffiDynamicLibrary);
 
   /// Holds the symbol lookup function.
-  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
-  _lookup;
+  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) _lookup;
 
   /// The symbols are looked up in [dynamicLibrary].
-  RustLibWire(ffi.DynamicLibrary dynamicLibrary)
-    : _lookup = dynamicLibrary.lookup;
+  RustLibWire(ffi.DynamicLibrary dynamicLibrary) : _lookup = dynamicLibrary.lookup;
 }
