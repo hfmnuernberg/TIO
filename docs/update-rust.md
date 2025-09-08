@@ -164,7 +164,7 @@ cargo install flutter_rust_bridge_codegen cargo-ndk
 Then run this, to actually create/update the bindings:
 
 ```shell
-flutter_rust_bridge_codegen generate
+flutter_rust_bridge_codegen generate --no-dart-enums-style
 ```
 
 14. Update Edition (when new Edition is available):
@@ -189,4 +189,18 @@ When changing the edition in Cargo.toml is not commited run:
 
 ```shell
 cargo +1.85.0 fix --edition --allow-dirty
+```
+
+15. Start the app:
+
+```shell
+app run ios
+```
+
+If something is not working, try to clean and rebuild:
+
+```shell
+app clean
+app generate:rust
+app run ios
 ```
