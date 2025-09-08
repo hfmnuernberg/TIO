@@ -173,14 +173,20 @@ flutter_rust_bridge_codegen generate
 - Commit first, because it throws an error if uncommitted changes are present.
 - `cargo fix --edition` also makes many changes, so it’s best to do it in a separate commit.
 
-Change Edition in [Cargo.toml](../rust/Cargo.toml):
+In rust folder, change Edition in [Cargo.toml](../rust/Cargo.toml):
 ```toml
 [package]
 edition = "2024"
 ```
 
-Then run:
+When changing the edition in Cargo.toml is already commited run:
 
 ```shell
 cargo +1.85.0 fix --edition
+```
+
+When changing the edition in Cargo.toml is not commited run:
+
+```shell
+cargo +1.85.0 fix --edition --allow-dirty
 ```
