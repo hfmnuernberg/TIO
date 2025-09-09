@@ -2,11 +2,13 @@
 
 set -euo pipefail
 
-if [ ! -f "./pubspec.yaml" ]; then echo "❌  Wrong directory! Must be in project root!"; exit 2; fi
-
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 RUST_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
 cd "$RUST_DIR"
+ROOT_DIR="$(cd -- "$RUST_DIR/.." && pwd)"
+cd "$RUST_DIR"
+
+if [ ! -f "$ROOT_DIR/pubspec.yaml" ]; then echo "❌  Wrong directory! pubspec.yaml not found in $ROOT_DIR"; exit 2; fi
 
 # ---------- helpers ------------------------------------------------------------
 
@@ -79,7 +81,7 @@ General
   doctor [<channel>]                        Show rustup toolchains & rustc version (default: pinned)
 
 Toolchain / MSRV / Edition   (docs/update-rust.md)
-  toolchain:install [<channel>]             rustup toolchain install (default: pinned)
+  toolchain:install [<channel>]             install and use the toolchain (default: pinned)
   toolchain:pin <channel>                   Write rust-toolchain.toml with the given channel
   msrv:set <version>                        Set [package].rust-version in Cargo.toml
   edition:set <edition>                     Set [package].edition in Cargo.toml (e.g. 2021, 2024)
