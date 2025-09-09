@@ -206,5 +206,6 @@ case "$1" in
   test:watch)                command=$(getTestCommand "$@"); watchexec -e dart "$command"; ;;
   upload)                    shift; scripts/upload.sh "$@"; ;;
   widgetbook)                shift; cd widgetbook; scripts/app.sh "$@"; cd ..; ;;
+  rust)                      shift; cd rust; scripts/app.sh "$@"; cd ..; ;;
   *)                         help; exit 1 ;;
 esac
