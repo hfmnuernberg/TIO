@@ -6,7 +6,9 @@ The installed version of `flutter-rust-bridge-codegen` must match the version of
 
 ## How to update
 
-1. Check for new versions of flutter-rust-bridge and related crates.
+1. Check for new versions of `flutter-rust-bridge` and related crates.
+
+Check [frb releases](https://github.com/fzyzcjy/flutter_rust_bridge/releases).
 
 In the rust folder, run:
 
