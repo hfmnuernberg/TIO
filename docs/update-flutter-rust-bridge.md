@@ -1,8 +1,14 @@
 # Update FRB (flutter-rust-bridge)
 
 
+**Important:**
 The installed version of `flutter-rust-bridge-codegen` must match the version of the flutter_rust_bridge dependency in
 `Cargo.toml` and `pubspec.yaml`.
+
+FRB is used to generate the code that handles the FFI (foreign function interface). All public rust functions inside the
+`rust/src/api` folder are exposed to Flutter this way. If you have a public function, that should not be exposed, add
+`#[flutter_rust_bridge::frb(ignore)]` above the function. Any change of the rust functions in this folder requires a
+rebuild with `flutter_rust_bridge_codegen` (use `app generate:rust`) to be exposed to Flutter.
 
 ## How to update
 
