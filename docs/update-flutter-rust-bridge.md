@@ -74,15 +74,4 @@ Common pitfalls:
 - Lifetimes: If you hit lifetime-related parser messages, and you do pass references over FFI, consider FRB’s
   `enable_lifetime: true` config (or redesign FFI to use owned types like String, Vec<T>, etc.).
 - Multiple objects with the same key (THREAD, THREAD_SENDER) info logs: Benign unless those symbols are exported in your
-  FFI surface. If they are, rename one or don’t expose both.
-
-- Make sure that the versions of `flutter_rust_bridge` in `Cargo.toml` and `pubspec.yaml` match.
-- Make sure that the version of `flutter_rust_bridge_codegen` matches the version of `flutter_rust_bridge` in `Cargo.toml`.
-- Make sure to use the `--force` flag when installing `flutter_rust_bridge_codegen` to ensure the correct version is installed.
-- If you encounter issues, try running `flutter clean` and rebuilding the project.
-- Ensure that all dependencies are up to date by running `cargo update` in the rust folder.
-- If you encounter issues with generated code, try deleting the generated files and regenerating them.
-- If you encounter issues with the Rust toolchain, try updating Rust using `rustup update`.
-- If you encounter issues with the Flutter toolchain, try updating Flutter using `flutter upgrade`.
-- If you encounter issues with the Dart toolchain, try updating Dart using `dart upgrade`.
-  
+  FFI surface. If they are, rename one or don’t expose both. 
