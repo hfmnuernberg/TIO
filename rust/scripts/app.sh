@@ -24,13 +24,17 @@ get_channel_from_file() {
   echo "1.85.0"
 }
 
-# Extracts [package].rust-version from rust/Cargo.toml
 get_rust_version_from_cargo() {
+  # Extracts [package].rust-version from rust/Cargo.toml
   if [[ -f "Cargo.toml" ]]; then
     awk -F\" '/^\s*rust-version\s*=\s*"/ {print $2; exit}' Cargo.toml || true
   fi
 }
 
+version_lt() {
+  # Returns 0 (true) if $1 < $2 using sort -V
+  [ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -n1)" = "$1" ] && [ "$1" != "$2" ]
+}
 
 CHANNEL_DEFAULT="$(get_channel_from_file)"
 
@@ -87,35 +91,36 @@ help() {
 Usage: scripts/app.sh <command> [args]
 
 General
-  help                                    Show this help
-  doctor [<channel>]                      Show rustup toolchains & rustc version (default: pinned)
-
-Toolchain / MSRV / Edition   (docs/update-rust.md)
-  install:toolchain [<channel>]           Install and use the toolchain (default: install pinned from rust-toolchain.toml)
-  install:edition                         Install and use the Rust Edition set in Cargo.toml (e.g., after update)
+  help                                    - Shows this help
+  doctor                                  - Shows rustup toolchains & rustc version
 
 Quality
-  format                                  Formats rust code (uses rust-version from Cargo.toml)
-  clippy                                  Lints rust code (uses rust-version from Cargo.toml)
-  analyze | lint                          Alias for clippy
-  test                                    Runs the Rust tests for the crate(s) (uses rust-version from Cargo.toml)
-  build                                   Compiles the Rust code (uses rust-version from Cargo.toml)
-  clean                                   cargo clean
+  format                                  - Formats rust code
+  clippy                                  - Lints rust code
+  analyze | lint                          - Alias for clippy
+  test                                    - Runs the Rust tests for the crate(s)
+  build                                   - Compiles the rust code and build the default dev profile (no --release)
+  clean                                   - Runs Rust’s clean for the crate(s). It deletes the rust/target/ build artifacts (including incremental build cache). It doesn’t touch Cargo.lock, Flutter/Pods/android caches, or anything outside rust/.
 
-Dependencies                 (docs/update-rust-dependencies.md)
-  outdated                                cargo outdated (root & transitive)
-  outdated:root                           cargo outdated -R (only root deps)
-  upgrade                                 cargo upgrade (requires cargo-edit)
-  update [<channel>]                      cargo +<channel> update (refresh lockfile)
+Toolchain / MSRV / Edition   (docs/update-rust.md)
+  install:toolchain [<channel>]           - Installs and uses the toolchain (default: install pinned from rust-toolchain.toml)
+  install:edition                         - Installs and uses the Rust Edition set in Cargo.toml (e.g., after update)
+  uninstall:toolchain [<channel>]         - Uninstalls the provided toolchain (not the current default)
 
 Flutter Rust Bridge          (docs/update-flutter-rust-bridge.md)
-  frb:install [<version>]                 cargo install flutter_rust_bridge_codegen [--version X] --force
-  frb:generate                            flutter_rust_bridge_codegen generate --no-dart-enums-style
+  install:frb [<version>]                 - Installs flutter_rust_bridge_codegen (given or latest) and cargo-ndk. If the installed rust-version from Cargo.toml is >= 1.86.0, it installs the latest cargo-ndk, otherwise cargo-ndk 3.5.4.
+  generate                                - Regenerates Flutter<->Rust bindings with Flutter Rust Bridge (auto-detects rust_input/dart_output)
+
+Dependencies                 (docs/update-rust-dependencies.md)
+  outdated                                - Lists all outdated dependencies (direct and transitive) and show current vs compatible/latest version. (requires and automatically installs cargo-outdated)
+  outdated:root                           - Lists all outdated root-only dependencies: Only shows crates listed in Cargo.toml (ignores transitive deps)
+  upgrade                                 - Updates the version requirements in Cargo.toml to the latest compatible releases; afterwards do app rust update to refresh the lockfile. (requires and automatically installs cargo-edit)
+  update                                  - Refreshes Cargo.lock to the newest versions that satisfy your Cargo.toml constraints (non-breaking). Does not change Cargo.toml.
 
 Flows
-  refresh                                 clean → update → format → clippy → build → test
-  update:rust <channel>                   install:toolchain + toolchain:pin + msrv:set <channel> + (optional edition)
-  update:edition <edition> [<channel>]    edition:set + install:edition
+  refresh                                 - clean → update → format → clippy → build → test
+  update:rust <channel>                   - install:toolchain + toolchain:pin + msrv:set <channel> + (optional edition)
+  update:edition <edition> [<channel>]    - edition:set + install:edition
 
 Notes
 - Commands default to the pinned channel in rust-toolchain.toml, or "stable" if none is pinned.
@@ -129,8 +134,8 @@ case "${1:-help}" in
   help) help ;;
 
   doctor)
-    shift || true
-    CH="$(resolved_channel "${1:-}")"
+    CH="$(get_rust_version_from_cargo)"
+    [[ -z "$CH" ]] && CH="$(resolved_channel "")"
     print_header "Rust Doctor (channel: $CH)"
     rustup show
     echo
@@ -209,27 +214,70 @@ case "${1:-help}" in
     ;;
 
   update)
-    shift || true
-    CH="$(resolved_channel "${1:-}")"
+    CH="$(get_rust_version_from_cargo)"
+    [[ -z "$CH" ]] && CH="$(resolved_channel "")"
     print_header "cargo +$CH update"
     cargo_plus "$CH" update
     ;;
 
-  frb:install)
+  install:frb)
     shift || true
     VERS="${1:-}"
-    print_header "Installing flutter_rust_bridge_codegen ${VERS:+(version $VERS)}"
     if [[ -n "$VERS" ]]; then
+      print_header "Installing flutter_rust_bridge_codegen --version $VERS (forced)"
       cargo install flutter_rust_bridge_codegen --version "$VERS" --force
     else
+      print_header "Installing flutter_rust_bridge_codegen (latest, forced)"
       cargo install flutter_rust_bridge_codegen --force
     fi
+    CH="$(get_rust_version_from_cargo)"
+    [[ -z "$CH" ]] && CH="$(resolved_channel "")"
+    if version_lt "$CH" "1.86.0"; then
+      print_header "Installing cargo-ndk --version 3.5.4 (forced) for rustc $CH"
+      cargo install cargo-ndk --version 3.5.4 --force
+    else
+      print_header "Installing cargo-ndk (latest, forced) for rustc $CH"
+      cargo install cargo-ndk --force
+    fi
     flutter_rust_bridge_codegen --version || true
+    cargo-ndk --version || true
     ;;
 
-  frb:generate)
-    print_header "flutter_rust_bridge_codegen generate --no-dart-enums-style"
-    flutter_rust_bridge_codegen generate --no-dart-enums-style
+  generate)
+    RUST_INPUT="${FRB_RUST_INPUT:-}"
+    RUST_ROOT="${FRB_RUST_ROOT:-.}"
+    DART_OUTPUT="${FRB_DART_OUTPUT:-}"
+
+    # Detect rust_input if not provided
+    if [[ -z "$RUST_INPUT" ]]; then
+      if [[ -f "src/api.rs" || -f "src/api/mod.rs" || -d "src/api" ]]; then
+        RUST_INPUT="crate::api"
+      elif [[ -f "src/lib.rs" ]]; then
+        RUST_INPUT="crate"
+      else
+        echo "❌  Could not determine rust_input. Create src/api.rs (preferred) or set FRB_RUST_INPUT (e.g., crate::api)." >&2
+        exit 2
+      fi
+    fi
+
+    # Detect dart_output if not provided
+    if [[ -z "$DART_OUTPUT" ]]; then
+      if [[ -d "../lib" ]]; then
+        DART_OUTPUT="../lib/bridge_generated.dart"
+      elif [[ -d "../../lib" ]]; then
+        DART_OUTPUT="../../lib/bridge_generated.dart"
+      else
+        echo "❌  Could not determine dart_output. Set FRB_DART_OUTPUT or ensure a ../lib folder exists." >&2
+        exit 2
+      fi
+    fi
+
+    print_header "flutter_rust_bridge_codegen generate --rust-input $RUST_INPUT --rust-root $RUST_ROOT --dart-output $DART_OUTPUT --no-dart-enums-style"
+    flutter_rust_bridge_codegen generate \
+      --rust-input "$RUST_INPUT" \
+      --rust-root "$RUST_ROOT" \
+      --dart-output "$DART_OUTPUT" \
+      --no-dart-enums-style
     ;;
 
   refresh)

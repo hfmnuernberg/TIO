@@ -3,15 +3,15 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
-import 'api/ffi.dart';
-import 'api/modules/media_player.dart';
-import 'api/modules/metronome.dart';
-import 'api/modules/metronome_rhythm.dart';
-import 'api/simple.dart';
+import 'package:tiomusic/bridge_generated.dart/api/ffi.dart';
+import 'package:tiomusic/bridge_generated.dart/api/modules/media_player.dart';
+import 'package:tiomusic/bridge_generated.dart/api/modules/metronome.dart';
+import 'package:tiomusic/bridge_generated.dart/api/modules/metronome_rhythm.dart';
+import 'package:tiomusic/bridge_generated.dart/api/simple.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'frb_generated.dart';
-import 'frb_generated.io.dart'
+import 'package:tiomusic/bridge_generated.dart/frb_generated.dart';
+import 'package:tiomusic/bridge_generated.dart/frb_generated.io.dart'
     if (dart.library.js_interop) 'frb_generated.web.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
@@ -214,7 +214,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiDebugTestFunctionConstMeta =>
-      const TaskConstMeta(debugName: "debug_test_function", argNames: []);
+      const TaskConstMeta(debugName: 'debug_test_function', argNames: []);
 
   @override
   Future<bool> crateApiFfiGeneratorNoteOff() {
@@ -241,7 +241,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiGeneratorNoteOffConstMeta =>
-      const TaskConstMeta(debugName: "generator_note_off", argNames: []);
+      const TaskConstMeta(debugName: 'generator_note_off', argNames: []);
 
   @override
   Future<bool> crateApiFfiGeneratorNoteOn({required double newFreq}) {
@@ -269,8 +269,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiGeneratorNoteOnConstMeta => const TaskConstMeta(
-    debugName: "generator_note_on",
-    argNames: ["newFreq"],
+    debugName: 'generator_note_on',
+    argNames: ['newFreq'],
   );
 
   @override
@@ -298,7 +298,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiGeneratorStartConstMeta =>
-      const TaskConstMeta(debugName: "generator_start", argNames: []);
+      const TaskConstMeta(debugName: 'generator_start', argNames: []);
 
   @override
   Future<bool> crateApiFfiGeneratorStop() {
@@ -325,7 +325,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiGeneratorStopConstMeta =>
-      const TaskConstMeta(debugName: "generator_stop", argNames: []);
+      const TaskConstMeta(debugName: 'generator_stop', argNames: []);
 
   @override
   Future<int> crateApiFfiGetSampleRate() {
@@ -352,7 +352,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiGetSampleRateConstMeta =>
-      const TaskConstMeta(debugName: "get_sample_rate", argNames: []);
+      const TaskConstMeta(debugName: 'get_sample_rate', argNames: []);
 
   @override
   Future<void> crateApiFfiInitAudio() {
@@ -379,7 +379,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiInitAudioConstMeta =>
-      const TaskConstMeta(debugName: "init_audio", argNames: []);
+      const TaskConstMeta(debugName: 'init_audio', argNames: []);
 
   @override
   Future<void> crateApiSimpleInitRustDefaultsManually() {
@@ -407,7 +407,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiSimpleInitRustDefaultsManuallyConstMeta =>
       const TaskConstMeta(
-        debugName: "init_rust_defaults_manually",
+        debugName: 'init_rust_defaults_manually',
         argNames: [],
       );
 
@@ -437,7 +437,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMediaPlayerGetRecordingSamplesConstMeta =>
       const TaskConstMeta(
-        debugName: "media_player_get_recording_samples",
+        debugName: 'media_player_get_recording_samples',
         argNames: [],
       );
 
@@ -468,8 +468,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMediaPlayerGetRmsConstMeta =>
       const TaskConstMeta(
-        debugName: "media_player_get_rms",
-        argNames: ["nBins"],
+        debugName: 'media_player_get_rms',
+        argNames: ['nBins'],
       );
 
   @override
@@ -497,7 +497,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiMediaPlayerGetStateConstMeta =>
-      const TaskConstMeta(debugName: "media_player_get_state", argNames: []);
+      const TaskConstMeta(debugName: 'media_player_get_state', argNames: []);
 
   @override
   Future<bool> crateApiFfiMediaPlayerLoadWav({required String wavFilePath}) {
@@ -526,8 +526,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMediaPlayerLoadWavConstMeta =>
       const TaskConstMeta(
-        debugName: "media_player_load_wav",
-        argNames: ["wavFilePath"],
+        debugName: 'media_player_load_wav',
+        argNames: ['wavFilePath'],
       );
 
   @override
@@ -557,8 +557,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMediaPlayerSetLoopConstMeta =>
       const TaskConstMeta(
-        debugName: "media_player_set_loop",
-        argNames: ["looping"],
+        debugName: 'media_player_set_loop',
+        argNames: ['looping'],
       );
 
   @override
@@ -590,8 +590,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMediaPlayerSetPitchSemitonesConstMeta =>
       const TaskConstMeta(
-        debugName: "media_player_set_pitch_semitones",
-        argNames: ["pitchSemitones"],
+        debugName: 'media_player_set_pitch_semitones',
+        argNames: ['pitchSemitones'],
       );
 
   @override
@@ -623,8 +623,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMediaPlayerSetPlaybackPosFactorConstMeta =>
       const TaskConstMeta(
-        debugName: "media_player_set_playback_pos_factor",
-        argNames: ["posFactor"],
+        debugName: 'media_player_set_playback_pos_factor',
+        argNames: ['posFactor'],
       );
 
   @override
@@ -656,8 +656,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMediaPlayerSetSpeedFactorConstMeta =>
       const TaskConstMeta(
-        debugName: "media_player_set_speed_factor",
-        argNames: ["speedFactor"],
+        debugName: 'media_player_set_speed_factor',
+        argNames: ['speedFactor'],
       );
 
   @override
@@ -691,8 +691,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMediaPlayerSetTrimConstMeta =>
       const TaskConstMeta(
-        debugName: "media_player_set_trim",
-        argNames: ["startFactor", "endFactor"],
+        debugName: 'media_player_set_trim',
+        argNames: ['startFactor', 'endFactor'],
       );
 
   @override
@@ -722,8 +722,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMediaPlayerSetVolumeConstMeta =>
       const TaskConstMeta(
-        debugName: "media_player_set_volume",
-        argNames: ["volume"],
+        debugName: 'media_player_set_volume',
+        argNames: ['volume'],
       );
 
   @override
@@ -751,7 +751,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiMediaPlayerStartConstMeta =>
-      const TaskConstMeta(debugName: "media_player_start", argNames: []);
+      const TaskConstMeta(debugName: 'media_player_start', argNames: []);
 
   @override
   Future<bool> crateApiFfiMediaPlayerStartRecording() {
@@ -779,7 +779,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMediaPlayerStartRecordingConstMeta =>
       const TaskConstMeta(
-        debugName: "media_player_start_recording",
+        debugName: 'media_player_start_recording',
         argNames: [],
       );
 
@@ -808,7 +808,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiMediaPlayerStopConstMeta =>
-      const TaskConstMeta(debugName: "media_player_stop", argNames: []);
+      const TaskConstMeta(debugName: 'media_player_stop', argNames: []);
 
   @override
   Future<bool> crateApiFfiMediaPlayerStopRecording() {
@@ -836,7 +836,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMediaPlayerStopRecordingConstMeta =>
       const TaskConstMeta(
-        debugName: "media_player_stop_recording",
+        debugName: 'media_player_stop_recording',
         argNames: [],
       );
 
@@ -871,8 +871,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMetronomeLoadFileConstMeta =>
       const TaskConstMeta(
-        debugName: "metronome_load_file",
-        argNames: ["beatType", "wavFilePath"],
+        debugName: 'metronome_load_file',
+        argNames: ['beatType', 'wavFilePath'],
       );
 
   @override
@@ -901,7 +901,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMetronomePollBeatEventHappenedConstMeta =>
       const TaskConstMeta(
-        debugName: "metronome_poll_beat_event_happened",
+        debugName: 'metronome_poll_beat_event_happened',
         argNames: [],
       );
 
@@ -934,8 +934,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMetronomeSetBeatMuteChanceConstMeta =>
       const TaskConstMeta(
-        debugName: "metronome_set_beat_mute_chance",
-        argNames: ["muteChance"],
+        debugName: 'metronome_set_beat_mute_chance',
+        argNames: ['muteChance'],
       );
 
   @override
@@ -964,7 +964,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiMetronomeSetBpmConstMeta =>
-      const TaskConstMeta(debugName: "metronome_set_bpm", argNames: ["bpm"]);
+      const TaskConstMeta(debugName: 'metronome_set_bpm', argNames: ['bpm']);
 
   @override
   Future<bool> crateApiFfiMetronomeSetMuted({required bool muted}) {
@@ -993,8 +993,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMetronomeSetMutedConstMeta =>
       const TaskConstMeta(
-        debugName: "metronome_set_muted",
-        argNames: ["muted"],
+        debugName: 'metronome_set_muted',
+        argNames: ['muted'],
       );
 
   @override
@@ -1028,8 +1028,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMetronomeSetRhythmConstMeta =>
       const TaskConstMeta(
-        debugName: "metronome_set_rhythm",
-        argNames: ["bars", "bars2"],
+        debugName: 'metronome_set_rhythm',
+        argNames: ['bars', 'bars2'],
       );
 
   @override
@@ -1059,8 +1059,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMetronomeSetVolumeConstMeta =>
       const TaskConstMeta(
-        debugName: "metronome_set_volume",
-        argNames: ["volume"],
+        debugName: 'metronome_set_volume',
+        argNames: ['volume'],
       );
 
   @override
@@ -1088,7 +1088,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiMetronomeStartConstMeta =>
-      const TaskConstMeta(debugName: "metronome_start", argNames: []);
+      const TaskConstMeta(debugName: 'metronome_start', argNames: []);
 
   @override
   Future<bool> crateApiFfiMetronomeStop() {
@@ -1115,7 +1115,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiMetronomeStopConstMeta =>
-      const TaskConstMeta(debugName: "metronome_stop", argNames: []);
+      const TaskConstMeta(debugName: 'metronome_stop', argNames: []);
 
   @override
   Future<bool> crateApiFfiPianoNoteOff({required int note}) {
@@ -1143,7 +1143,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiPianoNoteOffConstMeta =>
-      const TaskConstMeta(debugName: "piano_note_off", argNames: ["note"]);
+      const TaskConstMeta(debugName: 'piano_note_off', argNames: ['note']);
 
   @override
   Future<bool> crateApiFfiPianoNoteOn({required int note}) {
@@ -1171,7 +1171,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiPianoNoteOnConstMeta =>
-      const TaskConstMeta(debugName: "piano_note_on", argNames: ["note"]);
+      const TaskConstMeta(debugName: 'piano_note_on', argNames: ['note']);
 
   @override
   Future<bool> crateApiFfiPianoSetConcertPitch({
@@ -1202,8 +1202,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiPianoSetConcertPitchConstMeta =>
       const TaskConstMeta(
-        debugName: "piano_set_concert_pitch",
-        argNames: ["newConcertPitch"],
+        debugName: 'piano_set_concert_pitch',
+        argNames: ['newConcertPitch'],
       );
 
   @override
@@ -1232,7 +1232,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiPianoSetVolumeConstMeta =>
-      const TaskConstMeta(debugName: "piano_set_volume", argNames: ["volume"]);
+      const TaskConstMeta(debugName: 'piano_set_volume', argNames: ['volume']);
 
   @override
   Future<bool> crateApiFfiPianoSetup({required String soundFontPath}) {
@@ -1260,8 +1260,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiPianoSetupConstMeta => const TaskConstMeta(
-    debugName: "piano_setup",
-    argNames: ["soundFontPath"],
+    debugName: 'piano_setup',
+    argNames: ['soundFontPath'],
   );
 
   @override
@@ -1289,7 +1289,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiPianoStartConstMeta =>
-      const TaskConstMeta(debugName: "piano_start", argNames: []);
+      const TaskConstMeta(debugName: 'piano_start', argNames: []);
 
   @override
   Future<bool> crateApiFfiPianoStop() {
@@ -1316,7 +1316,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiPianoStopConstMeta =>
-      const TaskConstMeta(debugName: "piano_stop", argNames: []);
+      const TaskConstMeta(debugName: 'piano_stop', argNames: []);
 
   @override
   Future<double?> crateApiFfiTunerGetFrequency() {
@@ -1343,7 +1343,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiTunerGetFrequencyConstMeta =>
-      const TaskConstMeta(debugName: "tuner_get_frequency", argNames: []);
+      const TaskConstMeta(debugName: 'tuner_get_frequency', argNames: []);
 
   @override
   Future<bool> crateApiFfiTunerStart() {
@@ -1370,7 +1370,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiTunerStartConstMeta =>
-      const TaskConstMeta(debugName: "tuner_start", argNames: []);
+      const TaskConstMeta(debugName: 'tuner_start', argNames: []);
 
   @override
   Future<bool> crateApiFfiTunerStop() {
@@ -1397,10 +1397,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   TaskConstMeta get kCrateApiFfiTunerStopConstMeta =>
-      const TaskConstMeta(debugName: "tuner_stop", argNames: []);
+      const TaskConstMeta(debugName: 'tuner_stop', argNames: []);
 
   @protected
-  int dco_decode_CastedPrimitive_usize(dynamic raw) {
+  int dco_decode_CastedPrimitive_usize(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     throw UnimplementedError(
       'Not implemented in this codec, please use the other one',
@@ -1408,13 +1408,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  String dco_decode_String(dynamic raw) {
+  String dco_decode_String(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as String;
   }
 
   @protected
-  BeatHappenedEvent dco_decode_beat_happened_event(dynamic raw) {
+  BeatHappenedEvent dco_decode_beat_happened_event(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
     if (arr.length != 6)
@@ -1430,103 +1430,103 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  BeatSound dco_decode_beat_sound(dynamic raw) {
+  BeatSound dco_decode_beat_sound(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return BeatSound.values[raw as int];
   }
 
   @protected
-  BeatType dco_decode_beat_type(dynamic raw) {
+  BeatType dco_decode_beat_type(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return BeatType.values[raw as int];
   }
 
   @protected
-  BeatTypePoly dco_decode_beat_type_poly(dynamic raw) {
+  BeatTypePoly dco_decode_beat_type_poly(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return BeatTypePoly.values[raw as int];
   }
 
   @protected
-  bool dco_decode_bool(dynamic raw) {
+  bool dco_decode_bool(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as bool;
   }
 
   @protected
-  BeatHappenedEvent dco_decode_box_autoadd_beat_happened_event(dynamic raw) {
+  BeatHappenedEvent dco_decode_box_autoadd_beat_happened_event(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_beat_happened_event(raw);
   }
 
   @protected
-  double dco_decode_box_autoadd_f_32(dynamic raw) {
+  double dco_decode_box_autoadd_f_32(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as double;
   }
 
   @protected
-  MediaPlayerState dco_decode_box_autoadd_media_player_state(dynamic raw) {
+  MediaPlayerState dco_decode_box_autoadd_media_player_state(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_media_player_state(raw);
   }
 
   @protected
-  double dco_decode_f_32(dynamic raw) {
+  double dco_decode_f_32(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as double;
   }
 
   @protected
-  double dco_decode_f_64(dynamic raw) {
+  double dco_decode_f_64(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as double;
   }
 
   @protected
-  int dco_decode_i_32(dynamic raw) {
+  int dco_decode_i_32(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
   }
 
   @protected
-  List<BeatType> dco_decode_list_beat_type(dynamic raw) {
+  List<BeatType> dco_decode_list_beat_type(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_beat_type).toList();
   }
 
   @protected
-  List<BeatTypePoly> dco_decode_list_beat_type_poly(dynamic raw) {
+  List<BeatTypePoly> dco_decode_list_beat_type_poly(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_beat_type_poly).toList();
   }
 
   @protected
-  List<MetroBar> dco_decode_list_metro_bar(dynamic raw) {
+  List<MetroBar> dco_decode_list_metro_bar(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_metro_bar).toList();
   }
 
   @protected
-  Float32List dco_decode_list_prim_f_32_strict(dynamic raw) {
+  Float32List dco_decode_list_prim_f_32_strict(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Float32List;
   }
 
   @protected
-  Float64List dco_decode_list_prim_f_64_strict(dynamic raw) {
+  Float64List dco_decode_list_prim_f_64_strict(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Float64List;
   }
 
   @protected
-  Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
+  Uint8List dco_decode_list_prim_u_8_strict(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Uint8List;
   }
 
   @protected
-  MediaPlayerState dco_decode_media_player_state(dynamic raw) {
+  MediaPlayerState dco_decode_media_player_state(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
     if (arr.length != 6)
@@ -1542,7 +1542,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  MetroBar dco_decode_metro_bar(dynamic raw) {
+  MetroBar dco_decode_metro_bar(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
     if (arr.length != 4)
@@ -1556,39 +1556,37 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  BeatHappenedEvent? dco_decode_opt_box_autoadd_beat_happened_event(
-    dynamic raw,
-  ) {
+  BeatHappenedEvent? dco_decode_opt_box_autoadd_beat_happened_event(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_beat_happened_event(raw);
   }
 
   @protected
-  double? dco_decode_opt_box_autoadd_f_32(dynamic raw) {
+  double? dco_decode_opt_box_autoadd_f_32(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_f_32(raw);
   }
 
   @protected
-  MediaPlayerState? dco_decode_opt_box_autoadd_media_player_state(dynamic raw) {
+  MediaPlayerState? dco_decode_opt_box_autoadd_media_player_state(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_media_player_state(raw);
   }
 
   @protected
-  int dco_decode_u_8(dynamic raw) {
+  int dco_decode_u_8(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
   }
 
   @protected
-  void dco_decode_unit(dynamic raw) {
+  void dco_decode_unit(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return;
   }
 
   @protected
-  BigInt dco_decode_usize(dynamic raw) {
+  BigInt dco_decode_usize(raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dcoDecodeU64(raw);
   }
@@ -1660,13 +1658,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_beat_happened_event(deserializer));
+    return sse_decode_beat_happened_event(deserializer);
   }
 
   @protected
   double sse_decode_box_autoadd_f_32(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_f_32(deserializer));
+    return sse_decode_f_32(deserializer);
   }
 
   @protected
@@ -1674,7 +1672,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_media_player_state(deserializer));
+    return sse_decode_media_player_state(deserializer);
   }
 
   @protected
@@ -1795,7 +1793,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     if (sse_decode_bool(deserializer)) {
-      return (sse_decode_box_autoadd_beat_happened_event(deserializer));
+      return sse_decode_box_autoadd_beat_happened_event(deserializer);
     } else {
       return null;
     }
@@ -1806,7 +1804,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     if (sse_decode_bool(deserializer)) {
-      return (sse_decode_box_autoadd_f_32(deserializer));
+      return sse_decode_box_autoadd_f_32(deserializer);
     } else {
       return null;
     }
@@ -1819,7 +1817,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
     if (sse_decode_bool(deserializer)) {
-      return (sse_decode_box_autoadd_media_player_state(deserializer));
+      return sse_decode_box_autoadd_media_player_state(deserializer);
     } else {
       return null;
     }

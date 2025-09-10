@@ -3,10 +3,10 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
-import '../frb_generated.dart';
-import 'modules/media_player.dart';
-import 'modules/metronome.dart';
-import 'modules/metronome_rhythm.dart';
+import 'package:tiomusic/bridge_generated.dart/frb_generated.dart';
+import 'package:tiomusic/bridge_generated.dart/api/modules/media_player.dart';
+import 'package:tiomusic/bridge_generated.dart/api/modules/metronome.dart';
+import 'package:tiomusic/bridge_generated.dart/api/modules/metronome_rhythm.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 Future<void> initAudio() => RustLib.instance.api.crateApiFfiInitAudio();

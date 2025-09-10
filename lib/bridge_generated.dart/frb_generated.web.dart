@@ -6,14 +6,14 @@
 // Static analysis wrongly picks the IO variant, thus ignore this
 // ignore_for_file: argument_type_not_assignable
 
-import 'api/ffi.dart';
-import 'api/modules/media_player.dart';
-import 'api/modules/metronome.dart';
-import 'api/modules/metronome_rhythm.dart';
-import 'api/simple.dart';
+import 'package:tiomusic/bridge_generated.dart/api/ffi.dart';
+import 'package:tiomusic/bridge_generated.dart/api/modules/media_player.dart';
+import 'package:tiomusic/bridge_generated.dart/api/modules/metronome.dart';
+import 'package:tiomusic/bridge_generated.dart/api/modules/metronome_rhythm.dart';
+import 'package:tiomusic/bridge_generated.dart/api/simple.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'frb_generated.dart';
+import 'package:tiomusic/bridge_generated.dart/frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
@@ -25,87 +25,85 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   });
 
   @protected
-  int dco_decode_CastedPrimitive_usize(dynamic raw);
+  int dco_decode_CastedPrimitive_usize(raw);
 
   @protected
-  String dco_decode_String(dynamic raw);
+  String dco_decode_String(raw);
 
   @protected
-  BeatHappenedEvent dco_decode_beat_happened_event(dynamic raw);
+  BeatHappenedEvent dco_decode_beat_happened_event(raw);
 
   @protected
-  BeatSound dco_decode_beat_sound(dynamic raw);
+  BeatSound dco_decode_beat_sound(raw);
 
   @protected
-  BeatType dco_decode_beat_type(dynamic raw);
+  BeatType dco_decode_beat_type(raw);
 
   @protected
-  BeatTypePoly dco_decode_beat_type_poly(dynamic raw);
+  BeatTypePoly dco_decode_beat_type_poly(raw);
 
   @protected
-  bool dco_decode_bool(dynamic raw);
+  bool dco_decode_bool(raw);
 
   @protected
-  BeatHappenedEvent dco_decode_box_autoadd_beat_happened_event(dynamic raw);
+  BeatHappenedEvent dco_decode_box_autoadd_beat_happened_event(raw);
 
   @protected
-  double dco_decode_box_autoadd_f_32(dynamic raw);
+  double dco_decode_box_autoadd_f_32(raw);
 
   @protected
-  MediaPlayerState dco_decode_box_autoadd_media_player_state(dynamic raw);
+  MediaPlayerState dco_decode_box_autoadd_media_player_state(raw);
 
   @protected
-  double dco_decode_f_32(dynamic raw);
+  double dco_decode_f_32(raw);
 
   @protected
-  double dco_decode_f_64(dynamic raw);
+  double dco_decode_f_64(raw);
 
   @protected
-  int dco_decode_i_32(dynamic raw);
+  int dco_decode_i_32(raw);
 
   @protected
-  List<BeatType> dco_decode_list_beat_type(dynamic raw);
+  List<BeatType> dco_decode_list_beat_type(raw);
 
   @protected
-  List<BeatTypePoly> dco_decode_list_beat_type_poly(dynamic raw);
+  List<BeatTypePoly> dco_decode_list_beat_type_poly(raw);
 
   @protected
-  List<MetroBar> dco_decode_list_metro_bar(dynamic raw);
+  List<MetroBar> dco_decode_list_metro_bar(raw);
 
   @protected
-  Float32List dco_decode_list_prim_f_32_strict(dynamic raw);
+  Float32List dco_decode_list_prim_f_32_strict(raw);
 
   @protected
-  Float64List dco_decode_list_prim_f_64_strict(dynamic raw);
+  Float64List dco_decode_list_prim_f_64_strict(raw);
 
   @protected
-  Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
+  Uint8List dco_decode_list_prim_u_8_strict(raw);
 
   @protected
-  MediaPlayerState dco_decode_media_player_state(dynamic raw);
+  MediaPlayerState dco_decode_media_player_state(raw);
 
   @protected
-  MetroBar dco_decode_metro_bar(dynamic raw);
+  MetroBar dco_decode_metro_bar(raw);
 
   @protected
-  BeatHappenedEvent? dco_decode_opt_box_autoadd_beat_happened_event(
-    dynamic raw,
-  );
+  BeatHappenedEvent? dco_decode_opt_box_autoadd_beat_happened_event(raw);
 
   @protected
-  double? dco_decode_opt_box_autoadd_f_32(dynamic raw);
+  double? dco_decode_opt_box_autoadd_f_32(raw);
 
   @protected
-  MediaPlayerState? dco_decode_opt_box_autoadd_media_player_state(dynamic raw);
+  MediaPlayerState? dco_decode_opt_box_autoadd_media_player_state(raw);
 
   @protected
-  int dco_decode_u_8(dynamic raw);
+  int dco_decode_u_8(raw);
 
   @protected
-  void dco_decode_unit(dynamic raw);
+  void dco_decode_unit(raw);
 
   @protected
-  BigInt dco_decode_usize(dynamic raw);
+  BigInt dco_decode_usize(raw);
 
   @protected
   int sse_decode_CastedPrimitive_usize(SseDeserializer deserializer);
@@ -315,7 +313,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 // Section: wire_class
 
 class RustLibWire implements BaseWire {
-  RustLibWire.fromExternalLibrary(ExternalLibrary lib);
+  RustLibWire.fromExternalLibrary();
 }
 
 @JS('wasm_bindgen')

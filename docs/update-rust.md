@@ -61,10 +61,10 @@ _Note:_
 rustc --version
 ```
 
-4. Check the latest stable Rust version (and toolchain) by running:
+4. Check the currently installed and active toolchain by running:
 
 ```shell
-rustup show
+app doctor
 ```
 
 _Note:_
@@ -81,7 +81,8 @@ rust-version = "1.85.0"
 ```
 
 _Optional but recommended:_
-- Update the Edition to the latest (e.g., "2024") if you want to use new syntax/lints. This is not strictly necessary just to compile Edition-2024 crates, but it’s a good idea to stay current.
+Update the Edition to the latest (e.g., "2024") if you want to use new syntax/lints. This is not strictly necessary just
+to compile Edition-2024 crates, but it’s a good idea to stay current.
   
 ```toml
 [package]
@@ -91,10 +92,11 @@ edition = "2024"
 Then run:
 
 ```shell
-cargo +1.85.0 fix --edition
+app install:edition
 ```
 
-_Note: If you run into issues during updating the Edition, run the update command later, after running the version update command (step 10)._
+_Note: If you run into issues during updating the Edition, run the update command later, after running the version update
+command (step 10)._
 
 6. Pin the local toolchain to the desired version. Edit [rust-toolchain.toml](../rust-toolchain.toml) at the repo root to:
 
@@ -139,8 +141,8 @@ cargo update -p coreaudio-sys
 In rust folder, where the [Cargo.toml](/rust/Cargo.toml) is:
 
 ```shell
-cargo +1.85.0 update
-cargo +1.85.0 build
+app update
+app build
 ```
 
 10. Run formatting and linting:
@@ -153,7 +155,7 @@ app lint
 11. Run tests:
 
 ```shell
-cargo +1.85.0 test --workspace
+app test
 ```
 
 12. Check CI configuration
@@ -162,16 +164,19 @@ cargo +1.85.0 test --workspace
 
 13. Flutter/FRB side
 
-In rust folder, run this to install the CLIs (one-time / when upgrading):
+In rust folder, run this to install the flutter_rust_bridge_codegen CLI (one-time / when upgrading) and cargo-ndk:
 
 ```shell
-cargo install flutter_rust_bridge_codegen cargo-ndk
+app install:frb
 ```
+
+_Note:
+If the installed rust-version from Cargo.toml is >= 1.86.0, it installs the latest cargo-ndk, otherwise cargo-ndk 3.5.4._
 
 Then run this, to actually create/update the bindings:
 
 ```shell
-flutter_rust_bridge_codegen generate --no-dart-enums-style
+app generate
 ```
 
 14. Update Edition (when new Edition is available):

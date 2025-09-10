@@ -28,7 +28,6 @@ All listed flutter_rust_bridge dependencies should be on the same version.
 - flutter_rust_bridge_macros
 - ...
 
-
 2. In the rust folder, open `Cargo.toml` and update the version of `flutter_rust_bridge` to the latest version.
 
 ```toml
@@ -38,7 +37,6 @@ flutter_rust_bridge = "=X.X.X"
 
 _Note: The leading = is valid Cargo syntax for “exact version”. This is recommended to avoid unexpected breaking changes._
 
-
 3. In the root folder, open `pubspec.yaml` and update the version of `flutter_rust_bridge` to the latest version.
 
 ```yaml
@@ -46,29 +44,29 @@ dependencies:
   flutter_rust_bridge: X.X.X
 ```
 
-
-4. In rust folder, open the terminal and install the `flutter_rust_bridge_codegen` version.
-
-```shell
-cargo install flutter_rust_bridge_codegen --version <VERSION> --force
-```
-
-
-5. In the root folder, open the terminal and regenerate bindings (the bridge code).
+4. In rust folder, open the terminal and install the `flutter_rust_bridge_codegen` version and `cargo-ndk`.
 
 ```shell
-flutter_rust_bridge_codegen generate --no-dart-enums-style
+app install:frb
 ```
 
+If the installed rust-version from Cargo.toml is >= 1.86.0, it installs the latest cargo-ndk, otherwise cargo-ndk 3.5.4.
 
-4. Clean & rebuild
+5. In the rust folder, open the terminal and regenerate bindings (the bridge code).
+
+```shell
+app generate
+```
+
+6. Clean & rebuild
 
 In the root folder, run:
 
 ```shell
-flutter clean
-app install
-cargo +1.85.0 update
+fvm flutter clean
+app rust clean
+app rust install
+app rust update
 app generate:rust
 app run ios
 ```
