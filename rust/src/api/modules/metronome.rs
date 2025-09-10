@@ -6,8 +6,8 @@ use rand::Rng;
 use std::{
     ops::Neg,
     sync::{
-        mpsc::{channel, Receiver, Sender},
         Arc, Mutex,
+        mpsc::{Receiver, Sender, channel},
     },
     thread::{self, JoinHandle},
     time::Duration,

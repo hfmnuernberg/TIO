@@ -3,7 +3,7 @@ use lazy_static::__Deref;
 use pitch_shift::PitchShifter;
 use std::mem::MaybeUninit;
 use std::ops::DerefMut;
-use std::sync::mpsc::{channel, Receiver, Sender};
+use std::sync::mpsc::{Receiver, Sender, channel};
 use std::sync::{Arc, Mutex};
 use std::thread::{self, JoinHandle};
 use std::time::Duration;
@@ -131,37 +131,39 @@ pub fn media_player_create_stream() -> bool {
     });
 
     let (channel_sender_ps, channel_receiver_ps): (Sender<()>, Receiver<()>) = channel();
-    let pitch_shift_thread = thread::spawn(move || loop {
-        let mut audio_processing_data = PROCESSING_DATA
-            .lock()
-            .expect("Could not lock mutex to PROCESSING_DATA");
-
-        if let Ok(_command) = channel_receiver_ps.try_recv() {
-            return;
-        }
-
-        if producer.len() < MEDIA_PLAYER_PLAYBACK_MAX_BUFFERING {
-            let mut audio_source_data = SOURCE_DATA
+    let pitch_shift_thread = thread::spawn(move || {
+        loop {
+            let mut audio_processing_data = PROCESSING_DATA
                 .lock()
-                .expect("Could not lock mutex to SOURCE_DATA");
+                .expect("Could not lock mutex to PROCESSING_DATA");
 
-            if !audio_source_data.get_is_playing() {
-                media_player_trigger_destroy_stream();
+            if let Ok(_command) = channel_receiver_ps.try_recv() {
                 return;
             }
 
-            let read_speed = audio_processing_data.speed_change_factor;
-            audio_source_data.get_samples(
-                &mut audio_processing_data.buffer_after_speed_change,
-                read_speed,
-            );
+            if producer.len() < MEDIA_PLAYER_PLAYBACK_MAX_BUFFERING {
+                let mut audio_source_data = SOURCE_DATA
+                    .lock()
+                    .expect("Could not lock mutex to SOURCE_DATA");
 
-            pitch_shift(&mut audio_processing_data);
+                if !audio_source_data.get_is_playing() {
+                    media_player_trigger_destroy_stream();
+                    return;
+                }
 
-            for sample in audio_processing_data.buffer_after_pitch_shift.iter() {
-                producer
-                    .push(*sample)
-                    .expect("Could not push samples to ringbuffer");
+                let read_speed = audio_processing_data.speed_change_factor;
+                audio_source_data.get_samples(
+                    &mut audio_processing_data.buffer_after_speed_change,
+                    read_speed,
+                );
+
+                pitch_shift(&mut audio_processing_data);
+
+                for sample in audio_processing_data.buffer_after_pitch_shift.iter() {
+                    producer
+                        .push(*sample)
+                        .expect("Could not push samples to ringbuffer");
+                }
             }
         }
     });

@@ -34,4 +34,4 @@ updates:
     time: "03:00"
     timezone: Europe/Berlin
   open-pull-requests-limit: 10
-  versioning-strategy: increase-if-necessary
+  versioning-strategy: auto

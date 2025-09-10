@@ -49,22 +49,24 @@ Cons
 
 ## Update Rust
 
-1. Check the latest version of Rust on the [Rust release page](https://releases.rs/). There you can also find the list of versions and related changelogs.
-2. Check the latest edition of Rust on the [Rust editions page](https://doc.rust-lang.org/edition-guide/editions/index.html).
+**1. Check the latest version of Rust on the [Rust release page](https://releases.rs/). There you can also find the list of versions and related changelogs.**
+
+**2. Check the latest edition of Rust on the [Rust editions page](https://doc.rust-lang.org/edition-guide/editions/index.html).**
 
 _Note:_
 - The edition is updated as last step, after updating the Rust version. This is because the edition can be updated independently of the Rust version, but newer editions require a minimum Rust version (e.g., edition = "2024" require a compiler ≥1.85).
 - Rust editions are mostly about syntax and linting changes. The edition can be specified in the `Cargo.toml` file.
 
-3. Check the currently installed Rust version by running:
+**3. Check the currently installed Rust version by running:**
+
 ```shell
 rustc --version
 ```
 
-4. Check the latest stable Rust version (and toolchain) by running:
+**4. Check the currently installed and active toolchain by running:**
 
 ```shell
-rustup show
+app doctor
 ```
 
 _Note:_
@@ -73,7 +75,7 @@ _Note:_
 - If you care about installer/management behaviors, check rustup’s CHANGELOG on GitHub: [rust-lang/rustup CHANGELOG](https://github.com/rust-lang/rustup/blob/master/CHANGELOG.md)
 - If you have multiple toolchains installed (e.g., stable, beta, nightly), ensure you are updating the correct one.
 
-5. Open [rust/Cargo.toml](../rust/Cargo.toml) and change the `rust-version` field to the desired version (e.g., "1.85.0"):
+**5. Open [rust/Cargo.toml](../rust/Cargo.toml) and change the `rust-version` field to the desired version (e.g., "1.85.0"):**
 
 ```toml
 [package]
@@ -81,7 +83,8 @@ rust-version = "1.85.0"
 ```
 
 _Optional but recommended:_
-- Update the Edition to the latest (e.g., "2024") if you want to use new syntax/lints. This is not strictly necessary just to compile Edition-2024 crates, but it’s a good idea to stay current.
+Update the Edition to the latest (e.g., "2024") if you want to use new syntax/lints. This is not strictly necessary just
+to compile Edition-2024 crates, but it’s a good idea to stay current.
   
 ```toml
 [package]
@@ -91,28 +94,36 @@ edition = "2024"
 Then run:
 
 ```shell
-cargo +1.85.0 fix --edition
+app install:edition
 ```
 
-_Note: If you run into issues during updating the Edition, run the update command later, after running the version update command (step 10)._
+_Note: If you run into issues during updating the Edition, run the update command later, after running the version update
+command (step 10)._
 
-6. Pin the local toolchain to the desired version. Edit [rust-toolchain.toml](../rust-toolchain.toml) at the repo root to:
+**6. Pin the local toolchain to the desired version. Edit [rust-toolchain.toml](../rust-toolchain.toml) at the repo root to:**
 
 ```toml
 [toolchain]
 channel = "1.85.0"
+versioned = "1.85.0"
 ```
 
-If the file has other fields, keep them; just set channel to the new version (e.g., 1.85.0).
+If the file has other fields, keep them; just set `channel` and `versioned` to the new version (e.g., 1.85.0).
 
-7. Install & use that toolchain:
+**7. Install & use that toolchain:**
 
 ```shell
-rustup toolchain install 1.85.0
+app install:toolchain 1.85.0
 cargo +1.85.0 --version
 ```
 
-8. ONLY if you added any temporary pins, remove them.
+If you want to uninstall an old toolchain (any installed toolchain that is not the current default), run:
+
+```shell
+rustup toolchain uninstall <OLD_VERSION>
+```
+
+**8. ONLY if you added any temporary pins, remove them.**
 
 If you previously added a workaround like
 
@@ -127,51 +138,54 @@ in Cargo.toml to force a specific version, remove that now, then:
 cargo update -p coreaudio-sys
 ```
 
-9. Re-resolve & build on new version (e.g., 1.85)
+**9. Re-resolve & build on new version (e.g., 1.85.0)**
 
 In rust folder, where the [Cargo.toml](/rust/Cargo.toml) is:
 
 ```shell
-cargo +1.85.0 update
-cargo +1.85.0 build
+app update
+app build
 ```
 
-10. Run formatting and linting:
+**10. Run formatting and linting:**
 
 ```shell
-cargo +1.85.0 fmt --all
-cargo +1.85.0 clippy --workspace --all-targets -- -D warnings
+app format
+app lint
 ```
 
-11. Run tests:
+**11. Run tests:**
 
 ```shell
-cargo +1.85.0 test --workspace
+app test
 ```
 
-12. Check CI configuration
+**12. Check CI configuration**
+
 - If you have a GitHub Action or other CI, check the Rust version used there.
 - Update it to the new version, e.g., 1.85.0 (or rustup update 1.85.0) before build/test.
 
-13. Flutter/FRB side
+**13. Flutter/FRB side**
 
-In rust folder, run this to install the CLIs (one-time / when upgrading):
+In rust folder, run this to install the flutter_rust_bridge_codegen CLI (one-time / when upgrading) and cargo-ndk:
 
 ```shell
-cargo install flutter_rust_bridge_codegen cargo-ndk
+app install:frb
 ```
+
+_Note:
+If the installed rust-version from Cargo.toml is >= 1.86.0, it installs the latest cargo-ndk, otherwise cargo-ndk 3.5.4._
 
 Then run this, to actually create/update the bindings:
 
 ```shell
-flutter_rust_bridge_codegen generate --no-dart-enums-style
+app generate
 ```
 
-14. Update Edition (when new Edition is available):
+**14. Update Edition (when new Edition is available):**
 
 **Important:**
-- Commit first, because it throws an error if uncommitted changes are present.
-- `cargo fix --edition` also makes many changes, so it’s best to do it in a separate commit.
+Installing a new edition can make many changes, so it’s best to commit first before and do it in a separate commit.
 
 In rust folder, change Edition in [Cargo.toml](../rust/Cargo.toml):
 ```toml
@@ -179,19 +193,14 @@ In rust folder, change Edition in [Cargo.toml](../rust/Cargo.toml):
 edition = "2024"
 ```
 
-When changing the edition in Cargo.toml is already commited run:
+Make sure the rust-version is set correct (e.g., 1.85.0 supports edition 2024).
+When changing the edition in Cargo.toml is done run:
 
 ```shell
-cargo +1.85.0 fix --edition
+app install:edition
 ```
 
-When changing the edition in Cargo.toml is not commited run:
-
-```shell
-cargo +1.85.0 fix --edition --allow-dirty
-```
-
-15. Start the app:
+**15. Start the app:**
 
 ```shell
 app run ios

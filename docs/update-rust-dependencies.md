@@ -2,40 +2,40 @@
 
 ## Update Cargo minor and bugfix versions
 
-1. Check which dependencies are outdated
+**1. Check which dependencies are outdated**
 
 In the rust folder, check the currently outdated dependencies by running:
 ```shell
-cargo outdated
+app outdated
 ```
 
 The cargo outdated list mixes direct and transitive deps. To start with root-only dependencies (the Cargo.toml entries) use:
 ```shell
-cargo outdated -R
+app outdated:root
 ```
 
-2. Update lockfile to latest compatible (non-breaking) across the board:
+**2. Update lockfile to latest compatible (non-breaking) across the board:**
 
 ```shell
-cargo update
+app update
 ```
 
-3. Update version *requirements* in Cargo.toml to the latest compatible ones
+**3. Update version *requirements* in Cargo.toml to the latest compatible ones**
 
 ```shell
-cargo upgrade
+app upgrade
 ```
 
-4. Re-run updating the lockfile to ensure everything is in sync
+**4. Re-run updating the lockfile to ensure everything is in sync**
 
 ```shell
-cargo update
+app update
 ``` 
 
-5. Verify what's left (should now be only the breaking majors):
+**5. Verify what's left (should now be only the breaking majors):**
 
 ```shell
-cargo outdated -R
+app outdated:root
 ```
 
 You should end up with just the known “review-needed” candidates.

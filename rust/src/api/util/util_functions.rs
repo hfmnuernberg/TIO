@@ -1,8 +1,8 @@
 use ::num::{Float, NumCast};
 use anyhow::{Error, Result};
 use cpal::{
-    traits::{DeviceTrait, HostTrait},
     BufferSize, Device,
+    traits::{DeviceTrait, HostTrait},
 };
 use rubato::{
     Resampler, SincFixedIn, SincInterpolationParameters, SincInterpolationType, WindowFunction,

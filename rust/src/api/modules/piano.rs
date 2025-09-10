@@ -5,8 +5,8 @@ use rustysynth::{SoundFont, Synthesizer, SynthesizerSettings};
 use std::{
     fs::File,
     sync::{
-        mpsc::{channel, Receiver, Sender},
         Arc, Mutex,
+        mpsc::{Receiver, Sender, channel},
     },
     thread::{self, JoinHandle},
     time::Duration,

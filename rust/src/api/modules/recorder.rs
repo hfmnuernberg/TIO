@@ -1,7 +1,7 @@
 use std::{
     sync::{
-        mpsc::{channel, Receiver, Sender},
         Mutex,
+        mpsc::{Receiver, Sender, channel},
     },
     thread::{self, JoinHandle},
     time::Duration,
