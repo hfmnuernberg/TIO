@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:tiomusic/domain/metronome/metronome_beat.dart';
 import 'package:tiomusic/domain/metronome/metronome_beat_event.dart';
 import 'package:tiomusic/domain/metronome/metronome_beat_event_utils.dart';
@@ -71,6 +73,8 @@ class Metronome {
 
     await _audioSession.preparePlayback();
 
+    await _enableFlashAndAudioSyncImprovementOnAndroid();
+
     final success = await _as.metronomeStart();
     if (!success) return logger.e('Unable to start Metronome.');
 
@@ -88,6 +92,8 @@ class Metronome {
 
     _beatDetection?.cancel();
     _beatDetection = null;
+
+    await _disableFlashAndAudioSyncImprovementOnAndroid();
 
     final success = await _as.metronomeStop();
     if (!success) return logger.e('Unable to stop Metronome.');
@@ -167,5 +173,20 @@ class Metronome {
 
     _onBeatEvent(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary));
     _onBeatStop(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary));
+  }
+
+  Future<void> _enableFlashAndAudioSyncImprovementOnAndroid() async {
+    if (Platform.isAndroid) {
+      await SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.manual,
+        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom],
+      );
+    }
+  }
+
+  Future<void> _disableFlashAndAudioSyncImprovementOnAndroid() async {
+    if (Platform.isAndroid) {
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
   }
 }
