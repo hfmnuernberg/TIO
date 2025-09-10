@@ -196,7 +196,7 @@ case "$1" in
   install:rust:flutter-rust-bridge-codegen) cargo install flutter_rust_bridge_codegen --version 2.11.1; ;;
   install:rust:packages)     installRustPackages; ;;
   install:rust:targets)      installRustTargets; ;;
-  outdated)                  $FLUTTER pub outdated; bash "$0" widgetbook outdated; ;;
+  outdated)                  $FLUTTER pub outdated; bash "$0" widgetbook outdated; bash "$0" rust outdated:root; ;;
   refresh)                   bash "$0" clean; bash "$0" install; bash "$0" generate; bash "$0" run; ;;
   reset)                     reset; ;;
   run)                       shift; scripts/run.sh "$@"; ;;
