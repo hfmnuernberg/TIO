@@ -160,8 +160,6 @@ case "${1:-help}" in
     ;;
 
   format)
-    shift || true
-    "$SCRIPT_DIR/app.sh" format
     CH="$(get_rust_version_from_cargo)"
     [[ -z "$CH" ]] && CH="$(resolved_channel "")"
     print_header "cargo +$CH fmt --all"
