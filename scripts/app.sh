@@ -165,7 +165,7 @@ help() {
 }
 
 case "$1" in
-  analyze)                   bash "$0" analyze:dart; bash "$0" analyze:yaml; bash "$0" widgetbook analyze; ;;
+  analyze)                   bash "$0" analyze:dart; bash "$0" analyze:yaml; bash "$0" widgetbook analyze; bash "$0" rust analyze; ;;
   analyze:dart)              $FLUTTER analyze lib test; ;;
   analyze:files)             scripts/analyze-files-with-too-many-lines.sh .; ;;
   analyze:fix)               $DART fix --apply --code="$2"; ;;

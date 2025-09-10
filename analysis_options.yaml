@@ -6,6 +6,7 @@ analyzer:
   exclude:
   - lib/src/rust/**
   - lib/**.g.dart
+  - lib/bridge_generated.dart/**
 
 formatter:
   line-length: 120
