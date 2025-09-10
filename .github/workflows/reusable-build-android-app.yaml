@@ -58,7 +58,7 @@ jobs:
       uses: actions-rust-lang/setup-rust-toolchain@v1.14.1
 
     - name: Install cargo-ndk
-      run: cargo install cargo-ndk
+      run: cargo install cargo-ndk --version 3.5.4
 
     - name: Install Flutter dependencies
       run: scripts/app.sh install:flutter:packages
