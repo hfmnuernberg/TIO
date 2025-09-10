@@ -55,9 +55,7 @@ install() {
 }
 
 installRustPackages() {
-  cd rust;
-  cargo build;
-  cd ..;
+  bash "$0" rust build;
   rm -rf rust_builder/linux rust_builder/macos rust_builder/windows;
 }
 
