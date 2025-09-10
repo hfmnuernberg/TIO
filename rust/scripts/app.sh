@@ -91,32 +91,32 @@ help() {
 Usage: scripts/app.sh <command> [args]
 
 General
-  help                                    - Shows this help
-  doctor                                  - Shows rustup toolchains & rustc version
+  help                              - Shows this help
+  doctor                            - Shows rustup toolchains & rustc version
 
 Quality
-  format                                  - Formats rust code
-  clippy                                  - Lints rust code
-  analyze | lint                          - Alias for clippy
-  test                                    - Runs the Rust tests for the crate(s)
-  build                                   - Compiles the rust code and build the default dev profile (no --release)
-  clean                                   - Runs Rust’s clean for the crate(s). It deletes the rust/target/ build artifacts (including incremental build cache). It doesn’t touch Cargo.lock, Flutter/Pods/android caches, or anything outside rust/.
-  refresh                                 - clean → update → format → lint → build → test
+  format                            - Formats Rust code and Dart (lib test)
+  clippy                            - Lints Rust code
+  analyze | lint                    - Alias for clippy
+  test                              - Runs the Rust tests for the crate(s)
+  build                             - Compiles the Rust code and build the default dev profile (no --release)
+  clean                             - Runs Rust’s clean for the crate(s). It deletes the rust/target/ build artifacts (including incremental build cache). It doesn’t touch Cargo.lock, Flutter/Pods/android caches, or anything outside rust/.
+  refresh                           - clean → update → format → lint → build → test
 
 Toolchain / MSRV / Edition   (docs/update-rust.md)
-  install:toolchain [<channel>]           - Installs and uses the toolchain (default: install pinned from rust-toolchain.toml)
-  install:edition                         - Installs and uses the Rust Edition set in Cargo.toml (e.g., after update)
-  uninstall:toolchain [<channel>]         - Uninstalls the provided toolchain (not the current default)
+  install:toolchain [<channel>]     - Installs and uses the toolchain (default: install pinned from rust-toolchain.toml)
+  install:edition                   - Installs and uses the Rust Edition set in Cargo.toml (e.g., after update)
+  uninstall:toolchain [<channel>]   - Uninstalls the provided toolchain (not the current default)
 
 Flutter Rust Bridge          (docs/update-flutter-rust-bridge.md)
-  install:frb [<version>]                 - Installs flutter_rust_bridge_codegen (given or latest) and cargo-ndk. If the installed rust-version from Cargo.toml is >= 1.86.0, it installs the latest cargo-ndk, otherwise cargo-ndk 3.5.4.
-  generate                                - Regenerates Flutter<->Rust bindings with Flutter Rust Bridge (auto-detects rust_input/dart_output)
+  install:frb [<version>]           - Installs flutter_rust_bridge_codegen (given or latest) and cargo-ndk. If the installed rust-version from Cargo.toml is >= 1.86.0, it installs the latest cargo-ndk, otherwise cargo-ndk 3.5.4.
+  generate                          - Regenerates Flutter<->Rust bindings with Flutter Rust Bridge (auto-detects rust_input/dart_output)
 
 Dependencies                 (docs/update-rust-dependencies.md)
-  outdated                                - Lists all outdated dependencies (direct and transitive) and show current vs compatible/latest version. (requires and automatically installs cargo-outdated)
-  outdated:root                           - Lists all outdated root-only dependencies: Only shows crates listed in Cargo.toml (ignores transitive deps)
-  upgrade                                 - Updates the version requirements in Cargo.toml to the latest compatible releases; afterwards do app rust update to refresh the lockfile. (requires and automatically installs cargo-edit)
-  update                                  - Refreshes Cargo.lock to the newest versions that satisfy your Cargo.toml constraints (non-breaking). Does not change Cargo.toml.
+  outdated                          - Lists all outdated dependencies (direct and transitive) and show current vs compatible/latest version. (requires and automatically installs cargo-outdated)
+  outdated:root                     - Lists all outdated root-only dependencies: Only shows crates listed in Cargo.toml (ignores transitive deps)
+  upgrade                           - Updates the version requirements in Cargo.toml to the latest compatible releases; afterwards do app rust update to refresh the lockfile. (requires and automatically installs cargo-edit)
+  update                            - Refreshes Cargo.lock to the newest versions that satisfy your Cargo.toml constraints (non-breaking). Does not change Cargo.toml.
 
 Notes
 - Commands default to the pinned rust-version in Cargo.toml or channel in rust-toolchain.toml.
@@ -160,6 +160,11 @@ case "${1:-help}" in
     [[ -z "$CH" ]] && CH="$(resolved_channel "")"
     print_header "cargo +$CH fmt --all"
     cargo_plus "$CH" fmt --all
+
+    # Also run Dart formatter for project code (same as root script)
+    if command -v fvm >/dev/null 2>&1; then DART_CMD="fvm dart"; else DART_CMD="dart"; fi
+    print_header "$DART_CMD format --line-length=120 lib test (from $ROOT_DIR)"
+    ( cd "$ROOT_DIR" && $DART_CMD format --line-length=120 lib test )
     ;;
 
   clippy|analyze|lint)
