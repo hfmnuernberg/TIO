@@ -119,7 +119,7 @@ Dependencies                 (docs/update-rust-dependencies.md)
   update                                  - Refreshes Cargo.lock to the newest versions that satisfy your Cargo.toml constraints (non-breaking). Does not change Cargo.toml.
 
 Notes
-- Commands default to the pinned channel in rust-toolchain.toml, or "stable" if none is pinned.
+- Commands default to the pinned rust-version in Cargo.toml or channel in rust-toolchain.toml.
 - This script runs from rust/ automatically, so paths like Cargo.toml are local.
 EOF
 }

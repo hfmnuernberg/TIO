@@ -183,11 +183,11 @@ case "$1" in
   coverage:validate)         validateCoverage "$@"; ;;
   delete:lock)               deleteLockFiles; ;;
   doctor)                    $FLUTTER doctor; ;;
-  format)                    $DART format --line-length=120 lib test; bash "$0" widgetbook format; ;;
+  format)                    $DART format --line-length=120 lib test; bash "$0" widgetbook format; bash "$0" rust format; ;;
   generate)                  generate; bash "$0" widgetbook generate; ;;
   generate:icon)             $FLUTTER pub run flutter_launcher_icons -f flutter_launcher_icons.yaml; ;;
   generate:json)             $DART run build_runner build --delete-conflicting-outputs; ;;
-  generate:rust)             flutter_rust_bridge_codegen generate --no-dart-enums-style; ;;
+  generate:rust)             bash "$0" rust generate; ;;
   generate:splash)           $FLUTTER pub run flutter_native_splash:create --path=flutter_native_splash.yaml; ;;
   install)                   install; bash "$0" widgetbook install; ;;
   install:cocoa:pods)        $FLUTTER precache --ios; cd ios; pod install --repo-update; cd ..; ;;
