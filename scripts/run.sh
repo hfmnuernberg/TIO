@@ -29,15 +29,17 @@ if [ "$2" = 'prod' ]; then FLAVOR='prd'; fi
 if [ "$2" = 'production' ]; then FLAVOR='prd'; fi
 if [ -z "$FLAVOR" ]; then FLAVOR='dev'; fi
 
-if [ -z "$3" ]; then MODE='debug'; else MODE="$4"; fi
+if [ -z "$3" ]; then MODE='debug'; else MODE="$3"; fi
 
 echo "Running app ..."
 echo "  env:     $ENV"
 echo "  flavor:  $FLAVOR"
 echo "  mode:    $MODE"
 
+export GRADLE_OPTS="-Dorg.gradle.jvmargs='-Xmx4g -XX:MaxMetaspaceSize=512m'"
+export JAVA_TOOL_OPTIONS="-Xmx4g"
+
 $FLUTTER run \
     --dart-define=ENVIRONMENT="$ENV" \
-    --target lib/main.dart \
     --flavor "$FLAVOR" \
     "--$MODE"
