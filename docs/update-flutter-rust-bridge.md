@@ -63,7 +63,7 @@ app generate
 In the root folder, run:
 
 ```shell
-fvm flutter clean
+app clean
 app rust clean
 app rust install
 app rust update

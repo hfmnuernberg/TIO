@@ -101,6 +101,7 @@ Quality
   test                                    - Runs the Rust tests for the crate(s)
   build                                   - Compiles the rust code and build the default dev profile (no --release)
   clean                                   - Runs Rust’s clean for the crate(s). It deletes the rust/target/ build artifacts (including incremental build cache). It doesn’t touch Cargo.lock, Flutter/Pods/android caches, or anything outside rust/.
+  refresh                                 - clean → update → format → lint → build → test
 
 Toolchain / MSRV / Edition   (docs/update-rust.md)
   install:toolchain [<channel>]           - Installs and uses the toolchain (default: install pinned from rust-toolchain.toml)
@@ -116,11 +117,6 @@ Dependencies                 (docs/update-rust-dependencies.md)
   outdated:root                           - Lists all outdated root-only dependencies: Only shows crates listed in Cargo.toml (ignores transitive deps)
   upgrade                                 - Updates the version requirements in Cargo.toml to the latest compatible releases; afterwards do app rust update to refresh the lockfile. (requires and automatically installs cargo-edit)
   update                                  - Refreshes Cargo.lock to the newest versions that satisfy your Cargo.toml constraints (non-breaking). Does not change Cargo.toml.
-
-Flows
-  refresh                                 - clean → update → format → clippy → build → test
-  update:rust <channel>                   - install:toolchain + toolchain:pin + msrv:set <channel> + (optional edition)
-  update:edition <edition> [<channel>]    - edition:set + install:edition
 
 Notes
 - Commands default to the pinned channel in rust-toolchain.toml, or "stable" if none is pinned.
