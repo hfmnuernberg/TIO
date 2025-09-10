@@ -51,7 +51,7 @@ install() {
   bash "$0" install:cocoa:pods
   bash "$0" install:rust:targets
   bash "$0" install:rust:packages
-  bash "$0" install:rust:flutter-rust-bridge-codegen
+  bash "$0" install:rust:frb
 }
 
 installRustPackages() {
@@ -148,7 +148,7 @@ help() {
   echo 'install:cocoa:pods                            - install Cocoa Pods'
   echo 'install:fastlane                              - install Fastlane'
   echo 'install:flutter:packages                      - install Flutter packages'
-  echo 'install:rust:flutter-rust-bridge-codegen      - install Flutter/Dart<->Rust binding generator'
+  echo 'install:rust:frb                              - install Flutter/Dart<->Rust binding generator'
   echo 'install:rust:packages                         - install Rust packages'
   echo 'install:rust:targets                          - install Rust targets'
   echo 'lint*                                         - synonym for analyze'
@@ -193,7 +193,7 @@ case "$1" in
   install:cocoa:pods)        $FLUTTER precache --ios; cd ios; pod install --repo-update; cd ..; ;;
   install:fastlane)          cd android; bundle install; cd ..; cd ios; bundle install; cd ..; ;;
   install:flutter:packages)  $FLUTTER pub get; ;;
-  install:rust:flutter-rust-bridge-codegen) cargo install flutter_rust_bridge_codegen --version 2.11.1; ;;
+  install:rust:frb)          bash "$0" rust install:frb; ;;
   install:rust:packages)     installRustPackages; ;;
   install:rust:targets)      installRustTargets; ;;
   outdated)                  $FLUTTER pub outdated; bash "$0" widgetbook outdated; bash "$0" rust outdated:root; ;;

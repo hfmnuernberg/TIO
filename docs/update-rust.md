@@ -50,6 +50,7 @@ Cons
 ## Update Rust
 
 1. Check the latest version of Rust on the [Rust release page](https://releases.rs/). There you can also find the list of versions and related changelogs.
+
 2. Check the latest edition of Rust on the [Rust editions page](https://doc.rust-lang.org/edition-guide/editions/index.html).
 
 _Note:_
@@ -57,6 +58,7 @@ _Note:_
 - Rust editions are mostly about syntax and linting changes. The edition can be specified in the `Cargo.toml` file.
 
 3. Check the currently installed Rust version by running:
+
 ```shell
 rustc --version
 ```
