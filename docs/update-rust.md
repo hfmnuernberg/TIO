@@ -109,7 +109,7 @@ If the file has other fields, keep them; just set `channel` and `versioned` to t
 7. Install & use that toolchain:
 
 ```shell
-rustup toolchain install 1.85.0
+app install:toolchain 1.85.0
 cargo +1.85.0 --version
 ```
 
@@ -134,7 +134,7 @@ in Cargo.toml to force a specific version, remove that now, then:
 cargo update -p coreaudio-sys
 ```
 
-9. Re-resolve & build on new version (e.g., 1.85)
+9. Re-resolve & build on new version (e.g., 1.85.0)
 
 In rust folder, where the [Cargo.toml](/rust/Cargo.toml) is:
 
@@ -146,8 +146,8 @@ cargo +1.85.0 build
 10. Run formatting and linting:
 
 ```shell
-cargo +1.85.0 fmt --all
-cargo +1.85.0 clippy --workspace --all-targets -- -D warnings
+app format
+app lint
 ```
 
 11. Run tests:

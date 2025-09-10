@@ -96,9 +96,9 @@ Toolchain / MSRV / Edition   (docs/update-rust.md)
 
 Quality
   format                                  formats rust code (uses rust-version from Cargo.toml)
-  clippy [<channel>]                      cargo clippy --workspace --all-targets -D warnings
-  analyze [<channel>]                     Alias for clippy
-  test [<channel>]                        cargo test --workspace
+  clippy                                  lints rust code (uses rust-version from Cargo.toml)
+  analyze | lint                          alias for clippy
+  test                                    runs the Rust tests for the crate(s) (uses rust-version from Cargo.toml)
   build [<channel>]                       cargo build
   clean                                   cargo clean
 
@@ -163,16 +163,16 @@ case "${1:-help}" in
     cargo_plus "$CH" fmt --all
     ;;
 
-  clippy|analyze)
-    shift || true
-    CH="$(resolved_channel "${1:-}")"
+  clippy|analyze|lint)
+    CH="$(get_rust_version_from_cargo)"
+    [[ -z "$CH" ]] && CH="$(resolved_channel "")"
     print_header "cargo +$CH clippy --workspace --all-targets -- -D warnings"
     cargo_plus "$CH" clippy --workspace --all-targets -- -D warnings
     ;;
 
   test)
-    shift || true
-    CH="$(resolved_channel "${1:-}")"
+    CH="$(get_rust_version_from_cargo)"
+    [[ -z "$CH" ]] && CH="$(resolved_channel "")"
     print_header "cargo +$CH test --workspace"
     cargo_plus "$CH" test --workspace
     ;;
