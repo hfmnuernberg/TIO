@@ -50,6 +50,21 @@ sed_in_place() {
   if sed --version >/dev/null 2>&1; then sed -i "$@"; else sed -i '' "$@"; fi
 }
 
+ensure_cargo_expand() {
+  # Install cargo-expand with correct flags for MSRV
+  local ch="$1"
+  if ! command -v cargo-expand >/dev/null 2>&1; then
+    if version_lt "$ch" "1.86.0"; then
+      print_header "Installing cargo-expand (using --locked) for rustc $ch"
+      cargo install cargo-expand --locked --force
+    else
+      print_header "Installing cargo-expand (latest) for rustc $ch"
+      cargo install cargo-expand --force
+    fi
+  fi
+}
+
+
 ensure_tool() {
   local bin="$1" crate="$2"
   if ! command -v "$bin" >/dev/null 2>&1; then
@@ -238,6 +253,8 @@ case "${1:-help}" in
       print_header "Installing cargo-ndk (latest, forced) for rustc $CH"
       cargo install cargo-ndk --force
     fi
+    # Ensure cargo-expand is available; FRB auto-installs it, but that may fail on MSRV without --locked
+    ensure_cargo_expand "$CH"
     flutter_rust_bridge_codegen --version || true
     cargo-ndk --version || true
     ;;
@@ -246,6 +263,10 @@ case "${1:-help}" in
     RUST_INPUT="${FRB_RUST_INPUT:-}"
     RUST_ROOT="${FRB_RUST_ROOT:-.}"
     DART_OUTPUT="${FRB_DART_OUTPUT:-}"
+
+    # Ensure cargo-expand is installed with the right flags for our MSRV so FRB can run cargo expand
+    CH_FOR_EXPAND="$(get_rust_version_from_cargo)"; [[ -z "$CH_FOR_EXPAND" ]] && CH_FOR_EXPAND="$(resolved_channel "")"
+    ensure_cargo_expand "$CH_FOR_EXPAND"
 
     # Detect rust_input if not provided
     if [[ -z "$RUST_INPUT" ]]; then
