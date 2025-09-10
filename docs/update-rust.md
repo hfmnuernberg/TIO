@@ -101,15 +101,22 @@ _Note: If you run into issues during updating the Edition, run the update comman
 ```toml
 [toolchain]
 channel = "1.85.0"
+versioned = "1.85.0"
 ```
 
-If the file has other fields, keep them; just set channel to the new version (e.g., 1.85.0).
+If the file has other fields, keep them; just set `channel` and `versioned` to the new version (e.g., 1.85.0).
 
 7. Install & use that toolchain:
 
 ```shell
 rustup toolchain install 1.85.0
 cargo +1.85.0 --version
+```
+
+If you want to uninstall an old toolchain (any installed toolchain that is not the current default), run:
+
+```shell
+rustup toolchain uninstall <OLD_VERSION>
 ```
 
 8. ONLY if you added any temporary pins, remove them.
@@ -170,8 +177,7 @@ flutter_rust_bridge_codegen generate --no-dart-enums-style
 14. Update Edition (when new Edition is available):
 
 **Important:**
-- Commit first, because it throws an error if uncommitted changes are present.
-- `cargo fix --edition` also makes many changes, so it’s best to do it in a separate commit.
+Installing a new edition can make many changes, so it’s best to commit first before and do it in a separate commit.
 
 In rust folder, change Edition in [Cargo.toml](../rust/Cargo.toml):
 ```toml
@@ -179,16 +185,11 @@ In rust folder, change Edition in [Cargo.toml](../rust/Cargo.toml):
 edition = "2024"
 ```
 
-When changing the edition in Cargo.toml is already commited run:
+Make sure the rust-version is set correct (e.g., 1.85.0 supports edition 2024).
+When changing the edition in Cargo.toml is done run:
 
 ```shell
-cargo +1.85.0 fix --edition
-```
-
-When changing the edition in Cargo.toml is not commited run:
-
-```shell
-cargo +1.85.0 fix --edition --allow-dirty
+app install:edition
 ```
 
 15. Start the app:

@@ -12,16 +12,17 @@ use crate::{
             generator_trigger_destroy_stream,
         },
         media_player::{
-            media_player_compute_rms, media_player_create_stream, media_player_query_state,
-            media_player_set_buffer, media_player_set_loop_value, media_player_set_new_volume,
-            media_player_set_pitch, media_player_set_pos_factor, media_player_set_speed,
-            media_player_set_trim_by_factor, media_player_trigger_destroy_stream, MediaPlayerState,
+            MediaPlayerState, media_player_compute_rms, media_player_create_stream,
+            media_player_query_state, media_player_set_buffer, media_player_set_loop_value,
+            media_player_set_new_volume, media_player_set_pitch, media_player_set_pos_factor,
+            media_player_set_speed, media_player_set_trim_by_factor,
+            media_player_trigger_destroy_stream,
         },
         metronome::{
-            metronome_create_audio_stream, metronome_get_beat_event, metronome_load_audio_buffer,
-            metronome_set_audio_muted, metronome_set_new_bpm, metronome_set_new_mute_chance,
-            metronome_set_new_volume, metronome_set_rhythm_from_bars,
-            metronome_trigger_destroy_stream, BeatHappenedEvent,
+            BeatHappenedEvent, metronome_create_audio_stream, metronome_get_beat_event,
+            metronome_load_audio_buffer, metronome_set_audio_muted, metronome_set_new_bpm,
+            metronome_set_new_mute_chance, metronome_set_new_volume,
+            metronome_set_rhythm_from_bars, metronome_trigger_destroy_stream,
         },
         metronome_rhythm::{BeatSound, MetroBar},
         piano::{
@@ -64,7 +65,8 @@ pub fn init_audio() {
         Err(err) => {
             log::info!(
                 "Could not get platform default output sample rate, setting to fallback: {} - Error: {}",
-                fallback_sample_rate, err
+                fallback_sample_rate,
+                err
             );
             fallback_sample_rate
         }
@@ -75,7 +77,8 @@ pub fn init_audio() {
         Err(err) => {
             log::info!(
                 "Could not get platform default input sample rate, setting to fallback: {} - Error: {}",
-                fallback_sample_rate, err
+                fallback_sample_rate,
+                err
             );
             fallback_sample_rate
         }

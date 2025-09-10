@@ -13,14 +13,24 @@ if [ ! -f "$ROOT_DIR/pubspec.yaml" ]; then echo "❌  Wrong directory! pubspec.y
 # ---------- helpers ------------------------------------------------------------
 
 get_channel_from_file() {
-  # Read rust-toolchain.toml's channel; default to "stable"
-  if [[ -f "rust-toolchain.toml" ]]; then
-    local value
-    value="$(awk -F\" '/channel *=/ {print $2; exit}' rust-toolchain.toml || true)"
-    [[ -n "${value:-}" ]] && { echo "$value"; return; }
-  fi
-  echo "stable"
+  # Prefer repo root pin, then local; default to Edition-2024 MSRV (1.85.0)
+  for p in "$ROOT_DIR/rust-toolchain.toml" "rust-toolchain.toml"; do
+    if [[ -f "$p" ]]; then
+      local value
+      value="$(awk -F\" '/channel *=/ {print $2; exit}' "$p" || true)"
+      [[ -n "${value:-}" ]] && { echo "$value"; return; }
+    fi
+  done
+  echo "1.85.0"
 }
+
+# Extracts [package].rust-version from rust/Cargo.toml
+get_rust_version_from_cargo() {
+  if [[ -f "Cargo.toml" ]]; then
+    awk -F\" '/^\s*rust-version\s*=\s*"/ {print $2; exit}' Cargo.toml || true
+  fi
+}
+
 
 CHANNEL_DEFAULT="$(get_channel_from_file)"
 
@@ -77,38 +87,35 @@ help() {
 Usage: scripts/app.sh <command> [args]
 
 General
-  help                                      Show this help
-  doctor [<channel>]                        Show rustup toolchains & rustc version (default: pinned)
+  help                                    Show this help
+  doctor [<channel>]                      Show rustup toolchains & rustc version (default: pinned)
 
 Toolchain / MSRV / Edition   (docs/update-rust.md)
-  toolchain:install [<channel>]             install and use the toolchain (default: pinned)
-  toolchain:pin <channel>                   Write rust-toolchain.toml with the given channel
-  msrv:set <version>                        Set [package].rust-version in Cargo.toml
-  edition:set <edition>                     Set [package].edition in Cargo.toml (e.g. 2021, 2024)
-  edition:fix [<channel>] [--allow-dirty]   Run cargo +<channel> fix --edition
+  install:toolchain [<channel>]           Install and use the toolchain (default: install pinned from rust-toolchain.toml)
+  install:edition                         Install and use the Rust Edition set in Cargo.toml (e.g., after update)
 
 Quality
-  fmt [<channel>]                           cargo fmt --all
-  clippy [<channel>]                        cargo clippy --workspace --all-targets -D warnings
-  analyze [<channel>]                       Alias for clippy
-  test [<channel>]                          cargo test --workspace
-  build [<channel>]                         cargo build
-  clean                                     cargo clean
+  format                                  formats rust code (uses rust-version from Cargo.toml)
+  clippy [<channel>]                      cargo clippy --workspace --all-targets -D warnings
+  analyze [<channel>]                     Alias for clippy
+  test [<channel>]                        cargo test --workspace
+  build [<channel>]                       cargo build
+  clean                                   cargo clean
 
 Dependencies                 (docs/update-rust-dependencies.md)
-  deps:outdated                             cargo outdated (root & transitive)
-  deps:outdated:root                        cargo outdated -R (only root deps)
-  deps:upgrade                              cargo upgrade            (requires cargo-edit)
-  deps:update [<channel>]                   cargo +<channel> update  (refresh lockfile)
+  outdated                                cargo outdated (root & transitive)
+  outdated:root                           cargo outdated -R (only root deps)
+  upgrade                                 cargo upgrade (requires cargo-edit)
+  update [<channel>]                      cargo +<channel> update (refresh lockfile)
 
 Flutter Rust Bridge          (docs/update-flutter-rust-bridge.md)
-  frb:install [<version>]                   cargo install flutter_rust_bridge_codegen [--version X] --force
-  frb:generate                              flutter_rust_bridge_codegen generate --no-dart-enums-style
+  frb:install [<version>]                 cargo install flutter_rust_bridge_codegen [--version X] --force
+  frb:generate                            flutter_rust_bridge_codegen generate --no-dart-enums-style
 
 Flows
-  refresh                                   clean → deps:update → fmt → clippy → build → test
-  update:rust <channel>                     toolchain:install + toolchain:pin + msrv:set <channel> + (optional edition)
-  update:edition <edition> [<channel>]      edition:set + edition:fix
+  refresh                                 clean → update → format → clippy → build → test
+  update:rust <channel>                   install:toolchain + toolchain:pin + msrv:set <channel> + (optional edition)
+  update:edition <edition> [<channel>]    edition:set + install:edition
 
 Notes
 - Commands default to the pinned channel in rust-toolchain.toml, or "stable" if none is pinned.
@@ -127,83 +134,31 @@ case "${1:-help}" in
     print_header "Rust Doctor (channel: $CH)"
     rustup show
     echo
-    echo -n "rustc version ($CH): "
-    rustup_run "$CH" rustc --version
+    echo -n "rustc (effective, respecting rust-toolchain.toml): "
+    rustc --version
+    echo -n "rustc (+$CH explicit): "
+    rustup run "$CH" rustc --version
     ;;
 
-  toolchain:install)
+  install:toolchain)
     shift || true
     CH="$(resolved_channel "${1:-}")"
     print_header "Installing toolchain $CH"
     rustup toolchain install "$CH"
     ;;
 
-  toolchain:pin)
-    shift || true
-    [[ -z "${1:-}" ]] && { echo "Usage: toolchain:pin <channel>" >&2; exit 2; }
-    CH="$1"
-    print_header "Pinning rust-toolchain.toml → channel=\"$CH\""
-    cat > rust-toolchain.toml <<EOF
-[toolchain]
-channel = "$CH"
-EOF
+  install:edition)
+    CH="$(get_rust_version_from_cargo)"
+    [[ -z "$CH" ]] && CH="$(resolved_channel "")"
+    print_header "cargo +$CH fix --edition --allow-dirty"
+    cargo_plus "$CH" fix --edition --allow-dirty
     ;;
 
-  msrv:set)
+  format)
     shift || true
-    [[ -z "${1:-}" ]] && { echo "Usage: msrv:set <version>" >&2; exit 2; }
-    V="$1"
-    print_header "Setting [package].rust-version=\"$V\" in Cargo.toml"
-    if grep -qE '^\s*rust-version\s*=' Cargo.toml; then
-      sed_in_place 's/^\(\s*rust-version\s*=\s*\)".*"/\1"'"$V"'"/' Cargo.toml
-    else
-      if grep -q '^\[package\]' Cargo.toml; then
-        awk -v v="$V" '
-          BEGIN{done=0}
-          /^\[package\]/{print; getline; print "rust-version = \"" v "\""; print; done=1; next}
-          {print}
-          END{if(!done) print "\n[package]\nrust-version = \"" v "\""}
-        ' Cargo.toml > Cargo.toml.__tmp && mv Cargo.toml.__tmp Cargo.toml
-      else
-        printf '\n[package]\nrust-version = "%s"\n' "$V" >> Cargo.toml
-      fi
-    fi
-    ;;
-
-  edition:set)
-    shift || true
-    [[ -z "${1:-}" ]] && { echo "Usage: edition:set <edition>" >&2; exit 2; }
-    ED="$1"
-    print_header "Setting [package].edition=\"$ED\" in Cargo.toml"
-    if grep -qE '^\s*edition\s*=' Cargo.toml; then
-      sed_in_place 's/^\(\s*edition\s*=\s*\)".*"/\1"'"$ED"'"/' Cargo.toml
-    else
-      if grep -q '^\[package\]' Cargo.toml; then
-        awk -v ed="$ED" '
-          BEGIN{done=0}
-          /^\[package\]/{print; getline; print "edition = \"" ed "\""; print; done=1; next}
-          {print}
-          END{if(!done) print "\n[package]\nedition = \"" ed "\""}
-        ' Cargo.toml > Cargo.toml.__tmp && mv Cargo.toml.__tmp Cargo.toml
-      else
-        printf '\n[package]\nedition = "%s"\n' "$ED" >> Cargo.toml
-      fi
-    fi
-    ;;
-
-  edition:fix)
-    shift || true
-    CH="$(resolved_channel "${1:-}")"
-    [[ "${1:-}" == "$CH" ]] && shift || true
-    ALLOW=""
-    [[ "${1:-}" == "--allow-dirty" ]] && ALLOW="--allow-dirty"
-    print_header "cargo +$CH fix --edition ${ALLOW}"
-    cargo_plus "$CH" fix --edition ${ALLOW}
-    ;;
-
-  fmt)
-    shift || true
-    CH="$(resolved_channel "${1:-}")"
+    "$SCRIPT_DIR/app.sh" format
+    CH="$(get_rust_version_from_cargo)"
+    [[ -z "$CH" ]] && CH="$(resolved_channel "")"
     print_header "cargo +$CH fmt --all"
     cargo_plus "$CH" fmt --all
     ;;
@@ -234,26 +189,26 @@ EOF
     cargo clean
     ;;
 
-  deps:outdated)
+  outdated)
     print_header "cargo outdated"
     ensure_tool cargo-outdated cargo-outdated
     cargo outdated
     ;;
 
-  deps:outdated:root)
+  outdated:root)
     print_header "cargo outdated -R (root-only)"
     ensure_tool cargo-outdated cargo-outdated
     cargo outdated -R
     ;;
 
-  deps:upgrade)
+  upgrade)
     print_header "cargo upgrade (cargo-edit)"
     ensure_tool cargo-add cargo-edit
     ensure_tool cargo-upgrade cargo-edit
     cargo upgrade
     ;;
 
-  deps:update)
+  update)
     shift || true
     CH="$(resolved_channel "${1:-}")"
     print_header "cargo +$CH update"
@@ -278,10 +233,10 @@ EOF
     ;;
 
   refresh)
-    print_header "Refresh: clean → deps:update → fmt → clippy → build → test"
+    print_header "Refresh: clean → update → format → clippy → build → test"
     "$SCRIPT_DIR/app.sh" clean
-    "$SCRIPT_DIR/app.sh" deps:update
-    "$SCRIPT_DIR/app.sh" fmt
+    "$SCRIPT_DIR/app.sh" update
+    "$SCRIPT_DIR/app.sh" format
     "$SCRIPT_DIR/app.sh" clippy
     "$SCRIPT_DIR/app.sh" build
     "$SCRIPT_DIR/app.sh" test
@@ -293,7 +248,7 @@ EOF
     [[ -z "${1:-}" ]] && { echo "Usage: update:rust <channel>" >&2; exit 2; }
     CH="$1"
     print_header "Update Rust toolchain/MSRV to $CH"
-    "$SCRIPT_DIR/app.sh" toolchain:install "$CH"
+    "$SCRIPT_DIR/app.sh" install:toolchain "$CH"
     "$SCRIPT_DIR/app.sh" toolchain:pin "$CH"
     "$SCRIPT_DIR/app.sh" msrv:set "$CH"
     echo "Tip: If you also want to move edition, run: $SCRIPT_DIR/app.sh update:edition 2024 $CH"
@@ -306,7 +261,7 @@ EOF
     ED="$1"; CH="$(resolved_channel "${2:-}")"
     print_header "Update edition → $ED (then cargo fix --edition on $CH)"
     "$SCRIPT_DIR/app.sh" edition:set "$ED"
-    "$SCRIPT_DIR/app.sh" edition:fix "$CH" --allow-dirty || "$SCRIPT_DIR/app.sh" edition:fix "$CH"
+    "$SCRIPT_DIR/app.sh" install:edition "$CH" --allow-dirty || "$SCRIPT_DIR/app.sh" install:edition "$CH"
     ;;
 
   run|start*)
