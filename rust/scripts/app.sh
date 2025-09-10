@@ -95,11 +95,11 @@ Toolchain / MSRV / Edition   (docs/update-rust.md)
   install:edition                         Install and use the Rust Edition set in Cargo.toml (e.g., after update)
 
 Quality
-  format                                  formats rust code (uses rust-version from Cargo.toml)
-  clippy                                  lints rust code (uses rust-version from Cargo.toml)
-  analyze | lint                          alias for clippy
-  test                                    runs the Rust tests for the crate(s) (uses rust-version from Cargo.toml)
-  build [<channel>]                       cargo build
+  format                                  Formats rust code (uses rust-version from Cargo.toml)
+  clippy                                  Lints rust code (uses rust-version from Cargo.toml)
+  analyze | lint                          Alias for clippy
+  test                                    Runs the Rust tests for the crate(s) (uses rust-version from Cargo.toml)
+  build                                   Compiles the Rust code (uses rust-version from Cargo.toml)
   clean                                   cargo clean
 
 Dependencies                 (docs/update-rust-dependencies.md)
@@ -178,8 +178,8 @@ case "${1:-help}" in
     ;;
 
   build)
-    shift || true
-    CH="$(resolved_channel "${1:-}")"
+    CH="$(get_rust_version_from_cargo)"
+    [[ -z "$CH" ]] && CH="$(resolved_channel "")"
     print_header "cargo +$CH build"
     cargo_plus "$CH" build
     ;;
