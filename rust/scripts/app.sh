@@ -256,7 +256,9 @@ case "${1:-help}" in
 
     # Detect dart_output if not provided
     if [[ -z "$DART_OUTPUT" ]]; then
-      if [[ -d "../lib" ]]; then
+      if [[ -d "../lib/src/rust" ]]; then
+        DART_OUTPUT="../lib/src/rust"
+      elif [[ -d "../lib" ]]; then
         DART_OUTPUT="../lib/bridge_generated.dart"
       elif [[ -d "../../lib" ]]; then
         DART_OUTPUT="../../lib/bridge_generated.dart"
