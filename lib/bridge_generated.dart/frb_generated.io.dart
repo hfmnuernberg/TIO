@@ -3,15 +3,15 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
-import 'package:tiomusic/bridge_generated.dart/api/ffi.dart';
-import 'package:tiomusic/bridge_generated.dart/api/modules/media_player.dart';
-import 'package:tiomusic/bridge_generated.dart/api/modules/metronome.dart';
-import 'package:tiomusic/bridge_generated.dart/api/modules/metronome_rhythm.dart';
-import 'package:tiomusic/bridge_generated.dart/api/simple.dart';
+import 'api/ffi.dart';
+import 'api/modules/media_player.dart';
+import 'api/modules/metronome.dart';
+import 'api/modules/metronome_rhythm.dart';
+import 'api/simple.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
-import 'package:tiomusic/bridge_generated.dart/frb_generated.dart';
+import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_io.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
@@ -23,85 +23,87 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   });
 
   @protected
-  int dco_decode_CastedPrimitive_usize(raw);
+  int dco_decode_CastedPrimitive_usize(dynamic raw);
 
   @protected
-  String dco_decode_String(raw);
+  String dco_decode_String(dynamic raw);
 
   @protected
-  BeatHappenedEvent dco_decode_beat_happened_event(raw);
+  BeatHappenedEvent dco_decode_beat_happened_event(dynamic raw);
 
   @protected
-  BeatSound dco_decode_beat_sound(raw);
+  BeatSound dco_decode_beat_sound(dynamic raw);
 
   @protected
-  BeatType dco_decode_beat_type(raw);
+  BeatType dco_decode_beat_type(dynamic raw);
 
   @protected
-  BeatTypePoly dco_decode_beat_type_poly(raw);
+  BeatTypePoly dco_decode_beat_type_poly(dynamic raw);
 
   @protected
-  bool dco_decode_bool(raw);
+  bool dco_decode_bool(dynamic raw);
 
   @protected
-  BeatHappenedEvent dco_decode_box_autoadd_beat_happened_event(raw);
+  BeatHappenedEvent dco_decode_box_autoadd_beat_happened_event(dynamic raw);
 
   @protected
-  double dco_decode_box_autoadd_f_32(raw);
+  double dco_decode_box_autoadd_f_32(dynamic raw);
 
   @protected
-  MediaPlayerState dco_decode_box_autoadd_media_player_state(raw);
+  MediaPlayerState dco_decode_box_autoadd_media_player_state(dynamic raw);
 
   @protected
-  double dco_decode_f_32(raw);
+  double dco_decode_f_32(dynamic raw);
 
   @protected
-  double dco_decode_f_64(raw);
+  double dco_decode_f_64(dynamic raw);
 
   @protected
-  int dco_decode_i_32(raw);
+  int dco_decode_i_32(dynamic raw);
 
   @protected
-  List<BeatType> dco_decode_list_beat_type(raw);
+  List<BeatType> dco_decode_list_beat_type(dynamic raw);
 
   @protected
-  List<BeatTypePoly> dco_decode_list_beat_type_poly(raw);
+  List<BeatTypePoly> dco_decode_list_beat_type_poly(dynamic raw);
 
   @protected
-  List<MetroBar> dco_decode_list_metro_bar(raw);
+  List<MetroBar> dco_decode_list_metro_bar(dynamic raw);
 
   @protected
-  Float32List dco_decode_list_prim_f_32_strict(raw);
+  Float32List dco_decode_list_prim_f_32_strict(dynamic raw);
 
   @protected
-  Float64List dco_decode_list_prim_f_64_strict(raw);
+  Float64List dco_decode_list_prim_f_64_strict(dynamic raw);
 
   @protected
-  Uint8List dco_decode_list_prim_u_8_strict(raw);
+  Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
-  MediaPlayerState dco_decode_media_player_state(raw);
+  MediaPlayerState dco_decode_media_player_state(dynamic raw);
 
   @protected
-  MetroBar dco_decode_metro_bar(raw);
+  MetroBar dco_decode_metro_bar(dynamic raw);
 
   @protected
-  BeatHappenedEvent? dco_decode_opt_box_autoadd_beat_happened_event(raw);
+  BeatHappenedEvent? dco_decode_opt_box_autoadd_beat_happened_event(
+    dynamic raw,
+  );
 
   @protected
-  double? dco_decode_opt_box_autoadd_f_32(raw);
+  double? dco_decode_opt_box_autoadd_f_32(dynamic raw);
 
   @protected
-  MediaPlayerState? dco_decode_opt_box_autoadd_media_player_state(raw);
+  MediaPlayerState? dco_decode_opt_box_autoadd_media_player_state(dynamic raw);
 
   @protected
-  int dco_decode_u_8(raw);
+  int dco_decode_u_8(dynamic raw);
 
   @protected
-  void dco_decode_unit(raw);
+  void dco_decode_unit(dynamic raw);
 
   @protected
-  BigInt dco_decode_usize(raw);
+  BigInt dco_decode_usize(dynamic raw);
 
   @protected
   int sse_decode_CastedPrimitive_usize(SseDeserializer deserializer);
@@ -110,7 +112,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
-  BeatHappenedEvent sse_decode_beat_happened_event(SseDeserializer deserializer);
+  BeatHappenedEvent sse_decode_beat_happened_event(
+    SseDeserializer deserializer,
+  );
 
   @protected
   BeatSound sse_decode_beat_sound(SseDeserializer deserializer);
@@ -125,13 +129,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
-  BeatHappenedEvent sse_decode_box_autoadd_beat_happened_event(SseDeserializer deserializer);
+  BeatHappenedEvent sse_decode_box_autoadd_beat_happened_event(
+    SseDeserializer deserializer,
+  );
 
   @protected
   double sse_decode_box_autoadd_f_32(SseDeserializer deserializer);
 
   @protected
-  MediaPlayerState sse_decode_box_autoadd_media_player_state(SseDeserializer deserializer);
+  MediaPlayerState sse_decode_box_autoadd_media_player_state(
+    SseDeserializer deserializer,
+  );
 
   @protected
   double sse_decode_f_32(SseDeserializer deserializer);
@@ -146,7 +154,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<BeatType> sse_decode_list_beat_type(SseDeserializer deserializer);
 
   @protected
-  List<BeatTypePoly> sse_decode_list_beat_type_poly(SseDeserializer deserializer);
+  List<BeatTypePoly> sse_decode_list_beat_type_poly(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<MetroBar> sse_decode_list_metro_bar(SseDeserializer deserializer);
@@ -167,13 +177,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MetroBar sse_decode_metro_bar(SseDeserializer deserializer);
 
   @protected
-  BeatHappenedEvent? sse_decode_opt_box_autoadd_beat_happened_event(SseDeserializer deserializer);
+  BeatHappenedEvent? sse_decode_opt_box_autoadd_beat_happened_event(
+    SseDeserializer deserializer,
+  );
 
   @protected
   double? sse_decode_opt_box_autoadd_f_32(SseDeserializer deserializer);
 
   @protected
-  MediaPlayerState? sse_decode_opt_box_autoadd_media_player_state(SseDeserializer deserializer);
+  MediaPlayerState? sse_decode_opt_box_autoadd_media_player_state(
+    SseDeserializer deserializer,
+  );
 
   @protected
   int sse_decode_u_8(SseDeserializer deserializer);
@@ -191,7 +205,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
-  void sse_encode_beat_happened_event(BeatHappenedEvent self, SseSerializer serializer);
+  void sse_encode_beat_happened_event(
+    BeatHappenedEvent self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_beat_sound(BeatSound self, SseSerializer serializer);
@@ -206,13 +223,19 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_beat_happened_event(BeatHappenedEvent self, SseSerializer serializer);
+  void sse_encode_box_autoadd_beat_happened_event(
+    BeatHappenedEvent self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_box_autoadd_f_32(double self, SseSerializer serializer);
 
   @protected
-  void sse_encode_box_autoadd_media_player_state(MediaPlayerState self, SseSerializer serializer);
+  void sse_encode_box_autoadd_media_player_state(
+    MediaPlayerState self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_f_32(double self, SseSerializer serializer);
@@ -227,34 +250,55 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_list_beat_type(List<BeatType> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_beat_type_poly(List<BeatTypePoly> self, SseSerializer serializer);
+  void sse_encode_list_beat_type_poly(
+    List<BeatTypePoly> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_list_metro_bar(List<MetroBar> self, SseSerializer serializer);
 
   @protected
-  void sse_encode_list_prim_f_32_strict(Float32List self, SseSerializer serializer);
+  void sse_encode_list_prim_f_32_strict(
+    Float32List self,
+    SseSerializer serializer,
+  );
 
   @protected
-  void sse_encode_list_prim_f_64_strict(Float64List self, SseSerializer serializer);
+  void sse_encode_list_prim_f_64_strict(
+    Float64List self,
+    SseSerializer serializer,
+  );
 
   @protected
-  void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer);
+  void sse_encode_list_prim_u_8_strict(
+    Uint8List self,
+    SseSerializer serializer,
+  );
 
   @protected
-  void sse_encode_media_player_state(MediaPlayerState self, SseSerializer serializer);
+  void sse_encode_media_player_state(
+    MediaPlayerState self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_metro_bar(MetroBar self, SseSerializer serializer);
 
   @protected
-  void sse_encode_opt_box_autoadd_beat_happened_event(BeatHappenedEvent? self, SseSerializer serializer);
+  void sse_encode_opt_box_autoadd_beat_happened_event(
+    BeatHappenedEvent? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_opt_box_autoadd_f_32(double? self, SseSerializer serializer);
 
   @protected
-  void sse_encode_opt_box_autoadd_media_player_state(MediaPlayerState? self, SseSerializer serializer);
+  void sse_encode_opt_box_autoadd_media_player_state(
+    MediaPlayerState? self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_u_8(int self, SseSerializer serializer);
@@ -269,11 +313,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 // Section: wire_class
 
 class RustLibWire implements BaseWire {
-  /// The symbols are looked up in [dynamicLibrary].
-  RustLibWire(ffi.DynamicLibrary dynamicLibrary) : _lookup = dynamicLibrary.lookup;
-
-  factory RustLibWire.fromExternalLibrary(ExternalLibrary lib) => RustLibWire(lib.ffiDynamicLibrary);
+  factory RustLibWire.fromExternalLibrary(ExternalLibrary lib) =>
+      RustLibWire(lib.ffiDynamicLibrary);
 
   /// Holds the symbol lookup function.
-  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName) _lookup;
+  final ffi.Pointer<T> Function<T extends ffi.NativeType>(String symbolName)
+  _lookup;
+
+  /// The symbols are looked up in [dynamicLibrary].
+  RustLibWire(ffi.DynamicLibrary dynamicLibrary)
+    : _lookup = dynamicLibrary.lookup;
 }

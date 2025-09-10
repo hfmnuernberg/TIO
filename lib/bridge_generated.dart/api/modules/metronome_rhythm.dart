@@ -3,7 +3,7 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
-import 'package:tiomusic/bridge_generated.dart/frb_generated.dart';
+import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `get_event_time`, `get_event`
@@ -33,10 +33,16 @@ class MetroBar {
   final List<BeatTypePoly> polyBeats;
   final double beatLen;
 
-  const MetroBar({required this.id, required this.beats, required this.polyBeats, required this.beatLen});
+  const MetroBar({
+    required this.id,
+    required this.beats,
+    required this.polyBeats,
+    required this.beatLen,
+  });
 
   @override
-  int get hashCode => id.hashCode ^ beats.hashCode ^ polyBeats.hashCode ^ beatLen.hashCode;
+  int get hashCode =>
+      id.hashCode ^ beats.hashCode ^ polyBeats.hashCode ^ beatLen.hashCode;
 
   @override
   bool operator ==(Object other) =>

@@ -3,7 +3,8 @@
 
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
-import 'package:tiomusic/bridge_generated.dart/frb_generated.dart';
+import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-Future<void> initRustDefaultsManually() => RustLib.instance.api.crateApiSimpleInitRustDefaultsManually();
+Future<void> initRustDefaultsManually() =>
+    RustLib.instance.api.crateApiSimpleInitRustDefaultsManually();
