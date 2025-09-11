@@ -51,16 +51,39 @@ sed_in_place() {
 }
 
 ensure_cargo_expand() {
-  # Install cargo-expand with correct flags for MSRV
+    # Ensure cargo-expand exists and is compatible with our MSRV.
+    # If CH < 1.86, try installing latest with --locked; if that still pulls a dep
+    # requiring newer rustc (e.g., clap-cargo >=0.17 needing 1.86), fall back to a
+    # known-good version.
+    # Optional override: export CARGO_EXPAND_VERSION to force a specific version.
   local ch="$1"
-  if ! command -v cargo-expand >/dev/null 2>&1; then
-    if version_lt "$ch" "1.86.0"; then
-      print_header "Installing cargo-expand (using --locked) for rustc $ch"
-      cargo install cargo-expand --locked --force
-    else
-      print_header "Installing cargo-expand (latest) for rustc $ch"
-      cargo install cargo-expand --force
+  local forced_ver="${CARGO_EXPAND_VERSION:-}"
+
+  if command -v cargo-expand >/dev/null 2>&1 && [[ -z "$forced_ver" ]]; then
+    return 0
+  fi
+
+  if [[ -n "$forced_ver" ]]; then
+    print_header "Installing cargo-expand --version ${forced_ver} (forced)"
+    cargo install cargo-expand --version "$forced_ver" --locked --force
+    return 0
+  fi
+
+  if version_lt "$ch" "1.86.0"; then
+    print_header "Installing cargo-expand (using --locked) for rustc $ch"
+    set +e
+    cargo install cargo-expand --locked --force
+    local rc=$?
+    set -e
+    if [[ $rc -ne 0 ]]; then
+      # Fall back to a version known to work on rustc 1.85 (pre-clap-cargo 0.17).
+      # 1.0.114 is compatible at the time of writing; adjust via CARGO_EXPAND_VERSION if needed.
+      print_header "Retry: installing cargo-expand --version 1.0.114 --locked (MSRV fallback)"
+      cargo install cargo-expand --version 1.0.114 --locked --force
     fi
+  else
+    print_header "Installing cargo-expand (latest) for rustc $ch"
+    cargo install cargo-expand --force
   fi
 }
 
