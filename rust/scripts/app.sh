@@ -31,11 +31,6 @@ get_rust_version_from_cargo() {
   fi
 }
 
-version_lt() {
-  # Returns 0 (true) if $1 < $2 using sort -V
-  [ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -n1)" = "$1" ] && [ "$1" != "$2" ]
-}
-
 CHANNEL_DEFAULT="$(get_channel_from_file)"
 
 resolved_channel() {
@@ -49,44 +44,6 @@ rustup_run() { local ch; ch="$(resolved_channel "${1:-}")"; shift || true; comma
 sed_in_place() {
   if sed --version >/dev/null 2>&1; then sed -i "$@"; else sed -i '' "$@"; fi
 }
-
-ensure_cargo_expand() {
-    # Ensure cargo-expand exists and is compatible with our MSRV.
-    # If CH < 1.86, try installing latest with --locked; if that still pulls a dep
-    # requiring newer rustc (e.g., clap-cargo >=0.17 needing 1.86), fall back to a
-    # known-good version.
-    # Optional override: export CARGO_EXPAND_VERSION to force a specific version.
-  local ch="$1"
-  local forced_ver="${CARGO_EXPAND_VERSION:-}"
-
-  if command -v cargo-expand >/dev/null 2>&1 && [[ -z "$forced_ver" ]]; then
-    return 0
-  fi
-
-  if [[ -n "$forced_ver" ]]; then
-    print_header "Installing cargo-expand --version ${forced_ver} (forced)"
-    cargo install cargo-expand --version "$forced_ver" --locked --force
-    return 0
-  fi
-
-  if version_lt "$ch" "1.86.0"; then
-    print_header "Installing cargo-expand (using --locked) for rustc $ch"
-    set +e
-    cargo install cargo-expand --locked --force
-    local rc=$?
-    set -e
-    if [[ $rc -ne 0 ]]; then
-      # Fall back to a version known to work on rustc 1.85 (pre-clap-cargo 0.17).
-      # 1.0.114 is compatible at the time of writing; adjust via CARGO_EXPAND_VERSION if needed.
-      print_header "Retry: installing cargo-expand --version 1.0.114 --locked (MSRV fallback)"
-      cargo install cargo-expand --version 1.0.114 --locked --force
-    fi
-  else
-    print_header "Installing cargo-expand (latest) for rustc $ch"
-    cargo install cargo-expand --force
-  fi
-}
-
 
 ensure_tool() {
   local bin="$1" crate="$2"
@@ -147,7 +104,7 @@ Toolchain / MSRV / Edition   (docs/update-rust.md)
   uninstall:toolchain [<channel>]   - Uninstalls the provided toolchain (not the current default)
 
 Flutter Rust Bridge          (docs/update-flutter-rust-bridge.md)
-  install:frb [<version>]           - Installs flutter_rust_bridge_codegen (given or latest) and cargo-ndk. If the installed rust-version from Cargo.toml is >= 1.86.0, it installs the latest cargo-ndk, otherwise cargo-ndk 3.5.4.
+  install:frb [<version>]           - Installs flutter_rust_bridge_codegen (given or latest) and cargo-ndk (latest)
   generate                          - Regenerates Flutter<->Rust bindings with Flutter Rust Bridge (auto-detects rust_input/dart_output)
 
 Dependencies                 (docs/update-rust-dependencies.md)
@@ -267,17 +224,8 @@ case "${1:-help}" in
       print_header "Installing flutter_rust_bridge_codegen (latest, forced)"
       cargo install flutter_rust_bridge_codegen --force
     fi
-    CH="$(get_rust_version_from_cargo)"
-    [[ -z "$CH" ]] && CH="$(resolved_channel "")"
-    if version_lt "$CH" "1.86.0"; then
-      print_header "Installing cargo-ndk --version 3.5.4 (forced) for rustc $CH"
-      cargo install cargo-ndk --version 3.5.4 --force
-    else
-      print_header "Installing cargo-ndk (latest, forced) for rustc $CH"
-      cargo install cargo-ndk --force
-    fi
-    # Ensure cargo-expand is available; FRB auto-installs it, but that may fail on MSRV without --locked
-    ensure_cargo_expand "$CH"
+    print_header "Installing cargo-ndk (latest, forced)"
+    cargo install cargo-ndk --force
     flutter_rust_bridge_codegen --version || true
     cargo-ndk --version || true
     ;;
@@ -286,10 +234,6 @@ case "${1:-help}" in
     RUST_INPUT="${FRB_RUST_INPUT:-}"
     RUST_ROOT="${FRB_RUST_ROOT:-.}"
     DART_OUTPUT="${FRB_DART_OUTPUT:-}"
-
-    # Ensure cargo-expand is installed with the right flags for our MSRV so FRB can run cargo expand
-    CH_FOR_EXPAND="$(get_rust_version_from_cargo)"; [[ -z "$CH_FOR_EXPAND" ]] && CH_FOR_EXPAND="$(resolved_channel "")"
-    ensure_cargo_expand "$CH_FOR_EXPAND"
 
     # Detect rust_input if not provided
     if [[ -z "$RUST_INPUT" ]]; then
@@ -323,6 +267,9 @@ case "${1:-help}" in
       --rust-root "$RUST_ROOT" \
       --dart-output "$DART_OUTPUT" \
       --no-dart-enums-style
+
+    # Always format after generating (Rust + Dart)
+    bash "$0" format
     ;;
 
   refresh)
