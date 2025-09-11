@@ -31,11 +31,6 @@ get_rust_version_from_cargo() {
   fi
 }
 
-version_lt() {
-  # Returns 0 (true) if $1 < $2 using sort -V
-  [ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -n1)" = "$1" ] && [ "$1" != "$2" ]
-}
-
 CHANNEL_DEFAULT="$(get_channel_from_file)"
 
 resolved_channel() {
@@ -109,7 +104,7 @@ Toolchain / MSRV / Edition   (docs/update-rust.md)
   uninstall:toolchain [<channel>]   - Uninstalls the provided toolchain (not the current default)
 
 Flutter Rust Bridge          (docs/update-flutter-rust-bridge.md)
-  install:frb [<version>]           - Installs flutter_rust_bridge_codegen (given or latest) and cargo-ndk. If the installed rust-version from Cargo.toml is >= 1.86.0, it installs the latest cargo-ndk, otherwise cargo-ndk 3.5.4.
+  install:frb [<version>]           - Installs flutter_rust_bridge_codegen (given or latest) and cargo-ndk (latest)
   generate                          - Regenerates Flutter<->Rust bindings with Flutter Rust Bridge (auto-detects rust_input/dart_output)
 
 Dependencies                 (docs/update-rust-dependencies.md)
@@ -229,15 +224,8 @@ case "${1:-help}" in
       print_header "Installing flutter_rust_bridge_codegen (latest, forced)"
       cargo install flutter_rust_bridge_codegen --force
     fi
-    CH="$(get_rust_version_from_cargo)"
-    [[ -z "$CH" ]] && CH="$(resolved_channel "")"
-    if version_lt "$CH" "1.86.0"; then
-      print_header "Installing cargo-ndk --version 3.5.4 (forced) for rustc $CH"
-      cargo install cargo-ndk --version 3.5.4 --force
-    else
-      print_header "Installing cargo-ndk (latest, forced) for rustc $CH"
-      cargo install cargo-ndk --force
-    fi
+    print_header "Installing cargo-ndk (latest, forced)"
+    cargo install cargo-ndk --force
     flutter_rust_bridge_codegen --version || true
     cargo-ndk --version || true
     ;;
@@ -279,6 +267,9 @@ case "${1:-help}" in
       --rust-root "$RUST_ROOT" \
       --dart-output "$DART_OUTPUT" \
       --no-dart-enums-style
+
+    # Always format after generating (Rust + Dart)
+    bash "$0" format
     ;;
 
   refresh)
