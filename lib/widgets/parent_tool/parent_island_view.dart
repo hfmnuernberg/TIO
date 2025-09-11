@@ -137,7 +137,12 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     return widget.project!.blocks
         .asMap()
         .entries
-        .where((entry) => allowedKinds.contains(entry.value.kind) && entry.value.id != widget.toolBlock.id)
+        .where((entry) {
+      if (!allowedKinds.contains(entry.value.kind)) return false;
+      if (entry.value.id == widget.toolBlock.id) return false;
+      if (widget.toolBlock.kind != 'media_player' && entry.value.kind == widget.toolBlock.kind) return false;
+      return true;
+    })
         .toList();
   }
 
