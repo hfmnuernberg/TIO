@@ -144,9 +144,12 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
   List<BlockType> getFilteredNewToolTypes() {
     final connectableToolTypes = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
-    return connectableToolTypes
-        .where((blockType) => widget.toolBlock.kind != getBlockTypeInfos(context.l10n)[blockType]!.kind)
-        .toList();
+    final currentToolBlock = widget.toolBlock;
+
+    return connectableToolTypes.where((blockType) {
+      final blockTypeToConnect = getBlockTypeInfos(context.l10n)[blockType]!.kind;
+      return currentToolBlock.kind == 'media_player' || currentToolBlock.kind != blockTypeToConnect;
+    }).toList();
   }
 
   Future<void> handleConnectExistingTool(int projectToolIndex) async {
