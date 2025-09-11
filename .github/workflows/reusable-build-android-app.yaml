@@ -60,8 +60,8 @@ jobs:
         toolchain: 1.89.0
         components: rustfmt, clippy
 
-    - name: Install cargo-ndk
-      run: cargo install cargo-ndk
+    - name: Install Rust targets
+      run: scripts/app.sh install:rust:targets
 
     - name: Install Flutter dependencies
       run: scripts/app.sh install:flutter:packages
