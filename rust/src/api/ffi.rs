@@ -311,6 +311,100 @@ pub fn media_player_set_volume(volume: f32) -> bool {
     }
 }
 
+// === TEMP surface for multi-player: accept player_id, delegate to single-player ===
+
+pub fn media_player_load_wav_with_id(player_id: String, wav_file_path: String) -> bool {
+    log::info!("media_player_load_wav_with_id(id={})", player_id);
+    media_player_load_wav(wav_file_path)
+}
+
+pub fn media_player_start_with_id(player_id: String) -> bool {
+    log::info!("media_player_start_with_id(id={})", player_id);
+    media_player_start()
+}
+
+pub fn media_player_stop_with_id(player_id: String) -> bool {
+    log::info!("media_player_stop_with_id(id={})", player_id);
+    media_player_stop()
+}
+
+pub fn media_player_set_pitch_semitones_with_id(player_id: String, pitch_semitones: f32) -> bool {
+    log::info!(
+        "media_player_set_pitch_semitones_with_id(id={}, semitones={})",
+        player_id,
+        pitch_semitones
+    );
+    media_player_set_pitch(pitch_semitones)
+}
+
+pub fn media_player_set_speed_factor_with_id(player_id: String, speed_factor: f32) -> bool {
+    log::info!(
+        "media_player_set_speed_factor_with_id(id={}, speed={})",
+        player_id,
+        speed_factor
+    );
+    media_player_set_speed(speed_factor)
+}
+
+pub fn media_player_set_trim_by_factor_with_id(
+    player_id: String,
+    start_factor: f32,
+    end_factor: f32,
+) {
+    log::info!(
+        "media_player_set_trim_by_factor_with_id(id={}, start={}, end={})",
+        player_id,
+        start_factor,
+        end_factor
+    );
+    media_player_set_trim_by_factor(start_factor, end_factor)
+}
+
+#[frb(type_64bit_int)]
+pub fn media_player_get_rms_with_id(player_id: String, n_bins: i32) -> Vec<f32> {
+    log::info!(
+        "media_player_get_rms_with_id(id={}, n_bins={})",
+        player_id,
+        n_bins
+    );
+    if n_bins <= 0 {
+        return Vec::new();
+    }
+    media_player_compute_rms(n_bins as usize)
+}
+
+pub fn media_player_set_loop_with_id(player_id: String, looping: bool) {
+    log::info!(
+        "media_player_set_loop_with_id(id={}, looping={})",
+        player_id,
+        looping
+    );
+    media_player_set_loop_value(looping)
+}
+
+pub fn media_player_get_state_with_id(player_id: String) -> Option<MediaPlayerState> {
+    log::info!("media_player_get_state_with_id(id={})", player_id);
+    media_player_query_state()
+}
+
+pub fn media_player_set_pos_factor_with_id(player_id: String, pos_factor: f32) -> bool {
+    log::info!(
+        "media_player_set_pos_factor_with_id(id={}, pos_factor={})",
+        player_id,
+        pos_factor
+    );
+    media_player_set_pos_factor(pos_factor)
+}
+
+pub fn media_player_set_volume_with_id(player_id: String, volume: f32) -> bool {
+    log::info!(
+        "media_player_set_volume_with_id(id={}, vol={})",
+        player_id,
+        volume
+    );
+    media_player_set_new_volume(volume)
+}
+
 // metronome
 
 pub fn metronome_start() -> bool {

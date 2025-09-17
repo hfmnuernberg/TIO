@@ -66,6 +66,48 @@ Future<bool> mediaPlayerSetPlaybackPosFactor({required double posFactor}) =>
 Future<bool> mediaPlayerSetVolume({required double volume}) =>
     RustLib.instance.api.crateApiFfiMediaPlayerSetVolume(volume: volume);
 
+Future<bool> mediaPlayerLoadWavWithId({required String playerId, required String wavFilePath}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerLoadWavWithId(playerId: playerId, wavFilePath: wavFilePath);
+
+Future<bool> mediaPlayerStartWithId({required String playerId}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerStartWithId(playerId: playerId);
+
+Future<bool> mediaPlayerStopWithId({required String playerId}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerStopWithId(playerId: playerId);
+
+Future<bool> mediaPlayerSetPitchSemitonesWithId({required String playerId, required double pitchSemitones}) => RustLib
+    .instance
+    .api
+    .crateApiFfiMediaPlayerSetPitchSemitonesWithId(playerId: playerId, pitchSemitones: pitchSemitones);
+
+Future<bool> mediaPlayerSetSpeedFactorWithId({required String playerId, required double speedFactor}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerSetSpeedFactorWithId(playerId: playerId, speedFactor: speedFactor);
+
+Future<void> mediaPlayerSetTrimByFactorWithId({
+  required String playerId,
+  required double startFactor,
+  required double endFactor,
+}) => RustLib.instance.api.crateApiFfiMediaPlayerSetTrimByFactorWithId(
+  playerId: playerId,
+  startFactor: startFactor,
+  endFactor: endFactor,
+);
+
+Future<Float32List> mediaPlayerGetRmsWithId({required String playerId, required int nBins}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerGetRmsWithId(playerId: playerId, nBins: nBins);
+
+Future<void> mediaPlayerSetLoopWithId({required String playerId, required bool looping}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerSetLoopWithId(playerId: playerId, looping: looping);
+
+Future<MediaPlayerState?> mediaPlayerGetStateWithId({required String playerId}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerGetStateWithId(playerId: playerId);
+
+Future<bool> mediaPlayerSetPosFactorWithId({required String playerId, required double posFactor}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerSetPosFactorWithId(playerId: playerId, posFactor: posFactor);
+
+Future<bool> mediaPlayerSetVolumeWithId({required String playerId, required double volume}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerSetVolumeWithId(playerId: playerId, volume: volume);
+
 Future<bool> metronomeStart() => RustLib.instance.api.crateApiFfiMetronomeStart();
 
 Future<bool> metronomeStop() => RustLib.instance.api.crateApiFfiMetronomeStop();
