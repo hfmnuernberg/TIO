@@ -4,6 +4,9 @@ import 'package:tiomusic/src/rust/api/modules/media_player.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 
+typedef PlayerId = String;
+const String kDefaultPlayerId = 'default';
+
 mixin AudioSystem {
   Future<void> initAudio();
 
@@ -18,20 +21,24 @@ mixin AudioSystem {
 
   Future<bool> pianoSetConcertPitch({required double newConcertPitch});
 
-  Future<bool> mediaPlayerLoadWav({required String wavFilePath});
-  Future<bool> mediaPlayerStart();
-  Future<bool> mediaPlayerStop();
-  Future<bool> mediaPlayerStartRecording();
+  Future<bool> mediaPlayerLoadWav({required String wavFilePath, PlayerId playerId = kDefaultPlayerId});
+  Future<bool> mediaPlayerStart({PlayerId playerId = kDefaultPlayerId});
+  Future<bool> mediaPlayerStop({PlayerId playerId = kDefaultPlayerId});
+  Future<bool> mediaPlayerStartRecording(); // (leave recording global)
   Future<bool> mediaPlayerStopRecording();
   Future<Float64List> mediaPlayerGetRecordingSamples();
-  Future<bool> mediaPlayerSetPitchSemitones({required double pitchSemitones});
-  Future<bool> mediaPlayerSetSpeedFactor({required double speedFactor});
-  Future<void> mediaPlayerSetTrim({required double startFactor, required double endFactor});
-  Future<Float32List> mediaPlayerGetRms({required int nBins});
-  Future<void> mediaPlayerSetRepeat({required bool repeatOne});
-  Future<MediaPlayerState?> mediaPlayerGetState();
-  Future<bool> mediaPlayerSetPlaybackPosFactor({required double posFactor});
-  Future<bool> mediaPlayerSetVolume({required double volume});
+  Future<bool> mediaPlayerSetPitchSemitones({required double pitchSemitones, PlayerId playerId = kDefaultPlayerId});
+  Future<bool> mediaPlayerSetSpeedFactor({required double speedFactor, PlayerId playerId = kDefaultPlayerId});
+  Future<void> mediaPlayerSetTrim({
+    required double startFactor,
+    required double endFactor,
+    PlayerId playerId = kDefaultPlayerId,
+  });
+  Future<Float32List> mediaPlayerGetRms({required int nBins, PlayerId playerId = kDefaultPlayerId});
+  Future<void> mediaPlayerSetRepeat({required bool repeatOne, PlayerId playerId = kDefaultPlayerId});
+  Future<MediaPlayerState?> mediaPlayerGetState({PlayerId playerId = kDefaultPlayerId});
+  Future<bool> mediaPlayerSetPlaybackPosFactor({required double posFactor, PlayerId playerId = kDefaultPlayerId});
+  Future<bool> mediaPlayerSetVolume({required double volume, PlayerId playerId = kDefaultPlayerId});
 
   Future<bool> metronomeStart();
   Future<bool> metronomeStop();
