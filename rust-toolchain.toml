@@ -1,5 +1,5 @@
 [toolchain]
-channel = "1.85.0"
-versioned = "1.85.0"
-targets = [ "aarch64-linux-android", "armv7-linux-androideabi", "i686-linux-android", "x86_64-linux-android" ]
+channel = "1.89.0"
+versioned = "1.89.0"
+targets   = ["aarch64-linux-android","armv7-linux-androideabi","i686-linux-android","x86_64-linux-android"]
 profile = "default" # TODO: try minimal

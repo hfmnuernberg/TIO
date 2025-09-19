@@ -371,25 +371,6 @@ class _ParentToolState extends State<ParentTool> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final project = context.read<Project?>();
-
-    return Scaffold(
-      extendBody: true,
-      resizeToAvoidBottomInset: false,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(ParentToolParams.appBarHeight),
-        child: _appBar(context),
-      ),
-      backgroundColor: ColorTheme.primary92,
-      body: widget.deactivateScroll ? _body() : SingleChildScrollView(child: _body()),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: widget.floatingActionButton,
-      bottomNavigationBar: project == null ? null : ToolNavigationBar(project: project, toolBlock: widget.toolBlock),
-    );
-  }
-
   Widget _body() {
     bool hasSettingTiles = true;
     if (widget.settingTiles.isEmpty) {
@@ -424,6 +405,25 @@ class _ParentToolState extends State<ParentTool> {
         // empty space at the bottom
         const SizedBox(height: 32),
       ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final project = context.read<Project?>();
+
+    return Scaffold(
+      extendBody: true,
+      resizeToAvoidBottomInset: false,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(ParentToolParams.appBarHeight),
+        child: _appBar(context),
+      ),
+      backgroundColor: ColorTheme.primary92,
+      body: widget.deactivateScroll ? _body() : SingleChildScrollView(child: _body()),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: widget.floatingActionButton,
+      bottomNavigationBar: project == null ? null : ToolNavigationBar(project: project, toolBlock: widget.toolBlock),
     );
   }
 }
