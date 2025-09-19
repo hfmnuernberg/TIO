@@ -3,7 +3,7 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
-import 'api/api.dart';
+import 'api/ffi.dart';
 import 'api/modules/media_player.dart';
 import 'api/modules/metronome.dart';
 import 'api/modules/metronome_rhythm.dart';
@@ -64,7 +64,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => 1546940576;
+  int get rustContentHash => 1339322665;
 
   static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
     stem: 'rust_lib_tiomusic',
@@ -74,87 +74,87 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
-  Future<bool> crateApiApiDebugTestFunction();
+  Future<bool> crateApiFfiDebugTestFunction();
 
-  Future<bool> crateApiApiGeneratorNoteOff();
+  Future<bool> crateApiFfiGeneratorNoteOff();
 
-  Future<bool> crateApiApiGeneratorNoteOn({required double newFreq});
+  Future<bool> crateApiFfiGeneratorNoteOn({required double newFreq});
 
-  Future<bool> crateApiApiGeneratorStart();
+  Future<bool> crateApiFfiGeneratorStart();
 
-  Future<bool> crateApiApiGeneratorStop();
+  Future<bool> crateApiFfiGeneratorStop();
 
-  Future<int> crateApiApiGetSampleRate();
+  Future<int> crateApiFfiGetSampleRate();
 
-  Future<void> crateApiApiInitAudio();
+  Future<void> crateApiFfiInitAudio();
 
   Future<void> crateApiSimpleInitRustDefaultsManually();
 
-  Future<Float64List> crateApiApiMediaPlayerGetRecordingSamples();
+  Future<Float64List> crateApiFfiMediaPlayerGetRecordingSamples();
 
-  Future<Float32List> crateApiApiMediaPlayerGetRms({required int nBins});
+  Future<Float32List> crateApiFfiMediaPlayerGetRms({required int nBins});
 
-  Future<MediaPlayerState?> crateApiApiMediaPlayerGetState();
+  Future<MediaPlayerState?> crateApiFfiMediaPlayerGetState();
 
-  Future<bool> crateApiApiMediaPlayerLoadWav({required String wavFilePath});
+  Future<bool> crateApiFfiMediaPlayerLoadWav({required String wavFilePath});
 
-  Future<void> crateApiApiMediaPlayerSetLoop({required bool looping});
+  Future<void> crateApiFfiMediaPlayerSetLoop({required bool looping});
 
-  Future<bool> crateApiApiMediaPlayerSetPitchSemitones({required double pitchSemitones});
+  Future<bool> crateApiFfiMediaPlayerSetPitchSemitones({required double pitchSemitones});
 
-  Future<bool> crateApiApiMediaPlayerSetPlaybackPosFactor({required double posFactor});
+  Future<bool> crateApiFfiMediaPlayerSetPlaybackPosFactor({required double posFactor});
 
-  Future<bool> crateApiApiMediaPlayerSetSpeedFactor({required double speedFactor});
+  Future<bool> crateApiFfiMediaPlayerSetSpeedFactor({required double speedFactor});
 
-  Future<void> crateApiApiMediaPlayerSetTrim({required double startFactor, required double endFactor});
+  Future<void> crateApiFfiMediaPlayerSetTrim({required double startFactor, required double endFactor});
 
-  Future<bool> crateApiApiMediaPlayerSetVolume({required double volume});
+  Future<bool> crateApiFfiMediaPlayerSetVolume({required double volume});
 
-  Future<bool> crateApiApiMediaPlayerStart();
+  Future<bool> crateApiFfiMediaPlayerStart();
 
-  Future<bool> crateApiApiMediaPlayerStartRecording();
+  Future<bool> crateApiFfiMediaPlayerStartRecording();
 
-  Future<bool> crateApiApiMediaPlayerStop();
+  Future<bool> crateApiFfiMediaPlayerStop();
 
-  Future<bool> crateApiApiMediaPlayerStopRecording();
+  Future<bool> crateApiFfiMediaPlayerStopRecording();
 
-  Future<bool> crateApiApiMetronomeLoadFile({required BeatSound beatType, required String wavFilePath});
+  Future<bool> crateApiFfiMetronomeLoadFile({required BeatSound beatType, required String wavFilePath});
 
-  Future<BeatHappenedEvent?> crateApiApiMetronomePollBeatEventHappened();
+  Future<BeatHappenedEvent?> crateApiFfiMetronomePollBeatEventHappened();
 
-  Future<bool> crateApiApiMetronomeSetBeatMuteChance({required double muteChance});
+  Future<bool> crateApiFfiMetronomeSetBeatMuteChance({required double muteChance});
 
-  Future<bool> crateApiApiMetronomeSetBpm({required double bpm});
+  Future<bool> crateApiFfiMetronomeSetBpm({required double bpm});
 
-  Future<bool> crateApiApiMetronomeSetMuted({required bool muted});
+  Future<bool> crateApiFfiMetronomeSetMuted({required bool muted});
 
-  Future<bool> crateApiApiMetronomeSetRhythm({required List<MetroBar> bars, required List<MetroBar> bars2});
+  Future<bool> crateApiFfiMetronomeSetRhythm({required List<MetroBar> bars, required List<MetroBar> bars2});
 
-  Future<bool> crateApiApiMetronomeSetVolume({required double volume});
+  Future<bool> crateApiFfiMetronomeSetVolume({required double volume});
 
-  Future<bool> crateApiApiMetronomeStart();
+  Future<bool> crateApiFfiMetronomeStart();
 
-  Future<bool> crateApiApiMetronomeStop();
+  Future<bool> crateApiFfiMetronomeStop();
 
-  Future<bool> crateApiApiPianoNoteOff({required int note});
+  Future<bool> crateApiFfiPianoNoteOff({required int note});
 
-  Future<bool> crateApiApiPianoNoteOn({required int note});
+  Future<bool> crateApiFfiPianoNoteOn({required int note});
 
-  Future<bool> crateApiApiPianoSetConcertPitch({required double newConcertPitch});
+  Future<bool> crateApiFfiPianoSetConcertPitch({required double newConcertPitch});
 
-  Future<bool> crateApiApiPianoSetVolume({required double volume});
+  Future<bool> crateApiFfiPianoSetVolume({required double volume});
 
-  Future<bool> crateApiApiPianoSetup({required String soundFontPath});
+  Future<bool> crateApiFfiPianoSetup({required String soundFontPath});
 
-  Future<bool> crateApiApiPianoStart();
+  Future<bool> crateApiFfiPianoStart();
 
-  Future<bool> crateApiApiPianoStop();
+  Future<bool> crateApiFfiPianoStop();
 
-  Future<double?> crateApiApiTunerGetFrequency();
+  Future<double?> crateApiFfiTunerGetFrequency();
 
-  Future<bool> crateApiApiTunerStart();
+  Future<bool> crateApiFfiTunerStart();
 
-  Future<bool> crateApiApiTunerStop();
+  Future<bool> crateApiFfiTunerStop();
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -166,7 +166,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
-  Future<bool> crateApiApiDebugTestFunction() {
+  Future<bool> crateApiFfiDebugTestFunction() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -174,18 +174,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiDebugTestFunctionConstMeta,
+        constMeta: kCrateApiFfiDebugTestFunctionConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiDebugTestFunctionConstMeta =>
+  TaskConstMeta get kCrateApiFfiDebugTestFunctionConstMeta =>
       const TaskConstMeta(debugName: "debug_test_function", argNames: []);
 
   @override
-  Future<bool> crateApiApiGeneratorNoteOff() {
+  Future<bool> crateApiFfiGeneratorNoteOff() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -193,18 +193,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiGeneratorNoteOffConstMeta,
+        constMeta: kCrateApiFfiGeneratorNoteOffConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiGeneratorNoteOffConstMeta =>
+  TaskConstMeta get kCrateApiFfiGeneratorNoteOffConstMeta =>
       const TaskConstMeta(debugName: "generator_note_off", argNames: []);
 
   @override
-  Future<bool> crateApiApiGeneratorNoteOn({required double newFreq}) {
+  Future<bool> crateApiFfiGeneratorNoteOn({required double newFreq}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -213,18 +213,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 3, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiGeneratorNoteOnConstMeta,
+        constMeta: kCrateApiFfiGeneratorNoteOnConstMeta,
         argValues: [newFreq],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiGeneratorNoteOnConstMeta =>
+  TaskConstMeta get kCrateApiFfiGeneratorNoteOnConstMeta =>
       const TaskConstMeta(debugName: "generator_note_on", argNames: ["newFreq"]);
 
   @override
-  Future<bool> crateApiApiGeneratorStart() {
+  Future<bool> crateApiFfiGeneratorStart() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -232,18 +232,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiGeneratorStartConstMeta,
+        constMeta: kCrateApiFfiGeneratorStartConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiGeneratorStartConstMeta =>
+  TaskConstMeta get kCrateApiFfiGeneratorStartConstMeta =>
       const TaskConstMeta(debugName: "generator_start", argNames: []);
 
   @override
-  Future<bool> crateApiApiGeneratorStop() {
+  Future<bool> crateApiFfiGeneratorStop() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -251,18 +251,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiGeneratorStopConstMeta,
+        constMeta: kCrateApiFfiGeneratorStopConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiGeneratorStopConstMeta =>
+  TaskConstMeta get kCrateApiFfiGeneratorStopConstMeta =>
       const TaskConstMeta(debugName: "generator_stop", argNames: []);
 
   @override
-  Future<int> crateApiApiGetSampleRate() {
+  Future<int> crateApiFfiGetSampleRate() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -270,18 +270,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_CastedPrimitive_usize, decodeErrorData: null),
-        constMeta: kCrateApiApiGetSampleRateConstMeta,
+        constMeta: kCrateApiFfiGetSampleRateConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiGetSampleRateConstMeta =>
+  TaskConstMeta get kCrateApiFfiGetSampleRateConstMeta =>
       const TaskConstMeta(debugName: "get_sample_rate", argNames: []);
 
   @override
-  Future<void> crateApiApiInitAudio() {
+  Future<void> crateApiFfiInitAudio() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -289,14 +289,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
-        constMeta: kCrateApiApiInitAudioConstMeta,
+        constMeta: kCrateApiFfiInitAudioConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiInitAudioConstMeta => const TaskConstMeta(debugName: "init_audio", argNames: []);
+  TaskConstMeta get kCrateApiFfiInitAudioConstMeta => const TaskConstMeta(debugName: "init_audio", argNames: []);
 
   @override
   Future<void> crateApiSimpleInitRustDefaultsManually() {
@@ -318,7 +318,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "init_rust_defaults_manually", argNames: []);
 
   @override
-  Future<Float64List> crateApiApiMediaPlayerGetRecordingSamples() {
+  Future<Float64List> crateApiFfiMediaPlayerGetRecordingSamples() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -326,18 +326,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_list_prim_f_64_strict, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerGetRecordingSamplesConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerGetRecordingSamplesConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerGetRecordingSamplesConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerGetRecordingSamplesConstMeta =>
       const TaskConstMeta(debugName: "media_player_get_recording_samples", argNames: []);
 
   @override
-  Future<Float32List> crateApiApiMediaPlayerGetRms({required int nBins}) {
+  Future<Float32List> crateApiFfiMediaPlayerGetRms({required int nBins}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -346,18 +346,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_list_prim_f_32_strict, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerGetRmsConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerGetRmsConstMeta,
         argValues: [nBins],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerGetRmsConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerGetRmsConstMeta =>
       const TaskConstMeta(debugName: "media_player_get_rms", argNames: ["nBins"]);
 
   @override
-  Future<MediaPlayerState?> crateApiApiMediaPlayerGetState() {
+  Future<MediaPlayerState?> crateApiFfiMediaPlayerGetState() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -365,18 +365,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_opt_box_autoadd_media_player_state, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerGetStateConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerGetStateConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerGetStateConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerGetStateConstMeta =>
       const TaskConstMeta(debugName: "media_player_get_state", argNames: []);
 
   @override
-  Future<bool> crateApiApiMediaPlayerLoadWav({required String wavFilePath}) {
+  Future<bool> crateApiFfiMediaPlayerLoadWav({required String wavFilePath}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -385,18 +385,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerLoadWavConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerLoadWavConstMeta,
         argValues: [wavFilePath],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerLoadWavConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerLoadWavConstMeta =>
       const TaskConstMeta(debugName: "media_player_load_wav", argNames: ["wavFilePath"]);
 
   @override
-  Future<void> crateApiApiMediaPlayerSetLoop({required bool looping}) {
+  Future<void> crateApiFfiMediaPlayerSetLoop({required bool looping}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -405,18 +405,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerSetLoopConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerSetLoopConstMeta,
         argValues: [looping],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerSetLoopConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerSetLoopConstMeta =>
       const TaskConstMeta(debugName: "media_player_set_loop", argNames: ["looping"]);
 
   @override
-  Future<bool> crateApiApiMediaPlayerSetPitchSemitones({required double pitchSemitones}) {
+  Future<bool> crateApiFfiMediaPlayerSetPitchSemitones({required double pitchSemitones}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -425,18 +425,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerSetPitchSemitonesConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerSetPitchSemitonesConstMeta,
         argValues: [pitchSemitones],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerSetPitchSemitonesConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerSetPitchSemitonesConstMeta =>
       const TaskConstMeta(debugName: "media_player_set_pitch_semitones", argNames: ["pitchSemitones"]);
 
   @override
-  Future<bool> crateApiApiMediaPlayerSetPlaybackPosFactor({required double posFactor}) {
+  Future<bool> crateApiFfiMediaPlayerSetPlaybackPosFactor({required double posFactor}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -445,18 +445,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerSetPlaybackPosFactorConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerSetPlaybackPosFactorConstMeta,
         argValues: [posFactor],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerSetPlaybackPosFactorConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerSetPlaybackPosFactorConstMeta =>
       const TaskConstMeta(debugName: "media_player_set_playback_pos_factor", argNames: ["posFactor"]);
 
   @override
-  Future<bool> crateApiApiMediaPlayerSetSpeedFactor({required double speedFactor}) {
+  Future<bool> crateApiFfiMediaPlayerSetSpeedFactor({required double speedFactor}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -465,18 +465,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerSetSpeedFactorConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerSetSpeedFactorConstMeta,
         argValues: [speedFactor],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerSetSpeedFactorConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerSetSpeedFactorConstMeta =>
       const TaskConstMeta(debugName: "media_player_set_speed_factor", argNames: ["speedFactor"]);
 
   @override
-  Future<void> crateApiApiMediaPlayerSetTrim({required double startFactor, required double endFactor}) {
+  Future<void> crateApiFfiMediaPlayerSetTrim({required double startFactor, required double endFactor}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -486,18 +486,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerSetTrimConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerSetTrimConstMeta,
         argValues: [startFactor, endFactor],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerSetTrimConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerSetTrimConstMeta =>
       const TaskConstMeta(debugName: "media_player_set_trim", argNames: ["startFactor", "endFactor"]);
 
   @override
-  Future<bool> crateApiApiMediaPlayerSetVolume({required double volume}) {
+  Future<bool> crateApiFfiMediaPlayerSetVolume({required double volume}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -506,18 +506,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerSetVolumeConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerSetVolumeConstMeta,
         argValues: [volume],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerSetVolumeConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerSetVolumeConstMeta =>
       const TaskConstMeta(debugName: "media_player_set_volume", argNames: ["volume"]);
 
   @override
-  Future<bool> crateApiApiMediaPlayerStart() {
+  Future<bool> crateApiFfiMediaPlayerStart() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -525,18 +525,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerStartConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerStartConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerStartConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerStartConstMeta =>
       const TaskConstMeta(debugName: "media_player_start", argNames: []);
 
   @override
-  Future<bool> crateApiApiMediaPlayerStartRecording() {
+  Future<bool> crateApiFfiMediaPlayerStartRecording() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -544,18 +544,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerStartRecordingConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerStartRecordingConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerStartRecordingConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerStartRecordingConstMeta =>
       const TaskConstMeta(debugName: "media_player_start_recording", argNames: []);
 
   @override
-  Future<bool> crateApiApiMediaPlayerStop() {
+  Future<bool> crateApiFfiMediaPlayerStop() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -563,18 +563,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerStopConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerStopConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerStopConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerStopConstMeta =>
       const TaskConstMeta(debugName: "media_player_stop", argNames: []);
 
   @override
-  Future<bool> crateApiApiMediaPlayerStopRecording() {
+  Future<bool> crateApiFfiMediaPlayerStopRecording() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -582,18 +582,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMediaPlayerStopRecordingConstMeta,
+        constMeta: kCrateApiFfiMediaPlayerStopRecordingConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMediaPlayerStopRecordingConstMeta =>
+  TaskConstMeta get kCrateApiFfiMediaPlayerStopRecordingConstMeta =>
       const TaskConstMeta(debugName: "media_player_stop_recording", argNames: []);
 
   @override
-  Future<bool> crateApiApiMetronomeLoadFile({required BeatSound beatType, required String wavFilePath}) {
+  Future<bool> crateApiFfiMetronomeLoadFile({required BeatSound beatType, required String wavFilePath}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -603,18 +603,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMetronomeLoadFileConstMeta,
+        constMeta: kCrateApiFfiMetronomeLoadFileConstMeta,
         argValues: [beatType, wavFilePath],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeLoadFileConstMeta =>
+  TaskConstMeta get kCrateApiFfiMetronomeLoadFileConstMeta =>
       const TaskConstMeta(debugName: "metronome_load_file", argNames: ["beatType", "wavFilePath"]);
 
   @override
-  Future<BeatHappenedEvent?> crateApiApiMetronomePollBeatEventHappened() {
+  Future<BeatHappenedEvent?> crateApiFfiMetronomePollBeatEventHappened() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -622,18 +622,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 24, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_opt_box_autoadd_beat_happened_event, decodeErrorData: null),
-        constMeta: kCrateApiApiMetronomePollBeatEventHappenedConstMeta,
+        constMeta: kCrateApiFfiMetronomePollBeatEventHappenedConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomePollBeatEventHappenedConstMeta =>
+  TaskConstMeta get kCrateApiFfiMetronomePollBeatEventHappenedConstMeta =>
       const TaskConstMeta(debugName: "metronome_poll_beat_event_happened", argNames: []);
 
   @override
-  Future<bool> crateApiApiMetronomeSetBeatMuteChance({required double muteChance}) {
+  Future<bool> crateApiFfiMetronomeSetBeatMuteChance({required double muteChance}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -642,18 +642,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMetronomeSetBeatMuteChanceConstMeta,
+        constMeta: kCrateApiFfiMetronomeSetBeatMuteChanceConstMeta,
         argValues: [muteChance],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeSetBeatMuteChanceConstMeta =>
+  TaskConstMeta get kCrateApiFfiMetronomeSetBeatMuteChanceConstMeta =>
       const TaskConstMeta(debugName: "metronome_set_beat_mute_chance", argNames: ["muteChance"]);
 
   @override
-  Future<bool> crateApiApiMetronomeSetBpm({required double bpm}) {
+  Future<bool> crateApiFfiMetronomeSetBpm({required double bpm}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -662,18 +662,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 26, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMetronomeSetBpmConstMeta,
+        constMeta: kCrateApiFfiMetronomeSetBpmConstMeta,
         argValues: [bpm],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeSetBpmConstMeta =>
+  TaskConstMeta get kCrateApiFfiMetronomeSetBpmConstMeta =>
       const TaskConstMeta(debugName: "metronome_set_bpm", argNames: ["bpm"]);
 
   @override
-  Future<bool> crateApiApiMetronomeSetMuted({required bool muted}) {
+  Future<bool> crateApiFfiMetronomeSetMuted({required bool muted}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -682,18 +682,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 27, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMetronomeSetMutedConstMeta,
+        constMeta: kCrateApiFfiMetronomeSetMutedConstMeta,
         argValues: [muted],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeSetMutedConstMeta =>
+  TaskConstMeta get kCrateApiFfiMetronomeSetMutedConstMeta =>
       const TaskConstMeta(debugName: "metronome_set_muted", argNames: ["muted"]);
 
   @override
-  Future<bool> crateApiApiMetronomeSetRhythm({required List<MetroBar> bars, required List<MetroBar> bars2}) {
+  Future<bool> crateApiFfiMetronomeSetRhythm({required List<MetroBar> bars, required List<MetroBar> bars2}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -703,18 +703,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMetronomeSetRhythmConstMeta,
+        constMeta: kCrateApiFfiMetronomeSetRhythmConstMeta,
         argValues: [bars, bars2],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeSetRhythmConstMeta =>
+  TaskConstMeta get kCrateApiFfiMetronomeSetRhythmConstMeta =>
       const TaskConstMeta(debugName: "metronome_set_rhythm", argNames: ["bars", "bars2"]);
 
   @override
-  Future<bool> crateApiApiMetronomeSetVolume({required double volume}) {
+  Future<bool> crateApiFfiMetronomeSetVolume({required double volume}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -723,18 +723,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 29, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMetronomeSetVolumeConstMeta,
+        constMeta: kCrateApiFfiMetronomeSetVolumeConstMeta,
         argValues: [volume],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeSetVolumeConstMeta =>
+  TaskConstMeta get kCrateApiFfiMetronomeSetVolumeConstMeta =>
       const TaskConstMeta(debugName: "metronome_set_volume", argNames: ["volume"]);
 
   @override
-  Future<bool> crateApiApiMetronomeStart() {
+  Future<bool> crateApiFfiMetronomeStart() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -742,18 +742,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 30, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMetronomeStartConstMeta,
+        constMeta: kCrateApiFfiMetronomeStartConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeStartConstMeta =>
+  TaskConstMeta get kCrateApiFfiMetronomeStartConstMeta =>
       const TaskConstMeta(debugName: "metronome_start", argNames: []);
 
   @override
-  Future<bool> crateApiApiMetronomeStop() {
+  Future<bool> crateApiFfiMetronomeStop() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -761,18 +761,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 31, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiMetronomeStopConstMeta,
+        constMeta: kCrateApiFfiMetronomeStopConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiMetronomeStopConstMeta =>
+  TaskConstMeta get kCrateApiFfiMetronomeStopConstMeta =>
       const TaskConstMeta(debugName: "metronome_stop", argNames: []);
 
   @override
-  Future<bool> crateApiApiPianoNoteOff({required int note}) {
+  Future<bool> crateApiFfiPianoNoteOff({required int note}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -781,18 +781,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 32, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiPianoNoteOffConstMeta,
+        constMeta: kCrateApiFfiPianoNoteOffConstMeta,
         argValues: [note],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiPianoNoteOffConstMeta =>
+  TaskConstMeta get kCrateApiFfiPianoNoteOffConstMeta =>
       const TaskConstMeta(debugName: "piano_note_off", argNames: ["note"]);
 
   @override
-  Future<bool> crateApiApiPianoNoteOn({required int note}) {
+  Future<bool> crateApiFfiPianoNoteOn({required int note}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -801,18 +801,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 33, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiPianoNoteOnConstMeta,
+        constMeta: kCrateApiFfiPianoNoteOnConstMeta,
         argValues: [note],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiPianoNoteOnConstMeta =>
+  TaskConstMeta get kCrateApiFfiPianoNoteOnConstMeta =>
       const TaskConstMeta(debugName: "piano_note_on", argNames: ["note"]);
 
   @override
-  Future<bool> crateApiApiPianoSetConcertPitch({required double newConcertPitch}) {
+  Future<bool> crateApiFfiPianoSetConcertPitch({required double newConcertPitch}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -821,18 +821,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiPianoSetConcertPitchConstMeta,
+        constMeta: kCrateApiFfiPianoSetConcertPitchConstMeta,
         argValues: [newConcertPitch],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiPianoSetConcertPitchConstMeta =>
+  TaskConstMeta get kCrateApiFfiPianoSetConcertPitchConstMeta =>
       const TaskConstMeta(debugName: "piano_set_concert_pitch", argNames: ["newConcertPitch"]);
 
   @override
-  Future<bool> crateApiApiPianoSetVolume({required double volume}) {
+  Future<bool> crateApiFfiPianoSetVolume({required double volume}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -841,18 +841,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 35, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiPianoSetVolumeConstMeta,
+        constMeta: kCrateApiFfiPianoSetVolumeConstMeta,
         argValues: [volume],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiPianoSetVolumeConstMeta =>
+  TaskConstMeta get kCrateApiFfiPianoSetVolumeConstMeta =>
       const TaskConstMeta(debugName: "piano_set_volume", argNames: ["volume"]);
 
   @override
-  Future<bool> crateApiApiPianoSetup({required String soundFontPath}) {
+  Future<bool> crateApiFfiPianoSetup({required String soundFontPath}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -861,18 +861,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 36, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiPianoSetupConstMeta,
+        constMeta: kCrateApiFfiPianoSetupConstMeta,
         argValues: [soundFontPath],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiPianoSetupConstMeta =>
+  TaskConstMeta get kCrateApiFfiPianoSetupConstMeta =>
       const TaskConstMeta(debugName: "piano_setup", argNames: ["soundFontPath"]);
 
   @override
-  Future<bool> crateApiApiPianoStart() {
+  Future<bool> crateApiFfiPianoStart() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -880,17 +880,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 37, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiPianoStartConstMeta,
+        constMeta: kCrateApiFfiPianoStartConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiPianoStartConstMeta => const TaskConstMeta(debugName: "piano_start", argNames: []);
+  TaskConstMeta get kCrateApiFfiPianoStartConstMeta => const TaskConstMeta(debugName: "piano_start", argNames: []);
 
   @override
-  Future<bool> crateApiApiPianoStop() {
+  Future<bool> crateApiFfiPianoStop() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -898,17 +898,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 38, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiPianoStopConstMeta,
+        constMeta: kCrateApiFfiPianoStopConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiPianoStopConstMeta => const TaskConstMeta(debugName: "piano_stop", argNames: []);
+  TaskConstMeta get kCrateApiFfiPianoStopConstMeta => const TaskConstMeta(debugName: "piano_stop", argNames: []);
 
   @override
-  Future<double?> crateApiApiTunerGetFrequency() {
+  Future<double?> crateApiFfiTunerGetFrequency() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -916,18 +916,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 39, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_opt_box_autoadd_f_32, decodeErrorData: null),
-        constMeta: kCrateApiApiTunerGetFrequencyConstMeta,
+        constMeta: kCrateApiFfiTunerGetFrequencyConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiTunerGetFrequencyConstMeta =>
+  TaskConstMeta get kCrateApiFfiTunerGetFrequencyConstMeta =>
       const TaskConstMeta(debugName: "tuner_get_frequency", argNames: []);
 
   @override
-  Future<bool> crateApiApiTunerStart() {
+  Future<bool> crateApiFfiTunerStart() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -935,17 +935,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 40, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiTunerStartConstMeta,
+        constMeta: kCrateApiFfiTunerStartConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiTunerStartConstMeta => const TaskConstMeta(debugName: "tuner_start", argNames: []);
+  TaskConstMeta get kCrateApiFfiTunerStartConstMeta => const TaskConstMeta(debugName: "tuner_start", argNames: []);
 
   @override
-  Future<bool> crateApiApiTunerStop() {
+  Future<bool> crateApiFfiTunerStop() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -953,14 +953,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 41, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiApiTunerStopConstMeta,
+        constMeta: kCrateApiFfiTunerStopConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiApiTunerStopConstMeta => const TaskConstMeta(debugName: "tuner_stop", argNames: []);
+  TaskConstMeta get kCrateApiFfiTunerStopConstMeta => const TaskConstMeta(debugName: "tuner_stop", argNames: []);
 
   @protected
   int dco_decode_CastedPrimitive_usize(dynamic raw) {

@@ -5,8 +5,8 @@ use rustysynth::{SoundFont, Synthesizer, SynthesizerSettings};
 use std::{
     fs::File,
     sync::{
-        mpsc::{channel, Receiver, Sender},
         Arc, Mutex,
+        mpsc::{Receiver, Sender, channel},
     },
     thread::{self, JoinHandle},
     time::Duration,
@@ -228,7 +228,6 @@ fn calc_bend_value(concert_pitch: f32) -> i32 {
     const MAX_MIDI_RANGE: f32 = CENTER * 2.0 - 1.0;
     bend.clamp(MIN_MIDI_RANGE, MAX_MIDI_RANGE).round() as i32
 }
-
 
 #[flutter_rust_bridge::frb(ignore)]
 pub fn piano_trigger_note_off(note: i32) -> bool {

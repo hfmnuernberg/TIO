@@ -1,8 +1,8 @@
 use ::num::{Float, NumCast};
 use anyhow::{Error, Result};
 use cpal::{
-    traits::{DeviceTrait, HostTrait},
     BufferSize, Device,
+    traits::{DeviceTrait, HostTrait},
 };
 use rubato::{
     Resampler, SincFixedIn, SincInterpolationParameters, SincInterpolationType, WindowFunction,
@@ -16,7 +16,7 @@ use symphonia::core::{
 };
 
 use super::constants::{INPUT_SAMPLE_RATE, NUM_CHANNELS, OUTPUT_SAMPLE_RATE};
-use crate::api::api::get_sample_rate;
+use crate::api::ffi::get_sample_rate;
 
 #[flutter_rust_bridge::frb(ignore)]
 pub fn speed_factor_to_halftones<T: Float>(speed_factor: T) -> T {

@@ -1,4 +1,4 @@
-pub mod api;
+pub mod ffi;
 pub mod simple;
 
 pub mod audio;

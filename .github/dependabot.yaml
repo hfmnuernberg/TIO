@@ -23,3 +23,15 @@ updates:
     timezone: Europe/Berlin
   open-pull-requests-limit: 10
   versioning-strategy: increase-if-necessary
+
+# Rust/Cargo
+- package-ecosystem: cargo
+  directory: /rust
+  commit-message:
+    prefix: 'chore: TIO-84'
+  schedule:
+    interval: daily
+    time: "03:00"
+    timezone: Europe/Berlin
+  open-pull-requests-limit: 10
+  versioning-strategy: auto

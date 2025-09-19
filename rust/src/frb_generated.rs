@@ -26,7 +26,7 @@
 // Section: imports
 
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
-use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
+use flutter_rust_bridge::for_generated::{Lifetimeable, Lockable, transform_result_dco};
 use flutter_rust_bridge::{Handler, IntoIntoDart};
 
 // Section: boilerplate
@@ -37,7 +37,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1546940576;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1339322665;
 
 // Section: executor
 
@@ -45,7 +45,7 @@ flutter_rust_bridge::frb_generated_default_handler!();
 
 // Section: wire_funcs
 
-fn wire__crate__api__api__debug_test_function_impl(
+fn wire__crate__api__ffi__debug_test_function_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -70,14 +70,14 @@ fn wire__crate__api__api__debug_test_function_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::debug_test_function())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::debug_test_function())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__generator_note_off_impl(
+fn wire__crate__api__ffi__generator_note_off_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -102,14 +102,14 @@ fn wire__crate__api__api__generator_note_off_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::generator_note_off())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::generator_note_off())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__generator_note_on_impl(
+fn wire__crate__api__ffi__generator_note_on_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -136,14 +136,14 @@ fn wire__crate__api__api__generator_note_on_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::generator_note_on(api_new_freq))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::generator_note_on(api_new_freq))?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__generator_start_impl(
+fn wire__crate__api__ffi__generator_start_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -168,14 +168,14 @@ fn wire__crate__api__api__generator_start_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::generator_start())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::generator_start())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__generator_stop_impl(
+fn wire__crate__api__ffi__generator_stop_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -200,14 +200,14 @@ fn wire__crate__api__api__generator_stop_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::generator_stop())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::generator_stop())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__get_sample_rate_impl(
+fn wire__crate__api__ffi__get_sample_rate_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -232,14 +232,14 @@ fn wire__crate__api__api__get_sample_rate_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::get_sample_rate())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::get_sample_rate())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__init_audio_impl(
+fn wire__crate__api__ffi__init_audio_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -265,7 +265,7 @@ fn wire__crate__api__api__init_audio_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::api::init_audio();
+                        crate::api::ffi::init_audio();
                     })?;
                     Ok(output_ok)
                 })())
@@ -307,7 +307,7 @@ fn wire__crate__api__simple__init_rust_defaults_manually_impl(
         },
     )
 }
-fn wire__crate__api__api__media_player_get_recording_samples_impl(
+fn wire__crate__api__ffi__media_player_get_recording_samples_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -333,14 +333,14 @@ fn wire__crate__api__api__media_player_get_recording_samples_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::media_player_get_recording_samples())?;
+                        Result::<_, ()>::Ok(crate::api::ffi::media_player_get_recording_samples())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__media_player_get_rms_impl(
+fn wire__crate__api__ffi__media_player_get_rms_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -367,14 +367,14 @@ fn wire__crate__api__api__media_player_get_rms_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::media_player_get_rms(api_n_bins))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::media_player_get_rms(api_n_bins))?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__media_player_get_state_impl(
+fn wire__crate__api__ffi__media_player_get_state_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -399,14 +399,14 @@ fn wire__crate__api__api__media_player_get_state_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::media_player_get_state())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::media_player_get_state())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__media_player_load_wav_impl(
+fn wire__crate__api__ffi__media_player_load_wav_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -432,7 +432,7 @@ fn wire__crate__api__api__media_player_load_wav_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::media_player_load_wav(
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::media_player_load_wav(
                         api_wav_file_path,
                     ))?;
                     Ok(output_ok)
@@ -441,7 +441,7 @@ fn wire__crate__api__api__media_player_load_wav_impl(
         },
     )
 }
-fn wire__crate__api__api__media_player_set_loop_impl(
+fn wire__crate__api__ffi__media_player_set_loop_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -468,7 +468,7 @@ fn wire__crate__api__api__media_player_set_loop_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::api::media_player_set_loop(api_looping);
+                        crate::api::ffi::media_player_set_loop(api_looping);
                     })?;
                     Ok(output_ok)
                 })())
@@ -476,7 +476,7 @@ fn wire__crate__api__api__media_player_set_loop_impl(
         },
     )
 }
-fn wire__crate__api__api__media_player_set_pitch_semitones_impl(
+fn wire__crate__api__ffi__media_player_set_pitch_semitones_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -503,7 +503,7 @@ fn wire__crate__api__api__media_player_set_pitch_semitones_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(
-                        crate::api::api::media_player_set_pitch_semitones(api_pitch_semitones),
+                        crate::api::ffi::media_player_set_pitch_semitones(api_pitch_semitones),
                     )?;
                     Ok(output_ok)
                 })())
@@ -511,7 +511,7 @@ fn wire__crate__api__api__media_player_set_pitch_semitones_impl(
         },
     )
 }
-fn wire__crate__api__api__media_player_set_playback_pos_factor_impl(
+fn wire__crate__api__ffi__media_player_set_playback_pos_factor_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -538,7 +538,7 @@ fn wire__crate__api__api__media_player_set_playback_pos_factor_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(
-                        crate::api::api::media_player_set_playback_pos_factor(api_pos_factor),
+                        crate::api::ffi::media_player_set_playback_pos_factor(api_pos_factor),
                     )?;
                     Ok(output_ok)
                 })())
@@ -546,7 +546,7 @@ fn wire__crate__api__api__media_player_set_playback_pos_factor_impl(
         },
     )
 }
-fn wire__crate__api__api__media_player_set_speed_factor_impl(
+fn wire__crate__api__ffi__media_player_set_speed_factor_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -573,7 +573,7 @@ fn wire__crate__api__api__media_player_set_speed_factor_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(
-                        crate::api::api::media_player_set_speed_factor(api_speed_factor),
+                        crate::api::ffi::media_player_set_speed_factor(api_speed_factor),
                     )?;
                     Ok(output_ok)
                 })())
@@ -581,7 +581,7 @@ fn wire__crate__api__api__media_player_set_speed_factor_impl(
         },
     )
 }
-fn wire__crate__api__api__media_player_set_trim_impl(
+fn wire__crate__api__ffi__media_player_set_trim_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -609,7 +609,7 @@ fn wire__crate__api__api__media_player_set_trim_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        crate::api::api::media_player_set_trim(api_start_factor, api_end_factor);
+                        crate::api::ffi::media_player_set_trim(api_start_factor, api_end_factor);
                     })?;
                     Ok(output_ok)
                 })())
@@ -617,7 +617,7 @@ fn wire__crate__api__api__media_player_set_trim_impl(
         },
     )
 }
-fn wire__crate__api__api__media_player_set_volume_impl(
+fn wire__crate__api__ffi__media_player_set_volume_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -644,14 +644,14 @@ fn wire__crate__api__api__media_player_set_volume_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::media_player_set_volume(api_volume))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::media_player_set_volume(api_volume))?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__media_player_start_impl(
+fn wire__crate__api__ffi__media_player_start_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -676,14 +676,14 @@ fn wire__crate__api__api__media_player_start_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::media_player_start())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::media_player_start())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__media_player_start_recording_impl(
+fn wire__crate__api__ffi__media_player_start_recording_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -709,14 +709,14 @@ fn wire__crate__api__api__media_player_start_recording_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::media_player_start_recording())?;
+                        Result::<_, ()>::Ok(crate::api::ffi::media_player_start_recording())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__media_player_stop_impl(
+fn wire__crate__api__ffi__media_player_stop_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -741,14 +741,14 @@ fn wire__crate__api__api__media_player_stop_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::media_player_stop())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::media_player_stop())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__media_player_stop_recording_impl(
+fn wire__crate__api__ffi__media_player_stop_recording_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -774,14 +774,14 @@ fn wire__crate__api__api__media_player_stop_recording_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::media_player_stop_recording())?;
+                        Result::<_, ()>::Ok(crate::api::ffi::media_player_stop_recording())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__metronome_load_file_impl(
+fn wire__crate__api__ffi__metronome_load_file_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -809,7 +809,7 @@ fn wire__crate__api__api__metronome_load_file_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::metronome_load_file(
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::metronome_load_file(
                         api_beat_type,
                         api_wav_file_path,
                     ))?;
@@ -819,7 +819,7 @@ fn wire__crate__api__api__metronome_load_file_impl(
         },
     )
 }
-fn wire__crate__api__api__metronome_poll_beat_event_happened_impl(
+fn wire__crate__api__ffi__metronome_poll_beat_event_happened_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -845,14 +845,14 @@ fn wire__crate__api__api__metronome_poll_beat_event_happened_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::metronome_poll_beat_event_happened())?;
+                        Result::<_, ()>::Ok(crate::api::ffi::metronome_poll_beat_event_happened())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__metronome_set_beat_mute_chance_impl(
+fn wire__crate__api__ffi__metronome_set_beat_mute_chance_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -879,7 +879,7 @@ fn wire__crate__api__api__metronome_set_beat_mute_chance_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(
-                        crate::api::api::metronome_set_beat_mute_chance(api_mute_chance),
+                        crate::api::ffi::metronome_set_beat_mute_chance(api_mute_chance),
                     )?;
                     Ok(output_ok)
                 })())
@@ -887,7 +887,7 @@ fn wire__crate__api__api__metronome_set_beat_mute_chance_impl(
         },
     )
 }
-fn wire__crate__api__api__metronome_set_bpm_impl(
+fn wire__crate__api__ffi__metronome_set_bpm_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -914,14 +914,14 @@ fn wire__crate__api__api__metronome_set_bpm_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::metronome_set_bpm(api_bpm))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::metronome_set_bpm(api_bpm))?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__metronome_set_muted_impl(
+fn wire__crate__api__ffi__metronome_set_muted_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -948,14 +948,14 @@ fn wire__crate__api__api__metronome_set_muted_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::metronome_set_muted(api_muted))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::metronome_set_muted(api_muted))?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__metronome_set_rhythm_impl(
+fn wire__crate__api__ffi__metronome_set_rhythm_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -986,7 +986,7 @@ fn wire__crate__api__api__metronome_set_rhythm_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::metronome_set_rhythm(
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::metronome_set_rhythm(
                         api_bars, api_bars_2,
                     ))?;
                     Ok(output_ok)
@@ -995,7 +995,7 @@ fn wire__crate__api__api__metronome_set_rhythm_impl(
         },
     )
 }
-fn wire__crate__api__api__metronome_set_volume_impl(
+fn wire__crate__api__ffi__metronome_set_volume_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1022,14 +1022,14 @@ fn wire__crate__api__api__metronome_set_volume_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::metronome_set_volume(api_volume))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::metronome_set_volume(api_volume))?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__metronome_start_impl(
+fn wire__crate__api__ffi__metronome_start_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1054,14 +1054,14 @@ fn wire__crate__api__api__metronome_start_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::metronome_start())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::metronome_start())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__metronome_stop_impl(
+fn wire__crate__api__ffi__metronome_stop_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1086,14 +1086,14 @@ fn wire__crate__api__api__metronome_stop_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::metronome_stop())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::metronome_stop())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__piano_note_off_impl(
+fn wire__crate__api__ffi__piano_note_off_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1119,14 +1119,14 @@ fn wire__crate__api__api__piano_note_off_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::piano_note_off(api_note))?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::piano_note_off(api_note))?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__piano_note_on_impl(
+fn wire__crate__api__ffi__piano_note_on_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1152,14 +1152,14 @@ fn wire__crate__api__api__piano_note_on_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::piano_note_on(api_note))?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::piano_note_on(api_note))?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__piano_set_concert_pitch_impl(
+fn wire__crate__api__ffi__piano_set_concert_pitch_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1185,7 +1185,7 @@ fn wire__crate__api__api__piano_set_concert_pitch_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::piano_set_concert_pitch(
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::piano_set_concert_pitch(
                         api_new_concert_pitch,
                     ))?;
                     Ok(output_ok)
@@ -1194,7 +1194,7 @@ fn wire__crate__api__api__piano_set_concert_pitch_impl(
         },
     )
 }
-fn wire__crate__api__api__piano_set_volume_impl(
+fn wire__crate__api__ffi__piano_set_volume_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1221,14 +1221,14 @@ fn wire__crate__api__api__piano_set_volume_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::piano_set_volume(api_volume))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::piano_set_volume(api_volume))?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__piano_setup_impl(
+fn wire__crate__api__ffi__piano_setup_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1255,14 +1255,14 @@ fn wire__crate__api__api__piano_setup_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok =
-                        Result::<_, ()>::Ok(crate::api::api::piano_setup(api_sound_font_path))?;
+                        Result::<_, ()>::Ok(crate::api::ffi::piano_setup(api_sound_font_path))?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__piano_start_impl(
+fn wire__crate__api__ffi__piano_start_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1287,14 +1287,14 @@ fn wire__crate__api__api__piano_start_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::piano_start())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::piano_start())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__piano_stop_impl(
+fn wire__crate__api__ffi__piano_stop_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1319,14 +1319,14 @@ fn wire__crate__api__api__piano_stop_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::piano_stop())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::piano_stop())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__tuner_get_frequency_impl(
+fn wire__crate__api__ffi__tuner_get_frequency_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1351,14 +1351,14 @@ fn wire__crate__api__api__tuner_get_frequency_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::tuner_get_frequency())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::tuner_get_frequency())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__tuner_start_impl(
+fn wire__crate__api__ffi__tuner_start_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1383,14 +1383,14 @@ fn wire__crate__api__api__tuner_start_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::tuner_start())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::tuner_start())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__crate__api__api__tuner_stop_impl(
+fn wire__crate__api__ffi__tuner_stop_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1415,7 +1415,7 @@ fn wire__crate__api__api__tuner_stop_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(crate::api::api::tuner_stop())?;
+                    let output_ok = Result::<_, ()>::Ok(crate::api::ffi::tuner_stop())?;
                     Ok(output_ok)
                 })())
             }
@@ -1703,96 +1703,96 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        1 => wire__crate__api__api__debug_test_function_impl(port, ptr, rust_vec_len, data_len),
-        2 => wire__crate__api__api__generator_note_off_impl(port, ptr, rust_vec_len, data_len),
-        3 => wire__crate__api__api__generator_note_on_impl(port, ptr, rust_vec_len, data_len),
-        4 => wire__crate__api__api__generator_start_impl(port, ptr, rust_vec_len, data_len),
-        5 => wire__crate__api__api__generator_stop_impl(port, ptr, rust_vec_len, data_len),
-        6 => wire__crate__api__api__get_sample_rate_impl(port, ptr, rust_vec_len, data_len),
-        7 => wire__crate__api__api__init_audio_impl(port, ptr, rust_vec_len, data_len),
+        1 => wire__crate__api__ffi__debug_test_function_impl(port, ptr, rust_vec_len, data_len),
+        2 => wire__crate__api__ffi__generator_note_off_impl(port, ptr, rust_vec_len, data_len),
+        3 => wire__crate__api__ffi__generator_note_on_impl(port, ptr, rust_vec_len, data_len),
+        4 => wire__crate__api__ffi__generator_start_impl(port, ptr, rust_vec_len, data_len),
+        5 => wire__crate__api__ffi__generator_stop_impl(port, ptr, rust_vec_len, data_len),
+        6 => wire__crate__api__ffi__get_sample_rate_impl(port, ptr, rust_vec_len, data_len),
+        7 => wire__crate__api__ffi__init_audio_impl(port, ptr, rust_vec_len, data_len),
         8 => wire__crate__api__simple__init_rust_defaults_manually_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        9 => wire__crate__api__api__media_player_get_recording_samples_impl(
+        9 => wire__crate__api__ffi__media_player_get_recording_samples_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        10 => wire__crate__api__api__media_player_get_rms_impl(port, ptr, rust_vec_len, data_len),
-        11 => wire__crate__api__api__media_player_get_state_impl(port, ptr, rust_vec_len, data_len),
-        12 => wire__crate__api__api__media_player_load_wav_impl(port, ptr, rust_vec_len, data_len),
-        13 => wire__crate__api__api__media_player_set_loop_impl(port, ptr, rust_vec_len, data_len),
-        14 => wire__crate__api__api__media_player_set_pitch_semitones_impl(
+        10 => wire__crate__api__ffi__media_player_get_rms_impl(port, ptr, rust_vec_len, data_len),
+        11 => wire__crate__api__ffi__media_player_get_state_impl(port, ptr, rust_vec_len, data_len),
+        12 => wire__crate__api__ffi__media_player_load_wav_impl(port, ptr, rust_vec_len, data_len),
+        13 => wire__crate__api__ffi__media_player_set_loop_impl(port, ptr, rust_vec_len, data_len),
+        14 => wire__crate__api__ffi__media_player_set_pitch_semitones_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        15 => wire__crate__api__api__media_player_set_playback_pos_factor_impl(
+        15 => wire__crate__api__ffi__media_player_set_playback_pos_factor_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        16 => wire__crate__api__api__media_player_set_speed_factor_impl(
+        16 => wire__crate__api__ffi__media_player_set_speed_factor_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        17 => wire__crate__api__api__media_player_set_trim_impl(port, ptr, rust_vec_len, data_len),
+        17 => wire__crate__api__ffi__media_player_set_trim_impl(port, ptr, rust_vec_len, data_len),
         18 => {
-            wire__crate__api__api__media_player_set_volume_impl(port, ptr, rust_vec_len, data_len)
+            wire__crate__api__ffi__media_player_set_volume_impl(port, ptr, rust_vec_len, data_len)
         }
-        19 => wire__crate__api__api__media_player_start_impl(port, ptr, rust_vec_len, data_len),
-        20 => wire__crate__api__api__media_player_start_recording_impl(
+        19 => wire__crate__api__ffi__media_player_start_impl(port, ptr, rust_vec_len, data_len),
+        20 => wire__crate__api__ffi__media_player_start_recording_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        21 => wire__crate__api__api__media_player_stop_impl(port, ptr, rust_vec_len, data_len),
-        22 => wire__crate__api__api__media_player_stop_recording_impl(
+        21 => wire__crate__api__ffi__media_player_stop_impl(port, ptr, rust_vec_len, data_len),
+        22 => wire__crate__api__ffi__media_player_stop_recording_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        23 => wire__crate__api__api__metronome_load_file_impl(port, ptr, rust_vec_len, data_len),
-        24 => wire__crate__api__api__metronome_poll_beat_event_happened_impl(
+        23 => wire__crate__api__ffi__metronome_load_file_impl(port, ptr, rust_vec_len, data_len),
+        24 => wire__crate__api__ffi__metronome_poll_beat_event_happened_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        25 => wire__crate__api__api__metronome_set_beat_mute_chance_impl(
+        25 => wire__crate__api__ffi__metronome_set_beat_mute_chance_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        26 => wire__crate__api__api__metronome_set_bpm_impl(port, ptr, rust_vec_len, data_len),
-        27 => wire__crate__api__api__metronome_set_muted_impl(port, ptr, rust_vec_len, data_len),
-        28 => wire__crate__api__api__metronome_set_rhythm_impl(port, ptr, rust_vec_len, data_len),
-        29 => wire__crate__api__api__metronome_set_volume_impl(port, ptr, rust_vec_len, data_len),
-        30 => wire__crate__api__api__metronome_start_impl(port, ptr, rust_vec_len, data_len),
-        31 => wire__crate__api__api__metronome_stop_impl(port, ptr, rust_vec_len, data_len),
-        32 => wire__crate__api__api__piano_note_off_impl(port, ptr, rust_vec_len, data_len),
-        33 => wire__crate__api__api__piano_note_on_impl(port, ptr, rust_vec_len, data_len),
+        26 => wire__crate__api__ffi__metronome_set_bpm_impl(port, ptr, rust_vec_len, data_len),
+        27 => wire__crate__api__ffi__metronome_set_muted_impl(port, ptr, rust_vec_len, data_len),
+        28 => wire__crate__api__ffi__metronome_set_rhythm_impl(port, ptr, rust_vec_len, data_len),
+        29 => wire__crate__api__ffi__metronome_set_volume_impl(port, ptr, rust_vec_len, data_len),
+        30 => wire__crate__api__ffi__metronome_start_impl(port, ptr, rust_vec_len, data_len),
+        31 => wire__crate__api__ffi__metronome_stop_impl(port, ptr, rust_vec_len, data_len),
+        32 => wire__crate__api__ffi__piano_note_off_impl(port, ptr, rust_vec_len, data_len),
+        33 => wire__crate__api__ffi__piano_note_on_impl(port, ptr, rust_vec_len, data_len),
         34 => {
-            wire__crate__api__api__piano_set_concert_pitch_impl(port, ptr, rust_vec_len, data_len)
+            wire__crate__api__ffi__piano_set_concert_pitch_impl(port, ptr, rust_vec_len, data_len)
         }
-        35 => wire__crate__api__api__piano_set_volume_impl(port, ptr, rust_vec_len, data_len),
-        36 => wire__crate__api__api__piano_setup_impl(port, ptr, rust_vec_len, data_len),
-        37 => wire__crate__api__api__piano_start_impl(port, ptr, rust_vec_len, data_len),
-        38 => wire__crate__api__api__piano_stop_impl(port, ptr, rust_vec_len, data_len),
-        39 => wire__crate__api__api__tuner_get_frequency_impl(port, ptr, rust_vec_len, data_len),
-        40 => wire__crate__api__api__tuner_start_impl(port, ptr, rust_vec_len, data_len),
-        41 => wire__crate__api__api__tuner_stop_impl(port, ptr, rust_vec_len, data_len),
+        35 => wire__crate__api__ffi__piano_set_volume_impl(port, ptr, rust_vec_len, data_len),
+        36 => wire__crate__api__ffi__piano_setup_impl(port, ptr, rust_vec_len, data_len),
+        37 => wire__crate__api__ffi__piano_start_impl(port, ptr, rust_vec_len, data_len),
+        38 => wire__crate__api__ffi__piano_stop_impl(port, ptr, rust_vec_len, data_len),
+        39 => wire__crate__api__ffi__tuner_get_frequency_impl(port, ptr, rust_vec_len, data_len),
+        40 => wire__crate__api__ffi__tuner_start_impl(port, ptr, rust_vec_len, data_len),
+        41 => wire__crate__api__ffi__tuner_stop_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -2209,7 +2209,7 @@ mod io {
     use flutter_rust_bridge::for_generated::byteorder::{
         NativeEndian, ReadBytesExt, WriteBytesExt,
     };
-    use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
+    use flutter_rust_bridge::for_generated::{Lifetimeable, Lockable, transform_result_dco};
     use flutter_rust_bridge::{Handler, IntoIntoDart};
 
     // Section: boilerplate
@@ -2233,7 +2233,7 @@ mod web {
     };
     use flutter_rust_bridge::for_generated::wasm_bindgen;
     use flutter_rust_bridge::for_generated::wasm_bindgen::prelude::*;
-    use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
+    use flutter_rust_bridge::for_generated::{Lifetimeable, Lockable, transform_result_dco};
     use flutter_rust_bridge::{Handler, IntoIntoDart};
 
     // Section: boilerplate

@@ -6,7 +6,7 @@
 // Static analysis wrongly picks the IO variant, thus ignore this
 // ignore_for_file: argument_type_not_assignable
 
-import 'api/api.dart';
+import 'api/ffi.dart';
 import 'api/modules/media_player.dart';
 import 'api/modules/metronome.dart';
 import 'api/modules/metronome_rhythm.dart';

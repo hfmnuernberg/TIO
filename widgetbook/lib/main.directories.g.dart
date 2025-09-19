@@ -11,34 +11,37 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:tiomusic_widgetbook/widgets/input/number_input_and_slider_int.dart'
-    as _i2;
-import 'package:tiomusic_widgetbook/widgets/piano/keyboard.dart' as _i3;
-import 'package:widgetbook/widgetbook.dart' as _i1;
+    as _tiomusic_widgetbook_widgets_input_number_input_and_slider_int;
+import 'package:tiomusic_widgetbook/widgets/piano/keyboard.dart'
+    as _tiomusic_widgetbook_widgets_piano_keyboard;
+import 'package:widgetbook/widgetbook.dart' as _widgetbook;
 
-final directories = <_i1.WidgetbookNode>[
-  _i1.WidgetbookFolder(
+final directories = <_widgetbook.WidgetbookNode>[
+  _widgetbook.WidgetbookFolder(
     name: 'widgets',
     children: [
-      _i1.WidgetbookFolder(
+      _widgetbook.WidgetbookFolder(
         name: 'input',
         children: [
-          _i1.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookLeafComponent(
             name: 'NumberInputAndSliderInt',
-            useCase: _i1.WidgetbookUseCase(
+            useCase: _widgetbook.WidgetbookUseCase(
               name: 'NumberInputAndSliderInt',
-              builder: _i2.numberInputAndSliderInt,
+              builder:
+                  _tiomusic_widgetbook_widgets_input_number_input_and_slider_int
+                      .numberInputAndSliderInt,
             ),
           ),
         ],
       ),
-      _i1.WidgetbookFolder(
+      _widgetbook.WidgetbookFolder(
         name: 'piano',
         children: [
-          _i1.WidgetbookLeafComponent(
+          _widgetbook.WidgetbookLeafComponent(
             name: 'Keyboard',
-            useCase: _i1.WidgetbookUseCase(
+            useCase: _widgetbook.WidgetbookUseCase(
               name: 'Keyboard',
-              builder: _i3.keyboard,
+              builder: _tiomusic_widgetbook_widgets_piano_keyboard.keyboard,
             ),
           ),
         ],

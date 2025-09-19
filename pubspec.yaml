@@ -54,13 +54,13 @@ dev_dependencies:
   dependency_validator: 5.0.2
   ffigen: 19.1.0
   flutter_launcher_icons: 0.14.4
-  flutter_lints: 5.0.0
+  flutter_lints: 6.0.0
   flutter_native_splash: 2.4.6
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
-  json_serializable: 6.11.0
+  json_serializable: 6.11.1
   mocktail: 1.0.4
   test_cov_console: 0.2.2
 

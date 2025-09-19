@@ -32,7 +32,7 @@ class _SetRandomMuteState extends State<SetRandomMute> {
     value = metronomeBlock.randomMute;
   }
 
-  void handleChange(newValue) async {
+  void handleChange(int newValue) async {
     setState(() => value = newValue);
     metronome.setChanceOfMuteBeat(newValue).then((success) => null);
   }
