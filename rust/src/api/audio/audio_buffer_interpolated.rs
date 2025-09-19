@@ -3,7 +3,7 @@ use lerp::Lerp;
 use super::float_index::FloatIndex;
 
 #[flutter_rust_bridge::frb(ignore)]
-pub struct AudioBufferInterpolated {
+pub(crate) struct AudioBufferInterpolated {
     buffer_size_f32: f32,
     buffer: Vec<f32>,
     looping: bool,
@@ -15,7 +15,7 @@ pub struct AudioBufferInterpolated {
 
 impl AudioBufferInterpolated {
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn new(buffer: Vec<f32>) -> Self {
+    pub(crate) fn new(buffer: Vec<f32>) -> Self {
         let buffer_size_f32 = buffer.len() as f32;
         Self {
             buffer_size_f32,
@@ -29,7 +29,20 @@ impl AudioBufferInterpolated {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_samples(&mut self, buffer_to_write_to: &mut [f32], read_speed: f32) {
+    pub(crate) fn set_new_file(&mut self, buffer: Vec<f32>) {
+        self.buffer_size_f32 = buffer.len() as f32;
+        self.buffer = buffer;
+        // Reset playback-related state to safe defaults for a fresh file
+        self.looping = false;
+        self.is_playing = false;
+        self.start_factor = 0.0;
+        self.end_factor = 1.0;
+        // Reset the read head to cover the whole new buffer
+        self.read_head = FloatIndex::new(0.0, self.buffer_size_f32);
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn get_samples(&mut self, buffer_to_write_to: &mut [f32], read_speed: f32) {
         if self.buffer.len() < 2 {
             return;
         }
@@ -74,7 +87,7 @@ impl AudioBufferInterpolated {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn compute_rms(&self, n_bins: usize) -> Vec<f32> {
+    pub(crate) fn compute_rms(&self, n_bins: usize) -> Vec<f32> {
         // if buffer is empty return zeros
         if self.buffer.is_empty() {
             return vec![0.0; n_bins];
@@ -99,48 +112,48 @@ impl AudioBufferInterpolated {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn set_playing(&mut self, playing: bool) {
+    pub(crate) fn set_playing(&mut self, playing: bool) {
         self.is_playing = playing;
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_is_playing(&self) -> bool {
+    pub(crate) fn get_is_playing(&self) -> bool {
         self.is_playing
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn set_loop(&mut self, looping: bool) {
+    pub(crate) fn set_loop(&mut self, looping: bool) {
         self.looping = looping;
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_is_looping(&self) -> bool {
+    pub(crate) fn get_is_looping(&self) -> bool {
         self.looping
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_playback_position_factor(&self) -> f32 {
+    pub(crate) fn get_playback_position_factor(&self) -> f32 {
         self.read_head.get_index() / self.buffer_size_f32
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn set_playback_position_factor(&mut self, playback_position_factor: f32) {
+    pub(crate) fn set_playback_position_factor(&mut self, playback_position_factor: f32) {
         self.read_head
             .set_index(playback_position_factor * self.buffer_size_f32);
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_is_empty(&self) -> bool {
+    pub(crate) fn get_is_empty(&self) -> bool {
         self.buffer.is_empty()
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_length_seconds(&self, sample_rate: u32) -> f32 {
+    pub(crate) fn get_length_seconds(&self, sample_rate: u32) -> f32 {
         self.buffer.len() as f32 / sample_rate as f32
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn set_trim(&mut self, start_factor: f32, end_factor: f32) {
+    pub(crate) fn set_trim(&mut self, start_factor: f32, end_factor: f32) {
         self.start_factor = start_factor.min(end_factor).clamp(0.0, 1.0);
         self.end_factor = start_factor.max(end_factor).clamp(0.0, 1.0);
         self.read_head.set_start_end(
@@ -150,7 +163,7 @@ impl AudioBufferInterpolated {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_trim(&self) -> (f32, f32) {
+    pub(crate) fn get_trim(&self) -> (f32, f32) {
         (self.start_factor, self.end_factor)
     }
 }

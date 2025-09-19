@@ -2,6 +2,7 @@
  * This file contains all functions that are exposed to Flutter.
  */
 
+use crate::api::modules::media_player as mp;
 use flutter_rust_bridge::frb;
 
 use crate::{
@@ -315,17 +316,29 @@ pub fn media_player_set_volume(volume: f32) -> bool {
 
 pub fn media_player_load_wav_with_id(player_id: String, wav_file_path: String) -> bool {
     log::info!("media_player_load_wav_with_id(id={})", player_id);
-    media_player_load_wav(wav_file_path)
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp::mp_load(&player_id, &wav_file_path)
+    } else {
+        false
+    }
 }
 
 pub fn media_player_start_with_id(player_id: String) -> bool {
     log::info!("media_player_start_with_id(id={})", player_id);
-    media_player_start()
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp::mp_start(&player_id)
+    } else {
+        false
+    }
 }
 
 pub fn media_player_stop_with_id(player_id: String) -> bool {
     log::info!("media_player_stop_with_id(id={})", player_id);
-    media_player_stop()
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp::mp_stop(&player_id)
+    } else {
+        false
+    }
 }
 
 pub fn media_player_set_pitch_semitones_with_id(player_id: String, pitch_semitones: f32) -> bool {
@@ -334,7 +347,11 @@ pub fn media_player_set_pitch_semitones_with_id(player_id: String, pitch_semiton
         player_id,
         pitch_semitones
     );
-    media_player_set_pitch(pitch_semitones)
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp::mp_set_pitch(&player_id, pitch_semitones)
+    } else {
+        false
+    }
 }
 
 pub fn media_player_set_speed_factor_with_id(player_id: String, speed_factor: f32) -> bool {
@@ -343,7 +360,11 @@ pub fn media_player_set_speed_factor_with_id(player_id: String, speed_factor: f3
         player_id,
         speed_factor
     );
-    media_player_set_speed(speed_factor)
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp::mp_set_speed(&player_id, speed_factor)
+    } else {
+        false
+    }
 }
 
 pub fn media_player_set_trim_by_factor_with_id(
@@ -357,7 +378,9 @@ pub fn media_player_set_trim_by_factor_with_id(
         start_factor,
         end_factor
     );
-    media_player_set_trim_by_factor(start_factor, end_factor)
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp::mp_set_trim_by_factor(&player_id, start_factor, end_factor)
+    }
 }
 
 #[frb(type_64bit_int)]
@@ -370,7 +393,11 @@ pub fn media_player_get_rms_with_id(player_id: String, n_bins: i32) -> Vec<f32> 
     if n_bins <= 0 {
         return Vec::new();
     }
-    media_player_compute_rms(n_bins as usize)
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp::mp_compute_rms(&player_id, n_bins as usize)
+    } else {
+        Vec::new()
+    }
 }
 
 pub fn media_player_set_loop_with_id(player_id: String, looping: bool) {
@@ -379,12 +406,18 @@ pub fn media_player_set_loop_with_id(player_id: String, looping: bool) {
         player_id,
         looping
     );
-    media_player_set_loop_value(looping)
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp::mp_set_loop_value(&player_id, looping)
+    }
 }
 
 pub fn media_player_get_state_with_id(player_id: String) -> Option<MediaPlayerState> {
     log::info!("media_player_get_state_with_id(id={})", player_id);
-    media_player_query_state()
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp::mp_get_state(&player_id)
+    } else {
+        None
+    }
 }
 
 pub fn media_player_set_pos_factor_with_id(player_id: String, pos_factor: f32) -> bool {
@@ -393,7 +426,11 @@ pub fn media_player_set_pos_factor_with_id(player_id: String, pos_factor: f32) -
         player_id,
         pos_factor
     );
-    media_player_set_pos_factor(pos_factor)
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp::mp_set_pos_factor(&player_id, pos_factor)
+    } else {
+        false
+    }
 }
 
 pub fn media_player_set_volume_with_id(player_id: String, volume: f32) -> bool {
@@ -402,7 +439,11 @@ pub fn media_player_set_volume_with_id(player_id: String, volume: f32) -> bool {
         player_id,
         volume
     );
-    media_player_set_new_volume(volume)
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp::mp_set_volume(&player_id, volume)
+    } else {
+        false
+    }
 }
 
 // metronome

@@ -19,11 +19,94 @@ use crate::api::util::util_functions::{
     get_platform_default_cpal_output_config, speed_factor_to_halftones,
 };
 
+use crate::api::util::util_functions::load_audio_file;
+use std::collections::HashMap;
+
 use ringbuf::{Consumer, SharedRb};
+type RingConsumerType = Consumer<f32, Arc<SharedRb<f32, Vec<MaybeUninit<f32>>>>>;
+
+// type RingProducerType = ringbuf::Producer<f32, Arc<SharedRb<f32, Vec<MaybeUninit<f32>>>>>;
+
 extern crate queues;
+
+#[flutter_rust_bridge::frb(ignore)]
+struct PlayerCore {
+    // Former globals but now per-player:
+    pub source_data: AudioBufferInterpolated, // used to hold file + cursor + loop/trim
+    pub ring_consumer: Option<RingConsumerType>,
+    pub volume: f32,
+    pub playing: bool,
+    processing: AudioProcessingData, // speed/pitch + temp buffers
+
+                                     // The pitch thread & stop signal for THIS player:
+                                     //     pub pitch_join: Option<JoinHandle<()>>,
+                                     //     pub pitch_stop_tx: Option<Sender<()>>,
+}
+
+impl PlayerCore {
+    pub fn new(sample_rate: usize) -> Self {
+        Self {
+            source_data: AudioBufferInterpolated::new(vec![]),
+            processing: AudioProcessingData {
+                pitch_change_semitones: 0.0,
+                speed_change_factor: 1.0,
+                pitch_shifter: Some(PitchShifter::new(
+                    PITCH_SHIFT_WINDOW_DUR_MILLIS,
+                    sample_rate,
+                )),
+                //                 buffer_after_speed_change: [0.0; PITCH_SHIFT_BUFFER_SIZE],
+                //                 buffer_after_pitch_shift: [0.0; PITCH_SHIFT_BUFFER_SIZE],
+                buffer_after_speed_change: vec![0.0; PITCH_SHIFT_BUFFER_SIZE],
+                buffer_after_pitch_shift: vec![0.0; PITCH_SHIFT_BUFFER_SIZE],
+            },
+            ring_consumer: None,
+            volume: 1.0,
+            playing: false,
+            //             pitch_join: None,
+            //             pitch_stop_tx: None,
+        }
+    }
+}
+
+// #[flutter_rust_bridge::frb(ignore)]
+// enum MixerCommand {
+//     Stop,
+// }
+
+#[flutter_rust_bridge::frb(ignore)]
+struct Mixer {
+    players: HashMap<String, PlayerCore>,
+    out_join: Option<JoinHandle<()>>,
+    //     out_tx: Option<Sender<MixerCommand>>,
+    sample_rate: usize,
+}
+
+impl Mixer {
+    fn new(sample_rate: usize) -> Self {
+        Self {
+            players: HashMap::new(),
+            out_join: None,
+            //             out_tx: None,
+            sample_rate,
+        }
+    }
+    fn get_or_create(&mut self, id: &str) -> &mut PlayerCore {
+        self.players
+            .entry(id.to_string())
+            .or_insert_with(|| PlayerCore::new(self.sample_rate))
+    }
+}
+
+lazy_static! {
+    static ref MIXER: Mutex<Mixer> = {
+        let sr = *OUTPUT_SAMPLE_RATE.lock().expect("sample rate");
+        Mutex::new(Mixer::new(sr))
+    };
+}
 
 // DATA
 
+#[flutter_rust_bridge::frb(ignore)]
 struct ThreadData {
     _audio_out_thread: JoinHandle<()>,
     _pitch_shift_thread: JoinHandle<()>,
@@ -31,33 +114,403 @@ struct ThreadData {
     stop_sender_ps: Sender<()>,
 }
 
+#[flutter_rust_bridge::frb(ignore)]
 struct AudioProcessingData {
     pitch_change_semitones: f32,
     speed_change_factor: f32,
     pitch_shifter: Option<PitchShifter>,
-    buffer_after_speed_change: [f32; PITCH_SHIFT_BUFFER_SIZE],
-    buffer_after_pitch_shift: [f32; PITCH_SHIFT_BUFFER_SIZE],
+    //     buffer_after_speed_change: [f32; PITCH_SHIFT_BUFFER_SIZE],
+    //     buffer_after_pitch_shift: [f32; PITCH_SHIFT_BUFFER_SIZE],
+    buffer_after_speed_change: Vec<f32>,
+    buffer_after_pitch_shift: Vec<f32>,
 }
 
-type RingConsumerType = Consumer<f32, Arc<SharedRb<f32, Vec<MaybeUninit<f32>>>>>;
-
 lazy_static! {
-    static ref THREAD_DATA: Mutex<Option<ThreadData>> = Mutex::new(None);
-    static ref SOURCE_DATA: Mutex<AudioBufferInterpolated> =
-        Mutex::new(AudioBufferInterpolated::new(vec![]));
-    static ref PROCESSING_DATA: Mutex<AudioProcessingData> = Mutex::new(AudioProcessingData {
+//     static ref THREAD_DATA: Mutex<Option<ThreadData>> = Mutex::new(None);
+    static ref THREAD_DATA: std::sync::Mutex<Option<ThreadData>> = std::sync::Mutex::new(None);
+//     static ref SOURCE_DATA: Mutex<AudioBufferInterpolated> =
+//         Mutex::new(AudioBufferInterpolated::new(vec![]));
+    static ref SOURCE_DATA: std::sync::Mutex<AudioBufferInterpolated> =
+        std::sync::Mutex::new(AudioBufferInterpolated::new(vec![]));
+//     static ref PROCESSING_DATA: Mutex<AudioProcessingData> = Mutex::new(AudioProcessingData {
+//         pitch_change_semitones: 0.0,
+//         speed_change_factor: 1.0,
+//         pitch_shifter: None,
+// //         buffer_after_speed_change: [0.0; PITCH_SHIFT_BUFFER_SIZE],
+// //         buffer_after_pitch_shift: [0.0; PITCH_SHIFT_BUFFER_SIZE],
+//         buffer_after_speed_change: vec![0.0; PITCH_SHIFT_BUFFER_SIZE],
+//         buffer_after_pitch_shift: vec![0.0; PITCH_SHIFT_BUFFER_SIZE],
+//     });
+    static ref PROCESSING_DATA: std::sync::Mutex<AudioProcessingData> = std::sync::Mutex::new(AudioProcessingData {
         pitch_change_semitones: 0.0,
         speed_change_factor: 1.0,
         pitch_shifter: None,
-        buffer_after_speed_change: [0.0; PITCH_SHIFT_BUFFER_SIZE],
-        buffer_after_pitch_shift: [0.0; PITCH_SHIFT_BUFFER_SIZE],
+        buffer_after_speed_change: vec![0.0; PITCH_SHIFT_BUFFER_SIZE],
+        buffer_after_pitch_shift: vec![0.0; PITCH_SHIFT_BUFFER_SIZE],
     });
-    static ref RING_CONSUMER: Mutex<Option<RingConsumerType>> = Mutex::new(None);
+//     static ref RING_CONSUMER: Mutex<Option<RingConsumerType>> = Mutex::new(None);
+    static ref RING_CONSUMER: std::sync::Mutex<Option<RingConsumerType>> = std::sync::Mutex::new(None);
 }
+
+// ==== FFI-facing wrappers (crate-visible) ====================================
+// Keep these signatures FRB-friendly (String/&str, numbers, Vec<f32>, Option<MediaPlayerState>, etc).
+// Do NOT expose Mixer/PlayerCore in signatures.
+
+pub(crate) fn mp_load(id: &str, path: &str) -> bool {
+    match load_audio_file(path.to_string()) {
+        Ok(buffer) => {
+            let mut mx = MIXER.lock().expect("mixer");
+            let p = mx.get_or_create(id);
+            p.source_data.set_new_file(buffer);
+            true
+        }
+        Err(e) => {
+            log::info!("load failed: {}", e);
+            false
+        }
+    }
+}
+
+pub(crate) fn mp_start(id: &str) -> bool {
+    MIXER.lock().expect("mixer").start(id)
+}
+
+pub(crate) fn mp_stop(id: &str) -> bool {
+    MIXER.lock().expect("mixer").stop(id)
+}
+
+pub(crate) fn mp_set_pitch(id: &str, semitones: f32) -> bool {
+    MIXER.lock().expect("mixer").set_pitch(id, semitones)
+}
+
+pub(crate) fn mp_set_speed(id: &str, speed: f32) -> bool {
+    MIXER.lock().expect("mixer").set_speed(id, speed)
+}
+
+pub(crate) fn mp_set_trim_by_factor(id: &str, start: f32, end: f32) {
+    MIXER
+        .lock()
+        .expect("mixer")
+        .set_trim_by_factor(id, start, end)
+}
+
+pub(crate) fn mp_compute_rms(id: &str, n_bins: usize) -> Vec<f32> {
+    MIXER.lock().expect("mixer").compute_rms(id, n_bins)
+}
+
+pub(crate) fn mp_set_loop_value(id: &str, looping: bool) {
+    MIXER.lock().expect("mixer").set_loop_value(id, looping)
+}
+
+pub(crate) fn mp_get_state(id: &str) -> Option<MediaPlayerState> {
+    MIXER.lock().expect("mixer").get_state(id)
+}
+
+pub(crate) fn mp_set_pos_factor(id: &str, pos: f32) -> bool {
+    MIXER.lock().expect("mixer").set_pos_factor(id, pos)
+}
+
+pub(crate) fn mp_set_volume(id: &str, vol: f32) -> bool {
+    MIXER.lock().expect("mixer").set_volume(id, vol)
+}
+// ==== end wrappers ===========================================================
 
 static VOLUME: Mutex<f32> = Mutex::new(1.0);
 
 // FUNCTIONS
+
+fn apply_headroom_if_many(out: &mut [f32], active_players: usize) {
+    if active_players > 1 {
+        let gain = 0.5; // -6 dB when >1 player
+        for s in out.iter_mut() {
+            *s *= gain;
+        }
+    }
+}
+
+fn mix_output_callback(out: &mut [f32]) {
+    // Start silent
+    for s in out.iter_mut() {
+        *s = 0.0;
+    }
+
+    let mut active = 0usize;
+
+    // Lock the mixer briefly to pop from ring buffers
+    let mut maybe_chunks: Vec<Vec<f32>> = Vec::new();
+    {
+        let mut mx = MIXER.lock().expect("lock mixer");
+
+        for p in mx.players.values_mut() {
+            if !p.playing {
+                continue;
+            }
+            if let Some(consumer) = p.ring_consumer.as_mut() {
+                // Pull up to out.len() samples for this player
+                let mut buf = vec![0.0f32; out.len()];
+                let mut i = 0usize;
+                while i < buf.len() {
+                    match consumer.pop() {
+                        Some(sample) => {
+                            buf[i] = sample * p.volume;
+                            i += 1;
+                        }
+                        None => break,
+                    }
+                }
+                if i > 0 {
+                    active += 1;
+                    // If we didn’t fill the whole buf, the rest remains zeros (silence)
+                    maybe_chunks.push(buf);
+                }
+            }
+        }
+    }
+
+    // Sum the chunks into 'out'
+    for chunk in maybe_chunks.iter() {
+        for (o, s) in out.iter_mut().zip(chunk.iter()) {
+            *o += *s;
+        }
+    }
+
+    apply_headroom_if_many(out, active);
+}
+
+impl Mixer {
+    fn ensure_output_stream(&mut self) -> bool {
+        if self.out_join.is_some() {
+            return true;
+        }
+
+        let host = cpal::default_host();
+        let device = match host.default_output_device() {
+            Some(d) => d,
+            None => {
+                log::info!("Mixer: no output device");
+                return false;
+            }
+        };
+        let config = match get_platform_default_cpal_output_config(&device) {
+            Some(c) => c,
+            None => {
+                log::info!("Mixer: no default output config");
+                return false;
+            }
+        };
+
+        //         let (tx, rx): (Sender<MixerCommand>, Receiver<MixerCommand>) = channel();
+
+        let join = thread::spawn(move || {
+            match device.build_output_stream(
+                &config,
+                |data: &mut [f32], _| mix_output_callback(data),
+                move |_| log::info!("Mixer: output error"),
+                Some(Duration::from_secs(AUDIO_STREAM_CREATE_TIMEOUT_SECONDS)),
+            ) {
+                Ok(stream) => {
+                    if let Err(e) = stream.play() {
+                        log::info!("Mixer: could not play stream: {}", e);
+                    }
+                    // block until Stop
+                    //                     while let Ok(cmd) = rx.recv() {
+                    //                         if matches!(cmd, MixerCommand::Stop) {
+                    //                             break;
+                    //                         }
+                    //                     }
+                }
+                Err(e) => log::info!("Mixer: build_output_stream failed: {}", e),
+            }
+        });
+
+        //         self.out_tx = Some(tx);
+        self.out_join = Some(join);
+        true
+    }
+}
+
+impl Mixer {
+    // 3A) Load a wav for a player
+    //     pub fn load_wav(&mut self, id: &str, path: &str) -> bool {
+    //         let sr = self.sample_rate;
+    //         let p = self.get_or_create(id);
+    //         match load_audio_file(path.to_string()) {
+    //             Ok(buffer) => {
+    //                 p.source_data = AudioBufferInterpolated::new(buffer);
+    //
+    //                 // Create ringbuf for THIS player
+    //                 let rb = SharedRb::<f32, Vec<_>>::new(MEDIA_PLAYER_PLAYBACK_MAX_BUFFERING * 2);
+    //                 let (producer, consumer) = rb.split();
+    //                 p.ring_consumer = Some(consumer);
+    //                 p.playing = false;
+    //
+    //                 // Start/Restart this player’s pitch thread
+    //                 if let Some(tx) = p.pitch_stop_tx.take() {
+    //                     let _ = tx.send(());
+    //                 }
+    //                 if let Some(j) = p.pitch_join.take() {
+    //                     let _ = j.join();
+    //                 }
+    //
+    //                 let (tx, rx): (Sender<()>, Receiver<()>) = channel();
+    //                 p.pitch_stop_tx = Some(tx);
+    //                 let player_id = id.to_string();
+    //
+    //                 p.pitch_join = Some(thread::spawn(move || {
+    //                     pitch_thread_loop(player_id, sr, producer, rx);
+    //                 }));
+    //
+    //                 self.ensure_output_stream()
+    //             }
+    //             Err(e) => {
+    //                 log::info!("Mixer load_wav failed: {}", e);
+    //                 false
+    //             }
+    //         }
+    //     }
+
+    pub fn start(&mut self, id: &str) -> bool {
+        let p = self.get_or_create(id);
+        if p.source_data.get_is_empty() {
+            return false;
+        }
+        p.source_data.set_playing(true);
+        p.playing = true;
+        self.ensure_output_stream()
+    }
+
+    pub fn stop(&mut self, id: &str) -> bool {
+        let p = self.get_or_create(id);
+        p.source_data.set_playing(false);
+        p.playing = false;
+        true
+    }
+
+    pub fn set_volume(&mut self, id: &str, vol: f32) -> bool {
+        let p = self.get_or_create(id);
+        p.volume = vol;
+        true
+    }
+
+    pub fn set_pitch(&mut self, id: &str, semitones: f32) -> bool {
+        let p = self.get_or_create(id);
+        p.processing.pitch_change_semitones = semitones;
+        true
+    }
+
+    pub fn set_speed(&mut self, id: &str, speed: f32) -> bool {
+        let p = self.get_or_create(id);
+        p.processing.speed_change_factor = speed;
+        true
+    }
+
+    pub fn set_trim_by_factor(&mut self, id: &str, start: f32, end: f32) {
+        let p = self.get_or_create(id);
+        p.source_data.set_trim(start, end);
+    }
+
+    pub fn set_pos_factor(&mut self, id: &str, pos: f32) -> bool {
+        let p = self.get_or_create(id);
+        p.source_data.set_playback_position_factor(pos);
+        true
+    }
+
+    pub fn set_loop_value(&mut self, id: &str, looping: bool) {
+        let p = self.get_or_create(id);
+        p.source_data.set_loop(looping);
+    }
+
+    pub fn get_state(&self, _id: &str) -> Option<MediaPlayerState> {
+        // TODO: implement true per-player state
+        media_player_query_state()
+    }
+
+    //     pub fn compute_rms(&self, id: &str, n_bins: usize) -> Vec<f32> {
+    //         let p = match self.players.get(id) { Some(p) => p, None => return vec![] };
+    //         // Reuse your existing logic to compute RMS from AudioBufferInterpolated
+    //         media_player_compute_rms_from_source(&p.source_data, n_bins)
+    //     }
+    pub fn compute_rms(&self, _id: &str, n_bins: usize) -> Vec<f32> {
+        // TODO: implement true per-player RMS over p.source_data without mutating playback state.
+        // Temporary shim: reuse existing global RMS so UI keeps working.
+        media_player_compute_rms(n_bins)
+    }
+}
+
+// --- Minimal helper: pass-through pitch shift (replace with real shifter when ready)
+// fn pitch_shift_on_buffers(proc: &mut AudioProcessingData, _sample_rate: usize) {
+//     // If you already have a real pitch shifter function, call it here instead.
+//     // For now we just pass audio through so everything compiles/plays:
+//     //     for i in 0..PITCH_SHIFT_BUFFER_SIZE {
+//     //         proc.buffer_after_pitch_shift[i] = proc.buffer_after_speed_change[i];
+//     //     }
+//     let n = proc
+//         .buffer_after_speed_change
+//         .len()
+//         .min(proc.buffer_after_pitch_shift.len());
+//     for i in 0..n {
+//         proc.buffer_after_pitch_shift[i] = proc.buffer_after_speed_change[i];
+//     }
+// }
+
+// fn pitch_thread_loop(
+//     player_id: String,
+//     sample_rate: usize,
+//     mut producer: RingProducerType,
+//     rx: Receiver<()>,
+// ) {
+//     loop {
+//         // early stop?
+//         if rx.try_recv().is_ok() {
+//             return;
+//         }
+//
+//         // Don’t overfill the ring buffer
+//         if producer.len() >= MEDIA_PLAYER_PLAYBACK_MAX_BUFFERING {
+//             thread::sleep(Duration::from_millis(1));
+//             continue;
+//         }
+//
+//         // Access THIS player's state briefly
+//         let mut need_more = false;
+//         {
+//             let mut mx = MIXER.lock().expect("lock mixer");
+//             let p = match mx.players.get_mut(&player_id) {
+//                 Some(p) => p,
+//                 None => return,
+//             };
+//
+//             if !p.source_data.get_is_playing() {
+//                 // Player stopped → exit thread (will be recreated on next load_wav)
+//                 return;
+//             }
+//
+//             // 1) Pull a chunk from source with speed
+//             let read_speed = p.processing.speed_change_factor;
+//             p.source_data
+//                 .get_samples(&mut p.processing.buffer_after_speed_change, read_speed);
+//
+//             // 2) Apply pitch shift into buffer_after_pitch_shift
+//             // (You already have this logic in your current `pitch_shift(&mut audio_processing_data)`.)
+//             // Convert it to operate on p.processing.* and p.processing.pitch_shifter
+//             // For example:
+//             pitch_shift_on_buffers(&mut p.processing, sample_rate);
+//
+//             // 3) Write into the ring producer
+//             for s in p.processing.buffer_after_pitch_shift.iter() {
+//                 if producer.push(*s).is_err() {
+//                     need_more = false;
+//                     break;
+//                 }
+//                 need_more = true;
+//             }
+//         }
+//
+//         if !need_more {
+//             thread::sleep(Duration::from_millis(1));
+//         }
+//     }
+// }
 
 #[flutter_rust_bridge::frb(ignore)]
 pub fn media_player_create_stream() -> bool {
