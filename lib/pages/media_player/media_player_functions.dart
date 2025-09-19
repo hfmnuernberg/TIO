@@ -18,20 +18,19 @@ import 'package:tiomusic/util/log.dart';
 abstract class MediaPlayerFunctions {
   static final _logger = createPrefixLogger('MediaPlayerFunctions');
 
-  static void setSpeedAndPitchInRust(AudioSystem as, double speedFactor, double pitchSemitones) {
+  static void setSpeedAndPitchInRust(
+    AudioSystem as,
+    double speedFactor,
+    double pitchSemitones, {
+    PlayerId playerId = kDefaultPlayerId,
+  }) {
     as
-        .mediaPlayerSetSpeedFactor(speedFactor: speedFactor)
-        .then(
-          (success) => {
-            if (!success) {throw 'Setting speed factor in rust failed using this value: $speedFactor'},
-          },
-        );
+        .mediaPlayerSetSpeedFactor(speedFactor: speedFactor, playerId: playerId)
+        .then((success) => {if (!success) throw 'Setting speed factor in rust failed using this value: $speedFactor'});
     as
-        .mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones)
+        .mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones, playerId: playerId)
         .then(
-          (success) => {
-            if (!success) {throw 'Setting pitch semitones in rust failed using this value: $pitchSemitones'},
-          },
+          (success) => {if (!success) throw 'Setting pitch semitones in rust failed using this value: $pitchSemitones'},
         );
   }
 
@@ -40,16 +39,16 @@ abstract class MediaPlayerFunctions {
     String absoluteFilePath,
     double startFactor,
     double endFactor,
-    int numberOfBins,
-  ) async {
-    var success = await as.mediaPlayerLoadWav(wavFilePath: absoluteFilePath);
-    if (success) {
-      as.mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor);
+    int numberOfBins, {
+    PlayerId playerId = kDefaultPlayerId,
+  }) async {
+    final success = await as.mediaPlayerLoadWav(wavFilePath: absoluteFilePath, playerId: playerId);
+    if (!success) return null;
 
-      var tempRmsList = await as.mediaPlayerGetRms(nBins: numberOfBins);
-      return _normalizeRms(tempRmsList);
-    }
-    return null;
+    await as.mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor, playerId: playerId);
+
+    final tempRmsList = await as.mediaPlayerGetRms(nBins: numberOfBins, playerId: playerId);
+    return _normalizeRms(tempRmsList);
   }
 
   static Float32List _normalizeRms(Float32List rmsList) {
@@ -69,10 +68,11 @@ abstract class MediaPlayerFunctions {
     AudioSession audioSession,
     Wakelock wakelock,
     bool repeatOne,
-    bool hasMarkers,
-  ) async {
+    bool hasMarkers, {
+    PlayerId playerId = kDefaultPlayerId,
+  }) async {
     await stopRecording(as, wakelock);
-    await as.mediaPlayerSetRepeat(repeatOne: repeatOne);
+    await as.mediaPlayerSetRepeat(repeatOne: repeatOne, playerId: playerId);
     await audioSession.preparePlayback();
 
     if (hasMarkers) {
@@ -80,16 +80,14 @@ abstract class MediaPlayerFunctions {
       await as.generatorStart();
     }
 
-    var success = await as.mediaPlayerStart();
-    if (success) {
-      await wakelock.enable();
-    }
+    final success = await as.mediaPlayerStart(playerId: playerId);
+    if (success) await wakelock.enable();
     return success;
   }
 
-  static Future<bool> stopPlaying(AudioSystem as, Wakelock wakelock) async {
+  static Future<bool> stopPlaying(AudioSystem as, Wakelock wakelock, {PlayerId playerId = kDefaultPlayerId}) async {
     await wakelock.disable();
-    return as.mediaPlayerStop();
+    return as.mediaPlayerStop(playerId: playerId);
   }
 
   static Future<bool> startRecording(
@@ -125,12 +123,20 @@ abstract class MediaPlayerFunctions {
     AudioSystem as,
     FileSystem fs,
     MediaPlayerBlock block,
-    int numOfBins,
-  ) async {
+    int numOfBins, {
+    PlayerId playerId = kDefaultPlayerId,
+  }) async {
     final absolutePath = fs.toAbsoluteFilePath(block.relativePath);
     if (!fs.existsFile(absolutePath)) return null;
 
-    return _setAudioFileAndTrimInRust(as, absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
+    return _setAudioFileAndTrimInRust(
+      as,
+      absolutePath,
+      block.rangeStart,
+      block.rangeEnd,
+      numOfBins,
+      playerId: playerId,
+    );
   }
 
   static Widget displayRecordingTimer(String label, String duration, double height) {

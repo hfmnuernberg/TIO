@@ -54,7 +54,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     _as = context.read<AudioSystem>();
     _audioSession = context.read<AudioSession>();
     _wakelock = context.read<Wakelock>();
-    _as.mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
+    _as.mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume, playerId: widget.mediaPlayerBlock.id);
 
     _waveformVisualizer = WaveformVisualizer(
       0,
@@ -68,6 +68,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       _as,
       widget.mediaPlayerBlock.speedFactor,
       widget.mediaPlayerBlock.pitchSemitones,
+      playerId: widget.mediaPlayerBlock.id,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -94,6 +95,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
           fs,
           widget.mediaPlayerBlock,
           numOfBins,
+          playerId: widget.mediaPlayerBlock.id,
         );
         if (newRms != null) {
           _rmsValues = newRms;
@@ -125,7 +127,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
         return;
       }
       if (!_isPlaying) return;
-      _as.mediaPlayerGetState().then((mediaPlayerState) {
+      _as.mediaPlayerGetState(playerId: widget.mediaPlayerBlock.id).then((mediaPlayerState) {
         if (mediaPlayerState == null) {
           _logger.e('State is null.');
           return;
@@ -155,6 +157,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     MediaPlayerFunctions.stopPlaying(
       _as,
       _wakelock,
+      playerId: widget.mediaPlayerBlock.id,
     ).then((value) => MediaPlayerFunctions.stopRecording(_as, _wakelock));
 
     _timerPollPlaybackPosition?.cancel();
@@ -201,7 +204,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       _audioSessionInterruptionListenerHandle = null;
     }
 
-    await MediaPlayerFunctions.stopPlaying(_as, _wakelock);
+    await MediaPlayerFunctions.stopPlaying(_as, _wakelock, playerId: widget.mediaPlayerBlock.id);
     if (mounted) setState(() => _isPlaying = false);
   }
 
@@ -213,6 +216,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       _wakelock,
       widget.mediaPlayerBlock.looping,
       widget.mediaPlayerBlock.markerPositions.isNotEmpty,
+      playerId: widget.mediaPlayerBlock.id,
     );
     if (mounted) setState(() => _isPlaying = success);
   }
