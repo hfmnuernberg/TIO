@@ -37,7 +37,7 @@ class RustBasedAudioSystem implements AudioSystem {
 
   @override
   Future<bool> mediaPlayerLoadWav({required String wavFilePath, PlayerId playerId = kDefaultPlayerId}) async =>
-      rust.mediaPlayerLoadWavWithId(playerId: playerId, wavFilePath: wavFilePath);
+      rust.mediaPlayerLoadFileWithId(playerId: playerId, wavFilePath: wavFilePath);
 
   @override
   Future<bool> mediaPlayerStart({PlayerId playerId = kDefaultPlayerId}) async =>
@@ -60,7 +60,7 @@ class RustBasedAudioSystem implements AudioSystem {
   Future<bool> mediaPlayerSetPitchSemitones({
     required double pitchSemitones,
     PlayerId playerId = kDefaultPlayerId,
-  }) async => rust.mediaPlayerSetPitchSemitonesWithId(playerId: playerId, pitchSemitones: pitchSemitones);
+  }) async => rust.mediaPlayerSetPitchWithId(playerId: playerId, pitchSemitones: pitchSemitones);
 
   @override
   Future<bool> mediaPlayerSetSpeedFactor({required double speedFactor, PlayerId playerId = kDefaultPlayerId}) async =>
@@ -71,7 +71,7 @@ class RustBasedAudioSystem implements AudioSystem {
     required double startFactor,
     required double endFactor,
     PlayerId playerId = kDefaultPlayerId,
-  }) async => rust.mediaPlayerSetTrimByFactorWithId(playerId: playerId, startFactor: startFactor, endFactor: endFactor);
+  }) async => rust.mediaPlayerSetTrimWithId(playerId: playerId, startFactor: startFactor, endFactor: endFactor);
 
   @override
   Future<Float32List> mediaPlayerGetRms({required int nBins, PlayerId playerId = kDefaultPlayerId}) async =>

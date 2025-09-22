@@ -6,7 +6,7 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/src/rust/api/ffi.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/number_input_dec.dart';
 import 'package:tiomusic/widgets/input/number_input_int.dart';
@@ -42,7 +42,7 @@ class _SetSpeedState extends State<SetSpeed> {
   }
 
   Future<void> _updateSpeed(double newSpeed) async {
-    final success = await mediaPlayerSetSpeedFactor(speedFactor: newSpeed);
+    final success = await mediaPlayerSetSpeedFactorWithId(playerId: _mediaPlayerBlock.id, speedFactor: newSpeed);
     if (!mounted) return;
     if (!success) {
       throw 'Setting speed factor in rust failed using value: $newSpeed';

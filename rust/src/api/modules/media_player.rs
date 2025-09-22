@@ -198,7 +198,7 @@ pub(crate) fn mp_compute_rms(id: &str, n_bins: usize) -> Vec<f32> {
     MIXER.lock().expect("mixer").compute_rms(id, n_bins)
 }
 
-pub(crate) fn mp_set_loop_value(id: &str, looping: bool) {
+pub(crate) fn mp_set_loop_mode(id: &str, looping: bool) {
     MIXER.lock().expect("mixer").set_loop_value(id, looping)
 }
 
@@ -409,7 +409,7 @@ impl Mixer {
         p.source_data.set_trim(start, end);
     }
 
-    pub fn set_pos_factor(&mut self, id: &str, pos: f32) -> bool {
+    pub(crate) fn set_pos_factor(&mut self, id: &str, pos: f32) -> bool {
         let p = self.get_or_create(id);
         p.source_data.set_playback_position_factor(pos);
         true
@@ -511,6 +511,160 @@ impl Mixer {
 //         }
 //     }
 // }
+
+/// Load a WAV file for a specific player ID
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_load_wav_with_id(player_id: String, wav_file_path: String) -> bool {
+    log::info!(
+        "media player load wav with id: {} - {}",
+        &player_id,
+        &wav_file_path
+    );
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp_load(&player_id, &wav_file_path)
+    } else {
+        false
+    }
+}
+
+/// Start playback for a specific player ID
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_create_audio_stream_with_id(player_id: String) -> bool {
+    log::info!("media player start with id: {}", &player_id);
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp_start(&player_id)
+    } else {
+        false
+    }
+}
+
+/// Stop playback for a specific player ID
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_destroy_audio_stream_with_id(player_id: String) -> bool {
+    log::info!("media player stop with id: {}", &player_id);
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp_stop(&player_id)
+    } else {
+        false
+    }
+}
+
+/// Set pitch (in semitones) for a specific player ID
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_set_pitch_semitones_with_id(player_id: String, pitch_semitones: f32) -> bool {
+    log::info!(
+        "media player set pitch with id: {} -> {}",
+        &player_id,
+        pitch_semitones
+    );
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp_set_pitch(&player_id, pitch_semitones)
+    } else {
+        false
+    }
+}
+
+/// Set speed factor for a specific player ID
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_set_new_speed_factor_with_id(player_id: String, speed_factor: f32) -> bool {
+    log::info!(
+        "media player set speed with id: {} -> {}",
+        &player_id,
+        speed_factor
+    );
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp_set_speed(&player_id, speed_factor)
+    } else {
+        false
+    }
+}
+
+/// Set trim (range factors) for a specific player ID
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_set_trim_by_factor_with_id(
+    player_id: String,
+    start_factor: f32,
+    end_factor: f32,
+) {
+    log::info!(
+        "media player set trim with id: {} -> {}..{}",
+        &player_id,
+        start_factor,
+        end_factor
+    );
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp_set_trim_by_factor(&player_id, start_factor, end_factor);
+    }
+}
+
+/// Get RMS histogram for a specific player ID
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_get_rms_values_with_id(player_id: String, n_bins: usize) -> Vec<f32> {
+    log::info!(
+        "media player get rms with id: {} -> {} bins",
+        &player_id,
+        n_bins
+    );
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp_compute_rms(&player_id, n_bins)
+    } else {
+        vec![]
+    }
+}
+
+/// Enable/disable loop for a specific player ID
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_set_loop_mode_with_id(player_id: String, looping: bool) {
+    log::info!(
+        "media player set loop with id: {} -> {}",
+        &player_id,
+        looping
+    );
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp_set_loop_mode(&player_id, looping);
+    }
+}
+
+/// Query state for a specific player ID
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_get_new_state_with_id(player_id: String) -> Option<MediaPlayerState> {
+    log::info!("media player get state with id: {}", &player_id);
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp_get_state(&player_id)
+    } else {
+        None
+    }
+}
+
+/// Set playback position factor for a specific player ID
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_set_new_pos_factor_with_id(player_id: String, pos_factor: f32) -> bool {
+    log::info!(
+        "media player set pos factor with id: {} -> {}",
+        &player_id,
+        pos_factor
+    );
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp_set_pos_factor(&player_id, pos_factor)
+    } else {
+        false
+    }
+}
+
+/// Set volume for a specific player ID
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_set_new_volume_with_id(player_id: String, volume: f32) -> bool {
+    log::info!(
+        "media player set volume with id: {} -> {}",
+        &player_id,
+        volume
+    );
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        mp_set_volume(&player_id, volume)
+    } else {
+        false
+    }
+}
 
 #[flutter_rust_bridge::frb(ignore)]
 pub fn media_player_create_stream() -> bool {
@@ -811,7 +965,8 @@ pub fn media_player_set_new_volume(new_volume: f32) -> bool {
     true
 }
 
-#[flutter_rust_bridge::frb(ignore)]
+// #[flutter_rust_bridge::frb(ignore)]
+#[derive(Debug, Clone)]
 pub struct MediaPlayerState {
     pub playing: bool,
     pub playback_position_factor: f32,
