@@ -435,97 +435,99 @@ class _ProjectsPageState extends State<ProjectsPage> {
           ),
         ],
       ),
-      body: Stack(
-        alignment: Alignment.bottomCenter,
-        fit: StackFit.expand,
-        children: [
-          FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
+      body: SafeArea(
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          fit: StackFit.expand,
+          children: [
+            FittedBox(fit: BoxFit.fill, child: Image.asset('assets/images/tiomusic-bg.png')),
 
-          Column(
-            children: [
-              Expanded(
-                child: Consumer<ProjectLibrary>(
-                  builder: (context, projectLibrary, child) => Stack(
-                    children: [
-                      if (projectLibrary.projects.isEmpty)
-                        Padding(
-                          padding: const EdgeInsets.all(40),
-                          child: Text(
-                            l10n.projectsNoProjects,
-                            style: const TextStyle(color: Colors.white, fontSize: 42),
-                          ),
-                        )
-                      else if (_isEditing)
-                        EditableProjectList(
-                          projectLibrary: projectLibrary,
-                          onDelete: _handleDelete,
-                          onReorder: _handleReorder,
-                        )
-                      else
-                        ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
+            Column(
+              children: [
+                Expanded(
+                  child: Consumer<ProjectLibrary>(
+                    builder: (context, projectLibrary, child) => Stack(
+                      children: [
+                        if (projectLibrary.projects.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.all(40),
+                            child: Text(
+                              l10n.projectsNoProjects,
+                              style: const TextStyle(color: Colors.white, fontSize: 42),
+                            ),
+                          )
+                        else if (_isEditing)
+                          EditableProjectList(
+                            projectLibrary: projectLibrary,
+                            onDelete: _handleDelete,
+                            onReorder: _handleReorder,
+                          )
+                        else
+                          ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
 
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
-                          child: EditProjectsBar(
-                            key: _keyChangeProjectOrder,
-                            isEditing: _isEditing,
-                            onAddProject: _handleNew,
-                            onToggleEditing: _toggleEditingMode,
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
+                            child: EditProjectsBar(
+                              key: _keyChangeProjectOrder,
+                              isEditing: _isEditing,
+                              onAddProject: _handleNew,
+                              onToggleEditing: _toggleEditingMode,
+                            ),
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: TIOMusicParams.edgeInset, bottom: TIOMusicParams.edgeInset),
+                  color: ColorTheme.surface,
+                  child: Column(
+                    key: _keyQuickTools,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          QuickToolButton(
+                            icon: blockTypes[BlockType.metronome]!.icon,
+                            label: l10n.metronome,
+                            onTap: () => _onQuickToolTapped(BlockType.metronome),
+                          ),
+                          QuickToolButton(
+                            icon: blockTypes[BlockType.mediaPlayer]!.icon,
+                            label: l10n.mediaPlayer,
+                            onTap: () => _onQuickToolTapped(BlockType.mediaPlayer),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          QuickToolButton(
+                            icon: blockTypes[BlockType.tuner]!.icon,
+                            label: l10n.tuner,
+                            onTap: () => _onQuickToolTapped(BlockType.tuner),
+                          ),
+                          QuickToolButton(
+                            icon: blockTypes[BlockType.piano]!.icon,
+                            label: l10n.piano,
+                            onTap: () => _onQuickToolTapped(BlockType.piano),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.only(top: TIOMusicParams.edgeInset, bottom: TIOMusicParams.edgeInset),
-                color: ColorTheme.surface,
-                child: Column(
-                  key: _keyQuickTools,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        QuickToolButton(
-                          icon: blockTypes[BlockType.metronome]!.icon,
-                          label: l10n.metronome,
-                          onTap: () => _onQuickToolTapped(BlockType.metronome),
-                        ),
-                        QuickToolButton(
-                          icon: blockTypes[BlockType.mediaPlayer]!.icon,
-                          label: l10n.mediaPlayer,
-                          onTap: () => _onQuickToolTapped(BlockType.mediaPlayer),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        QuickToolButton(
-                          icon: blockTypes[BlockType.tuner]!.icon,
-                          label: l10n.tuner,
-                          onTap: () => _onQuickToolTapped(BlockType.tuner),
-                        ),
-                        QuickToolButton(
-                          icon: blockTypes[BlockType.piano]!.icon,
-                          label: l10n.piano,
-                          onTap: () => _onQuickToolTapped(BlockType.piano),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          if (_showBanner) SurveyBanner(onClose: () => setState(() => _showBanner = false)) else const SizedBox(),
-        ],
+              ],
+            ),
+            if (_showBanner) SurveyBanner(onClose: () => setState(() => _showBanner = false)) else const SizedBox(),
+          ],
+        ),
       ),
     );
   }
