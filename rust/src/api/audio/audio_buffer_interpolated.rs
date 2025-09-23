@@ -32,12 +32,10 @@ impl AudioBufferInterpolated {
     pub(crate) fn set_new_file(&mut self, buffer: Vec<f32>) {
         self.buffer_size_f32 = buffer.len() as f32;
         self.buffer = buffer;
-        // Reset playback-related state to safe defaults for a fresh file
         self.looping = false;
         self.is_playing = false;
         self.start_factor = 0.0;
         self.end_factor = 1.0;
-        // Reset the read head to cover the whole new buffer
         self.read_head = FloatIndex::new(0.0, self.buffer_size_f32);
     }
 
