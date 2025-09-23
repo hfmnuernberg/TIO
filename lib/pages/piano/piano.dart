@@ -339,171 +339,175 @@ class _PianoState extends State<Piano> {
     final Project? project = widget.isQuickTool ? null : context.read<Project>();
     final islandWidth = MediaQuery.of(context).size.width - (MediaQuery.of(context).size.width / 1.9);
     final l10n = context.l10n;
+    final double deviceEdgeInset = Platform.isAndroid ? 8 : 0;
 
     return SafeArea(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // close button
-              BackButton(
-                color: ColorTheme.primary,
-                onPressed: () async {
-                  // if quick tool and values have been changed: ask for saving
-                  if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock, l10n)) {
-                    final save = await askForSavingQuickTool(context);
+      child: Padding(
+        padding: EdgeInsets.only(right: deviceEdgeInset, bottom: deviceEdgeInset),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // close button
+                BackButton(
+                  color: ColorTheme.primary,
+                  onPressed: () async {
+                    // if quick tool and values have been changed: ask for saving
+                    if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock, l10n)) {
+                      final save = await askForSavingQuickTool(context);
 
-                    // if user taps outside the dialog, we dont want to exit the quick tool and we dont want to save
-                    if (save == null) return;
+                      // if user taps outside the dialog, we dont want to exit the quick tool and we dont want to save
+                      if (save == null) return;
 
-                    if (save) {
-                      setState(() {
-                        _showSavingPage = true;
-                      });
+                      if (save) {
+                        setState(() {
+                          _showSavingPage = true;
+                        });
+                      } else {
+                        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+                        if (context.mounted) Navigator.of(context).pop();
+                      }
                     } else {
                       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-                      if (context.mounted) Navigator.of(context).pop();
+                      Navigator.of(context).pop();
                     }
-                  } else {
-                    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-
-              // title
-              Expanded(
-                child: GestureDetector(
-                  onTap: () async {
-                    final newTitle = await showFlatEditTextDialog(
-                      context: context,
-                      label: l10n.toolNewTitle,
-                      value: _pianoBlock.title,
-                    );
-                    if (newTitle == null) return;
-                    _pianoBlock.title = newTitle;
-                    if (context.mounted) {
-                      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-                    }
-                    setState(() {});
                   },
-                  child: Column(
-                    key: _keyChangeTitle,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _pianoBlock.title,
-                        style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        '${l10n.formatNumber(_concertPitch)} Hz – ${_soundFont.getLabel(l10n)}',
-                        style: const TextStyle(color: ColorTheme.primary),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+                ),
+
+                // title
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () async {
+                      final newTitle = await showFlatEditTextDialog(
+                        context: context,
+                        label: l10n.toolNewTitle,
+                        value: _pianoBlock.title,
+                      );
+                      if (newTitle == null) return;
+                      _pianoBlock.title = newTitle;
+                      if (context.mounted) {
+                        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+                      }
+                      setState(() {});
+                    },
+                    child: Column(
+                      key: _keyChangeTitle,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _pianoBlock.title,
+                          style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          '${l10n.formatNumber(_concertPitch)} Hz – ${_soundFont.getLabel(l10n)}',
+                          style: const TextStyle(color: ColorTheme.primary),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
-              // island
-              SizedBox(
-                key: _keyIsland,
-                height: ParentToolParams.islandHeight,
-                width: islandWidth,
-                child: ParentIslandView(project: project, toolBlock: _pianoBlock),
-              ),
-              Row(
-                children: [
-                  // save button
-                  IconButton(
-                    key: widget.isQuickTool ? _keyBookmarkSave : _keyBookmarkShare,
-                    onPressed: () {
-                      setState(() {
-                        _showSavingPage = true;
-                      });
-                    },
-                    icon: Icon(
-                      widget.isQuickTool ? Icons.bookmark_outline : Icons.bookmark_add_outlined,
-                      color: ColorTheme.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  if (widget.isQuickTool)
-                    PianoNavigationBar(
-                      keyOctaveSwitch: _keyOctaveSwitch,
-                      keySettings: _keySettings,
-                      isHolding: _isHolding,
-                      onOctaveDown: _pianoBlock.octaveDown,
-                      onToneDown: _pianoBlock.toneDown,
-                      onToneUp: _pianoBlock.toneUp,
-                      onOctaveUp: _pianoBlock.octaveUp,
-                      onOpenPitch: handleOnOpenPitch,
-                      onOpenVolume: handleOnOpenVolume,
-                      onOpenSound: handleOnOpenSound,
-                      onToggleHold: _soundFont.canHold ? handleToggleHold : null,
-                    )
-                  else
-                    PianoToolNavigationBar(
-                      project: project!,
-                      keyOctaveSwitch: _keyOctaveSwitch,
-                      keySettings: _keySettings,
-                      isHolding: _isHolding,
-                      toolBlock: _pianoBlock,
-                      onOctaveDown: _pianoBlock.octaveDown,
-                      onToneDown: _pianoBlock.toneDown,
-                      onToneUp: _pianoBlock.toneUp,
-                      onOctaveUp: _pianoBlock.octaveUp,
-                      onOpenPitch: handleOnOpenPitch,
-                      onOpenVolume: handleOnOpenVolume,
-                      onOpenSound: handleOnOpenSound,
-                      onToggleHold: _soundFont.canHold ? handleToggleHold : null,
-                    ),
-
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    top: 52,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: ColorTheme.primaryFixedDim,
-                        borderRadius: const BorderRadius.all(Radius.circular(20)),
-                      ),
-                      padding: const EdgeInsets.all(10),
-                      child: Consumer<ProjectBlock>(
-                        builder: (context, projectBlock, child) {
-                          final pianoBlock = projectBlock as PianoBlock;
-                          return Keyboard(
-                            lowestNote: pianoBlock.keyboardPosition,
-                            isHolding: _isHolding,
-                            onPlay: _playNoteOn,
-                            onRelease: _playNoteOff,
-                          );
-                        },
+                // island
+                SizedBox(
+                  key: _keyIsland,
+                  height: ParentToolParams.islandHeight,
+                  width: islandWidth,
+                  child: ParentIslandView(project: project, toolBlock: _pianoBlock),
+                ),
+                Row(
+                  children: [
+                    // save button
+                    IconButton(
+                      key: widget.isQuickTool ? _keyBookmarkSave : _keyBookmarkShare,
+                      onPressed: () {
+                        setState(() {
+                          _showSavingPage = true;
+                        });
+                      },
+                      icon: Icon(
+                        widget.isQuickTool ? Icons.bookmark_outline : Icons.bookmark_add_outlined,
+                        color: ColorTheme.primary,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+              ],
+            ),
+
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    if (widget.isQuickTool)
+                      PianoNavigationBar(
+                        keyOctaveSwitch: _keyOctaveSwitch,
+                        keySettings: _keySettings,
+                        isHolding: _isHolding,
+                        onOctaveDown: _pianoBlock.octaveDown,
+                        onToneDown: _pianoBlock.toneDown,
+                        onToneUp: _pianoBlock.toneUp,
+                        onOctaveUp: _pianoBlock.octaveUp,
+                        onOpenPitch: handleOnOpenPitch,
+                        onOpenVolume: handleOnOpenVolume,
+                        onOpenSound: handleOnOpenSound,
+                        onToggleHold: _soundFont.canHold ? handleToggleHold : null,
+                      )
+                    else
+                      PianoToolNavigationBar(
+                        project: project!,
+                        keyOctaveSwitch: _keyOctaveSwitch,
+                        keySettings: _keySettings,
+                        isHolding: _isHolding,
+                        toolBlock: _pianoBlock,
+                        onOctaveDown: _pianoBlock.octaveDown,
+                        onToneDown: _pianoBlock.toneDown,
+                        onToneUp: _pianoBlock.toneUp,
+                        onOctaveUp: _pianoBlock.octaveUp,
+                        onOpenPitch: handleOnOpenPitch,
+                        onOpenVolume: handleOnOpenVolume,
+                        onOpenSound: handleOnOpenSound,
+                        onToggleHold: _soundFont.canHold ? handleToggleHold : null,
+                      ),
+
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      top: 52,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: ColorTheme.primaryFixedDim,
+                          borderRadius: const BorderRadius.all(Radius.circular(20)),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: Consumer<ProjectBlock>(
+                          builder: (context, projectBlock, child) {
+                            final pianoBlock = projectBlock as PianoBlock;
+                            return Keyboard(
+                              lowestNote: pianoBlock.keyboardPosition,
+                              isHolding: _isHolding,
+                              onPlay: _playNoteOn,
+                              onRelease: _playNoteOff,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

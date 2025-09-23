@@ -50,21 +50,21 @@ Cons
 
 ## Update Rust
 
-**1. Check the latest version of Rust on the [Rust release page](https://releases.rs/). There you can also find the list of versions and related changelogs.**
+#### 1. Check the latest version of Rust on the [Rust release page](https://releases.rs/). There you can also find the list of versions and related changelogs.
 
-**2. Check the latest edition of Rust on the [Rust editions page](https://doc.rust-lang.org/edition-guide/editions/index.html).**
+#### 2. Check the latest edition of Rust on the [Rust editions page](https://doc.rust-lang.org/edition-guide/editions/index.html).
 
 _Note:_
 - The edition is updated as last step, after updating the Rust version. This is because the edition can be updated independently of the Rust version, but newer editions require a minimum Rust version (e.g., edition = "2024" require a compiler >= 1.85).
 - Rust editions are mostly about syntax and linting changes. The edition can be specified in the `Cargo.toml` file.
 
-**3. Check the currently installed Rust version by running:**
+#### 3. Check the currently installed Rust version by running:
 
 ```shell
 rustc --version
 ```
 
-**4. Check the currently installed and active toolchain by running:**
+#### 4. Check the currently installed and active toolchain by running:
 
 From rust directory:
 
@@ -78,7 +78,7 @@ _Note:_
 - If you care about installer/management behaviors, check rustup’s CHANGELOG on GitHub: [rust-lang/rustup CHANGELOG](https://github.com/rust-lang/rustup/blob/master/CHANGELOG.md)
 - If you have multiple toolchains installed (e.g., stable, beta, nightly), ensure you are updating the correct one.
 
-**5. Open [rust/Cargo.toml](../rust/Cargo.toml) and change the `rust-version` field to the desired version (e.g., "1.85.0"):**
+#### 5. Open [rust/Cargo.toml](../rust/Cargo.toml) and change the `rust-version` field to the desired version (e.g., "1.85.0"):
 
 ```toml
 [package]
@@ -88,7 +88,7 @@ rust-version = "1.85.0"
 _Note: If you run into issues during updating the Edition, run the update command later, after running the version update
 command (step 10)._
 
-**6. Pin the local toolchain to the desired version. Edit [rust-toolchain.toml](../rust-toolchain.toml) at the repo root to:**
+#### 6. Pin the local toolchain to the desired version. Edit [rust-toolchain.toml](../rust-toolchain.toml) at the repo root to:
 
 ```toml
 [toolchain]
@@ -98,12 +98,29 @@ versioned = "1.85.0"
 
 If the file has other fields, keep them; just set `channel` and `versioned` to the new version (e.g., 1.85.0).
 
-**7. Install & use that toolchain:**
+#### 7. Install & use that toolchain:
 
 ```shell
 app install:toolchain 1.85.0
 cargo +1.85.0 --version
 ```
+
+Ensure the new installed version is being used as active and as default:
+
+```shell
+app rust doctor
+```
+or
+
+```shell
+rustup show
+```
+
+If it is not used as default, set it:
+
+```shell
+rustup default 1.85.0
+````
 
 If you want to uninstall an old toolchain (any installed toolchain that is not the current default), run:
 
@@ -111,7 +128,7 @@ If you want to uninstall an old toolchain (any installed toolchain that is not t
 rustup toolchain uninstall <OLD_VERSION>
 ```
 
-**8. ONLY if you added any temporary pins, remove them.**
+#### 8. ONLY if you added any temporary pins, remove them.
 
 If you previously added a workaround like
 
@@ -126,7 +143,7 @@ in Cargo.toml to force a specific version, remove that now, then:
 cargo update -p coreaudio-sys
 ```
 
-**9. Re-resolve & build on new version (e.g., 1.85.0)**
+#### 9. Re-resolve & build on new version (e.g., 1.85.0)
 
 In rust folder, where the [Cargo.toml](/rust/Cargo.toml) is:
 
@@ -135,20 +152,20 @@ app update
 app build
 ```
 
-**10. Run formatting and linting:**
+#### 10. Run formatting and linting:
 
 ```shell
 app format
 app lint
 ```
 
-**11. Run tests:**
+#### 11. Run tests:
 
 ```shell
 app test
 ```
 
-**12. Check CI configuration**
+#### 12. Check CI configuration
 
 - If you have a GitHub Action or other CI, check the Rust version used there.
 - Update it to the new version, e.g., 1.85.0 (or rustup update 1.85.0) before build/test.
@@ -158,7 +175,7 @@ Check e.g., the "Setup Rust" steps in
 - [reusable-build-ios-app.yaml](../.github/workflows/reusable-build-ios-app.yaml)
 - [reusable-verify.yaml](../.github/workflows/reusable-verify.yaml)
 
-**13. Flutter/FRB side**
+#### 13. Flutter/FRB side
 
 In rust folder, run this to install the latest stable flutter_rust_bridge_codegen CLI (one-time / when upgrading) and latest stable cargo-ndk:
 
@@ -173,7 +190,7 @@ app generate
 app format
 ```
 
-**14. Update Edition (when new Edition is available):**
+#### 14. Update Edition (when new Edition is available):
 
 **Important:**
 Installing a new edition can make many changes, so it’s best to commit first before and do it in a separate commit.
@@ -191,7 +208,7 @@ When changing the edition in Cargo.toml is done run:
 app install:edition
 ```
 
-**15. Start the app:**
+#### 15. Start the app:
 
 ```shell
 app run ios
