@@ -8,22 +8,14 @@ part of 'rhythm_group.dart';
 
 RhythmGroup _$RhythmGroupFromJson(Map<String, dynamic> json) => RhythmGroup(
   json['keyID'] as String? ?? '',
-  (json['beats'] as List<dynamic>?)?.map((e) => $enumDecode(_$BeatTypeEnumMap, e)).toList() ?? [],
-  (json['polyBeats'] as List<dynamic>?)?.map((e) => $enumDecode(_$BeatTypePolyEnumMap, e)).toList() ?? [],
+  json['beats'] == null ? [] : RhythmGroup._beatsFromJson(json['beats'] as List?),
+  json['polyBeats'] == null ? [] : RhythmGroup._polyBeatsFromJson(json['polyBeats'] as List?),
   json['noteKey'] as String? ?? 'e4',
 );
 
 Map<String, dynamic> _$RhythmGroupToJson(RhythmGroup instance) => <String, dynamic>{
   'keyID': instance.keyID,
-  'beats': instance.beats.map((e) => _$BeatTypeEnumMap[e]!).toList(),
-  'polyBeats': instance.polyBeats.map((e) => _$BeatTypePolyEnumMap[e]!).toList(),
+  'beats': RhythmGroup._beatsToJson(instance.beats),
+  'polyBeats': RhythmGroup._polyBeatsToJson(instance.polyBeats),
   'noteKey': instance.noteKey,
-};
-
-const _$BeatTypeEnumMap = {BeatType.Accented: 'Accented', BeatType.Unaccented: 'Unaccented', BeatType.Muted: 'Muted'};
-
-const _$BeatTypePolyEnumMap = {
-  BeatTypePoly.Accented: 'Accented',
-  BeatTypePoly.Unaccented: 'Unaccented',
-  BeatTypePoly.Muted: 'Muted',
 };

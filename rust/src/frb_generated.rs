@@ -363,7 +363,7 @@ fn wire__crate__api__ffi__media_player_get_rms_with_id_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_player_id = <String>::sse_decode(&mut deserializer);
-            let api_n_bins = <i32>::sse_decode(&mut deserializer);
+            let api_n_bins = <usize>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {

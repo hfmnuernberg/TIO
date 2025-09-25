@@ -10,7 +10,7 @@ part 'rhythm_group.g.dart';
 
 // ignore_for_file: must_be_immutable // FIXME: fix these block issues
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class RhythmGroup extends Equatable {
   @override
   List<Object> get props => [beats, polyBeats, beatLen];
@@ -18,10 +18,10 @@ class RhythmGroup extends Equatable {
   @JsonKey(defaultValue: MetronomeParams.defaultId)
   late String keyID;
 
-  @JsonKey(defaultValue: [])
+  @JsonKey(fromJson: _beatsFromJson, toJson: _beatsToJson, defaultValue: [])
   late List<BeatType> beats;
 
-  @JsonKey(defaultValue: [])
+  @JsonKey(fromJson: _polyBeatsFromJson, toJson: _polyBeatsToJson, defaultValue: [])
   late List<BeatTypePoly> polyBeats;
 
   @JsonKey(defaultValue: MetronomeParams.defaultNoteKey)
@@ -79,4 +79,14 @@ class RhythmGroup extends Equatable {
   factory RhythmGroup.fromJson(Map<String, dynamic> json) => _$RhythmGroupFromJson(json);
 
   Map<String, dynamic> toJson() => _$RhythmGroupToJson(this);
+
+  static List<BeatType> _beatsFromJson(List<dynamic>? json) =>
+      (json ?? const []).map((e) => BeatType.values.byName(e as String)).toList();
+
+  static List<String> _beatsToJson(List<BeatType> beats) => beats.map((e) => e.name).toList();
+
+  static List<BeatTypePoly> _polyBeatsFromJson(List<dynamic>? json) =>
+      (json ?? const []).map((e) => BeatTypePoly.values.byName(e as String)).toList();
+
+  static List<String> _polyBeatsToJson(List<BeatTypePoly> beats) => beats.map((e) => e.name).toList();
 }

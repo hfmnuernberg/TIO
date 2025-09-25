@@ -43,11 +43,22 @@ abstract class MediaPlayerFunctions {
     PlayerId playerId = kDefaultPlayerId,
   }) async {
     final success = await as.mediaPlayerLoadWav(wavFilePath: absoluteFilePath, playerId: playerId);
+    _logger.t('[MP] loadFile ok=$success');
     if (!success) return null;
 
     await as.mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor, playerId: playerId);
+    _logger.t('[MP] setTrim done start=$startFactor end=$endFactor');
 
-    final tempRmsList = await as.mediaPlayerGetRms(nBins: numberOfBins, playerId: playerId);
+    final tempRmsList = await as
+        .mediaPlayerGetRms(nBins: numberOfBins, playerId: playerId)
+        .timeout(
+          const Duration(seconds: 15),
+          onTimeout: () {
+            _logger.e('[MP] getRms timeout after 15s (bins=$numberOfBins)');
+            throw 'getRms timeout';
+          },
+        );
+    _logger.t('[MP] getRms done len=${tempRmsList.length}');
     return _normalizeRms(tempRmsList);
   }
 

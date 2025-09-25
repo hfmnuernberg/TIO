@@ -11,14 +11,15 @@ use crate::{
             generator_create_audio_stream, generator_start_note, generator_stop_current_note,
             generator_trigger_destroy_stream,
         },
-        media_player::{
-            MediaPlayerState, media_player_create_audio_stream_with_id,
-            media_player_destroy_audio_stream_with_id, media_player_get_new_state_with_id,
-            media_player_get_rms_values_with_id, media_player_load_wav_with_id,
-            media_player_set_loop_mode_with_id, media_player_set_new_pos_factor_with_id,
-            media_player_set_new_speed_factor_with_id, media_player_set_new_volume_with_id,
-            media_player_set_pitch_semitones_with_id, media_player_set_trim_by_factor_with_id,
-        },
+        //         media_player::{
+        //             MediaPlayerState, media_player_create_audio_stream_with_id,
+        //             media_player_destroy_audio_stream_with_id, media_player_get_new_state_with_id,
+        //             media_player_get_rms_values_with_id, media_player_load_wav_with_id,
+        //             media_player_set_loop_mode_with_id, media_player_set_new_pos_factor_with_id,
+        //             media_player_set_new_speed_factor_with_id, media_player_set_new_volume_with_id,
+        //             media_player_set_pitch_semitones_with_id, media_player_set_trim_by_factor_with_id,
+        //         },
+        media_player::MediaPlayerState,
         metronome::{
             BeatHappenedEvent, metronome_create_audio_stream, metronome_get_beat_event,
             metronome_load_audio_buffer, metronome_set_audio_muted, metronome_set_new_bpm,
@@ -178,99 +179,76 @@ pub fn piano_set_concert_pitch(new_concert_pitch: f32) -> bool {
 pub fn media_player_load_file_with_id(player_id: String, wav_file_path: String) -> bool {
     log::info!(
         "media player load wav with id: {} - {}",
-        &player_id,
-        &wav_file_path
+        player_id,
+        wav_file_path
     );
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_load_wav_with_id(player_id, wav_file_path)
+        crate::api::modules::media_player::mp_load(&player_id, &wav_file_path)
     } else {
         false
     }
 }
 
 pub fn media_player_start_with_id(player_id: String) -> bool {
-    log::info!("media player start with id: {}", &player_id);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_create_audio_stream_with_id(player_id)
+        crate::api::modules::media_player::mp_start(&player_id)
     } else {
         false
     }
 }
 
 pub fn media_player_stop_with_id(player_id: String) -> bool {
-    log::info!("media player stop with id: {}", &player_id);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_destroy_audio_stream_with_id(player_id)
+        crate::api::modules::media_player::mp_stop(&player_id)
     } else {
         false
     }
 }
 
 pub fn media_player_set_pitch_with_id(player_id: String, pitch_semitones: f32) -> bool {
-    log::info!(
-        "media player set pitch with id: {} -> {}",
-        &player_id,
-        pitch_semitones
-    );
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_set_pitch_semitones_with_id(player_id, pitch_semitones)
+        crate::api::modules::media_player::mp_set_pitch(&player_id, pitch_semitones)
     } else {
         false
     }
 }
 
 pub fn media_player_set_speed_factor_with_id(player_id: String, speed_factor: f32) -> bool {
-    log::info!(
-        "media player set speed with id: {} -> {}",
-        &player_id,
-        speed_factor
-    );
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_set_new_speed_factor_with_id(player_id, speed_factor)
+        crate::api::modules::media_player::mp_set_speed(&player_id, speed_factor)
     } else {
         false
     }
 }
 
 pub fn media_player_set_trim_with_id(player_id: String, start_factor: f32, end_factor: f32) {
-    log::info!(
-        "media player set trim with id: {} -> {}..{}",
-        &player_id,
-        start_factor,
-        end_factor
-    );
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_set_trim_by_factor_with_id(player_id, start_factor, end_factor)
+        crate::api::modules::media_player::mp_set_trim_by_factor(
+            &player_id,
+            start_factor,
+            end_factor,
+        );
     }
 }
 
-pub fn media_player_get_rms_with_id(player_id: String, n_bins: i32) -> Vec<f32> {
-    log::info!(
-        "media player get rms with id: {} -> {} bins",
-        &player_id,
-        n_bins
-    );
+#[frb(type_64bit_int)]
+pub fn media_player_get_rms_with_id(player_id: String, n_bins: usize) -> Vec<f32> {
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_get_rms_values_with_id(player_id, n_bins as usize)
+        crate::api::modules::media_player::mp_compute_rms(&player_id, n_bins)
     } else {
-        vec![]
+        Vec::new()
     }
 }
 
 pub fn media_player_set_loop_with_id(player_id: String, looping: bool) {
-    log::info!(
-        "media player set loop with id: {} -> {}",
-        &player_id,
-        looping
-    );
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_set_loop_mode_with_id(player_id, looping)
+        crate::api::modules::media_player::mp_set_loop_mode(&player_id, looping);
     }
 }
 
 pub fn media_player_get_state_with_id(player_id: String) -> Option<MediaPlayerState> {
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_get_new_state_with_id(player_id)
+        crate::api::modules::media_player::mp_get_state(&player_id)
     } else {
         None
     }
@@ -278,7 +256,7 @@ pub fn media_player_get_state_with_id(player_id: String) -> Option<MediaPlayerSt
 
 pub fn media_player_set_pos_factor_with_id(player_id: String, pos_factor: f32) -> bool {
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_set_new_pos_factor_with_id(player_id, pos_factor)
+        crate::api::modules::media_player::mp_set_pos_factor(&player_id, pos_factor)
     } else {
         false
     }
@@ -286,7 +264,7 @@ pub fn media_player_set_pos_factor_with_id(player_id: String, pos_factor: f32) -
 
 pub fn media_player_set_volume_with_id(player_id: String, volume: f32) -> bool {
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_set_new_volume_with_id(player_id, volume)
+        crate::api::modules::media_player::mp_set_volume(&player_id, volume)
     } else {
         false
     }
