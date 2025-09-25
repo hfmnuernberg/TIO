@@ -1638,16 +1638,10 @@ impl SseDecode for crate::api::modules::media_player::MediaPlayerState {
         let mut var_playing = <bool>::sse_decode(deserializer);
         let mut var_playbackPositionFactor = <f32>::sse_decode(deserializer);
         let mut var_totalLengthSeconds = <f32>::sse_decode(deserializer);
-        let mut var_looping = <bool>::sse_decode(deserializer);
-        let mut var_trimStartFactor = <f32>::sse_decode(deserializer);
-        let mut var_trimEndFactor = <f32>::sse_decode(deserializer);
         return crate::api::modules::media_player::MediaPlayerState {
             playing: var_playing,
             playback_position_factor: var_playbackPositionFactor,
             total_length_seconds: var_totalLengthSeconds,
-            looping: var_looping,
-            trim_start_factor: var_trimStartFactor,
-            trim_end_factor: var_trimEndFactor,
         };
     }
 }
@@ -1982,9 +1976,6 @@ impl flutter_rust_bridge::IntoDart for crate::api::modules::media_player::MediaP
             self.playing.into_into_dart().into_dart(),
             self.playback_position_factor.into_into_dart().into_dart(),
             self.total_length_seconds.into_into_dart().into_dart(),
-            self.looping.into_into_dart().into_dart(),
-            self.trim_start_factor.into_into_dart().into_dart(),
-            self.trim_end_factor.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -2194,9 +2185,6 @@ impl SseEncode for crate::api::modules::media_player::MediaPlayerState {
         <bool>::sse_encode(self.playing, serializer);
         <f32>::sse_encode(self.playback_position_factor, serializer);
         <f32>::sse_encode(self.total_length_seconds, serializer);
-        <bool>::sse_encode(self.looping, serializer);
-        <f32>::sse_encode(self.trim_start_factor, serializer);
-        <f32>::sse_encode(self.trim_end_factor, serializer);
     }
 }
 

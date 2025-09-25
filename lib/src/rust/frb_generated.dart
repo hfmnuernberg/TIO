@@ -1110,14 +1110,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   MediaPlayerState dco_decode_media_player_state(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
     return MediaPlayerState(
       playing: dco_decode_bool(arr[0]),
       playbackPositionFactor: dco_decode_f_32(arr[1]),
       totalLengthSeconds: dco_decode_f_32(arr[2]),
-      looping: dco_decode_bool(arr[3]),
-      trimStartFactor: dco_decode_f_32(arr[4]),
-      trimEndFactor: dco_decode_f_32(arr[5]),
     );
   }
 
@@ -1329,16 +1326,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_playing = sse_decode_bool(deserializer);
     var var_playbackPositionFactor = sse_decode_f_32(deserializer);
     var var_totalLengthSeconds = sse_decode_f_32(deserializer);
-    var var_looping = sse_decode_bool(deserializer);
-    var var_trimStartFactor = sse_decode_f_32(deserializer);
-    var var_trimEndFactor = sse_decode_f_32(deserializer);
     return MediaPlayerState(
       playing: var_playing,
       playbackPositionFactor: var_playbackPositionFactor,
       totalLengthSeconds: var_totalLengthSeconds,
-      looping: var_looping,
-      trimStartFactor: var_trimStartFactor,
-      trimEndFactor: var_trimEndFactor,
     );
   }
 
@@ -1539,9 +1530,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self.playing, serializer);
     sse_encode_f_32(self.playbackPositionFactor, serializer);
     sse_encode_f_32(self.totalLengthSeconds, serializer);
-    sse_encode_bool(self.looping, serializer);
-    sse_encode_f_32(self.trimStartFactor, serializer);
-    sse_encode_f_32(self.trimEndFactor, serializer);
   }
 
   @protected

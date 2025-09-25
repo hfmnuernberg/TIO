@@ -6,37 +6,25 @@
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `apply_headroom_if_many`, `ensure_output_stream`, `get_or_create`, `mix_output_callback`, `mp_compute_rms`, `mp_get_state`, `mp_load`, `mp_set_loop_mode`, `mp_set_pitch`, `mp_set_pos_factor`, `mp_set_speed`, `mp_set_trim_by_factor`, `mp_set_volume`, `mp_start`, `mp_stop`, `new`, `on_audio_callback`, `set_pos_factor`, `thread_handle_command`
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `AudioProcessingData`, `MIXER`, `Mixer`, `PROCESSING_DATA`, `PlayerCore`, `SOURCE_DATA`, `THREAD_DATA`, `ThreadData`
-// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `deref`, `deref`, `deref`, `deref`, `fmt`, `initialize`, `initialize`, `initialize`, `initialize`
-// These functions are ignored (category: IgnoreBecauseExplicitAttribute): `media_player_compute_rms`, `media_player_create_stream`, `media_player_query_state`, `media_player_set_buffer`, `media_player_set_loop_value`, `media_player_set_new_volume`, `media_player_set_pitch`, `media_player_set_pos_factor`, `media_player_set_speed`, `media_player_set_trim_by_factor`, `media_player_trigger_destroy_stream`
-// These functions are ignored (category: IgnoreBecauseOwnerTyShouldIgnore): `compute_rms`, `get_state`, `new`, `set_loop_value`, `set_pitch`, `set_speed`, `set_trim_by_factor`, `set_volume`, `start`, `stop`
+// These functions are ignored because they are not marked as `pub`: `apply_headroom_if_many`, `ensure_output_stream`, `get_or_create`, `new`, `new`, `on_audio_callback`, `set_pos_factor`, `thread_handle_command`, `with_mixer_mut`, `with_mixer`, `with_player_mut`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `AudioProcessingData`, `MIXER`, `Mixer`, `PLAYERS`, `PROCESSING_DATA`, `PlayerCore`, `SOURCE_DATA`, `THREAD_DATA`, `ThreadData`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `deref`, `deref`, `deref`, `deref`, `deref`, `fmt`, `initialize`, `initialize`, `initialize`, `initialize`, `initialize`
+// These functions are ignored (category: IgnoreBecauseExplicitAttribute): `media_player_compute_rms`, `media_player_create_stream`, `media_player_query_state`, `media_player_set_buffer`, `media_player_set_loop_value`, `media_player_set_new_volume`, `media_player_set_pitch`, `media_player_set_pos_factor`, `media_player_set_speed`, `media_player_set_trim_by_factor`, `media_player_trigger_destroy_stream`, `mp_compute_rms`, `mp_get_state`, `mp_load`, `mp_set_loop_mode`, `mp_set_pitch`, `mp_set_pos_factor`, `mp_set_speed`, `mp_set_trim_by_factor`, `mp_set_volume`, `mp_start`, `mp_stop`
+// These functions are ignored (category: IgnoreBecauseOwnerTyShouldIgnore): `compute_rms`, `get_state`, `set_loop_value`, `set_pitch`, `set_speed`, `set_trim_by_factor`, `set_volume`, `start`, `stop`
 
 class MediaPlayerState {
   final bool playing;
   final double playbackPositionFactor;
   final double totalLengthSeconds;
-  final bool looping;
-  final double trimStartFactor;
-  final double trimEndFactor;
 
   const MediaPlayerState({
     required this.playing,
     required this.playbackPositionFactor,
     required this.totalLengthSeconds,
-    required this.looping,
-    required this.trimStartFactor,
-    required this.trimEndFactor,
   });
 
   @override
-  int get hashCode =>
-      playing.hashCode ^
-      playbackPositionFactor.hashCode ^
-      totalLengthSeconds.hashCode ^
-      looping.hashCode ^
-      trimStartFactor.hashCode ^
-      trimEndFactor.hashCode;
+  int get hashCode => playing.hashCode ^ playbackPositionFactor.hashCode ^ totalLengthSeconds.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -45,8 +33,5 @@ class MediaPlayerState {
           runtimeType == other.runtimeType &&
           playing == other.playing &&
           playbackPositionFactor == other.playbackPositionFactor &&
-          totalLengthSeconds == other.totalLengthSeconds &&
-          looping == other.looping &&
-          trimStartFactor == other.trimStartFactor &&
-          trimEndFactor == other.trimEndFactor;
+          totalLengthSeconds == other.totalLengthSeconds;
 }

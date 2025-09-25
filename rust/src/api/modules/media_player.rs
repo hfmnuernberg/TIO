@@ -9,68 +9,95 @@ use std::time::Duration;
 use crate::api::audio::audio_buffer_interpolated::AudioBufferInterpolated;
 use crate::api::audio::global::GLOBAL_AUDIO_LOCK;
 use crate::api::util::constants::{
-    AUDIO_STREAM_CREATE_TIMEOUT_SECONDS, OUTPUT_SAMPLE_RATE, PITCH_SHIFT_WINDOW_DUR_MILLIS,
+    AUDIO_STREAM_CREATE_TIMEOUT_SECONDS, NUM_CHANNELS, OUTPUT_SAMPLE_RATE,
+    PITCH_SHIFT_WINDOW_DUR_MILLIS,
 };
 use crate::api::util::util_functions::get_platform_default_cpal_output_config;
 
-use crate::api::util::util_functions::load_audio_file;
+use crate::api::util::util_functions::load_audio_file; // can be deleted?
 use std::collections::HashMap;
+use std::collections::hash_map::Entry;
 
 extern crate queues;
 
-#[flutter_rust_bridge::frb(ignore)]
-struct PlayerCore {
-    pub source_data: AudioBufferInterpolated,
-    pub volume: f32,
+#[derive(Debug, Clone)]
+pub struct MediaPlayerState {
     pub playing: bool,
-    processing: AudioProcessingData,
+    pub playback_position_factor: f32,
+    pub total_length_seconds: f32,
+}
+
+struct PlayerCore {
+    source_data: AudioBufferInterpolated,
+    volume: f32,
+    playing: bool,
+    pitch_semitones: f32,
+    speed_factor: f32,
 }
 
 impl PlayerCore {
-    pub fn new(sample_rate: usize) -> Self {
+    fn new() -> Self {
         Self {
             source_data: AudioBufferInterpolated::new(vec![]),
-            processing: AudioProcessingData {
-                pitch_change_semitones: 0.0,
-                speed_change_factor: 1.0,
-                pitch_shifter: Some(PitchShifter::new(
-                    PITCH_SHIFT_WINDOW_DUR_MILLIS,
-                    sample_rate,
-                )),
-            },
             volume: 1.0,
             playing: false,
+            pitch_semitones: 0.0,
+            speed_factor: 1.0,
         }
     }
 }
 
 #[flutter_rust_bridge::frb(ignore)]
 struct Mixer {
-    players: HashMap<String, PlayerCore>,
-    out_join: Option<JoinHandle<()>>,
-    sample_rate: usize,
+    players: std::collections::HashMap<String, PlayerCore>,
+    out_thread: Option<std::thread::JoinHandle<()>>,
 }
 
+#[flutter_rust_bridge::frb(ignore)]
 impl Mixer {
-    fn new(sample_rate: usize) -> Self {
+    fn new() -> Self {
         Self {
             players: HashMap::new(),
-            out_join: None,
-            sample_rate,
+            out_thread: None,
         }
-    }
-    fn get_or_create(&mut self, id: &str) -> &mut PlayerCore {
-        self.players
-            .entry(id.to_string())
-            .or_insert_with(|| PlayerCore::new(self.sample_rate))
     }
 }
 
 lazy_static! {
-    static ref MIXER: Mutex<Mixer> = {
-        let sr = *OUTPUT_SAMPLE_RATE.lock().expect("sample rate");
-        Mutex::new(Mixer::new(sr))
+    static ref MIXER: std::sync::Mutex<Mixer> = std::sync::Mutex::new(Mixer::new());
+}
+
+lazy_static! {
+    static ref PLAYERS: std::sync::Mutex<std::collections::HashMap<String, PlayerCore>> =
+        std::sync::Mutex::new(std::collections::HashMap::new());
+}
+
+#[inline]
+fn with_player_mut<R>(id: &str, f: impl FnOnce(&mut PlayerCore) -> R) -> R {
+    let mut map = PLAYERS.lock().expect("PLAYERS");
+    let p = match map.entry(id.to_string()) {
+        Entry::Occupied(o) => o.into_mut(),
+        Entry::Vacant(v) => v.insert(PlayerCore {
+            source_data: AudioBufferInterpolated::new(vec![]),
+            volume: 1.0,
+            playing: false,
+            pitch_semitones: 0.0,
+            speed_factor: 1.0,
+        }),
     };
+    f(p)
+}
+
+#[flutter_rust_bridge::frb(ignore)]
+fn with_mixer_mut<R>(f: impl FnOnce(&mut Mixer) -> R) -> R {
+    let mut mix = MIXER.lock().expect("MediaPlayer: lock MIXER");
+    f(&mut mix)
+}
+
+#[flutter_rust_bridge::frb(ignore)]
+fn with_mixer<R>(f: impl FnOnce(&Mixer) -> R) -> R {
+    let mix = MIXER.lock().expect("MediaPlayer: lock MIXER");
+    f(&mix)
 }
 
 // DATA
@@ -102,76 +129,78 @@ lazy_static! {
         });
 }
 
-pub(crate) fn mp_load(id: &str, path: &str) -> bool {
-    match load_audio_file(path.to_string()) {
-        Ok(buffer) => {
-            let mut mx = MIXER.lock().expect("mixer");
-            let p = mx.get_or_create(id);
-            p.source_data.set_new_file(buffer);
-            true
-        }
+#[flutter_rust_bridge::frb(ignore)]
+pub fn mp_load(id: &str, path: &str) -> bool {
+    let buffer = match load_audio_file(path.to_string()) {
+        Ok(buf) => buf,
         Err(e) => {
-            log::info!("load failed: {}", e);
-            false
+            log::info!("MediaPlayer: load failed: {}", e);
+            return false;
         }
-    }
+    };
+
+    with_player_mut(id, |p| {
+        p.source_data.set_new_file(buffer);
+        p.source_data.set_playing(false);
+        p.playing = false;
+    });
+    true
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub(crate) fn mp_start(id: &str) -> bool {
-    let ok = MIXER.lock().expect("mixer").start(id);
-    log::info!("Mixer: mp_start(id={}) -> {}", id, ok);
-    ok
+pub fn mp_start(id: &str) -> bool {
+    with_mixer_mut(|m| m.start(id))
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub(crate) fn mp_stop(id: &str) -> bool {
-    let ok = MIXER.lock().expect("mixer").stop(id);
-    log::info!("Mixer: mp_stop(id={}) -> {}", id, ok);
-    ok
+pub fn mp_stop(id: &str) -> bool {
+    with_mixer_mut(|m| m.stop(id))
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub(crate) fn mp_set_pitch(id: &str, semitones: f32) -> bool {
-    MIXER.lock().expect("mixer").set_pitch(id, semitones)
+pub fn mp_set_volume(id: &str, vol: f32) -> bool {
+    with_mixer_mut(|m| m.set_volume(id, vol))
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub(crate) fn mp_set_speed(id: &str, speed: f32) -> bool {
-    MIXER.lock().expect("mixer").set_speed(id, speed)
+pub fn mp_set_pitch(id: &str, semitones: f32) -> bool {
+    with_mixer_mut(|m| m.set_pitch(id, semitones))
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub(crate) fn mp_set_trim_by_factor(id: &str, start: f32, end: f32) {
-    MIXER
-        .lock()
-        .expect("mixer")
-        .set_trim_by_factor(id, start, end)
+pub fn mp_set_speed(id: &str, speed: f32) -> bool {
+    with_mixer_mut(|m| m.set_speed(id, speed))
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub(crate) fn mp_compute_rms(id: &str, n_bins: usize) -> Vec<f32> {
-    MIXER.lock().expect("mixer").compute_rms(id, n_bins)
+pub fn mp_set_trim_by_factor(id: &str, start: f32, end: f32) -> bool {
+    with_mixer_mut(|m| {
+        m.set_trim_by_factor(id, start, end);
+        true
+    })
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub(crate) fn mp_set_loop_mode(id: &str, looping: bool) {
-    MIXER.lock().expect("mixer").set_loop_value(id, looping)
+pub fn mp_set_pos_factor(id: &str, pos: f32) -> bool {
+    with_mixer_mut(|m| m.set_pos_factor(id, pos))
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub(crate) fn mp_get_state(id: &str) -> Option<MediaPlayerState> {
-    MIXER.lock().expect("mixer").get_state(id)
+pub fn mp_set_loop_mode(id: &str, looping: bool) -> bool {
+    with_mixer_mut(|m| {
+        m.set_loop_value(id, looping);
+        true
+    })
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub(crate) fn mp_set_pos_factor(id: &str, pos: f32) -> bool {
-    MIXER.lock().expect("mixer").set_pos_factor(id, pos)
+pub fn mp_get_state(id: &str) -> Option<MediaPlayerState> {
+    with_mixer(|m| m.get_state(id))
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub(crate) fn mp_set_volume(id: &str, vol: f32) -> bool {
-    MIXER.lock().expect("mixer").set_volume(id, vol)
+pub fn mp_compute_rms(id: &str, n_bins: usize) -> Vec<f32> {
+    with_mixer(|m| m.compute_rms(id, n_bins))
 }
 
 static VOLUME: Mutex<f32> = Mutex::new(1.0);
@@ -187,48 +216,9 @@ fn apply_headroom_if_many(out: &mut [f32], active_players: usize) {
     }
 }
 
-fn mix_output_callback(out: &mut [f32]) {
-    for s in out.iter_mut() {
-        *s = 0.0;
-    }
-
-    let mut active = 0usize;
-
-    let mut maybe_chunks: Vec<Vec<f32>> = Vec::new();
-    {
-        let mut mx = MIXER.lock().expect("lock mixer");
-
-        for p in mx.players.values_mut() {
-            if !p.playing {
-                continue;
-            }
-
-            let mut buf = vec![0.0f32; out.len()];
-            // TODO: replace 1.0 with the actual read speed from your processing state
-            p.source_data.get_samples(&mut buf, 1.0);
-
-            if buf.iter().any(|s| *s != 0.0) {
-                for s in buf.iter_mut() {
-                    *s *= p.volume;
-                }
-                active += 1;
-                maybe_chunks.push(buf);
-            }
-        }
-    }
-
-    for chunk in maybe_chunks.iter() {
-        for (o, s) in out.iter_mut().zip(chunk.iter()) {
-            *o += *s;
-        }
-    }
-
-    apply_headroom_if_many(out, active);
-}
-
 impl Mixer {
     fn ensure_output_stream(&mut self) -> bool {
-        if self.out_join.is_some() {
+        if self.out_thread.is_some() {
             return true;
         }
 
@@ -248,13 +238,37 @@ impl Mixer {
             }
         };
 
-        let join = thread::spawn(move || {
-            match device.build_output_stream(
+        let join = std::thread::spawn(move || {
+            let stream_res = device.build_output_stream(
                 &config,
-                |data: &mut [f32], _| mix_output_callback(data),
+                |out: &mut [f32], _| {
+                    // zero out the output buffer first
+                    for s in out.iter_mut() {
+                        *s = 0.0;
+                    }
+
+                    // mix all currently-playing players into `out`
+                    let mut active_players = 0usize;
+
+                    if let Ok(mut map) = PLAYERS.lock() {
+                        for (_id, player) in map.iter_mut() {
+                            if player.playing {
+                                active_players += 1;
+                                player.source_data.add_samples_to_buffer(out, player.volume);
+                            }
+                        }
+                    }
+
+                    // apply a bit of headroom when multiple players are mixed
+                    apply_headroom_if_many(out, active_players);
+                },
                 move |_| log::info!("Mixer: output error"),
-                Some(Duration::from_secs(AUDIO_STREAM_CREATE_TIMEOUT_SECONDS)),
-            ) {
+                Some(std::time::Duration::from_secs(
+                    AUDIO_STREAM_CREATE_TIMEOUT_SECONDS,
+                )),
+            );
+
+            match stream_res {
                 Ok(stream) => {
                     if let Err(e) = stream.play() {
                         log::info!("Mixer: could not play stream: {}", e);
@@ -264,8 +278,15 @@ impl Mixer {
             }
         });
 
-        self.out_join = Some(join);
+        self.out_thread = Some(join);
         true
+    }
+
+    fn get_or_create(&mut self, id: &str) -> &mut PlayerCore {
+        match self.players.entry(id.to_string()) {
+            Entry::Occupied(o) => o.into_mut(),
+            Entry::Vacant(v) => v.insert(PlayerCore::new()),
+        }
     }
 }
 
@@ -295,19 +316,19 @@ impl Mixer {
 
     pub fn set_pitch(&mut self, id: &str, semitones: f32) -> bool {
         let p = self.get_or_create(id);
-        p.processing.pitch_change_semitones = semitones;
+        p.pitch_semitones = semitones; // metadata only for now
         true
     }
 
     pub fn set_speed(&mut self, id: &str, speed: f32) -> bool {
         let p = self.get_or_create(id);
-        p.processing.speed_change_factor = speed;
+        p.speed_factor = speed; // metadata only for now
         true
     }
 
     pub fn set_trim_by_factor(&mut self, id: &str, start: f32, end: f32) {
         let p = self.get_or_create(id);
-        p.source_data.set_trim(start, end);
+        p.source_data.set_trim_by_factor(start, end);
     }
 
     pub(crate) fn set_pos_factor(&mut self, id: &str, pos: f32) -> bool {
@@ -458,8 +479,37 @@ pub fn media_player_trigger_destroy_stream() -> bool {
     }
 }
 
-fn on_audio_callback(samples_out: &mut [f32], _: &cpal::OutputCallbackInfo) {
-    mix_output_callback(samples_out);
+#[flutter_rust_bridge::frb(ignore)]
+fn on_audio_callback(out: &mut [f32], _: &cpal::OutputCallbackInfo) {
+    // Clear output
+    for s in out.iter_mut() {
+        *s = 0.0;
+    }
+
+    let mut active_players = 0usize;
+
+    let mut guard = MIXER.lock().expect("MediaPlayer: lock MIXER");
+    for (_id, p) in guard.players.iter_mut() {
+        if !p.playing {
+            continue;
+        }
+        active_players += 1;
+
+        // Scratch buffer for mono read
+        let frames = out.len() / NUM_CHANNELS;
+        let mut temp = vec![0.0f32; frames];
+        p.source_data.get_samples(&mut temp[..], 1.0); // Option A: speed=1.0, no pitch/time processing
+
+        // Mix into stereo out (or NUM_CHANNELS)
+        for i in 0..frames {
+            let v = temp[i] * p.volume;
+            for ch in 0..NUM_CHANNELS {
+                out[i * NUM_CHANNELS + ch] += v;
+            }
+        }
+    }
+
+    apply_headroom_if_many(out, active_players);
 }
 
 fn thread_handle_command(_command: ()) {
@@ -542,16 +592,6 @@ pub fn media_player_set_new_volume(new_volume: f32) -> bool {
     true
 }
 
-#[derive(Debug, Clone)]
-pub struct MediaPlayerState {
-    pub playing: bool,
-    pub playback_position_factor: f32,
-    pub total_length_seconds: f32,
-    pub looping: bool,
-    pub trim_start_factor: f32,
-    pub trim_end_factor: f32,
-}
-
 #[flutter_rust_bridge::frb(ignore)]
 pub fn media_player_query_state() -> Option<MediaPlayerState> {
     let sample_rate = *OUTPUT_SAMPLE_RATE
@@ -563,15 +603,11 @@ pub fn media_player_query_state() -> Option<MediaPlayerState> {
         .expect("Could not lock mutex to SOURCE_DATA to get media player state");
 
     let playback_position_factor = source_data.get_playback_position_factor();
-    let total_length_seconds = source_data.get_length_seconds(sample_rate as u32);
-    let (trim_start_factor, trim_end_factor) = source_data.get_trim();
+    let total_length_seconds = source_data.get_length_seconds(sample_rate);
 
     Some(MediaPlayerState {
         playing: source_data.get_is_playing(),
         playback_position_factor,
         total_length_seconds,
-        looping: source_data.get_is_looping(),
-        trim_start_factor,
-        trim_end_factor,
     })
 }
