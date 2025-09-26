@@ -231,7 +231,7 @@ class German extends AppLocalizations {
   String get pianoLowestKey => 'Tiefste Taste';
   String get pianoSetConcertPitch => 'Kammerton einstellen';
   String get pianoSetSound => 'Piano-Sound einstellen';
-  String get pianoTutorialAdjust => 'Tippe hier, um den Kammerton, die Lautstärke oder den Klang anzupassen.';
+  String get pianoTutorialAdjust => 'Tippe hier, um den Kammerton, die Lautstärke oder den Klang anzupassen. Wenn Du einen Klang mit Hold-Funktion ausgewählt hast, erscheint die H-Taste nicht mehr ausgegraut.';
   String get pianoTutorialChangeKeyOrOctave =>
       'Tippe auf die Pfeile links oder rechts, um die Tastatur um eine Taste oder um eine Oktave nach oben oder unten zu verschieben.';
   String get pianoTutorialIslandTool =>
