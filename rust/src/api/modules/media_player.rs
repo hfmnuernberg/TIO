@@ -67,24 +67,9 @@ lazy_static! {
     static ref MIXER: std::sync::Mutex<Mixer> = std::sync::Mutex::new(Mixer::new());
 }
 
-lazy_static! {
-    static ref PLAYERS: std::sync::Mutex<std::collections::HashMap<String, PlayerCore>> =
-        std::sync::Mutex::new(std::collections::HashMap::new());
-}
-
-#[inline]
 fn with_player_mut<R>(id: &str, f: impl FnOnce(&mut PlayerCore) -> R) -> R {
-    let mut map = PLAYERS.lock().expect("PLAYERS");
-    let p = match map.entry(id.to_string()) {
-        Entry::Occupied(o) => o.into_mut(),
-        Entry::Vacant(v) => v.insert(PlayerCore {
-            source_data: AudioBufferInterpolated::new(vec![]),
-            volume: 1.0,
-            playing: false,
-            pitch_semitones: 0.0,
-            speed_factor: 1.0,
-        }),
-    };
+    let mut mix = MIXER.lock().expect("MediaPlayer: lock MIXER");
+    let p = mix.get_or_create(id);
     f(p)
 }
 
@@ -149,7 +134,10 @@ pub fn mp_load(id: &str, path: &str) -> bool {
 
 #[flutter_rust_bridge::frb(ignore)]
 pub fn mp_start(id: &str) -> bool {
-    with_mixer_mut(|m| m.start(id))
+    log::info!("[MP] mp_start(id={})", id);
+    let ok = with_mixer_mut(|m| m.start(id));
+    log::info!("[MP] mp_start(id={}) -> {}", id, ok);
+    ok
 }
 
 #[flutter_rust_bridge::frb(ignore)]
@@ -247,14 +235,14 @@ impl Mixer {
                         *s = 0.0;
                     }
 
-                    // mix all currently-playing players into `out`
                     let mut active_players = 0usize;
 
-                    if let Ok(mut map) = PLAYERS.lock() {
-                        for (_id, player) in map.iter_mut() {
+                    if let Ok(mut mix) = MIXER.lock() {
+                        for player in mix.players.values_mut() {
                             if player.playing {
-                                active_players += 1;
+                                // mix this player
                                 player.source_data.add_samples_to_buffer(out, player.volume);
+                                active_players += 1;
                             }
                         }
                     }
@@ -292,13 +280,18 @@ impl Mixer {
 
 impl Mixer {
     pub fn start(&mut self, id: &str) -> bool {
+        log::info!("[MP] Mixer::start(id={})", id);
         let p = self.get_or_create(id);
         if p.source_data.get_is_empty() {
+            log::info!("[MP] Mixer::start -> false (empty buffer)");
             return false;
         }
+        p.source_data.reset_to_start();
         p.source_data.set_playing(true);
         p.playing = true;
-        self.ensure_output_stream()
+        let ok = self.ensure_output_stream();
+        log::info!("[MP] Mixer::start ensure_output_stream -> {}", ok);
+        ok
     }
 
     pub fn stop(&mut self, id: &str) -> bool {
@@ -347,10 +340,11 @@ impl Mixer {
         media_player_query_state()
     }
 
-    pub fn compute_rms(&self, _id: &str, n_bins: usize) -> Vec<f32> {
-        // TODO: implement true per-player RMS over p.source_data without mutating playback state.
-        // Temporary shim: reuse existing global RMS so UI keeps working.
-        media_player_compute_rms(n_bins)
+    pub fn compute_rms(&self, id: &str, n_bins: usize) -> Vec<f32> {
+        if let Some(p) = self.players.get(id) {
+            return p.source_data.compute_rms(n_bins);
+        }
+        vec![0.0; n_bins]
     }
 }
 

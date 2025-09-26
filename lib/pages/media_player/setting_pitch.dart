@@ -5,8 +5,8 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/ffi.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_dec.dart';
 
@@ -32,7 +32,10 @@ class _SetPitchState extends State<SetPitch> {
   }
 
   Future<void> _updatePitch(double newPitch) async {
-    final success = await mediaPlayerSetPitchWithId(playerId: _mediaPlayerBlock.id, pitchSemitones: newPitch);
+    final success = await context.read<AudioSystem>().mediaPlayerSetPitchSemitones(
+      pitchSemitones: newPitch,
+      playerId: _mediaPlayerBlock.id,
+    );
     if (!success) {
       throw 'Setting pitch semitones in rust failed using value: $newPitch';
     }

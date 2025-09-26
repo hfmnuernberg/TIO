@@ -8,8 +8,8 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/ffi.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 
@@ -24,6 +24,8 @@ class SetTrim extends StatefulWidget {
 }
 
 class _SetTrimState extends State<SetTrim> {
+  late final AudioSystem _as;
+
   late RangeValues _rangeValues;
 
   late MediaPlayerBlock _mediaPlayerBlock;
@@ -131,7 +133,7 @@ class _SetTrimState extends State<SetTrim> {
     _mediaPlayerBlock.rangeEnd = _rangeValues.end;
     await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
 
-    await mediaPlayerSetTrimWithId(
+    await _as.mediaPlayerSetTrim(
       playerId: _mediaPlayerBlock.id,
       startFactor: _mediaPlayerBlock.rangeStart,
       endFactor: _mediaPlayerBlock.rangeEnd,
@@ -148,7 +150,7 @@ class _SetTrimState extends State<SetTrim> {
   }
 
   void _onCancel() async {
-    await mediaPlayerSetTrimWithId(
+    await _as.mediaPlayerSetTrim(
       playerId: _mediaPlayerBlock.id,
       startFactor: _mediaPlayerBlock.rangeStart,
       endFactor: _mediaPlayerBlock.rangeEnd,
@@ -158,7 +160,7 @@ class _SetTrimState extends State<SetTrim> {
 
   void _onUserChangesTrim() async {
     if (_rangeValues.start < _rangeValues.end) {
-      await mediaPlayerSetTrimWithId(
+      await _as.mediaPlayerSetTrim(
         playerId: _mediaPlayerBlock.id,
         startFactor: _rangeValues.start,
         endFactor: _rangeValues.end,

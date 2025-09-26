@@ -48,8 +48,13 @@ class RustBasedAudioSystem implements AudioSystem {
   }
 
   @override
-  Future<bool> mediaPlayerStart({PlayerId playerId = kDefaultPlayerId}) async =>
-      rust.mediaPlayerStartWithId(playerId: playerId);
+  Future<bool> mediaPlayerStart({PlayerId playerId = kDefaultPlayerId}) async {
+    final ok = await rust.mediaPlayerStartWithId(playerId: playerId);
+    // Temporary debug logging to trace load pipeline
+    // ignore: avoid_print
+    print('[MP] start id=$playerId -> $ok');
+    return ok;
+  }
 
   @override
   Future<bool> mediaPlayerStop({PlayerId playerId = kDefaultPlayerId}) async =>

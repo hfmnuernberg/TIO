@@ -132,6 +132,13 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
           _logger.e('State is null.');
           return;
         }
+        // TEMP trace:
+        // ignore: avoid_print
+        print(
+          '[MP] state id=${widget.mediaPlayerBlock.id} '
+          'playing=${mediaPlayerState.playing} '
+          'pos=${mediaPlayerState.playbackPositionFactor.toStringAsFixed(3)}',
+        );
 
         setState(() {
           _isPlaying = mediaPlayerState.playing;
