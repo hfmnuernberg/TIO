@@ -16,6 +16,8 @@ clean() {
   if [ -d "ios/Pods" ];        then rm -rf ios/Pods;        fi
   if [ -d "ios/vendor" ];      then rm -rf ios/vendor;      fi
   if [ -d "rust/target" ];     then rm -rf rust/target;     fi
+  if [ -d "lib/src/rust" ];    then rm -rf lib/src/rust;    fi
+  if [ ! -d "lib/src/rust" ];  then mkdir lib/src/rust;     fi
 }
 
 deleteLockFiles() {

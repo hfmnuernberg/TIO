@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/media_repository.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/src/rust/api/ffi.dart';
 import 'package:wav/wav_file.dart';
 import 'package:wav/wav_format.dart';
 

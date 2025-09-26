@@ -64,7 +64,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => 1339322665;
+  int get rustContentHash => 654771383;
 
   static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
     stem: 'rust_lib_tiomusic',
@@ -92,31 +92,35 @@ abstract class RustLibApi extends BaseApi {
 
   Future<Float64List> crateApiFfiMediaPlayerGetRecordingSamples();
 
-  Future<Float32List> crateApiFfiMediaPlayerGetRms({required int nBins});
+  Future<Float32List> crateApiFfiMediaPlayerGetRmsWithId({required String playerId, required int nBins});
 
-  Future<MediaPlayerState?> crateApiFfiMediaPlayerGetState();
+  Future<MediaPlayerState?> crateApiFfiMediaPlayerGetStateWithId({required String playerId});
 
-  Future<bool> crateApiFfiMediaPlayerLoadWav({required String wavFilePath});
+  Future<bool> crateApiFfiMediaPlayerLoadFileWithId({required String playerId, required String wavFilePath});
 
-  Future<void> crateApiFfiMediaPlayerSetLoop({required bool looping});
+  Future<void> crateApiFfiMediaPlayerSetLoopWithId({required String playerId, required bool looping});
 
-  Future<bool> crateApiFfiMediaPlayerSetPitchSemitones({required double pitchSemitones});
+  Future<bool> crateApiFfiMediaPlayerSetPitchWithId({required String playerId, required double pitchSemitones});
 
-  Future<bool> crateApiFfiMediaPlayerSetPlaybackPosFactor({required double posFactor});
+  Future<bool> crateApiFfiMediaPlayerSetPosFactorWithId({required String playerId, required double posFactor});
 
-  Future<bool> crateApiFfiMediaPlayerSetSpeedFactor({required double speedFactor});
+  Future<bool> crateApiFfiMediaPlayerSetSpeedFactorWithId({required String playerId, required double speedFactor});
 
-  Future<void> crateApiFfiMediaPlayerSetTrim({required double startFactor, required double endFactor});
+  Future<void> crateApiFfiMediaPlayerSetTrimWithId({
+    required String playerId,
+    required double startFactor,
+    required double endFactor,
+  });
 
-  Future<bool> crateApiFfiMediaPlayerSetVolume({required double volume});
-
-  Future<bool> crateApiFfiMediaPlayerStart();
+  Future<bool> crateApiFfiMediaPlayerSetVolumeWithId({required String playerId, required double volume});
 
   Future<bool> crateApiFfiMediaPlayerStartRecording();
 
-  Future<bool> crateApiFfiMediaPlayerStop();
+  Future<bool> crateApiFfiMediaPlayerStartWithId({required String playerId});
 
   Future<bool> crateApiFfiMediaPlayerStopRecording();
+
+  Future<bool> crateApiFfiMediaPlayerStopWithId({required String playerId});
 
   Future<bool> crateApiFfiMetronomeLoadFile({required BeatSound beatType, required String wavFilePath});
 
@@ -337,203 +341,199 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "media_player_get_recording_samples", argNames: []);
 
   @override
-  Future<Float32List> crateApiFfiMediaPlayerGetRms({required int nBins}) {
+  Future<Float32List> crateApiFfiMediaPlayerGetRmsWithId({required String playerId, required int nBins}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(playerId, serializer);
           sse_encode_CastedPrimitive_usize(nBins, serializer);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_list_prim_f_32_strict, decodeErrorData: null),
-        constMeta: kCrateApiFfiMediaPlayerGetRmsConstMeta,
-        argValues: [nBins],
+        constMeta: kCrateApiFfiMediaPlayerGetRmsWithIdConstMeta,
+        argValues: [playerId, nBins],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiFfiMediaPlayerGetRmsConstMeta =>
-      const TaskConstMeta(debugName: "media_player_get_rms", argNames: ["nBins"]);
+  TaskConstMeta get kCrateApiFfiMediaPlayerGetRmsWithIdConstMeta =>
+      const TaskConstMeta(debugName: "media_player_get_rms_with_id", argNames: ["playerId", "nBins"]);
 
   @override
-  Future<MediaPlayerState?> crateApiFfiMediaPlayerGetState() {
+  Future<MediaPlayerState?> crateApiFfiMediaPlayerGetStateWithId({required String playerId}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(playerId, serializer);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_opt_box_autoadd_media_player_state, decodeErrorData: null),
-        constMeta: kCrateApiFfiMediaPlayerGetStateConstMeta,
-        argValues: [],
+        constMeta: kCrateApiFfiMediaPlayerGetStateWithIdConstMeta,
+        argValues: [playerId],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiFfiMediaPlayerGetStateConstMeta =>
-      const TaskConstMeta(debugName: "media_player_get_state", argNames: []);
+  TaskConstMeta get kCrateApiFfiMediaPlayerGetStateWithIdConstMeta =>
+      const TaskConstMeta(debugName: "media_player_get_state_with_id", argNames: ["playerId"]);
 
   @override
-  Future<bool> crateApiFfiMediaPlayerLoadWav({required String wavFilePath}) {
+  Future<bool> crateApiFfiMediaPlayerLoadFileWithId({required String playerId, required String wavFilePath}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(playerId, serializer);
           sse_encode_String(wavFilePath, serializer);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiFfiMediaPlayerLoadWavConstMeta,
-        argValues: [wavFilePath],
+        constMeta: kCrateApiFfiMediaPlayerLoadFileWithIdConstMeta,
+        argValues: [playerId, wavFilePath],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiFfiMediaPlayerLoadWavConstMeta =>
-      const TaskConstMeta(debugName: "media_player_load_wav", argNames: ["wavFilePath"]);
+  TaskConstMeta get kCrateApiFfiMediaPlayerLoadFileWithIdConstMeta =>
+      const TaskConstMeta(debugName: "media_player_load_file_with_id", argNames: ["playerId", "wavFilePath"]);
 
   @override
-  Future<void> crateApiFfiMediaPlayerSetLoop({required bool looping}) {
+  Future<void> crateApiFfiMediaPlayerSetLoopWithId({required String playerId, required bool looping}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(playerId, serializer);
           sse_encode_bool(looping, serializer);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
-        constMeta: kCrateApiFfiMediaPlayerSetLoopConstMeta,
-        argValues: [looping],
+        constMeta: kCrateApiFfiMediaPlayerSetLoopWithIdConstMeta,
+        argValues: [playerId, looping],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiFfiMediaPlayerSetLoopConstMeta =>
-      const TaskConstMeta(debugName: "media_player_set_loop", argNames: ["looping"]);
+  TaskConstMeta get kCrateApiFfiMediaPlayerSetLoopWithIdConstMeta =>
+      const TaskConstMeta(debugName: "media_player_set_loop_with_id", argNames: ["playerId", "looping"]);
 
   @override
-  Future<bool> crateApiFfiMediaPlayerSetPitchSemitones({required double pitchSemitones}) {
+  Future<bool> crateApiFfiMediaPlayerSetPitchWithId({required String playerId, required double pitchSemitones}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(playerId, serializer);
           sse_encode_f_32(pitchSemitones, serializer);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiFfiMediaPlayerSetPitchSemitonesConstMeta,
-        argValues: [pitchSemitones],
+        constMeta: kCrateApiFfiMediaPlayerSetPitchWithIdConstMeta,
+        argValues: [playerId, pitchSemitones],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiFfiMediaPlayerSetPitchSemitonesConstMeta =>
-      const TaskConstMeta(debugName: "media_player_set_pitch_semitones", argNames: ["pitchSemitones"]);
+  TaskConstMeta get kCrateApiFfiMediaPlayerSetPitchWithIdConstMeta =>
+      const TaskConstMeta(debugName: "media_player_set_pitch_with_id", argNames: ["playerId", "pitchSemitones"]);
 
   @override
-  Future<bool> crateApiFfiMediaPlayerSetPlaybackPosFactor({required double posFactor}) {
+  Future<bool> crateApiFfiMediaPlayerSetPosFactorWithId({required String playerId, required double posFactor}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(playerId, serializer);
           sse_encode_f_32(posFactor, serializer);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiFfiMediaPlayerSetPlaybackPosFactorConstMeta,
-        argValues: [posFactor],
+        constMeta: kCrateApiFfiMediaPlayerSetPosFactorWithIdConstMeta,
+        argValues: [playerId, posFactor],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiFfiMediaPlayerSetPlaybackPosFactorConstMeta =>
-      const TaskConstMeta(debugName: "media_player_set_playback_pos_factor", argNames: ["posFactor"]);
+  TaskConstMeta get kCrateApiFfiMediaPlayerSetPosFactorWithIdConstMeta =>
+      const TaskConstMeta(debugName: "media_player_set_pos_factor_with_id", argNames: ["playerId", "posFactor"]);
 
   @override
-  Future<bool> crateApiFfiMediaPlayerSetSpeedFactor({required double speedFactor}) {
+  Future<bool> crateApiFfiMediaPlayerSetSpeedFactorWithId({required String playerId, required double speedFactor}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(playerId, serializer);
           sse_encode_f_32(speedFactor, serializer);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiFfiMediaPlayerSetSpeedFactorConstMeta,
-        argValues: [speedFactor],
+        constMeta: kCrateApiFfiMediaPlayerSetSpeedFactorWithIdConstMeta,
+        argValues: [playerId, speedFactor],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiFfiMediaPlayerSetSpeedFactorConstMeta =>
-      const TaskConstMeta(debugName: "media_player_set_speed_factor", argNames: ["speedFactor"]);
+  TaskConstMeta get kCrateApiFfiMediaPlayerSetSpeedFactorWithIdConstMeta =>
+      const TaskConstMeta(debugName: "media_player_set_speed_factor_with_id", argNames: ["playerId", "speedFactor"]);
 
   @override
-  Future<void> crateApiFfiMediaPlayerSetTrim({required double startFactor, required double endFactor}) {
+  Future<void> crateApiFfiMediaPlayerSetTrimWithId({
+    required String playerId,
+    required double startFactor,
+    required double endFactor,
+  }) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(playerId, serializer);
           sse_encode_f_32(startFactor, serializer);
           sse_encode_f_32(endFactor, serializer);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_unit, decodeErrorData: null),
-        constMeta: kCrateApiFfiMediaPlayerSetTrimConstMeta,
-        argValues: [startFactor, endFactor],
+        constMeta: kCrateApiFfiMediaPlayerSetTrimWithIdConstMeta,
+        argValues: [playerId, startFactor, endFactor],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiFfiMediaPlayerSetTrimConstMeta =>
-      const TaskConstMeta(debugName: "media_player_set_trim", argNames: ["startFactor", "endFactor"]);
+  TaskConstMeta get kCrateApiFfiMediaPlayerSetTrimWithIdConstMeta => const TaskConstMeta(
+    debugName: "media_player_set_trim_with_id",
+    argNames: ["playerId", "startFactor", "endFactor"],
+  );
 
   @override
-  Future<bool> crateApiFfiMediaPlayerSetVolume({required double volume}) {
+  Future<bool> crateApiFfiMediaPlayerSetVolumeWithId({required String playerId, required double volume}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(playerId, serializer);
           sse_encode_f_32(volume, serializer);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiFfiMediaPlayerSetVolumeConstMeta,
-        argValues: [volume],
+        constMeta: kCrateApiFfiMediaPlayerSetVolumeWithIdConstMeta,
+        argValues: [playerId, volume],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiFfiMediaPlayerSetVolumeConstMeta =>
-      const TaskConstMeta(debugName: "media_player_set_volume", argNames: ["volume"]);
-
-  @override
-  Future<bool> crateApiFfiMediaPlayerStart() {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19, port: port_);
-        },
-        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiFfiMediaPlayerStartConstMeta,
-        argValues: [],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiFfiMediaPlayerStartConstMeta =>
-      const TaskConstMeta(debugName: "media_player_start", argNames: []);
+  TaskConstMeta get kCrateApiFfiMediaPlayerSetVolumeWithIdConstMeta =>
+      const TaskConstMeta(debugName: "media_player_set_volume_with_id", argNames: ["playerId", "volume"]);
 
   @override
   Future<bool> crateApiFfiMediaPlayerStartRecording() {
@@ -541,7 +541,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20, port: port_);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 19, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiFfiMediaPlayerStartRecordingConstMeta,
@@ -555,23 +555,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "media_player_start_recording", argNames: []);
 
   @override
-  Future<bool> crateApiFfiMediaPlayerStop() {
+  Future<bool> crateApiFfiMediaPlayerStartWithId({required String playerId}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21, port: port_);
+          sse_encode_String(playerId, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
-        constMeta: kCrateApiFfiMediaPlayerStopConstMeta,
-        argValues: [],
+        constMeta: kCrateApiFfiMediaPlayerStartWithIdConstMeta,
+        argValues: [playerId],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiFfiMediaPlayerStopConstMeta =>
-      const TaskConstMeta(debugName: "media_player_stop", argNames: []);
+  TaskConstMeta get kCrateApiFfiMediaPlayerStartWithIdConstMeta =>
+      const TaskConstMeta(debugName: "media_player_start_with_id", argNames: ["playerId"]);
 
   @override
   Future<bool> crateApiFfiMediaPlayerStopRecording() {
@@ -579,7 +580,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22, port: port_);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiFfiMediaPlayerStopRecordingConstMeta,
@@ -591,6 +592,26 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiFfiMediaPlayerStopRecordingConstMeta =>
       const TaskConstMeta(debugName: "media_player_stop_recording", argNames: []);
+
+  @override
+  Future<bool> crateApiFfiMediaPlayerStopWithId({required String playerId}) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(playerId, serializer);
+          pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22, port: port_);
+        },
+        codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
+        constMeta: kCrateApiFfiMediaPlayerStopWithIdConstMeta,
+        argValues: [playerId],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiFfiMediaPlayerStopWithIdConstMeta =>
+      const TaskConstMeta(debugName: "media_player_stop_with_id", argNames: ["playerId"]);
 
   @override
   Future<bool> crateApiFfiMetronomeLoadFile({required BeatSound beatType, required String wavFilePath}) {
@@ -1089,14 +1110,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   MediaPlayerState dco_decode_media_player_state(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
-    if (arr.length != 6) throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    if (arr.length != 3) throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
     return MediaPlayerState(
       playing: dco_decode_bool(arr[0]),
       playbackPositionFactor: dco_decode_f_32(arr[1]),
       totalLengthSeconds: dco_decode_f_32(arr[2]),
-      looping: dco_decode_bool(arr[3]),
-      trimStartFactor: dco_decode_f_32(arr[4]),
-      trimEndFactor: dco_decode_f_32(arr[5]),
     );
   }
 
@@ -1308,16 +1326,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_playing = sse_decode_bool(deserializer);
     var var_playbackPositionFactor = sse_decode_f_32(deserializer);
     var var_totalLengthSeconds = sse_decode_f_32(deserializer);
-    var var_looping = sse_decode_bool(deserializer);
-    var var_trimStartFactor = sse_decode_f_32(deserializer);
-    var var_trimEndFactor = sse_decode_f_32(deserializer);
     return MediaPlayerState(
       playing: var_playing,
       playbackPositionFactor: var_playbackPositionFactor,
       totalLengthSeconds: var_totalLengthSeconds,
-      looping: var_looping,
-      trimStartFactor: var_trimStartFactor,
-      trimEndFactor: var_trimEndFactor,
     );
   }
 
@@ -1518,9 +1530,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self.playing, serializer);
     sse_encode_f_32(self.playbackPositionFactor, serializer);
     sse_encode_f_32(self.totalLengthSeconds, serializer);
-    sse_encode_bool(self.looping, serializer);
-    sse_encode_f_32(self.trimStartFactor, serializer);
-    sse_encode_f_32(self.trimEndFactor, serializer);
   }
 
   @protected

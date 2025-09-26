@@ -130,13 +130,18 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-    _as.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume);
+    _as.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume, playerId: _mediaPlayerBlock.id);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
       _numOfBins = (_waveFormWidth / MediaPlayerParams.binWidth).floor();
 
-      MediaPlayerFunctions.setSpeedAndPitchInRust(_as, _mediaPlayerBlock.speedFactor, _mediaPlayerBlock.pitchSemitones);
+      MediaPlayerFunctions.setSpeedAndPitchInRust(
+        _as,
+        _mediaPlayerBlock.speedFactor,
+        _mediaPlayerBlock.pitchSemitones,
+        playerId: _mediaPlayerBlock.id,
+      );
 
       setState(() => _isLoading = true);
 
@@ -151,6 +156,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           _fs,
           _mediaPlayerBlock,
           _numOfBins,
+          playerId: _mediaPlayerBlock.id,
         );
         if (newRms == null) {
           if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
@@ -280,12 +286,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _wakelock,
       false,
       _mediaPlayerBlock.markerPositions.isNotEmpty,
+      playerId: _mediaPlayerBlock.id,
     );
     if (success && mounted) setState(() => _isPlaying = true);
   }
 
   Future<void> _queryAndUpdateStateFromRust() async {
-    var mediaPlayerStateRust = await _as.mediaPlayerGetState();
+    var mediaPlayerStateRust = await _as.mediaPlayerGetState(playerId: _mediaPlayerBlock.id);
     if (!mounted || mediaPlayerStateRust == null) return;
 
     final wasPreviousPlaying = _isPlaying;
@@ -346,7 +353,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   @override
   void deactivate() async {
-    MediaPlayerFunctions.stopPlaying(_as, _wakelock);
+    MediaPlayerFunctions.stopPlaying(_as, _wakelock, playerId: _mediaPlayerBlock.id);
     MediaPlayerFunctions.stopRecording(_as, _wakelock);
 
     if (playInterruptionListenerHandle != null) {
@@ -514,10 +521,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
             initialValue: _mediaPlayerBlock.volume,
             onConfirm: (vol) {
               _mediaPlayerBlock.volume = vol;
-              _as.mediaPlayerSetVolume(volume: vol);
+              _as.mediaPlayerSetVolume(volume: vol, playerId: _mediaPlayerBlock.id);
             },
-            onChange: (vol) => _as.mediaPlayerSetVolume(volume: vol),
-            onCancel: () => _as.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume),
+            onChange: (vol) => _as.mediaPlayerSetVolume(volume: vol, playerId: _mediaPlayerBlock.id),
+            onCancel: () => _as.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume, playerId: _mediaPlayerBlock.id),
           ),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
@@ -674,7 +681,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   void _setFileDuration() async {
-    var state = await _as.mediaPlayerGetState();
+    var state = await _as.mediaPlayerGetState(playerId: _mediaPlayerBlock.id);
     if (state != null) {
       var millisecondsDuration = state.totalLengthSeconds * 1000;
       _fileDuration = Duration(milliseconds: millisecondsDuration.toInt());
@@ -682,7 +689,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   void _jump10Seconds(bool forward) async {
-    final state = await _as.mediaPlayerGetState();
+    final state = await _as.mediaPlayerGetState(playerId: _mediaPlayerBlock.id);
     if (state == null) {
       _logger.w('Cannot jump 10 seconds - State is null');
       return;
@@ -780,6 +787,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _fs,
         _mediaPlayerBlock,
         _numOfBins,
+        playerId: _mediaPlayerBlock.id,
       );
       if (newRms == null) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
@@ -871,13 +879,14 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _wakelock,
       _mediaPlayerBlock.looping,
       _mediaPlayerBlock.markerPositions.isNotEmpty,
+      playerId: _mediaPlayerBlock.id,
     );
     _audioSession.registerInterruptionListener(_stopPlaying);
     setState(() => _isPlaying = success);
   }
 
   Future<void> _stopPlaying() async {
-    bool success = await MediaPlayerFunctions.stopPlaying(_as, _wakelock);
+    bool success = await MediaPlayerFunctions.stopPlaying(_as, _wakelock, playerId: _mediaPlayerBlock.id);
     if (!success) _logger.e('Unable to stop playing.');
     if (mounted) setState(() => _isPlaying = false);
   }
@@ -959,6 +968,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _fs,
         _mediaPlayerBlock,
         _numOfBins,
+        playerId: _mediaPlayerBlock.id,
       );
       if (newRms == null) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
@@ -982,7 +992,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
       setState(() => _isLoading = false);
     }
 
-    var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_as, _fs, _mediaPlayerBlock, _numOfBins);
+    var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(
+      _as,
+      _fs,
+      _mediaPlayerBlock,
+      _numOfBins,
+      playerId: _mediaPlayerBlock.id,
+    );
     if (newRms == null) {
       if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
     } else {

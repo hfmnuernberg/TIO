@@ -3,7 +3,7 @@ use lerp::Lerp;
 use super::float_index::FloatIndex;
 
 #[flutter_rust_bridge::frb(ignore)]
-pub struct AudioBufferInterpolated {
+pub(crate) struct AudioBufferInterpolated {
     buffer_size_f32: f32,
     buffer: Vec<f32>,
     looping: bool,
@@ -15,7 +15,16 @@ pub struct AudioBufferInterpolated {
 
 impl AudioBufferInterpolated {
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn new(buffer: Vec<f32>) -> Self {
+    pub fn get_length_seconds(&self, sample_rate: usize) -> f32 {
+        // mono data length (samples) ÷ sample_rate
+        if sample_rate == 0 {
+            return 0.0;
+        }
+        self.buffer_size_f32 / sample_rate as f32
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn new(buffer: Vec<f32>) -> Self {
         let buffer_size_f32 = buffer.len() as f32;
         Self {
             buffer_size_f32,
@@ -29,7 +38,18 @@ impl AudioBufferInterpolated {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_samples(&mut self, buffer_to_write_to: &mut [f32], read_speed: f32) {
+    pub(crate) fn set_new_file(&mut self, buffer: Vec<f32>) {
+        self.buffer_size_f32 = buffer.len() as f32;
+        self.buffer = buffer;
+        self.looping = false;
+        self.is_playing = false;
+        self.start_factor = 0.0;
+        self.end_factor = 1.0;
+        self.read_head = FloatIndex::new(0.0, self.buffer_size_f32);
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn get_samples(&mut self, buffer_to_write_to: &mut [f32], read_speed: f32) {
         if self.buffer.len() < 2 {
             return;
         }
@@ -61,6 +81,35 @@ impl AudioBufferInterpolated {
         }
     }
 
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn add_samples_to_buffer(&mut self, out: &mut [f32], volume: f32) {
+        if self.is_empty() || !self.is_playing {
+            return;
+        }
+
+        // keep it conservative to avoid clipping; you can tune later
+        let gain = volume;
+
+        for sample_to_write in out.iter_mut() {
+            // sample at current floating index using the existing linear interpolation
+            let s = self.sample_at_index(self.read_head.get_index());
+
+            *sample_to_write += s * gain;
+
+            // move forward by 1 sample; if wrapped, stop when not looping
+            let wrapped = self.read_head.move_index(1.0);
+            if wrapped && !self.looping {
+                self.is_playing = false;
+                break;
+            }
+        }
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    fn sample_at_index(&self, index: f32) -> f32 {
+        self.get_interpolated(index)
+    }
+
     fn get_interpolated(&self, index: f32) -> f32 {
         let index_prev = index.floor();
         let index_next = index.ceil();
@@ -74,7 +123,7 @@ impl AudioBufferInterpolated {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn compute_rms(&self, n_bins: usize) -> Vec<f32> {
+    pub(crate) fn compute_rms(&self, n_bins: usize) -> Vec<f32> {
         // if buffer is empty return zeros
         if self.buffer.is_empty() {
             return vec![0.0; n_bins];
@@ -99,48 +148,83 @@ impl AudioBufferInterpolated {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn set_playing(&mut self, playing: bool) {
+    pub(crate) fn set_trim_by_factor(&mut self, start_factor: f32, end_factor: f32) {
+        let start = start_factor.clamp(0.0, 1.0);
+        let end = end_factor.clamp(start, 1.0);
+        self.start_factor = start;
+        self.end_factor = end;
+
+        let start_idx = (self.start_factor * self.buffer_size_f32).clamp(0.0, self.buffer_size_f32);
+        let end_idx =
+            (self.end_factor * self.buffer_size_f32).clamp(start_idx, self.buffer_size_f32);
+
+        self.read_head.set_start_end(start_idx, end_idx);
+        self.read_head.set_index(start_idx);
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn set_playing(&mut self, playing: bool) {
         self.is_playing = playing;
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_is_playing(&self) -> bool {
+    pub(crate) fn get_is_playing(&self) -> bool {
         self.is_playing
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn set_loop(&mut self, looping: bool) {
+    pub(crate) fn is_empty(&self) -> bool {
+        self.buffer.len() < 2
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn reset_to_start(&mut self) {
+        // Move read head to the start of the current trimmed region.
+        // We compute the start index from the normalized start_factor.
+        let start_index =
+            (self.start_factor * self.buffer_size_f32).clamp(0.0, self.buffer_size_f32);
+        self.read_head.set_index(start_index);
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn get_playback_position_factor(&self) -> f32 {
+        if self.buffer_size_f32 <= 0.0 {
+            return 0.0;
+        }
+        (self.read_head.get_index() / self.buffer_size_f32).clamp(0.0, 1.0)
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn set_playback_position_factor(&mut self, playback_position_factor: f32) {
+        let idx = (playback_position_factor.clamp(0.0, 1.0) * self.buffer_size_f32)
+            .clamp(0.0, self.buffer_size_f32);
+        self.read_head.set_index(idx);
+    }
+
+    // Backwards-compatible alias, if older code calls set_pos_factor(...)
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn set_pos_factor(&mut self, pos_factor: f32) {
+        self.set_playback_position_factor(pos_factor);
+    }
+
+    // Backwards-compatible alias, if older code calls get_is_empty()
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn get_is_empty(&self) -> bool {
+        self.is_empty()
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn set_loop(&mut self, looping: bool) {
         self.looping = looping;
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_is_looping(&self) -> bool {
+    pub(crate) fn get_is_looping(&self) -> bool {
         self.looping
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_playback_position_factor(&self) -> f32 {
-        self.read_head.get_index() / self.buffer_size_f32
-    }
-
-    #[flutter_rust_bridge::frb(ignore)]
-    pub fn set_playback_position_factor(&mut self, playback_position_factor: f32) {
-        self.read_head
-            .set_index(playback_position_factor * self.buffer_size_f32);
-    }
-
-    #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_is_empty(&self) -> bool {
-        self.buffer.is_empty()
-    }
-
-    #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_length_seconds(&self, sample_rate: u32) -> f32 {
-        self.buffer.len() as f32 / sample_rate as f32
-    }
-
-    #[flutter_rust_bridge::frb(ignore)]
-    pub fn set_trim(&mut self, start_factor: f32, end_factor: f32) {
+    pub(crate) fn set_trim(&mut self, start_factor: f32, end_factor: f32) {
         self.start_factor = start_factor.min(end_factor).clamp(0.0, 1.0);
         self.end_factor = start_factor.max(end_factor).clamp(0.0, 1.0);
         self.read_head.set_start_end(
@@ -150,7 +234,7 @@ impl AudioBufferInterpolated {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_trim(&self) -> (f32, f32) {
+    pub(crate) fn get_trim(&self) -> (f32, f32) {
         (self.start_factor, self.end_factor)
     }
 }
