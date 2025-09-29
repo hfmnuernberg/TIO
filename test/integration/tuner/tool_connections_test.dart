@@ -57,7 +57,6 @@ void main() {
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome 1')), findsOneWidget);
       });
 
-      // TODO(TIO-264, jeromeweiss): Enable again when feature is complete
       // testWidgets('connects selected tool', (tester) async {
       //   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
       //   await tester.createTunerToolInProject();
@@ -83,7 +82,6 @@ void main() {
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome')), findsOneWidget);
       });
 
-      // TODO(TIO-264, jeromeweiss): Enable again when feature is complete
       // testWidgets('adds and connects selected tool', (tester) async {
       //   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
       //   await tester.createTunerToolInProject();
