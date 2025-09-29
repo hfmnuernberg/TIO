@@ -41,6 +41,8 @@ class _SetTrimState extends State<SetTrim> {
   void initState() {
     super.initState();
 
+    _as = context.read<AudioSystem>();
+
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
     _rangeValues = RangeValues(_mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd);
 

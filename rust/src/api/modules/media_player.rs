@@ -261,6 +261,10 @@ impl Mixer {
                     if let Err(e) = stream.play() {
                         log::info!("Mixer: could not play stream: {}", e);
                     }
+                    // Keep the thread alive so `stream` is not dropped.
+                    loop {
+                        std::thread::sleep(std::time::Duration::from_millis(100));
+                    }
                 }
                 Err(e) => log::info!("Mixer: build_output_stream failed: {}", e),
             }
@@ -335,16 +339,29 @@ impl Mixer {
         p.source_data.set_loop(looping);
     }
 
-    pub fn get_state(&self, _id: &str) -> Option<MediaPlayerState> {
-        // TODO: implement true per-player state
-        media_player_query_state()
+    pub fn get_state(&self, id: &str) -> Option<MediaPlayerState> {
+        let p = self.players.get(id)?;
+        Some(MediaPlayerState {
+            // reflect the actual per-player state
+            playing: p.playing && p.source_data.get_is_playing(),
+            playback_position_factor: p.source_data.get_playback_position_factor(),
+            total_length_seconds: p
+                .source_data
+                .get_length_seconds(*OUTPUT_SAMPLE_RATE.lock().expect("OUTPUT_SAMPLE_RATE")),
+        })
     }
 
+    //     pub fn compute_rms(&self, id: &str, n_bins: usize) -> Vec<f32> {
+    //         if let Some(p) = self.players.get(id) {
+    //             return p.source_data.compute_rms(n_bins);
+    //         }
+    //         vec![0.0; n_bins]
+    //     }
     pub fn compute_rms(&self, id: &str, n_bins: usize) -> Vec<f32> {
-        if let Some(p) = self.players.get(id) {
-            return p.source_data.compute_rms(n_bins);
+        match self.players.get(id) {
+            Some(p) => p.source_data.compute_rms(n_bins),
+            None => vec![0.0; n_bins],
         }
-        vec![0.0; n_bins]
     }
 }
 

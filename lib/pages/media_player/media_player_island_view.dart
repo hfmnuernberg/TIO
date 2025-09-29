@@ -163,6 +163,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
     MediaPlayerFunctions.stopPlaying(
       _as,
+      _audioSession,
       _wakelock,
       playerId: widget.mediaPlayerBlock.id,
     ).then((value) => MediaPlayerFunctions.stopRecording(_as, _wakelock));
@@ -211,13 +212,21 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       _audioSessionInterruptionListenerHandle = null;
     }
 
-    await MediaPlayerFunctions.stopPlaying(_as, _wakelock, playerId: widget.mediaPlayerBlock.id);
+    await MediaPlayerFunctions.stopPlaying(_as, _audioSession, _wakelock, playerId: widget.mediaPlayerBlock.id);
     if (mounted) setState(() => _isPlaying = false);
   }
 
   Future<void> _startPlaying() async {
     _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(_stopPlaying);
-    var success = await MediaPlayerFunctions.startPlaying(
+    // var success = await MediaPlayerFunctions.startPlaying(
+    //   _as,
+    //   _audioSession,
+    //   _wakelock,
+    //   widget.mediaPlayerBlock.looping,
+    //   widget.mediaPlayerBlock.markerPositions.isNotEmpty,
+    //   playerId: widget.mediaPlayerBlock.id,
+    // );
+    final success = await MediaPlayerFunctions.startPlaying(
       _as,
       _audioSession,
       _wakelock,
@@ -225,6 +234,8 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       widget.mediaPlayerBlock.markerPositions.isNotEmpty,
       playerId: widget.mediaPlayerBlock.id,
     );
-    if (mounted) setState(() => _isPlaying = success);
+
+    // if (mounted) setState(() => _isPlaying = success);
+    if (mounted && success) setState(() => _isPlaying = true);
   }
 }

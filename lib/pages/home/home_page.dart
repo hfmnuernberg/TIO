@@ -31,7 +31,14 @@ class _HomePageState extends State<HomePage> {
           logger.e('Unable to start audio session.');
           return;
         }
-        await audioSession.preparePlayback();
+        // await audioSession.preparePlayback();
+        try {
+          await audioSession.preparePlayback();
+        } catch (e) {
+          // This can fail if permissions are not granted yet.
+          // ignore: avoid_print
+          print('[Home] preparePlayback failed early: $e (will reconfigure when a tool starts)');
+        }
         await Future.delayed(const Duration(milliseconds: 500));
         await audioSystem.initAudio();
       });

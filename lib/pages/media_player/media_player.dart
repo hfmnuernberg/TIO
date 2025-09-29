@@ -353,7 +353,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   @override
   void deactivate() async {
-    MediaPlayerFunctions.stopPlaying(_as, _wakelock, playerId: _mediaPlayerBlock.id);
+    MediaPlayerFunctions.stopPlaying(_as, _audioSession, _wakelock, playerId: _mediaPlayerBlock.id);
     MediaPlayerFunctions.stopRecording(_as, _wakelock);
 
     if (playInterruptionListenerHandle != null) {
@@ -886,7 +886,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   Future<void> _stopPlaying() async {
-    bool success = await MediaPlayerFunctions.stopPlaying(_as, _wakelock, playerId: _mediaPlayerBlock.id);
+    bool success = await MediaPlayerFunctions.stopPlaying(
+      _as,
+      _audioSession,
+      _wakelock,
+      playerId: _mediaPlayerBlock.id,
+    );
     if (!success) _logger.e('Unable to stop playing.');
     if (mounted) setState(() => _isPlaying = false);
   }

@@ -85,6 +85,7 @@ abstract class MediaPlayerFunctions {
     await stopRecording(as, wakelock);
     await as.mediaPlayerSetRepeat(repeatOne: repeatOne, playerId: playerId);
     await audioSession.preparePlayback();
+    await audioSession.start();
 
     if (hasMarkers) {
       await as.generatorStop();
@@ -96,9 +97,17 @@ abstract class MediaPlayerFunctions {
     return success;
   }
 
-  static Future<bool> stopPlaying(AudioSystem as, Wakelock wakelock, {PlayerId playerId = kDefaultPlayerId}) async {
-    await wakelock.disable();
-    return as.mediaPlayerStop(playerId: playerId);
+  static Future<bool> stopPlaying(
+    AudioSystem as,
+    AudioSession audioSession,
+    Wakelock wakelock, {
+    PlayerId playerId = kDefaultPlayerId,
+  }) async {
+    // await wakelock.disable();
+    // return as.mediaPlayerStop(playerId: playerId);
+    final ok = await as.mediaPlayerStop(playerId: playerId);
+    await audioSession.stop();
+    return ok;
   }
 
   static Future<bool> startRecording(
@@ -108,7 +117,7 @@ abstract class MediaPlayerFunctions {
     bool isPlaying,
   ) async {
     if (isPlaying) {
-      await stopPlaying(as, wakelock);
+      await stopPlaying(as, audioSession, wakelock);
       await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     }
 
