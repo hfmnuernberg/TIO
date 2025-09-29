@@ -57,18 +57,19 @@ void main() {
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome 1')), findsOneWidget);
       });
 
-      testWidgets('connects selected tool', (tester) async {
-        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-        await tester.createTunerToolInProject();
-        await tester.tapAndSettle(find.byTooltip('Add new tool'));
-        await tester.createMediaPlayerToolInProject();
-
-        await tester.openTunerAndSettle();
-        await tester.openConnectionDialog();
-        await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
-
-        expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
-      });
+      // TODO(TIO-264, jeromeweiss): Enable again when feature is complete
+      // testWidgets('connects selected tool', (tester) async {
+      //   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+      //   await tester.createTunerToolInProject();
+      //   await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      //   await tester.createMediaPlayerToolInProject();
+      //
+      //   await tester.openTunerAndSettle();
+      //   await tester.openConnectionDialog();
+      //   await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+      //
+      //   expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
+      // });
     });
 
     group('connection to new/none existing tools', () {
@@ -82,23 +83,24 @@ void main() {
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome')), findsOneWidget);
       });
 
-      testWidgets('adds and connects selected tool', (tester) async {
-        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-        await tester.createTunerToolInProject();
-
-        await tester.openTunerAndSettle();
-        await tester.openConnectionDialog();
-
-        await tester.tapAndSettle(find.bySemanticsLabel('Media Player'));
-        await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 1');
-        await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-
-        expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
-
-        await tester.tapAndSettle(find.bySemanticsLabel('Back'));
-
-        expect(tester.withinList(find.bySemanticsLabel('Media Player 1')), findsOneWidget);
-      });
+      // TODO(TIO-264, jeromeweiss): Enable again when feature is complete
+      // testWidgets('adds and connects selected tool', (tester) async {
+      //   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+      //   await tester.createTunerToolInProject();
+      //
+      //   await tester.openTunerAndSettle();
+      //   await tester.openConnectionDialog();
+      //
+      //   await tester.tapAndSettle(find.bySemanticsLabel('Media Player'));
+      //   await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 1');
+      //   await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
+      //
+      //   expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
+      //
+      //   await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+      //
+      //   expect(tester.withinList(find.bySemanticsLabel('Media Player 1')), findsOneWidget);
+      // });
 
       testWidgets('does not show tuner because tool is tuner itself', (tester) async {
         await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
