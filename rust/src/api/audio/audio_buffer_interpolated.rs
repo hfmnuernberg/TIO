@@ -49,6 +49,16 @@ impl AudioBufferInterpolated {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn reset_playhead_to_start_if_at_end(&mut self) {
+        // If we previously stopped because we hit the end (non-looping),
+        // reset index so we’ll output from the beginning of the current trim window.
+        if !self.is_playing {
+            let start_idx = self.start_factor * self.buffer_size_f32;
+            self.read_head.set_index(start_idx);
+        }
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
     pub(crate) fn get_samples(&mut self, buffer_to_write_to: &mut [f32], read_speed: f32) {
         if self.buffer.len() < 2 {
             return;
@@ -84,25 +94,39 @@ impl AudioBufferInterpolated {
     #[flutter_rust_bridge::frb(ignore)]
     pub(crate) fn add_samples_to_buffer(&mut self, out: &mut [f32], volume: f32) {
         if self.is_empty() || !self.is_playing {
+            log::trace!("[MP] add_samples_to_buffer: skipped (empty or not playing)");
             return;
         }
 
-        // keep it conservative to avoid clipping; you can tune later
         let gain = volume;
+        let mut wrote_nonzero = false;
+        log::trace!("[MP] add_samples_to_buffer: start (gain={})", gain);
 
         for sample_to_write in out.iter_mut() {
-            // sample at current floating index using the existing linear interpolation
             let s = self.sample_at_index(self.read_head.get_index());
-
             *sample_to_write += s * gain;
+            if !wrote_nonzero && (s * gain).abs() > 1e-6 {
+                wrote_nonzero = true;
+            }
 
-            // move forward by 1 sample; if wrapped, stop when not looping
             let wrapped = self.read_head.move_index(1.0);
             if wrapped && !self.looping {
                 self.is_playing = false;
+                log::info!(
+                    "[MP] add_samples_to_buffer: finished, playing={} index={} wrote_nonzero={}",
+                    self.is_playing,
+                    self.read_head.get_index(),
+                    wrote_nonzero
+                );
                 break;
             }
         }
+
+        log::trace!(
+            "[MP] add_samples_to_buffer: finished, playing={} index={}",
+            self.is_playing,
+            self.read_head.get_index()
+        );
     }
 
     #[flutter_rust_bridge::frb(ignore)]

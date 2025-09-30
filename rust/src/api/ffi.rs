@@ -189,8 +189,19 @@ pub fn media_player_load_file_with_id(player_id: String, wav_file_path: String) 
     }
 }
 
+// pub fn media_player_start_with_id(player_id: String) -> bool {
+//     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+//         crate::api::modules::media_player::mp_start(&player_id)
+//     } else {
+//         false
+//     }
+// }
 pub fn media_player_start_with_id(player_id: String) -> bool {
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        // Ensure the recorder is fully torn down; ignore the result, best-effort.
+        if !recorder_trigger_destroy_stream() {
+            log::warn!("Failed to send command to stop recorder (pre-start), continuing");
+        }
         crate::api::modules::media_player::mp_start(&player_id)
     } else {
         false

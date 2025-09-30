@@ -18,7 +18,13 @@ use crate::api::util::util_functions::load_audio_file; // can be deleted?
 use std::collections::HashMap;
 use std::collections::hash_map::Entry;
 
+use std::sync::atomic::{AtomicUsize, Ordering};
+
 extern crate queues;
+
+// Heartbeat/throttling counters for callback logging
+static AUDIO_CB_HEARTBEAT: AtomicUsize = AtomicUsize::new(0);
+static NO_ACTIVE_HEARTBEAT: AtomicUsize = AtomicUsize::new(0);
 
 #[derive(Debug, Clone)]
 pub struct MediaPlayerState {
@@ -181,9 +187,15 @@ pub fn mp_set_loop_mode(id: &str, looping: bool) -> bool {
     })
 }
 
+// #[flutter_rust_bridge::frb(ignore)]
+// pub fn mp_get_state(id: &str) -> Option<MediaPlayerState> {
+//     with_mixer(|m| m.get_state(id))
+// }
 #[flutter_rust_bridge::frb(ignore)]
 pub fn mp_get_state(id: &str) -> Option<MediaPlayerState> {
-    with_mixer(|m| m.get_state(id))
+    // read-only lock; no need to mutate the mixer
+    let mix = MIXER.lock().expect("MediaPlayer: lock MIXER");
+    mix.get_state(id)
 }
 
 #[flutter_rust_bridge::frb(ignore)]
@@ -205,68 +217,135 @@ fn apply_headroom_if_many(out: &mut [f32], active_players: usize) {
 }
 
 impl Mixer {
+    //     fn rebuild_output_stream(&mut self) {
+    //         log::warn!("[MP] rebuild_output_stream: tearing down and recreating output thread");
+    //         if self.out_thread.take().is_some() {
+    //             log::warn!("[MP] rebuild_output_stream: dropped previous output thread handle");
+    //         }
+    //         // Force a fresh stream creation
+    //         let ok = self.ensure_output_stream();
+    //         log::info!("[MP] rebuild_output_stream: ensure_output_stream -> {}", ok);
+    //     }
+
     fn ensure_output_stream(&mut self) -> bool {
+        // Idempotent: if we already have a running thread/stream, reuse it.
         if self.out_thread.is_some() {
+            log::info!("[MP] ensure_output_stream: reuse existing output thread (already running)");
             return true;
         }
+
+        log::info!("[MP] ensure_output_stream: create new output thread");
 
         let host = cpal::default_host();
         let device = match host.default_output_device() {
             Some(d) => d,
             None => {
-                log::info!("Mixer: no output device");
+                log::info!("[MP] ensure_output_stream: no output device");
                 return false;
             }
         };
         let config = match get_platform_default_cpal_output_config(&device) {
             Some(c) => c,
             None => {
-                log::info!("Mixer: no default output config");
+                log::info!("[MP] ensure_output_stream: no default output config");
                 return false;
             }
         };
 
+        // Spawn a thread that owns the CPAL stream so it won't drop.
         let join = std::thread::spawn(move || {
-            let stream_res = device.build_output_stream(
+            let build_res = device.build_output_stream(
                 &config,
                 |out: &mut [f32], _| {
-                    // zero out the output buffer first
-                    for s in out.iter_mut() {
-                        *s = 0.0;
+                    // (2) Heartbeat goes here (see below)
+                    // Heartbeat at the very top of the audio callback (throttled)
+                    let hb = AUDIO_CB_HEARTBEAT.fetch_add(1, Ordering::Relaxed) + 1;
+                    if hb % 50 == 0 {
+                        // Every ~50 callbacks emit an info-level heartbeat so it shows up in production logs
+                        log::info!("[MP] audio callback: tick #{}", hb);
+                    } else {
+                        // Keep the per-callback trace for deep debugging
+                        log::trace!("[MP] audio callback: tick");
                     }
 
-                    let mut active_players = 0usize;
+                    // Zero out the buffer first
+                    for s in out.iter_mut() { *s = 0.0; }
 
+                    // Mix players (see also (4) clarity tweaks below)
+                    let mut active_players = 0usize;
                     if let Ok(mut mix) = MIXER.lock() {
-                        for player in mix.players.values_mut() {
-                            if player.playing {
-                                // mix this player
-                                player.source_data.add_samples_to_buffer(out, player.volume);
-                                active_players += 1;
+                        let mut mixed_ids: Vec<String> = Vec::new();
+
+                        for (id, player) in mix.players.iter_mut() {
+                            if player.source_data.get_is_empty() {
+                                log::trace!("[MP] skip {} (empty buffer)", id);
+                                continue;
+                            }
+                            if !player.playing {
+                                if player.source_data.get_is_playing() {
+                                    log::trace!("[MP] skip {} (mixer flag false but buffer says playing=true)", id);
+                                } else {
+                                    log::trace!("[MP] skip {} (mixer flag false)", id);
+                                }
+                                continue;
+                            }
+                            if !player.source_data.get_is_playing() {
+                                log::trace!("[MP] skip {} (buffer not playing)", id);
+                                continue;
+                            }
+
+                            player.source_data.add_samples_to_buffer(out, player.volume);
+                            active_players += 1;
+                            mixed_ids.push(id.clone());
+                        }
+
+                        apply_headroom_if_many(out, active_players);
+
+                        if active_players > 0 {
+                            // quick visibility
+                            let mut energy: f32 = 0.0;
+                            for s in out.iter() { energy += s.abs(); }
+                            log::trace!("[MP] mixed players: {:?}; energy={:.6}", mixed_ids, energy);
+                            // reset idle heartbeat
+                            NO_ACTIVE_HEARTBEAT.store(0, Ordering::Relaxed);
+                        } else {
+                            // Throttle idle spam: emit every ~200 callbacks at info-level
+                            let idle = NO_ACTIVE_HEARTBEAT.fetch_add(1, Ordering::Relaxed) + 1;
+                            if idle % 200 == 0 {
+                                log::info!("Mixer: no active players");
+                            } else {
+                                log::trace!("Mixer: no active players");
                             }
                         }
+                    } else {
+                        log::trace!("[MP] audio callback: failed to lock MIXER");
                     }
-
-                    // apply a bit of headroom when multiple players are mixed
-                    apply_headroom_if_many(out, active_players);
                 },
-                move |_| log::info!("Mixer: output error"),
-                Some(std::time::Duration::from_secs(
-                    AUDIO_STREAM_CREATE_TIMEOUT_SECONDS,
-                )),
+                |err| {
+                    log::error!("[MP] output stream error: {:?}", err);
+                },
+                None, // no create-timeout
             );
 
-            match stream_res {
+            match build_res {
                 Ok(stream) => {
                     if let Err(e) = stream.play() {
-                        log::info!("Mixer: could not play stream: {}", e);
+                        log::error!("[MP] ensure_output_stream: play() failed: {:?}", e);
+                        return; // Drop thread; next ensure() will recreate.
                     }
-                    // Keep the thread alive so `stream` is not dropped.
+                    log::info!("[MP] ensure_output_stream: stream.play() ok");
+
+                    // Keep this thread alive forever to retain `stream`
                     loop {
-                        std::thread::sleep(std::time::Duration::from_millis(100));
+                        std::thread::sleep(std::time::Duration::from_secs(3600));
                     }
                 }
-                Err(e) => log::info!("Mixer: build_output_stream failed: {}", e),
+                Err(e) => {
+                    log::error!(
+                        "[MP] ensure_output_stream: build_output_stream failed: {:?}",
+                        e
+                    );
+                }
             }
         });
 
@@ -283,26 +362,128 @@ impl Mixer {
 }
 
 impl Mixer {
+    //     pub fn start(&mut self, id: &str) -> bool {
+    //         log::info!("[MP] Mixer::start(id={})", id);
+    //         let p = self.get_or_create(id);
+    //         log::info!(
+    //             "[MP] Mixer::start: id={} playing={} is_playing={} trim=({:.3},{:.3}) pos={:.3}",
+    //             id,
+    //             p.playing,
+    //             p.source_data.get_is_playing(),
+    //             p.source_data.get_trim().0,
+    //             p.source_data.get_trim().1,
+    //             p.source_data.get_playback_position_factor(),
+    //         );
+    //
+    //         if p.source_data.get_is_empty() {
+    //             log::info!("[MP] Mixer::start -> false (empty buffer)");
+    //             return false;
+    //         }
+    //
+    //         p.source_data.reset_to_start();
+    //         p.source_data.set_playing(true);
+    //         p.playing = true;
+    //         let ok = self.ensure_output_stream();
+    //         log::info!("[MP] Mixer::start ensure_output_stream -> {}", ok);
+    //         ok
+    //     }
+    //     pub fn start(&mut self, id: &str) -> bool {
+    //         if let Some(p) = self.players.get_mut(id) {
+    //             // allow buffer to generate samples
+    //             p.source_data.set_playing(true);
+    //             // mark eligible for mixing
+    //             p.playing = true;
+    //
+    //             // optional but recommended when not looping:
+    //             p.source_data.reset_playhead_to_start_if_at_end();
+    //
+    //             self.ensure_output_stream()
+    //         } else {
+    //             log::info!("[MP] Mixer::start: no player {}", id);
+    //             false
+    //         }
+    //     }
     pub fn start(&mut self, id: &str) -> bool {
         log::info!("[MP] Mixer::start(id={})", id);
-        let p = self.get_or_create(id);
-        if p.source_data.get_is_empty() {
-            log::info!("[MP] Mixer::start -> false (empty buffer)");
+        // 1) Set up/flip flags while holding the player mutably, but release before ensure_output_stream()
+        {
+            let p = self.get_or_create(id);
+            log::info!(
+                "[MP] Mixer::start: id={} playing={} is_playing={} trim=({:.3},{:.3}) pos={:.3}",
+                id,
+                p.playing,
+                p.source_data.get_is_playing(),
+                p.source_data.get_trim().0,
+                p.source_data.get_trim().1,
+                p.source_data.get_playback_position_factor(),
+            );
+
+            if p.source_data.get_is_empty() {
+                log::info!("[MP] Mixer::start -> false (empty buffer)");
+                return false;
+            }
+
+            p.source_data.reset_playhead_to_start_if_at_end();
+            p.source_data.set_playing(true);
+            p.playing = true;
+        } // <-- release mutable borrow of self via `p`
+
+        // 2) Now we can safely call a method that needs &mut self again
+
+        let before = AUDIO_CB_HEARTBEAT.load(Ordering::Relaxed);
+        let ok = self.ensure_output_stream();
+        if !ok {
             return false;
         }
-        p.source_data.reset_to_start();
-        p.source_data.set_playing(true);
-        p.playing = true;
-        let ok = self.ensure_output_stream();
-        log::info!("[MP] Mixer::start ensure_output_stream -> {}", ok);
+
+        std::thread::sleep(std::time::Duration::from_millis(40)); // ~2–3 callbacks at 48k
+        let after = AUDIO_CB_HEARTBEAT.load(Ordering::Relaxed);
+        if after == before {
+            log::warn!("[MP] no audio callbacks after start; rebuilding output stream");
+            self.rebuild_output_stream();
+        }
+
+        // 3) Take an immutable snapshot for logging (or handle missing player gracefully)
+        let (playing, is_playing) = if let Some(p) = self.players.get(id) {
+            (p.playing, p.source_data.get_is_playing())
+        } else {
+            (false, false)
+        };
+
+        log::info!(
+            "[MP] Mixer::start ensure_output_stream -> {} (now: playing={} is_playing={})",
+            ok,
+            playing,
+            is_playing
+        );
+
         ok
     }
 
+    //     pub fn stop(&mut self, id: &str) -> bool {
+    //         let p = self.get_or_create(id);
+    //         p.source_data.set_playing(false);
+    //         p.playing = false;
+    //         true
+    //     }
     pub fn stop(&mut self, id: &str) -> bool {
-        let p = self.get_or_create(id);
-        p.source_data.set_playing(false);
-        p.playing = false;
-        true
+        if let Some(p) = self.players.get_mut(id) {
+            p.source_data.set_playing(false);
+            p.playing = false;
+            true
+        } else {
+            log::info!("[MP] Mixer::stop: no player {}", id);
+            false
+        }
+    }
+
+    fn rebuild_output_stream(&mut self) {
+        log::warn!("[MP] rebuild_output_stream: tearing down and recreating output thread");
+        if self.out_thread.take().is_some() {
+            log::warn!("[MP] rebuild_output_stream: dropped previous output thread handle");
+        }
+        let ok = self.ensure_output_stream();
+        log::info!("[MP] rebuild_output_stream: ensure_output_stream -> {}", ok);
     }
 
     pub fn set_volume(&mut self, id: &str, vol: f32) -> bool {
