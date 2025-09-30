@@ -26,8 +26,9 @@ extension WidgetTesterTunerExtension on WidgetTester {
   Finder withinConnectionDialog(FinderBase<Element> matching) =>
       find.descendant(of: connectionDialog, matching: matching);
 
-  Finder withinList(FinderBase<Element> matching) =>
-      find.descendant(of: find.bySemanticsLabel('Tool list'), matching: matching);
+  // deactivated until TIO-264 feature is done
+  // Finder withinList(FinderBase<Element> matching) =>
+  //     find.descendant(of: find.bySemanticsLabel('Tool list'), matching: matching);
 }
 
 void main() {
@@ -57,6 +58,7 @@ void main() {
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome 1')), findsOneWidget);
       });
 
+      // deactivated until TIO-264 feature is done
       // testWidgets('connects selected tool', (tester) async {
       //   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
       //   await tester.createTunerToolInProject();
@@ -82,6 +84,7 @@ void main() {
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome')), findsOneWidget);
       });
 
+      // deactivated until TIO-264 feature is done
       // testWidgets('adds and connects selected tool', (tester) async {
       //   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
       //   await tester.createTunerToolInProject();

@@ -40,6 +40,7 @@ void main() {
 
   group('Metronome - connections to other tools', () {
     group('connection to existing tools', () {
+      // deactivated until TIO-264 feature is done
       // testWidgets('connects media-player', (tester) async {
       //   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
       //   await tester.createMetronomeToolInProject();
@@ -69,6 +70,7 @@ void main() {
     });
 
     group('connection to new/none existing tools', () {
+      // deactivated until TIO-264 feature is done
       // testWidgets('adds and connects media-player', (tester) async {
       //   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
       //   await tester.createMetronomeToolInProject();
