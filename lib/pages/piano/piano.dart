@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/domain/piano/piano.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/project.dart';
@@ -32,21 +33,21 @@ import 'package:tiomusic/widgets/piano/piano_navigation_bar.dart';
 import 'package:tiomusic/widgets/piano/piano_tool_navigation_bar.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
-class Piano extends StatefulWidget {
+class PianoPage extends StatefulWidget {
   final bool isQuickTool;
   final bool withoutInitAndStart;
 
-  const Piano({super.key, required this.isQuickTool, this.withoutInitAndStart = false});
+  const PianoPage({super.key, required this.isQuickTool, this.withoutInitAndStart = false});
 
   @override
-  State<Piano> createState() => _PianoState();
+  State<PianoPage> createState() => _PianoPageState();
 }
 
-class _PianoState extends State<Piano> {
-  late AudioSystem _as;
-  late AudioSession _audioSession;
+class _PianoPageState extends State<PianoPage> {
   late FileSystem _fs;
   late ProjectRepository _projectRepo;
+
+  late final Piano piano;
 
   bool _isHolding = false;
 
@@ -72,19 +73,14 @@ class _PianoState extends State<Piano> {
   final GlobalKey _keyChangeTitle = GlobalKey();
   final GlobalKey _keyBookmarkShare = GlobalKey();
 
-  AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
-  bool _isPlaying = false;
-
   bool _dontStopOnLeave = false;
 
   @override
   void initState() {
     super.initState();
 
-    _as = context.read<AudioSystem>();
-    _audioSession = context.read<AudioSession>();
-    _fs = context.read<FileSystem>();
     _projectRepo = context.read<ProjectRepository>();
+    _fs = context.read<FileSystem>();
 
     // lock screen to only use landscape
     SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
@@ -99,66 +95,18 @@ class _PianoState extends State<Piano> {
 
     unawaited(_projectRepo.saveLibrary(projectLibrary));
 
+    piano = Piano(context.read<AudioSystem>(), context.read<AudioSession>(), context.read<FileSystem>());
+
     if (widget.withoutInitAndStart) {
-      _isPlaying = true;
+      piano.isPlaying = true;
     } else {
-      _pianoStart();
+      piano.pianoStart(_pianoBlock.concertPitch, _pianoBlock.soundFontIndex);
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _createTutorial();
       _tutorial.show(context);
     });
-  }
-
-  void _playNoteOn(int note) => _as.pianoNoteOn(note: note);
-
-  void _playNoteOff(int note) => _as.pianoNoteOff(note: note);
-
-  Future<void> _pianoStart() async {
-    if (_isPlaying) return;
-    _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(_pianoStop);
-
-    bool initSuccess = await _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
-    await _audioSession.preparePlayback();
-    if (!initSuccess) return;
-
-    _pianoSetConcertPitch(_pianoBlock.concertPitch);
-
-    bool success = await _as.pianoStart();
-    _isPlaying = success;
-  }
-
-  Future<void> _pianoStop() async {
-    if (_audioSessionInterruptionListenerHandle != null) {
-      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
-      _audioSessionInterruptionListenerHandle = null;
-    }
-    if (_isPlaying) {
-      await _as.pianoStop();
-    }
-    _isPlaying = false;
-  }
-
-  Future<void> _pianoSetConcertPitch(double concertPitch) async {
-    bool success = await _as.pianoSetConcertPitch(newConcertPitch: concertPitch);
-
-    if (!success) {
-      throw 'Rust library failed to update new concert pitch: $concertPitch';
-    }
-  }
-
-  Future<void> _reloadSoundFont() async {
-    await _pianoStop();
-
-    final newSf = SoundFont.values[_pianoBlock.soundFontIndex];
-    if (!await _initPiano(newSf.file)) return;
-
-    await _audioSession.preparePlayback();
-    await _pianoSetConcertPitch(_pianoBlock.concertPitch);
-    _isPlaying = await _as.pianoStart();
-
-    if (mounted) setState(() => _soundFont = newSf);
   }
 
   void _createTutorial() {
@@ -271,26 +219,16 @@ class _PianoState extends State<Piano> {
   @override
   void deactivate() {
     // don't stop if we save or copy the piano
-    if (!_dontStopOnLeave) {
-      _pianoStop();
-    }
+    if (!_dontStopOnLeave) piano.pianoStop();
     super.deactivate();
   }
 
   @override
   void dispose() {
     _toolTitleFieldFocus.dispose();
+    piano.pianoStop();
     _tutorial.dispose();
     super.dispose();
-  }
-
-  Future<bool> _initPiano(String soundFontPath) async {
-    // rust cannot access asset files which are not really files on disk, so we need to copy to a temp file
-    final tempSoundFontPath = '${_fs.tmpFolderPath}/sound_font.sf2';
-    final byteData = await rootBundle.load(soundFontPath);
-    final bytes = byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
-    await _fs.saveFileAsBytes(tempSoundFontPath, bytes);
-    return _as.pianoSetup(soundFontPath: tempSoundFontPath);
   }
 
   Future<void> handleOnOpenPitch() async {
@@ -298,7 +236,7 @@ class _PianoState extends State<Piano> {
       SetConcertPitch(),
       context,
       _pianoBlock,
-      callbackOnReturn: (_) => _pianoSetConcertPitch(_pianoBlock.concertPitch),
+      callbackOnReturn: (_) => piano.pianoSetConcertPitch(_pianoBlock.concertPitch),
     );
     setState(() => _concertPitch = _pianoBlock.concertPitch);
   }
@@ -309,10 +247,10 @@ class _PianoState extends State<Piano> {
         initialValue: _pianoBlock.volume,
         onConfirm: (vol) {
           _pianoBlock.volume = vol;
-          _as.pianoSetVolume(volume: vol);
+          piano.setVolume(vol);
         },
-        onChange: (vol) => _as.pianoSetVolume(volume: vol),
-        onCancel: () => _as.pianoSetVolume(volume: _pianoBlock.volume),
+        onChange: (vol) => piano.setVolume(vol),
+        onCancel: () => piano.setVolume(_pianoBlock.volume),
       ),
       context,
       _pianoBlock,
@@ -321,7 +259,16 @@ class _PianoState extends State<Piano> {
   }
 
   Future<void> handleOnOpenSound() async {
-    await openSettingPage(const ChooseSound(), context, _pianoBlock, callbackOnReturn: (_) => _reloadSoundFont());
+    await openSettingPage(
+      const ChooseSound(),
+      context,
+      _pianoBlock,
+      callbackOnReturn: (_) async {
+        final newSf = SoundFont.values[_pianoBlock.soundFontIndex];
+        await piano.reloadSoundFont(_pianoBlock.concertPitch, newSf.file);
+        if (mounted) setState(() => _soundFont = newSf);
+      },
+    );
   }
 
   void handleToggleHold() => setState(() => _isHolding = !_isHolding);
@@ -495,8 +442,8 @@ class _PianoState extends State<Piano> {
                             return Keyboard(
                               lowestNote: pianoBlock.keyboardPosition,
                               isHolding: _isHolding,
-                              onPlay: _playNoteOn,
-                              onRelease: _playNoteOff,
+                              onPlay: piano.playNoteOn,
+                              onRelease: piano.playNoteOff,
                             );
                           },
                         ),

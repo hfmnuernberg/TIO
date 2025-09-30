@@ -344,7 +344,7 @@ Future<dynamic> goToTool(
       if (block is MetronomeBlock) return const MetronomePage(isQuickTool: false);
       if (block is MediaPlayerBlock) return MediaPlayer(isQuickTool: false, shouldAutoplay: shouldAutoplay);
       if (block is ImageBlock) return const ImageTool(isQuickTool: false);
-      if (block is PianoBlock) return Piano(isQuickTool: false, withoutInitAndStart: pianoAlreadyOn);
+      if (block is PianoBlock) return PianoPage(isQuickTool: false, withoutInitAndStart: pianoAlreadyOn);
       if (block is TextBlock) return const TextTool(isQuickTool: false);
       throw 'ERROR: Unknown block type $block';
     },
