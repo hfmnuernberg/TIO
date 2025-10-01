@@ -230,8 +230,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         CustomTargetFocus(
           _keySettings,
           l10n.mediaPlayerTutorialAdjust,
-          alignText: ContentAlign.custom,
-          customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
+          alignText: ContentAlign.top,
           pointingDirection: PointingDirection.down,
           buttonsPosition: ButtonsPosition.top,
           shape: ShapeLightFocus.RRect,
