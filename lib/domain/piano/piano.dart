@@ -11,67 +11,69 @@ class Piano {
   final AudioSession _audioSession;
   final FileSystem _fs;
 
-  bool isPlaying = false;
+  bool _isPlaying = false;
+  bool get isPlaying => _isPlaying;
+
+  double _concertPitch = 440;
+  double get concertPitch => _concertPitch;
+
+  SoundFont _soundFont = SoundFont.piano1;
+  SoundFont get soundFont => _soundFont;
 
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
   Piano(this._as, this._audioSession, this._fs);
 
-  void playNoteOn(int note) => _as.pianoNoteOn(note: note);
+  void playNote(int note) => _as.pianoNoteOn(note: note);
 
-  void playNoteOff(int note) => _as.pianoNoteOff(note: note);
+  void releaseNote(int note) => _as.pianoNoteOff(note: note);
 
   Future<void> setVolume(double volume) async => _as.pianoSetVolume(volume: volume);
 
-  Future<bool> initPiano(String soundFontPath) async {
-    // rust cannot access asset files which are not really files on disk, so we need to copy to a temp file
+  Future<void> setConcertPitch(double concertPitch) async {
+    await _as.pianoSetConcertPitch(newConcertPitch: concertPitch);
+    _concertPitch = concertPitch;
+  }
+
+  Future<void> setSoundFont(SoundFont soundFont) async {
+    _soundFont = soundFont;
+    await restart();
+  }
+
+  Future<void> start() async {
+    if (_isPlaying) return;
+    _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(stop);
+
+    bool initSuccess = await _loadSoundFontFile(_soundFont.file);
+    await _audioSession.preparePlayback();
+    if (!initSuccess) return;
+
+    bool success = await _as.pianoStart();
+    _isPlaying = success;
+  }
+
+  Future<void> stop() async {
+    if (!_isPlaying) return;
+
+    if (_audioSessionInterruptionListenerHandle != null) {
+      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
+      _audioSessionInterruptionListenerHandle = null;
+    }
+
+    _isPlaying = false;
+  }
+
+  Future<void> restart() async {
+    if (!_isPlaying) return;
+    await stop();
+    await start();
+  }
+
+  Future<bool> _loadSoundFontFile(String soundFontPath) async {
     final tempSoundFontPath = '${_fs.tmpFolderPath}/sound_font.sf2';
     final byteData = await rootBundle.load(soundFontPath);
     final bytes = byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
     await _fs.saveFileAsBytes(tempSoundFontPath, bytes);
     return _as.pianoSetup(soundFontPath: tempSoundFontPath);
-  }
-
-  Future<void> pianoStart(double concertPitch, int soundFontIndex) async {
-    if (isPlaying) return;
-    _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(pianoStop);
-
-    bool initSuccess = await initPiano(SoundFont.values[soundFontIndex].file);
-    await _audioSession.preparePlayback();
-    if (!initSuccess) return;
-
-    pianoSetConcertPitch(concertPitch);
-
-    bool success = await _as.pianoStart();
-    isPlaying = success;
-  }
-
-  Future<void> pianoStop() async {
-    if (_audioSessionInterruptionListenerHandle != null) {
-      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
-      _audioSessionInterruptionListenerHandle = null;
-    }
-    if (isPlaying) {
-      await _as.pianoStop();
-    }
-    isPlaying = false;
-  }
-
-  Future<void> pianoSetConcertPitch(double concertPitch) async {
-    bool success = await _as.pianoSetConcertPitch(newConcertPitch: concertPitch);
-
-    if (!success) {
-      throw 'Rust library failed to update new concert pitch: $concertPitch';
-    }
-  }
-
-  Future<void> reloadSoundFont(double concertPitch, String soundFontPath) async {
-    await pianoStop();
-
-    if (!await initPiano(soundFontPath)) return;
-
-    await _audioSession.preparePlayback();
-    await pianoSetConcertPitch(concertPitch);
-    isPlaying = await _as.pianoStart();
   }
 }

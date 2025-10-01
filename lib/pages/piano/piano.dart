@@ -11,11 +11,10 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/sound_font.dart';
-import 'package:tiomusic/services/audio_session.dart';
-import 'package:tiomusic/widgets/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/piano/choose_sound.dart';
 import 'package:tiomusic/pages/piano/set_concert_pitch.dart';
+import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -28,6 +27,7 @@ import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/flat_edit_text_dialog.dart';
+import 'package:tiomusic/widgets/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/widgets/piano/keyboard.dart';
 import 'package:tiomusic/widgets/piano/piano_navigation_bar.dart';
 import 'package:tiomusic/widgets/piano/piano_tool_navigation_bar.dart';
@@ -52,8 +52,6 @@ class _PianoPageState extends State<PianoPage> {
   bool _isHolding = false;
 
   late PianoBlock _pianoBlock;
-  late double _concertPitch = _pianoBlock.concertPitch;
-  late SoundFont _soundFont = SoundFont.values[_pianoBlock.soundFontIndex];
 
   Icon _bookmarkIcon = const Icon(Icons.bookmark_add_outlined);
   Color? _highlightColorOnSave;
@@ -98,9 +96,12 @@ class _PianoPageState extends State<PianoPage> {
     piano = Piano(context.read<AudioSystem>(), context.read<AudioSession>(), context.read<FileSystem>());
 
     if (widget.withoutInitAndStart) {
-      piano.isPlaying = true;
+      piano.restart();
     } else {
-      piano.pianoStart(_pianoBlock.concertPitch, _pianoBlock.soundFontIndex);
+      piano.setVolume(_pianoBlock.volume);
+      piano.setConcertPitch(_pianoBlock.concertPitch);
+      piano.setSoundFont(SoundFont.values[_pianoBlock.soundFontIndex]);
+      piano.start();
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -219,14 +220,14 @@ class _PianoPageState extends State<PianoPage> {
   @override
   void deactivate() {
     // don't stop if we save or copy the piano
-    if (!_dontStopOnLeave) piano.pianoStop();
+    if (!_dontStopOnLeave) piano.stop();
     super.deactivate();
   }
 
   @override
   void dispose() {
     _toolTitleFieldFocus.dispose();
-    piano.pianoStop();
+    piano.stop();
     _tutorial.dispose();
     super.dispose();
   }
@@ -236,9 +237,9 @@ class _PianoPageState extends State<PianoPage> {
       SetConcertPitch(),
       context,
       _pianoBlock,
-      callbackOnReturn: (_) => piano.pianoSetConcertPitch(_pianoBlock.concertPitch),
+      callbackOnReturn: (_) => piano.setConcertPitch(_pianoBlock.concertPitch),
     );
-    setState(() => _concertPitch = _pianoBlock.concertPitch);
+    setState(() {});
   }
 
   Future<void> handleOnOpenVolume() async {
@@ -264,9 +265,8 @@ class _PianoPageState extends State<PianoPage> {
       context,
       _pianoBlock,
       callbackOnReturn: (_) async {
-        final newSf = SoundFont.values[_pianoBlock.soundFontIndex];
-        await piano.reloadSoundFont(_pianoBlock.concertPitch, newSf.file);
-        if (mounted) setState(() => _soundFont = newSf);
+        await piano.setSoundFont(SoundFont.values[_pianoBlock.soundFontIndex]);
+        if (mounted) setState(() {});
       },
     );
   }
@@ -351,7 +351,7 @@ class _PianoPageState extends State<PianoPage> {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          '${l10n.formatNumber(_concertPitch)} Hz – ${_soundFont.getLabel(l10n)}',
+                          '${l10n.formatNumber(piano.concertPitch)} Hz – ${piano.soundFont.getLabel(l10n)}',
                           style: const TextStyle(color: ColorTheme.primary),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -406,7 +406,7 @@ class _PianoPageState extends State<PianoPage> {
                         onOpenPitch: handleOnOpenPitch,
                         onOpenVolume: handleOnOpenVolume,
                         onOpenSound: handleOnOpenSound,
-                        onToggleHold: _soundFont.canHold ? handleToggleHold : null,
+                        onToggleHold: piano.soundFont.canHold ? handleToggleHold : null,
                       )
                     else
                       PianoToolNavigationBar(
@@ -422,7 +422,7 @@ class _PianoPageState extends State<PianoPage> {
                         onOpenPitch: handleOnOpenPitch,
                         onOpenVolume: handleOnOpenVolume,
                         onOpenSound: handleOnOpenSound,
-                        onToggleHold: _soundFont.canHold ? handleToggleHold : null,
+                        onToggleHold: piano.soundFont.canHold ? handleToggleHold : null,
                       ),
 
                     Positioned(
@@ -442,8 +442,8 @@ class _PianoPageState extends State<PianoPage> {
                             return Keyboard(
                               lowestNote: pianoBlock.keyboardPosition,
                               isHolding: _isHolding,
-                              onPlay: piano.playNoteOn,
-                              onRelease: piano.playNoteOff,
+                              onPlay: piano.playNote,
+                              onRelease: piano.releaseNote,
                             );
                           },
                         ),
