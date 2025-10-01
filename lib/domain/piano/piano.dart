@@ -5,8 +5,11 @@ import 'package:tiomusic/models/sound_font.dart';
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/util/log.dart';
 
 class Piano {
+  static final logger = createPrefixLogger('Piano');
+
   final AudioSystem _as;
   final AudioSession _audioSession;
   final FileSystem _fs;
@@ -50,10 +53,14 @@ class Piano {
 
     bool success = await _as.pianoStart();
     _isPlaying = success;
+    if (!success) return logger.e('Unable to start Piano.');
   }
 
   Future<void> stop() async {
     if (!_isPlaying) return;
+
+    final success = await _as.pianoStop();
+    if (!success) return logger.e('Unable to stop Piano.');
 
     if (_audioSessionInterruptionListenerHandle != null) {
       _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);

@@ -207,4 +207,8 @@ class AudioSystemMock extends Mock implements AudioSystem {
       bars2: any(named: 'bars2', that: metroBarListEquals(bars2)),
     ),
   ).called(1);
+
+  void verifyPianoStartCalled() => verify(pianoStart).called(1);
+
+  void verifyPianoStopCalled() => verify(pianoStop).called(1);
 }
