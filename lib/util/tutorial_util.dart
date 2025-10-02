@@ -174,18 +174,26 @@ class CustomTargetFocus {
               crossAxisAlignment: buttonsColumnCrossAlign,
               children: [
                 // NEXT
-                CircleAvatar(
-                  backgroundColor: ColorTheme.primary,
-                  radius: 50,
-                  child: TextButton(
-                    onPressed: () => controller.next(),
-                    child: Text(context.l10n.commonNext, style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24)),
+                SizedBox(
+                  width: 110,
+                  child: Center(
+                    child: CircleAvatar(
+                      backgroundColor: ColorTheme.primary,
+                      radius: 50,
+                      child: TextButton(
+                        onPressed: () => controller.next(),
+                        child: Text(
+                          context.l10n.commonNext,
+                          style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 10),
                 // CANCEL
                 SizedBox(
-                  width: 50 * 2,
+                  width: 110,
                   child: Center(
                     child: TextButton(
                       onPressed: () => controller.skip(),
