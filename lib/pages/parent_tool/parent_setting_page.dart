@@ -125,24 +125,23 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
   Widget? _bottomSheet() {
     return MediaQuery.of(context).orientation == Orientation.landscape
         ? null
-        : Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ColoredBox(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
-              ColoredBox(
-                color: ColorTheme.primary80,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
+        : SafeArea(
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ColoredBox(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
+                ColoredBox(
+                  color: ColorTheme.primary80,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
-                      ConfirmButton(onTap: widget.confirm),
-                    ],
-                  ),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
+                        ConfirmButton(onTap: widget.confirm),
+                      ],
+                    ),
                 ),
-              ),
-            ],
-          );
+              ],
+            ),
+        );
   }
 }
