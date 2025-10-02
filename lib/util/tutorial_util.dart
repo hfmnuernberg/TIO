@@ -80,21 +80,27 @@ class CustomTargetFocus {
     double pointerOffset = 0,
     PointerPosition pointerPosition = PointerPosition.center,
   }) {
-    var edgeSpace = 8.0;
+    final mediaQuery = (context != null) ? MediaQuery.of(context) : null;
+    final safeTop = mediaQuery?.viewPadding.top ?? 0;
+    final safeBottom = mediaQuery?.viewPadding.bottom ?? 0;
+    final safeHeight = mediaQuery != null ? mediaQuery.size.height - safeTop - safeBottom : 0;
+    const edgeSpace = 8.0;
     CustomTargetContentPosition positionNextButton;
     CrossAxisAlignment buttonsColumnCrossAlign = CrossAxisAlignment.center;
 
     switch (buttonsPosition) {
       case ButtonsPosition.top:
-        positionNextButton = CustomTargetContentPosition(top: edgeSpace);
+        positionNextButton = CustomTargetContentPosition(top: edgeSpace + safeTop);
+        buttonsColumnCrossAlign = CrossAxisAlignment.center;
       case ButtonsPosition.bottom:
-        positionNextButton = CustomTargetContentPosition(bottom: edgeSpace);
+        positionNextButton = CustomTargetContentPosition(bottom: edgeSpace + safeBottom);
+        buttonsColumnCrossAlign = CrossAxisAlignment.center;
       case ButtonsPosition.left:
         positionNextButton = context == null
             ? CustomTargetContentPosition(left: edgeSpace, top: 100)
             : CustomTargetContentPosition(
                 left: edgeSpace,
-                top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons,
+                top: safeTop + safeHeight / 2 - TIOMusicParams.sizeBigButtons,
               );
         buttonsColumnCrossAlign = CrossAxisAlignment.start;
       case ButtonsPosition.right:
@@ -102,14 +108,15 @@ class CustomTargetFocus {
             ? CustomTargetContentPosition(right: edgeSpace, top: 100)
             : CustomTargetContentPosition(
                 right: edgeSpace,
-                top: MediaQuery.of(context).size.height / 2 - TIOMusicParams.sizeBigButtons,
+                top: safeTop + safeHeight / 2 - TIOMusicParams.sizeBigButtons,
               );
         buttonsColumnCrossAlign = CrossAxisAlignment.end;
       case ButtonsPosition.bottomright:
-        positionNextButton = CustomTargetContentPosition(bottom: edgeSpace);
+        positionNextButton = CustomTargetContentPosition(bottom: edgeSpace + safeBottom);
         buttonsColumnCrossAlign = CrossAxisAlignment.end;
       default:
-        positionNextButton = CustomTargetContentPosition(bottom: edgeSpace);
+        positionNextButton = CustomTargetContentPosition(bottom: edgeSpace + safeBottom);
+        buttonsColumnCrossAlign = CrossAxisAlignment.center;
     }
 
     var contents = List<TargetContent>.empty(growable: true);
@@ -133,20 +140,23 @@ class CustomTargetFocus {
         align: alignText ?? (customTextPosition != null ? ContentAlign.custom : ContentAlign.bottom),
         customPosition: customTextPosition,
         builder: (context, controller) {
-          return DecoratedBox(
-            decoration: ShapeDecoration(
-              color: Colors.white,
-              shape: MessageBorder(
-                pointingDirection: pointingDirection,
-                pointerOffset: pointerOffset,
-                pointerPosition: pointerPosition,
+          return SafeArea(
+            minimum: EdgeInsets.only(left: edgeSpace, right: edgeSpace, top: edgeSpace, bottom: edgeSpace),
+            child: DecoratedBox(
+              decoration: ShapeDecoration(
+                color: Colors.white,
+                shape: MessageBorder(
+                  pointingDirection: pointingDirection,
+                  pointerOffset: pointerOffset,
+                  pointerPosition: pointerPosition,
+                ),
               ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                description,
-                style: const TextStyle(color: ColorTheme.tertiary, fontWeight: FontWeight.bold),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  description,
+                  style: const TextStyle(color: ColorTheme.tertiary, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           );
@@ -158,29 +168,36 @@ class CustomTargetFocus {
         align: ContentAlign.custom,
         customPosition: positionNextButton,
         builder: (context, controller) {
-          return Column(
-            crossAxisAlignment: buttonsColumnCrossAlign,
-            children: [
-              // NEXT
-              CircleAvatar(
-                backgroundColor: ColorTheme.primary,
-                radius: 50,
-                child: TextButton(
-                  onPressed: () {
-                    controller.next();
-                  },
-                  child: Text(context.l10n.commonNext, style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24)),
+          return SafeArea(
+            minimum: EdgeInsets.only(bottom: edgeSpace, left: edgeSpace, right: edgeSpace, top: edgeSpace),
+            child: Column(
+              crossAxisAlignment: buttonsColumnCrossAlign,
+              children: [
+                // NEXT
+                CircleAvatar(
+                  backgroundColor: ColorTheme.primary,
+                  radius: 50,
+                  child: TextButton(
+                    onPressed: () => controller.next(),
+                    child: Text(context.l10n.commonNext, style: TextStyle(color: ColorTheme.onPrimary, fontSize: 24)),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              // CANCEL
-              TextButton(
-                onPressed: () {
-                  controller.skip();
-                },
-                child: Text(context.l10n.commonCancel, style: TextStyle(color: ColorTheme.onPrimary, fontSize: 16)),
-              ),
-            ],
+                const SizedBox(height: 10),
+                // CANCEL
+                SizedBox(
+                  width: 50 * 2,
+                  child: Center(
+                    child: TextButton(
+                      onPressed: () => controller.skip(),
+                      child: Text(
+                        context.l10n.commonCancel,
+                        style: TextStyle(color: ColorTheme.onPrimary, fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),

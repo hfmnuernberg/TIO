@@ -51,20 +51,22 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
             automaticallyImplyLeading: false,
           ),
           backgroundColor: ColorTheme.primary92,
-          body: widget.mustBeScrollable
-              ? LayoutBuilder(
-                  builder: (context, viewportConstraints) {
-                    return SingleChildScrollView(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
-                        child: isPortrait ? _buildPortrait() : _buildLandscape(),
-                      ),
-                    );
-                  },
-                )
-              : isPortrait
-              ? _buildPortrait()
-              : _buildLandscape(),
+          body: SafeArea(
+            child: widget.mustBeScrollable
+                ? LayoutBuilder(
+                    builder: (context, viewportConstraints) {
+                      return SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+                          child: isPortrait ? _buildPortrait() : _buildLandscape(),
+                        ),
+                      );
+                    },
+                  )
+                : isPortrait
+                ? _buildPortrait()
+                : _buildLandscape(),
+          ),
           bottomSheet: _bottomSheet(),
         ),
       ),
@@ -125,24 +127,23 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
   Widget? _bottomSheet() {
     return MediaQuery.of(context).orientation == Orientation.landscape
         ? null
-        : Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ColoredBox(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
-              ColoredBox(
-                color: ColorTheme.primary80,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: Row(
+        : ColoredBox(
+            color: ColorTheme.primary80,
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ColoredBox(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
                       ConfirmButton(onTap: widget.confirm),
                     ],
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           );
   }
 }
