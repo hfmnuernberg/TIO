@@ -249,8 +249,7 @@ class _ParentToolState extends State<ParentTool> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => SafeArea(
-        child: ModalBottomSheet(
+      builder: (context) => ModalBottomSheet(
           label: label,
           titleChildren: [
             CardListTile(
@@ -306,7 +305,6 @@ class _ParentToolState extends State<ParentTool> {
             const SizedBox(height: 16),
           ],
         ),
-      ),
     );
   }
 
