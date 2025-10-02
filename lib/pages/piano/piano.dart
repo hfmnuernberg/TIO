@@ -150,7 +150,7 @@ class _PianoPageState extends State<PianoPage> {
             right: MediaQuery.of(context).size.width,
           ),
           pointingDirection: PointingDirection.up,
-          pointerOffset: -120,
+          pointerOffset: -60,
           shape: ShapeLightFocus.RRect,
           buttonsPosition: ButtonsPosition.bottomright,
         ),

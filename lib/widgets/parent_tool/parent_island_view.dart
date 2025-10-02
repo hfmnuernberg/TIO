@@ -133,7 +133,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   }
 
   List<MapEntry<int, ProjectBlock>> getFilteredExistingTools() {
-    final allowedKinds = ['tuner', 'metronome', 'media_player'];
+    final allowedKinds = ['tuner', 'metronome' /*, 'media_player'*/];
     return widget.project!.blocks.asMap().entries.where((entry) {
       if (!allowedKinds.contains(entry.value.kind)) return false;
       if (entry.value.id == widget.toolBlock.id) return false;
@@ -143,7 +143,7 @@ class _ParentIslandViewState extends State<ParentIslandView> {
   }
 
   List<BlockType> getFilteredNewToolTypes() {
-    final connectableToolTypes = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
+    final connectableToolTypes = [BlockType.metronome, /*BlockType.mediaPlayer,*/ BlockType.tuner];
     return connectableToolTypes
         .where((blockType) => widget.toolBlock.kind != getBlockTypeInfos(context.l10n)[blockType]!.kind)
         .toList();
