@@ -64,5 +64,40 @@ void main() {
       context.audioSystemMock.verifyPianoStopNeverCalled();
       context.audioSystemMock.verifyPianoStartNeverCalled();
     });
+
+    testWidgets('increases the running piano counter on start', (tester) async {
+      expect(piano.startedPianos, 0);
+
+      await piano.start();
+
+      expect(piano.startedPianos, 1);
+
+      await piano.stop();
+    });
+
+    testWidgets('decreases the running piano counter on stop', (tester) async {
+      await piano.start();
+      expect(piano.startedPianos, 1);
+
+      await piano.stop();
+      expect(piano.startedPianos, 0);
+    });
+
+    testWidgets('does not stop the piano on stop when another piano is started', (tester) async {
+      final piano2 = Piano(context.audioSystem, context.audioSession, context.inMemoryFileSystem);
+
+      await piano.start();
+      await piano2.start();
+
+      expect(piano.startedPianos, 2);
+
+      await piano.stop();
+      expect(piano.startedPianos, 1);
+      context.audioSystemMock.verifyPianoStopNeverCalled();
+
+      await piano2.stop();
+      expect(piano.startedPianos, 0);
+      context.audioSystemMock.verifyPianoStopCalled();
+    });
   });
 }

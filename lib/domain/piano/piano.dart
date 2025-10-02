@@ -17,6 +17,9 @@ class Piano {
   bool _isPlaying = false;
   bool get isPlaying => _isPlaying;
 
+  static int _startedPianos = 0;
+  int get startedPianos => _startedPianos;
+
   double _concertPitch = 440;
   double get concertPitch => _concertPitch;
 
@@ -45,22 +48,24 @@ class Piano {
 
   Future<void> start() async {
     if (_isPlaying) return;
+
     _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(stop);
 
     bool initSuccess = await _loadSoundFontFile(_soundFont.file);
     await _audioSession.preparePlayback();
     if (!initSuccess) return;
 
-    bool success = await _as.pianoStart();
-    _isPlaying = success;
-    if (!success) return logger.e('Unable to start Piano.');
+    if (_startedPianos == 0) {
+      bool success = await _as.pianoStart();
+      if (!success) return logger.e('Unable to start Piano.');
+    }
+
+    _isPlaying = true;
+    _startedPianos++;
   }
 
   Future<void> stop() async {
     if (!_isPlaying) return;
-
-    final success = await _as.pianoStop();
-    if (!success) return logger.e('Unable to stop Piano.');
 
     if (_audioSessionInterruptionListenerHandle != null) {
       _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
@@ -68,6 +73,17 @@ class Piano {
     }
 
     _isPlaying = false;
+    _startedPianos--;
+
+    if (_startedPianos == 0) {
+      final success = await _as.pianoStop();
+      if (!success) {
+        logger.e('Unable to stop Piano.');
+        _startedPianos = 1;
+        _isPlaying = true;
+        return;
+      }
+    }
   }
 
   Future<void> restart() async {
