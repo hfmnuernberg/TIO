@@ -212,7 +212,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         toolPage = const MediaPlayer(isQuickTool: true);
       case BlockType.piano:
         block = PianoBlock.withDefaults(context.l10n);
-        toolPage = const Piano(isQuickTool: true);
+        toolPage = const PianoPage(isQuickTool: true);
       default:
         throw Exception('Wrong BlockType');
     }
