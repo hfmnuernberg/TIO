@@ -51,20 +51,22 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
             automaticallyImplyLeading: false,
           ),
           backgroundColor: ColorTheme.primary92,
-          body: widget.mustBeScrollable
-              ? LayoutBuilder(
-                  builder: (context, viewportConstraints) {
-                    return SingleChildScrollView(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
-                        child: isPortrait ? _buildPortrait() : _buildLandscape(),
-                      ),
-                    );
-                  },
-                )
-              : isPortrait
-              ? _buildPortrait()
-              : _buildLandscape(),
+          body: SafeArea(
+            child: widget.mustBeScrollable
+                ? LayoutBuilder(
+                    builder: (context, viewportConstraints) {
+                      return SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+                          child: isPortrait ? _buildPortrait() : _buildLandscape(),
+                        ),
+                      );
+                    },
+                  )
+                : isPortrait
+                ? _buildPortrait()
+                : _buildLandscape(),
+          ),
           bottomSheet: _bottomSheet(),
         ),
       ),
