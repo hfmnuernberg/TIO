@@ -99,4 +99,6 @@ class Piano {
     await _fs.saveFileAsBytes(tempSoundFontPath, bytes);
     return _as.pianoSetup(soundFontPath: tempSoundFontPath);
   }
+
+  static void reset() => _startedPianos = 0;
 }
