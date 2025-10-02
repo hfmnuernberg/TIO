@@ -10,8 +10,14 @@ void main() {
 
   setUp(() async {
     resetMocktailState();
+    Piano.reset();
     context = TestContext();
     piano = Piano(context.audioSystem, context.audioSession, context.inMemoryFileSystem);
+  });
+
+  tearDown(() async {
+    if (piano.isPlaying) await piano.stop();
+    Piano.reset();
   });
 
   group('Piano', () {
