@@ -83,9 +83,7 @@ class CustomTargetFocus {
     final mediaQuery = (context != null) ? MediaQuery.of(context) : null;
     final safeTop = mediaQuery?.viewPadding.top ?? 0;
     final safeBottom = mediaQuery?.viewPadding.bottom ?? 0;
-    final safeHeight = mediaQuery != null
-        ? mediaQuery.size.height - safeTop - safeBottom
-        : 0;
+    final safeHeight = mediaQuery != null ? mediaQuery.size.height - safeTop - safeBottom : 0;
     const edgeSpace = 8.0;
     CustomTargetContentPosition positionNextButton;
     CrossAxisAlignment buttonsColumnCrossAlign = CrossAxisAlignment.center;
