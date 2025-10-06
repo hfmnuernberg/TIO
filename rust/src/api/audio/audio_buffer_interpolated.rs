@@ -112,21 +112,9 @@ impl AudioBufferInterpolated {
             let wrapped = self.read_head.move_index(1.0);
             if wrapped && !self.looping {
                 self.is_playing = false;
-                log::info!(
-                    "[MP] add_samples_to_buffer: finished, playing={} index={} wrote_nonzero={}",
-                    self.is_playing,
-                    self.read_head.get_index(),
-                    wrote_nonzero
-                );
                 break;
             }
         }
-
-        log::trace!(
-            "[MP] add_samples_to_buffer: finished, playing={} index={}",
-            self.is_playing,
-            self.read_head.get_index()
-        );
     }
 
     #[flutter_rust_bridge::frb(ignore)]

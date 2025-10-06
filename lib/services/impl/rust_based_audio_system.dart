@@ -37,22 +37,13 @@ class RustBasedAudioSystem implements AudioSystem {
 
   @override
   Future<bool> mediaPlayerLoadWav({required String wavFilePath, PlayerId playerId = kDefaultPlayerId}) async {
-    // Temporary debug logging to trace load pipeline
-    // ignore: avoid_print
-    print('[MP] loadFile start id=$playerId path=$wavFilePath');
     final ok = await rust.mediaPlayerLoadFileWithId(playerId: playerId, wavFilePath: wavFilePath);
-    // Temporary debug logging to trace load pipeline
-    // ignore: avoid_print
-    print('[MP] loadFile done -> $ok');
     return ok;
   }
 
   @override
   Future<bool> mediaPlayerStart({PlayerId playerId = kDefaultPlayerId}) async {
     final ok = await rust.mediaPlayerStartWithId(playerId: playerId);
-    // Temporary debug logging to trace load pipeline
-    // ignore: avoid_print
-    print('[MP] start id=$playerId -> $ok');
     return ok;
   }
 

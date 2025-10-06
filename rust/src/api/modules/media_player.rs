@@ -256,18 +256,7 @@ impl Mixer {
         let join = std::thread::spawn(move || {
             let build_res = device.build_output_stream(
                 &config,
-                |out: &mut [f32], _| {
-                    // (2) Heartbeat goes here (see below)
-                    // Heartbeat at the very top of the audio callback (throttled)
-                    let hb = AUDIO_CB_HEARTBEAT.fetch_add(1, Ordering::Relaxed) + 1;
-                    if hb % 50 == 0 {
-                        // Every ~50 callbacks emit an info-level heartbeat so it shows up in production logs
-                        log::info!("[MP] audio callback: tick #{}", hb);
-                    } else {
-                        // Keep the per-callback trace for deep debugging
-                        log::trace!("[MP] audio callback: tick");
-                    }
-
+                move |out: &mut [f32], _| {
                     // Zero out the buffer first
                     for s in out.iter_mut() { *s = 0.0; }
 
@@ -317,8 +306,6 @@ impl Mixer {
                                 log::trace!("Mixer: no active players");
                             }
                         }
-                    } else {
-                        log::trace!("[MP] audio callback: failed to lock MIXER");
                     }
                 },
                 |err| {
