@@ -132,6 +132,12 @@ pub fn mp_load(id: &str, path: &str) -> bool {
 
     with_player_mut(id, |p| {
         p.source_data.set_new_file(buffer);
+        // Assign a known source sample rate so the mixer can compute read_inc correctly.
+        // If your decoder exposes the *actual* file sample rate, prefer using that value here.
+        let out_sr = *OUTPUT_SAMPLE_RATE
+            .lock()
+            .expect("Could not lock OUTPUT_SAMPLE_RATE");
+        p.source_data.set_sample_rate_hz(out_sr);
         p.source_data.set_playing(false);
         p.playing = false;
     });
@@ -278,12 +284,34 @@ impl Mixer {
                                 }
                                 continue;
                             }
-                            if !player.source_data.get_is_playing() {
-                                log::trace!("[MP] skip {} (buffer not playing)", id);
-                                continue;
+                            let frames = out.len() / NUM_CHANNELS;
+
+                            // Compute per-player read increment based on source vs output sample rate and UI speed/pitch
+                            let out_sr = *OUTPUT_SAMPLE_RATE.lock().expect("OUTPUT_SAMPLE_RATE");
+                            let src_sr = {
+                              let s = player.source_data.sample_rate_hz();
+                              if s == 0 { out_sr } else { s }
+                            } as f32;
+
+                            let base = (src_sr / out_sr as f32).max(0.0001);
+                            let mut read_inc = base * player.speed_factor.max(0.01);
+
+                            // Quick 'tape-style' pitch: couple pitch to playback rate
+                            if player.pitch_semitones.abs() > 1e-6 {
+                              let pitch_ratio = (2.0_f32).powf(player.pitch_semitones / 12.0);
+                              read_inc *= pitch_ratio;
                             }
 
-                            player.source_data.add_samples_to_buffer(out, player.volume);
+                            // Pull mono, then mix to out
+                            let mut temp = vec![0.0f32; frames];
+                            player.source_data.get_samples(&mut temp[..], read_inc);
+
+                            for i in 0..frames {
+                              let v = temp[i] * player.volume;
+                              for ch in 0..NUM_CHANNELS {
+                                out[i * NUM_CHANNELS + ch] += v;
+                              }
+                            }
                             active_players += 1;
                             mixed_ids.push(id.clone());
                         }
@@ -513,9 +541,7 @@ impl Mixer {
             // reflect the actual per-player state
             playing: p.playing && p.source_data.get_is_playing(),
             playback_position_factor: p.source_data.get_playback_position_factor(),
-            total_length_seconds: p
-                .source_data
-                .get_length_seconds(*OUTPUT_SAMPLE_RATE.lock().expect("OUTPUT_SAMPLE_RATE")),
+            total_length_seconds: p.source_data.get_length_seconds_self_sr(),
         })
     }
 
@@ -674,12 +700,28 @@ fn on_audio_callback(out: &mut [f32], _: &cpal::OutputCallbackInfo) {
         }
         active_players += 1;
 
-        // Scratch buffer for mono read
         let frames = out.len() / NUM_CHANNELS;
-        let mut temp = vec![0.0f32; frames];
-        p.source_data.get_samples(&mut temp[..], 1.0); // Option A: speed=1.0, no pitch/time processing
 
-        // Mix into stereo out (or NUM_CHANNELS)
+        // Compute per-player read increment based on source vs output sample rate and UI speed/pitch
+        let out_sr = *OUTPUT_SAMPLE_RATE.lock().expect("OUTPUT_SAMPLE_RATE");
+        let src_sr = {
+            let s = p.source_data.sample_rate_hz();
+            if s == 0 { out_sr } else { s }
+        } as f32;
+
+        let base = (src_sr / out_sr as f32).max(0.0001);
+        let mut read_inc = base * p.speed_factor.max(0.01);
+
+        // Quick 'tape-style' pitch: couple pitch to playback rate
+        if p.pitch_semitones.abs() > 1e-6 {
+            let pitch_ratio = (2.0_f32).powf(p.pitch_semitones / 12.0);
+            read_inc *= pitch_ratio;
+        }
+
+        // Pull mono, then mix to out
+        let mut temp = vec![0.0f32; frames];
+        p.source_data.get_samples(&mut temp[..], read_inc);
+
         for i in 0..frames {
             let v = temp[i] * p.volume;
             for ch in 0..NUM_CHANNELS {
@@ -706,10 +748,14 @@ fn thread_handle_command(_command: ()) {
 
 #[flutter_rust_bridge::frb(ignore)]
 pub fn media_player_set_buffer(new_buffer: Vec<f32>) {
+    let mut buf = AudioBufferInterpolated::new(new_buffer);
+    let out_sr = *OUTPUT_SAMPLE_RATE
+        .lock()
+        .expect("Could not lock OUTPUT_SAMPLE_RATE");
+    buf.set_sample_rate_hz(out_sr);
     *SOURCE_DATA
         .lock()
-        .expect("Could not lock mutex to SOURCE_DATA to set buffer") =
-        AudioBufferInterpolated::new(new_buffer);
+        .expect("Could not lock mutex to SOURCE_DATA to set buffer") = buf;
 }
 
 #[flutter_rust_bridge::frb(ignore)]

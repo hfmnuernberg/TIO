@@ -6,6 +6,7 @@ use super::float_index::FloatIndex;
 pub(crate) struct AudioBufferInterpolated {
     buffer_size_f32: f32,
     buffer: Vec<f32>,
+    sample_rate_hz: usize,
     looping: bool,
     is_playing: bool,
     start_factor: f32,
@@ -24,11 +25,35 @@ impl AudioBufferInterpolated {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn get_length_seconds_self_sr(&self) -> f32 {
+        if self.sample_rate_hz == 0 {
+            return 0.0;
+        }
+        self.buffer_size_f32 / self.sample_rate_hz as f32
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
     pub(crate) fn new(buffer: Vec<f32>) -> Self {
         let buffer_size_f32 = buffer.len() as f32;
         Self {
             buffer_size_f32,
             buffer,
+            sample_rate_hz: 48_000,
+            looping: false,
+            is_playing: false,
+            start_factor: 0.0,
+            end_factor: 1.0,
+            read_head: FloatIndex::new(0.0, buffer_size_f32),
+        }
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn new_with_sr(buffer: Vec<f32>, sample_rate_hz: usize) -> Self {
+        let buffer_size_f32 = buffer.len() as f32;
+        Self {
+            buffer_size_f32,
+            buffer,
+            sample_rate_hz,
             looping: false,
             is_playing: false,
             start_factor: 0.0,
@@ -41,11 +66,22 @@ impl AudioBufferInterpolated {
     pub(crate) fn set_new_file(&mut self, buffer: Vec<f32>) {
         self.buffer_size_f32 = buffer.len() as f32;
         self.buffer = buffer;
+        // keep existing self.sample_rate_hz
         self.looping = false;
         self.is_playing = false;
         self.start_factor = 0.0;
         self.end_factor = 1.0;
         self.read_head = FloatIndex::new(0.0, self.buffer_size_f32);
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn set_sample_rate_hz(&mut self, sr: usize) {
+        self.sample_rate_hz = sr;
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub(crate) fn sample_rate_hz(&self) -> usize {
+        self.sample_rate_hz
     }
 
     #[flutter_rust_bridge::frb(ignore)]
@@ -67,6 +103,18 @@ impl AudioBufferInterpolated {
         if !self.is_playing {
             for sample_to_write in buffer_to_write_to.iter_mut() {
                 *sample_to_write = 0.0;
+            }
+            return;
+        }
+
+        let mut read_speed = if read_speed.is_finite() {
+            read_speed
+        } else {
+            0.0
+        };
+        if read_speed <= 0.0 {
+            for s in buffer_to_write_to.iter_mut() {
+                *s = 0.0;
             }
             return;
         }
