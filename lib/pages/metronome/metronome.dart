@@ -334,6 +334,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
 
   Future<void> refresh(MetronomeBeatEvent event) async {
     if (!mounted) return metronome.stop();
+    if (event.isFast) return;
     setState(() {});
   }
 

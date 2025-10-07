@@ -37,6 +37,8 @@ class Metronome {
   bool _isMute = false;
   bool get isMute => _isMute;
 
+  int _bpm = 80;
+
   List<RhythmGroup> _rhythms = [];
   List<RhythmGroup> _secondaryRhythms = [];
 
@@ -116,7 +118,10 @@ class Metronome {
 
   Future<void> setVolume(double volume) async => _as.metronomeSetVolume(volume: volume);
 
-  Future<void> setBpm(int bpm) async => _as.metronomeSetBpm(bpm: bpm.toDouble());
+  Future<void> setBpm(int bpm) async {
+    _bpm = bpm;
+    _as.metronomeSetBpm(bpm: bpm.toDouble());
+  }
 
   Future<void> mute() async => _isMute = await _as.metronomeSetMuted(muted: true);
 
@@ -171,8 +176,10 @@ class Metronome {
       _currentBeat = getNextBeatOnStop(event, _currentBeat);
     }
 
-    _onBeatEvent(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary));
-    _onBeatStop(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary));
+    final isFast = _isFast(event.isPoly, event.isSecondary ? _secondaryRhythms.first : _rhythms.first);
+
+    _onBeatEvent(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary, isFast: isFast));
+    _onBeatStop(MetronomeBeatEvent(isPoly: event.isPoly, isSecondary: event.isSecondary, isFast: isFast));
   }
 
   Future<void> _enableFlashAndAudioSyncImprovementOnAndroid() async {
@@ -188,5 +195,12 @@ class Metronome {
     if (Platform.isAndroid) {
       await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     }
+  }
+
+  bool _isFast(bool isPoly, RhythmGroup rhythm) {
+    final polyFactor = isPoly ? rhythm.beats.length / rhythm.polyBeats.length : 1;
+    final beatLengthInMs = 60 / _bpm * 1000 * rhythm.beatLen * polyFactor;
+    print('isPoly: $isPoly, polyFactor: $polyFactor, beatLengthInMs: $beatLengthInMs, isFast: ${beatLengthInMs < beatDurationInMs * 2}');
+    return beatLengthInMs < beatDurationInMs * 2;
   }
 }

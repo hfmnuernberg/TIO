@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/domain/metronome/metronome_beat_event.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/note_handler.dart';
@@ -103,8 +104,9 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
     super.dispose();
   }
 
-  Future<void> refresh(_) async {
+  Future<void> refresh(MetronomeBeatEvent event) async {
     if (!mounted) return metronome.stop();
+    if (event.isFast) return;
     setState(() {});
   }
 

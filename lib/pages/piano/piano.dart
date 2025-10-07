@@ -119,6 +119,8 @@ class _PianoState extends State<Piano> {
     if (_isPlaying) return;
     _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(_pianoStop);
 
+    await _enableFlashAndAudioSyncImprovementOnAndroid();
+
     bool initSuccess = await _initPiano(SoundFont.values[_pianoBlock.soundFontIndex].file);
     await _audioSession.preparePlayback();
     if (!initSuccess) return;
@@ -134,10 +136,28 @@ class _PianoState extends State<Piano> {
       _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
       _audioSessionInterruptionListenerHandle = null;
     }
+
+    await _disableFlashAndAudioSyncImprovementOnAndroid();
+
     if (_isPlaying) {
       await _as.pianoStop();
     }
     _isPlaying = false;
+  }
+
+  Future<void> _enableFlashAndAudioSyncImprovementOnAndroid() async {
+    if (Platform.isAndroid) {
+      await SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.manual,
+        overlays: [SystemUiOverlay.top, SystemUiOverlay.bottom],
+      );
+    }
+  }
+
+  Future<void> _disableFlashAndAudioSyncImprovementOnAndroid() async {
+    if (Platform.isAndroid) {
+      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
   }
 
   Future<void> _pianoSetConcertPitch(double concertPitch) async {
