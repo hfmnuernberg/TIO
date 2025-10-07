@@ -112,7 +112,7 @@ impl AudioBufferInterpolated {
             return;
         }
 
-        let mut read_speed = if read_speed.is_finite() {
+        let read_speed = if read_speed.is_finite() {
             read_speed
         } else {
             0.0
