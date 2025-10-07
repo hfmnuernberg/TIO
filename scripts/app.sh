@@ -15,6 +15,10 @@ clean() {
   if [ -d "ios/.symlinks" ];   then rm -rf ios/.symlinks;   fi
   if [ -d "ios/Pods" ];        then rm -rf ios/Pods;        fi
   if [ -d "ios/vendor" ];      then rm -rf ios/vendor;      fi
+  bash "$0" clean:rust
+}
+
+cleanRust() {
   if [ -d "rust/target" ];     then rm -rf rust/target;     fi
   if [ -d "lib/src/rust" ];    then rm -rf lib/src/rust;    fi
   if [ ! -d "lib/src/rust" ];  then mkdir lib/src/rust;     fi
@@ -51,6 +55,10 @@ getTestCommand() {
 install() {
   bash "$0" install:flutter:packages
   bash "$0" install:cocoa:pods
+  bash "$0" install:rust
+}
+
+installRust() {
   bash "$0" install:rust:targets
   bash "$0" install:rust:packages
   bash "$0" install:rust:frb
@@ -127,7 +135,8 @@ help() {
   echo 'analyze:todos                                 - analyze TODOs and FIXMEs in code'
   echo 'analyze:yaml                                  - analyze yaml files'
   echo 'build <platform> [<env>] [<flavor>] [<mode>]  - build app for ios or android'
-  echo 'clean                                         - clean build'
+  echo 'clean                                         - clean build (deletes coverage, generated iOS, Android, and Rust files)'
+  echo 'clean:rust                                    - clean build (deletes generated Rust files)'
   echo 'coverage                                      - measure and open test coverage report'
   echo 'coverage:generate                             - generate test coverage report from previous test run'
   echo 'coverage:measure                              - run all tests and measure test coverage'
@@ -148,12 +157,14 @@ help() {
   echo 'install:cocoa:pods                            - install Cocoa Pods'
   echo 'install:fastlane                              - install Fastlane'
   echo 'install:flutter:packages                      - install Flutter packages'
+  echo 'install:rust                                  - install Flutter/Dart<->Rust binding generator, and Rust toolchain, targets, and packages'
   echo 'install:rust:frb                              - install Flutter/Dart<->Rust binding generator'
   echo 'install:rust:packages                         - install Rust packages'
   echo 'install:rust:targets                          - install Rust targets'
   echo 'lint*                                         - synonym for analyze'
   echo 'outdated                                      - list outdated dependencies'
   echo 'refresh                                       - clean, install, generate, run'
+  echo 'refresh:rust                                  - Rust clean, install, generate, format, analyze, run'
   echo 'reset                                         - clean, delete lock files, install, generate, analyze, test, build, run'
   echo 'run [<env>] [<flavor>] [<mode>]               - run app'
   echo 'simulator                                     - open iOS simulator'
@@ -174,6 +185,7 @@ case "$1" in
   analyze:yaml)              yamllint .; ;;
   build)                     shift; scripts/build.sh "$@"; ;;
   clean)                     clean; bash "$0" widgetbook clean; ;;
+  clean:rust)                cleanRust; ;;
   coverage)                  bash "$0" coverage:measure; bash "$0" coverage:generate; bash "$0" coverage:open; ;;
   coverage:generate)         genhtml --no-function-coverage coverage/lcov.info -o coverage/html; ;;
   coverage:measure)          $FLUTTER test --coverage test; ;;
@@ -193,11 +205,13 @@ case "$1" in
   install:cocoa:pods)        $FLUTTER precache --ios; cd ios; pod install --repo-update; cd ..; ;;
   install:fastlane)          cd android; bundle install; cd ..; cd ios; bundle install; cd ..; ;;
   install:flutter:packages)  $FLUTTER pub get; ;;
+  install:rust)              installRust; ;;
   install:rust:frb)          bash "$0" rust install:frb; ;;
   install:rust:packages)     installRustPackages; ;;
   install:rust:targets)      installRustTargets; ;;
   outdated)                  $FLUTTER pub outdated; bash "$0" widgetbook outdated; bash "$0" rust outdated:root; ;;
   refresh)                   bash "$0" clean; bash "$0" install; bash "$0" generate; bash "$0" run; ;;
+  refresh:rust)              bash "$0" clean:rust; bash "$0" install:rust; bash "$0" generate:rust; bash "$0" format; bash "$0" analyze; bash "$0" run; ;;
   reset)                     reset; ;;
   run)                       shift; scripts/run.sh "$@"; ;;
   simulator)                 open -a Simulator; ;;
