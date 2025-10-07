@@ -86,10 +86,15 @@ impl AudioBufferInterpolated {
 
     #[flutter_rust_bridge::frb(ignore)]
     pub(crate) fn reset_playhead_to_start_if_at_end(&mut self) {
-        // If we previously stopped because we hit the end (non-looping),
-        // reset index so we’ll output from the beginning of the current trim window.
-        if !self.is_playing {
-            let start_idx = self.start_factor * self.buffer_size_f32;
+        // Only reset if we actually are at (or beyond) the end of the current trim slice.
+        // Paused-in-the-middle should NOT jump back to start.
+        let start_idx = (self.start_factor * self.buffer_size_f32).clamp(0.0, self.buffer_size_f32);
+        let end_idx =
+            (self.end_factor * self.buffer_size_f32).clamp(start_idx, self.buffer_size_f32);
+        let cur = self.read_head.get_index();
+        // small epsilon to tolerate float rounding
+        let at_or_past_end = cur + 1e-4 >= end_idx;
+        if at_or_past_end {
             self.read_head.set_index(start_idx);
         }
     }

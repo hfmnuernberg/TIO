@@ -438,6 +438,9 @@ impl Mixer {
                 return false;
             }
 
+            // Keep buffer SR aligned with current output SR (temporary measure until loader provides true file SR).
+            let out_sr = *OUTPUT_SAMPLE_RATE.lock().expect("OUTPUT_SAMPLE_RATE");
+            p.source_data.set_sample_rate_hz(out_sr);
             p.source_data.reset_playhead_to_start_if_at_end();
             p.source_data.set_playing(true);
             p.playing = true;
