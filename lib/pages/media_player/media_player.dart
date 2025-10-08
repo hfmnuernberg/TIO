@@ -379,7 +379,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   Future<void> _handleRepeatToggle() async {
     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    _as.mediaPlayerSetRepeat(repeatOne: _mediaPlayerBlock.looping);
+    _as.mediaPlayerSetRepeat(repeatOne: _mediaPlayerBlock.looping, playerId: _mediaPlayerBlock.id);
   }
 
   @override
@@ -661,7 +661,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
         top: 4,
         child: IconButton(
           onPressed: () async {
-            await _as.mediaPlayerSetPlaybackPosFactor(posFactor: pos);
+            await _as.mediaPlayerSetPlaybackPosFactor(
+              posFactor: pos,
+              playerId: _mediaPlayerBlock.id,
+            );
             await _queryAndUpdateStateFromRust();
           },
           icon: const Icon(Icons.arrow_drop_down, color: ColorTheme.primary, size: MediaPlayerParams.markerIconSize),
@@ -676,7 +679,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
   void _onWaveGesture(Offset localPosition) async {
     double relativeTapPosition = localPosition.dx / _waveFormWidth;
 
-    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: relativeTapPosition.clamp(0, 1));
+    await _as.mediaPlayerSetPlaybackPosFactor(
+      posFactor: relativeTapPosition.clamp(0, 1),
+      playerId: _mediaPlayerBlock.id,
+    );
     await _queryAndUpdateStateFromRust();
   }
 
@@ -703,7 +709,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
     } else {
       newPos = state.playbackPositionFactor - secondFactor10;
     }
-    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: newPos);
+    // Clamp newPos to [0.0, 1.0] before sending to Rust
+    await _as.mediaPlayerSetPlaybackPosFactor(
+      posFactor: newPos.clamp(0.0, 1.0),
+      playerId: _mediaPlayerBlock.id,
+    );
     await _queryAndUpdateStateFromRust();
   }
 
