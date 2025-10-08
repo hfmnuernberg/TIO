@@ -861,6 +861,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     if (!_isPlaying) {
       await _startPlaying();
+      await _stopPlaying();
+      await _startPlaying();
     } else {
       await _stopPlaying();
     }
