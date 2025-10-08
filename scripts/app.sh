@@ -15,10 +15,6 @@ clean() {
   if [ -d "ios/.symlinks" ];   then rm -rf ios/.symlinks;   fi
   if [ -d "ios/Pods" ];        then rm -rf ios/Pods;        fi
   if [ -d "ios/vendor" ];      then rm -rf ios/vendor;      fi
-  bash "$0" clean:rust
-}
-
-cleanRust() {
   if [ -d "rust/target" ];     then rm -rf rust/target;     fi
   if [ -d "lib/src/rust" ];    then rm -rf lib/src/rust;    fi
   if [ ! -d "lib/src/rust" ];  then mkdir lib/src/rust;     fi
@@ -80,23 +76,6 @@ installRustTargets() {
     x86_64-linux-android
 }
 
-refresh() {
-  bash "$0" clean
-  bash "$0" install
-  bash "$0" generate
-  bash "$0" run
-}
-
-refreshRust() {
-  $FLUTTER clean
-  bash "$0" clean:rust
-  bash "$0" install:rust
-  bash "$0" generate:rust
-  bash "$0" format
-  bash "$0" analyze
-  bash "$0" run
-}
-
 reset() {
   bash "$0" doctor
   bash "$0" clean
@@ -153,7 +132,7 @@ help() {
   echo 'analyze:yaml                                  - analyze yaml files'
   echo 'build <platform> [<env>] [<flavor>] [<mode>]  - build app for ios or android'
   echo 'clean                                         - clean build (deletes coverage, generated iOS, Android, and Rust files)'
-  echo 'clean:rust                                    - clean build (deletes generated Rust files)'
+  echo 'clean:rust                                    - clean but without storybook'
   echo 'coverage                                      - measure and open test coverage report'
   echo 'coverage:generate                             - generate test coverage report from previous test run'
   echo 'coverage:measure                              - run all tests and measure test coverage'
@@ -202,7 +181,7 @@ case "$1" in
   analyze:yaml)              yamllint .; ;;
   build)                     shift; scripts/build.sh "$@"; ;;
   clean)                     clean; bash "$0" widgetbook clean; ;;
-  clean:rust)                cleanRust; ;;
+  clean:rust)                clean; ;;
   coverage)                  bash "$0" coverage:measure; bash "$0" coverage:generate; bash "$0" coverage:open; ;;
   coverage:generate)         genhtml --no-function-coverage coverage/lcov.info -o coverage/html; ;;
   coverage:measure)          $FLUTTER test --coverage test; ;;
@@ -227,8 +206,8 @@ case "$1" in
   install:rust:packages)     installRustPackages; ;;
   install:rust:targets)      installRustTargets; ;;
   outdated)                  $FLUTTER pub outdated; bash "$0" widgetbook outdated; bash "$0" rust outdated:root; ;;
-  refresh)                   refresh; ;;
-  refresh:rust)              refreshRust; ;;
+  refresh)                   bash "$0" clean; bash "$0" install; bash "$0" generate; bash "$0" run; ;;
+  refresh:rust)              bash "$0" clean; bash "$0" install:rust; bash "$0" generate:rust; bash "$0" format; bash "$0" analyze; bash "$0" run; ;;
   reset)                     reset; ;;
   run)                       shift; scripts/run.sh "$@"; ;;
   simulator)                 open -a Simulator; ;;
