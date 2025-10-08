@@ -22,7 +22,6 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 extern crate queues;
 
-// Heartbeat/throttling counters for callback logging
 static AUDIO_CB_HEARTBEAT: AtomicUsize = AtomicUsize::new(0);
 static NO_ACTIVE_HEARTBEAT: AtomicUsize = AtomicUsize::new(0);
 
@@ -132,8 +131,6 @@ pub fn mp_load(id: &str, path: &str) -> bool {
 
     with_player_mut(id, |p| {
         p.source_data.set_new_file(buffer);
-        // Assign a known source sample rate so the mixer can compute read_inc correctly.
-        // If your decoder exposes the *actual* file sample rate, prefer using that value here.
         let out_sr = *OUTPUT_SAMPLE_RATE
             .lock()
             .expect("Could not lock OUTPUT_SAMPLE_RATE");
@@ -193,10 +190,6 @@ pub fn mp_set_loop_mode(id: &str, looping: bool) -> bool {
     })
 }
 
-// #[flutter_rust_bridge::frb(ignore)]
-// pub fn mp_get_state(id: &str) -> Option<MediaPlayerState> {
-//     with_mixer(|m| m.get_state(id))
-// }
 #[flutter_rust_bridge::frb(ignore)]
 pub fn mp_get_state(id: &str) -> Option<MediaPlayerState> {
     // read-only lock; no need to mutate the mixer
@@ -223,18 +216,7 @@ fn apply_headroom_if_many(out: &mut [f32], active_players: usize) {
 }
 
 impl Mixer {
-    //     fn rebuild_output_stream(&mut self) {
-    //         log::warn!("[MP] rebuild_output_stream: tearing down and recreating output thread");
-    //         if self.out_thread.take().is_some() {
-    //             log::warn!("[MP] rebuild_output_stream: dropped previous output thread handle");
-    //         }
-    //         // Force a fresh stream creation
-    //         let ok = self.ensure_output_stream();
-    //         log::info!("[MP] rebuild_output_stream: ensure_output_stream -> {}", ok);
-    //     }
-
     fn ensure_output_stream(&mut self) -> bool {
-        // Idempotent: if we already have a running thread/stream, reuse it.
         if self.out_thread.is_some() {
             log::info!("[MP] ensure_output_stream: reuse existing output thread (already running)");
             return true;
@@ -258,15 +240,12 @@ impl Mixer {
             }
         };
 
-        // Spawn a thread that owns the CPAL stream so it won't drop.
         let join = std::thread::spawn(move || {
             let build_res = device.build_output_stream(
                 &config,
                 move |out: &mut [f32], _| {
-                    // Zero out the buffer first
                     for s in out.iter_mut() { *s = 0.0; }
 
-                    // Mix players (see also (4) clarity tweaks below)
                     let mut active_players = 0usize;
                     if let Ok(mut mix) = MIXER.lock() {
                         let mut mixed_ids: Vec<String> = Vec::new();
@@ -286,7 +265,6 @@ impl Mixer {
                             }
                             let frames = out.len() / NUM_CHANNELS;
 
-                            // Compute per-player read increment based on source vs output sample rate and UI speed/pitch
                             let out_sr = *OUTPUT_SAMPLE_RATE.lock().expect("OUTPUT_SAMPLE_RATE");
                             let src_sr = {
                               let s = player.source_data.sample_rate_hz();
@@ -296,13 +274,11 @@ impl Mixer {
                             let base = (src_sr / out_sr as f32).max(0.0001);
                             let mut read_inc = base * player.speed_factor.max(0.01);
 
-                            // Quick 'tape-style' pitch: couple pitch to playback rate
                             if player.pitch_semitones.abs() > 1e-6 {
                               let pitch_ratio = (2.0_f32).powf(player.pitch_semitones / 12.0);
                               read_inc *= pitch_ratio;
                             }
 
-                            // Pull mono, then mix to out
                             let mut temp = vec![0.0f32; frames];
                             player.source_data.get_samples(&mut temp[..], read_inc);
 
@@ -319,14 +295,11 @@ impl Mixer {
                         apply_headroom_if_many(out, active_players);
 
                         if active_players > 0 {
-                            // quick visibility
                             let mut energy: f32 = 0.0;
                             for s in out.iter() { energy += s.abs(); }
                             log::trace!("[MP] mixed players: {:?}; energy={:.6}", mixed_ids, energy);
-                            // reset idle heartbeat
                             NO_ACTIVE_HEARTBEAT.store(0, Ordering::Relaxed);
                         } else {
-                            // Throttle idle spam: emit every ~200 callbacks at info-level
                             let idle = NO_ACTIVE_HEARTBEAT.fetch_add(1, Ordering::Relaxed) + 1;
                             if idle % 200 == 0 {
                                 log::info!("Mixer: no active players");
@@ -339,18 +312,17 @@ impl Mixer {
                 |err| {
                     log::error!("[MP] output stream error: {:?}", err);
                 },
-                None, // no create-timeout
+                None,
             );
 
             match build_res {
                 Ok(stream) => {
                     if let Err(e) = stream.play() {
                         log::error!("[MP] ensure_output_stream: play() failed: {:?}", e);
-                        return; // Drop thread; next ensure() will recreate.
+                        return;
                     }
                     log::info!("[MP] ensure_output_stream: stream.play() ok");
 
-                    // Keep this thread alive forever to retain `stream`
                     loop {
                         std::thread::sleep(std::time::Duration::from_secs(3600));
                     }
@@ -377,50 +349,8 @@ impl Mixer {
 }
 
 impl Mixer {
-    //     pub fn start(&mut self, id: &str) -> bool {
-    //         log::info!("[MP] Mixer::start(id={})", id);
-    //         let p = self.get_or_create(id);
-    //         log::info!(
-    //             "[MP] Mixer::start: id={} playing={} is_playing={} trim=({:.3},{:.3}) pos={:.3}",
-    //             id,
-    //             p.playing,
-    //             p.source_data.get_is_playing(),
-    //             p.source_data.get_trim().0,
-    //             p.source_data.get_trim().1,
-    //             p.source_data.get_playback_position_factor(),
-    //         );
-    //
-    //         if p.source_data.get_is_empty() {
-    //             log::info!("[MP] Mixer::start -> false (empty buffer)");
-    //             return false;
-    //         }
-    //
-    //         p.source_data.reset_to_start();
-    //         p.source_data.set_playing(true);
-    //         p.playing = true;
-    //         let ok = self.ensure_output_stream();
-    //         log::info!("[MP] Mixer::start ensure_output_stream -> {}", ok);
-    //         ok
-    //     }
-    //     pub fn start(&mut self, id: &str) -> bool {
-    //         if let Some(p) = self.players.get_mut(id) {
-    //             // allow buffer to generate samples
-    //             p.source_data.set_playing(true);
-    //             // mark eligible for mixing
-    //             p.playing = true;
-    //
-    //             // optional but recommended when not looping:
-    //             p.source_data.reset_playhead_to_start_if_at_end();
-    //
-    //             self.ensure_output_stream()
-    //         } else {
-    //             log::info!("[MP] Mixer::start: no player {}", id);
-    //             false
-    //         }
-    //     }
     pub fn start(&mut self, id: &str) -> bool {
         log::info!("[MP] Mixer::start(id={})", id);
-        // 1) Set up/flip flags while holding the player mutably, but release before ensure_output_stream()
         {
             let p = self.get_or_create(id);
             log::info!(
@@ -438,15 +368,12 @@ impl Mixer {
                 return false;
             }
 
-            // Keep buffer SR aligned with current output SR (temporary measure until loader provides true file SR).
             let out_sr = *OUTPUT_SAMPLE_RATE.lock().expect("OUTPUT_SAMPLE_RATE");
             p.source_data.set_sample_rate_hz(out_sr);
             p.source_data.reset_playhead_to_start_if_at_end();
             p.source_data.set_playing(true);
             p.playing = true;
-        } // <-- release mutable borrow of self via `p`
-
-        // 2) Now we can safely call a method that needs &mut self again
+        }
 
         let before = AUDIO_CB_HEARTBEAT.load(Ordering::Relaxed);
         let ok = self.ensure_output_stream();
@@ -454,14 +381,13 @@ impl Mixer {
             return false;
         }
 
-        std::thread::sleep(std::time::Duration::from_millis(40)); // ~2–3 callbacks at 48k
+        std::thread::sleep(std::time::Duration::from_millis(40));
         let after = AUDIO_CB_HEARTBEAT.load(Ordering::Relaxed);
         if after == before {
             log::warn!("[MP] no audio callbacks after start; rebuilding output stream");
             self.rebuild_output_stream();
         }
 
-        // 3) Take an immutable snapshot for logging (or handle missing player gracefully)
         let (playing, is_playing) = if let Some(p) = self.players.get(id) {
             (p.playing, p.source_data.get_is_playing())
         } else {
@@ -478,12 +404,6 @@ impl Mixer {
         ok
     }
 
-    //     pub fn stop(&mut self, id: &str) -> bool {
-    //         let p = self.get_or_create(id);
-    //         p.source_data.set_playing(false);
-    //         p.playing = false;
-    //         true
-    //     }
     pub fn stop(&mut self, id: &str) -> bool {
         if let Some(p) = self.players.get_mut(id) {
             p.source_data.set_playing(false);
@@ -541,19 +461,12 @@ impl Mixer {
     pub fn get_state(&self, id: &str) -> Option<MediaPlayerState> {
         let p = self.players.get(id)?;
         Some(MediaPlayerState {
-            // reflect the actual per-player state
             playing: p.playing && p.source_data.get_is_playing(),
             playback_position_factor: p.source_data.get_playback_position_factor(),
             total_length_seconds: p.source_data.get_length_seconds_self_sr(),
         })
     }
 
-    //     pub fn compute_rms(&self, id: &str, n_bins: usize) -> Vec<f32> {
-    //         if let Some(p) = self.players.get(id) {
-    //             return p.source_data.compute_rms(n_bins);
-    //         }
-    //         vec![0.0; n_bins]
-    //     }
     pub fn compute_rms(&self, id: &str, n_bins: usize) -> Vec<f32> {
         match self.players.get(id) {
             Some(p) => p.source_data.compute_rms(n_bins),
@@ -689,7 +602,6 @@ pub fn media_player_trigger_destroy_stream() -> bool {
 
 #[flutter_rust_bridge::frb(ignore)]
 fn on_audio_callback(out: &mut [f32], _: &cpal::OutputCallbackInfo) {
-    // Clear output
     for s in out.iter_mut() {
         *s = 0.0;
     }
@@ -705,7 +617,6 @@ fn on_audio_callback(out: &mut [f32], _: &cpal::OutputCallbackInfo) {
 
         let frames = out.len() / NUM_CHANNELS;
 
-        // Compute per-player read increment based on source vs output sample rate and UI speed/pitch
         let out_sr = *OUTPUT_SAMPLE_RATE.lock().expect("OUTPUT_SAMPLE_RATE");
         let src_sr = {
             let s = p.source_data.sample_rate_hz();
@@ -715,13 +626,11 @@ fn on_audio_callback(out: &mut [f32], _: &cpal::OutputCallbackInfo) {
         let base = (src_sr / out_sr as f32).max(0.0001);
         let mut read_inc = base * p.speed_factor.max(0.01);
 
-        // Quick 'tape-style' pitch: couple pitch to playback rate
         if p.pitch_semitones.abs() > 1e-6 {
             let pitch_ratio = (2.0_f32).powf(p.pitch_semitones / 12.0);
             read_inc *= pitch_ratio;
         }
 
-        // Pull mono, then mix to out
         let mut temp = vec![0.0f32; frames];
         p.source_data.get_samples(&mut temp[..], read_inc);
 
