@@ -80,6 +80,23 @@ installRustTargets() {
     x86_64-linux-android
 }
 
+refresh() {
+  bash "$0" clean
+  bash "$0" install
+  bash "$0" generate
+  bash "$0" run
+}
+
+refreshRust() {
+  $FLUTTER clean
+  bash "$0" clean:rust
+  bash "$0" install:rust
+  bash "$0" generate:rust
+  bash "$0" format
+  bash "$0" analyze
+  bash "$0" run
+}
+
 reset() {
   bash "$0" doctor
   bash "$0" clean
@@ -210,8 +227,8 @@ case "$1" in
   install:rust:packages)     installRustPackages; ;;
   install:rust:targets)      installRustTargets; ;;
   outdated)                  $FLUTTER pub outdated; bash "$0" widgetbook outdated; bash "$0" rust outdated:root; ;;
-  refresh)                   bash "$0" clean; bash "$0" install; bash "$0" generate; bash "$0" run; ;;
-  refresh:rust)              bash "$0" clean:rust; bash "$0" install:rust; bash "$0" generate:rust; bash "$0" format; bash "$0" analyze; bash "$0" run; ;;
+  refresh)                   refresh; ;;
+  refresh:rust)              refreshRust; ;;
   reset)                     reset; ;;
   run)                       shift; scripts/run.sh "$@"; ;;
   simulator)                 open -a Simulator; ;;
