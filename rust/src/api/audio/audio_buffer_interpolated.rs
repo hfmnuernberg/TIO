@@ -135,6 +135,12 @@ impl AudioBufferInterpolated {
 
             if buffer_just_hit_end && !self.looping {
                 buffer_at_end = true;
+                // Snap the playhead to the *end of the trimmed region* so UI can see we're at end.
+                let start_idx =
+                    (self.start_factor * self.buffer_size_f32).clamp(0.0, self.buffer_size_f32);
+                let end_idx =
+                    (self.end_factor * self.buffer_size_f32).clamp(start_idx, self.buffer_size_f32);
+                self.read_head.set_index(end_idx);
                 self.set_playing(false);
                 *sample_to_write = 0.0;
                 continue;

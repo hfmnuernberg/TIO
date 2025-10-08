@@ -309,7 +309,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
     });
 
     if (_project != null && _project!.mediaPlayerRepeatAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) {
-      _goToNextMediaPlayerWithLoadedFile();
+      final endFactor = _mediaPlayerBlock.rangeEnd;
+      final atEnd = mediaPlayerStateRust.playbackPositionFactor >= (endFactor - 0.001);
+      if (atEnd) _goToNextMediaPlayerWithLoadedFile();
     }
 
     if (_mediaPlayerBlock.markerPositions.isNotEmpty) _handleMarkers(mediaPlayerStateRust.playbackPositionFactor);
@@ -661,10 +663,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         top: 4,
         child: IconButton(
           onPressed: () async {
-            await _as.mediaPlayerSetPlaybackPosFactor(
-              posFactor: pos,
-              playerId: _mediaPlayerBlock.id,
-            );
+            await _as.mediaPlayerSetPlaybackPosFactor(posFactor: pos, playerId: _mediaPlayerBlock.id);
             await _queryAndUpdateStateFromRust();
           },
           icon: const Icon(Icons.arrow_drop_down, color: ColorTheme.primary, size: MediaPlayerParams.markerIconSize),
@@ -710,10 +709,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
       newPos = state.playbackPositionFactor - secondFactor10;
     }
     // Clamp newPos to [0.0, 1.0] before sending to Rust
-    await _as.mediaPlayerSetPlaybackPosFactor(
-      posFactor: newPos.clamp(0.0, 1.0),
-      playerId: _mediaPlayerBlock.id,
-    );
+    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: newPos.clamp(0.0, 1.0), playerId: _mediaPlayerBlock.id);
     await _queryAndUpdateStateFromRust();
   }
 
