@@ -66,6 +66,20 @@ Future<bool> mediaPlayerSetPlaybackPosFactor({required double posFactor}) =>
 Future<bool> mediaPlayerSetVolume({required double volume}) =>
     RustLib.instance.api.crateApiFfiMediaPlayerSetVolume(volume: volume);
 
+Future<bool> mediaPlayerRenderMidiToWav({
+  required String midiPath,
+  required String soundFontPath,
+  required String wavOutPath,
+  required int sampleRate,
+  required double gain,
+}) => RustLib.instance.api.crateApiFfiMediaPlayerRenderMidiToWav(
+  midiPath: midiPath,
+  soundFontPath: soundFontPath,
+  wavOutPath: wavOutPath,
+  sampleRate: sampleRate,
+  gain: gain,
+);
+
 Future<bool> metronomeStart() => RustLib.instance.api.crateApiFfiMetronomeStart();
 
 Future<bool> metronomeStop() => RustLib.instance.api.crateApiFfiMetronomeStop();

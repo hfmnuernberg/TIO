@@ -11,6 +11,20 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `deref`, `deref`, `deref`, `deref`, `initialize`, `initialize`, `initialize`, `initialize`
 // These functions are ignored (category: IgnoreBecauseExplicitAttribute): `media_player_compute_rms`, `media_player_create_stream`, `media_player_query_state`, `media_player_set_buffer`, `media_player_set_loop_value`, `media_player_set_new_volume`, `media_player_set_pitch`, `media_player_set_pos_factor`, `media_player_set_speed`, `media_player_set_trim_by_factor`, `media_player_trigger_destroy_stream`
 
+Future<bool> mediaPlayerRenderMidToWav({
+  required String midiPath,
+  required String soundfontPath,
+  required String wavOutPath,
+  required int sampleRate,
+  required double gain,
+}) => RustLib.instance.api.crateApiModulesMediaPlayerMediaPlayerRenderMidToWav(
+  midiPath: midiPath,
+  soundfontPath: soundfontPath,
+  wavOutPath: wavOutPath,
+  sampleRate: sampleRate,
+  gain: gain,
+);
+
 class MediaPlayerState {
   final bool playing;
   final double playbackPositionFactor;

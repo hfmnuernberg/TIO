@@ -172,6 +172,27 @@ class AudioSystemLogDecorator implements AudioSystem {
   }
 
   @override
+  Future<bool> mediaPlayerRenderMidiToWav({
+    required String midiPath,
+    required String soundFontPath,
+    required String wavOutPath,
+    required int sampleRate,
+    required double gain,
+  }) async {
+    final result = await _as.mediaPlayerRenderMidiToWav(
+      midiPath: midiPath,
+      soundFontPath: soundFontPath,
+      wavOutPath: wavOutPath,
+      sampleRate: sampleRate,
+      gain: gain,
+    );
+    _logger.t(
+      'mediaPlayerRenderMidiToWav(midiPath: $midiPath, soundFontPath: $soundFontPath, wavOutPath: $wavOutPath, sampleRate: $sampleRate, gain: $gain): $result',
+    );
+    return result;
+  }
+
+  @override
   Future<bool> metronomeStart() async {
     final result = await _as.metronomeStart();
     _logger.t('metronomeStart(): $result');

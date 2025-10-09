@@ -252,6 +252,7 @@ Future<void> showFormatNotSupportedDialog(BuildContext context, String? format) 
 // show a dialog to tell the user that the file could not be opened
 
 Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) {
+  print('+++++++++ showFileOpenFailedDialog for file: $fileName');
   final l10n = context.l10n;
   fileName = (fileName ?? '').isEmpty ? null : fileName;
 
