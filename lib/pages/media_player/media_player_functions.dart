@@ -1,15 +1,14 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:io';
-import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
-import 'package:tiomusic/models/sound_font.dart';
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -46,10 +45,8 @@ abstract class MediaPlayerFunctions {
     double endFactor,
     int numberOfBins,
   ) async {
-    print('++++++++++++++ Setting audio file in Rust: $absoluteFilePath');
     final isMidi = absoluteFilePath.toLowerCase().endsWith('.mid');
     final pathForPlayer = isMidi ? (await _renderMidiToTempWav(as, fs, absoluteFilePath)) : absoluteFilePath;
-    print('++++++++++++++ Path for player: $pathForPlayer, isMidi: $isMidi');
 
     if (pathForPlayer == null) return null;
 
@@ -63,21 +60,16 @@ abstract class MediaPlayerFunctions {
   }
 
   static Future<String?> _renderMidiToTempWav(AudioSystem as, FileSystem fs, String midiAbs) async {
-    // Sample rate comes from the audio engine, not the file system.
     final sampleRate = await as.getSampleRate();
 
-    // Build a temp WAV path under the FileSystem's tmp folder.
     final ts = DateTime.now().millisecondsSinceEpoch;
     final base = fs.toBasename(midiAbs).replaceAll(RegExp(r'[^\w.-]'), '_');
     final tmpDir = fs.tmpFolderPath;
     await fs.createFolder(tmpDir);
     final tmpWavAbs = '$tmpDir/$base.$ts.rendered.wav';
 
-    // Resolve a SoundFont (.sf2) file to synthesize the MIDI.
     final sf2Abs = await _resolveSoundFontPath(fs);
-    if (sf2Abs == null) {
-      return null; // Let caller show an error dialog.
-    }
+    if (sf2Abs == null) return null;
 
     final ok = await as.mediaPlayerRenderMidiToWav(
       midiPath: midiAbs,
@@ -89,17 +81,10 @@ abstract class MediaPlayerFunctions {
     return ok ? tmpWavAbs : null;
   }
 
-  static Future<String?> _resolveSoundFontPath(
-    FileSystem fs, {
-    SoundFont? soundFont, // if null, fall back to a sensible default
-  }) async {
-    // Decide which asset path to load, preferring the caller-provided enum
-    final assetPath = soundFont != null
-        ? _soundFontAssetFromEnum(soundFont)
-        : 'assets/sound_fonts/piano_01.sf2'; // default fallback you already use in Piano
+  static Future<String?> _resolveSoundFontPath(FileSystem fs) async {
+    const assetPath = 'assets/sound_fonts/piano_01.sf2';
 
     try {
-      // Copy bundled asset into a readable file path for Rust
       final data = await rootBundle.load(assetPath);
       final tmpDir = fs.tmpFolderPath;
       await fs.createFolder(tmpDir);
@@ -111,20 +96,6 @@ abstract class MediaPlayerFunctions {
     } catch (e, st) {
       _logger.e('Failed to load SoundFont asset at "$assetPath": $e\n$st');
       return null;
-    }
-  }
-
-  static String _soundFontAssetFromEnum(SoundFont sf) {
-    switch (sf) {
-      // TODO: Extend this mapping with your actual enum values
-      // Example guesses — adjust to your real names:
-      case SoundFont.piano1:
-        return 'assets/sound_fonts/piano_01.sf2';
-      // Add more cases here:
-      // case SoundFont.fluidR3:
-      //   return 'assets/sound_fonts/FluidR3_GM.sf2';
-      default:
-        return 'assets/sound_fonts/piano_01.sf2';
     }
   }
 
@@ -203,13 +174,10 @@ abstract class MediaPlayerFunctions {
     MediaPlayerBlock block,
     int numOfBins,
   ) async {
-    print('++++++++++++++ Opening audio file: ${block.relativePath}');
     final absolutePath = fs.toAbsoluteFilePath(block.relativePath);
     if (!fs.existsFile(absolutePath)) return null;
 
-    final newRms = await _setAudioFileAndTrimInRust(as, fs, absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
-    print('++++++++++++++ Audio file opened: ${newRms.toString()}');
-    return newRms;
+    return _setAudioFileAndTrimInRust(as, fs, absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }
 
   static Widget displayRecordingTimer(String label, String duration, double height) {
