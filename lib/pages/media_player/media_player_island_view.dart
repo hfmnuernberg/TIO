@@ -191,6 +191,8 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
     if (!_isPlaying) {
       await _startPlaying();
+      // await _stopPlaying();
+      // await _startPlaying();
     } else {
       await _stopPlaying();
     }
@@ -205,20 +207,19 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       _audioSessionInterruptionListenerHandle = null;
     }
 
-    await MediaPlayerFunctions.stopPlaying(_as, _audioSession, _wakelock, playerId: widget.mediaPlayerBlock.id);
+    final success = await MediaPlayerFunctions.stopPlaying(
+      _as,
+      _audioSession,
+      _wakelock,
+      playerId: widget.mediaPlayerBlock.id,
+    );
+    if (!success) _logger.e('Unable to stop playing in linked tool.');
     if (mounted) setState(() => _isPlaying = false);
   }
 
   Future<void> _startPlaying() async {
     _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(_stopPlaying);
-    // var success = await MediaPlayerFunctions.startPlaying(
-    //   _as,
-    //   _audioSession,
-    //   _wakelock,
-    //   widget.mediaPlayerBlock.looping,
-    //   widget.mediaPlayerBlock.markerPositions.isNotEmpty,
-    //   playerId: widget.mediaPlayerBlock.id,
-    // );
+
     final success = await MediaPlayerFunctions.startPlaying(
       _as,
       _audioSession,
@@ -227,8 +228,8 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       widget.mediaPlayerBlock.markerPositions.isNotEmpty,
       playerId: widget.mediaPlayerBlock.id,
     );
+    if (!success) _logger.e('Unable to start playing in linked tool.');
 
-    // if (mounted) setState(() => _isPlaying = success);
-    if (mounted && success) setState(() => _isPlaying = true);
+    if (mounted) setState(() => _isPlaying = success);
   }
 }

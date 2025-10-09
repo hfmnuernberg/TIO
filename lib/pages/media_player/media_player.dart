@@ -358,6 +358,11 @@ class _MediaPlayerState extends State<MediaPlayer> {
     MediaPlayerFunctions.stopPlaying(_as, _audioSession, _wakelock, playerId: _mediaPlayerBlock.id);
     MediaPlayerFunctions.stopRecording(_as, _wakelock);
 
+    final linkedId = _mediaPlayerBlock.islandToolID;
+    if (linkedId != null) {
+      await MediaPlayerFunctions.stopPlaying(_as, _audioSession, _wakelock, playerId: linkedId);
+    }
+
     if (playInterruptionListenerHandle != null) {
       await _audioSession.unregisterInterruptionListener(playInterruptionListenerHandle!);
     }
@@ -861,8 +866,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     if (!_isPlaying) {
       await _startPlaying();
-      await _stopPlaying();
-      await _startPlaying();
+      // await _stopPlaying();
+      // await _startPlaying();
     } else {
       await _stopPlaying();
     }
@@ -881,6 +886,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
       return;
     }
 
+    _audioSession.registerInterruptionListener(_stopPlaying);
+
+    final linkedId = _mediaPlayerBlock.islandToolID;
+
     var success = await MediaPlayerFunctions.startPlaying(
       _as,
       _audioSession,
@@ -889,11 +898,26 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _mediaPlayerBlock.markerPositions.isNotEmpty,
       playerId: _mediaPlayerBlock.id,
     );
-    _audioSession.registerInterruptionListener(_stopPlaying);
-    setState(() => _isPlaying = success);
+    if (!success) _logger.e('Unable to start playing.');
+
+    if (linkedId != null) {
+      final linkedSuccess = await MediaPlayerFunctions.startPlaying(
+        _as,
+        _audioSession,
+        _wakelock,
+        _mediaPlayerBlock.looping,
+        _mediaPlayerBlock.markerPositions.isNotEmpty,
+        playerId: linkedId,
+      );
+      if (!linkedSuccess) _logger.e('[MP] Failed to start linked player $linkedId');
+    }
+
+    if (mounted) setState(() => _isPlaying = success);
   }
 
   Future<void> _stopPlaying() async {
+    final linkedId = _mediaPlayerBlock.islandToolID;
+
     bool success = await MediaPlayerFunctions.stopPlaying(
       _as,
       _audioSession,
@@ -901,6 +925,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
       playerId: _mediaPlayerBlock.id,
     );
     if (!success) _logger.e('Unable to stop playing.');
+
+    if (linkedId != null) {
+      final linkedSuccess = await MediaPlayerFunctions.stopPlaying(_as, _audioSession, _wakelock, playerId: linkedId);
+      if (!linkedSuccess) _logger.e('[MP] Failed to stop linked player $linkedId');
+    }
+
     if (mounted) setState(() => _isPlaying = false);
   }
 
