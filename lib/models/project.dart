@@ -49,6 +49,15 @@ class Project extends ChangeNotifier {
     notifyListeners();
   }
 
+  @JsonKey(includeFromJson: true, includeToJson: true, defaultValue: false)
+  late bool _mediaPlayerRepeatAll = false;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  bool get mediaPlayerRepeatAll => _mediaPlayerRepeatAll;
+  set mediaPlayerRepeatAll(bool value) {
+    _mediaPlayerRepeatAll = value;
+    notifyListeners();
+  }
+
   void setDefaultThumbnail() {
     _thumbnailPath = TIOMusicParams.noImagePath;
     notifyListeners();

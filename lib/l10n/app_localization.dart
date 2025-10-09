@@ -16,7 +16,6 @@ abstract class AppLocalizations {
   String get appAboutTitle;
   String get appAboutVersion;
   String get appAboutVersionError;
-  String get appTutorialToolIsland;
   String get appTutorialToolSave;
 
   String get commonBasicBeat;
@@ -90,14 +89,19 @@ abstract class AppLocalizations {
   String get mediaPlayerFactor;
   String get mediaPlayerFactorAndBpm;
   String get mediaPlayerFile;
-  String get mediaPlayerLoadAudioFile;
-  String get mediaPlayerLooping;
   String get mediaPlayerMarkers;
+  String get mediaPlayerOpenFileSystem;
+  String get mediaPlayerOpenMediaLibrary;
   String get mediaPlayerOverwriteSound;
   String get mediaPlayerOverwriteSoundQuestion;
+  String get mediaPlayerPause;
   String get mediaPlayerPitch;
+  String get mediaPlayerPlay;
   String get mediaPlayerRecording;
   String get mediaPlayerRemoveMarker;
+  String get mediaPlayerRepeatAll;
+  String get mediaPlayerRepeatOff;
+  String get mediaPlayerRepeatOne;
   String get mediaPlayerSecShort;
   String get mediaPlayerSemitonesLabel;
   String get mediaPlayerSetPitch;
@@ -106,9 +110,13 @@ abstract class AppLocalizations {
   String get mediaPlayerShareAudioFile;
   String get mediaPlayerSpeed;
   String get mediaPlayerTapToTempo;
+  String get mediaPlayerTooManyFilesDescription;
+  String get mediaPlayerTooManyFilesTitle;
   String get mediaPlayerTrim;
   String get mediaPlayerTutorialAdjust;
+  String get mediaPlayerTutorialIslandTool;
   String get mediaPlayerTutorialJumpTo;
+  String get mediaPlayerTutorialRepeat;
   String get mediaPlayerTutorialStartStop;
 
   String mediaPlayerErrorFileFormatDescription(String format);
@@ -168,8 +176,11 @@ abstract class AppLocalizations {
   String get metronomeSoundTypeWood;
   String get metronomeTutorialAddNew;
   String get metronomeTutorialAdjust;
+  String get metronomeTutorialIslandTool;
+  String get metronomeTutorialModeAdvanced;
+  String get metronomeTutorialModeChange;
+  String get metronomeTutorialModeSimple;
   String get metronomeTutorialEditBeats;
-  String get metronomeTutorialRelocate;
   String get metronomeTutorialStartStop;
   String get metronomeUnaccented;
 
@@ -182,6 +193,7 @@ abstract class AppLocalizations {
   String get pianoDescription;
   String get pianoInstrumentElectricPiano1;
   String get pianoInstrumentElectricPiano2;
+  String get pianoInstrumentElectricPianoHold;
   String get pianoInstrumentGrandPiano1;
   String get pianoInstrumentGrandPiano2;
   String get pianoInstrumentHarpsichord;
@@ -191,6 +203,7 @@ abstract class AppLocalizations {
   String get pianoSetSound;
   String get pianoTutorialAdjust;
   String get pianoTutorialChangeKeyOrOctave;
+  String get pianoTutorialIslandTool;
 
   String get projectDelete;
   String get projectDeleteTool;
@@ -247,6 +260,9 @@ abstract class AppLocalizations {
   String get textImportSuccess;
 
   String get toolAddNew;
+  String get toolConnectAnother;
+  String get toolConnectExistingTool;
+  String get toolConnectNewTool;
   String get toolEmpty;
   String get toolNewProjectTitle;
   String get toolNewTitle;
@@ -274,10 +290,19 @@ abstract class AppLocalizations {
   String get tunerConcertPitchInHz;
   String get tunerDescription;
   String get tunerFrequency;
+  String get tunerInstrument;
   String get tunerPlayReference;
   String get tunerSetConcertPitch;
   String get tunerTutorialAdjust;
+  String get tunerTutorialIslandTool;
   String get tunerTutorialStartStop;
+  String get tunerTypeChromatic;
+  String get tunerTypeBass;
+  String get tunerTypeGuitar;
+  String get tunerTypeUkulele;
+  String get tunerTypeViola;
+  String get tunerTypeViolin;
+  String get tunerTypeVioloncello;
 
   String formatNumber(double number) => NumberFormat.decimalPattern(locale).format(number);
 

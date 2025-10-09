@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/rhythm_extension.dart';
+import 'package:tiomusic/util/l10n/rhythm_extension.dart';
 
 class RhythmWheel extends StatefulWidget {
   final Rhythm rhythm;

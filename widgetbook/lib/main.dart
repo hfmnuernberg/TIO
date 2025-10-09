@@ -22,7 +22,10 @@ class WidgetbookApp extends StatelessWidget {
         LocalizationAddon(locales: supportedLocales, localizationsDelegates: localizationsDelegates),
         GridAddon(10),
         InspectorAddon(),
-        BuilderAddon(name: 'Accessibility', builder: (context, child) => AccessibilityTools(child: child)),
+        BuilderAddon(
+          name: 'Accessibility',
+          builder: (context, child) => AccessibilityTools(child: child),
+        ),
         SemanticsAddon(),
       ],
     );

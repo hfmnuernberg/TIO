@@ -17,10 +17,12 @@ class InfoPage extends StatelessWidget {
         foregroundColor: ColorTheme.primary,
       ),
       backgroundColor: ColorTheme.primary92,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: textSections),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: textSections),
+          ),
         ),
       ),
     );
@@ -54,7 +56,10 @@ class TextSection extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(top: topSpacing, bottom: bottomSpacing),
-      child: Text(content, style: TextStyle(color: ColorTheme.surfaceTint, fontSize: fontSize)),
+      child: Text(
+        content,
+        style: TextStyle(color: ColorTheme.surfaceTint, fontSize: fontSize),
+      ),
     );
   }
 }

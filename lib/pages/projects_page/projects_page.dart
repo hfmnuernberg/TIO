@@ -65,6 +65,12 @@ class _ProjectsPageState extends State<ProjectsPage> {
     _showTutorial();
   }
 
+  @override
+  void dispose() {
+    _tutorial.dispose();
+    super.dispose();
+  }
+
   void _showTutorial() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final projectLibrary = context.read<ProjectLibrary>();
@@ -80,22 +86,23 @@ class _ProjectsPageState extends State<ProjectsPage> {
   }
 
   void _createTutorial() {
+    final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         null,
         context: context,
-        context.l10n.projectsTutorialHowToUseTio,
+        l10n.projectsTutorialHowToUseTio,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
       CustomTargetFocus(
         _keyAddProjectButton,
-        context.l10n.projectsTutorialAddProject,
+        l10n.projectsTutorialAddProject,
         alignText: ContentAlign.right,
         pointingDirection: PointingDirection.left,
       ),
       CustomTargetFocus(
         _keyQuickTools,
-        context.l10n.projectsTutorialStartUsingTool,
+        l10n.projectsTutorialStartUsingTool,
         alignText: ContentAlign.top,
         pointingDirection: PointingDirection.down,
         buttonsPosition: ButtonsPosition.top,
@@ -103,7 +110,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
       ),
       CustomTargetFocus(
         _keyChangeProjectOrder,
-        context.l10n.projectsTutorialChangeProjectOrder,
+        l10n.projectsTutorialChangeProjectOrder,
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
@@ -112,10 +119,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
       CustomTargetFocus(
         null,
         context: context,
-        context.l10n.projectsTutorialCanIncludeMultipleTools,
+        l10n.projectsTutorialCanIncludeMultipleTools,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
     ];
+
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showHomepageTutorial = false;
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
@@ -195,7 +203,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
     switch (blockType) {
       case BlockType.metronome:
         block = MetronomeBlock.withDefaults(context.l10n);
-        toolPage = const Metronome(isQuickTool: true);
+        toolPage = const MetronomePage(isQuickTool: true);
       case BlockType.tuner:
         block = TunerBlock.withDefaults(context.l10n);
         toolPage = const Tuner(isQuickTool: true);
@@ -204,7 +212,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         toolPage = const MediaPlayer(isQuickTool: true);
       case BlockType.piano:
         block = PianoBlock.withDefaults(context.l10n);
-        toolPage = const Piano(isQuickTool: true);
+        toolPage = const PianoPage(isQuickTool: true);
       default:
         throw Exception('Wrong BlockType');
     }
@@ -227,7 +235,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         .then(doActionOnReturn);
   }
 
-  void doActionOnReturn(returnValue) {
+  void doActionOnReturn(Object? returnValue) {
     setState(() {});
 
     if (returnValue is Map) {
@@ -256,10 +264,9 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
       return AlertDialog(
         title: Text(l10n.commonDelete, style: const TextStyle(color: ColorTheme.primary)),
-        content:
-            deleteAll
-                ? Text(l10n.projectsDeleteAllConfirmation, style: TextStyle(color: ColorTheme.primary))
-                : Text(l10n.projectsDeleteConfirmation, style: TextStyle(color: ColorTheme.primary)),
+        content: deleteAll
+            ? Text(l10n.projectsDeleteAllConfirmation, style: TextStyle(color: ColorTheme.primary))
+            : Text(l10n.projectsDeleteConfirmation, style: TextStyle(color: ColorTheme.primary)),
         actions: [
           TextButton(
             onPressed: () {
@@ -341,11 +348,10 @@ class _ProjectsPageState extends State<ProjectsPage> {
   Future<void> _handleGoToProject(Project project, bool withoutRealProject) async {
     final result = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder:
-            (context) => ChangeNotifierProvider<Project>.value(
-              value: project,
-              child: ProjectPage(goStraightToTool: false, withoutRealProject: withoutRealProject),
-            ),
+        builder: (context) => ChangeNotifierProvider<Project>.value(
+          value: project,
+          child: ProjectPage(goStraightToTool: false, withoutRealProject: withoutRealProject),
+        ),
       ),
     );
     doActionOnReturn(result);
@@ -429,98 +435,99 @@ class _ProjectsPageState extends State<ProjectsPage> {
           ),
         ],
       ),
-      body: Stack(
-        alignment: Alignment.bottomCenter,
-        fit: StackFit.expand,
-        children: [
-          FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
+      body: SafeArea(
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          fit: StackFit.expand,
+          children: [
+            FittedBox(fit: BoxFit.fill, child: Image.asset('assets/images/tiomusic-bg.png')),
 
-          Column(
-            children: [
-              Expanded(
-                child: Consumer<ProjectLibrary>(
-                  builder:
-                      (context, projectLibrary, child) => Stack(
-                        children: [
-                          if (projectLibrary.projects.isEmpty)
-                            Padding(
-                              padding: const EdgeInsets.all(40),
-                              child: Text(
-                                l10n.projectsNoProjects,
-                                style: const TextStyle(color: Colors.white, fontSize: 42),
-                              ),
-                            )
-                          else if (_isEditing)
-                            EditableProjectList(
-                              projectLibrary: projectLibrary,
-                              onDelete: _handleDelete,
-                              onReorder: _handleReorder,
-                            )
-                          else
-                            ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
-
-                          Positioned(
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
-                              child: EditProjectsBar(
-                                key: _keyChangeProjectOrder,
-                                isEditing: _isEditing,
-                                onAddProject: _handleNew,
-                                onToggleEditing: _toggleEditingMode,
-                              ),
+            Column(
+              children: [
+                Expanded(
+                  child: Consumer<ProjectLibrary>(
+                    builder: (context, projectLibrary, child) => Stack(
+                      children: [
+                        if (projectLibrary.projects.isEmpty)
+                          Padding(
+                            padding: const EdgeInsets.all(40),
+                            child: Text(
+                              l10n.projectsNoProjects,
+                              style: const TextStyle(color: Colors.white, fontSize: 42),
                             ),
+                          )
+                        else if (_isEditing)
+                          EditableProjectList(
+                            projectLibrary: projectLibrary,
+                            onDelete: _handleDelete,
+                            onReorder: _handleReorder,
+                          )
+                        else
+                          ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
+
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
+                            child: EditProjectsBar(
+                              key: _keyChangeProjectOrder,
+                              isEditing: _isEditing,
+                              onAddProject: _handleNew,
+                              onToggleEditing: _toggleEditingMode,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: TIOMusicParams.edgeInset, bottom: TIOMusicParams.edgeInset),
+                  color: ColorTheme.surface,
+                  child: Column(
+                    key: _keyQuickTools,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          QuickToolButton(
+                            icon: blockTypes[BlockType.metronome]!.icon,
+                            label: l10n.metronome,
+                            onTap: () => _onQuickToolTapped(BlockType.metronome),
+                          ),
+                          QuickToolButton(
+                            icon: blockTypes[BlockType.mediaPlayer]!.icon,
+                            label: l10n.mediaPlayer,
+                            onTap: () => _onQuickToolTapped(BlockType.mediaPlayer),
                           ),
                         ],
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          QuickToolButton(
+                            icon: blockTypes[BlockType.tuner]!.icon,
+                            label: l10n.tuner,
+                            onTap: () => _onQuickToolTapped(BlockType.tuner),
+                          ),
+                          QuickToolButton(
+                            icon: blockTypes[BlockType.piano]!.icon,
+                            label: l10n.piano,
+                            onTap: () => _onQuickToolTapped(BlockType.piano),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.only(top: TIOMusicParams.edgeInset, bottom: TIOMusicParams.edgeInset),
-                color: ColorTheme.surface,
-                child: Column(
-                  key: _keyQuickTools,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        QuickToolButton(
-                          icon: blockTypes[BlockType.metronome]!.icon,
-                          label: l10n.metronome,
-                          onTap: () => _onQuickToolTapped(BlockType.metronome),
-                        ),
-                        QuickToolButton(
-                          icon: blockTypes[BlockType.mediaPlayer]!.icon,
-                          label: l10n.mediaPlayer,
-                          onTap: () => _onQuickToolTapped(BlockType.mediaPlayer),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        QuickToolButton(
-                          icon: blockTypes[BlockType.tuner]!.icon,
-                          label: l10n.tuner,
-                          onTap: () => _onQuickToolTapped(BlockType.tuner),
-                        ),
-                        QuickToolButton(
-                          icon: blockTypes[BlockType.piano]!.icon,
-                          label: l10n.piano,
-                          onTap: () => _onQuickToolTapped(BlockType.piano),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          if (_showBanner) SurveyBanner(onClose: () => setState(() => _showBanner = false)) else const SizedBox(),
-        ],
+              ],
+            ),
+            if (_showBanner) SurveyBanner(onClose: () => setState(() => _showBanner = false)) else const SizedBox(),
+          ],
+        ),
       ),
     );
   }

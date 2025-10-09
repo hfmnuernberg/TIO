@@ -41,10 +41,9 @@ class ProjectList extends StatelessWidget {
             color: ColorTheme.primaryFixedDim,
             onPressed: () => onGoToProject(project, false),
           ),
-          leadingPicture:
-              project.thumbnailPath.isEmpty
-                  ? AssetImage(TIOMusicParams.tiomusicIconPath)
-                  : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
+          leadingPicture: project.thumbnailPath.isEmpty
+              ? AssetImage(TIOMusicParams.tiomusicIconPath)
+              : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
           onTapFunction: () => onGoToProject(project, false),
         );
       },

@@ -1,10 +1,9 @@
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use lazy_static::__Deref;
 use pitch_shift::PitchShifter;
-use std::f32::EPSILON;
 use std::mem::MaybeUninit;
 use std::ops::DerefMut;
-use std::sync::mpsc::{channel, Receiver, Sender};
+use std::sync::mpsc::{Receiver, Sender, channel};
 use std::sync::{Arc, Mutex};
 use std::thread::{self, JoinHandle};
 use std::time::Duration;
@@ -132,37 +131,39 @@ pub fn media_player_create_stream() -> bool {
     });
 
     let (channel_sender_ps, channel_receiver_ps): (Sender<()>, Receiver<()>) = channel();
-    let pitch_shift_thread = thread::spawn(move || loop {
-        let mut audio_processing_data = PROCESSING_DATA
-            .lock()
-            .expect("Could not lock mutex to PROCESSING_DATA");
-
-        if let Ok(_command) = channel_receiver_ps.try_recv() {
-            return;
-        }
-
-        if producer.len() < MEDIA_PLAYER_PLAYBACK_MAX_BUFFERING {
-            let mut audio_source_data = SOURCE_DATA
+    let pitch_shift_thread = thread::spawn(move || {
+        loop {
+            let mut audio_processing_data = PROCESSING_DATA
                 .lock()
-                .expect("Could not lock mutex to SOURCE_DATA");
+                .expect("Could not lock mutex to PROCESSING_DATA");
 
-            if !audio_source_data.get_is_playing() {
-                media_player_trigger_destroy_stream();
+            if let Ok(_command) = channel_receiver_ps.try_recv() {
                 return;
             }
 
-            let read_speed = audio_processing_data.speed_change_factor;
-            audio_source_data.get_samples(
-                &mut audio_processing_data.buffer_after_speed_change,
-                read_speed,
-            );
+            if producer.len() < MEDIA_PLAYER_PLAYBACK_MAX_BUFFERING {
+                let mut audio_source_data = SOURCE_DATA
+                    .lock()
+                    .expect("Could not lock mutex to SOURCE_DATA");
 
-            pitch_shift(&mut audio_processing_data);
+                if !audio_source_data.get_is_playing() {
+                    media_player_trigger_destroy_stream();
+                    return;
+                }
 
-            for sample in audio_processing_data.buffer_after_pitch_shift.iter() {
-                producer
-                    .push(*sample)
-                    .expect("Could not push samples to ringbuffer");
+                let read_speed = audio_processing_data.speed_change_factor;
+                audio_source_data.get_samples(
+                    &mut audio_processing_data.buffer_after_speed_change,
+                    read_speed,
+                );
+
+                pitch_shift(&mut audio_processing_data);
+
+                for sample in audio_processing_data.buffer_after_pitch_shift.iter() {
+                    producer
+                        .push(*sample)
+                        .expect("Could not push samples to ringbuffer");
+                }
             }
         }
     });
@@ -218,40 +219,37 @@ fn on_audio_callback(samples_out: &mut [f32], _: &cpal::OutputCallbackInfo) {
         .lock()
         .expect("Could not lock mutex to VOLUME to get it in on_audio_out_callback");
 
-    match RING_CONSUMER
+    if let Some(ring_consumer) = RING_CONSUMER
         .lock()
         .expect("Could not lock mutex to RING_CONSUMER")
         .deref_mut()
     {
-        Some(ring_consumer) => {
-            if ring_consumer.len() < MEDIA_PLAYER_PLAYBACK_MIN_BUFFERING.max(samples_out.len()) {
-                log::info!("buffering...");
-                return;
-            }
+        if ring_consumer.len() < MEDIA_PLAYER_PLAYBACK_MIN_BUFFERING.max(samples_out.len()) {
+            log::info!("buffering...");
+            return;
+        }
 
-            // write to output
-            for i in 0..samples_out.len() / NUM_CHANNELS {
-                match ring_consumer.pop() {
-                    Some(sample) => {
-                        for channel in 0..NUM_CHANNELS {
-                            let index_out = i * NUM_CHANNELS + channel;
-                            samples_out[index_out] = sample * vol * 4.0;
-                        }
+        // write to output
+        for i in 0..samples_out.len() / NUM_CHANNELS {
+            match ring_consumer.pop() {
+                Some(sample) => {
+                    for channel in 0..NUM_CHANNELS {
+                        let index_out = i * NUM_CHANNELS + channel;
+                        samples_out[index_out] = sample * vol * 4.0;
                     }
-                    None => {
-                        log::info!("Mediaplayer ring buffer empty - cannot write to audio output");
-                        break;
-                    }
+                }
+                None => {
+                    log::info!("Mediaplayer ring buffer empty - cannot write to audio output");
+                    break;
                 }
             }
         }
-        None => {}
     }
 }
 
 fn pitch_shift(audio_processing_data: &mut AudioProcessingData) {
-    if (audio_processing_data.speed_change_factor - 1.0).abs() < EPSILON
-        && audio_processing_data.pitch_change_semitones.abs() < EPSILON
+    if (audio_processing_data.speed_change_factor - 1.0).abs() < f32::EPSILON
+        && audio_processing_data.pitch_change_semitones.abs() < f32::EPSILON
     {
         // no pitch shift needed
         for (i, sample) in audio_processing_data

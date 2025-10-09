@@ -24,7 +24,6 @@ class English extends AppLocalizations {
   String get appAboutTitle => 'About';
   String get appAboutVersion => 'App Version';
   String get appAboutVersionError => 'Could not load app version.';
-  String get appTutorialToolIsland => 'Tap here to combine your tool with other tools.';
   String get appTutorialToolSave => 'Tap here to copy your tool to another project.';
 
   String get commonBasicBeat => 'Basic beat';
@@ -106,15 +105,20 @@ class English extends AppLocalizations {
   String get mediaPlayerFactor => 'Factor';
   String get mediaPlayerFactorAndBpm => 'Factor and BPM slider';
   String get mediaPlayerFile => 'File';
-  String get mediaPlayerLoadAudioFile => 'Load audio file';
-  String get mediaPlayerLooping => 'Looping';
   String get mediaPlayerMarkers => 'Markers';
+  String get mediaPlayerOpenFileSystem => 'Open files';
+  String get mediaPlayerOpenMediaLibrary => 'Open media library';
   String get mediaPlayerOverwriteSound => 'Overwrite?';
   String get mediaPlayerOverwriteSoundQuestion =>
       'Do you want to overwrite the current audio file and start recording?';
+  String get mediaPlayerPause => 'Pause';
   String get mediaPlayerPitch => 'Pitch';
+  String get mediaPlayerPlay => 'Play';
   String get mediaPlayerRecording => 'Recording...';
   String get mediaPlayerRemoveMarker => 'Remove selected marker';
+  String get mediaPlayerRepeatAll => 'Repeat all media player';
+  String get mediaPlayerRepeatOff => 'Repeat no media player';
+  String get mediaPlayerRepeatOne => 'Repeat media player';
   String get mediaPlayerSecShort => 'Sec';
   String get mediaPlayerSemitonesLabel => 'Semitones';
   String get mediaPlayerSetPitch => 'Set pitch';
@@ -123,10 +127,17 @@ class English extends AppLocalizations {
   String get mediaPlayerShareAudioFile => 'Share audio file';
   String get mediaPlayerSpeed => 'Tempo';
   String get mediaPlayerTapToTempo => 'Tap to tempo';
+  String get mediaPlayerTooManyFilesDescription =>
+      'Due to technical limitations, only 10 files can be loaded at once.\n\nPlease repeat the process for any files that were not loaded this time.';
+  String get mediaPlayerTooManyFilesTitle => 'Too many files';
   String get mediaPlayerTrim => 'Trim';
   String get mediaPlayerTutorialAdjust =>
       'Tap here to adjust your audio file. You can set the volume and the basic beat, trim your file and set markers, as well as change the pitch and tempo afterwards.';
+  String get mediaPlayerTutorialIslandTool =>
+      'Tap here to combine your Media Player with a Tuner or Metronome.\n\nYou can link your Media Player with an existing tool or create a new tool and link it.';
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file.';
+  String get mediaPlayerTutorialRepeat =>
+      'Enable repeated playback for this media player. By tapping again, you can also play all media players in this project that contain a sound file one after another.';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file.';
 
   String mediaPlayerErrorFileFormatDescription(String format) =>
@@ -189,9 +200,14 @@ class English extends AppLocalizations {
   String get metronomeSoundTypeWood => 'wood';
   String get metronomeTutorialAddNew => 'Tap here to add a second metronome.';
   String get metronomeTutorialAdjust => 'Tap here to adjust the metronome settings.';
-  String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted.';
-  String get metronomeTutorialRelocate =>
+  String get metronomeTutorialIslandTool =>
+      'Tap here to combine your Metronome with a Tuner or Media Player.\n\nYou can link your Metronome with an existing tool or create a new tool and link it.';
+  String get metronomeTutorialModeAdvanced =>
       'Hold and drag sideways to relocate a bar, swipe upwards to delete a bar, or tap to edit the selected bar.';
+  String get metronomeTutorialModeChange =>
+      'You can switch between basic and advanced mode using the menu in the top right corner.';
+  String get metronomeTutorialModeSimple => 'Here you can set the basic beats and the rhythm pattern.';
+  String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted.';
   String get metronomeTutorialStartStop => 'Tap here to start and stop the metronome.';
   String get metronomeUnaccented => 'Unaccented';
 
@@ -205,15 +221,19 @@ class English extends AppLocalizations {
   String get pianoDescription => 'No piano around? Try out a piece or play some chords.';
   String get pianoInstrumentElectricPiano1 => 'Electric Piano 1';
   String get pianoInstrumentElectricPiano2 => 'Electric Piano 2';
+  String get pianoInstrumentElectricPianoHold => 'Electric Piano (H)';
   String get pianoInstrumentGrandPiano1 => 'Grand Piano 1';
   String get pianoInstrumentGrandPiano2 => 'Grand Piano 2';
   String get pianoInstrumentHarpsichord => 'Harpsichord';
-  String get pianoInstrumentPipeOrgan => 'Pipe Organ';
+  String get pianoInstrumentPipeOrgan => 'Pipe Organ (H)';
   String get pianoLowestKey => 'Lowest piano key';
   String get pianoSetConcertPitch => 'Set concert pitch';
   String get pianoSetSound => 'Set piano sound';
-  String get pianoTutorialAdjust => 'Tap here to adjust concert pitch, volume, and sound.';
+  String get pianoTutorialAdjust =>
+      'Tap here to adjust concert pitch, volume, and sound. If you have selected a sound with a hold function, the H button will no longer appear grayed out.';
   String get pianoTutorialChangeKeyOrOctave => 'Tap the left or right arrows to move up or down per key or per octave.';
+  String get pianoTutorialIslandTool =>
+      'Tap here to combine your Piano with a Tuner, Media Player, or Metronome.\n\nYou can link your Piano with an existing tool or create a new tool and link it.';
 
   String get projectDelete => 'Delete project';
   String get projectDeleteTool => 'Delete tool';
@@ -277,6 +297,9 @@ class English extends AppLocalizations {
   String get textImportSuccess => 'Text imported successfully!';
 
   String get toolAddNew => 'Add new tool';
+  String get toolConnectAnother => 'Connect another tool';
+  String get toolConnectExistingTool => 'Connect a tool';
+  String get toolConnectNewTool => 'Connect a new tool';
   String get toolEmpty => 'Empty';
   String get toolNewProjectTitle => 'Project title';
   String get toolNewTitle => 'Tool title';
@@ -293,7 +316,8 @@ class English extends AppLocalizations {
   String get toolSaveInNewProject => 'Save in new project';
   String get toolTitleCopy => 'Copy';
   String get toolTutorialEditTitle => 'Tap here to edit the title of your tool.';
-  String get toolTutorialSave => 'Tap here to save the tool to a project.';
+  String get toolTutorialSave =>
+      'Tap here to save the tool to a project.\n\nOnce this tool is part of a project, you can link it with other tools.';
   String get toolUseBookmarkToSave => 'Use bookmark to save a tool.';
 
   String toolHasNoIslandView(String tool) => '$tool has no compact view!';
@@ -306,10 +330,21 @@ class English extends AppLocalizations {
   String get tunerConcertPitchInHz => 'Concert pitch in Hz';
   String get tunerDescription => 'Tune your instrument or use reference tones.';
   String get tunerFrequency => 'Frequency';
+  String get tunerInstrument => 'Instrument';
   String get tunerPlayReference => 'Play reference';
   String get tunerSetConcertPitch => 'Set concert pitch';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';
-  String get tunerTutorialStartStop => 'Tap here to start and stop the tuner.';
+  String get tunerTutorialIslandTool =>
+      'Tap here to combine your Tuner with a Metronome or Media Player.\n\nYou can link your Tuner with an existing tool or create a new tool and link it.';
+  String get tunerTutorialStartStop =>
+      'Tap here to start and stop the tuner.\n\nWhen the note fades out, overtones may cause incorrect readings. It’s best to strike the note again.';
+  String get tunerTypeChromatic => 'Chromatic Tuner';
+  String get tunerTypeBass => 'Bass';
+  String get tunerTypeGuitar => 'Guitar';
+  String get tunerTypeUkulele => 'Ukulele';
+  String get tunerTypeViola => 'Viola';
+  String get tunerTypeViolin => 'Violin';
+  String get tunerTypeVioloncello => 'Violoncello';
 
   String formatDateAndTime(DateTime time) => DateFormat('dd/MM/yyyy - HH:mm:ss').format(time);
 }

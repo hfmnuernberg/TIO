@@ -93,34 +93,45 @@ class _ProjectPageState extends State<ProjectPage> {
       _project.timeLastModified = getCurrentDateTime();
     });
 
-    if (context.read<ProjectLibrary>().showProjectPageTutorial && _project.blocks.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!widget.goStraightToTool &&
+          _project.blocks.isNotEmpty &&
+          context.read<ProjectLibrary>().showProjectPageTutorial) {
         _createTutorial();
         _tutorial.show(context);
-      });
-    }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tutorial.dispose();
+    _titleController.dispose();
+    super.dispose();
   }
 
   void _toggleEditingMode() => setState(() => _isEditing = !_isEditing);
 
   void _createTutorial() {
+    final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyChangeTitle,
-        context.l10n.projectTutorialEditTitle,
+        l10n.projectTutorialEditTitle,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
       ),
       CustomTargetFocus(
         _keyChangeToolOrder,
-        context.l10n.projectTutorialChangeToolOrder,
+        l10n.projectTutorialChangeToolOrder,
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
         alignText: ContentAlign.top,
         shape: ShapeLightFocus.RRect,
       ),
     ];
+
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showProjectPageTutorial = false;
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
@@ -174,10 +185,9 @@ class _ProjectPageState extends State<ProjectPage> {
 
       return AlertDialog(
         title: Text(l10n.commonDelete, style: TextStyle(color: ColorTheme.primary)),
-        content:
-            deleteAll
-                ? Text(l10n.projectDeleteAllToolsConfirmation, style: TextStyle(color: ColorTheme.primary))
-                : Text(l10n.projectDeleteToolConfirmation, style: TextStyle(color: ColorTheme.primary)),
+        content: deleteAll
+            ? Text(l10n.projectDeleteAllToolsConfirmation, style: TextStyle(color: ColorTheme.primary))
+            : Text(l10n.projectDeleteToolConfirmation, style: TextStyle(color: ColorTheme.primary)),
         actions: [
           TextButton(
             onPressed: () {
@@ -295,11 +305,10 @@ class _ProjectPageState extends State<ProjectPage> {
                 child: Text(context.l10n.projectExport, style: TextStyle(color: ColorTheme.primary)),
               ),
               MenuItemButton(
-                onPressed:
-                    () => setState(() {
-                      _showBlocks = false;
-                      _isEditing = false;
-                    }),
+                onPressed: () => setState(() {
+                  _showBlocks = false;
+                  _isEditing = false;
+                }),
                 child: Text(context.l10n.toolAddNew, style: TextStyle(color: ColorTheme.primary)),
               ),
               MenuItemButton(
@@ -337,11 +346,10 @@ class _ProjectPageState extends State<ProjectPage> {
       bottomNavigationBar: EditProjectBar(
         key: _keyChangeToolOrder,
         isEditing: _isEditing,
-        onAddTool:
-            () => setState(() {
-              _showBlocks = false;
-              _isEditing = false;
-            }),
+        onAddTool: () => setState(() {
+          _showBlocks = false;
+          _isEditing = false;
+        }),
         onToggleEditing: _toggleEditingMode,
       ),
     );

@@ -46,10 +46,9 @@ class _ParentInnerIslandState extends State<ParentInnerIsland> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
-              child:
-                  widget.centerView is CustomPainter
-                      ? CustomPaint(key: widget.customPaintKey, painter: widget.centerView, size: Size.infinite)
-                      : widget.centerView,
+              child: widget.centerView is CustomPainter
+                  ? CustomPaint(key: widget.customPaintKey, painter: widget.centerView, size: Size.infinite)
+                  : widget.centerView,
             ),
           ),
           SizedBox(

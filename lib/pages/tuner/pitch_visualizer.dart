@@ -11,7 +11,7 @@ class PitchOffset {
     offsetFactor = 0.5;
   }
 
-  PitchOffset.withValue(offsetMidi) {
+  PitchOffset.withValue(double offsetMidi) {
     isValue = true;
     offsetFactor = clampDouble(offsetMidi + 0.5, 0, 1);
   }
@@ -39,21 +39,18 @@ class PitchVisualizer extends CustomPainter {
     _dirty = false;
     final spaceBetweenVerticalLines = size.width * _offsetTolerance;
 
-    var paintCircle =
-        Paint()
-          ..color = ColorTheme.tertiary60
-          ..strokeWidth = 8
-          ..style = PaintingStyle.stroke;
+    var paintCircle = Paint()
+      ..color = ColorTheme.tertiary60
+      ..strokeWidth = 8
+      ..style = PaintingStyle.stroke;
 
-    var paintLine =
-        Paint()
-          ..color = Colors.white
-          ..strokeWidth = 4;
+    var paintLine = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 4;
 
-    var paintVerticalLine =
-        Paint()
-          ..color = ColorTheme.primaryFixedDim
-          ..strokeWidth = 2;
+    var paintVerticalLine = Paint()
+      ..color = ColorTheme.primaryFixedDim
+      ..strokeWidth = 2;
 
     var paintRect = Paint()..color = ColorTheme.primaryFixedDim;
 

@@ -16,7 +16,7 @@ DIRECTORY="$1"
 
 FILE_TYPES="*.js *.mjs *.jsx *.ts *.tsx *.dart *.java *.kt *.sh"
 
-IGNORED_FOLDERS="node_modules .dart_tool .fvm .git .idea build coverage android/.gradle ios/.symlinks ios/Pods"
+IGNORED_FOLDERS="node_modules .dart_tool .expo .fvm .git .idea build coverage android/.gradle ios/.symlinks ios/Pods"
 
 MAX_LINES=200
 

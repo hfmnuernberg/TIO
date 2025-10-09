@@ -1,24 +1,22 @@
 import 'dart:async';
-import 'package:audio_session/audio_session.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/metronome_block.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
-import 'package:tiomusic/pages/metronome/metronome_functions.dart';
-import 'package:tiomusic/pages/metronome/metronome_utils.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
+import 'package:tiomusic/services/audio_session.dart';
+import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
-import 'package:tiomusic/src/rust/api/modules/metronome.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/log.dart';
-import 'package:tiomusic/util/util_functions.dart';
+import 'package:tiomusic/domain/metronome/metronome.dart';
+import 'package:tiomusic/domain/metronome/metronome_beat.dart';
 import 'package:tiomusic/widgets/metronome/beat/beat_button.dart';
 import 'package:tiomusic/widgets/metronome/beat/beat_button_type.dart';
-import 'package:tiomusic/widgets/metronome/current_beat.dart';
 
 class MetronomeIslandView extends StatefulWidget {
   final MetronomeBlock metronomeBlock;
@@ -30,122 +28,75 @@ class MetronomeIslandView extends StatefulWidget {
 }
 
 class _MetronomeIslandViewState extends State<MetronomeIslandView> {
-  static final _logger = createPrefixLogger('MetronomeIslandView');
+  late final Metronome metronome;
 
-  late FileSystem _fs;
-
-  bool _isStarted = false;
-  late Timer _beatDetection;
-
-  CurrentBeat currentPrimaryBeat = CurrentBeat();
-  CurrentBeat currentSecondaryBeat = CurrentBeat();
-
-  bool _processingButtonClick = false;
-
-  StreamSubscription<AudioInterruptionEvent>? audioInterruptionListener;
+  bool processingButtonClick = false;
 
   @override
   void initState() {
     super.initState();
 
-    _fs = context.read<FileSystem>();
-
-    metronomeSetVolume(volume: widget.metronomeBlock.volume);
-    metronomeSetRhythm(
-      bars: getRhythmAsMetroBar(widget.metronomeBlock.rhythmGroups),
-      bars2: getRhythmAsMetroBar(widget.metronomeBlock.rhythmGroups2),
+    metronome = Metronome(
+      context.read<AudioSystem>(),
+      context.read<AudioSession>(),
+      context.read<FileSystem>(),
+      context.read<Wakelock>(),
+      onBeatEvent: refresh,
     );
-    metronomeSetBpm(bpm: widget.metronomeBlock.bpm.toDouble());
-    metronomeSetBeatMuteChance(muteChance: widget.metronomeBlock.randomMute.toDouble() / 100.0);
-    metronomeSetMuted(muted: false);
 
-    MetronomeUtils.loadSounds(_fs, widget.metronomeBlock);
-
-    _beatDetection = Timer.periodic(const Duration(milliseconds: MetronomeParams.beatDetectionDurationMillis), (t) {
-      if (!mounted) {
-        t.cancel();
-        return;
-      }
-      if (!_isStarted) return;
-
-      metronomePollBeatEventHappened().then((event) {
-        if (event != null) onBeatHappened(event);
-      });
-      if (!mounted) return;
-      setState(() {});
-    });
+    // metronome.mute(); // TODO
+    metronome.setVolume(widget.metronomeBlock.volume);
+    metronome.setBpm(widget.metronomeBlock.bpm);
+    metronome.setChanceOfMuteBeat(widget.metronomeBlock.randomMute);
+    metronome.setRhythm(widget.metronomeBlock.rhythmGroups, widget.metronomeBlock.rhythmGroups2);
+    metronome.sounds.loadAllSounds(widget.metronomeBlock);
   }
 
   @override
   void deactivate() {
-    stopMetronome();
-    _beatDetection.cancel();
+    metronome.stop();
     super.deactivate();
   }
 
-  void onBeatHappened(BeatHappenedEvent event) {
-    if (event.isRandomMute) return;
-
-    Timer(Duration(milliseconds: event.millisecondsBeforeStart), () {
-      if (!mounted) return;
-      currentPrimaryBeat = MetronomeUtils.getCurrentPrimaryBeatFromEvent(isOn: true, event: event);
-      currentSecondaryBeat = MetronomeUtils.getCurrentSecondaryBeatFromEvent(isOn: true, event: event);
-      setState(() {});
-    });
-
-    Timer(Duration(milliseconds: event.millisecondsBeforeStart + MetronomeParams.flashDurationInMs), () {
-      if (!mounted) return;
-      currentPrimaryBeat = MetronomeUtils.getCurrentPrimaryBeatFromEvent(isOn: false, event: event);
-      currentSecondaryBeat = MetronomeUtils.getCurrentSecondaryBeatFromEvent(isOn: false, event: event);
-      setState(() {});
-    });
+  @override
+  void dispose() {
+    metronome.stop();
+    super.dispose();
   }
 
-  void onMetronomeToggleButtonClicked() async {
-    if (_processingButtonClick) return;
-    setState(() => _processingButtonClick = true);
+  Future<void> refresh(_) async {
+    if (!mounted) return metronome.stop();
+    setState(() {});
+  }
 
-    if (_isStarted) {
-      await stopMetronome();
+  Future<void> onMetronomeToggleButtonClicked() async {
+    if (processingButtonClick) return;
+    setState(() => processingButtonClick = true);
+
+    if (metronome.isOn) {
+      await metronome.stop();
     } else {
-      await startMetronome();
+      await metronome.start();
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
-    setState(() => _processingButtonClick = false);
-  }
-
-  Future<void> startMetronome() async {
-    audioInterruptionListener = (await AudioSession.instance).interruptionEventStream.listen((event) {
-      if (event.type == AudioInterruptionType.unknown) stopMetronome();
-    });
-    final success = await MetronomeFunctions.start();
-    if (!success) {
-      _logger.e('Unable to start metronome.');
-      return;
-    }
-    _isStarted = true;
-  }
-
-  Future<void> stopMetronome() async {
-    await audioInterruptionListener?.cancel();
-    await MetronomeFunctions.stop();
-    _isStarted = false;
+    setState(() => processingButtonClick = false);
   }
 
   @override
   Widget build(BuildContext context) {
     return ParentInnerIsland(
       onMainIconPressed: onMetronomeToggleButtonClicked,
-      mainIcon:
-          _isStarted ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.metronomeBlock.icon,
+      mainIcon: metronome.isOn
+          ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary)
+          : widget.metronomeBlock.icon,
       parameterText: '${widget.metronomeBlock.bpm} ${context.l10n.commonBpm}',
       centerView: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Beats(rhythmGroups: widget.metronomeBlock.rhythmGroups, currentBeat: currentPrimaryBeat),
+          Beats(rhythmGroups: widget.metronomeBlock.rhythmGroups, currentBeat: metronome.currentBeat),
           if (widget.metronomeBlock.rhythmGroups2.isNotEmpty)
-            Beats(rhythmGroups: widget.metronomeBlock.rhythmGroups2, currentBeat: currentSecondaryBeat),
+            Beats(rhythmGroups: widget.metronomeBlock.rhythmGroups2, currentBeat: metronome.currentSecondaryBeat),
         ],
       ),
       textSpaceWidth: 60,
@@ -155,7 +106,7 @@ class _MetronomeIslandViewState extends State<MetronomeIslandView> {
 
 class Beats extends StatelessWidget {
   final List<RhythmGroup> rhythmGroups;
-  final CurrentBeat currentBeat;
+  final MetronomeBeat currentBeat;
 
   const Beats({super.key, required this.rhythmGroups, required this.currentBeat});
 
@@ -165,10 +116,9 @@ class Beats extends StatelessWidget {
 
   bool get isPolyBeatHighlighted => currentBeat.polyBeatIndex != null;
 
-  String get beatsText =>
-      rhythmGroup.beats.isEmpty && rhythmGroup.polyBeats.isEmpty
-          ? '${rhythmGroup.beats.length}'
-          : '${rhythmGroup.beats.length}:${rhythmGroup.polyBeats.length}';
+  String get beatsText => rhythmGroup.beats.isEmpty && rhythmGroup.polyBeats.isEmpty
+      ? '${rhythmGroup.beats.length}'
+      : '${rhythmGroup.beats.length}:${rhythmGroup.polyBeats.length}';
 
   @override
   Widget build(BuildContext context) {

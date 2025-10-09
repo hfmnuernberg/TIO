@@ -1,0 +1,55 @@
+name: Semantic Release
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+        description: The commit SHA, tag or release
+    outputs:
+      new_release_published:
+        description: Whether a new semantic release was created or not
+        value: ${{ jobs.semantic-release.outputs.new_release_published }}
+      new_release_version:
+        description: The new semantic release version (e.g., 1.2.3)
+        value: ${{ jobs.semantic-release.outputs.new_release_version }}
+
+jobs:
+  semantic-release:
+    name: Semantic release
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
+    outputs:
+      new_release_published: ${{ steps.new_release_published.outputs.new_release_published }}
+      new_release_version: ${{ steps.new_release_version.outputs.new_release_version }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v5.0.0
+      with:
+        ref: ${{ inputs.ref }}
+        fetch-depth: 0
+
+    - name: Create GitHub release
+      id: release
+      uses: cycjimmy/semantic-release-action@v5.0.0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Export if new release was published
+      id: new_release_published
+      run: echo "new_release_published=${{ steps.release.outputs.new_release_published }}" >> "$GITHUB_OUTPUT"
+
+    - name: Export new release version
+      id: new_release_version
+      run: echo "new_release_version=${{ steps.release.outputs.new_release_version || 'none' }}" >> "$GITHUB_OUTPUT"
+
+    - name: Report new release version
+      run: |
+        echo "New version: \`${{ steps.release.outputs.new_release_version || 'none' }}\`" >> $GITHUB_STEP_SUMMARY

@@ -75,23 +75,26 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             const SizedBox(height: TIOMusicParams.edgeInset),
             Expanded(
               child:
-              // stack for waveform and markers
-              Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
-                    child:
-                    // waveform with gesture detector to jump to position on wave tap
-                    GestureDetector(
-                      onTapDown: _onWaveTap,
-                      child: CustomPaint(painter: _waveformVisualizer, size: Size(_waveFormWidth, _waveFormHeight)),
-                    ),
-                  ),
+                  // stack for waveform and markers
+                  Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
+                        child:
+                            // waveform with gesture detector to jump to position on wave tap
+                            GestureDetector(
+                              onTapDown: _onWaveTap,
+                              child: CustomPaint(
+                                painter: _waveformVisualizer,
+                                size: Size(_waveFormWidth, _waveFormHeight),
+                              ),
+                            ),
+                      ),
 
-                  // markers
-                  Stack(children: _buildMarkers()),
-                ],
-              ),
+                      // markers
+                      Stack(children: _buildMarkers()),
+                    ],
+                  ),
             ),
             Slider(
               value: _sliderValue,
@@ -160,8 +163,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         }
       }
 
-      var marker = Positioned(
-        left: TIOMusicParams.edgeInset + ((pos * _waveFormWidth) - (MediaPlayerParams.markerIconSize / 1.4)),
+      final marker = Positioned(
+        left: TIOMusicParams.edgeInset + ((pos * _waveFormWidth) - (MediaPlayerParams.markerButton / 2)),
         top: (_waveFormHeight / 2) - MediaPlayerParams.markerIconSize - 20,
         child: IconButton(
           onPressed: () {

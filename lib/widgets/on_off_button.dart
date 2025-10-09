@@ -12,6 +12,8 @@ class OnOffButton extends StatefulWidget {
   final dynamic iconOff;
   final dynamic iconOn;
   final bool isDisabled;
+  final String tooltipOff;
+  final String tooltipOn;
 
   const OnOffButton({
     super.key,
@@ -21,6 +23,8 @@ class OnOffButton extends StatefulWidget {
     required this.iconOn,
     this.buttonSize = 70,
     this.isDisabled = false,
+    this.tooltipOff = '',
+    this.tooltipOn = '',
   });
 
   @override
@@ -43,14 +47,14 @@ class _OnOffButtonState extends State<OnOffButton> {
             backgroundColor: Colors.white,
             radius: widget.buttonSize,
             child: IconButton(
-              onPressed:
-                  widget.isDisabled
-                      ? null
-                      : () {
-                        widget.onTap();
-                      },
+              onPressed: widget.isDisabled
+                  ? null
+                  : () {
+                      widget.onTap();
+                    },
               iconSize: widget.buttonSize,
               icon: widget.isActive ? _getIconOn() : _getIconOff(),
+              tooltip: widget.isActive ? widget.tooltipOff : widget.tooltipOn,
             ),
           ),
         ),

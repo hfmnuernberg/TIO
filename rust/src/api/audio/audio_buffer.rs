@@ -1,4 +1,4 @@
-use std::{sync::Arc, usize};
+use std::sync::Arc;
 
 #[flutter_rust_bridge::frb(ignore)]
 pub struct AudioBufferReader {

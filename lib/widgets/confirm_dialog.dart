@@ -29,7 +29,10 @@ class ConfirmDialog extends StatelessWidget {
         offset: const Offset(0, 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [Text(content, style: TextStyle(color: ColorTheme.primary)), SizedBox(height: 10)],
+          children: [
+            Text(content, style: TextStyle(color: ColorTheme.primary)),
+            SizedBox(height: 10),
+          ],
         ),
       ),
       actions: [

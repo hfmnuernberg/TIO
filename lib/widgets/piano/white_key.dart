@@ -41,14 +41,13 @@ class WhiteKey extends StatelessWidget {
               highlightColor: _playedColor,
               child: Align(
                 alignment: Alignment.bottomCenter,
-                child:
-                    label == null
-                        ? null
-                        : Text(
-                          label!,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: ColorTheme.primaryFixedDim, fontSize: width / 3),
-                        ),
+                child: label == null
+                    ? null
+                    : Text(
+                        label!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: ColorTheme.primaryFixedDim, fontSize: width / 3),
+                      ),
               ),
             ),
           ),

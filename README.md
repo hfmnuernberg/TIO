@@ -59,6 +59,10 @@ For more information on this project check out the (german) [Homepage](https://w
 - [Upgrade Flutter & Dart](docs/upgrade-flutter-dart.md)
 - [Upgrade Fastlane](docs/upgrade-fastlane.md)
 - [Upgrade iOS and Android SDKs](docs/upgrade-ios-android-sdks.md)
+- Upgrade Rust
+  - [Upgrade Rust](docs/update-rust.md)
+  - [Update cargo dependencies for Rust code](docs/update-rust-dependencies.md)
+  - [Update flutter-rust-bridge](docs/update-flutter-rust-bridge.md)
 - [Publish apps to app store](docs/publish-apps-to-app-stores.md)
 - [Unpublish apps from app stores](docs/unpublish-apps-from-app-stores.md)
 - [Troubleshooting](docs/troubleshooting.md)
@@ -73,45 +77,37 @@ For more information on this project check out the (german) [Homepage](https://w
 
 **TIO** is a [Flutter](https://flutter.dev/) cross-platform app with Android and iOS as target platforms.
 
-Under the hood, it is powered by a [Rust](https://www.rust-lang.org/) library handling the signal processing tasks for real time pitch shifting, pitch detection, time stretching and more.
+Under the hood, it is powered by a [Rust](https://www.rust-lang.org/) library handling the signal processing tasks for
+real time pitch shifting, pitch detection, time stretching and more.
 
-If you are interested in giving feedback or contributing to **TIO**, please leave an issue or open a PR, or head over to [the survey (german)](https://cloud9.evasys.de/hfmn/online.php?p=Q2TYV).
+If you are interested in giving feedback or contributing to **TIO**, please leave an issue or open a PR, or head over
+to [the survey (german)](https://cloud9.evasys.de/hfmn/online.php?p=Q2TYV).
 
 ## Development
 
-#### Updating Rust Bridge
-
-```
-rustup upgrade
-cargo install flutter_rust_bridge_codegen --version 2.7.1
-```
-
-in `/rust` (update der packages)
-
-```
-cargo update
-```
-
-Rust Bridge is responsible for generating the code that handles the FFI. All public rust functions inside `rust/src/api` are exposted to Flutter this way. If you have a public function, that should not be exposed, add `#[flutter_rust_bridge::frb(ignore)]` above the function. Any change of the rust functions in this folder requires a rebuild with the `flutter_rust_bridge_codegen` to be exposed to Flutter. This can most easily be done via:
-
-```
-python3 ./generate.py rust
-```
+This project has an [app script](scripts/app.sh) that can be used for daily tasks, e.g. starting the app, running tests,
+linting, format code, (re-)generating code, etc.
+To get an overview about available commands run `app help` in the apps root directory.
 
 ## Build for iOS
 
--   make sure you installed all rust targets like described above
--   open the xcode workspace at `ios/Runner.xcworkspace`
-    -   press `Cmd + comma` to open the settings
-        -   go to accounts
-        -   log into the necessary account for codesigning (check the certificates)
--   restart your mac - **don't skip, this is important**
--   run `fvm flutter build ipa`
+To build the iOS app, check the build command in the [app script](scripts/app.sh) and the [iOS build pipeline](.github/workflows/reusable-build-ios-app.yaml)
+to get an idea what parameters and variables need to be used and set first.
+
+From root directory, run:
+
+```shell
+app build ios
+``` 
+
 
 ## Build for Android
 
--   make sure you installed all rust targets like described above
--   generate or get your personal upload key ready (see https://developer.android.com/studio/publish/app-signing#generate-key)
-    -   doing this you should get a `key.jks` file and a `key.properties` file. (If you choose other names for those files, adjust the names in `android/app/build.gradle`)
-    -   put those two files in your android folder (Don't check them into source control!!!)
--   run `fvm flutter build appbundle`
+To build the Android app, check the build command in the [app script](scripts/app.sh) and the [Android build pipeline](.github/workflows/reusable-build-android-app.yaml)
+to get an idea what parameters and variables need to be used and set first.
+
+From root directory, run:
+
+```shell
+app build android prd prd release
+```

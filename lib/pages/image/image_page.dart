@@ -113,11 +113,10 @@ class _ImageToolState extends State<ImageTool> {
 
   Future addImageDialog(BuildContext context) => showDialog(
     context: context,
-    builder:
-        (context) => AddImageDialog(
-          pickImageFunction: (useAsThumbnail) => pickImagesAndSave(useAsThumbnail),
-          takePhotoFunction: (useAsThumbnail) => takePhotoAndSave(useAsThumbnail),
-        ),
+    builder: (context) => AddImageDialog(
+      pickImageFunction: (useAsThumbnail) => pickImagesAndSave(useAsThumbnail),
+      takePhotoFunction: (useAsThumbnail) => takePhotoAndSave(useAsThumbnail),
+    ),
   );
 
   Future<void> pickImagesAndSave(bool useAsThumbnail) async {
@@ -128,13 +127,31 @@ class _ImageToolState extends State<ImageTool> {
       for (int i = 0; i < imagePaths.length; i++) {
         await handleImage(i, imagePaths[i], useAsThumbnail);
       }
-
-      if (!mounted) return;
-
-      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
-      setState(() {});
     } on PlatformException catch (e) {
       logger.e('Unable to pick images.', error: e);
+    }
+  }
+
+  Future<void> takePhotoAndSave(bool useAsThumbnail) async {
+    try {
+      WidgetsFlutterBinding.ensureInitialized();
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) {
+        if (mounted) await showNoCameraFoundDialog(context);
+        return;
+      }
+
+      final firstCamera = cameras.first;
+
+      if (!mounted) return;
+      String? imagePath = await Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (context) => TakePictureScreen(camera: firstCamera)));
+      if (imagePath == null) return;
+
+      await handleImage(0, imagePath, useAsThumbnail);
+    } on PlatformException catch (e) {
+      logger.e('Unable to take photo.', error: e);
     }
   }
 
@@ -158,72 +175,43 @@ class _ImageToolState extends State<ImageTool> {
       final newBlock = ImageBlock.withTitle(title)..relativePath = newRelativePath;
       project.addBlock(newBlock);
     }
-  }
-
-  Future<void> takePhotoAndSave(bool useAsThumbnail) async {
-    WidgetsFlutterBinding.ensureInitialized();
-    final cameras = await availableCameras();
-
-    if (cameras.isEmpty) {
-      if (mounted) await showNoCameraFoundDialog(context);
-      return;
-    }
-
-    final firstCamera = cameras.first;
 
     if (!mounted) return;
-
-    String? imagePath = await Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (context) => TakePictureScreen(camera: firstCamera)));
-    if (imagePath == null) return;
-
-    var newFileName = '${project.title}-${imageBlock.title}';
-
-    final newRelativePath = await mediaRepo.import(imagePath, newFileName);
-    if (newRelativePath == null) return;
-
-    if (!mounted) return;
-
-    if (useAsThumbnail) Provider.of<Project>(context, listen: false).thumbnailPath = newRelativePath;
-
-    fileReferences.dec(imageBlock.relativePath, context.read<ProjectLibrary>());
-    imageBlock.relativePath = newRelativePath;
-    fileReferences.inc(newRelativePath);
 
     await projectRepo.saveLibrary(context.read<ProjectLibrary>());
-
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    final project = widget.isQuickTool ? null : context.read<Project>();
+    final isUsedAsThumbnail = project?.thumbnailPath == imageBlock.relativePath;
+
     return ParentTool(
       barTitle: imageBlock.title,
       isQuickTool: widget.isQuickTool,
-      project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
+      project: project,
       toolBlock: imageBlock,
-      menuItems:
-          imageBlock.relativePath.isNotEmpty
-              ? [
-                MenuItemButton(
-                  onPressed: shareFilePressed,
-                  child: Text(context.l10n.imageShare, style: const TextStyle(color: ColorTheme.primary)),
-                ),
-                MenuItemButton(
-                  onPressed: setAsThumbnail,
-                  child: Text(context.l10n.imageSetAsThumbnail, style: const TextStyle(color: ColorTheme.primary)),
-                ),
-                MenuItemButton(
-                  onPressed: () => pickImagesAndSave(false),
-                  child: Text(context.l10n.imagePickNewImage, style: const TextStyle(color: ColorTheme.primary)),
-                ),
-                MenuItemButton(
-                  onPressed: () => takePhotoAndSave(false),
-                  child: Text(context.l10n.imageTakeNewPhoto, style: const TextStyle(color: ColorTheme.primary)),
-                ),
-              ]
-              : null,
+      menuItems: imageBlock.relativePath.isNotEmpty
+          ? [
+              MenuItemButton(
+                onPressed: shareFilePressed,
+                child: Text(context.l10n.imageShare, style: const TextStyle(color: ColorTheme.primary)),
+              ),
+              MenuItemButton(
+                onPressed: setAsThumbnail,
+                child: Text(context.l10n.imageSetAsThumbnail, style: const TextStyle(color: ColorTheme.primary)),
+              ),
+              MenuItemButton(
+                onPressed: () => pickImagesAndSave(isUsedAsThumbnail),
+                child: Text(context.l10n.imagePickNewImage, style: const TextStyle(color: ColorTheme.primary)),
+              ),
+              MenuItemButton(
+                onPressed: () => takePhotoAndSave(isUsedAsThumbnail),
+                child: Text(context.l10n.imageTakeNewPhoto, style: const TextStyle(color: ColorTheme.primary)),
+              ),
+            ]
+          : null,
       centerModule: Padding(
         padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
         child: Center(

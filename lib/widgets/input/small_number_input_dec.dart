@@ -89,7 +89,10 @@ class _NumberInputDecState extends State<SmallNumberInputDec> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(_formatNumber(widget.value), style: TextStyle(fontSize: widget.textFontSize, color: ColorTheme.primary)),
+        Text(
+          _formatNumber(widget.value),
+          style: TextStyle(fontSize: widget.textFontSize, color: ColorTheme.primary),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

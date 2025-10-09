@@ -44,9 +44,8 @@ void main() {
 
     await inMemoryFileSystem.init();
     await mediaRepo.init();
-    final projectLibrary =
-        projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults()
-          ..dismissAllTutorials();
+    final projectLibrary = projectRepo.existsLibrary() ? await projectRepo.loadLibrary() : ProjectLibrary.withDefaults()
+      ..dismissAllTutorials();
     await projectRepo.saveLibrary(projectLibrary);
     await fileReferences.init(projectLibrary);
     final project = Project.defaultThumbnail('Test Project');
@@ -63,7 +62,7 @@ void main() {
   });
 
   group('ImageTool', () {
-    testWidgets('uploads image', (tester) async {
+    testWidgets('imports image', (tester) async {
       final imagePath = '${inMemoryFileSystem.tmpFolderPath}/image.jpg';
       inMemoryFileSystem.saveFileAsBytes(imagePath, File('assets/test/black_circle.jpg').readAsBytesSync());
       filePickerMock.mockPickImages([imagePath]);
@@ -80,7 +79,7 @@ void main() {
       expect(find.byTooltip('Pick image(s)'), findsNothing);
     });
 
-    testWidgets('uploads multiple images', (tester) async {
+    testWidgets('imports multiple images', (tester) async {
       final imagePath1 = '${inMemoryFileSystem.tmpFolderPath}/image1.jpg';
       final imagePath2 = '${inMemoryFileSystem.tmpFolderPath}/image2.jpg';
       inMemoryFileSystem.saveFileAsBytes(imagePath1, File('assets/test/black_circle.jpg').readAsBytesSync());

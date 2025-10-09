@@ -1,6 +1,6 @@
 use std::ops::DerefMut;
-use std::sync::mpsc::{channel, Receiver, Sender};
 use std::sync::Mutex;
+use std::sync::mpsc::{Receiver, Sender, channel};
 use std::thread::{self, JoinHandle};
 use std::time::Duration;
 
@@ -8,8 +8,8 @@ use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use lazy_static::__Deref;
 
 // use pitch_detection::detector::mcleod::McLeodDetector;
-use pitch_detection::detector::yin::YINDetector;
 use pitch_detection::detector::PitchDetector;
+use pitch_detection::detector::yin::YINDetector;
 
 extern crate indexed_ring_buffer;
 use indexed_ring_buffer::*;

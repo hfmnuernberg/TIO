@@ -51,17 +51,15 @@ class FileReferencesImpl implements FileReferences {
   int _countRefs(String path, ProjectLibrary projectLibrary) =>
       _countImageRefs(path, projectLibrary) + _countMediaPlayerRefs(path, projectLibrary);
 
-  int _countImageRefs(String path, ProjectLibrary projectLibrary) =>
-      projectLibrary.projects
-          .expand((project) => project.blocks)
-          .whereType<ImageBlock>()
-          .where((block) => block.relativePath == path)
-          .length;
+  int _countImageRefs(String path, ProjectLibrary projectLibrary) => projectLibrary.projects
+      .expand((project) => project.blocks)
+      .whereType<ImageBlock>()
+      .where((block) => block.relativePath == path)
+      .length;
 
-  int _countMediaPlayerRefs(String path, ProjectLibrary projectLibrary) =>
-      projectLibrary.projects
-          .expand((project) => project.blocks)
-          .whereType<MediaPlayerBlock>()
-          .where((block) => block.relativePath == path)
-          .length;
+  int _countMediaPlayerRefs(String path, ProjectLibrary projectLibrary) => projectLibrary.projects
+      .expand((project) => project.blocks)
+      .whereType<MediaPlayerBlock>()
+      .where((block) => block.relativePath == path)
+      .length;
 }

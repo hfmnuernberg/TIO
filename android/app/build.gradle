@@ -22,16 +22,10 @@ if (flutterVersionName == null) {
     flutterVersionName = '0.0.1'
 }
 
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('key.properties')
-if (!keystorePropertiesFile.exists()) {
-    keystorePropertiesFile = rootProject.file('key.properties.debug')
-}
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-
 android {
-    compileSdkVersion 35
-    ndkVersion "26.3.11579264"
+    namespace 'de.hfmnuernberg.tiomusic'
+    compileSdkVersion 36
+    ndkVersion "27.0.12077973"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
@@ -51,26 +45,41 @@ android {
 
     defaultConfig {
         applicationId "com.studiofluffy.tonica"
-        minSdkVersion 31
-        targetSdkVersion 35
+        minSdkVersion 33
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
 
     signingConfigs {
-        release {
-            storeFile file(keystoreProperties['storeFile'] ? keystoreProperties['storeFile'] : System.getenv('ANDROID_KEYSTORE_STORE_FILE'))
-            storePassword keystoreProperties['storePassword'] ? keystoreProperties['storePassword'] : System.getenv('ANDROID_KEYSTORE_STORE_PASSWORD')
-            keyAlias keystoreProperties['keyAlias'] ? keystoreProperties['keyAlias'] : System.getenv('ANDROID_KEYSTORE_KEY_ALIAS')
-            keyPassword keystoreProperties['keyPassword'] ? keystoreProperties['keyPassword'] : System.getenv('ANDROID_KEYSTORE_KEY_PASSWORD')
-        }
         debug {
-            storeFile file(keystoreProperties['storeFile'] ? keystoreProperties['storeFile'] : System.getenv('ANDROID_KEYSTORE_STORE_FILE'))
-            storePassword keystoreProperties['storePassword'] ? keystoreProperties['storePassword'] : System.getenv('ANDROID_KEYSTORE_STORE_PASSWORD')
-            keyAlias keystoreProperties['keyAlias'] ? keystoreProperties['keyAlias'] : System.getenv('ANDROID_KEYSTORE_KEY_ALIAS')
-            keyPassword keystoreProperties['keyPassword'] ? keystoreProperties['keyPassword'] : System.getenv('ANDROID_KEYSTORE_KEY_PASSWORD')
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+        release {
+            storeFile file(System.getenv('ANDROID_KEYSTORE_PATH') ?: 'release.keystore')
+            storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+            keyAlias System.getenv('ANDROID_KEY_ALIAS')
+            keyPassword System.getenv('ANDROID_KEY_PASSWORD')
         }
     }
+
+    flavorDimensions "default"
+    productFlavors {
+        dev {
+            dimension "default"
+            applicationIdSuffix ".dev"
+            manifestPlaceholders = [appName: "[DEV] TIO Music"]
+        }
+        prd {
+            dimension "default"
+            applicationIdSuffix ""
+            manifestPlaceholders = [appName: "TIO Music"]
+        }
+    }
+
     buildTypes {
         release {
             signingConfig signingConfigs.release
@@ -87,7 +96,6 @@ android {
             }
         }
     }
-    namespace 'com.studiofluffy.tonica'
 }
 
 flutter {
@@ -101,23 +109,27 @@ flutter {
 ].each {
     def taskPostfix = it.key
     def profileMode = it.value
-    tasks.whenTaskAdded { task ->
-        if (task.name == "javaPreCompile$taskPostfix") {
-            task.dependsOn "cargoBuild$taskPostfix"
-        }
+    tasks.register("cargoBuild${taskPostfix}", Exec) {
+      workingDir "../../rust"
+      commandLine 'cargo',
+              'ndk',
+              '-t', 'armeabi-v7a',
+              '-t', 'arm64-v8a',
+              '-t', 'x86_64',
+              '-o', '../android/app/src/main/jniLibs',
+              'build'
+      if (profileMode != null) {
+          args profileMode
+      }
     }
-    tasks.register("cargoBuild$taskPostfix", Exec) {
-        workingDir "../../rust"
-        commandLine 'cargo',
-                'ndk',
-                '-t', 'armeabi-v7a',
-                '-t', 'arm64-v8a',
-                '-t', 'x86',
-                '-t', 'x86_64',
-                '-o', '../android/app/src/main/jniLibs',
-                'build'
-        if (profileMode != null) {
-            args profileMode
-        }
+
+  afterEvaluate {
+    android.applicationVariants.all { variant ->
+      def variantCap = variant.name.capitalize()
+      def btCap = variant.buildType.name.capitalize()
+      tasks.named("pre${variantCap}Build").configure {
+        dependsOn "cargoBuild${btCap}"
+      }
     }
+  }
 }

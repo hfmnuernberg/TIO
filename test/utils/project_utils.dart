@@ -32,10 +32,32 @@ extension WidgetTesterProjectExtension on WidgetTester {
     await tapAndSettle(find.bySemanticsLabel('Back'));
   }
 
+  Future<void> createMediaPlayerToolInProject() async {
+    await tapAndSettle(find.bySemanticsLabel('Media Player'));
+    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 1');
+    await tapAndSettle(find.bySemanticsLabel('Submit'));
+    await tapAndSettle(find.bySemanticsLabel('Back'));
+  }
+
+  Future<void> createMetronomeToolInProject() async {
+    await tapAndSettle(find.bySemanticsLabel('Metronome'));
+    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Metronome 1');
+    await tapAndSettle(find.bySemanticsLabel('Submit'));
+    await tapAndSettle(find.bySemanticsLabel('Back'));
+  }
+
   Future<void> createPianoToolInProject() async {
     await tapAndSettle(find.bySemanticsLabel('Piano'));
     await enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Piano 1');
     await tapAndSettle(find.bySemanticsLabel('Submit'));
+    await tapAndSettle(find.bySemanticsLabel('Back'));
+  }
+
+  Future<void> createTunerToolInProject() async {
+    await tapAndSettle(find.bySemanticsLabel('Tuner'));
+    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Tuner 1');
+    await tapAndSettle(find.bySemanticsLabel('Submit'));
+    await pumpAndSettle(const Duration(milliseconds: 1100));
     await tapAndSettle(find.bySemanticsLabel('Back'));
   }
 }

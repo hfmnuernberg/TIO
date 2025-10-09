@@ -50,10 +50,9 @@ class EditableProjectList extends StatelessWidget {
               color: ColorTheme.tertiary,
               onPressed: () => onDelete(index),
             ),
-            leadingPicture:
-                project.thumbnailPath.isEmpty
-                    ? AssetImage(TIOMusicParams.tiomusicIconPath)
-                    : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
+            leadingPicture: project.thumbnailPath.isEmpty
+                ? AssetImage(TIOMusicParams.tiomusicIconPath)
+                : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
             onTapFunction: () {},
           ),
         );

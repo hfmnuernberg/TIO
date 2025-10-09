@@ -21,26 +21,24 @@ class Notes extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
-      child:
-          numberOfNotes == 0
-              ? const SizedBox(height: TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2)
-              : Row(
-                children:
-                    List.generate(numberOfNotes, (i) => noteKey)
-                        .expandIndexed(
-                          (i, noteKey) => [
-                            if (spaceBetweenNotes != null && i > 0)
-                              SizedBox(
-                                width:
-                                    spaceBetweenNotes! -
-                                    TIOMusicParams.beatButtonSizeMainPage -
-                                    TIOMusicParams.beatButtonPadding * 2,
-                              ),
-                            Note(noteKey: noteKey),
-                          ],
-                        )
-                        .toList(),
-              ),
+      child: numberOfNotes == 0
+          ? const SizedBox(height: TIOMusicParams.beatButtonSizeMainPage + TIOMusicParams.beatButtonPadding * 2)
+          : Row(
+              children: List.generate(numberOfNotes, (i) => noteKey)
+                  .expandIndexed(
+                    (i, noteKey) => [
+                      if (spaceBetweenNotes != null && i > 0)
+                        SizedBox(
+                          width:
+                              spaceBetweenNotes! -
+                              TIOMusicParams.beatButtonSizeMainPage -
+                              TIOMusicParams.beatButtonPadding * 2,
+                        ),
+                      Note(noteKey: noteKey),
+                    ],
+                  )
+                  .toList(),
+            ),
     );
   }
 }

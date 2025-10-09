@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
@@ -13,7 +12,6 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/pages/image/image_page.dart';
 import 'package:tiomusic/pages/media_player/media_player.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
@@ -21,28 +19,15 @@ import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/text/text.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/services/file_references.dart';
-import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/directional_page_route.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
 // ---------------------------------------------------------------
-// copy an asset to a temporary file
-
-Future<String> copyAssetToTemp(FileSystem fs, String assetPath) async {
-  final tempAssetPath = '${fs.tmpFolderPath}/${assetPath.split('/').last}';
-  final byteData = await rootBundle.load(assetPath);
-  final bytes = byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes);
-  await fs.saveFileAsBytes(tempAssetPath, bytes);
-  return tempAssetPath;
-}
-
-// ---------------------------------------------------------------
 // format the settings into Text that can be displayed
 
-String formatSettingValues(List settingValues) {
+String formatSettingValues(List<Object> settingValues) {
   final buffer = StringBuffer();
   bool firstTime = true;
   for (final settingValue in settingValues) {
@@ -59,7 +44,7 @@ String formatSettingValues(List settingValues) {
 // ---------------------------------------------------------------
 // open setting page with the correct provider
 
-void _emptyFunction(value) {}
+void _emptyFunction() {}
 
 Future<dynamic> openSettingPage(
   Widget settingPage,
@@ -272,24 +257,23 @@ Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) 
 
   return showDialog<void>(
     context: context,
-    builder:
-        (context) => AlertDialog(
-          title: Text(l10n.mediaPlayerErrorFileOpen, style: TextStyle(color: ColorTheme.primary)),
-          content: Column(
-            children: [
-              Text(l10n.mediaPlayerErrorFileOpenDescription, style: const TextStyle(color: ColorTheme.primary)),
-              if (fileName != null)
-                Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
-                    style: const TextStyle(color: ColorTheme.primary),
-                  ),
-                ),
-            ],
-          ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
-        ),
+    builder: (context) => AlertDialog(
+      title: Text(l10n.mediaPlayerErrorFileOpen, style: TextStyle(color: ColorTheme.primary)),
+      content: Column(
+        children: [
+          Text(l10n.mediaPlayerErrorFileOpenDescription, style: const TextStyle(color: ColorTheme.primary)),
+          if (fileName != null)
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              child: Text(
+                '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
+                style: const TextStyle(color: ColorTheme.primary),
+              ),
+            ),
+        ],
+      ),
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
+    ),
   );
 }
 
@@ -302,24 +286,23 @@ Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName
 
   return showDialog<void>(
     context: context,
-    builder:
-        (context) => AlertDialog(
-          title: Text(l10n.mediaPlayerErrorFileAccessible, style: TextStyle(color: ColorTheme.primary)),
-          content: Column(
-            children: [
-              Text(l10n.mediaPlayerErrorFileAccessibleDescription, style: const TextStyle(color: ColorTheme.primary)),
-              if (fileName != null)
-                Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
-                    style: const TextStyle(color: ColorTheme.primary),
-                  ),
-                ),
-            ],
-          ),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
-        ),
+    builder: (context) => AlertDialog(
+      title: Text(l10n.mediaPlayerErrorFileAccessible, style: TextStyle(color: ColorTheme.primary)),
+      content: Column(
+        children: [
+          Text(l10n.mediaPlayerErrorFileAccessibleDescription, style: const TextStyle(color: ColorTheme.primary)),
+          if (fileName != null)
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              child: Text(
+                '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
+                style: const TextStyle(color: ColorTheme.primary),
+              ),
+            ),
+        ],
+      ),
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
+    ),
   );
 }
 
@@ -330,12 +313,11 @@ Future<void> showNoCameraFoundDialog(BuildContext context) {
   final l10n = context.l10n;
   return showDialog<void>(
     context: context,
-    builder:
-        (context) => AlertDialog(
-          title: Text(l10n.imageNoCameraFound, style: TextStyle(color: ColorTheme.primary)),
-          content: Text(l10n.imageNoCameraFoundHint, style: TextStyle(color: ColorTheme.primary)),
-          actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
-        ),
+    builder: (context) => AlertDialog(
+      title: Text(l10n.imageNoCameraFound, style: TextStyle(color: ColorTheme.primary)),
+      content: Text(l10n.imageNoCameraFoundHint, style: TextStyle(color: ColorTheme.primary)),
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
+    ),
   );
 }
 
@@ -349,6 +331,7 @@ Future<dynamic> goToTool(
   bool pianoAlreadyOn = false,
   bool replace = false,
   bool transitionLeftToRight = false,
+  bool shouldAutoplay = false,
 }) {
   final page = MultiProvider(
     providers: [
@@ -358,10 +341,10 @@ Future<dynamic> goToTool(
 
     builder: (context, child) {
       if (block is TunerBlock) return const Tuner(isQuickTool: false);
-      if (block is MetronomeBlock) return const Metronome(isQuickTool: false);
-      if (block is MediaPlayerBlock) return const MediaPlayer(isQuickTool: false);
+      if (block is MetronomeBlock) return const MetronomePage(isQuickTool: false);
+      if (block is MediaPlayerBlock) return MediaPlayer(isQuickTool: false, shouldAutoplay: shouldAutoplay);
       if (block is ImageBlock) return const ImageTool(isQuickTool: false);
-      if (block is PianoBlock) return Piano(isQuickTool: false, withoutInitAndStart: pianoAlreadyOn);
+      if (block is PianoBlock) return PianoPage(isQuickTool: false, withoutInitAndStart: pianoAlreadyOn);
       if (block is TextBlock) return const TextTool(isQuickTool: false);
       throw 'ERROR: Unknown block type $block';
     },
@@ -464,33 +447,6 @@ void saveToolInNewProject(
 enum ReturnAction { goToNewTool, showTutorial }
 
 // ---------------------------------------------------------------
-// our modal bottom sheet
-
-Future<dynamic> ourModalBottomSheet(BuildContext context, List<Widget> titelChildren, List<Widget> contentChildren) {
-  return showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) {
-      return FractionallySizedBox(
-        heightFactor: 0.75,
-        child: Column(
-          children: [
-            DecoratedBox(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
-                color: ColorTheme.surface,
-              ),
-              child: Column(children: [const SizedBox(height: 20), Column(children: titelChildren)]),
-            ),
-            Expanded(child: ColoredBox(color: ColorTheme.primary80, child: Column(children: contentChildren))),
-          ],
-        ),
-      );
-    },
-  );
-}
-
-// ---------------------------------------------------------------
 // Circle Icon for displaying the tool icons all with the same color
 
 Widget circleToolIcon(Widget icon) {
@@ -498,40 +454,6 @@ Widget circleToolIcon(Widget icon) {
 }
 
 // ---------------------------------------------------------------
-
-bool checkIslandPossible(Project? project, ProjectBlock toolBlock) {
-  if (project != null) {
-    // if we are in a normal tool, check the following
-
-    // check if there is more than one tool in the project
-    if (project.blocks.length > 1) {
-      bool possibleToolFound = false;
-      for (final block in project.blocks) {
-        // don't allow the same kind that is currently open
-        if (block.kind != toolBlock.kind) {
-          // only allow tuner, metronome and media player as islands
-          if (block.kind == 'tuner' || block.kind == 'metronome' || block.kind == 'media_player') {
-            possibleToolFound = true;
-          }
-        }
-      }
-      return possibleToolFound;
-    }
-  }
-  return false;
-}
-
-// convert the RhythmGroup class into the MetroBar class, that is used in Rust
-List<MetroBar> getRhythmAsMetroBar(List<RhythmGroup> rhythm) {
-  return List<MetroBar>.generate(rhythm.length, (index) {
-    return MetroBar(
-      id: 0,
-      beats: rhythm[index].beats,
-      polyBeats: rhythm[index].polyBeats,
-      beatLen: rhythm[index].beatLen,
-    );
-  });
-}
 
 enum IncreaseOrDecrease { increase, decrease }
 

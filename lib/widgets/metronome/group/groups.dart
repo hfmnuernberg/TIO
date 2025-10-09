@@ -61,44 +61,41 @@ class _GroupsState extends State<Groups> with RouteAware {
               scrollDirection: Axis.horizontal,
               children: <Widget>[
                 ReorderableListView.builder(
-                  proxyDecorator:
-                      (child, index, animation) => AnimatedBuilder(
-                        animation: animation,
-                        builder: (context, child) {
-                          final double animValue = Curves.easeInOut.transform(animation.value);
-                          final double elevation = lerpDouble(0, 6, animValue)!;
-                          return Material(
-                            elevation: elevation,
-                            color: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            child: child,
-                          );
-                        },
+                  proxyDecorator: (child, index, animation) => AnimatedBuilder(
+                    animation: animation,
+                    builder: (context, child) {
+                      final double animValue = Curves.easeInOut.transform(animation.value);
+                      final double elevation = lerpDouble(0, 6, animValue)!;
+                      return Material(
+                        elevation: elevation,
+                        color: Colors.transparent,
+                        shadowColor: Colors.transparent,
                         child: child,
-                      ),
+                      );
+                    },
+                    child: child,
+                  ),
                   buildDefaultDragHandles: false,
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
                   itemCount: widget.rhythmGroups.length,
-                  itemBuilder:
-                      (context, index) => Dismissible(
-                        key: Key(widget.rhythmGroups[index].keyID),
-                        direction:
-                            widget.canDeleteLastSegment || widget.rhythmGroups.length > 1
-                                ? DismissDirection.up
-                                : DismissDirection.none,
-                        onDismissed: (_) => widget.onDelete(index),
-                        background: const Icon(Icons.delete_outlined, color: ColorTheme.primary),
-                        child: EditableGroup(
-                          index: index,
-                          highlightedMainBeatIndex: _getHighlightedMainBeatIndex(index),
-                          highlightedPolyBeatIndex: _getHighlightedPolyBeatIndex(index),
-                          rhythmGroup: widget.rhythmGroups[index],
-                          canReorder: widget.rhythmGroups.length > 1,
-                          isReordering: isReordering,
-                          onEdit: () => widget.onEdit(index),
-                        ),
-                      ),
+                  itemBuilder: (context, index) => Dismissible(
+                    key: Key(widget.rhythmGroups[index].keyID),
+                    direction: widget.canDeleteLastSegment || widget.rhythmGroups.length > 1
+                        ? DismissDirection.up
+                        : DismissDirection.none,
+                    onDismissed: (_) => widget.onDelete(index),
+                    background: const Icon(Icons.delete_outlined, color: ColorTheme.primary),
+                    child: EditableGroup(
+                      index: index,
+                      highlightedMainBeatIndex: _getHighlightedMainBeatIndex(index),
+                      highlightedPolyBeatIndex: _getHighlightedPolyBeatIndex(index),
+                      rhythmGroup: widget.rhythmGroups[index],
+                      canReorder: widget.rhythmGroups.length > 1,
+                      isReordering: isReordering,
+                      onEdit: () => widget.onEdit(index),
+                    ),
+                  ),
                   onReorderStart: (_) => setState(() => isReordering = true),
                   onReorderEnd: (_) => setState(() => isReordering = false),
                   onReorder: widget.onReorder,

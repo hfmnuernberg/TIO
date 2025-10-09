@@ -51,13 +51,11 @@ install() {
   bash "$0" install:cocoa:pods
   bash "$0" install:rust:targets
   bash "$0" install:rust:packages
-  bash "$0" install:rust:flutter-rust-bridge-codegen
+  bash "$0" install:rust:frb
 }
 
 installRustPackages() {
-  cd rust;
-  cargo build;
-  cd ..;
+  bash "$0" rust build;
   rm -rf rust_builder/linux rust_builder/macos rust_builder/windows;
 }
 
@@ -119,53 +117,53 @@ help() {
   echo
   echo 'Commands:'
   echo
-  echo 'analyze                                   - analyze code and yaml files'
-  echo 'analyze:dart                              - run static code analysis (lint)'
-  echo 'analyze:files                             - analyze files with too many lines of code'
-  echo 'analyze:fix <rule>                        - fix static code analysis rule violations'
-  echo 'analyze:fix:dry                           - simulates fixing static code analysis rule violations'
-  echo 'analyze:todos                             - analyze TODOs and FIXMEs in code'
-  echo 'analyze:yaml                              - analyze yaml files'
-  echo 'build <platform> [<mode>]                 - build app for ios or android'
-  echo 'clean                                     - clean build'
-  echo 'coverage                                  - measure and open test coverage report'
-  echo 'coverage:generate                         - generate test coverage report from previous test run'
-  echo 'coverage:measure                          - run all tests and measure test coverage'
-  echo 'coverage:measure:random                   - run all tests in random order and measure test coverage'
-  echo 'coverage:open                             - open test coverage report from previous test run'
-  echo 'coverage:print                            - print test coverage report from previous test run to console'
-  echo 'coverage:validate <decimal>               - validates the total test coverage against the given threshold'
-  echo 'delete:lock                               - delete lock files'
-  echo 'doctor                                    - run flutter doctor'
-  echo 'format                                    - format code'
-  echo 'generate                                  - update generated code'
-  echo 'generate:icon                             - update generated launcher icons'
-  echo 'generate:json                             - update generated json *.g.dart files'
-  echo 'generate:rust                             - update generated rust TIO music library'
-  echo 'generate:splash                           - update generated splash image assets'
-  echo 'help                                      - print this help'
-  echo 'install                                   - install dependencies'
-  echo 'install:cocoa:pods                        - install Cocoa Pods'
-  echo 'install:fastlane                          - install Fastlane'
-  echo 'install:flutter:packages                  - install Flutter packages'
-  echo 'install:rust:flutter-rust-bridge-codegen  - install Flutter/Dart<->Rust binding generator'
-  echo 'install:rust:packages                     - install Rust packages'
-  echo 'install:rust:targets                      - install Rust targets'
-  echo 'lint*                                     - synonym for analyze'
-  echo 'outdated                                  - list outdated dependencies'
-  echo 'refresh                                   - clean, install, generate, run'
-  echo 'reset                                     - clean, delete lock files, install, generate, analyze, test, build, run'
-  echo 'run [<mode>]                              - run app'
-  echo 'simulator                                 - open iOS simulator'
-  echo 'start*                                    - synonym for run'
-  echo 'test [<path>] [<name>]                    - run tests'
-  echo 'test:random                               - run all tests in random order'
-  echo 'test:watch [<path>] [<name>]              - run tests in watch mode'
-  echo 'upload <platform>                         - upload ios or android app to app store'
+  echo 'analyze                                       - analyze code and yaml files'
+  echo 'analyze:dart                                  - run static code analysis (lint)'
+  echo 'analyze:files                                 - analyze files with too many lines of code'
+  echo 'analyze:fix <rule>                            - fix static code analysis rule violations'
+  echo 'analyze:fix:dry                               - simulates fixing static code analysis rule violations'
+  echo 'analyze:todos                                 - analyze TODOs and FIXMEs in code'
+  echo 'analyze:yaml                                  - analyze yaml files'
+  echo 'build <platform> [<env>] [<flavor>] [<mode>]  - build app for ios or android'
+  echo 'clean                                         - clean build'
+  echo 'coverage                                      - measure and open test coverage report'
+  echo 'coverage:generate                             - generate test coverage report from previous test run'
+  echo 'coverage:measure                              - run all tests and measure test coverage'
+  echo 'coverage:measure:random                       - run all tests in random order and measure test coverage'
+  echo 'coverage:open                                 - open test coverage report from previous test run'
+  echo 'coverage:print                                - print test coverage report from previous test run to console'
+  echo 'coverage:validate <decimal>                   - validates the total test coverage against the given threshold'
+  echo 'delete:lock                                   - delete lock files'
+  echo 'doctor                                        - run flutter doctor'
+  echo 'format                                        - format code'
+  echo 'generate                                      - update generated code'
+  echo 'generate:icon                                 - update generated launcher icons'
+  echo 'generate:json                                 - update generated json *.g.dart files'
+  echo 'generate:rust                                 - update generated rust TIO music library'
+  echo 'generate:splash                               - update generated splash image assets'
+  echo 'help                                          - print this help'
+  echo 'install                                       - install dependencies'
+  echo 'install:cocoa:pods                            - install Cocoa Pods'
+  echo 'install:fastlane                              - install Fastlane'
+  echo 'install:flutter:packages                      - install Flutter packages'
+  echo 'install:rust:frb                              - install Flutter/Dart<->Rust binding generator'
+  echo 'install:rust:packages                         - install Rust packages'
+  echo 'install:rust:targets                          - install Rust targets'
+  echo 'lint*                                         - synonym for analyze'
+  echo 'outdated                                      - list outdated dependencies'
+  echo 'refresh                                       - clean, install, generate, run'
+  echo 'reset                                         - clean, delete lock files, install, generate, analyze, test, build, run'
+  echo 'run [<env>] [<flavor>] [<mode>]               - run app'
+  echo 'simulator                                     - open iOS simulator'
+  echo 'start*                                        - synonym for run'
+  echo 'test [<path>] [<name>]                        - run tests'
+  echo 'test:random                                   - run all tests in random order'
+  echo 'test:watch [<path>] [<name>]                  - run tests in watch mode'
+  echo 'upload <platform> <env>                       - upload ios or android app to app store'
 }
 
 case "$1" in
-  analyze)                   bash "$0" analyze:dart; bash "$0" analyze:yaml; bash "$0" widgetbook analyze; ;;
+  analyze)                   bash "$0" analyze:dart; bash "$0" analyze:yaml; bash "$0" widgetbook analyze; bash "$0" rust analyze; ;;
   analyze:dart)              $FLUTTER analyze lib test; ;;
   analyze:files)             scripts/analyze-files-with-too-many-lines.sh .; ;;
   analyze:fix)               $DART fix --apply --code="$2"; ;;
@@ -183,20 +181,20 @@ case "$1" in
   coverage:validate)         validateCoverage "$@"; ;;
   delete:lock)               deleteLockFiles; ;;
   doctor)                    $FLUTTER doctor; ;;
-  format)                    $DART format --line-length=120 lib test; bash "$0" widgetbook format; ;;
+  format)                    $DART format --line-length=120 lib test; bash "$0" widgetbook format; bash "$0" rust format; ;;
   generate)                  generate; bash "$0" widgetbook generate; ;;
   generate:icon)             $FLUTTER pub run flutter_launcher_icons -f flutter_launcher_icons.yaml; ;;
   generate:json)             $DART run build_runner build --delete-conflicting-outputs; ;;
-  generate:rust)             flutter_rust_bridge_codegen generate --no-dart-enums-style; ;;
+  generate:rust)             bash "$0" rust generate; ;;
   generate:splash)           $FLUTTER pub run flutter_native_splash:create --path=flutter_native_splash.yaml; ;;
   install)                   install; bash "$0" widgetbook install; ;;
   install:cocoa:pods)        $FLUTTER precache --ios; cd ios; pod install --repo-update; cd ..; ;;
   install:fastlane)          cd android; bundle install; cd ..; cd ios; bundle install; cd ..; ;;
   install:flutter:packages)  $FLUTTER pub get; ;;
-  install:rust:flutter-rust-bridge-codegen) cargo install flutter_rust_bridge_codegen --version 2.9.0; ;;
+  install:rust:frb)          bash "$0" rust install:frb; ;;
   install:rust:packages)     installRustPackages; ;;
   install:rust:targets)      installRustTargets; ;;
-  outdated)                  $FLUTTER pub outdated; bash "$0" widgetbook outdated; ;;
+  outdated)                  $FLUTTER pub outdated; bash "$0" widgetbook outdated; bash "$0" rust outdated:root; ;;
   refresh)                   bash "$0" clean; bash "$0" install; bash "$0" generate; bash "$0" run; ;;
   reset)                     reset; ;;
   run)                       shift; scripts/run.sh "$@"; ;;
@@ -206,5 +204,6 @@ case "$1" in
   test:watch)                command=$(getTestCommand "$@"); watchexec -e dart "$command"; ;;
   upload)                    shift; scripts/upload.sh "$@"; ;;
   widgetbook)                shift; cd widgetbook; scripts/app.sh "$@"; cd ..; ;;
+  rust)                      shift; cd rust; scripts/app.sh "$@"; cd ..; ;;
   *)                         help; exit 1 ;;
 esac

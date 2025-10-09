@@ -9,7 +9,7 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/sound_font_extensions.dart';
+import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
 
 class ChooseSound extends StatefulWidget {
   const ChooseSound({super.key});
@@ -29,11 +29,7 @@ class _ChooseSoundState extends State<ChooseSound> {
 
     _pianoBlock = Provider.of<ProjectBlock>(context, listen: false) as PianoBlock;
 
-    for (var i = 0; i < _selectedSounds.length; i++) {
-      if (i == _pianoBlock.soundFontIndex) {
-        _selectedSounds[i] = true;
-      }
-    }
+    _selectedSounds[_pianoBlock.soundFontIndex] = true;
   }
 
   @override
@@ -53,13 +49,11 @@ class _ChooseSoundState extends State<ChooseSound> {
         },
         constraints: const BoxConstraints(minHeight: 30, minWidth: 200),
         isSelected: _selectedSounds,
-        children:
-            SoundFont.values
-                .map(
-                  (soundFont) =>
-                      Text(soundFont.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)),
-                )
-                .toList(),
+        children: SoundFont.values
+            .map(
+              (soundFont) => Text(soundFont.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)),
+            )
+            .toList(),
       ),
     );
   }

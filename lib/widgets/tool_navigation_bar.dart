@@ -34,8 +34,9 @@ class ToolNavigationBar extends StatelessWidget {
       onPrevTool: index > 0 ? () => replaceTool(tools[(index - 1)], ltr: true) : null,
       onNextTool: index < tools.length - 1 ? () => replaceTool(tools[(index + 1)]) : null,
       onPrevToolOfSameType: sameToolsIndex > 0 ? () => replaceTool(sameTools[sameToolsIndex - 1], ltr: true) : null,
-      onNextToolOfSameType:
-          sameToolsIndex < sameTools.length - 1 ? () => replaceTool(sameTools[sameToolsIndex + 1]) : null,
+      onNextToolOfSameType: sameToolsIndex < sameTools.length - 1
+          ? () => replaceTool(sameTools[sameToolsIndex + 1])
+          : null,
     );
   }
 }

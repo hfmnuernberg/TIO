@@ -9,6 +9,7 @@ import 'package:tiomusic/widgets/piano/white_key.dart';
 
 class Keyboard extends StatefulWidget {
   final int lowestNote;
+  final bool isHolding;
 
   final List<KeyNote> _naturals;
   final List<KeyNote> _sharps;
@@ -17,10 +18,15 @@ class Keyboard extends StatefulWidget {
   final Function(int note) onPlay;
   final Function(int note) onRelease;
 
-  Keyboard({super.key, required this.lowestNote, required this.onPlay, required this.onRelease})
-    : _naturals = createNaturals(lowestNote),
-      _sharps = createSharps(lowestNote),
-      _sharpsWithSpacing = createSharpsWithSpacing(lowestNote);
+  Keyboard({
+    super.key,
+    required this.lowestNote,
+    required this.isHolding,
+    required this.onPlay,
+    required this.onRelease,
+  }) : _naturals = createNaturals(lowestNote),
+       _sharps = createSharps(lowestNote),
+       _sharpsWithSpacing = createSharpsWithSpacing(lowestNote);
 
   @override
   State<Keyboard> createState() => _KeyboardState();
@@ -34,6 +40,9 @@ class _KeyboardState extends State<Keyboard> {
   @override
   void didUpdateWidget(covariant Keyboard oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.isHolding && !widget.isHolding) handleReleaseAll();
+
     if (keyboardSize == null) return;
     if (widget.lowestNote == oldWidget.lowestNote) return;
 
@@ -67,9 +76,16 @@ class _KeyboardState extends State<Keyboard> {
   }
 
   void handleRelease(int pointer, int? note) {
+    if (widget.isHolding) return;
     pointersWithLastNote.remove(pointer);
     setState(() {});
     if (note != null) widget.onRelease(note);
+  }
+
+  void handleReleaseAll() {
+    pointersWithLastNote.values.forEach(widget.onRelease);
+    pointersWithLastNote.clear();
+    setState(() {});
   }
 
   bool isPlayed(int note) => pointersWithLastNote.values.contains(note);
@@ -126,35 +142,33 @@ class _KeyboardState extends State<Keyboard> {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children:
-                          widget._naturals
-                              .map(
-                                (key) => WhiteKey(
-                                  isPlayed: isPlayed(key.note),
-                                  width: keyWidth,
-                                  height: keyHeight,
-                                  borderWidth: 4,
-                                  semanticsLabel: key.name,
-                                  label: key.note % PianoParams.numberOfWhiteKeys == 0 ? key.name : null,
-                                ),
-                              )
-                              .toList(),
+                      children: widget._naturals
+                          .map(
+                            (key) => WhiteKey(
+                              isPlayed: isPlayed(key.note),
+                              width: keyWidth,
+                              height: keyHeight,
+                              borderWidth: 4,
+                              semanticsLabel: key.name,
+                              label: key.note % PianoParams.numberOfWhiteKeys == 0 ? key.name : null,
+                            ),
+                          )
+                          .toList(),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         SizedBox(width: keyWidth / 2),
                         ...widget._sharpsWithSpacing.map(
-                          (key) =>
-                              key == null
-                                  ? SizedBox(width: keyWidth)
-                                  : BlackKey(
-                                    isPlayed: isPlayed(key.note),
-                                    width: keyWidth,
-                                    height: keyHeight / 2,
-                                    borderWidth: 4,
-                                    semanticsLabel: key.name,
-                                  ),
+                          (key) => key == null
+                              ? SizedBox(width: keyWidth)
+                              : BlackKey(
+                                  isPlayed: isPlayed(key.note),
+                                  width: keyWidth,
+                                  height: keyHeight / 2,
+                                  borderWidth: 4,
+                                  semanticsLabel: key.name,
+                                ),
                         ),
                         SizedBox(width: keyWidth / 2),
                       ],

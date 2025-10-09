@@ -6,17 +6,25 @@ import 'package:provider/single_child_widget.dart';
 import 'package:tiomusic/l10n/delegate.dart';
 import 'package:tiomusic/util/color_schemes.g.dart';
 
+const screenWidth = 575.0;
+const screenHeight = screenWidth * 2;
+
+const screenSize = Size(screenWidth, screenHeight);
+
 extension WidgetTesterRenderExtension on WidgetTester {
   Future<void> renderScaffold(Widget scaffold, [List<SingleChildWidget> providers = const []]) async {
     await pumpWidget(
-      MultiProvider(
-        providers: providers,
-        child: MaterialApp(
-          navigatorObservers: [RouteObserver<PageRoute>()],
-          theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
-          localizationsDelegates: [...GlobalMaterialLocalizations.delegates, AppLocalizationsDelegate()],
-          supportedLocales: const [Locale('en', 'US'), Locale('de', 'DE')],
-          home: scaffold,
+      MediaQuery(
+        data: const MediaQueryData(size: screenSize),
+        child: MultiProvider(
+          providers: providers,
+          child: MaterialApp(
+            navigatorObservers: [RouteObserver<PageRoute>()],
+            theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
+            localizationsDelegates: [...GlobalMaterialLocalizations.delegates, AppLocalizationsDelegate()],
+            supportedLocales: const [Locale('en', 'US'), Locale('de', 'DE')],
+            home: scaffold,
+          ),
         ),
       ),
     );

@@ -207,6 +207,9 @@ class DeleteLeadingZeros extends TextInputFormatter {
         text = text.substring(1);
       }
     }
-    return TextEditingValue(text: text, selection: TextSelection.collapsed(offset: text.length));
+    return TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
+    );
   }
 }
