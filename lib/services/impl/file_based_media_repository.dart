@@ -56,27 +56,6 @@ class FileBasedMediaRepository implements MediaRepository {
     return _fs.existsFile(absolutePath) ? relativePath : null;
   }
 
-  Future<String> createTempWavPath({required String basename}) async {
-    final ts = DateTime.now().millisecondsSinceEpoch;
-    final safe = basename.replaceAll(RegExp(r'[^\w.-]'), '_');
-    final dir = _fs.tmpFolderPath;
-    await _fs.createFolder(dir);
-    final abs = '$dir/$safe.$ts.rendered.wav';
-    return abs;
-  }
-
-  Future<String> getDefaultSoundFontPath() async {
-    final candidates = ['${_fs.appFolderPath}/assets/sound_fonts/piano_01.sf2'];
-    for (final p in candidates) {
-      if (_fs.existsFile(p)) return p;
-    }
-    final files = await _fs.listFiles(_fs.appFolderPath);
-    for (final p in files) {
-      if (p.toLowerCase().endsWith('.sf2')) return p;
-    }
-    throw Exception('No SoundFont (.sf2) found in app folder');
-  }
-
   @override
   Future<void> delete(String relativePath) async {
     final absolutePath = '${_fs.appFolderPath}/$relativePath';
