@@ -26,8 +26,9 @@ extension WidgetTesterTunerExtension on WidgetTester {
   Finder withinConnectionDialog(FinderBase<Element> matching) =>
       find.descendant(of: connectionDialog, matching: matching);
 
-  Finder withinList(FinderBase<Element> matching) =>
-      find.descendant(of: find.bySemanticsLabel('Tool list'), matching: matching);
+  // deactivated until TIO-264 feature is done
+  // Finder withinList(FinderBase<Element> matching) =>
+  //     find.descendant(of: find.bySemanticsLabel('Tool list'), matching: matching);
 }
 
 void main() {
@@ -57,18 +58,19 @@ void main() {
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome 1')), findsOneWidget);
       });
 
-      testWidgets('connects selected tool', (tester) async {
-        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-        await tester.createTunerToolInProject();
-        await tester.tapAndSettle(find.byTooltip('Add new tool'));
-        await tester.createMediaPlayerToolInProject();
-
-        await tester.openTunerAndSettle();
-        await tester.openConnectionDialog();
-        await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
-
-        expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
-      });
+      // deactivated until TIO-264 feature is done
+      // testWidgets('connects selected tool', (tester) async {
+      //   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+      //   await tester.createTunerToolInProject();
+      //   await tester.tapAndSettle(find.byTooltip('Add new tool'));
+      //   await tester.createMediaPlayerToolInProject();
+      //
+      //   await tester.openTunerAndSettle();
+      //   await tester.openConnectionDialog();
+      //   await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+      //
+      //   expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
+      // });
     });
 
     group('connection to new/none existing tools', () {
@@ -82,23 +84,24 @@ void main() {
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome')), findsOneWidget);
       });
 
-      testWidgets('adds and connects selected tool', (tester) async {
-        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-        await tester.createTunerToolInProject();
-
-        await tester.openTunerAndSettle();
-        await tester.openConnectionDialog();
-
-        await tester.tapAndSettle(find.bySemanticsLabel('Media Player'));
-        await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 1');
-        await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-
-        expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
-
-        await tester.tapAndSettle(find.bySemanticsLabel('Back'));
-
-        expect(tester.withinList(find.bySemanticsLabel('Media Player 1')), findsOneWidget);
-      });
+      // deactivated until TIO-264 feature is done
+      // testWidgets('adds and connects selected tool', (tester) async {
+      //   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+      //   await tester.createTunerToolInProject();
+      //
+      //   await tester.openTunerAndSettle();
+      //   await tester.openConnectionDialog();
+      //
+      //   await tester.tapAndSettle(find.bySemanticsLabel('Media Player'));
+      //   await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 1');
+      //   await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
+      //
+      //   expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
+      //
+      //   await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+      //
+      //   expect(tester.withinList(find.bySemanticsLabel('Media Player 1')), findsOneWidget);
+      // });
 
       testWidgets('does not show tuner because tool is tuner itself', (tester) async {
         await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);

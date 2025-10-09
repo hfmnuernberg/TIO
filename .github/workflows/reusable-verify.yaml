@@ -57,7 +57,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y libasound2-dev
 
     - name: Setup Rust
-      uses: actions-rust-lang/setup-rust-toolchain@v1.15.0
+      uses: actions-rust-lang/setup-rust-toolchain@v1.15.2
       with:
         toolchain: 1.89.0
         components: rustfmt, clippy
@@ -136,4 +136,4 @@ jobs:
       run: scripts/app.sh coverage:print
 
     - name: Validate coverage
-      run: scripts/app.sh coverage:validate 44.8
+      run: scripts/app.sh coverage:validate 47.5

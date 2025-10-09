@@ -32,7 +32,7 @@ class ModalBottomSheet extends StatelessWidget {
             Expanded(
               child: ColoredBox(
                 color: ColorTheme.primary80,
-                child: Column(children: contentChildren),
+                child: SafeArea(child: Column(children: contentChildren)),
               ),
             ),
           ],

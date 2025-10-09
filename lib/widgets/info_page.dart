@@ -17,10 +17,12 @@ class InfoPage extends StatelessWidget {
         foregroundColor: ColorTheme.primary,
       ),
       backgroundColor: ColorTheme.primary92,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: textSections),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: textSections),
+          ),
         ),
       ),
     );
