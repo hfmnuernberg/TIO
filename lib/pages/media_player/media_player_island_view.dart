@@ -54,7 +54,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     _as = context.read<AudioSystem>();
     _audioSession = context.read<AudioSession>();
     _wakelock = context.read<Wakelock>();
-    _as.mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
+    _as.mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume, playerId: widget.mediaPlayerBlock.id);
 
     _waveformVisualizer = WaveformVisualizer(
       0,
@@ -68,6 +68,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       _as,
       widget.mediaPlayerBlock.speedFactor,
       widget.mediaPlayerBlock.pitchSemitones,
+      playerId: widget.mediaPlayerBlock.id,
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -94,6 +95,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
           fs,
           widget.mediaPlayerBlock,
           numOfBins,
+          playerId: widget.mediaPlayerBlock.id,
         );
         if (newRms != null) {
           _rmsValues = newRms;
@@ -125,7 +127,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
         return;
       }
       if (!_isPlaying) return;
-      _as.mediaPlayerGetState().then((mediaPlayerState) {
+      _as.mediaPlayerGetState(playerId: widget.mediaPlayerBlock.id).then((mediaPlayerState) {
         if (mediaPlayerState == null) {
           _logger.e('State is null.');
           return;
@@ -154,7 +156,9 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
     MediaPlayerFunctions.stopPlaying(
       _as,
+      _audioSession,
       _wakelock,
+      playerId: widget.mediaPlayerBlock.id,
     ).then((value) => MediaPlayerFunctions.stopRecording(_as, _wakelock));
 
     _timerPollPlaybackPosition?.cancel();
@@ -187,6 +191,8 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
     if (!_isPlaying) {
       await _startPlaying();
+      // await _stopPlaying();
+      // await _startPlaying();
     } else {
       await _stopPlaying();
     }
@@ -201,19 +207,29 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       _audioSessionInterruptionListenerHandle = null;
     }
 
-    await MediaPlayerFunctions.stopPlaying(_as, _wakelock);
+    final success = await MediaPlayerFunctions.stopPlaying(
+      _as,
+      _audioSession,
+      _wakelock,
+      playerId: widget.mediaPlayerBlock.id,
+    );
+    if (!success) _logger.e('Unable to stop playing in linked tool.');
     if (mounted) setState(() => _isPlaying = false);
   }
 
   Future<void> _startPlaying() async {
     _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(_stopPlaying);
-    var success = await MediaPlayerFunctions.startPlaying(
+
+    final success = await MediaPlayerFunctions.startPlaying(
       _as,
       _audioSession,
       _wakelock,
       widget.mediaPlayerBlock.looping,
       widget.mediaPlayerBlock.markerPositions.isNotEmpty,
+      playerId: widget.mediaPlayerBlock.id,
     );
+    if (!success) _logger.e('Unable to start playing in linked tool.');
+
     if (mounted) setState(() => _isPlaying = success);
   }
 }

@@ -130,13 +130,18 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-    _as.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume);
+    _as.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume, playerId: _mediaPlayerBlock.id);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
       _numOfBins = (_waveFormWidth / MediaPlayerParams.binWidth).floor();
 
-      MediaPlayerFunctions.setSpeedAndPitchInRust(_as, _mediaPlayerBlock.speedFactor, _mediaPlayerBlock.pitchSemitones);
+      MediaPlayerFunctions.setSpeedAndPitchInRust(
+        _as,
+        _mediaPlayerBlock.speedFactor,
+        _mediaPlayerBlock.pitchSemitones,
+        playerId: _mediaPlayerBlock.id,
+      );
 
       setState(() => _isLoading = true);
 
@@ -151,6 +156,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
           _fs,
           _mediaPlayerBlock,
           _numOfBins,
+          playerId: _mediaPlayerBlock.id,
         );
         if (newRms == null) {
           if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
@@ -279,12 +285,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _wakelock,
       false,
       _mediaPlayerBlock.markerPositions.isNotEmpty,
+      playerId: _mediaPlayerBlock.id,
     );
     if (success && mounted) setState(() => _isPlaying = true);
   }
 
   Future<void> _queryAndUpdateStateFromRust() async {
-    var mediaPlayerStateRust = await _as.mediaPlayerGetState();
+    var mediaPlayerStateRust = await _as.mediaPlayerGetState(playerId: _mediaPlayerBlock.id);
     if (!mounted || mediaPlayerStateRust == null) return;
 
     final wasPreviousPlaying = _isPlaying;
@@ -301,7 +308,9 @@ class _MediaPlayerState extends State<MediaPlayer> {
     });
 
     if (_project != null && _project!.mediaPlayerRepeatAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) {
-      _goToNextMediaPlayerWithLoadedFile();
+      final endFactor = _mediaPlayerBlock.rangeEnd;
+      final atEnd = mediaPlayerStateRust.playbackPositionFactor >= (endFactor - 0.001);
+      if (atEnd) _goToNextMediaPlayerWithLoadedFile();
     }
 
     if (_mediaPlayerBlock.markerPositions.isNotEmpty) _handleMarkers(mediaPlayerStateRust.playbackPositionFactor);
@@ -345,8 +354,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   @override
   void deactivate() async {
-    MediaPlayerFunctions.stopPlaying(_as, _wakelock);
+    MediaPlayerFunctions.stopPlaying(_as, _audioSession, _wakelock, playerId: _mediaPlayerBlock.id);
     MediaPlayerFunctions.stopRecording(_as, _wakelock);
+
+    final linkedId = _mediaPlayerBlock.islandToolID;
+    if (linkedId != null) {
+      await MediaPlayerFunctions.stopPlaying(_as, _audioSession, _wakelock, playerId: linkedId);
+    }
 
     if (playInterruptionListenerHandle != null) {
       await _audioSession.unregisterInterruptionListener(playInterruptionListenerHandle!);
@@ -371,7 +385,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
   Future<void> _handleRepeatToggle() async {
     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    _as.mediaPlayerSetRepeat(repeatOne: _mediaPlayerBlock.looping);
+    _as.mediaPlayerSetRepeat(repeatOne: _mediaPlayerBlock.looping, playerId: _mediaPlayerBlock.id);
   }
 
   @override
@@ -513,10 +527,10 @@ class _MediaPlayerState extends State<MediaPlayer> {
             initialValue: _mediaPlayerBlock.volume,
             onConfirm: (vol) {
               _mediaPlayerBlock.volume = vol;
-              _as.mediaPlayerSetVolume(volume: vol);
+              _as.mediaPlayerSetVolume(volume: vol, playerId: _mediaPlayerBlock.id);
             },
-            onChange: (vol) => _as.mediaPlayerSetVolume(volume: vol),
-            onCancel: () => _as.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume),
+            onChange: (vol) => _as.mediaPlayerSetVolume(volume: vol, playerId: _mediaPlayerBlock.id),
+            onCancel: () => _as.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume, playerId: _mediaPlayerBlock.id),
           ),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
@@ -653,7 +667,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         top: 4,
         child: IconButton(
           onPressed: () async {
-            await _as.mediaPlayerSetPlaybackPosFactor(posFactor: pos);
+            await _as.mediaPlayerSetPlaybackPosFactor(posFactor: pos, playerId: _mediaPlayerBlock.id);
             await _queryAndUpdateStateFromRust();
           },
           icon: const Icon(Icons.arrow_drop_down, color: ColorTheme.primary, size: MediaPlayerParams.markerIconSize),
@@ -668,12 +682,15 @@ class _MediaPlayerState extends State<MediaPlayer> {
   void _onWaveGesture(Offset localPosition) async {
     double relativeTapPosition = localPosition.dx / _waveFormWidth;
 
-    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: relativeTapPosition.clamp(0, 1));
+    await _as.mediaPlayerSetPlaybackPosFactor(
+      posFactor: relativeTapPosition.clamp(0, 1),
+      playerId: _mediaPlayerBlock.id,
+    );
     await _queryAndUpdateStateFromRust();
   }
 
   void _setFileDuration() async {
-    var state = await _as.mediaPlayerGetState();
+    var state = await _as.mediaPlayerGetState(playerId: _mediaPlayerBlock.id);
     if (state != null) {
       var millisecondsDuration = state.totalLengthSeconds * 1000;
       _fileDuration = Duration(milliseconds: millisecondsDuration.toInt());
@@ -681,7 +698,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   void _jump10Seconds(bool forward) async {
-    final state = await _as.mediaPlayerGetState();
+    final state = await _as.mediaPlayerGetState(playerId: _mediaPlayerBlock.id);
     if (state == null) {
       _logger.w('Cannot jump 10 seconds - State is null');
       return;
@@ -695,7 +712,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
     } else {
       newPos = state.playbackPositionFactor - secondFactor10;
     }
-    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: newPos);
+    // Clamp newPos to [0.0, 1.0] before sending to Rust
+    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: newPos.clamp(0.0, 1.0), playerId: _mediaPlayerBlock.id);
     await _queryAndUpdateStateFromRust();
   }
 
@@ -779,6 +797,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _fs,
         _mediaPlayerBlock,
         _numOfBins,
+        playerId: _mediaPlayerBlock.id,
       );
       if (newRms == null) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
@@ -846,6 +865,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     if (!_isPlaying) {
       await _startPlaying();
+      // await _stopPlaying();
+      // await _startPlaying();
     } else {
       await _stopPlaying();
     }
@@ -864,20 +885,51 @@ class _MediaPlayerState extends State<MediaPlayer> {
       return;
     }
 
+    _audioSession.registerInterruptionListener(_stopPlaying);
+
+    final linkedId = _mediaPlayerBlock.islandToolID;
+
     var success = await MediaPlayerFunctions.startPlaying(
       _as,
       _audioSession,
       _wakelock,
       _mediaPlayerBlock.looping,
       _mediaPlayerBlock.markerPositions.isNotEmpty,
+      playerId: _mediaPlayerBlock.id,
     );
-    _audioSession.registerInterruptionListener(_stopPlaying);
-    setState(() => _isPlaying = success);
+    if (!success) _logger.e('Unable to start playing.');
+
+    if (linkedId != null) {
+      final linkedSuccess = await MediaPlayerFunctions.startPlaying(
+        _as,
+        _audioSession,
+        _wakelock,
+        _mediaPlayerBlock.looping,
+        _mediaPlayerBlock.markerPositions.isNotEmpty,
+        playerId: linkedId,
+      );
+      if (!linkedSuccess) _logger.e('[MP] Failed to start linked player $linkedId');
+    }
+
+    if (mounted) setState(() => _isPlaying = success);
   }
 
   Future<void> _stopPlaying() async {
-    bool success = await MediaPlayerFunctions.stopPlaying(_as, _wakelock);
+    final linkedId = _mediaPlayerBlock.islandToolID;
+
+    bool success = await MediaPlayerFunctions.stopPlaying(
+      _as,
+      _audioSession,
+      _wakelock,
+      playerId: _mediaPlayerBlock.id,
+    );
     if (!success) _logger.e('Unable to stop playing.');
+
+    if (linkedId != null) {
+      final linkedSuccess = await MediaPlayerFunctions.stopPlaying(_as, _audioSession, _wakelock, playerId: linkedId);
+      if (!linkedSuccess) _logger.e('[MP] Failed to stop linked player $linkedId');
+    }
+
     if (mounted) setState(() => _isPlaying = false);
   }
 
@@ -958,6 +1010,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
         _fs,
         _mediaPlayerBlock,
         _numOfBins,
+        playerId: _mediaPlayerBlock.id,
       );
       if (newRms == null) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
@@ -981,7 +1034,13 @@ class _MediaPlayerState extends State<MediaPlayer> {
       setState(() => _isLoading = false);
     }
 
-    var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_as, _fs, _mediaPlayerBlock, _numOfBins);
+    var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(
+      _as,
+      _fs,
+      _mediaPlayerBlock,
+      _numOfBins,
+      playerId: _mediaPlayerBlock.id,
+    );
     if (newRms == null) {
       if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
     } else {
