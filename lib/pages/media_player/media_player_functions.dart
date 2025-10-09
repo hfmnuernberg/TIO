@@ -106,10 +106,7 @@ abstract class MediaPlayerFunctions {
       final fileName = assetPath.split('/').last;
       final outPath = '$tmpDir/$fileName';
       final outFile = File(outPath);
-      await outFile.writeAsBytes(
-        data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
-        flush: true,
-      );
+      await outFile.writeAsBytes(data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes), flush: true);
       return outPath;
     } catch (e, st) {
       _logger.e('Failed to load SoundFont asset at "$assetPath": $e\n$st');

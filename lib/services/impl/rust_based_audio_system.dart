@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:tiomusic/src/rust/api/api.dart' as rust;
 import 'package:tiomusic/services/audio_system.dart';
+import 'package:tiomusic/src/rust/api/ffi.dart' as rust;
 import 'package:tiomusic/src/rust/api/modules/media_player.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
