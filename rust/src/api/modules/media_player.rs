@@ -415,20 +415,16 @@ pub fn media_player_render_mid_to_wav(
         gain
     );
 
-    // Wrap everything in a catch block so we can return false on any failure
     let result = (|| -> anyhow::Result<()> {
-        // --- Load and parse MIDI ---
         let midi_bytes =
             fs::read(&midi_path).with_context(|| format!("reading midi {}", midi_path))?;
         let smf = Smf::parse(&midi_bytes).context("parsing midi")?;
 
-        // --- Timing ---
-        let tpq = match smf.header.timing {
+        let ticks_per_quarter = match smf.header.timing {
             midly::Timing::Metrical(t) => t.as_int() as f64,
             _ => 480.0,
         };
 
-        // Tempo map
         let mut tempo_changes: Vec<(u32, f64)> = Vec::new();
         for track in &smf.tracks {
             let mut tick: u32 = 0;
@@ -444,22 +440,22 @@ pub fn media_player_render_mid_to_wav(
         let ticks_to_seconds = |abs_tick: u32| -> f64 {
             let mut secs = 0.0;
             let mut last_tick: u32 = 0;
-            let mut cur_us = 500_000.0;
+            let mut current_tempo_in_us = 500_000.0;
             for (t, us) in tempo_changes.iter() {
                 if *t > abs_tick {
                     break;
                 }
-                let dt = *t - last_tick;
-                secs += (dt as f64) * cur_us / 1_000_000.0 / tpq;
+                let delta_ticks = *t - last_tick;
+                secs +=
+                    (delta_ticks as f64) * current_tempo_in_us / 1_000_000.0 / ticks_per_quarter;
                 last_tick = *t;
-                cur_us = *us;
+                current_tempo_in_us = *us;
             }
             let dt = abs_tick - last_tick;
-            secs += (dt as f64) * cur_us / 1_000_000.0 / tpq;
+            secs += (dt as f64) * current_tempo_in_us / 1_000_000.0 / ticks_per_quarter;
             secs
         };
 
-        // --- Synth setup ---
         let sf2_bytes = fs::read(&soundfont_path)
             .with_context(|| format!("reading soundfont {}", soundfont_path))?;
         let mut cursor = Cursor::new(sf2_bytes);
@@ -469,7 +465,6 @@ pub fn media_player_render_mid_to_wav(
         let mut synth = Synthesizer::new(&sf2, &settings).context("creating synthesizer")?;
         synth.set_master_volume(gain);
 
-        // Flatten events
         #[derive(Clone)]
         struct Ev {
             t: f64,
@@ -479,9 +474,9 @@ pub fn media_player_render_mid_to_wav(
         let mut events: Vec<Ev> = Vec::new();
         for track in &smf.tracks {
             let mut tick: u32 = 0;
-            for ev in track {
-                tick = tick.saturating_add(ev.delta.as_int());
-                if let TrackEventKind::Midi { channel, message } = ev.kind {
+            for event in track {
+                tick = tick.saturating_add(event.delta.as_int());
+                if let TrackEventKind::Midi { channel, message } = event.kind {
                     events.push(Ev {
                         t: ticks_to_seconds(tick),
                         ch: channel.as_int(),
@@ -492,7 +487,6 @@ pub fn media_player_render_mid_to_wav(
         }
         events.sort_by(|a, b| a.t.partial_cmp(&b.t).unwrap());
 
-        // --- WAV writer ---
         let spec = WavSpec {
             channels: 2,
             sample_rate,
@@ -502,20 +496,19 @@ pub fn media_player_render_mid_to_wav(
         let mut writer = WavWriter::create(&wav_out_path, spec)
             .with_context(|| format!("creating wav {}", wav_out_path))?;
 
-        // Render loop
-        let mut idx = 0usize;
+        let mut index = 0usize;
         let mut time = 0.0f64;
-        let dt = 128.0 / (sample_rate as f64);
+        let delta_ticks = 128.0 / (sample_rate as f64);
         let mut left = vec![0.0f32; 128];
         let mut right = vec![0.0f32; 128];
         let end = events.last().map(|e| e.t).unwrap_or(0.0) + 2.0;
 
         while time < end {
-            let next = time + dt;
-            while idx < events.len() && events[idx].t < next {
-                let e = &events[idx];
-                let ch = e.ch as i32;
-                match e.msg {
+            let next = time + delta_ticks;
+            while index < events.len() && events[index].t < next {
+                let event = &events[index];
+                let ch = event.ch as i32;
+                match event.msg {
                     MidiMessage::NoteOn { key, vel } => {
                         let k = key.as_int() as i32;
                         let v = vel.as_int() as i32;
@@ -530,7 +523,7 @@ pub fn media_player_render_mid_to_wav(
                     }
                     _ => {}
                 }
-                idx += 1;
+                index += 1;
             }
 
             synth.render(&mut left, &mut right);
