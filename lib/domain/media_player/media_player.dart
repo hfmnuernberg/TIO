@@ -17,6 +17,9 @@ class MediaPlayer {
   bool _isPlaying = false;
   bool get isPlaying => _isPlaying;
 
+  final double _markerSoundFrequency = 2000;
+  final int _markerSoundDurationInMilliseconds = 80;
+
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
   MediaPlayer(this._as, this._audioSession, this._wakelock);
@@ -69,6 +72,12 @@ class MediaPlayer {
   Future<void> setPlaybackPosFactor(double posFactor) async {
     await _as.mediaPlayerSetPlaybackPosFactor(posFactor: posFactor.clamp(0, 1));
   }
+
+  Future<void> playMarkerPeep() async {
+    await _as.generatorNoteOn(newFreq: _markerSoundFrequency);
+    Future.delayed(Duration(milliseconds: _markerSoundDurationInMilliseconds), _as.generatorNoteOff);
+  }
+
 
   Future<dynamic> getState() => _as.mediaPlayerGetState();
 

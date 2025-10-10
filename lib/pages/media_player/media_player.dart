@@ -73,8 +73,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   late MarkerHandler _markerHandler;
   double? _previousPlaybackPositionFactor;
-  final double _markerSoundFrequency = 2000;
-  final int _markerSoundDurationInMilliseconds = 80;
 
   Timer? _timerPollPlaybackPosition;
 
@@ -332,12 +330,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       previousPosition: previousPosition,
       currentPosition: currentPosition,
       markers: _mediaPlayerBlock.markerPositions,
-      onPeep: (marker) async {
-        if (_isPlaying) {
-          await _as.generatorNoteOn(newFreq: _markerSoundFrequency);
-          Future.delayed(Duration(milliseconds: _markerSoundDurationInMilliseconds), () => _as.generatorNoteOff());
-        }
-      },
+      onPeep: (_) async => _isPlaying ? await _player.playMarkerPeep() : null,
     );
     _previousPlaybackPositionFactor = currentPosition;
   }
