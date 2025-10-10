@@ -124,53 +124,47 @@ def ndkPath = (sdkDir && ndkVer) ? new File(new File(sdkDir, 'ndk'), ndkVer).abs
               'build'
       if (ndkPath != null) {
         environment 'ANDROID_NDK_HOME', ndkPath
-        environment 'ANDROID_NDK_ROOT', ndkPath
       }
       if (sdkDir != null) {
         environment 'ANDROID_SDK_ROOT', sdkDir
       }
       if (profileMode != null) {
-          args profileMode
+        args profileMode
       }
       doLast {
         if (ndkPath == null) {
-          logger.lifecycle("WARN: ndkPath is null; cannot copy libc++_shared.so")
-        } else {
-          def abiList = ["arm64-v8a", "armeabi-v7a", "x86_64"]
-          def tripleMap = [
-            "arm64-v8a": "aarch64-linux-android",
-            "armeabi-v7a": "arm-linux-androideabi",
-            "x86_64": "x86_64-linux-android"
-          ]
+          throw new GradleException("NDK path not resolved — cannot copy libc++_shared.so")
+        }
 
-          def minApi = android.defaultConfig.minSdkVersion.apiString ?: "21"
-          logger.lifecycle("NDK path resolved for libc++ copy: ${ndkPath}")
-          def prebuiltRoot = new File(ndkPath, "toolchains/llvm/prebuilt")
-          def hostDirs = prebuiltRoot.exists() ? prebuiltRoot.listFiles()?.findAll { it.isDirectory() } : []
-          abiList.each { abi ->
-            def candidates = []
-            candidates << new File(new File(new File(ndkPath, "sources/cxx-stl/llvm-libc++/libs"), abi), "libc++_shared.so")
-            hostDirs?.each { host ->
-              candidates << new File(new File(new File(new File(host, "sysroot/usr/lib"), tripleMap[abi]), ""), "libc++_shared.so")
-              candidates << new File(new File(new File(new File(new File(host, "sysroot/usr/lib"), tripleMap[abi]), minApi), ""), "libc++_shared.so")
-            }
+        def abiList = ["arm64-v8a", "armeabi-v7a", "x86_64"]
+        def tripleMap = [
+          "arm64-v8a": "aarch64-linux-android",
+          "armeabi-v7a": "arm-linux-androideabi",
+          "x86_64": "x86_64-linux-android"
+        ]
 
-            def found = candidates.find { it.exists() }
-            def dstDir = file("src/main/jniLibs/${abi}")
-            dstDir.mkdirs()
-            if (found) {
-              copy {
-                from found
-                into dstDir
-              }
-              def outFile = new File(dstDir, "libc++_shared.so")
-              if (!outFile.exists()) {
-                throw new GradleException("Failed to copy libc++_shared.so for ${abi} from ${found} -> ${dstDir}")
-              }
-              logger.lifecycle("Copied libc++_shared.so for ${abi} from ${found} -> ${dstDir}")
-            } else {
-              throw new GradleException("libc++_shared.so not found for ${abi}. Checked: \n" + candidates.collect { it.absolutePath }.join("\n"))
+        def minApi = android.defaultConfig.minSdkVersion.apiString ?: "21"
+        def prebuiltRoot = new File(ndkPath, "toolchains/llvm/prebuilt")
+        def hostDirs = prebuiltRoot.exists() ? prebuiltRoot.listFiles()?.findAll { it.isDirectory() } : []
+
+        abiList.each { abi ->
+          def candidates = hostDirs.collectMany { host ->
+            [
+              new File(new File(new File(new File(host, "sysroot/usr/lib"), tripleMap[abi]), ""), "libc++_shared.so"),
+              new File(new File(new File(new File(new File(host, "sysroot/usr/lib"), tripleMap[abi]), minApi), ""), "libc++_shared.so")
+            ]
+          }
+
+          def found = candidates.find { it.exists() }
+          def dstDir = file("src/main/jniLibs/${abi}")
+          dstDir.mkdirs()
+          if (found) {
+            copy {
+              from found
+              into dstDir
             }
+          } else {
+            throw new GradleException("libc++_shared.so not found for ${abi}")
           }
         }
       }
