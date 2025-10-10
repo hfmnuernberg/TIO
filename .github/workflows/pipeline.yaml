@@ -1,6 +1,7 @@
 name: Pipeline [PRD]
 
 on:
+  pull_request:
   push:
     branches:
     - main
@@ -60,34 +61,34 @@ jobs:
       build_number: ${{ needs.bump-build-number.outputs.new_build_number }}
       target_env: prd
 
-  upload-ios-app:
-    needs: [load-semver, bump-build-number, verify, build-ios-app]
-    name: Upload iOS App
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-ios-app.yaml@main
-    secrets: inherit
-    permissions:
-      deployments: write
-      id-token: write
-      contents: read
-    with:
-      ref: ${{ github.sha }}
-      semver: ${{ needs.load-semver.outputs.semver }}
-      build_number: ${{ needs.bump-build-number.outputs.new_build_number }}
-      target_env: prd
-      apple_app_store_url: ${{ vars.APPLE_APP_STORE_URL }}
-
-  upload-android-app:
-    needs: [load-semver, bump-build-number, verify, build-android-app]
-    name: Upload Android App
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-android-app.yaml@main
-    secrets: inherit
-    permissions:
-      deployments: write
-      id-token: write
-      contents: read
-    with:
-      ref: ${{ github.sha }}
-      semver: ${{ needs.load-semver.outputs.semver }}
-      build_number: ${{ needs.bump-build-number.outputs.new_build_number }}
-      target_env: prd
-      google_play_store_url: ${{ vars.GOOGLE_PLAY_STORE_URL }}
+#  upload-ios-app:
+#    needs: [load-semver, bump-build-number, verify, build-ios-app]
+#    name: Upload iOS App
+#    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-ios-app.yaml@main
+#    secrets: inherit
+#    permissions:
+#      deployments: write
+#      id-token: write
+#      contents: read
+#    with:
+#      ref: ${{ github.sha }}
+#      semver: ${{ needs.load-semver.outputs.semver }}
+#      build_number: ${{ needs.bump-build-number.outputs.new_build_number }}
+#      target_env: prd
+#      apple_app_store_url: ${{ vars.APPLE_APP_STORE_URL }}
+#
+#  upload-android-app:
+#    needs: [load-semver, bump-build-number, verify, build-android-app]
+#    name: Upload Android App
+#    uses: hfmnuernberg/TIO/.github/workflows/reusable-upload-android-app.yaml@main
+#    secrets: inherit
+#    permissions:
+#      deployments: write
+#      id-token: write
+#      contents: read
+#    with:
+#      ref: ${{ github.sha }}
+#      semver: ${{ needs.load-semver.outputs.semver }}
+#      build_number: ${{ needs.bump-build-number.outputs.new_build_number }}
+#      target_env: prd
+#      google_play_store_url: ${{ vars.GOOGLE_PLAY_STORE_URL }}
