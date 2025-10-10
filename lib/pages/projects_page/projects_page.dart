@@ -209,7 +209,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         toolPage = const Tuner(isQuickTool: true);
       case BlockType.mediaPlayer:
         block = MediaPlayerBlock.withDefaults(context.l10n);
-        toolPage = const MediaPlayer(isQuickTool: true);
+        toolPage = const MediaPlayerPage(isQuickTool: true);
       case BlockType.piano:
         block = PianoBlock.withDefaults(context.l10n);
         toolPage = const PianoPage(isQuickTool: true);

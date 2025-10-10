@@ -342,7 +342,7 @@ Future<dynamic> goToTool(
     builder: (context, child) {
       if (block is TunerBlock) return const Tuner(isQuickTool: false);
       if (block is MetronomeBlock) return const MetronomePage(isQuickTool: false);
-      if (block is MediaPlayerBlock) return MediaPlayer(isQuickTool: false, shouldAutoplay: shouldAutoplay);
+      if (block is MediaPlayerBlock) return MediaPlayerPage(isQuickTool: false, shouldAutoplay: shouldAutoplay);
       if (block is ImageBlock) return const ImageTool(isQuickTool: false);
       if (block is PianoBlock) return PianoPage(isQuickTool: false, withoutInitAndStart: pianoAlreadyOn);
       if (block is TextBlock) return const TextTool(isQuickTool: false);

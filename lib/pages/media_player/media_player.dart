@@ -40,18 +40,19 @@ import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
+import 'package:tiomusic/domain/media_player/media_player.dart';
 
-class MediaPlayer extends StatefulWidget {
+class MediaPlayerPage extends StatefulWidget {
   final bool isQuickTool;
   final bool shouldAutoplay;
 
-  const MediaPlayer({super.key, required this.isQuickTool, this.shouldAutoplay = false});
+  const MediaPlayerPage({super.key, required this.isQuickTool, this.shouldAutoplay = false});
 
   @override
-  State<MediaPlayer> createState() => _MediaPlayerState();
+  State<MediaPlayerPage> createState() => _MediaPlayerPageState();
 }
 
-class _MediaPlayerState extends State<MediaPlayer> {
+class _MediaPlayerPageState extends State<MediaPlayerPage> {
   static final _logger = createPrefixLogger('MediaPlayer');
 
   late AudioSystem _as;
@@ -62,6 +63,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
   late FileReferences _fileReferences;
   late MediaRepository _mediaRepo;
   late ProjectRepository _projectRepo;
+
+  late final MediaPlayer _player;
 
   late bool _isPlaying = false;
   late bool _isRecording = false;
@@ -116,6 +119,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
     _fileReferences = context.read<FileReferences>();
     _mediaRepo = context.read<MediaRepository>();
     _projectRepo = context.read<ProjectRepository>();
+
+    _player = MediaPlayer(context.read<AudioSystem>(), context.read<AudioSession>(), context.read<Wakelock>());
 
     _waveformVisualizer = WaveformVisualizer(0, 0, 1, _rmsValues, 0);
 
@@ -668,12 +673,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
   void _onWaveGesture(Offset localPosition) async {
     double relativeTapPosition = localPosition.dx / _waveFormWidth;
 
-    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: relativeTapPosition.clamp(0, 1));
+    await _player.setPlaybackPosFactor(relativeTapPosition.clamp(0, 1));
     await _queryAndUpdateStateFromRust();
   }
 
   void _setFileDuration() async {
-    var state = await _as.mediaPlayerGetState();
+    var state = await _player.getState();
     if (state != null) {
       var millisecondsDuration = state.totalLengthSeconds * 1000;
       _fileDuration = Duration(milliseconds: millisecondsDuration.toInt());
@@ -681,21 +686,8 @@ class _MediaPlayerState extends State<MediaPlayer> {
   }
 
   void _jump10Seconds(bool forward) async {
-    final state = await _as.mediaPlayerGetState();
-    if (state == null) {
-      _logger.w('Cannot jump 10 seconds - State is null');
-      return;
-    }
-
-    double secondFactor10 = _fileDuration.inSeconds > 0.01 ? 10.0 / _fileDuration.inSeconds : 100.0;
-
-    double newPos;
-    if (forward) {
-      newPos = state.playbackPositionFactor + secondFactor10;
-    } else {
-      newPos = state.playbackPositionFactor - secondFactor10;
-    }
-    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: newPos);
+    final seconds = forward ? 10 : -10;
+    await _player.jumpSeconds(seconds, _fileDuration);
     await _queryAndUpdateStateFromRust();
   }
 
@@ -840,45 +832,23 @@ class _MediaPlayerState extends State<MediaPlayer> {
     },
   );
 
-  void _togglePlaying() async {
+  Future<void> _togglePlaying() async {
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
 
-    if (!_isPlaying) {
-      await _startPlaying();
+    if (!_player.isPlaying) {
+      final started = await _player.start(
+        looping: _mediaPlayerBlock.looping,
+        useMarkers: _mediaPlayerBlock.markerPositions.isNotEmpty,
+      );
+      if (mounted) setState(() => _isPlaying = started);
     } else {
-      await _stopPlaying();
+      await _player.stop();
+      if (mounted) setState(() => _isPlaying = false);
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     setState(() => _processingButtonClick = false);
-  }
-
-  Future<void> _startPlaying() async {
-    if (_isRecording) {
-      _logger.w('Cannot play - Recording in progress.');
-      return;
-    }
-    if (!_fileLoaded) {
-      _logger.w('Cannot play - No file loaded.');
-      return;
-    }
-
-    var success = await MediaPlayerFunctions.startPlaying(
-      _as,
-      _audioSession,
-      _wakelock,
-      _mediaPlayerBlock.looping,
-      _mediaPlayerBlock.markerPositions.isNotEmpty,
-    );
-    _audioSession.registerInterruptionListener(_stopPlaying);
-    setState(() => _isPlaying = success);
-  }
-
-  Future<void> _stopPlaying() async {
-    bool success = await MediaPlayerFunctions.stopPlaying(_as, _wakelock);
-    if (!success) _logger.e('Unable to stop playing.');
-    if (mounted) setState(() => _isPlaying = false);
   }
 
   Future<void> _toggleRecording() async {
