@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
@@ -37,19 +39,64 @@ abstract class MediaPlayerFunctions {
 
   static Future<Float32List?> _setAudioFileAndTrimInRust(
     AudioSystem as,
+    FileSystem fs,
     String absoluteFilePath,
     double startFactor,
     double endFactor,
     int numberOfBins,
   ) async {
-    var success = await as.mediaPlayerLoadWav(wavFilePath: absoluteFilePath);
+    final isMidi = absoluteFilePath.toLowerCase().endsWith('.mid');
+    final pathForPlayer = isMidi ? (await _renderMidiToTempWav(as, fs, absoluteFilePath)) : absoluteFilePath;
+
+    if (pathForPlayer == null) return null;
+
+    var success = await as.mediaPlayerLoadWav(wavFilePath: pathForPlayer);
     if (success) {
       as.mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor);
-
       var tempRmsList = await as.mediaPlayerGetRms(nBins: numberOfBins);
       return _normalizeRms(tempRmsList);
     }
     return null;
+  }
+
+  static Future<String?> _renderMidiToTempWav(AudioSystem as, FileSystem fs, String midiAbs) async {
+    final sampleRate = await as.getSampleRate();
+
+    final ts = DateTime.now().millisecondsSinceEpoch;
+    final base = fs.toBasename(midiAbs).replaceAll(RegExp(r'[^\w.-]'), '_');
+    final tmpDir = fs.tmpFolderPath;
+    await fs.createFolder(tmpDir);
+    final tmpWavAbs = '$tmpDir/$base.$ts.rendered.wav';
+
+    final sf2Abs = await _resolveSoundFontPath(fs);
+    if (sf2Abs == null) return null;
+
+    final ok = await as.mediaPlayerRenderMidiToWav(
+      midiPath: midiAbs,
+      soundFontPath: sf2Abs,
+      wavOutPath: tmpWavAbs,
+      sampleRate: sampleRate,
+      gain: 0.7,
+    );
+    return ok ? tmpWavAbs : null;
+  }
+
+  static Future<String?> _resolveSoundFontPath(FileSystem fs) async {
+    const assetPath = 'assets/sound_fonts/piano_01.sf2';
+
+    try {
+      final data = await rootBundle.load(assetPath);
+      final tmpDir = fs.tmpFolderPath;
+      await fs.createFolder(tmpDir);
+      final fileName = assetPath.split('/').last;
+      final outPath = '$tmpDir/$fileName';
+      final outFile = File(outPath);
+      await outFile.writeAsBytes(data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes), flush: true);
+      return outPath;
+    } catch (e, st) {
+      _logger.e('Failed to load SoundFont asset at "$assetPath": $e\n$st');
+      return null;
+    }
   }
 
   static Float32List _normalizeRms(Float32List rmsList) {
@@ -130,7 +177,7 @@ abstract class MediaPlayerFunctions {
     final absolutePath = fs.toAbsoluteFilePath(block.relativePath);
     if (!fs.existsFile(absolutePath)) return null;
 
-    return _setAudioFileAndTrimInRust(as, absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
+    return _setAudioFileAndTrimInRust(as, fs, absolutePath, block.rangeStart, block.rangeEnd, numOfBins);
   }
 
   static Widget displayRecordingTimer(String label, String duration, double height) {

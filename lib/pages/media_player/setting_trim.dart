@@ -9,7 +9,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/api.dart';
+import 'package:tiomusic/src/rust/api/ffi.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 

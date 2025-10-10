@@ -32,6 +32,13 @@ mixin AudioSystem {
   Future<MediaPlayerState?> mediaPlayerGetState();
   Future<bool> mediaPlayerSetPlaybackPosFactor({required double posFactor});
   Future<bool> mediaPlayerSetVolume({required double volume});
+  Future<bool> mediaPlayerRenderMidiToWav({
+    required String midiPath,
+    required String soundFontPath,
+    required String wavOutPath,
+    required int sampleRate,
+    required double gain,
+  });
 
   Future<bool> metronomeStart();
   Future<bool> metronomeStop();
