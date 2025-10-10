@@ -54,6 +54,18 @@ class MediaPlayer {
     _isPlaying = false;
   }
 
+  Future<void> setVolume(double volume) async {
+    await _as.mediaPlayerSetVolume(volume: volume);
+  }
+
+  Future<void> setRepeat(bool repeatOne) async {
+    await _as.mediaPlayerSetRepeat(repeatOne: repeatOne);
+  }
+
+  Future<void> setSpeedAndPitch(double speedFactor, double pitchSemitones) async {
+    await MediaPlayerFunctions.setSpeedAndPitchInRust(_as, speedFactor, pitchSemitones);
+  }
+
   Future<void> setPlaybackPosFactor(double posFactor) async {
     await _as.mediaPlayerSetPlaybackPosFactor(posFactor: posFactor.clamp(0, 1));
   }

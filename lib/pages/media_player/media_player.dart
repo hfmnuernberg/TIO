@@ -135,13 +135,13 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-    _as.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume);
+    _player.setVolume(_mediaPlayerBlock.volume);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
       _numOfBins = (_waveFormWidth / MediaPlayerParams.binWidth).floor();
 
-      MediaPlayerFunctions.setSpeedAndPitchInRust(_as, _mediaPlayerBlock.speedFactor, _mediaPlayerBlock.pitchSemitones);
+      _player.setSpeedAndPitch(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.pitchSemitones);
 
       setState(() => _isLoading = true);
 
@@ -278,18 +278,12 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   Future<void> _autoplayAfterDelay() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    final success = await MediaPlayerFunctions.startPlaying(
-      _as,
-      _audioSession,
-      _wakelock,
-      false,
-      _mediaPlayerBlock.markerPositions.isNotEmpty,
-    );
-    if (success && mounted) setState(() => _isPlaying = true);
+    final started = await _player.start(looping: false, useMarkers: _mediaPlayerBlock.markerPositions.isNotEmpty);
+    if (started && mounted) setState(() => _isPlaying = true);
   }
 
   Future<void> _queryAndUpdateStateFromRust() async {
-    var mediaPlayerStateRust = await _as.mediaPlayerGetState();
+    var mediaPlayerStateRust = await _player.getState();
     if (!mounted || mediaPlayerStateRust == null) return;
 
     final wasPreviousPlaying = _isPlaying;
@@ -376,7 +370,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   Future<void> _handleRepeatToggle() async {
     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    _as.mediaPlayerSetRepeat(repeatOne: _mediaPlayerBlock.looping);
+    _player.setRepeat(_mediaPlayerBlock.looping);
   }
 
   @override
@@ -518,10 +512,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
             initialValue: _mediaPlayerBlock.volume,
             onConfirm: (vol) {
               _mediaPlayerBlock.volume = vol;
-              _as.mediaPlayerSetVolume(volume: vol);
+              _player.setVolume(vol);
             },
-            onChange: (vol) => _as.mediaPlayerSetVolume(volume: vol),
-            onCancel: () => _as.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume),
+            onChange: (vol) => _player.setVolume(vol),
+            onCancel: () => _player.setVolume(_mediaPlayerBlock.volume),
           ),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
@@ -658,7 +652,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         top: 4,
         child: IconButton(
           onPressed: () async {
-            await _as.mediaPlayerSetPlaybackPosFactor(posFactor: pos);
+            await _player.setPlaybackPosFactor(pos);
             await _queryAndUpdateStateFromRust();
           },
           icon: const Icon(Icons.arrow_drop_down, color: ColorTheme.primary, size: MediaPlayerParams.markerIconSize),
