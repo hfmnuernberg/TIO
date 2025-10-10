@@ -118,7 +118,12 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     _mediaRepo = context.read<MediaRepository>();
     _projectRepo = context.read<ProjectRepository>();
 
-    _player = MediaPlayer(context.read<AudioSystem>(), context.read<AudioSession>(), context.read<Wakelock>());
+    _player = MediaPlayer(
+      context.read<AudioSystem>(),
+      context.read<AudioSession>(),
+      context.read<FileSystem>(),
+      context.read<Wakelock>(),
+    );
 
     _waveformVisualizer = WaveformVisualizer(0, 0, 1, _rmsValues, 0);
 
@@ -149,11 +154,11 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       }
 
       if (_mediaPlayerBlock.relativePath.isNotEmpty) {
-        var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(
-          _as,
-          _fs,
-          _mediaPlayerBlock,
-          _numOfBins,
+        var newRms = await _player.openFileAndGetRms(
+          absolutePath: _fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath),
+          startFactor: _mediaPlayerBlock.rangeStart,
+          endFactor: _mediaPlayerBlock.rangeEnd,
+          numberOfBins: _numOfBins,
         );
         if (newRms == null) {
           if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
@@ -753,11 +758,11 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
       setState(() => _isLoading = true);
 
-      var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(
-        _as,
-        _fs,
-        _mediaPlayerBlock,
-        _numOfBins,
+      var newRms = await _player.openFileAndGetRms(
+        absolutePath: _fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath),
+        startFactor: _mediaPlayerBlock.rangeStart,
+        endFactor: _mediaPlayerBlock.rangeEnd,
+        numberOfBins: _numOfBins,
       );
       if (newRms == null) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
@@ -910,11 +915,11 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         await showFormatNotSupportedDialog(context, fileExtension);
       }
 
-      var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(
-        _as,
-        _fs,
-        _mediaPlayerBlock,
-        _numOfBins,
+      var newRms = await _player.openFileAndGetRms(
+        absolutePath: _fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath),
+        startFactor: _mediaPlayerBlock.rangeStart,
+        endFactor: _mediaPlayerBlock.rangeEnd,
+        numberOfBins: _numOfBins,
       );
       if (newRms == null) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
@@ -938,7 +943,12 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       setState(() => _isLoading = false);
     }
 
-    var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(_as, _fs, _mediaPlayerBlock, _numOfBins);
+    var newRms = await _player.openFileAndGetRms(
+      absolutePath: _fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath),
+      startFactor: _mediaPlayerBlock.rangeStart,
+      endFactor: _mediaPlayerBlock.rangeEnd,
+      numberOfBins: _numOfBins,
+    );
     if (newRms == null) {
       if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
     } else {

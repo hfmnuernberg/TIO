@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
+import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/log.dart';
 
@@ -12,6 +14,7 @@ class MediaPlayer {
 
   final AudioSystem _as;
   final AudioSession _audioSession;
+  final FileSystem _fs;
   final Wakelock _wakelock;
 
   bool _isPlaying = false;
@@ -22,7 +25,23 @@ class MediaPlayer {
 
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
-  MediaPlayer(this._as, this._audioSession, this._wakelock);
+  MediaPlayer(this._as, this._audioSession, this._fs, this._wakelock);
+
+  Future<Float32List?> openFileAndGetRms({
+    required String absolutePath,
+    required double startFactor,
+    required double endFactor,
+    required int numberOfBins,
+  }) {
+    return MediaPlayerFunctions.openAudioFileFromPathAndGetRMSValues(
+      _as,
+      _fs,
+      absolutePath,
+      startFactor,
+      endFactor,
+      numberOfBins,
+    );
+  }
 
   Future<bool> start({required bool looping, required bool useMarkers}) async {
     if (_isPlaying) return true;
@@ -77,7 +96,6 @@ class MediaPlayer {
     await _as.generatorNoteOn(newFreq: _markerSoundFrequency);
     Future.delayed(Duration(milliseconds: _markerSoundDurationInMilliseconds), _as.generatorNoteOff);
   }
-
 
   Future<dynamic> getState() => _as.mediaPlayerGetState();
 

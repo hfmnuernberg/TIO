@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/domain/media_player/media_player.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
@@ -33,6 +34,8 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   late Wakelock _wakelock;
   late WaveformVisualizer _waveformVisualizer;
 
+  late final MediaPlayer _player;
+
   Float32List _rmsValues = Float32List(100);
   int numOfBins = 0;
 
@@ -55,6 +58,13 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     _audioSession = context.read<AudioSession>();
     _wakelock = context.read<Wakelock>();
     _as.mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
+
+    _player = MediaPlayer(
+      context.read<AudioSystem>(),
+      context.read<AudioSession>(),
+      context.read<FileSystem>(),
+      context.read<Wakelock>(),
+    );
 
     _waveformVisualizer = WaveformVisualizer(
       0,
@@ -89,11 +99,11 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       }
 
       if (widget.mediaPlayerBlock.relativePath.isNotEmpty) {
-        var newRms = await MediaPlayerFunctions.openAudioFileInRustAndGetRMSValues(
-          _as,
-          fs,
-          widget.mediaPlayerBlock,
-          numOfBins,
+        var newRms = await _player.openFileAndGetRms(
+          absolutePath: fs.toAbsoluteFilePath(widget.mediaPlayerBlock.relativePath),
+          startFactor: widget.mediaPlayerBlock.rangeStart,
+          endFactor: widget.mediaPlayerBlock.rangeEnd,
+          numberOfBins: numOfBins,
         );
         if (newRms != null) {
           _rmsValues = newRms;

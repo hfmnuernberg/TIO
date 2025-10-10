@@ -159,6 +159,17 @@ abstract class MediaPlayerFunctions {
     return as.mediaPlayerStopRecording();
   }
 
+  static Future<Float32List?> openAudioFileFromPathAndGetRMSValues(
+    AudioSystem as,
+    FileSystem fs,
+    String absolutePath,
+    double startFactor,
+    double endFactor,
+    int numOfBins,
+  ) async {
+    return _setAudioFileAndTrimInRust(as, fs, absolutePath, startFactor, endFactor, numOfBins);
+  }
+
   static Future<Float32List?> openAudioFileInRustAndGetRMSValues(
     AudioSystem as,
     FileSystem fs,
