@@ -45,6 +45,13 @@ struct AudioProcessingData {
     buffer_after_pitch_shift: [f32; PITCH_SHIFT_BUFFER_SIZE],
 }
 
+#[derive(Clone)]
+struct Ev {
+    t: f64,
+    ch: u8,
+    msg: MidiMessage,
+}
+
 type RingConsumerType = Consumer<f32, Arc<SharedRb<f32, Vec<MaybeUninit<f32>>>>>;
 
 lazy_static! {
@@ -406,15 +413,6 @@ pub fn media_player_render_mid_to_wav(
     sample_rate: u32,
     gain: f32,
 ) -> bool {
-    log::info!(
-        "media player render midi to wav: {}, {}, {}, {}, {}",
-        midi_path,
-        soundfont_path,
-        wav_out_path,
-        sample_rate,
-        gain
-    );
-
     let result = (|| -> anyhow::Result<()> {
         let midi_bytes =
             fs::read(&midi_path).with_context(|| format!("reading midi {}", midi_path))?;
@@ -465,12 +463,6 @@ pub fn media_player_render_mid_to_wav(
         let mut synth = Synthesizer::new(&sf2, &settings).context("creating synthesizer")?;
         synth.set_master_volume(gain);
 
-        #[derive(Clone)]
-        struct Ev {
-            t: f64,
-            ch: u8,
-            msg: MidiMessage,
-        }
         let mut events: Vec<Ev> = Vec::new();
         for track in &smf.tracks {
             let mut tick: u32 = 0;
