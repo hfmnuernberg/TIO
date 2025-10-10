@@ -342,7 +342,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   @override
   void deactivate() async {
-    MediaPlayerFunctions.stopPlaying(_as, _wakelock);
+    await _player.stop();
     MediaPlayerFunctions.stopRecording(_as, _wakelock);
 
     if (playInterruptionListenerHandle != null) {
