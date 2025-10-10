@@ -102,7 +102,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   final GlobalKey _keyWaveform = GlobalKey();
   final GlobalKey islandToolTutorialKey = GlobalKey();
 
-  AudioSessionInterruptionListenerHandle? playInterruptionListenerHandle;
   AudioSessionInterruptionListenerHandle? recordInterruptionListenerHandle;
 
   @override
@@ -345,9 +344,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     await _player.stop();
     MediaPlayerFunctions.stopRecording(_as, _wakelock);
 
-    if (playInterruptionListenerHandle != null) {
-      await _audioSession.unregisterInterruptionListener(playInterruptionListenerHandle!);
-    }
     if (recordInterruptionListenerHandle != null) {
       await _audioSession.unregisterInterruptionListener(recordInterruptionListenerHandle!);
     }
