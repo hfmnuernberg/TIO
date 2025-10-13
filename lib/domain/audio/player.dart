@@ -84,8 +84,12 @@ class Player {
     await _as.mediaPlayerSetRepeat(repeatOne: repeatOne);
   }
 
-  Future<void> setSpeedAndPitch(double speedFactor, double pitchSemitones) async {
-    await MediaPlayerFunctions.setSpeedAndPitchInRust(_as, speedFactor, pitchSemitones);
+  Future<void> setPitch(double pitchSemitones) async {
+    await _as.mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones);
+  }
+
+  Future<void> setSpeed(double speedFactor) async {
+    await _as.mediaPlayerSetSpeedFactor(speedFactor: speedFactor);
   }
 
   Future<void> setPlaybackPosition(double posFactor) async {

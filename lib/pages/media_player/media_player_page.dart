@@ -143,7 +143,8 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
       _numOfBins = (_waveFormWidth / MediaPlayerParams.binWidth).floor();
 
-      _player.setSpeedAndPitch(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.pitchSemitones);
+      _player.setPitch(_mediaPlayerBlock.pitchSemitones);
+      _player.setSpeed(_mediaPlayerBlock.speedFactor);
 
       setState(() => _isLoading = true);
 

@@ -74,11 +74,8 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       0,
     );
 
-    MediaPlayerFunctions.setSpeedAndPitchInRust(
-      _as,
-      widget.mediaPlayerBlock.speedFactor,
-      widget.mediaPlayerBlock.pitchSemitones,
-    );
+    _player.setPitch(widget.mediaPlayerBlock.pitchSemitones);
+    _player.setSpeed(widget.mediaPlayerBlock.speedFactor);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final fs = context.read<FileSystem>();

@@ -20,14 +20,7 @@ import 'package:tiomusic/util/log.dart';
 abstract class MediaPlayerFunctions {
   static final _logger = createPrefixLogger('MediaPlayerFunctions');
 
-  static Future<void> setSpeedAndPitchInRust(AudioSystem as, double speedFactor, double pitchSemitones) async {
-    final okSpeed = await as.mediaPlayerSetSpeedFactor(speedFactor: speedFactor);
-    if (!okSpeed) throw 'Setting speed factor in rust failed using this value: $speedFactor';
-
-    final okPitch = await as.mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones);
-    if (!okPitch) throw 'Setting pitch semitones in rust failed using this value: $pitchSemitones';
-  }
-
+  // split in domain class -> load file, set file, get rms, trim
   static Future<Float32List?> _setAudioFileAndTrimInRust(
     AudioSystem as,
     FileSystem fs,
