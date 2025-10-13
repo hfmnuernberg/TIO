@@ -33,7 +33,7 @@ rand = "0.8.5"
 ringbuf = "0.3.3"
 rubato = "0.15.0"
 rustysynth = "1.3.6"
-symphonia = { version = "0.5.4", features = [
+symphonia = { version = "0.5.5", features = [
     "mpa",
     "all-codecs",
     "aiff",
