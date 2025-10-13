@@ -12,7 +12,7 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/info_pages/about_page.dart';
 import 'package:tiomusic/pages/info_pages/feedback_page.dart';
-import 'package:tiomusic/pages/media_player/media_player.dart';
+import 'package:tiomusic/pages/media_player/media_player_page.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';

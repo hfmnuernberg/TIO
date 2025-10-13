@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tiomusic/domain/media_player/media_player.dart';
+import 'package:tiomusic/domain/audio/player.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
@@ -34,7 +34,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   late Wakelock _wakelock;
   late WaveformVisualizer _waveformVisualizer;
 
-  late final MediaPlayer _player;
+  late final Player _player;
 
   Float32List _rmsValues = Float32List(100);
   int numOfBins = 0;
@@ -59,7 +59,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     _wakelock = context.read<Wakelock>();
     _as.mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
 
-    _player = MediaPlayer(
+    _player = Player(
       context.read<AudioSystem>(),
       context.read<AudioSession>(),
       context.read<FileSystem>(),

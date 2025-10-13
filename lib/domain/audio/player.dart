@@ -9,8 +9,8 @@ import 'package:tiomusic/util/log.dart';
 
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 
-class MediaPlayer {
-  static final logger = createPrefixLogger('MediaPlayer');
+class Player {
+  static final logger = createPrefixLogger('AudioPlayer');
 
   final AudioSystem _as;
   final AudioSession _audioSession;
@@ -25,7 +25,7 @@ class MediaPlayer {
 
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
-  MediaPlayer(this._as, this._audioSession, this._fs, this._wakelock);
+  Player(this._as, this._audioSession, this._fs, this._wakelock);
 
   Future<Float32List?> openFileAndGetRms({
     required String absolutePath,
@@ -88,7 +88,7 @@ class MediaPlayer {
     await MediaPlayerFunctions.setSpeedAndPitchInRust(_as, speedFactor, pitchSemitones);
   }
 
-  Future<void> setPlaybackPosFactor(double posFactor) async {
+  Future<void> setPlaybackPosition(double posFactor) async {
     await _as.mediaPlayerSetPlaybackPosFactor(posFactor: posFactor.clamp(0, 1));
   }
 

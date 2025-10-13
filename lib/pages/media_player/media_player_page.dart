@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/domain/audio/player.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
@@ -40,7 +41,6 @@ import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
-import 'package:tiomusic/domain/media_player/media_player.dart';
 
 class MediaPlayerPage extends StatefulWidget {
   final bool isQuickTool;
@@ -53,7 +53,7 @@ class MediaPlayerPage extends StatefulWidget {
 }
 
 class _MediaPlayerPageState extends State<MediaPlayerPage> {
-  static final _logger = createPrefixLogger('MediaPlayer');
+  static final _logger = createPrefixLogger('MediaPlayerPage');
 
   late AudioSystem _as;
   late AudioSession _audioSession;
@@ -64,7 +64,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   late MediaRepository _mediaRepo;
   late ProjectRepository _projectRepo;
 
-  late final MediaPlayer _player;
+  late final Player _player;
 
   late bool _isPlaying = false;
   late bool _isRecording = false;
@@ -117,7 +117,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     _mediaRepo = context.read<MediaRepository>();
     _projectRepo = context.read<ProjectRepository>();
 
-    _player = MediaPlayer(
+    _player = Player(
       context.read<AudioSystem>(),
       context.read<AudioSession>(),
       context.read<FileSystem>(),
@@ -646,7 +646,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         top: 4,
         child: IconButton(
           onPressed: () async {
-            await _player.setPlaybackPosFactor(pos);
+            await _player.setPlaybackPosition(pos);
             await _queryAndUpdateStateFromRust();
           },
           icon: const Icon(Icons.arrow_drop_down, color: ColorTheme.primary, size: MediaPlayerParams.markerIconSize),
@@ -661,7 +661,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   void _onWaveGesture(Offset localPosition) async {
     double relativeTapPosition = localPosition.dx / _waveFormWidth;
 
-    await _player.setPlaybackPosFactor(relativeTapPosition.clamp(0, 1));
+    await _player.setPlaybackPosition(relativeTapPosition.clamp(0, 1));
     await _queryAndUpdateStateFromRust();
   }
 
