@@ -5,7 +5,6 @@ import 'package:tiomusic/util/constants.dart';
 
 class WaveformVisualizer extends CustomPainter {
   final int _numOfBins;
-
   final Float32List _rmsValues;
 
   double? _playbackPosition;
@@ -37,18 +36,25 @@ class WaveformVisualizer extends CustomPainter {
 
     double stepSize = MediaPlayerParams.binWidth / 2.0;
 
-    // this is if calling the standard constructor or the singleView constructor
+    if (_rmsValues.isEmpty || size.width <= 0 || size.height <= 0) {
+      return;
+    }
+    final double totalContentWidth = _rmsValues.length * MediaPlayerParams.binWidth - 30;
+    final double scaleX = totalContentWidth > 0 ? (size.width / totalContentWidth) : 1.0;
+
+    canvas.save();
+    canvas.clipRect(Offset.zero & size);
+
     if (_playbackPosition != null) {
       double playbackPositionMapped = _playbackPosition! * _numOfBins;
 
       for (int i = 0; i < _rmsValues.length; i++) {
         var brush = blueBrush;
-        // if calling with singleView constructor
+
         if (_singleView) {
           if (i >= playbackPositionMapped - 1.0 && i <= playbackPositionMapped) {
             brush = redBrush;
           }
-          // else calling with standard constructor
         } else {
           double rangeStartMapped = _rangeStartPos! * _numOfBins;
           double rangeEndMapped = _rangeEndPos! * _numOfBins;
@@ -62,10 +68,9 @@ class WaveformVisualizer extends CustomPainter {
           }
         }
 
-        _drawWaveLine(canvas, size, stepSize, midAxisHeight, i, brush);
+        _drawWaveLine(canvas, size, stepSize * scaleX, midAxisHeight, i, brush);
         stepSize = stepSize + MediaPlayerParams.binWidth;
       }
-      // this is if calling the setTrim constructor
     } else if (_rangeStartPos != null && _rangeEndPos != null) {
       double startPositionMapped = _rangeStartPos! * _numOfBins;
       double endPositionMapped = _rangeEndPos! * _numOfBins;
@@ -73,10 +78,12 @@ class WaveformVisualizer extends CustomPainter {
       for (int i = 0; i < _rmsValues.length; i++) {
         var brush = i >= startPositionMapped && i <= endPositionMapped ? redBrush : blueBrush;
 
-        _drawWaveLine(canvas, size, stepSize, midAxisHeight, i, brush);
+        _drawWaveLine(canvas, size, stepSize * scaleX, midAxisHeight, i, brush);
         stepSize = stepSize + MediaPlayerParams.binWidth;
       }
     }
+
+    canvas.restore();
   }
 
   void _drawWaveLine(Canvas canvas, Size size, double stepSize, var midAxisHeight, int i, Paint brush) {
