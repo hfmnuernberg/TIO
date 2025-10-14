@@ -92,9 +92,8 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
   }
 
   Widget _buildLandscape() {
-    const padding = TIOMusicParams.edgeInset;
     return Padding(
-      padding: EdgeInsets.all(padding),
+      padding: EdgeInsets.all(TIOMusicParams.edgeInset),
       child: Stack(
         children: [
           LayoutBuilder(
