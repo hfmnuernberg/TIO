@@ -30,8 +30,8 @@ class Player {
   bool _repeatOne = false;
   bool get repeatOne => _repeatOne;
 
-  String _absoluteFilePath = '';
-  String get absoluteFilePath => _absoluteFilePath;
+  String? _absoluteFilePath;
+  String? get absoluteFilePath => _absoluteFilePath;
 
   double _startPosition = 0;
   // this getter is currently not used
@@ -156,7 +156,42 @@ class Player {
     await _as.mediaPlayerSetPlaybackPosFactor(posFactor: newPos);
   }
 
-  Float32List _normalizeRms(Float32List rmsList) {
+  Future<void> _renderMidiToTempWav() async {
+    final sampleRate = await _as.getSampleRate();
+
+    final ts = DateTime.now().millisecondsSinceEpoch;
+    final base = _fs.toBasename(_absoluteFilePath!).replaceAll(RegExp(r'[^\w.-]'), '_');
+    final tmpDir = _fs.tmpFolderPath;
+    await _fs.createFolder(tmpDir);
+    final tmpWavAbs = '$tmpDir/$base.$ts.rendered.wav';
+
+    final sf2Abs = await _resolveSoundFontPath();
+    if (sf2Abs == null) {
+      _absoluteFilePath = null;
+      return;
+    }
+
+    final success = await _as.mediaPlayerRenderMidiToWav(
+      midiPath: _absoluteFilePath!,
+      soundFontPath: sf2Abs,
+      wavOutPath: tmpWavAbs,
+      sampleRate: sampleRate,
+      gain: 0.7,
+    );
+    _absoluteFilePath = success ? tmpWavAbs : null;
+  }
+
+  Future<bool> _loadAudioFile(String path) async {
+    return _as.mediaPlayerLoadWav(wavFilePath: path);
+  }
+
+  Future<void> _applyTrim() async {
+    await _as.mediaPlayerSetTrim(startFactor: _startPosition, endFactor: _endPosition);
+  }
+
+  Future<Float32List?> _getRmsNormalized({required int numberOfBins}) async {
+    final rmsList = await _as.mediaPlayerGetRms(nBins: numberOfBins);
+
     Float32List newList = Float32List(rmsList.length);
     var minValue = rmsList.reduce(min);
     var maxValue = rmsList.reduce(max);
@@ -168,42 +203,17 @@ class Player {
     return newList;
   }
 
-  // TODO(TIO-337): split in domain class -> load file, set file, get rms, trim
-  Future<Float32List?> _setAudioFileAndTrimInRust({required int numberOfBins}) async {
-    final isMidi = _absoluteFilePath.toLowerCase().endsWith('.mid');
-    final pathForPlayer = isMidi ? (await _renderMidiToTempWav()) : _absoluteFilePath;
+  Future<Float32List?> processFile({required int numberOfBins}) async {
+    if (_absoluteFilePath == null) return null;
 
-    if (pathForPlayer == null) return null;
+    final isMidi = _absoluteFilePath!.toLowerCase().endsWith('.mid');
+    if (isMidi) await _renderMidiToTempWav();
 
-    var success = await _as.mediaPlayerLoadWav(wavFilePath: pathForPlayer);
-    if (success) {
-      _as.mediaPlayerSetTrim(startFactor: _startPosition, endFactor: _endPosition);
-      var tempRmsList = await _as.mediaPlayerGetRms(nBins: numberOfBins);
-      return _normalizeRms(tempRmsList);
-    }
-    return null;
-  }
+    final loaded = await _loadAudioFile(_absoluteFilePath!);
+    if (!loaded) return null;
 
-  Future<String?> _renderMidiToTempWav() async {
-    final sampleRate = await _as.getSampleRate();
-
-    final ts = DateTime.now().millisecondsSinceEpoch;
-    final base = _fs.toBasename(_absoluteFilePath).replaceAll(RegExp(r'[^\w.-]'), '_');
-    final tmpDir = _fs.tmpFolderPath;
-    await _fs.createFolder(tmpDir);
-    final tmpWavAbs = '$tmpDir/$base.$ts.rendered.wav';
-
-    final sf2Abs = await _resolveSoundFontPath();
-    if (sf2Abs == null) return null;
-
-    final ok = await _as.mediaPlayerRenderMidiToWav(
-      midiPath: _absoluteFilePath,
-      soundFontPath: sf2Abs,
-      wavOutPath: tmpWavAbs,
-      sampleRate: sampleRate,
-      gain: 0.7,
-    );
-    return ok ? tmpWavAbs : null;
+    await _applyTrim();
+    return _getRmsNormalized(numberOfBins: numberOfBins);
   }
 
   Future<String?> _resolveSoundFontPath() async {

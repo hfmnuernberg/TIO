@@ -97,7 +97,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       }
 
       if (widget.mediaPlayerBlock.relativePath.isNotEmpty) {
-        var newRms = await _player.openFileAndGetRms(numberOfBins: numOfBins);
+        var newRms = await _player.processFile(numberOfBins: numOfBins);
         if (newRms != null) {
           _rmsValues = newRms;
 

@@ -159,7 +159,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
       if (_mediaPlayerBlock.relativePath.isNotEmpty) {
         await _player.setAbsoluteFilePath(_mediaPlayerBlock.relativePath);
-        var newRms = await _player.openFileAndGetRms(numberOfBins: _numOfBins);
+        var newRms = await _player.processFile(numberOfBins: _numOfBins);
         if (newRms == null) {
           if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
         } else {
@@ -756,7 +756,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       await _player.stop();
       setState(() => _isLoading = true);
 
-      var newRms = await _player.openFileAndGetRms(numberOfBins: _numOfBins);
+      var newRms = await _player.processFile(numberOfBins: _numOfBins);
       if (newRms == null) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
       } else {
@@ -914,7 +914,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         await showFormatNotSupportedDialog(context, fileExtension);
       }
 
-      var newRms = await _player.openFileAndGetRms(numberOfBins: _numOfBins);
+      var newRms = await _player.processFile(numberOfBins: _numOfBins);
       if (newRms == null) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
       } else {
