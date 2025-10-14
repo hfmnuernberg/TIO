@@ -138,6 +138,8 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     _player.setVolume(_mediaPlayerBlock.volume);
+    _player.setRepeat(_mediaPlayerBlock.looping);
+    _player.markerPositions = _mediaPlayerBlock.markerPositions;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
@@ -281,8 +283,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   Future<void> _autoplayAfterDelay() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    final started = await _player.start(looping: false, useMarkers: _mediaPlayerBlock.markerPositions.isNotEmpty);
-    if (started && mounted) setState(() => _isPlaying = true);
+    await _startPlaying(repeatOne: false);
   }
 
   Future<void> _queryAndUpdateStateFromRust() async {
@@ -342,7 +343,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   @override
   void deactivate() async {
-    await _player.stop();
+    _stopPlaying();
     MediaPlayerFunctions.stopRecording(_as, _wakelock);
 
     if (recordInterruptionListenerHandle != null) {
@@ -825,19 +826,24 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
 
-    if (!_player.isPlaying) {
-      final started = await _player.start(
-        looping: _mediaPlayerBlock.looping,
-        useMarkers: _mediaPlayerBlock.markerPositions.isNotEmpty,
-      );
-      if (mounted) setState(() => _isPlaying = started);
+    if (!_isPlaying) {
+      await _startPlaying();
     } else {
-      await _player.stop();
-      if (mounted) setState(() => _isPlaying = false);
+      await _stopPlaying();
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     setState(() => _processingButtonClick = false);
+  }
+
+  Future<void> _startPlaying({bool? repeatOne}) async {
+    var success = await _player.start(repeatOne: repeatOne);
+    if (mounted) setState(() => _isPlaying = success);
+  }
+
+  Future<void> _stopPlaying() async {
+    await _player.stop();
+    if (mounted) setState(() => _isPlaying = false);
   }
 
   Future<void> _toggleRecording() async {
@@ -863,9 +869,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   Future<void> _startRecording() async {
+    await _stopPlaying();
     var success = await MediaPlayerFunctions.startRecording(_as, _audioSession, _wakelock, _isPlaying);
     setState(() {
-      _isPlaying = false;
       _isRecording = true;
       if (success) _startRecordingTimer();
     });
@@ -934,6 +940,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         _setFileDuration();
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
+        _player.markerPositions = [];
         _markerHandler.reset();
         if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       }
@@ -962,6 +969,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       _setFileDuration();
       _addShareOptionToMenu();
       _mediaPlayerBlock.markerPositions.clear();
+      _player.markerPositions = [];
       _markerHandler.reset();
       if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }

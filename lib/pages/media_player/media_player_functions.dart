@@ -95,34 +95,6 @@ abstract class MediaPlayerFunctions {
     return newList;
   }
 
-  static Future<bool> startPlaying(
-    AudioSystem as,
-    AudioSession audioSession,
-    Wakelock wakelock,
-    bool repeatOne,
-    bool hasMarkers,
-  ) async {
-    await stopRecording(as, wakelock);
-    await as.mediaPlayerSetRepeat(repeatOne: repeatOne);
-    await audioSession.preparePlayback();
-
-    if (hasMarkers) {
-      await as.generatorStop();
-      await as.generatorStart();
-    }
-
-    var success = await as.mediaPlayerStart();
-    if (success) {
-      await wakelock.enable();
-    }
-    return success;
-  }
-
-  static Future<bool> stopPlaying(AudioSystem as, Wakelock wakelock) async {
-    await wakelock.disable();
-    return as.mediaPlayerStop();
-  }
-
   static Future<bool> startRecording(
     AudioSystem as,
     AudioSession audioSession,
@@ -130,7 +102,6 @@ abstract class MediaPlayerFunctions {
     bool isPlaying,
   ) async {
     if (isPlaying) {
-      await stopPlaying(as, wakelock);
       await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     }
 

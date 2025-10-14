@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:typed_data';
 
 import 'package:tiomusic/services/audio_session.dart';
@@ -20,8 +21,17 @@ class Player {
   bool _isPlaying = false;
   bool get isPlaying => _isPlaying;
 
+  bool _repeatOne = false;
+  bool get repeatOne => _repeatOne;
+
   final double _markerSoundFrequency = 2000;
   final int _markerSoundDurationInMilliseconds = 80;
+
+  late List<double> _markerPositions;
+  UnmodifiableListView<double> get markerPositions => UnmodifiableListView(_markerPositions);
+  set markerPositions(List<double> value) {
+    _markerPositions = List.of(value);
+  }
 
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
@@ -43,28 +53,39 @@ class Player {
     );
   }
 
-  Future<bool> start({required bool looping, required bool useMarkers}) async {
+  Future<bool> start({bool? repeatOne}) async {
     if (_isPlaying) return true;
 
     _audioSessionInterruptionListenerHandle ??= await _audioSession.registerInterruptionListener(stop);
 
-    final success = await MediaPlayerFunctions.startPlaying(_as, _audioSession, _wakelock, looping, useMarkers);
+    await MediaPlayerFunctions.stopRecording(_as, _wakelock);
+    await _as.mediaPlayerSetRepeat(repeatOne: repeatOne ?? _repeatOne);
+    await _audioSession.preparePlayback();
 
-    if (!success) {
-      logger.e('Unable to start MediaPlayer.');
+    if (_markerPositions.isNotEmpty) {
+      await _as.generatorStop();
+      await _as.generatorStart();
+    }
+
+    final success = await _as.mediaPlayerStart();
+    if (success) {
+      await _wakelock.enable();
+      _isPlaying = true;
+    } else {
+      logger.e('Unable to start Audio Player.');
       return false;
     }
 
-    _isPlaying = true;
     return true;
   }
 
   Future<void> stop() async {
     if (!_isPlaying) return;
 
-    final success = await MediaPlayerFunctions.stopPlaying(_as, _wakelock);
+    await _wakelock.disable();
+    final success = await _as.mediaPlayerStop();
     if (!success) {
-      logger.e('Unable to stop MediaPlayer.');
+      logger.e('Unable to stop Audio Player.');
       return;
     }
 
@@ -81,6 +102,7 @@ class Player {
   }
 
   Future<void> setRepeat(bool repeatOne) async {
+    _repeatOne = repeatOne;
     await _as.mediaPlayerSetRepeat(repeatOne: repeatOne);
   }
 
@@ -101,7 +123,14 @@ class Player {
     Future.delayed(Duration(milliseconds: _markerSoundDurationInMilliseconds), _as.generatorNoteOff);
   }
 
-  Future<dynamic> getState() => _as.mediaPlayerGetState();
+  // instead use getter (isPlaying, playbackPosition) -> get rid of this method
+  Future<dynamic> getState() async {
+    final state = await _as.mediaPlayerGetState();
+    if (state != null) {
+      _isPlaying = state.playing;
+    }
+    return state;
+  }
 
   Future<void> jumpSeconds(int seconds, Duration totalDuration) async {
     final state = await _as.mediaPlayerGetState();
