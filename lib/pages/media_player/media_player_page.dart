@@ -174,13 +174,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       }
 
       if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
 
-      if (_fileLoaded) {
-        _addShareOptionToMenu();
-      }
+      if (_fileLoaded) _addShareOptionToMenu();
 
       await _queryAndUpdateStateFromRust();
 
@@ -208,9 +204,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   void _addShareOptionToMenu() {
-    if (!_menuItems.contains(_shareMenuButton)) {
-      _menuItems.add(_shareMenuButton);
-    }
+    if (!_menuItems.contains(_shareMenuButton)) _menuItems.add(_shareMenuButton);
   }
 
   void _createTutorial() {
@@ -372,9 +366,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     return ParentTool(
       barTitle: _mediaPlayerBlock.title,
       functionBeforeNavigatingBack: () async {
-        if (_isRecording) {
-          await _askForKeepRecordingOnExit();
-        }
+        if (_isRecording) await _askForKeepRecordingOnExit();
       },
       isQuickTool: widget.isQuickTool,
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
@@ -580,11 +572,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (_isRecording) {
       return _recordButton(TIOMusicParams.sizeBigButtons, key: key);
     } else {
-      if (_fileLoaded) {
-        return _playPauseButton(TIOMusicParams.sizeBigButtons, key: key);
-      } else {
-        return _recordButton(TIOMusicParams.sizeBigButtons, key: key);
-      }
+      return _fileLoaded
+          ? _playPauseButton(TIOMusicParams.sizeBigButtons, key: key)
+          : _recordButton(TIOMusicParams.sizeBigButtons, key: key);
     }
   }
 
@@ -592,11 +582,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (_isRecording) {
       return _playPauseButton(TIOMusicParams.sizeSmallButtons);
     } else {
-      if (_fileLoaded) {
-        return _recordButton(TIOMusicParams.sizeSmallButtons);
-      } else {
-        return _playPauseButton(TIOMusicParams.sizeSmallButtons);
-      }
+      return _fileLoaded
+          ? _recordButton(TIOMusicParams.sizeSmallButtons)
+          : _playPauseButton(TIOMusicParams.sizeSmallButtons);
     }
   }
 
@@ -806,11 +794,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
 
-    if (!_isPlaying) {
-      await _startPlaying();
-    } else {
-      await _stopPlaying();
-    }
+    _isPlaying ? await _stopPlaying() : await _startPlaying();
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     setState(() => _processingButtonClick = false);
@@ -838,11 +822,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       }
     }
 
-    if (!_isRecording) {
-      await _startRecording();
-    } else {
-      await _stopRecording();
-    }
+    _isRecording ? await _stopRecording() : await _startRecording();
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     setState(() => _processingButtonClick = false);
@@ -865,9 +845,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     }
 
     var success = await MediaPlayerFunctions.stopRecording(_as, _wakelock);
-    if (mounted) {
-      setState(() => _isRecording = false);
-    }
+    if (mounted) setState(() => _isRecording = false);
     if (success && mounted) {
       _resetRecordingTimer();
 
@@ -891,7 +869,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       _mediaPlayerBlock.relativePath = newRelativePath;
       await _player.setAbsoluteFilePath(newRelativePath);
 
-      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       setState(() => _isLoading = true);
 
       final fileExtension = _fs.toExtension(_mediaPlayerBlock.relativePath);
