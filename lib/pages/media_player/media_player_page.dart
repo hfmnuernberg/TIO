@@ -140,6 +140,8 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     _player.setVolume(_mediaPlayerBlock.volume);
     _player.setRepeat(_mediaPlayerBlock.looping);
     _player.markerPositions = _mediaPlayerBlock.markerPositions;
+    _player.startPosition = _mediaPlayerBlock.rangeStart;
+    _player.endPosition = _mediaPlayerBlock.rangeEnd;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
@@ -156,12 +158,8 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       }
 
       if (_mediaPlayerBlock.relativePath.isNotEmpty) {
-        var newRms = await _player.openFileAndGetRms(
-          absolutePath: _fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath),
-          startFactor: _mediaPlayerBlock.rangeStart,
-          endFactor: _mediaPlayerBlock.rangeEnd,
-          numberOfBins: _numOfBins,
-        );
+        await _player.setAbsoluteFilePath(_mediaPlayerBlock.relativePath);
+        var newRms = await _player.openFileAndGetRms(numberOfBins: _numOfBins);
         if (newRms == null) {
           if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
         } else {
@@ -740,6 +738,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (index == 0) {
       _fileReferences.dec(_mediaPlayerBlock.relativePath, projectLibrary);
       _mediaPlayerBlock.relativePath = newRelativePath;
+      await _player.setAbsoluteFilePath(newRelativePath);
       _fileReferences.inc(newRelativePath);
 
       await _projectRepo.saveLibrary(projectLibrary);
@@ -754,14 +753,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         _numOfBins,
       );
 
+      await _player.stop();
       setState(() => _isLoading = true);
 
-      var newRms = await _player.openFileAndGetRms(
-        absolutePath: _fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath),
-        startFactor: _mediaPlayerBlock.rangeStart,
-        endFactor: _mediaPlayerBlock.rangeEnd,
-        numberOfBins: _numOfBins,
-      );
+      var newRms = await _player.openFileAndGetRms(numberOfBins: _numOfBins);
       if (newRms == null) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
       } else {
@@ -909,6 +904,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         _fileReferences.dec(_mediaPlayerBlock.relativePath, context.read<ProjectLibrary>());
       }
       _mediaPlayerBlock.relativePath = newRelativePath;
+      await _player.setAbsoluteFilePath(newRelativePath);
 
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       setState(() => _isLoading = true);
@@ -918,12 +914,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         await showFormatNotSupportedDialog(context, fileExtension);
       }
 
-      var newRms = await _player.openFileAndGetRms(
-        absolutePath: _fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath),
-        startFactor: _mediaPlayerBlock.rangeStart,
-        endFactor: _mediaPlayerBlock.rangeEnd,
-        numberOfBins: _numOfBins,
-      );
+      var newRms = await _player.openFileAndGetRms(numberOfBins: _numOfBins);
       if (newRms == null) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
       } else {
@@ -947,12 +938,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       setState(() => _isLoading = false);
     }
 
-    var newRms = await _player.openFileAndGetRms(
-      absolutePath: _fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath),
-      startFactor: _mediaPlayerBlock.rangeStart,
-      endFactor: _mediaPlayerBlock.rangeEnd,
-      numberOfBins: _numOfBins,
-    );
+    var newRms = await _player.openFileAndGetRms(numberOfBins: _numOfBins);
     if (newRms == null) {
       if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
     } else {

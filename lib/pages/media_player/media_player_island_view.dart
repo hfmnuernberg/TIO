@@ -74,6 +74,9 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     _player.setSpeed(widget.mediaPlayerBlock.speedFactor);
     _player.setRepeat(widget.mediaPlayerBlock.looping);
     _player.markerPositions = widget.mediaPlayerBlock.markerPositions;
+    _player.setAbsoluteFilePath(widget.mediaPlayerBlock.relativePath);
+    _player.startPosition = widget.mediaPlayerBlock.rangeStart;
+    _player.endPosition = widget.mediaPlayerBlock.rangeEnd;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final fs = context.read<FileSystem>();
@@ -94,12 +97,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       }
 
       if (widget.mediaPlayerBlock.relativePath.isNotEmpty) {
-        var newRms = await _player.openFileAndGetRms(
-          absolutePath: fs.toAbsoluteFilePath(widget.mediaPlayerBlock.relativePath),
-          startFactor: widget.mediaPlayerBlock.rangeStart,
-          endFactor: widget.mediaPlayerBlock.rangeEnd,
-          numberOfBins: numOfBins,
-        );
+        var newRms = await _player.openFileAndGetRms(numberOfBins: numOfBins);
         if (newRms != null) {
           _rmsValues = newRms;
 

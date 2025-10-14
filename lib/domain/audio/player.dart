@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:flutter/services.dart';
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -18,14 +21,33 @@ class Player {
   final FileSystem _fs;
   final Wakelock _wakelock;
 
+  final double _markerSoundFrequency = 2000;
+  final int _markerSoundDurationInMilliseconds = 80;
+
   bool _isPlaying = false;
   bool get isPlaying => _isPlaying;
 
   bool _repeatOne = false;
   bool get repeatOne => _repeatOne;
 
-  final double _markerSoundFrequency = 2000;
-  final int _markerSoundDurationInMilliseconds = 80;
+  String _absoluteFilePath = '';
+  String get absoluteFilePath => _absoluteFilePath;
+
+  double _startPosition = 0;
+  // this getter is currently not used
+  // ignore: unnecessary_getters_setters
+  double get startPosition => _startPosition;
+  set startPosition(double value) {
+    _startPosition = value;
+  }
+
+  double _endPosition = 1;
+  // this getter is currently not used
+  // ignore: unnecessary_getters_setters
+  double get endPosition => _endPosition;
+  set endPosition(double value) {
+    _endPosition = value;
+  }
 
   late List<double> _markerPositions;
   UnmodifiableListView<double> get markerPositions => UnmodifiableListView(_markerPositions);
@@ -36,22 +58,6 @@ class Player {
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
   Player(this._as, this._audioSession, this._fs, this._wakelock);
-
-  Future<Float32List?> openFileAndGetRms({
-    required String absolutePath,
-    required double startFactor,
-    required double endFactor,
-    required int numberOfBins,
-  }) {
-    return MediaPlayerFunctions.openAudioFileFromPathAndGetRMSValues(
-      _as,
-      _fs,
-      absolutePath,
-      startFactor,
-      endFactor,
-      numberOfBins,
-    );
-  }
 
   Future<bool> start({bool? repeatOne}) async {
     if (_isPlaying) return true;
@@ -118,6 +124,10 @@ class Player {
     await _as.mediaPlayerSetPlaybackPosFactor(posFactor: posFactor.clamp(0, 1));
   }
 
+  Future<void> setAbsoluteFilePath(String relativePath) async {
+    _absoluteFilePath = _fs.toAbsoluteFilePath(relativePath);
+  }
+
   Future<void> playMarkerPeep() async {
     await _as.generatorNoteOn(newFreq: _markerSoundFrequency);
     Future.delayed(Duration(milliseconds: _markerSoundDurationInMilliseconds), _as.generatorNoteOff);
@@ -144,5 +154,77 @@ class Player {
     final newPos = state.playbackPositionFactor + secondFactor;
 
     await _as.mediaPlayerSetPlaybackPosFactor(posFactor: newPos);
+  }
+
+  Float32List _normalizeRms(Float32List rmsList) {
+    Float32List newList = Float32List(rmsList.length);
+    var minValue = rmsList.reduce(min);
+    var maxValue = rmsList.reduce(max);
+    if (minValue == maxValue) return newList;
+
+    for (int i = 0; i < rmsList.length; i++) {
+      newList[i] = (rmsList[i] - minValue) / (maxValue - minValue);
+    }
+    return newList;
+  }
+
+  // TODO(TIO-337): split in domain class -> load file, set file, get rms, trim
+  Future<Float32List?> _setAudioFileAndTrimInRust({required int numberOfBins}) async {
+    final isMidi = _absoluteFilePath.toLowerCase().endsWith('.mid');
+    final pathForPlayer = isMidi ? (await _renderMidiToTempWav()) : _absoluteFilePath;
+
+    if (pathForPlayer == null) return null;
+
+    var success = await _as.mediaPlayerLoadWav(wavFilePath: pathForPlayer);
+    if (success) {
+      _as.mediaPlayerSetTrim(startFactor: _startPosition, endFactor: _endPosition);
+      var tempRmsList = await _as.mediaPlayerGetRms(nBins: numberOfBins);
+      return _normalizeRms(tempRmsList);
+    }
+    return null;
+  }
+
+  Future<String?> _renderMidiToTempWav() async {
+    final sampleRate = await _as.getSampleRate();
+
+    final ts = DateTime.now().millisecondsSinceEpoch;
+    final base = _fs.toBasename(_absoluteFilePath).replaceAll(RegExp(r'[^\w.-]'), '_');
+    final tmpDir = _fs.tmpFolderPath;
+    await _fs.createFolder(tmpDir);
+    final tmpWavAbs = '$tmpDir/$base.$ts.rendered.wav';
+
+    final sf2Abs = await _resolveSoundFontPath();
+    if (sf2Abs == null) return null;
+
+    final ok = await _as.mediaPlayerRenderMidiToWav(
+      midiPath: _absoluteFilePath,
+      soundFontPath: sf2Abs,
+      wavOutPath: tmpWavAbs,
+      sampleRate: sampleRate,
+      gain: 0.7,
+    );
+    return ok ? tmpWavAbs : null;
+  }
+
+  Future<String?> _resolveSoundFontPath() async {
+    const assetPath = 'assets/sound_fonts/piano_01.sf2';
+
+    try {
+      final data = await rootBundle.load(assetPath);
+      final tmpDir = _fs.tmpFolderPath;
+      await _fs.createFolder(tmpDir);
+      final fileName = assetPath.split('/').last;
+      final outPath = '$tmpDir/$fileName';
+      final outFile = File(outPath);
+      await outFile.writeAsBytes(data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes), flush: true);
+      return outPath;
+    } catch (e, st) {
+      logger.e('Failed to load SoundFont asset at "$assetPath": $e\n$st');
+      return null;
+    }
+  }
+
+  Future<Float32List?> openFileAndGetRms({required int numberOfBins}) async {
+    return _setAudioFileAndTrimInRust(numberOfBins: numberOfBins);
   }
 }
