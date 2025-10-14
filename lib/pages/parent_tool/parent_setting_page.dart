@@ -52,20 +52,18 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
           ),
           backgroundColor: ColorTheme.primary92,
           body: SafeArea(
-            child: widget.mustBeScrollable
+            child: (widget.mustBeScrollable && isPortrait)
                 ? LayoutBuilder(
                     builder: (context, viewportConstraints) {
                       return SingleChildScrollView(
                         child: ConstrainedBox(
                           constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
-                          child: isPortrait ? _buildPortrait() : _buildLandscape(),
+                          child: _buildPortrait(),
                         ),
                       );
                     },
                   )
-                : isPortrait
-                ? _buildPortrait()
-                : _buildLandscape(),
+                : (isPortrait ? _buildPortrait() : _buildLandscape()),
           ),
           bottomSheet: _bottomSheet(),
         ),
@@ -94,30 +92,54 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
   }
 
   Widget _buildLandscape() {
-    var padding = 4.0;
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
+    const padding = TIOMusicParams.edgeInset;
+    return Padding(
+      padding: EdgeInsets.all(padding),
       child: Stack(
-        alignment: Alignment.center,
-        clipBehavior: Clip.none,
         children: [
-          Positioned(left: padding * 12, top: padding, child: widget.numberInput ?? const SizedBox()),
-          Positioned(left: padding * 12, top: padding * 12, child: widget.customWidget ?? const SizedBox()),
-          Positioned(
-            right: padding,
-            bottom: padding,
-            child: ConfirmButton(onTap: widget.confirm),
+          LayoutBuilder(
+            builder: (context, viewportConstraints) {
+              return SingleChildScrollView(
+                padding: EdgeInsets.zero,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1000),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (widget.displayResetAtTop) ...[
+                            const SizedBox(height: 8),
+                            TIOTextButton(text: context.l10n.commonReset, onTap: widget.reset),
+                            const SizedBox(height: 20),
+                          ],
+                          widget.numberInput ?? const SizedBox(),
+                          if (widget.customWidget != null) ...[const SizedBox(height: 12), widget.customWidget!],
+                          if (!widget.displayResetAtTop) ...[
+                            const SizedBox(height: 20),
+                            TIOTextButton(text: context.l10n.commonReset, onTap: widget.reset),
+                          ],
+                          SizedBox(height: TIOMusicParams.sizeBigButtons * 2 + TIOMusicParams.edgeInset),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
           Positioned(
-            right: padding + TIOMusicParams.sizeBigButtons * 2.5,
-            bottom: padding + TIOMusicParams.sizeBigButtons / 2.5,
-            child: CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
-          ),
-          Positioned(
-            right: padding + TIOMusicParams.sizeBigButtons * 4.7,
-            bottom: padding + TIOMusicParams.sizeBigButtons / 1.5,
-            child: TIOTextButton(text: context.l10n.commonReset, onTap: widget.reset),
+            right: 0,
+            bottom: 0,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
+                ConfirmButton(onTap: widget.confirm),
+              ],
+            ),
           ),
         ],
       ),
