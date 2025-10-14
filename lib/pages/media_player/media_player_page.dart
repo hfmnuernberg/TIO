@@ -937,29 +937,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       }
       setState(() => _isLoading = false);
     }
-
-    var newRms = await _player.openFileAndGetRms(numberOfBins: _numOfBins);
-    if (newRms == null) {
-      if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
-    } else {
-      _fileLoaded = true;
-      _rmsValues = newRms;
-      _waveformVisualizer = WaveformVisualizer(
-        0,
-        _mediaPlayerBlock.rangeStart,
-        _mediaPlayerBlock.rangeEnd,
-        _rmsValues,
-        _numOfBins,
-      );
-
-      _setFileDuration();
-      _addShareOptionToMenu();
-      _mediaPlayerBlock.markerPositions.clear();
-      _player.markerPositions = [];
-      _markerHandler.reset();
-      if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    }
-    setState(() => _isLoading = false);
   }
 
   Future _askForKeepRecordingOnExit() async {
