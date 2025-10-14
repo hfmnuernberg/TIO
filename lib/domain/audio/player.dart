@@ -55,6 +55,9 @@ class Player {
     _markerPositions = List.of(value);
   }
 
+  Duration _fileDuration = Duration.zero;
+  Duration get fileDuration => _fileDuration;
+
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
   Player(this._as, this._audioSession, this._fs, this._wakelock);
@@ -142,14 +145,14 @@ class Player {
     return state;
   }
 
-  Future<void> jumpSeconds(int seconds, Duration totalDuration) async {
+  Future<void> jumpSeconds({required int seconds}) async {
     final state = await _as.mediaPlayerGetState();
     if (state == null) {
       logger.w('Cannot jump $seconds seconds - State is null');
       return;
     }
 
-    final totalSecs = totalDuration.inSeconds;
+    final totalSecs = _fileDuration.inSeconds;
     final secondFactor = totalSecs > 0 ? seconds.toDouble() / totalSecs : 1.0;
     final newPos = state.playbackPositionFactor + secondFactor;
 
@@ -203,6 +206,13 @@ class Player {
     return newList;
   }
 
+  Future<void> _setFileDuration() async {
+    final state = await _as.mediaPlayerGetState();
+    if (state != null) {
+      _fileDuration = Duration(milliseconds: (state.totalLengthSeconds * 1000).toInt());
+    }
+  }
+
   Future<Float32List?> processFile({required int numberOfBins}) async {
     if (_absoluteFilePath == null) return null;
 
@@ -213,6 +223,7 @@ class Player {
     if (!loaded) return null;
 
     await _applyTrim();
+    await _setFileDuration();
     return _getRmsNormalized(numberOfBins: numberOfBins);
   }
 
@@ -233,8 +244,7 @@ class Player {
       return null;
     }
   }
-
-  Future<Float32List?> openFileAndGetRms({required int numberOfBins}) async {
-    return _setAudioFileAndTrimInRust(numberOfBins: numberOfBins);
-  }
 }
+
+// onPlaybackPositionChange (optional)
+// onMarkerReached (optional)

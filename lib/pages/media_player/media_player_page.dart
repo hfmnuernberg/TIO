@@ -79,8 +79,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
   late MenuItemButton _shareMenuButton;
 
-  Duration _fileDuration = Duration.zero;
-
   late MediaPlayerBlock _mediaPlayerBlock;
   Project? _project;
 
@@ -172,8 +170,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
             _rmsValues,
             _numOfBins,
           );
-
-          _setFileDuration();
         }
       }
 
@@ -527,7 +523,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           title: l10n.mediaPlayerTrim,
           subtitle: '${(_mediaPlayerBlock.rangeStart * 100).round()}% → ${(_mediaPlayerBlock.rangeEnd * 100).round()}%',
           leadingIcon: 'assets/icons/arrow_range.svg',
-          settingPage: SetTrim(rmsValues: _rmsValues, fileDuration: _fileDuration),
+          settingPage: SetTrim(rmsValues: _rmsValues, fileDuration: _player.fileDuration),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => _queryAndUpdateStateFromRust(),
           inactive: _isLoading,
@@ -538,7 +534,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           leadingIcon: Icons.arrow_drop_down,
           settingPage: EditMarkersPage(
             mediaPlayerBlock: _mediaPlayerBlock,
-            fileDuration: _fileDuration,
+            fileDuration: _player.fileDuration,
             rmsValues: _rmsValues,
           ),
           block: _mediaPlayerBlock,
@@ -660,22 +656,12 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   void _onWaveGesture(Offset localPosition) async {
     double relativeTapPosition = localPosition.dx / _waveFormWidth;
-
     await _player.setPlaybackPosition(relativeTapPosition.clamp(0, 1));
     await _queryAndUpdateStateFromRust();
   }
 
-  void _setFileDuration() async {
-    var state = await _player.getState();
-    if (state != null) {
-      var millisecondsDuration = state.totalLengthSeconds * 1000;
-      _fileDuration = Duration(milliseconds: millisecondsDuration.toInt());
-    }
-  }
-
   void _jump10Seconds(bool forward) async {
-    final seconds = forward ? 10 : -10;
-    await _player.jumpSeconds(seconds, _fileDuration);
+    await _player.jumpSeconds(seconds: forward ? 10 : -10);
     await _queryAndUpdateStateFromRust();
   }
 
@@ -770,7 +756,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           _numOfBins,
         );
 
-        _setFileDuration();
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
         _markerHandler.reset();
@@ -928,7 +913,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           _numOfBins,
         );
 
-        _setFileDuration();
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
         _player.markerPositions = [];
