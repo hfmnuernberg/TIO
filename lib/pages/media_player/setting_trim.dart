@@ -29,8 +29,6 @@ class _SetTrimState extends State<SetTrim> {
   late MediaPlayerBlock _mediaPlayerBlock;
 
   late WaveformVisualizer _waveformVisualizer;
-  late int _numOfBins;
-  double _waveFormWidth = 0;
 
   Duration _rangeStartDuration = Duration.zero;
   Duration _rangeEndDuration = Duration.zero;
@@ -42,22 +40,14 @@ class _SetTrimState extends State<SetTrim> {
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
     _rangeValues = RangeValues(_mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd);
 
-    _waveformVisualizer = WaveformVisualizer.setTrim(0, 1, widget.rmsValues, 0);
+    _waveformVisualizer = WaveformVisualizer.setTrim(0, 1, widget.rmsValues);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
-      _numOfBins = (_waveFormWidth / MediaPlayerParams.binWidth).floor();
-
       _rangeStartDuration = widget.fileDuration * _rangeValues.start;
       _rangeEndDuration = widget.fileDuration * _rangeValues.end;
 
       setState(() {
-        _waveformVisualizer = WaveformVisualizer.setTrim(
-          _rangeValues.start,
-          _rangeValues.end,
-          widget.rmsValues,
-          _numOfBins,
-        );
+        _waveformVisualizer = WaveformVisualizer.setTrim(_rangeValues.start, _rangeValues.end, widget.rmsValues);
       });
     });
   }
@@ -93,12 +83,7 @@ class _SetTrimState extends State<SetTrim> {
                   onChanged: (values) {
                     setState(() {
                       _rangeValues = values;
-                      _waveformVisualizer = WaveformVisualizer.setTrim(
-                        values.start,
-                        values.end,
-                        widget.rmsValues,
-                        _numOfBins,
-                      );
+                      _waveformVisualizer = WaveformVisualizer.setTrim(values.start, values.end, widget.rmsValues);
                       _rangeStartDuration = widget.fileDuration * _rangeValues.start;
                       _rangeEndDuration = widget.fileDuration * _rangeValues.end;
 
@@ -139,7 +124,7 @@ class _SetTrimState extends State<SetTrim> {
   void _reset() {
     setState(() {
       _rangeValues = const RangeValues(MediaPlayerParams.defaultRangeStart, MediaPlayerParams.defaultRangeEnd);
-      _waveformVisualizer = WaveformVisualizer.setTrim(0, 1, widget.rmsValues, _numOfBins);
+      _waveformVisualizer = WaveformVisualizer.setTrim(0, 1, widget.rmsValues);
     });
   }
 
