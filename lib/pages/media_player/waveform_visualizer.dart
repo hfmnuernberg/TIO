@@ -4,7 +4,6 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 
 class WaveformVisualizer extends CustomPainter {
-  final int _numOfBins;
   final Float32List _rmsValues;
 
   double? _playbackPosition;
@@ -12,11 +11,11 @@ class WaveformVisualizer extends CustomPainter {
   double? _rangeEndPos;
   bool _singleView = false;
 
-  WaveformVisualizer(this._playbackPosition, this._rangeStartPos, this._rangeEndPos, this._rmsValues, this._numOfBins);
+  WaveformVisualizer(this._playbackPosition, this._rangeStartPos, this._rangeEndPos, this._rmsValues);
 
-  WaveformVisualizer.singleView(this._playbackPosition, this._rmsValues, this._numOfBins, this._singleView);
+  WaveformVisualizer.singleView(this._playbackPosition, this._rmsValues, this._singleView);
 
-  WaveformVisualizer.setTrim(this._rangeStartPos, this._rangeEndPos, this._rmsValues, this._numOfBins);
+  WaveformVisualizer.setTrim(this._rangeStartPos, this._rangeEndPos, this._rmsValues);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -47,7 +46,7 @@ class WaveformVisualizer extends CustomPainter {
     canvas.clipRect(Offset.zero & size);
 
     if (_playbackPosition != null) {
-      double playbackPositionMapped = _playbackPosition! * _numOfBins;
+      double playbackPositionMapped = _playbackPosition! * numberOfBins;
 
       for (int i = 0; i < _rmsValues.length; i++) {
         var brush = blueBrush;
@@ -57,8 +56,8 @@ class WaveformVisualizer extends CustomPainter {
             brush = redBrush;
           }
         } else {
-          double rangeStartMapped = _rangeStartPos! * _numOfBins;
-          double rangeEndMapped = _rangeEndPos! * _numOfBins;
+          double rangeStartMapped = _rangeStartPos! * numberOfBins;
+          double rangeEndMapped = _rangeEndPos! * numberOfBins;
 
           if (i < rangeStartMapped || i > rangeEndMapped) {
             brush = lightBlueBrush;
@@ -73,8 +72,8 @@ class WaveformVisualizer extends CustomPainter {
         _drawWaveLine(canvas, size, x, midAxisHeight, i, brush);
       }
     } else if (_rangeStartPos != null && _rangeEndPos != null) {
-      double startPositionMapped = _rangeStartPos! * _numOfBins;
-      double endPositionMapped = _rangeEndPos! * _numOfBins;
+      double startPositionMapped = _rangeStartPos! * numberOfBins;
+      double endPositionMapped = _rangeEndPos! * numberOfBins;
 
       for (int i = 0; i < _rmsValues.length; i++) {
         var brush = i >= startPositionMapped && i <= endPositionMapped ? redBrush : blueBrush;
@@ -112,6 +111,12 @@ class WaveformVisualizer extends CustomPainter {
     final double raw = (x - _halfStroke()) / (MediaPlayerParams.binWidth * scaleX);
     final double clamped = raw.clamp(0.0, (n - 1).toDouble());
     return clamped.round();
+  }
+
+  static int suggestBinCountForWidth(double availableWidth) {
+    final double drawableWidth = (availableWidth - 2 * _halfStroke()).clamp(0.0, availableWidth);
+    if (drawableWidth <= 0) return 1;
+    return drawableWidth ~/ MediaPlayerParams.binWidth + 1; // floor + 1
   }
 
   @override

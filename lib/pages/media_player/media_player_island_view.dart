@@ -61,7 +61,6 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       widget.mediaPlayerBlock.rangeStart,
       widget.mediaPlayerBlock.rangeEnd,
       _rmsValues,
-      0,
     );
 
     MediaPlayerFunctions.setSpeedAndPitchInRust(
@@ -75,7 +74,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       var customPaintContext = globalKeyCustomPaint.currentContext;
       if (customPaintContext != null) {
         final customPaintRenderBox = customPaintContext.findRenderObject()! as RenderBox;
-        numOfBins = (customPaintRenderBox.size.width / MediaPlayerParams.binWidth).floor();
+        numOfBins = WaveformVisualizer.suggestBinCountForWidth(customPaintRenderBox.size.width);
       } else {
         throw "WARNING: couldn't set numOfBins because the custom painter context was null!";
       }
@@ -106,7 +105,6 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
               widget.mediaPlayerBlock.rangeStart,
               widget.mediaPlayerBlock.rangeEnd,
               _rmsValues,
-              numOfBins,
             );
           });
         }
@@ -138,7 +136,6 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
             widget.mediaPlayerBlock.rangeStart,
             widget.mediaPlayerBlock.rangeEnd,
             _rmsValues,
-            numOfBins,
           );
         });
       });
