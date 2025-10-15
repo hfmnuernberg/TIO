@@ -38,22 +38,24 @@ class _ChooseSoundState extends State<ChooseSound> {
       title: context.l10n.pianoSetSound,
       confirm: _onConfirm,
       reset: _reset,
-      customWidget: ToggleButtons(
-        direction: Axis.vertical,
-        onPressed: (index) {
-          setState(() {
-            for (int i = 0; i < _selectedSounds.length; i++) {
-              _selectedSounds[i] = i == index;
-            }
-          });
-        },
-        constraints: const BoxConstraints(minHeight: 30, minWidth: 200),
-        isSelected: _selectedSounds,
-        children: SoundFont.values
-            .map(
-              (soundFont) => Text(soundFont.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)),
-            )
-            .toList(),
+      customWidget: Center(
+        child: ToggleButtons(
+          direction: Axis.vertical,
+          onPressed: (index) {
+            setState(() {
+              for (int i = 0; i < _selectedSounds.length; i++) {
+                _selectedSounds[i] = i == index;
+              }
+            });
+          },
+          constraints: const BoxConstraints(minHeight: 30, minWidth: 200),
+          isSelected: _selectedSounds,
+          children: SoundFont.values
+              .map(
+                (soundFont) => Text(soundFont.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)),
+          )
+              .toList(),
+        ),
       ),
     );
   }
