@@ -226,7 +226,8 @@ class AudioSystemMock extends Mock implements AudioSystem {
   void verifyMediaPlayerStartCalled() => verify(mediaPlayerStart).called(1);
   void verifyMediaPlayerStopCalled() => verify(mediaPlayerStop).called(1);
 
-  void verifyMediaPlayerSetRepeatCalledWith(bool repeat) => verify(() => mediaPlayerSetRepeat(repeatOne: repeat)).called(1);
+  void verifyMediaPlayerSetRepeatCalledWith(bool repeat) =>
+      verify(() => mediaPlayerSetRepeat(repeatOne: repeat)).called(1);
 
   void verifyMediaPlayerGetStateCalled() => verify(mediaPlayerGetState).called(1);
 

@@ -15,28 +15,22 @@ void main() {
     player = Player(context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
   });
 
-  void mockStartedState() {
+  void mockPlayerState({
+    bool playing = true,
+    double playbackPositionFactor = 0,
+    double totalLengthSeconds = 1,
+    bool looping = false,
+    double trimStartFactor = 0,
+    double trimEndFactor = 1,
+  }) {
     context.audioSystemMock.mockMediaPlayerGetState(
       MediaPlayerState(
-        playing: true,
-        playbackPositionFactor: 0,
-        totalLengthSeconds: 1,
-        looping: false,
-        trimStartFactor: 0,
-        trimEndFactor: 1,
-      ),
-    );
-  }
-
-  void mockStoppedState() {
-    context.audioSystemMock.mockMediaPlayerGetState(
-      MediaPlayerState(
-        playing: false,
-        playbackPositionFactor: 0,
-        totalLengthSeconds: 1,
-        looping: false,
-        trimStartFactor: 0,
-        trimEndFactor: 1,
+        playing: playing,
+        playbackPositionFactor: playbackPositionFactor,
+        totalLengthSeconds: totalLengthSeconds,
+        looping: looping,
+        trimStartFactor: trimStartFactor,
+        trimEndFactor: trimEndFactor,
       ),
     );
   }
@@ -45,17 +39,17 @@ void main() {
     testWidgets('starts and stops', (tester) async {
       expect(player.isPlaying, isFalse);
 
-      mockStartedState();
+      mockPlayerState();
       await player.start();
       expect(player.isPlaying, isTrue);
 
-      mockStoppedState();
+      mockPlayerState(playing: false);
       await player.stop();
       expect(player.isPlaying, isFalse);
     });
 
     testWidgets('starts player in audio system when started', (tester) async {
-      mockStartedState();
+      mockPlayerState();
       await player.start();
 
       context.audioSystemMock.verifyMediaPlayerStartCalled();
@@ -64,7 +58,7 @@ void main() {
     });
 
     testWidgets('starts only once', (tester) async {
-      mockStartedState();
+      mockPlayerState();
       await player.start();
       await player.start();
       context.audioSystemMock.verifyMediaPlayerStartCalled();
@@ -73,7 +67,7 @@ void main() {
     });
 
     testWidgets('sets repeat in audio system when started', (tester) async {
-      mockStartedState();
+      mockPlayerState();
       await player.start();
 
       context.audioSystemMock.verifyMediaPlayerSetRepeatCalledWith(false);
@@ -82,7 +76,7 @@ void main() {
     });
 
     testWidgets('prepares playback in audio session when started', (tester) async {
-      mockStartedState();
+      mockPlayerState();
       await player.start();
 
       context.audioSessionMock.verifyPreparePlaybackCalled();
@@ -91,7 +85,7 @@ void main() {
     });
 
     testWidgets('restarts generator in audio system when started', (tester) async {
-      mockStartedState();
+      mockPlayerState();
       player.markers.positions = [0];
       await player.start();
 
@@ -102,7 +96,7 @@ void main() {
     });
 
     testWidgets('does not start generator in audio system when no positions', (tester) async {
-      mockStartedState();
+      mockPlayerState();
       player.markers.positions = [];
       await player.start();
 
@@ -112,7 +106,7 @@ void main() {
     });
 
     testWidgets('forces screen to stay on when started', (tester) async {
-      mockStartedState();
+      mockPlayerState();
       await player.start();
 
       context.wakelockMock.verifyEnableCalled();
@@ -121,7 +115,7 @@ void main() {
     });
 
     testWidgets('fetches the media player state when started for state updates', (tester) async {
-      mockStartedState();
+      mockPlayerState();
       await player.start();
 
       context.audioSystemMock.verifyMediaPlayerGetStateCalled();
@@ -130,7 +124,7 @@ void main() {
     });
 
     testWidgets('fires periodic update tick after start', (tester) async {
-      mockStartedState();
+      mockPlayerState();
       await player.start();
       context.audioSystemMock.verifyMediaPlayerGetStateCalled();
 
@@ -141,7 +135,7 @@ void main() {
     });
 
     testWidgets('stops player in audio system when stopped', (tester) async {
-      mockStartedState();
+      mockPlayerState();
       await player.start();
 
       await player.stop();
@@ -150,10 +144,10 @@ void main() {
     });
 
     testWidgets('stops only once', (tester) async {
-      mockStartedState();
+      mockPlayerState();
       await player.start();
 
-      mockStoppedState();
+      mockPlayerState(playing: false);
       await player.stop();
       await player.stop();
 
@@ -161,7 +155,7 @@ void main() {
     });
 
     testWidgets('stops generator in audio system when stopped', (tester) async {
-      mockStartedState();
+      mockPlayerState();
       player.markers.positions = [0];
       await player.start();
       context.audioSystemMock.verifyGeneratorStopCalled();
@@ -180,7 +174,7 @@ void main() {
     });
 
     testWidgets('fails to stop player when audio system signals failure', (tester) async {
-      mockStartedState();
+      mockPlayerState();
       context.audioSystemMock.mockMediaPlayerStop(false);
       await player.start();
 
