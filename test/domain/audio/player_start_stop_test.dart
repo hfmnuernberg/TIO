@@ -90,6 +90,27 @@ void main() {
       await player.stop();
     });
 
+    testWidgets('restarts generator in audio system when started', (tester) async {
+      mockStartedState();
+      player.markers.positions = [0];
+      await player.start();
+
+      context.audioSystemMock.verifyGeneratorStartCalled();
+      context.audioSystemMock.verifyGeneratorStopCalled();
+
+      await player.stop();
+    });
+
+    testWidgets('does not start generator in audio system when no positions', (tester) async {
+      mockStartedState();
+      player.markers.positions = [];
+      await player.start();
+
+      context.audioSystemMock.verifyGeneratorStartNeverCalled();
+
+      await player.stop();
+    });
+
     testWidgets('forces screen to stay on when started', (tester) async {
       mockStartedState();
       await player.start();
@@ -137,6 +158,17 @@ void main() {
       await player.stop();
 
       context.audioSystemMock.verifyMediaPlayerStopCalled();
+    });
+
+    testWidgets('stops generator in audio system when stopped', (tester) async {
+      mockStartedState();
+      player.markers.positions = [0];
+      await player.start();
+      context.audioSystemMock.verifyGeneratorStopCalled();
+
+      await player.stop();
+
+      context.audioSystemMock.verifyGeneratorStopCalled();
     });
 
     testWidgets('fails to start player when audio system signals failure', (tester) async {
