@@ -117,7 +117,6 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     final customPaintContext = globalKeyCustomPaint.currentContext;
     final renderBox = customPaintContext?.findRenderObject() as RenderBox?;
 
-    // If not laid out yet, try again next frame.
     if (renderBox == null || renderBox.size.width <= 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _initBinsAndLoadRms());
       return;
@@ -203,11 +202,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
           : widget.mediaPlayerBlock.icon,
       mainButtonIsDisabled: _isLoading,
       parameterText: widget.mediaPlayerBlock.title,
-      centerView: _isLoading
-      // loading spinner
-          ? const Center(child: CircularProgressIndicator())
-      // waveform visualizer
-          : _waveformVisualizer,
+      centerView: _isLoading ? const Center(child: CircularProgressIndicator()) : _waveformVisualizer,
       customPaintKey: globalKeyCustomPaint,
       textSpaceWidth: 70,
     );
