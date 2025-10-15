@@ -108,6 +108,17 @@ void main() {
       await player.stop();
     });
 
+    testWidgets('fires periodic update tick after start', (tester) async {
+      mockStartedState();
+      await player.start();
+      context.audioSystemMock.verifyMediaPlayerGetStateCalled();
+
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+      context.audioSystemMock.verifyMediaPlayerGetStateCalled();
+
+      await player.stop();
+    });
+
     testWidgets('stops player in audio system when stopped', (tester) async {
       mockStartedState();
       await player.start();
