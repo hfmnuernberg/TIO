@@ -92,6 +92,8 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
   }
 
   Widget _buildLandscape() {
+    final isPhone = MediaQuery.of(context).size.shortestSide < 600;
+    final double rightGutter = isPhone ? (TIOMusicParams.sizeBigButtons * 2 + TIOMusicParams.edgeInset * 5) : 0;
     return Padding(
       padding: EdgeInsets.all(TIOMusicParams.edgeInset),
       child: Stack(
@@ -102,26 +104,29 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
                 padding: EdgeInsets.zero,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 1000),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (widget.displayResetAtTop) ...[
-                            const SizedBox(height: 8),
-                            TIOTextButton(text: context.l10n.commonReset, onTap: widget.reset),
-                            const SizedBox(height: 20),
+                  child: Padding(
+                    padding: EdgeInsets.only(right: rightGutter),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 1000),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (widget.displayResetAtTop) ...[
+                              const SizedBox(height: 8),
+                              TIOTextButton(text: context.l10n.commonReset, onTap: widget.reset),
+                              const SizedBox(height: 20),
+                            ],
+                            widget.numberInput ?? const SizedBox(),
+                            if (widget.customWidget != null) ...[const SizedBox(height: 12), widget.customWidget!],
+                            if (!widget.displayResetAtTop) ...[
+                              const SizedBox(height: 20),
+                              TIOTextButton(text: context.l10n.commonReset, onTap: widget.reset),
+                            ],
+                            SizedBox(height: TIOMusicParams.sizeBigButtons * 2 + TIOMusicParams.edgeInset),
                           ],
-                          widget.numberInput ?? const SizedBox(),
-                          if (widget.customWidget != null) ...[const SizedBox(height: 12), widget.customWidget!],
-                          if (!widget.displayResetAtTop) ...[
-                            const SizedBox(height: 20),
-                            TIOTextButton(text: context.l10n.commonReset, onTap: widget.reset),
-                          ],
-                          SizedBox(height: TIOMusicParams.sizeBigButtons * 2 + TIOMusicParams.edgeInset),
-                        ],
+                        ),
                       ),
                     ),
                   ),
