@@ -13,7 +13,7 @@ class Markers {
 
   final AudioSystem _as;
 
-  late List<double> _positions;
+  List<double> _positions = const [];
   UnmodifiableListView<double> get positions => UnmodifiableListView(_positions);
   set positions(List<double> value) {
     _positions = List.of(value);

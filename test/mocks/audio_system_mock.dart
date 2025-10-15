@@ -222,4 +222,7 @@ class AudioSystemMock extends Mock implements AudioSystem {
   void verifyPianoNoteOnCalledWith(int note) => verify(() => pianoNoteOn(note: note)).called(1);
 
   void verifyPianoNoteOffCalledWith(int note) => verify(() => pianoNoteOff(note: note)).called(1);
+
+  void verifyMediaPlayerStartCalled() => verify(mediaPlayerStart).called(1);
+  void verifyMediaPlayerStopCalled() => verify(mediaPlayerStop).called(1);
 }

@@ -86,17 +86,19 @@ class Player {
       (t) => _update(),
     );
 
+    await _update();
     await _wakelock.enable();
     return;
   }
 
   Future<void> stop() async {
-    if (!_isPlaying) return;
+    // Always clean up side-effects even if our local `_isPlaying` flag didn't flip yet.
+    _playbackSamplingTimer?.cancel();
+    _playbackSamplingTimer = null;
 
     await _wakelock.disable();
 
-    _playbackSamplingTimer?.cancel();
-    _playbackSamplingTimer = null;
+    if (!_isPlaying) return;
 
     final success = await _as.mediaPlayerStop();
     if (!success) {
@@ -110,7 +112,7 @@ class Player {
     }
 
     await _markers.stop();
-    _update();
+    await _update();
   }
 
   Future<void> setVolume(double volume) async {
