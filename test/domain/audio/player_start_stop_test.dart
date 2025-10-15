@@ -72,11 +72,38 @@ void main() {
       await player.stop();
     });
 
+    testWidgets('sets repeat in audio system when started', (tester) async {
+      mockStartedState();
+      await player.start();
+
+      context.audioSystemMock.verifyMediaPlayerSetRepeatCalledWith(false);
+
+      await player.stop();
+    });
+
     testWidgets('prepares playback in audio session when started', (tester) async {
       mockStartedState();
       await player.start();
 
       context.audioSessionMock.verifyPreparePlaybackCalled();
+
+      await player.stop();
+    });
+
+    testWidgets('forces screen to stay on when started', (tester) async {
+      mockStartedState();
+      await player.start();
+
+      context.wakelockMock.verifyEnableCalled();
+
+      await player.stop();
+    });
+
+    testWidgets('fetches the media player state when started for state updates', (tester) async {
+      mockStartedState();
+      await player.start();
+
+      context.audioSystemMock.verifyMediaPlayerGetStateCalled();
 
       await player.stop();
     });
@@ -90,43 +117,33 @@ void main() {
       context.audioSystemMock.verifyMediaPlayerStopCalled();
     });
 
-    // testWidgets('stops only once', (tester) async {
-    //   await player.start();
-    //
-    //   await player.stop();
-    //   await player.stop();
-    //
-    //   context.audioSystemMock.verifyPlayerStartCalled();
-    // });
-    //
-    // testWidgets('restarts', (tester) async {
-    //   await player.start();
-    //   context.audioSystemMock.verifyPlayerStartCalled();
-    //
-    //   await player.restart();
-    //
-    //   expect(player.isPlaying, isTrue);
-    //   context.audioSystemMock.verifyPlayerStopCalled();
-    //   context.audioSystemMock.verifyPlayerStartCalled();
-    //
-    //   await player.stop();
-    // });
-    //
-    // testWidgets('fails to start player when audio system signals failure', (tester) async {
-    //   context.audioSystemMock.mockPlayerStart(false);
-    //
-    //   await player.start();
-    //
-    //   expect(player.isPlaying, isFalse);
-    // });
-    //
-    // testWidgets('fails to stop player when audio system signals failure', (tester) async {
-    //   context.audioSystemMock.mockPlayerStop(false);
-    //   await player.start();
-    //
-    //   await player.stop();
-    //
-    //   expect(player.isPlaying, isTrue);
-    // });
+    testWidgets('stops only once', (tester) async {
+      mockStartedState();
+      await player.start();
+
+      mockStoppedState();
+      await player.stop();
+      await player.stop();
+
+      context.audioSystemMock.verifyMediaPlayerStopCalled();
+    });
+
+    testWidgets('fails to start player when audio system signals failure', (tester) async {
+      context.audioSystemMock.mockMediaPlayerStart(false);
+
+      await player.start();
+
+      expect(player.isPlaying, isFalse);
+    });
+
+    testWidgets('fails to stop player when audio system signals failure', (tester) async {
+      mockStartedState();
+      context.audioSystemMock.mockMediaPlayerStop(false);
+      await player.start();
+
+      await player.stop();
+
+      expect(player.isPlaying, isTrue);
+    });
   });
 }
