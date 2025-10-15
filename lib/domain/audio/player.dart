@@ -1,17 +1,21 @@
 import 'dart:async';
-import 'dart:collection';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
+import 'package:tiomusic/domain/audio/markers.dart';
+import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/log.dart';
 
-import 'package:tiomusic/pages/media_player/media_player_functions.dart';
+const int playbackSamplingIntervalInMs = 120;
+
+typedef OnPlaybackPositionChange = void Function(double playbackPosition);
+typedef OnIsPlayingChange = void Function(bool isPlaying);
 
 class Player {
   static final logger = createPrefixLogger('AudioPlayer');
@@ -21,77 +25,79 @@ class Player {
   final FileSystem _fs;
   final Wakelock _wakelock;
 
-  final double _markerSoundFrequency = 2000;
-  final int _markerSoundDurationInMilliseconds = 80;
+  final OnPlaybackPositionChange _onPlaybackPositionChange;
+  final OnIsPlayingChange _onIsPlayingChange;
+
+  final Markers _markers;
+  Markers get markers => _markers;
 
   bool _isPlaying = false;
   bool get isPlaying => _isPlaying;
 
-  bool _repeatOne = false;
-  bool get repeatOne => _repeatOne;
+  double _playbackPosition = 0;
+  double get playbackPosition => _playbackPosition;
 
-  String? _absoluteFilePath;
-  String? get absoluteFilePath => _absoluteFilePath;
+  bool _repeat = false;
+  bool get repeat => _repeat;
+
+  bool _loaded = false;
+  bool get loaded => _loaded;
 
   double _startPosition = 0;
-  // this getter is currently not used
-  // ignore: unnecessary_getters_setters
-  double get startPosition => _startPosition;
-  set startPosition(double value) {
-    _startPosition = value;
-  }
-
   double _endPosition = 1;
-  // this getter is currently not used
-  // ignore: unnecessary_getters_setters
-  double get endPosition => _endPosition;
-  set endPosition(double value) {
-    _endPosition = value;
-  }
-
-  late List<double> _markerPositions;
-  UnmodifiableListView<double> get markerPositions => UnmodifiableListView(_markerPositions);
-  set markerPositions(List<double> value) {
-    _markerPositions = List.of(value);
-  }
 
   Duration _fileDuration = Duration.zero;
   Duration get fileDuration => _fileDuration;
 
+  Timer? _playbackSamplingTimer;
+
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
-  Player(this._as, this._audioSession, this._fs, this._wakelock);
+  Player(
+    this._as,
+    this._audioSession,
+    this._fs,
+    this._wakelock, {
+    OnIsPlayingChange? onIsPlayingChange,
+    OnPlaybackPositionChange? onPlaybackPositionChange,
+  }) : _markers = Markers(_as),
+       _onIsPlayingChange = onIsPlayingChange ?? ((_) {}),
+       _onPlaybackPositionChange = onPlaybackPositionChange ?? ((_) {});
 
-  Future<bool> start({bool? repeatOne}) async {
-    if (_isPlaying) return true;
+  Future<void> start() async {
+    if (_isPlaying) return;
 
     _audioSessionInterruptionListenerHandle ??= await _audioSession.registerInterruptionListener(stop);
 
     await MediaPlayerFunctions.stopRecording(_as, _wakelock);
-    await _as.mediaPlayerSetRepeat(repeatOne: repeatOne ?? _repeatOne);
+    await _as.mediaPlayerSetRepeat(repeatOne: _repeat);
     await _audioSession.preparePlayback();
 
-    if (_markerPositions.isNotEmpty) {
-      await _as.generatorStop();
-      await _as.generatorStart();
-    }
+    await _markers.start();
 
     final success = await _as.mediaPlayerStart();
-    if (success) {
-      await _wakelock.enable();
-      _isPlaying = true;
-    } else {
+    if (!success) {
       logger.e('Unable to start Audio Player.');
-      return false;
+      return;
     }
 
-    return true;
+    _playbackSamplingTimer = Timer.periodic(
+      const Duration(milliseconds: playbackSamplingIntervalInMs),
+      (t) => _update(),
+    );
+
+    await _wakelock.enable();
+    return;
   }
 
   Future<void> stop() async {
     if (!_isPlaying) return;
 
     await _wakelock.disable();
+
+    _playbackSamplingTimer?.cancel();
+    _playbackSamplingTimer = null;
+
     final success = await _as.mediaPlayerStop();
     if (!success) {
       logger.e('Unable to stop Audio Player.');
@@ -103,16 +109,17 @@ class Player {
       _audioSessionInterruptionListenerHandle = null;
     }
 
-    _isPlaying = false;
+    await _markers.stop();
+    _update();
   }
 
   Future<void> setVolume(double volume) async {
     await _as.mediaPlayerSetVolume(volume: volume);
   }
 
-  Future<void> setRepeat(bool repeatOne) async {
-    _repeatOne = repeatOne;
-    await _as.mediaPlayerSetRepeat(repeatOne: repeatOne);
+  Future<void> setRepeat(bool repeat) async {
+    _repeat = repeat;
+    await _as.mediaPlayerSetRepeat(repeatOne: repeat);
   }
 
   Future<void> setPitch(double pitchSemitones) async {
@@ -125,74 +132,31 @@ class Player {
 
   Future<void> setPlaybackPosition(double posFactor) async {
     await _as.mediaPlayerSetPlaybackPosFactor(posFactor: posFactor.clamp(0, 1));
+    await _update();
   }
 
-  Future<void> setAbsoluteFilePath(String relativePath) async {
-    _absoluteFilePath = _fs.toAbsoluteFilePath(relativePath);
+  Future<void> setTrim(double startPosition, double endPosition) async {
+    _startPosition = startPosition;
+    _endPosition = endPosition;
+    if (_loaded) _as.mediaPlayerSetTrim(startFactor: startPosition, endFactor: endPosition);
   }
 
-  Future<void> playMarkerPeep() async {
-    await _as.generatorNoteOn(newFreq: _markerSoundFrequency);
-    Future.delayed(Duration(milliseconds: _markerSoundDurationInMilliseconds), _as.generatorNoteOff);
-  }
-
-  // instead use getter (isPlaying, playbackPosition) -> get rid of this method
-  Future<dynamic> getState() async {
-    final state = await _as.mediaPlayerGetState();
-    if (state != null) {
-      _isPlaying = state.playing;
-    }
-    return state;
-  }
-
-  Future<void> jumpSeconds({required int seconds}) async {
+  Future<void> skip({required int seconds}) async {
     final state = await _as.mediaPlayerGetState();
     if (state == null) {
-      logger.w('Cannot jump $seconds seconds - State is null');
+      logger.w('Cannot skip - State is null');
       return;
     }
 
     final totalSecs = _fileDuration.inSeconds;
-    final secondFactor = totalSecs > 0 ? seconds.toDouble() / totalSecs : 1.0;
+    final secondFactor = totalSecs > 0 ? seconds / totalSecs : 1.0;
     final newPos = state.playbackPositionFactor + secondFactor;
 
     await _as.mediaPlayerSetPlaybackPosFactor(posFactor: newPos);
+    await _update();
   }
 
-  Future<void> _renderMidiToTempWav() async {
-    final sampleRate = await _as.getSampleRate();
-
-    final ts = DateTime.now().millisecondsSinceEpoch;
-    final base = _fs.toBasename(_absoluteFilePath!).replaceAll(RegExp(r'[^\w.-]'), '_');
-    final tmpDir = _fs.tmpFolderPath;
-    await _fs.createFolder(tmpDir);
-    final tmpWavAbs = '$tmpDir/$base.$ts.rendered.wav';
-
-    final sf2Abs = await _resolveSoundFontPath();
-    if (sf2Abs == null) {
-      _absoluteFilePath = null;
-      return;
-    }
-
-    final success = await _as.mediaPlayerRenderMidiToWav(
-      midiPath: _absoluteFilePath!,
-      soundFontPath: sf2Abs,
-      wavOutPath: tmpWavAbs,
-      sampleRate: sampleRate,
-      gain: 0.7,
-    );
-    _absoluteFilePath = success ? tmpWavAbs : null;
-  }
-
-  Future<bool> _loadAudioFile(String path) async {
-    return _as.mediaPlayerLoadWav(wavFilePath: path);
-  }
-
-  Future<void> _applyTrim() async {
-    await _as.mediaPlayerSetTrim(startFactor: _startPosition, endFactor: _endPosition);
-  }
-
-  Future<Float32List?> _getRmsNormalized({required int numberOfBins}) async {
+  Future<Float32List> getRmsValues(int numberOfBins) async {
     final rmsList = await _as.mediaPlayerGetRms(nBins: numberOfBins);
 
     Float32List newList = Float32List(rmsList.length);
@@ -206,25 +170,50 @@ class Player {
     return newList;
   }
 
+  Future<bool> loadAudioFile(String absoluteFilePath) async {
+    _loaded = false;
+    final isMidi = absoluteFilePath.toLowerCase().endsWith('.mid');
+    final wavFilePath = isMidi ? (await _convertMidiToWav(absoluteFilePath)) : absoluteFilePath;
+    if (wavFilePath == null) return false;
+
+    final loaded = await _as.mediaPlayerLoadWav(wavFilePath: wavFilePath);
+    if (!loaded) return false;
+    _loaded = true;
+
+    await setTrim(_startPosition, _endPosition);
+    await _setFileDuration();
+    _markers.reset();
+    _update();
+    return true;
+  }
+
+  Future<String?> _convertMidiToWav(String absoluteMidiFilePath) async {
+    final sampleRate = await _as.getSampleRate();
+
+    final ts = DateTime.now().millisecondsSinceEpoch;
+    final base = _fs.toBasename(absoluteMidiFilePath).replaceAll(RegExp(r'[^\w.-]'), '_');
+    final tmpDir = _fs.tmpFolderPath;
+    await _fs.createFolder(tmpDir);
+    final tmpWavAbs = '$tmpDir/$base.$ts.rendered.wav';
+
+    final sf2Abs = await _resolveSoundFontPath();
+    if (sf2Abs == null) return null;
+
+    final success = await _as.mediaPlayerRenderMidiToWav(
+      midiPath: absoluteMidiFilePath,
+      soundFontPath: sf2Abs,
+      wavOutPath: tmpWavAbs,
+      sampleRate: sampleRate,
+      gain: 0.7,
+    );
+    return success ? tmpWavAbs : null;
+  }
+
   Future<void> _setFileDuration() async {
     final state = await _as.mediaPlayerGetState();
     if (state != null) {
       _fileDuration = Duration(milliseconds: (state.totalLengthSeconds * 1000).toInt());
     }
-  }
-
-  Future<Float32List?> processFile({required int numberOfBins}) async {
-    if (_absoluteFilePath == null) return null;
-
-    final isMidi = _absoluteFilePath!.toLowerCase().endsWith('.mid');
-    if (isMidi) await _renderMidiToTempWav();
-
-    final loaded = await _loadAudioFile(_absoluteFilePath!);
-    if (!loaded) return null;
-
-    await _applyTrim();
-    await _setFileDuration();
-    return _getRmsNormalized(numberOfBins: numberOfBins);
   }
 
   Future<String?> _resolveSoundFontPath() async {
@@ -244,7 +233,22 @@ class Player {
       return null;
     }
   }
-}
 
-// onPlaybackPositionChange (optional)
-// onMarkerReached (optional)
+  Future<void> _update() async {
+    final state = await _as.mediaPlayerGetState();
+    if (state == null) return;
+
+    if (state.playing != _isPlaying) {
+      _isPlaying = state.playing;
+      _onIsPlayingChange(state.playing);
+    }
+
+    if (state.playbackPositionFactor != _playbackPosition) {
+      final previousPosition = _playbackPosition;
+      _playbackPosition = state.playbackPositionFactor;
+      _onPlaybackPositionChange(state.playbackPositionFactor);
+
+      await _markers.onPlaybackPositionChange(previousPosition: previousPosition, currentPosition: _playbackPosition);
+    }
+  }
+}

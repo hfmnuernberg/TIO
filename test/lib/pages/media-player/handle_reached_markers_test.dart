@@ -1,12 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tiomusic/pages/media_player/handle_reached_markers.dart';
+import 'package:tiomusic/domain/audio/markers.dart';
+
+import '../../../utils/test_context.dart';
 
 void main() {
-  late MarkerHandler handler;
+  late Markers handler;
+  late TestContext context;
   late List<double> triggered;
 
   setUp(() {
-    handler = MarkerHandler();
+    context = TestContext();
+    handler = Markers(context.audioSystem);
     triggered = <double>[];
   });
 

@@ -12,7 +12,6 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/edit_markers_page.dart';
-import 'package:tiomusic/pages/media_player/handle_reached_markers.dart';
 import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/pages/media_player/media_player_repeat_button.dart';
 import 'package:tiomusic/pages/media_player/setting_bpm.dart';
@@ -66,15 +65,8 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   late final Player _player;
 
-  late bool _isPlaying = false;
   late bool _isRecording = false;
-  late bool _fileLoaded = false;
   late bool _isLoading = false;
-
-  late MarkerHandler _markerHandler;
-  double? _previousPlaybackPositionFactor;
-
-  Timer? _timerPollPlaybackPosition;
 
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
   late MenuItemButton _shareMenuButton;
@@ -120,14 +112,14 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       context.read<AudioSession>(),
       context.read<FileSystem>(),
       context.read<Wakelock>(),
+      onIsPlayingChange: (_) => _updateState(),
+      onPlaybackPositionChange: (_) => _updateState(),
     );
 
     _waveformVisualizer = WaveformVisualizer(0, 0, 1, _rmsValues, 0);
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
     _mediaPlayerBlock.timeLastModified = getCurrentDateTime();
-
-    _markerHandler = MarkerHandler();
 
     if (!widget.isQuickTool) {
       _project = context.read<Project>();
@@ -137,16 +129,14 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
     _player.setVolume(_mediaPlayerBlock.volume);
     _player.setRepeat(_mediaPlayerBlock.looping);
-    _player.markerPositions = _mediaPlayerBlock.markerPositions;
-    _player.startPosition = _mediaPlayerBlock.rangeStart;
-    _player.endPosition = _mediaPlayerBlock.rangeEnd;
+    _player.markers.positions = _mediaPlayerBlock.markerPositions;
+    _player.setTrim(_mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd);
+    _player.setPitch(_mediaPlayerBlock.pitchSemitones);
+    _player.setSpeed(_mediaPlayerBlock.speedFactor);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
       _numOfBins = (_waveFormWidth / MediaPlayerParams.binWidth).floor();
-
-      _player.setPitch(_mediaPlayerBlock.pitchSemitones);
-      _player.setSpeed(_mediaPlayerBlock.speedFactor);
 
       setState(() => _isLoading = true);
 
@@ -156,13 +146,11 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       }
 
       if (_mediaPlayerBlock.relativePath.isNotEmpty) {
-        await _player.setAbsoluteFilePath(_mediaPlayerBlock.relativePath);
-        var newRms = await _player.processFile(numberOfBins: _numOfBins);
-        if (newRms == null) {
+        final success = await _player.loadAudioFile(_fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath));
+        if (!success) {
           if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
         } else {
-          _fileLoaded = true;
-          _rmsValues = newRms;
+          _rmsValues = await _player.getRmsValues(_numOfBins);
           _waveformVisualizer = WaveformVisualizer(
             0,
             _mediaPlayerBlock.rangeStart,
@@ -176,20 +164,11 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       if (!mounted) return;
       setState(() => _isLoading = false);
 
-      if (_fileLoaded) _addShareOptionToMenu();
+      if (_player.loaded) _addShareOptionToMenu();
 
-      await _queryAndUpdateStateFromRust();
+      await _updateState();
 
-      if (mounted && widget.shouldAutoplay && _fileLoaded) _autoplayAfterDelay();
-    });
-
-    _timerPollPlaybackPosition = Timer.periodic(const Duration(milliseconds: 120), (t) async {
-      if (!mounted) {
-        t.cancel();
-        return;
-      }
-
-      await _queryAndUpdateStateFromRust();
+      if (mounted && widget.shouldAutoplay && _player.loaded) _autoplayAfterDelay();
     });
   }
 
@@ -241,7 +220,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           alignText: ContentAlign.bottom,
           shape: ShapeLightFocus.RRect,
         ),
-      if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded)
+      if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded)
         CustomTargetFocus(
           _keyWaveform,
           l10n.mediaPlayerTutorialJumpTo,
@@ -261,7 +240,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         context.read<ProjectLibrary>().showMediaPlayerIslandTutorial = false;
       }
 
-      if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
+      if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded) {
         context.read<ProjectLibrary>().showWaveformTip = false;
       }
 
@@ -271,19 +250,15 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   Future<void> _autoplayAfterDelay() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    await _startPlaying(repeatOne: false);
+    _player.setRepeat(false);
+    await _player.start();
   }
 
-  Future<void> _queryAndUpdateStateFromRust() async {
-    var mediaPlayerStateRust = await _player.getState();
-    if (!mounted || mediaPlayerStateRust == null) return;
-
-    final wasPreviousPlaying = _isPlaying;
-
+  Future<void> _updateState() async {
+    if (!mounted) return;
     setState(() {
-      _isPlaying = mediaPlayerStateRust.playing;
       _waveformVisualizer = WaveformVisualizer(
-        mediaPlayerStateRust.playbackPositionFactor,
+        _player.playbackPosition,
         _mediaPlayerBlock.rangeStart,
         _mediaPlayerBlock.rangeEnd,
         _rmsValues,
@@ -291,11 +266,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       );
     });
 
-    if (_project != null && _project!.mediaPlayerRepeatAll && wasPreviousPlaying && !_isPlaying && _fileLoaded) {
+    if (!mounted) return;
+    if (_project != null && _project!.mediaPlayerRepeatAll && _player.isPlaying && _player.loaded) {
       _goToNextMediaPlayerWithLoadedFile();
     }
-
-    if (_mediaPlayerBlock.markerPositions.isNotEmpty) _handleMarkers(mediaPlayerStateRust.playbackPositionFactor);
   }
 
   Future<void> _goToNextMediaPlayerWithLoadedFile() async {
@@ -313,42 +287,22 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     }
   }
 
-  void _handleMarkers(double currentPosition) {
-    final previousPosition = _previousPlaybackPositionFactor ?? currentPosition;
-    if (previousPosition > currentPosition) {
-      _markerHandler.reset();
-      _previousPlaybackPositionFactor = currentPosition;
-      return;
-    }
-    _markerHandler.checkMarkers(
-      previousPosition: previousPosition,
-      currentPosition: currentPosition,
-      markers: _mediaPlayerBlock.markerPositions,
-      onPeep: (_) async => _isPlaying ? await _player.playMarkerPeep() : null,
-    );
-    _previousPlaybackPositionFactor = currentPosition;
-  }
-
   @override
-  void deactivate() async {
-    _stopPlaying();
+  void deactivate() {
+    _player.stop();
     MediaPlayerFunctions.stopRecording(_as, _wakelock);
-
     if (recordInterruptionListenerHandle != null) {
-      await _audioSession.unregisterInterruptionListener(recordInterruptionListenerHandle!);
+      _audioSession.unregisterInterruptionListener(recordInterruptionListenerHandle!);
     }
-
     _recordingTimer?.cancel();
-    _timerPollPlaybackPosition?.cancel();
-
     super.deactivate();
   }
 
   @override
   void dispose() {
     _tutorial.dispose();
+    _player.stop();
     _recordingTimer?.cancel();
-    _timerPollPlaybackPosition?.cancel();
     super.dispose();
   }
 
@@ -398,9 +352,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                               waveformHeight,
                             )
                           : GestureDetector(
-                              onTapDown: (details) => _fileLoaded ? _onWaveGesture(details.localPosition) : null,
+                              onTapDown: (details) => _player.loaded ? _onWaveGesture(details.localPosition) : null,
                               onHorizontalDragUpdate: (details) =>
-                                  _fileLoaded ? _onWaveGesture(details.localPosition) : null,
+                                  _player.loaded ? _onWaveGesture(details.localPosition) : null,
                               child: CustomPaint(
                                 painter: _waveformVisualizer,
                                 size: Size(_waveFormWidth, waveformHeight),
@@ -414,12 +368,12 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                TextButton(onPressed: () => _jump10Seconds(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
+                TextButton(onPressed: () => _skip(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
                 Container(
                   key: _keyRepeat,
                   child: MediaPlayerRepeatButton(onToggle: _handleRepeatToggle),
                 ),
-                TextButton(onPressed: () => _jump10Seconds(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
+                TextButton(onPressed: () => _skip(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
               ],
             ),
             Row(
@@ -431,7 +385,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
               ],
             ),
 
-            if (_fileLoaded)
+            if (_player.loaded)
               Padding(
                 padding: const EdgeInsets.only(top: 16),
                 child: Text(
@@ -450,7 +404,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                       onPressed: () async {
                         await _pickAudioFilesAndSave(isMultipleAllowed: isMultiImportEnabled);
                         if (!context.mounted) return;
-                        if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
+                        if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded) {
                           _createTutorial();
                           _tutorial.show(context);
                         }
@@ -469,7 +423,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                             pickAudioFromFileSystem: true,
                           );
                           if (!context.mounted) return;
-                          if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
+                          if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded) {
                             _createTutorial();
                             _tutorial.show(context);
                           }
@@ -515,9 +469,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           title: l10n.mediaPlayerTrim,
           subtitle: '${(_mediaPlayerBlock.rangeStart * 100).round()}% → ${(_mediaPlayerBlock.rangeEnd * 100).round()}%',
           leadingIcon: 'assets/icons/arrow_range.svg',
+          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
           settingPage: SetTrim(rmsValues: _rmsValues, fileDuration: _player.fileDuration),
           block: _mediaPlayerBlock,
-          callOnReturn: (value) => _queryAndUpdateStateFromRust(),
+          callOnReturn: (value) => _updateState(),
           inactive: _isLoading,
         ),
         SettingsTile(
@@ -530,7 +485,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
             rmsValues: _rmsValues,
           ),
           block: _mediaPlayerBlock,
-          callOnReturn: (value) => setState(() {}),
+          callOnReturn: (value) {
+            _player.markers.positions = _mediaPlayerBlock.markerPositions;
+            setState(() {});
+          },
           inactive: _isLoading,
         ),
         SettingsTile(
@@ -540,6 +498,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
             l10n.mediaPlayerSemitones(_mediaPlayerBlock.pitchSemitones.round()),
           ),
           leadingIcon: Icons.height,
+          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
           settingPage: const SetPitch(),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
@@ -550,6 +509,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           subtitle:
               '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
           leadingIcon: Icons.speed,
+          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
           settingPage: const SetSpeed(),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
@@ -572,7 +532,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (_isRecording) {
       return _recordButton(TIOMusicParams.sizeBigButtons, key: key);
     } else {
-      return _fileLoaded
+      return _player.loaded
           ? _playPauseButton(TIOMusicParams.sizeBigButtons, key: key)
           : _recordButton(TIOMusicParams.sizeBigButtons, key: key);
     }
@@ -582,7 +542,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (_isRecording) {
       return _playPauseButton(TIOMusicParams.sizeSmallButtons);
     } else {
-      return _fileLoaded
+      return _player.loaded
           ? _recordButton(TIOMusicParams.sizeSmallButtons)
           : _playPauseButton(TIOMusicParams.sizeSmallButtons);
     }
@@ -595,7 +555,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       onTap: () async {
         await _toggleRecording();
         if (!mounted) return;
-        if (context.read<ProjectLibrary>().showWaveformTip && _fileLoaded) {
+        if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded) {
           _createTutorial();
           _tutorial.show(context);
         }
@@ -610,7 +570,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   Widget _playPauseButton(double buttonSize, {Key? key}) {
     return OnOffButton(
       key: key,
-      isActive: _isPlaying,
+      isActive: _player.isPlaying,
       onTap: _togglePlaying,
       buttonSize: buttonSize,
       iconOff: (_mediaPlayerBlock.icon as Icon).icon!,
@@ -631,7 +591,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         child: IconButton(
           onPressed: () async {
             await _player.setPlaybackPosition(pos);
-            await _queryAndUpdateStateFromRust();
+            await _updateState();
           },
           icon: const Icon(Icons.arrow_drop_down, color: ColorTheme.primary, size: MediaPlayerParams.markerIconSize),
         ),
@@ -645,12 +605,12 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   void _onWaveGesture(Offset localPosition) async {
     double relativeTapPosition = localPosition.dx / _waveFormWidth;
     await _player.setPlaybackPosition(relativeTapPosition.clamp(0, 1));
-    await _queryAndUpdateStateFromRust();
+    await _updateState();
   }
 
-  void _jump10Seconds(bool forward) async {
-    await _player.jumpSeconds(seconds: forward ? 10 : -10);
-    await _queryAndUpdateStateFromRust();
+  void _skip(bool forward) async {
+    await _player.skip(seconds: forward ? 10 : -10);
+    await _updateState();
   }
 
   Future<void> _pickAudioFilesAndSave({required bool isMultipleAllowed, bool pickAudioFromFileSystem = false}) async {
@@ -712,12 +672,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (index == 0) {
       _fileReferences.dec(_mediaPlayerBlock.relativePath, projectLibrary);
       _mediaPlayerBlock.relativePath = newRelativePath;
-      await _player.setAbsoluteFilePath(newRelativePath);
       _fileReferences.inc(newRelativePath);
 
       await _projectRepo.saveLibrary(projectLibrary);
 
-      _fileLoaded = false;
       _rmsValues = Float32List(0);
       _waveformVisualizer = WaveformVisualizer(
         0,
@@ -730,12 +688,11 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       await _player.stop();
       setState(() => _isLoading = true);
 
-      var newRms = await _player.processFile(numberOfBins: _numOfBins);
-      if (newRms == null) {
+      final success = await _player.loadAudioFile(_fs.toAbsoluteFilePath(newRelativePath));
+      if (!success) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
       } else {
-        _fileLoaded = true;
-        _rmsValues = newRms;
+        _rmsValues = await _player.getRmsValues(_numOfBins);
         _waveformVisualizer = WaveformVisualizer(
           0,
           _mediaPlayerBlock.rangeStart,
@@ -746,12 +703,11 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
-        _markerHandler.reset();
         if (mounted) await _projectRepo.saveLibrary(projectLibrary);
       }
       setState(() => _isLoading = false);
 
-      await _queryAndUpdateStateFromRust();
+      await _updateState();
     } else {
       final title = '${_mediaPlayerBlock.title} ($index)';
       final newBlock = MediaPlayerBlock.withTitle(title)..relativePath = newRelativePath;
@@ -794,27 +750,17 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
 
-    _isPlaying ? await _stopPlaying() : await _startPlaying();
+    _player.isPlaying ? await _player.stop() : await _player.start();
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     setState(() => _processingButtonClick = false);
-  }
-
-  Future<void> _startPlaying({bool? repeatOne}) async {
-    var success = await _player.start(repeatOne: repeatOne);
-    if (mounted) setState(() => _isPlaying = success);
-  }
-
-  Future<void> _stopPlaying() async {
-    await _player.stop();
-    if (mounted) setState(() => _isPlaying = false);
   }
 
   Future<void> _toggleRecording() async {
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
 
-    if (!_isRecording && _fileLoaded) {
+    if (!_isRecording && _player.loaded) {
       final overrideFile = await askForOverridingFileOnRecordingStart(context);
       if (overrideFile == null || !overrideFile) {
         setState(() => _processingButtonClick = false);
@@ -829,8 +775,8 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   Future<void> _startRecording() async {
-    await _stopPlaying();
-    var success = await MediaPlayerFunctions.startRecording(_as, _audioSession, _wakelock, _isPlaying);
+    await _player.stop();
+    var success = await MediaPlayerFunctions.startRecording(_as, _audioSession, _wakelock, _player.isPlaying);
     setState(() {
       _isRecording = true;
       if (success) _startRecordingTimer();
@@ -867,7 +813,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         _fileReferences.dec(_mediaPlayerBlock.relativePath, context.read<ProjectLibrary>());
       }
       _mediaPlayerBlock.relativePath = newRelativePath;
-      await _player.setAbsoluteFilePath(newRelativePath);
 
       if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       setState(() => _isLoading = true);
@@ -877,12 +822,11 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         await showFormatNotSupportedDialog(context, fileExtension);
       }
 
-      var newRms = await _player.processFile(numberOfBins: _numOfBins);
-      if (newRms == null) {
+      final success = await _player.loadAudioFile(_fs.toAbsoluteFilePath(newRelativePath));
+      if (!success) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
       } else {
-        _fileLoaded = true;
-        _rmsValues = newRms;
+        _rmsValues = await _player.getRmsValues(_numOfBins);
         _waveformVisualizer = WaveformVisualizer(
           0,
           _mediaPlayerBlock.rangeStart,
@@ -893,8 +837,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
-        _player.markerPositions = [];
-        _markerHandler.reset();
+        _player.markers.positions = [];
         if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       }
       setState(() => _isLoading = false);
@@ -930,7 +873,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   void _stopRecordingTimer() {
-    setState(() => _recordingTimer?.cancel());
+    _recordingTimer?.cancel();
+    if (!mounted) return;
+    setState(() => {});
   }
 
   void _resetRecordingTimer() {

@@ -14,7 +14,6 @@ import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 
 class MediaPlayerIslandView extends StatefulWidget {
@@ -27,9 +26,8 @@ class MediaPlayerIslandView extends StatefulWidget {
 }
 
 class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
-  static final _logger = createPrefixLogger('MediaPlayerIslandView');
-
   late AudioSystem _as;
+  late FileSystem _fs;
   late Wakelock _wakelock;
   late WaveformVisualizer _waveformVisualizer;
 
@@ -38,7 +36,6 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   Float32List _rmsValues = Float32List(100);
   int numOfBins = 0;
 
-  var _isPlaying = false;
   var _isLoading = false;
 
   Timer? _timerPollPlaybackPosition;
@@ -52,6 +49,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     super.initState();
 
     _as = context.read<AudioSystem>();
+    _fs = context.read<FileSystem>();
     _wakelock = context.read<Wakelock>();
     _as.mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
 
@@ -73,10 +71,8 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     _player.setPitch(widget.mediaPlayerBlock.pitchSemitones);
     _player.setSpeed(widget.mediaPlayerBlock.speedFactor);
     _player.setRepeat(widget.mediaPlayerBlock.looping);
-    _player.markerPositions = widget.mediaPlayerBlock.markerPositions;
-    _player.setAbsoluteFilePath(widget.mediaPlayerBlock.relativePath);
-    _player.startPosition = widget.mediaPlayerBlock.rangeStart;
-    _player.endPosition = widget.mediaPlayerBlock.rangeEnd;
+    _player.markers.positions = widget.mediaPlayerBlock.markerPositions;
+    _player.setTrim(widget.mediaPlayerBlock.rangeStart, widget.mediaPlayerBlock.rangeEnd);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final fs = context.read<FileSystem>();
@@ -97,9 +93,9 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       }
 
       if (widget.mediaPlayerBlock.relativePath.isNotEmpty) {
-        var newRms = await _player.processFile(numberOfBins: numOfBins);
-        if (newRms != null) {
-          _rmsValues = newRms;
+        final success = await _player.loadAudioFile(_fs.toAbsoluteFilePath(widget.mediaPlayerBlock.relativePath));
+        if (!success) {
+          _rmsValues = await _player.getRmsValues(numOfBins);
 
           // this return is to prevent the call of setState if user exits media player while isLoading
           if (!mounted) return;
@@ -127,30 +123,23 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
         t.cancel();
         return;
       }
-      if (!_isPlaying) return;
-      _player.getState().then((mediaPlayerState) {
-        if (mediaPlayerState == null) {
-          _logger.e('State is null.');
-          return;
-        }
+      if (!_player.isPlaying) return;
 
-        setState(() {
-          _isPlaying = mediaPlayerState.playing;
-          _waveformVisualizer = WaveformVisualizer(
-            mediaPlayerState.playbackPositionFactor,
-            widget.mediaPlayerBlock.rangeStart,
-            widget.mediaPlayerBlock.rangeEnd,
-            _rmsValues,
-            numOfBins,
-          );
-        });
+      setState(() {
+        _waveformVisualizer = WaveformVisualizer(
+          _player.playbackPosition,
+          widget.mediaPlayerBlock.rangeStart,
+          widget.mediaPlayerBlock.rangeEnd,
+          _rmsValues,
+          numOfBins,
+        );
       });
     });
   }
 
   @override
-  void deactivate() {
-    _stopPlaying();
+  Future<void> deactivate() async {
+    await _player.stop();
     MediaPlayerFunctions.stopRecording(_as, _wakelock);
 
     _timerPollPlaybackPosition?.cancel();
@@ -161,7 +150,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   Widget build(BuildContext context) {
     return ParentInnerIsland(
       onMainIconPressed: _togglePlaying,
-      mainIcon: _isPlaying
+      mainIcon: _player.isPlaying
           ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary)
           : widget.mediaPlayerBlock.icon,
       mainButtonIsDisabled: _isLoading,
@@ -180,23 +169,13 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
 
-    if (!_isPlaying) {
-      await _startPlaying();
+    if (!_player.isPlaying) {
+      await _player.start();
     } else {
-      await _stopPlaying();
+      await _player.stop();
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     setState(() => _processingButtonClick = false);
-  }
-
-  Future<void> _stopPlaying() async {
-    await _player.stop();
-    if (mounted) setState(() => _isPlaying = false);
-  }
-
-  Future<void> _startPlaying() async {
-    var success = await _player.start();
-    if (mounted) setState(() => _isPlaying = success);
   }
 }
