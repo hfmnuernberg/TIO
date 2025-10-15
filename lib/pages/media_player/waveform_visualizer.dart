@@ -34,14 +34,12 @@ class WaveformVisualizer extends CustomPainter {
       ..color = ColorTheme.primary95
       ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
 
-    if (_rmsValues.isEmpty || size.width <= 0 || size.height <= 0) {
-      return;
-    }
+    if (_rmsValues.isEmpty || size.width <= 0 || size.height <= 0) return;
 
     final int numberOfBins = _rmsValues.length;
     final double contentUnits = (numberOfBins > 1 ? (numberOfBins - 1) : 1) * MediaPlayerParams.binWidth;
 
-    const double halfStroke = (MediaPlayerParams.binWidth / 2.0) / 2.0;
+    final double halfStroke = _halfStroke();
     final double drawableWidth = (size.width - 2 * halfStroke).clamp(0.0, size.width);
     final double scaleX = drawableWidth / contentUnits;
 
@@ -103,14 +101,28 @@ class WaveformVisualizer extends CustomPainter {
     );
   }
 
+  static double _halfStroke() => MediaPlayerParams.binWidth / 4.0;
+  static double _contentUnits(int n) => (n > 1 ? (n - 1) : 1) * MediaPlayerParams.binWidth;
+  static double computeScaleX(double availableWidth, int n) {
+    final double drawableWidth = (availableWidth - 2 * _halfStroke()).clamp(0.0, availableWidth);
+    final double units = _contentUnits(n);
+    return units > 0 ? (drawableWidth / units) : 1.0;
+  }
+  static double xForIndex(int i, double availableWidth, int n) {
+    final double scaleX = computeScaleX(availableWidth, n);
+    return _halfStroke() + (i * MediaPlayerParams.binWidth) * scaleX;
+  }
+  static int indexForX(double x, double availableWidth, int n) {
+    if (n <= 1) return 0;
+    final double scaleX = computeScaleX(availableWidth, n);
+    final double raw = (x - _halfStroke()) / (MediaPlayerParams.binWidth * scaleX);
+    final double clamped = raw.clamp(0.0, (n - 1).toDouble());
+    return clamped.round();
+  }
+
+
   @override
   bool shouldRepaint(WaveformVisualizer oldDelegate) {
-    if (_playbackPosition != oldDelegate._playbackPosition ||
-        _rmsValues != oldDelegate._rmsValues ||
-        _rangeStartPos != oldDelegate._rangeStartPos ||
-        _rangeEndPos != oldDelegate._rangeEndPos) {
-      return true;
-    }
-    return false;
+    return true;
   }
 }
