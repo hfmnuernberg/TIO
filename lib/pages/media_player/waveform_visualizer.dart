@@ -88,17 +88,9 @@ class WaveformVisualizer extends CustomPainter {
   }
 
   void _drawWaveLine(Canvas canvas, Size size, double x, var midAxisHeight, int i, Paint brush) {
-    canvas.drawLine(
-      Offset(x, midAxisHeight),
-      Offset(x, midAxisHeight - (_rmsValues[i] * (size.height / 2.2))),
-      brush,
-    );
+    canvas.drawLine(Offset(x, midAxisHeight), Offset(x, midAxisHeight - (_rmsValues[i] * (size.height / 2.2))), brush);
 
-    canvas.drawLine(
-      Offset(x, midAxisHeight),
-      Offset(x, midAxisHeight + (_rmsValues[i] * (size.height / 2.2))),
-      brush,
-    );
+    canvas.drawLine(Offset(x, midAxisHeight), Offset(x, midAxisHeight + (_rmsValues[i] * (size.height / 2.2))), brush);
   }
 
   static double _halfStroke() => MediaPlayerParams.binWidth / 4.0;
@@ -108,10 +100,12 @@ class WaveformVisualizer extends CustomPainter {
     final double units = _contentUnits(n);
     return units > 0 ? (drawableWidth / units) : 1.0;
   }
+
   static double xForIndex(int i, double availableWidth, int n) {
     final double scaleX = computeScaleX(availableWidth, n);
     return _halfStroke() + (i * MediaPlayerParams.binWidth) * scaleX;
   }
+
   static int indexForX(double x, double availableWidth, int n) {
     if (n <= 1) return 0;
     final double scaleX = computeScaleX(availableWidth, n);
@@ -119,7 +113,6 @@ class WaveformVisualizer extends CustomPainter {
     final double clamped = raw.clamp(0.0, (n - 1).toDouble());
     return clamped.round();
   }
-
 
   @override
   bool shouldRepaint(WaveformVisualizer oldDelegate) {

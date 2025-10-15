@@ -52,8 +52,9 @@ class _ChooseSoundState extends State<ChooseSound> {
           isSelected: _selectedSounds,
           children: SoundFont.values
               .map(
-                (soundFont) => Text(soundFont.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)),
-          )
+                (soundFont) =>
+                    Text(soundFont.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)),
+              )
               .toList(),
         ),
       ),
