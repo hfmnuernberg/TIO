@@ -122,7 +122,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       return;
     }
 
-    numOfBins = WaveformVisualizer.suggestBinCountForWidth(renderBox.size.width);
+    numOfBins = WaveformVisualizer.calculateBinCountForWidth(renderBox.size.width);
 
     if (mounted) setState(() => _isLoading = true);
 

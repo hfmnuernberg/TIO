@@ -113,10 +113,10 @@ class WaveformVisualizer extends CustomPainter {
     return clamped.round();
   }
 
-  static int suggestBinCountForWidth(double availableWidth) {
+  static int calculateBinCountForWidth(double availableWidth) {
     final double drawableWidth = (availableWidth - 2 * _halfStroke()).clamp(0.0, availableWidth);
     if (drawableWidth <= 0) return 1;
-    return drawableWidth ~/ MediaPlayerParams.binWidth + 1; // floor + 1
+    return drawableWidth ~/ MediaPlayerParams.binWidth + 1;
   }
 
   @override

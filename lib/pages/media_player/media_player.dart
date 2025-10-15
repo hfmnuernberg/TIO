@@ -134,7 +134,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
-      _numOfBins = WaveformVisualizer.suggestBinCountForWidth(_waveFormWidth);
+      _numOfBins = WaveformVisualizer.calculateBinCountForWidth(_waveFormWidth);
 
       MediaPlayerFunctions.setSpeedAndPitchInRust(_as, _mediaPlayerBlock.speedFactor, _mediaPlayerBlock.pitchSemitones);
 
