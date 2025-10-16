@@ -92,7 +92,6 @@ class Player {
   }
 
   Future<void> stop() async {
-    // Always clean up side-effects even if our local `_isPlaying` flag didn't flip yet.
     _playbackSamplingTimer?.cancel();
     _playbackSamplingTimer = null;
 

@@ -3,26 +3,19 @@ import 'package:mocktail/mocktail.dart';
 import 'package:tiomusic/domain/audio/player.dart';
 import 'package:tiomusic/src/rust/api/modules/media_player.dart';
 
-import '../../mocks/audio_player_handler_mock.dart';
+import '../../mocks/player_handler_mock.dart';
 import '../../utils/test_context.dart';
 
 void main() {
   late TestContext context;
-  late AudioPlayerHandlerMock audioPlayerHandlerMock;
+  late PlayerHandlerMock playerHandlerMock;
   late Player player;
 
   setUp(() async {
     resetMocktailState();
     context = TestContext();
-    audioPlayerHandlerMock = AudioPlayerHandlerMock();
-    player = Player(
-      context.audioSystem,
-      context.audioSession,
-      context.inMemoryFileSystem,
-      context.wakelock,
-      onIsPlayingChange: audioPlayerHandlerMock.onIsPlayingChange,
-      onPlaybackPositionChange: audioPlayerHandlerMock.onPlaybackPositionChange,
-    );
+    playerHandlerMock = PlayerHandlerMock();
+    player = Player(context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
   });
 
   void mockPlayerState({
@@ -46,48 +39,93 @@ void main() {
   }
 
   group('Player', () {
-    testWidgets('notifies about playing updates', (tester) async {
+    testWidgets('updates playing state periodically when changed', (tester) async {
       mockPlayerState();
       await player.start();
+      mockPlayerState(playing: false);
+      expect(player.isPlaying, isTrue);
 
-      audioPlayerHandlerMock.verifyOnPlayingChangeCalled(true);
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+      expect(player.isPlaying, isFalse);
 
       await player.stop();
     });
 
-    testWidgets('does not notify about playing updates when no callback is provided', (tester) async {
-      player = Player(context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
+    testWidgets('does not update playing state when not changed', (tester) async {
       mockPlayerState();
       await player.start();
+      expect(player.isPlaying, isTrue);
 
-      audioPlayerHandlerMock.verifyOnPlayingChangeNeverCalled();
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+      expect(player.isPlaying, isTrue);
+
+      await player.stop();
+    });
+
+    testWidgets('updates position state periodically when changed', (tester) async {
+      mockPlayerState();
+      await player.start();
+      mockPlayerState(playbackPositionFactor: 0.5);
+      expect(player.playbackPosition, 0);
+
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+      expect(player.playbackPosition, 0.5);
+
+      await player.stop();
+    });
+
+    testWidgets('does not update position state when not changed', (tester) async {
+      mockPlayerState();
+      await player.start();
+      expect(player.playbackPosition, 0);
+
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+      expect(player.playbackPosition, 0);
+
+      await player.stop();
+    });
+
+    testWidgets('notifies about playing updates when changed', (tester) async {
+      player = Player(
+        context.audioSystem,
+        context.audioSession,
+        context.inMemoryFileSystem,
+        context.wakelock,
+        onIsPlayingChange: playerHandlerMock.onIsPlayingChange,
+      );
+      mockPlayerState();
+      await player.start();
+      playerHandlerMock.verifyOnPlayingChangeCalledWith(true);
+      mockPlayerState(playing: false);
+
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+      playerHandlerMock.verifyOnPlayingChangeCalledWith(false);
+
+      mockPlayerState();
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+      playerHandlerMock.verifyOnPlayingChangeCalledWith(true);
 
       await player.stop();
     });
 
     testWidgets('notifies about position updates', (tester) async {
+      player = Player(
+        context.audioSystem,
+        context.audioSession,
+        context.inMemoryFileSystem,
+        context.wakelock,
+        onPlaybackPositionChange: playerHandlerMock.onPlaybackPositionChange,
+      );
       mockPlayerState();
       await player.start();
-      await tester.pump();
+      mockPlayerState(playbackPositionFactor: 0.1);
 
-      mockPlayerState(playbackPositionFactor: 0.5);
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+      playerHandlerMock.verifyOnPlaybackPositionChangeCalledWith(0.1);
 
-      await player.setPlaybackPosition(0.5);
-      audioPlayerHandlerMock.verifyOnPlaybackPositionChangeCalled(0.5);
-
-      await player.stop();
-    });
-
-    testWidgets('does not notify about position updates when no callback is provided', (tester) async {
-      player = Player(context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
-      mockPlayerState();
-      await player.start();
-      await tester.pump();
-
-      mockPlayerState(playbackPositionFactor: 0.5);
-
-      await player.setPlaybackPosition(0.5);
-      audioPlayerHandlerMock.verifyOnPlaybackPositionChangeNeverCalled();
+      mockPlayerState(playbackPositionFactor: 0.2);
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+      playerHandlerMock.verifyOnPlaybackPositionChangeCalledWith(0.2);
 
       await player.stop();
     });
