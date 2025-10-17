@@ -304,7 +304,6 @@ class _PianoPageState extends State<PianoPage> {
                     if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock, l10n)) {
                       final save = await askForSavingQuickTool(context);
                       if (!context.mounted) return;
-
                       if (save == null) return;
 
                       if (save) {
@@ -314,12 +313,12 @@ class _PianoPageState extends State<PianoPage> {
                         return;
                       }
 
-                      await AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
+                      AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
                       navigator.pop();
                       return;
                     }
 
-                    await AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
+                    AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
                     navigator.pop();
                   },
                 ),
