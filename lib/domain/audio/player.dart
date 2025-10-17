@@ -144,7 +144,7 @@ class Player {
 
   Future<void> skip({required int seconds}) async {
     final state = await _as.mediaPlayerGetState();
-    if (state == null) return logger.w('Cannot skip - State is null');
+    if (state == null) return logger.e('Cannot skip - State is null');
 
     final totalSecs = _fileDuration.inSeconds;
     final secondFactor = totalSecs > 0 ? seconds / totalSecs : 1.0;
