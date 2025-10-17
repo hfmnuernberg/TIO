@@ -226,8 +226,29 @@ class AudioSystemMock extends Mock implements AudioSystem {
   void verifyMediaPlayerStartCalled() => verify(mediaPlayerStart).called(1);
   void verifyMediaPlayerStopCalled() => verify(mediaPlayerStop).called(1);
 
+  void verifyMediaPlayerSetVolumeCalledWith(double volume) =>
+      verify(() => mediaPlayerSetVolume(volume: volume)).called(1);
+
   void verifyMediaPlayerSetRepeatCalledWith(bool repeat) =>
       verify(() => mediaPlayerSetRepeat(repeatOne: repeat)).called(1);
+
+  void verifyMediaPlayerSetPitchCalledWith(double pitchSemitones) =>
+      verify(() => mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones)).called(1);
+
+  void verifyMediaPlayerSetSpeedCalledWith(double speedFactor) =>
+      verify(() => mediaPlayerSetSpeedFactor(speedFactor: speedFactor)).called(1);
+
+  void verifyMediaPlayerSetPlaybackPositionCalledWith(double posFactor) =>
+      verify(() => mediaPlayerSetPlaybackPosFactor(posFactor: posFactor)).called(1);
+
+  void verifyMediaPlayerSetTrimCalledWith(double startFactor, double endFactor) =>
+      verify(() => mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor)).called(1);
+  void verifyMediaPlayerSetTrimNeverCalled() => verifyNever(
+    () => mediaPlayerSetTrim(
+      startFactor: any(named: 'startFactor'),
+      endFactor: any(named: 'endFactor'),
+    ),
+  );
 
   void verifyMediaPlayerGetStateCalled() => verify(mediaPlayerGetState).called(1);
 
