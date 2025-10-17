@@ -99,7 +99,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      AppOrientation.set(context, policy: OrientationPolicy.phoneLandscapeTabletFree);
+      AppOrientation.set(context, policy: OrientationPolicy.phonePortraitTabletFree);
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
