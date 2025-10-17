@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/domain/piano/piano.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -18,6 +17,7 @@ import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
+import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
@@ -80,9 +80,6 @@ class _PianoPageState extends State<PianoPage> {
     _projectRepo = context.read<ProjectRepository>();
     _fs = context.read<FileSystem>();
 
-    // lock screen to only use landscape
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
-
     _toolTitleFieldFocus = FocusNode();
 
     _pianoBlock = Provider.of<ProjectBlock>(context, listen: false) as PianoBlock;
@@ -105,6 +102,8 @@ class _PianoPageState extends State<PianoPage> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      AppOrientation.set(context, policy: OrientationPolicy.phoneLandscapeTabletFree);
       _createTutorial();
       _tutorial.show(context);
     });
@@ -229,6 +228,7 @@ class _PianoPageState extends State<PianoPage> {
     _toolTitleFieldFocus.dispose();
     piano.stop();
     _tutorial.dispose();
+    AppOrientation.reset();
     super.dispose();
   }
 
@@ -312,12 +312,10 @@ class _PianoPageState extends State<PianoPage> {
                         setState(() {
                           _showSavingPage = true;
                         });
-                      } else {
-                        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-                        if (context.mounted) Navigator.of(context).pop();
+                      } else if (context.mounted) {
+                        Navigator.of(context).pop();
                       }
                     } else {
-                      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
                       Navigator.of(context).pop();
                     }
                   },
