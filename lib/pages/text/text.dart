@@ -8,7 +8,6 @@ import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/models/blocks/text_block.dart';
 import 'package:tiomusic/pages/text/import_text.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -36,11 +35,6 @@ class _TextToolState extends State<TextTool> {
     _textBlock = Provider.of<ProjectBlock>(context, listen: false) as TextBlock;
     _textBlock.timeLastModified = getCurrentDateTime();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      AppOrientation.set(context, policy: OrientationPolicy.phonePortraitTabletFree);
-    });
-
     _textController.text = _textBlock.content;
 
     // Start listening to changes. These functions are called for evey little change in the text field
@@ -51,7 +45,6 @@ class _TextToolState extends State<TextTool> {
   @override
   void dispose() {
     _textController.dispose();
-    AppOrientation.reset();
     super.dispose();
   }
 

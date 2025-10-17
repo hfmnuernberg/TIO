@@ -17,7 +17,6 @@ import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
@@ -61,21 +60,11 @@ class _ImageToolState extends State<ImageTool> {
 
     project = context.read<Project>();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      AppOrientation.set(context, policy: OrientationPolicy.phonePortraitTabletFree);
-    });
-
     if (imageBlock.relativePath.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await addImageDialog(context);
       });
     }
-  }
-
-  @override
-  void dispose() {
-    AppOrientation.reset();
-    super.dispose();
   }
 
   void shareFilePressed() async {

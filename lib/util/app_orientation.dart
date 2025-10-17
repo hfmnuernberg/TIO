@@ -21,6 +21,4 @@ class AppOrientation {
 
     await SystemChrome.setPreferredOrientations(orientations);
   }
-
-  static Future<void> reset() => SystemChrome.setPreferredOrientations(DeviceOrientation.values);
 }

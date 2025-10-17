@@ -71,7 +71,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
   @override
   void dispose() {
     _tutorial.dispose();
-    AppOrientation.reset();
     super.dispose();
   }
 

@@ -228,7 +228,6 @@ class _PianoPageState extends State<PianoPage> {
     _toolTitleFieldFocus.dispose();
     piano.stop();
     _tutorial.dispose();
-    AppOrientation.reset();
     super.dispose();
   }
 
@@ -297,27 +296,31 @@ class _PianoPageState extends State<PianoPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // close button
                 BackButton(
                   color: ColorTheme.primary,
                   onPressed: () async {
-                    // if quick tool and values have been changed: ask for saving
+                    final navigator = Navigator.of(context);
+
                     if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock, l10n)) {
                       final save = await askForSavingQuickTool(context);
+                      if (!context.mounted) return;
 
-                      // if user taps outside the dialog, we dont want to exit the quick tool and we dont want to save
                       if (save == null) return;
 
                       if (save) {
                         setState(() {
                           _showSavingPage = true;
                         });
-                      } else if (context.mounted) {
-                        Navigator.of(context).pop();
+                        return;
                       }
-                    } else {
-                      Navigator.of(context).pop();
+
+                      await AppOrientation.set(context, policy: OrientationPolicy.phonePortraitTabletFree);
+                      navigator.pop();
+                      return;
                     }
+
+                    await AppOrientation.set(context, policy: OrientationPolicy.phonePortraitTabletFree);
+                    navigator.pop();
                   },
                 ),
 
