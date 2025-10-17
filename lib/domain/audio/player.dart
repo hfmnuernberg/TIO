@@ -144,17 +144,13 @@ class Player {
 
   Future<void> skip({required int seconds}) async {
     final state = await _as.mediaPlayerGetState();
-    if (state == null) {
-      logger.w('Cannot skip - State is null');
-      return;
-    }
+    if (state == null) return logger.w('Cannot skip - State is null');
 
     final totalSecs = _fileDuration.inSeconds;
     final secondFactor = totalSecs > 0 ? seconds / totalSecs : 1.0;
     final newPos = state.playbackPositionFactor + secondFactor;
 
-    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: newPos);
-    await _update();
+    await setPlaybackPosition(newPos);
   }
 
   Future<Float32List> getRmsValues(int numberOfBins) async {
