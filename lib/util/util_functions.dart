@@ -333,8 +333,6 @@ Future<dynamic> goToTool(
   bool transitionLeftToRight = false,
   bool shouldAutoplay = false,
 }) {
-  final navigator = Navigator.of(context);
-
   final page = MultiProvider(
     providers: [
       ChangeNotifierProvider<Project>.value(value: project),
@@ -355,7 +353,7 @@ Future<dynamic> goToTool(
   final route = MaterialPageRoute(builder: (_) => page);
   final routeWithTransition = DirectionalPageRoute(builder: (_) => page, transitionLeftToRight: transitionLeftToRight);
 
-  return replace ? navigator.pushReplacement(routeWithTransition) : navigator.push(route);
+  return replace ? Navigator.of(context).pushReplacement(routeWithTransition) : Navigator.of(context).push(route);
 }
 
 // ---------------------------------------------------------------
