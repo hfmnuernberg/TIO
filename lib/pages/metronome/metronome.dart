@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/app.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -23,6 +22,7 @@ import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/services/wakelock.dart';
+import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
@@ -76,7 +76,6 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
   void initState() {
     super.initState();
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     VolumeController.instance.addListener(handleVolumeChange);
 
     projectRepo = context.read<ProjectRepository>();
@@ -98,6 +97,11 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     metronome.setChanceOfMuteBeat(metronomeBlock.randomMute);
     metronome.sounds.loadAllSounds(metronomeBlock);
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      AppOrientation.set(context, policy: OrientationPolicy.phoneLandscapeTabletFree);
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await syncMetronomeSound();
     });
@@ -115,6 +119,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     routeObserver.unsubscribe(this);
     metronome.stop();
     tutorial.dispose();
+    AppOrientation.reset();
     super.dispose();
   }
 
