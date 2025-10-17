@@ -133,7 +133,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      AppOrientation.set(context, policy: OrientationPolicy.phoneLandscapeTabletFree);
+      AppOrientation.set(context, policy: OrientationPolicy.phonePortraitTabletFree);
 
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
       _numOfBins = WaveformVisualizer.calculateBinCountForWidth(_waveFormWidth);
