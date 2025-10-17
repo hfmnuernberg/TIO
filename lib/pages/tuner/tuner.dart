@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
@@ -111,9 +110,6 @@ class _TunerState extends State<Tuner> {
     tunerBlock = Provider.of<ProjectBlock>(context, listen: false) as TunerBlock;
 
     tunerBlock.timeLastModified = getCurrentDateTime();
-
-    // only allow portrait mode for this tool
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       // start with delay to make sure previous tuner is stopped before new one is started (on copy/save)

@@ -128,8 +128,6 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _project = context.read<Project>();
     }
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
     _as.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {

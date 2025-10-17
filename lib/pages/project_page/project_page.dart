@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
@@ -15,6 +14,7 @@ import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
@@ -85,15 +85,15 @@ class _ProjectPageState extends State<ProjectPage> {
           pianoAlreadyOn: widget.pianoAlreadyOn,
         ).then((_) => setState(() {}));
       });
-    } else {
-      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _project.timeLastModified = getCurrentDateTime();
-    });
+      if (!mounted) return;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _project.timeLastModified = getCurrentDateTime();
+
+      AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
+
       if (!widget.goStraightToTool &&
           _project.blocks.isNotEmpty &&
           context.read<ProjectLibrary>().showProjectPageTutorial) {
