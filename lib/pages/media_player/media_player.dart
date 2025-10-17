@@ -21,6 +21,7 @@ import 'package:tiomusic/pages/media_player/setting_trim.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/wakelock.dart';
+import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/widgets/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
@@ -128,11 +129,12 @@ class _MediaPlayerState extends State<MediaPlayer> {
       _project = context.read<Project>();
     }
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
     _as.mediaPlayerSetVolume(volume: _mediaPlayerBlock.volume);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted) return;
+      AppOrientation.set(context, policy: OrientationPolicy.phoneLandscapeTabletFree);
+
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
       _numOfBins = WaveformVisualizer.calculateBinCountForWidth(_waveFormWidth);
 
@@ -364,6 +366,7 @@ class _MediaPlayerState extends State<MediaPlayer> {
     _tutorial.dispose();
     _recordingTimer?.cancel();
     _timerPollPlaybackPosition?.cancel();
+    AppOrientation.reset();
     super.dispose();
   }
 
