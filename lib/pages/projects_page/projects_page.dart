@@ -62,7 +62,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      AppOrientation.set(context, policy: OrientationPolicy.phonePortraitTabletFree);
+      AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
     });
 
     _showTutorial();

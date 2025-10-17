@@ -103,7 +103,7 @@ class _PianoPageState extends State<PianoPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      AppOrientation.set(context, policy: OrientationPolicy.phoneLandscapeTabletFree);
+      AppOrientation.set(context, policy: OrientationPolicy.phoneLandscape);
       _createTutorial();
       _tutorial.show(context);
     });
@@ -314,12 +314,12 @@ class _PianoPageState extends State<PianoPage> {
                         return;
                       }
 
-                      await AppOrientation.set(context, policy: OrientationPolicy.phonePortraitTabletFree);
+                      await AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
                       navigator.pop();
                       return;
                     }
 
-                    await AppOrientation.set(context, policy: OrientationPolicy.phonePortraitTabletFree);
+                    await AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
                     navigator.pop();
                   },
                 ),

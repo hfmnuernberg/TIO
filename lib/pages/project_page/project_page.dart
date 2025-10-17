@@ -92,7 +92,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
       _project.timeLastModified = getCurrentDateTime();
 
-      AppOrientation.set(context, policy: OrientationPolicy.phonePortraitTabletFree);
+      AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
 
       if (!widget.goStraightToTool &&
           _project.blocks.isNotEmpty &&

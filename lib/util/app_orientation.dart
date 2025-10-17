@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-enum OrientationPolicy { phonePortraitTabletFree, phoneLandscapeTabletFree }
+enum OrientationPolicy { phonePortrait, phoneLandscape }
 
 class AppOrientation {
   static Future<void> set(BuildContext context, {required OrientationPolicy policy}) async {
@@ -9,11 +9,11 @@ class AppOrientation {
 
     List<DeviceOrientation> orientations;
     switch (policy) {
-      case OrientationPolicy.phonePortraitTabletFree:
+      case OrientationPolicy.phonePortrait:
         orientations = isTablet
             ? DeviceOrientation.values
             : const <DeviceOrientation>[DeviceOrientation.portraitUp, DeviceOrientation.portraitDown];
-      case OrientationPolicy.phoneLandscapeTabletFree:
+      case OrientationPolicy.phoneLandscape:
         orientations = isTablet
             ? DeviceOrientation.values
             : const <DeviceOrientation>[DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight];
