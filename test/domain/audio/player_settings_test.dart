@@ -42,7 +42,7 @@ void main() {
       context.audioSystemMock.verifyMediaPlayerSetVolumeCalledWith(1.2);
     });
 
-    testWidgets('can be muted and unmuted', (tester) async {
+    testWidgets('looping can be activated and deactivated', (tester) async {
       expect(player.repeat, isFalse);
 
       await player.setRepeat(true);

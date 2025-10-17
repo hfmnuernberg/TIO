@@ -180,7 +180,7 @@ class Player {
     await setTrim(_startPosition, _endPosition);
     await _setFileDuration();
     _markers.reset();
-    _update();
+    await _update();
     return true;
   }
 
@@ -215,13 +215,15 @@ class Player {
 
   Future<String?> _resolveSoundFontPath() async {
     const assetPath = 'assets/sound_fonts/piano_01.sf2';
+    final tmpDir = _fs.tmpFolderPath;
+    await _fs.createFolder(tmpDir);
+    final fileName = assetPath.split('/').last;
+    final outPath = '$tmpDir/$fileName';
+
+    if (_fs.existsFile(outPath)) return outPath;
 
     try {
       final data = await rootBundle.load(assetPath);
-      final tmpDir = _fs.tmpFolderPath;
-      await _fs.createFolder(tmpDir);
-      final fileName = assetPath.split('/').last;
-      final outPath = '$tmpDir/$fileName';
       final outFile = File(outPath);
       await outFile.writeAsBytes(data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes), flush: true);
       return outPath;

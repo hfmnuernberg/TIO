@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/src/rust/api/modules/media_player.dart';
@@ -23,6 +24,7 @@ class AudioSystemMock extends Mock implements AudioSystem {
     mockPianoSetConcertPitch();
 
     mockMediaPlayerLoadWav();
+    mockMediaPlayerRenderMidiToWav();
     mockMediaPlayerStart();
     mockMediaPlayerStop();
     mockMediaPlayerStartRecording();
@@ -80,6 +82,16 @@ class AudioSystemMock extends Mock implements AudioSystem {
 
   void mockMediaPlayerLoadWav([bool result = true]) =>
       when(() => mediaPlayerLoadWav(wavFilePath: any(named: 'wavFilePath'))).thenAnswer((_) async => result);
+
+  void mockMediaPlayerRenderMidiToWav([bool result = true]) => when(
+    () => mediaPlayerRenderMidiToWav(
+      midiPath: any(named: 'midiPath'),
+      soundFontPath: any(named: 'soundFontPath'),
+      wavOutPath: any(named: 'wavOutPath'),
+      sampleRate: any(named: 'sampleRate'),
+      gain: any(named: 'gain'),
+    ),
+  ).thenAnswer((_) async => result);
 
   void mockMediaPlayerStart([bool result = true]) => when(mediaPlayerStart).thenAnswer((_) async => result);
 
@@ -223,6 +235,8 @@ class AudioSystemMock extends Mock implements AudioSystem {
 
   void verifyPianoNoteOffCalledWith(int note) => verify(() => pianoNoteOff(note: note)).called(1);
 
+  void verifyGetSampleRateCalled() => verify(getSampleRate).called(1);
+
   void verifyMediaPlayerStartCalled() => verify(mediaPlayerStart).called(1);
   void verifyMediaPlayerStopCalled() => verify(mediaPlayerStop).called(1);
 
@@ -251,6 +265,22 @@ class AudioSystemMock extends Mock implements AudioSystem {
   );
 
   void verifyMediaPlayerGetRmsCalledWith(int nBins) => verify(() => mediaPlayerGetRms(nBins: nBins)).called(1);
+
+  void verifyMediaPlayerLoadWavCalledWith(Pattern wavFilePath) => verify(
+    () => mediaPlayerLoadWav(
+      wavFilePath: any(named: 'wavFilePath', that: matches(wavFilePath)),
+    ),
+  ).called(1);
+
+  void verifyMediaPlayerRenderMidiToWavCalled() => verify(
+    () => mediaPlayerRenderMidiToWav(
+      midiPath: any(named: 'midiPath'),
+      soundFontPath: any(named: 'soundFontPath'),
+      wavOutPath: any(named: 'wavOutPath'),
+      sampleRate: any(named: 'sampleRate'),
+      gain: any(named: 'gain'),
+    ),
+  ).called(1);
 
   void verifyMediaPlayerGetStateCalled() => verify(mediaPlayerGetState).called(1);
 
