@@ -37,7 +37,7 @@ class ParentSettingPage extends StatefulWidget {
 class _ParentSettingPageState extends State<ParentSettingPage> {
   @override
   Widget build(BuildContext context) {
-    var isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    final bool isLandscapeLayout = _useLandscapeLayout(context);
 
     return DismissKeyboard(
       child: PopScope(
@@ -52,7 +52,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
           ),
           backgroundColor: ColorTheme.primary92,
           body: SafeArea(
-            child: (widget.mustBeScrollable && isPortrait)
+            child: (widget.mustBeScrollable && !isLandscapeLayout)
                 ? LayoutBuilder(
                     builder: (context, viewportConstraints) {
                       return SingleChildScrollView(
@@ -63,12 +63,17 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
                       );
                     },
                   )
-                : (isPortrait ? _buildPortrait() : _buildLandscape()),
+                : (!isLandscapeLayout ? _buildPortrait() : _buildLandscape()),
           ),
           bottomSheet: _bottomSheet(),
         ),
       ),
     );
+  }
+
+  bool _useLandscapeLayout(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return size.width >= 600 || size.width > size.height;
   }
 
   Widget _buildPortrait() {
@@ -151,7 +156,8 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
   }
 
   Widget? _bottomSheet() {
-    return MediaQuery.of(context).orientation == Orientation.landscape
+    final bool isLandscapeLayout = _useLandscapeLayout(context);
+    return isLandscapeLayout
         ? null
         : ColoredBox(
             color: ColorTheme.primary80,

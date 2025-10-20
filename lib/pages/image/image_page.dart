@@ -60,8 +60,6 @@ class _ImageToolState extends State<ImageTool> {
 
     project = context.read<Project>();
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
     if (imageBlock.relativePath.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await addImageDialog(context);
