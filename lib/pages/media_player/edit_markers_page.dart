@@ -31,7 +31,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   late WaveformVisualizer _waveformVisualizer;
   double _waveFormWidth = 0;
   final double _waveFormHeight = 200;
-  late int _numOfBins;
   double _sliderValue = 0;
 
   Duration _positionDuration = Duration.zero;
@@ -48,14 +47,13 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     _positionDuration = widget.fileDuration * _sliderValue;
 
-    _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, 0, true);
+    _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, true);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
-      _numOfBins = (_waveFormWidth / MediaPlayerParams.binWidth).floor();
 
       setState(() {
-        _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, _numOfBins, true);
+        _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, true);
       });
     });
   }
@@ -104,7 +102,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               onChanged: (newValue) {
                 setState(() {
                   _sliderValue = newValue;
-                  _waveformVisualizer = WaveformVisualizer.singleView(newValue, widget.rmsValues, _numOfBins, true);
+                  _waveformVisualizer = WaveformVisualizer.singleView(newValue, widget.rmsValues, true);
                   _positionDuration = widget.fileDuration * _sliderValue;
 
                   if (_selectedMarkerPosition != null) {
@@ -171,7 +169,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             if (!selected) {
               setState(() {
                 _sliderValue = pos;
-                _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, _numOfBins, true);
+                _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
                 _selectedMarkerPosition = pos;
               });
             }
@@ -211,7 +209,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     setState(() {
       _sliderValue = relativeTapPosition;
-      _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, _numOfBins, true);
+      _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
     });
 
     double? foundMarkerPosition;

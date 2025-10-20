@@ -52,20 +52,6 @@ void main() {
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome 1')), findsOneWidget);
       });
 
-      // deactivated until TIO-264 feature is done
-      // testWidgets('connects media-player', (tester) async {
-      //   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-      //   await tester.createPianoToolInProject();
-      //   await tester.tapAndSettle(find.byTooltip('Add new tool'));
-      //   await tester.createMediaPlayerToolInProject();
-      //
-      //   await tester.tapAndSettle(find.bySemanticsLabel('Piano 1'));
-      //   await tester.openConnectionDialog();
-      //   await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
-      //
-      //   expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
-      // });
-
       testWidgets('connects tuner', (tester) async {
         await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
         await tester.createPianoToolInProject();
@@ -91,25 +77,6 @@ void main() {
 
         expect(tester.withinConnectionDialog(find.bySemanticsLabel('Metronome')), findsOneWidget);
       });
-
-      // deactivated until TIO-264 feature is done
-      // testWidgets('adds and connects media-player', (tester) async {
-      //   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-      //   await tester.createPianoToolInProject();
-      //
-      //   await tester.tapAndSettle(find.bySemanticsLabel('Piano 1'));
-      //   await tester.openConnectionDialog();
-      //
-      //   await tester.tapAndSettle(find.bySemanticsLabel('Media Player'));
-      //   await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 1');
-      //   await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-      //
-      //   expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);
-      //
-      //   await tester.tapAndSettle(find.bySemanticsLabel('Back'));
-      //
-      //   expect(tester.withinList(find.bySemanticsLabel('Media Player 1')), findsOneWidget);
-      // });
 
       testWidgets('adds and connects tuner', (tester) async {
         await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);

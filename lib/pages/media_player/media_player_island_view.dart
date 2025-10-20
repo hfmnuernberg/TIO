@@ -65,7 +65,6 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       widget.mediaPlayerBlock.rangeStart,
       widget.mediaPlayerBlock.rangeEnd,
       _rmsValues,
-      0,
     );
 
     _player.setPitch(widget.mediaPlayerBlock.pitchSemitones);
@@ -74,49 +73,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     _player.markers.positions = widget.mediaPlayerBlock.markerPositions;
     _player.setTrim(widget.mediaPlayerBlock.rangeStart, widget.mediaPlayerBlock.rangeEnd);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final fs = context.read<FileSystem>();
-      var customPaintContext = globalKeyCustomPaint.currentContext;
-      if (customPaintContext != null) {
-        final customPaintRenderBox = customPaintContext.findRenderObject()! as RenderBox;
-        numOfBins = (customPaintRenderBox.size.width / MediaPlayerParams.binWidth).floor();
-      } else {
-        throw "WARNING: couldn't set numOfBins because the custom painter context was null!";
-      }
-
-      setState(() {
-        _isLoading = true;
-      });
-      final fileExtension = fs.toExtension(widget.mediaPlayerBlock.relativePath);
-      if (mounted && fileExtension != null && !TIOMusicParams.audioFormats.contains(fileExtension)) {
-        await showFormatNotSupportedDialog(context, fileExtension);
-      }
-
-      if (widget.mediaPlayerBlock.relativePath.isNotEmpty) {
-        final success = await _player.loadAudioFile(_fs.toAbsoluteFilePath(widget.mediaPlayerBlock.relativePath));
-        if (!success) {
-          _rmsValues = await _player.getRmsValues(numOfBins);
-
-          // this return is to prevent the call of setState if user exits media player while isLoading
-          if (!mounted) return;
-          setState(() {
-            _waveformVisualizer = WaveformVisualizer(
-              0,
-              widget.mediaPlayerBlock.rangeStart,
-              widget.mediaPlayerBlock.rangeEnd,
-              _rmsValues,
-              numOfBins,
-            );
-          });
-        }
-      }
-
-      // this return is to prevent the call of setState if user exits media player while isLoading
-      if (!mounted) return;
-      setState(() {
-        _isLoading = false;
-      });
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _initBinsAndLoadRms());
 
     _timerPollPlaybackPosition = Timer.periodic(const Duration(milliseconds: 120), (t) {
       if (!mounted) {
@@ -131,7 +88,6 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
           widget.mediaPlayerBlock.rangeStart,
           widget.mediaPlayerBlock.rangeEnd,
           _rmsValues,
-          numOfBins,
         );
       });
     });
@@ -146,23 +102,43 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     super.deactivate();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return ParentInnerIsland(
-      onMainIconPressed: _togglePlaying,
-      mainIcon: _player.isPlaying
-          ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary)
-          : widget.mediaPlayerBlock.icon,
-      mainButtonIsDisabled: _isLoading,
-      parameterText: widget.mediaPlayerBlock.title,
-      centerView: _isLoading
-          // loading spinner
-          ? const Center(child: CircularProgressIndicator())
-          // waveform visualizer
-          : _waveformVisualizer,
-      customPaintKey: globalKeyCustomPaint,
-      textSpaceWidth: 70,
-    );
+  void _initBinsAndLoadRms() async {
+    final fs = context.read<FileSystem>();
+    final customPaintContext = globalKeyCustomPaint.currentContext;
+    final renderBox = customPaintContext?.findRenderObject() as RenderBox?;
+
+    if (renderBox == null || renderBox.size.width <= 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _initBinsAndLoadRms());
+      return;
+    }
+
+    numOfBins = WaveformVisualizer.calculateBinCountForWidth(renderBox.size.width);
+
+    if (mounted) setState(() => _isLoading = true);
+
+    final fileExtension = fs.toExtension(widget.mediaPlayerBlock.relativePath);
+    if (mounted && fileExtension != null && !TIOMusicParams.audioFormats.contains(fileExtension)) {
+      await showFormatNotSupportedDialog(context, fileExtension);
+    }
+
+    if (widget.mediaPlayerBlock.relativePath.isNotEmpty) {
+      final success = await _player.loadAudioFile(_fs.toAbsoluteFilePath(widget.mediaPlayerBlock.relativePath));
+      if (!success) {
+        _rmsValues = await _player.getRmsValues(numOfBins);
+
+        if (!mounted) return;
+        setState(() {
+          _waveformVisualizer = WaveformVisualizer(
+            0,
+            widget.mediaPlayerBlock.rangeStart,
+            widget.mediaPlayerBlock.rangeEnd,
+            _rmsValues,
+          );
+        });
+      }
+    }
+
+    if (mounted) setState(() => _isLoading = false);
   }
 
   void _togglePlaying() async {
@@ -177,5 +153,20 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     setState(() => _processingButtonClick = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ParentInnerIsland(
+      onMainIconPressed: _togglePlaying,
+      mainIcon: _player.isPlaying
+          ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary)
+          : widget.mediaPlayerBlock.icon,
+      mainButtonIsDisabled: _isLoading,
+      parameterText: widget.mediaPlayerBlock.title,
+      centerView: _isLoading ? const Center(child: CircularProgressIndicator()) : _waveformVisualizer,
+      customPaintKey: globalKeyCustomPaint,
+      textSpaceWidth: 70,
+    );
   }
 }

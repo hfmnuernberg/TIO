@@ -116,7 +116,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       onPlaybackPositionChange: (_) => _updateState(),
     );
 
-    _waveformVisualizer = WaveformVisualizer(0, 0, 1, _rmsValues, 0);
+    _waveformVisualizer = WaveformVisualizer(0, 0, 1, _rmsValues);
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
     _mediaPlayerBlock.timeLastModified = getCurrentDateTime();
@@ -136,7 +136,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
-      _numOfBins = (_waveFormWidth / MediaPlayerParams.binWidth).floor();
+      _numOfBins = WaveformVisualizer.calculateBinCountForWidth(_waveFormWidth);
 
       setState(() => _isLoading = true);
 
@@ -156,7 +156,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
             _mediaPlayerBlock.rangeStart,
             _mediaPlayerBlock.rangeEnd,
             _rmsValues,
-            _numOfBins,
           );
         }
       }
@@ -262,7 +261,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         _mediaPlayerBlock.rangeStart,
         _mediaPlayerBlock.rangeEnd,
         _rmsValues,
-        _numOfBins,
       );
     });
 
@@ -677,13 +675,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       await _projectRepo.saveLibrary(projectLibrary);
 
       _rmsValues = Float32List(0);
-      _waveformVisualizer = WaveformVisualizer(
-        0,
-        _mediaPlayerBlock.rangeStart,
-        _mediaPlayerBlock.rangeEnd,
-        _rmsValues,
-        _numOfBins,
-      );
+      _waveformVisualizer = WaveformVisualizer(0, _mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd, _rmsValues);
 
       await _player.stop();
       setState(() => _isLoading = true);
@@ -698,7 +690,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           _mediaPlayerBlock.rangeStart,
           _mediaPlayerBlock.rangeEnd,
           _rmsValues,
-          _numOfBins,
         );
 
         _addShareOptionToMenu();
@@ -832,7 +823,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           _mediaPlayerBlock.rangeStart,
           _mediaPlayerBlock.rangeEnd,
           _rmsValues,
-          _numOfBins,
         );
 
         _addShareOptionToMenu();
