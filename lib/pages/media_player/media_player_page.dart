@@ -67,6 +67,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   late bool _isRecording = false;
   late bool _isLoading = false;
+  late bool _wasPlaying = false;
+  double _previousPosition = 0;
+  static const double _endEpsilon = 0.01;
 
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
   late MenuItemButton _shareMenuButton;
@@ -253,21 +256,56 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     await _player.start();
   }
 
+  bool _didFinishAndStopped({
+    required bool wasPlaying,
+    required bool isPlaying,
+    required double currentPosition,
+    required double previousPosition,
+    required double start,
+    required double end,
+  }) {
+    final bool fell = wasPlaying && !isPlaying;
+    final bool atEndNow = currentPosition >= (end - _endEpsilon);
+    final bool wasAtEnd = previousPosition >= (end - _endEpsilon);
+    final bool resetToStart = fell && (currentPosition <= start + _endEpsilon);
+    final bool finished = atEndNow || wasAtEnd || resetToStart;
+    return fell && finished;
+  }
+
+  void _updatePlaybackMemories({required bool isPlaying, required double position}) {
+    _wasPlaying = isPlaying;
+    _previousPosition = position;
+  }
+
   Future<void> _updateState() async {
     if (!mounted) return;
+
+    final bool isPlaying = _player.isPlaying;
+    final double currentPosition = _player.playbackPosition;
+    final double start = _mediaPlayerBlock.rangeStart;
+    final double end = _mediaPlayerBlock.rangeEnd;
+
     setState(() {
-      _waveformVisualizer = WaveformVisualizer(
-        _player.playbackPosition,
-        _mediaPlayerBlock.rangeStart,
-        _mediaPlayerBlock.rangeEnd,
-        _rmsValues,
-      );
+      _waveformVisualizer = WaveformVisualizer(currentPosition, start, end, _rmsValues);
     });
 
     if (!mounted) return;
-    if (_project != null && _project!.mediaPlayerRepeatAll && _player.isPlaying && _player.loaded) {
-      _goToNextMediaPlayerWithLoadedFile();
-    }
+
+    final bool shouldAdvance =
+        _project!.mediaPlayerRepeatAll &&
+        _player.loaded &&
+        _didFinishAndStopped(
+          wasPlaying: _wasPlaying,
+          isPlaying: isPlaying,
+          currentPosition: currentPosition,
+          previousPosition: _previousPosition,
+          start: start,
+          end: end,
+        );
+
+    _updatePlaybackMemories(isPlaying: isPlaying, position: currentPosition);
+
+    if (shouldAdvance) await _goToNextMediaPlayerWithLoadedFile();
   }
 
   Future<void> _goToNextMediaPlayerWithLoadedFile() async {
