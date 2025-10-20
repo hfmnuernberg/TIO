@@ -1,0 +1,64 @@
+import 'dart:collection';
+
+import 'package:tiomusic/services/audio_system.dart';
+
+typedef MarkerPeepCallback = void Function(double marker);
+
+const epsilon = 0.02;
+const double markerSoundFrequency = 2000;
+const int markerSoundDurationInMilliseconds = 80;
+
+class Markers {
+  final Set<double> _triggered = {};
+
+  final AudioSystem _as;
+
+  List<double> _positions = const [];
+  UnmodifiableListView<double> get positions => UnmodifiableListView(_positions);
+  set positions(List<double> value) {
+    _positions = List.of(value);
+  }
+
+  Markers(this._as);
+
+  Future<void> start() async {
+    if (_positions.isEmpty) return;
+
+    await _as.generatorStop();
+    await _as.generatorStart();
+  }
+
+  Future<void> stop() async {
+    await _as.generatorStop();
+  }
+
+  void reset() => _triggered.clear();
+
+  Future<void> onPlaybackPositionChange({required double previousPosition, required double currentPosition}) async {
+    if (previousPosition > currentPosition) {
+      reset();
+      return;
+    }
+
+    for (final position in positions.toSet()) {
+      if (_triggered.contains(position)) continue;
+
+      final bool crossed =
+          (previousPosition == currentPosition && currentPosition >= position) ||
+          (previousPosition < position && currentPosition >= position) ||
+          (previousPosition > position && currentPosition <= position);
+
+      final bool closeEnough = (currentPosition - position).abs() <= epsilon;
+
+      if (crossed || closeEnough) {
+        _triggered.add(position);
+        await _playSound();
+      }
+    }
+  }
+
+  Future<void> _playSound() async {
+    await _as.generatorNoteOn(newFreq: markerSoundFrequency);
+    Future.delayed(Duration(milliseconds: markerSoundDurationInMilliseconds), _as.generatorNoteOff);
+  }
+}
