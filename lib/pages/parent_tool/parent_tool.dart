@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/widgets/parent_tool/modal_bottom_sheet.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -89,9 +89,9 @@ class _ParentToolState extends State<ParentTool> {
 
     unawaited(_projectRepo.saveLibrary(projectLibrary));
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
       _createTutorial();
       _tutorial.show(context);
     });
