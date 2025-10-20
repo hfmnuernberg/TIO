@@ -91,8 +91,6 @@ class _ParentToolState extends State<ParentTool> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final route = ModalRoute.of(context);
-      if (route == null || !route.isCurrent) return;
       AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
       _createTutorial();
       _tutorial.show(context);
