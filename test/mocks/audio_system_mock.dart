@@ -287,4 +287,7 @@ class AudioSystemMock extends Mock implements AudioSystem {
   void verifyGeneratorStartCalled() => verify(generatorStart).called(1);
   void verifyGeneratorStartNeverCalled() => verifyNever(generatorStart);
   void verifyGeneratorStopCalled() => verify(generatorStop).called(1);
+
+  void verifyGeneratorNoteOnCalled() => verify(() => generatorNoteOn(newFreq: any(named: 'newFreq'))).called(1);
+  void verifyGeneratorNoteOffCalled() => verify(generatorNoteOff).called(1);
 }
