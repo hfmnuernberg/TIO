@@ -177,8 +177,8 @@ class _PianoPageState extends State<PianoPage> {
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             top: MediaQuery.of(context).size.height / 8,
-            left: MediaQuery.of(context).size.width / 2,
-            right: MediaQuery.of(context).size.width / 2,
+            left: MediaQuery.of(context).size.width / 6,
+            right: MediaQuery.of(context).size.width / 3,
           ),
           pointingDirection: PointingDirection.up,
           pointerOffset: 120,
