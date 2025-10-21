@@ -24,11 +24,7 @@ IGNORE_FILES=(
   "lib/l10n/app_localization.dart"
   "lib/l10n/de.dart"
   "lib/l10n/en.dart"
-  "lib/util/constants.dart"
-  "lib/services/decorators/audio_system_log_decorator.dart"
   "lib/src/rust/frb_generated*.dart"   # generated
-  "rust/scripts/app.sh"
-  "scripts/app.sh"
 )
 
 IGNORE_DIRS=(
@@ -109,14 +105,19 @@ fi
 
 # Calculate the percentage of files that exceed the max-line threshold
 if [ "$total_count" -gt 0 ]; then
-  percentage_over_threshold=$(echo "scale=2; ($file_count_over_threshold / $total_count) * 100" | bc)
+  percentage_over_threshold=$(LC_ALL=C awk -v a="$file_count_over_threshold" -v b="$total_count" -v d="${2:-2}" 'BEGIN{printf "%.*f", d, (a/b)*100}')
 else
   percentage_over_threshold=0
 fi
 
 # ===== print results =====
 
-echo "ℹ️ Total number of files: $total_count files"
+if [ "$file_count_over_threshold" -gt 0 ]; then
+  echo "📜 List of too long files:"
+  printf '%s\n' "${too_long_files[@]}"
+fi
+
+echo "ℹ️ Checked files: $total_count files"
 echo "ℹ️ Ignored files: $ignored_count"
 # To print ignored file paths, uncomment:
 # printf '%s\n' "${ignored_list[@]}"
@@ -124,9 +125,6 @@ echo "ℹ️ Ignored files: $ignored_count"
 if [ "$file_count_over_threshold" -gt 0 ]; then
   echo "⚠️ Number of files with more than $MAX_LINES lines: $file_count_over_threshold files ($percentage_over_threshold%)"
   echo "⚠️ Average length of files over threshold: $avg_length_over_threshold lines"
-  echo
-  echo "📜 List of too long files:"
-  printf '%s\n' "${too_long_files[@]}"
   exit 1
 else
   echo "✅️ No files exceed the max-line threshold of $MAX_LINES lines."
