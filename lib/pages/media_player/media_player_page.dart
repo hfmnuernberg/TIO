@@ -267,8 +267,8 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     final bool fell = wasPlaying && !isPlaying;
     final bool atEndNow = currentPosition >= (end - _endEpsilon);
     final bool wasAtEnd = previousPosition >= (end - _endEpsilon);
-    final bool resetToStart = fell && (currentPosition <= start + _endEpsilon);
-    final bool finished = atEndNow || wasAtEnd || resetToStart;
+    final resetToStartAfterFinish = wasAtEnd && (currentPosition <= start + _endEpsilon);
+    final bool finished = atEndNow || wasAtEnd || resetToStartAfterFinish;
     return fell && finished;
   }
 
