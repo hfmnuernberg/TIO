@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -256,6 +257,13 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     await _player.start();
   }
 
+  double _effectiveEndEpsilon() {
+    final totalMs = _player.fileDuration.inMilliseconds;
+    if (totalMs <= 0) return _endEpsilon;
+    final tickFraction = playbackSamplingIntervalInMs / totalMs;
+    return math.max(_endEpsilon, tickFraction * 3.0);
+  }
+
   bool _didFinishAndStopped({
     required bool wasPlaying,
     required bool isPlaying,
@@ -265,10 +273,11 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     required double end,
   }) {
     final bool fell = wasPlaying && !isPlaying;
-    final bool atEndNow = currentPosition >= (end - _endEpsilon);
-    final bool wasAtEnd = previousPosition >= (end - _endEpsilon);
-    final bool resetToStart = fell && (currentPosition <= start + _endEpsilon);
-    final bool finished = atEndNow || wasAtEnd || resetToStart;
+    final epsilon = _effectiveEndEpsilon();
+    final bool atEndNow = currentPosition >= (end - epsilon);
+    final bool wasAtEnd = previousPosition >= (end - epsilon);
+    final resetToStartAfterFinish = wasAtEnd && (currentPosition <= start + epsilon);
+    final bool finished = atEndNow || wasAtEnd || resetToStartAfterFinish;
     return fell && finished;
   }
 
