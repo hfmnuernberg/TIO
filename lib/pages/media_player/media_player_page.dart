@@ -750,29 +750,29 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                       padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
                       child: _recorder.isRecording
                           ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              context.l10n.mediaPlayerRecording,
-                              style: TextStyle(color: ColorTheme.tertiary, fontSize: waveformHeight / 10),
-                            ),
-                            Text(
-                              context.l10n.formatDuration(_recordingLength),
-                              style: TextStyle(color: ColorTheme.tertiary, fontSize: waveformHeight / 6),
-                            ),
-                          ],
-                        ),
-                      )
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    context.l10n.mediaPlayerRecording,
+                                    style: TextStyle(color: ColorTheme.tertiary, fontSize: waveformHeight / 10),
+                                  ),
+                                  Text(
+                                    context.l10n.formatDuration(_recordingLength),
+                                    style: TextStyle(color: ColorTheme.tertiary, fontSize: waveformHeight / 6),
+                                  ),
+                                ],
+                              ),
+                            )
                           : GestureDetector(
-                        onTapDown: (details) => _player.loaded ? _onWaveGesture(details.localPosition) : null,
-                        onHorizontalDragUpdate: (details) =>
-                        _player.loaded ? _onWaveGesture(details.localPosition) : null,
-                        child: CustomPaint(
-                          painter: _waveformVisualizer,
-                          size: Size(_waveFormWidth, waveformHeight),
-                        ),
-                      ),
+                              onTapDown: (details) => _player.loaded ? _onWaveGesture(details.localPosition) : null,
+                              onHorizontalDragUpdate: (details) =>
+                                  _player.loaded ? _onWaveGesture(details.localPosition) : null,
+                              child: CustomPaint(
+                                painter: _waveformVisualizer,
+                                size: Size(_waveFormWidth, waveformHeight),
+                              ),
+                            ),
                     ),
                   Stack(children: _recorder.isRecording ? [] : _buildMarkers()),
                 ],
@@ -920,7 +920,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         SettingsTile(
           title: l10n.mediaPlayerSpeed,
           subtitle:
-          '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
+              '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
           leadingIcon: Icons.speed,
           // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
           settingPage: const SetSpeed(),
