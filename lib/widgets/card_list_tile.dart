@@ -55,7 +55,7 @@ class CardListTile extends StatelessWidget {
               style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
             ),
           ),
-          subtitle: _buildSubtitle(),
+          subtitle: _CardListTileSubtitle(subtitle: subtitle, textColor: textColor),
           leading: _showPicture(leadingPicture),
           titleAlignment: ListTileTitleAlignment.titleHeight,
           trailing: Wrap(
@@ -83,8 +83,16 @@ class CardListTile extends StatelessWidget {
       return CircleAvatar(backgroundColor: ColorTheme.surface, child: picture as Widget?);
     }
   }
+}
 
-  Widget? _buildSubtitle() {
+class _CardListTileSubtitle extends StatelessWidget {
+  final Object? subtitle;
+  final Color textColor;
+
+  const _CardListTileSubtitle({required this.subtitle, required this.textColor});
+
+  @override
+  Widget build(BuildContext context) {
     switch (subtitle) {
       case final String text:
         return Text(text, style: TextStyle(color: textColor));
