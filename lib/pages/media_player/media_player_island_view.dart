@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/domain/audio/player.dart';
-import 'package:tiomusic/domain/audio/recorder.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
@@ -30,16 +28,13 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   late WaveformVisualizer _waveformVisualizer;
 
   late final Player _player;
-  late final Recorder _recorder;
 
   Float32List _rmsValues = Float32List(100);
-  int numOfBins = 0;
+  int _numOfBins = 0;
 
   var _isLoading = false;
 
-  Timer? _timerPollPlaybackPosition;
-
-  GlobalKey globalKeyCustomPaint = GlobalKey();
+  final GlobalKey _customPaintKey = GlobalKey();
 
   bool _processingButtonClick = false;
 
@@ -54,9 +49,22 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       context.read<AudioSession>(),
       context.read<FileSystem>(),
       context.read<Wakelock>(),
+      onIsPlayingChange: (_) {
+        if (!mounted) return;
+        setState(() {});
+      },
+      onPlaybackPositionChange: (_) {
+        if (!mounted) return;
+        setState(() {
+          _waveformVisualizer = WaveformVisualizer(
+            _player.playbackPosition,
+            widget.mediaPlayerBlock.rangeStart,
+            widget.mediaPlayerBlock.rangeEnd,
+            _rmsValues,
+          );
+        });
+      },
     );
-
-    _recorder = Recorder(context.read<AudioSystem>(), context.read<AudioSession>(), context.read<Wakelock>());
 
     _waveformVisualizer = WaveformVisualizer(
       0,
@@ -73,58 +81,35 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     _player.setTrim(widget.mediaPlayerBlock.rangeStart, widget.mediaPlayerBlock.rangeEnd);
 
     WidgetsBinding.instance.addPostFrameCallback((_) => _initBinsAndLoadRms());
-
-    _timerPollPlaybackPosition = Timer.periodic(const Duration(milliseconds: 120), (t) {
-      if (!mounted) {
-        t.cancel();
-        return;
-      }
-      if (!_player.isPlaying) return;
-
-      setState(() {
-        _waveformVisualizer = WaveformVisualizer(
-          _player.playbackPosition,
-          widget.mediaPlayerBlock.rangeStart,
-          widget.mediaPlayerBlock.rangeEnd,
-          _rmsValues,
-        );
-      });
-    });
   }
 
   @override
   Future<void> deactivate() async {
     await _player.stop();
-    await _recorder.stop();
-
-    _timerPollPlaybackPosition?.cancel();
     super.deactivate();
   }
 
-  void _initBinsAndLoadRms() async {
-    final fs = context.read<FileSystem>();
-    final customPaintContext = globalKeyCustomPaint.currentContext;
-    final renderBox = customPaintContext?.findRenderObject() as RenderBox?;
-
+  Future<void> _initBinsAndLoadRms() async {
+    final ctx = _customPaintKey.currentContext;
+    final renderBox = ctx?.findRenderObject() as RenderBox?;
     if (renderBox == null || renderBox.size.width <= 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _initBinsAndLoadRms());
       return;
     }
 
-    numOfBins = WaveformVisualizer.calculateBinCountForWidth(renderBox.size.width);
+    _numOfBins = WaveformVisualizer.calculateBinCountForWidth(renderBox.size.width);
 
     if (mounted) setState(() => _isLoading = true);
 
-    final fileExtension = fs.toExtension(widget.mediaPlayerBlock.relativePath);
+    final fileExtension = _fs.toExtension(widget.mediaPlayerBlock.relativePath);
     if (mounted && fileExtension != null && !TIOMusicParams.audioFormats.contains(fileExtension)) {
       await showFormatNotSupportedDialog(context, fileExtension);
     }
 
     if (widget.mediaPlayerBlock.relativePath.isNotEmpty) {
       final success = await _player.loadAudioFile(_fs.toAbsoluteFilePath(widget.mediaPlayerBlock.relativePath));
-      if (!success) {
-        _rmsValues = await _player.getRmsValues(numOfBins);
-
+      if (success) {
+        _rmsValues = await _player.getRmsValues(_numOfBins);
         if (!mounted) return;
         setState(() {
           _waveformVisualizer = WaveformVisualizer(
@@ -147,7 +132,6 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     if (_player.isPlaying) {
       await _player.stop();
     } else {
-      await _recorder.stop();
       await _player.start();
     }
 
@@ -165,7 +149,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       mainButtonIsDisabled: _isLoading,
       parameterText: widget.mediaPlayerBlock.title,
       centerView: _isLoading ? const Center(child: CircularProgressIndicator()) : _waveformVisualizer,
-      customPaintKey: globalKeyCustomPaint,
+      customPaintKey: _customPaintKey,
       textSpaceWidth: 70,
     );
   }

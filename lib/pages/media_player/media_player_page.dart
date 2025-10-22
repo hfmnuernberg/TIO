@@ -931,5 +931,4 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       ],
     );
   }
-
 }
