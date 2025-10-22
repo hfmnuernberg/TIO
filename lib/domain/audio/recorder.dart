@@ -7,6 +7,9 @@ import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/log.dart';
 
+typedef OnIsRecordingChange = void Function(bool isRecording);
+typedef OnRecordingLengthChange = void Function(Duration recordingLength);
+
 class Recorder {
   static final logger = createPrefixLogger('AudioRecorder');
 
@@ -14,64 +17,81 @@ class Recorder {
   final AudioSession _audioSession;
   final Wakelock _wakelock;
 
+  final OnIsRecordingChange _onIsRecordingChange;
+  final OnRecordingLengthChange _onRecordingLengthChange;
+
   bool _isRecording = false;
   bool get isRecording => _isRecording;
 
+  Duration _recordingLength = Duration.zero;
+  Duration get recordingLength => _recordingLength;
+
+  Timer? _recordingTimer;
+
   AudioSessionInterruptionListenerHandle? _interruptionHandle;
 
-  Recorder(this._as, this._audioSession, this._wakelock);
+  Recorder(
+    this._as,
+    this._audioSession,
+    this._wakelock, {
+    OnIsRecordingChange? onIsRecordingChange,
+    OnRecordingLengthChange? onRecordingLengthChange,
+  }) : _onIsRecordingChange = onIsRecordingChange ?? ((_) {}),
+       _onRecordingLengthChange = onRecordingLengthChange ?? ((_) {});
 
   Future<bool> start() async {
     if (_isRecording) return true;
 
-    // Request microphone permission
     final micGranted = await Permission.microphone.request().isGranted;
     if (!micGranted) {
       logger.w('Failed to get microphone permissions.');
       return false;
     }
 
-    // Prepare audio session and start recording via AudioSystem
     await _audioSession.prepareRecording();
     final success = await _as.mediaPlayerStartRecording();
     if (!success) {
-      logger.e('mediaPlayerStartRecording() returned false');
+      logger.e('Unable to start Audio Recorder.');
       return false;
     }
 
     _isRecording = true;
+    _recordingLength = Duration.zero;
+    _onIsRecordingChange(true);
+    _onRecordingLengthChange(_recordingLength);
 
-    // Listen for interruptions and stop recording if needed
     _interruptionHandle ??= await _audioSession.registerInterruptionListener(stop);
 
-    // Keep device awake while recording
     await _wakelock.enable();
+
+    _recordingTimer ??= Timer.periodic(const Duration(seconds: 1), (_) {
+      _recordingLength += const Duration(seconds: 1);
+      _onRecordingLengthChange(_recordingLength);
+    });
 
     return true;
   }
 
   Future<bool> stop() async {
-    // Always disable wakelock when we *attempt* to stop.
     await _wakelock.disable();
+
+    _recordingTimer?.cancel();
+    _recordingTimer = null;
 
     if (!_isRecording) return true;
 
-    // Stop via AudioSystem
     final success = await _as.mediaPlayerStopRecording();
-    if (!success) {
-      logger.e('mediaPlayerStopRecording() returned false');
-      return false;
-    }
+    if (!success) logger.e('Unable to stop Audio Recorder.');
 
     _isRecording = false;
+    _onIsRecordingChange(false);
 
-    // Unregister interruption listener
     if (_interruptionHandle != null) {
       await _audioSession.unregisterInterruptionListener(_interruptionHandle!);
       _interruptionHandle = null;
     }
 
-    return true;
+    return success;
   }
 
   Future<Float64List> getRecordingSamples() async => _as.mediaPlayerGetRecordingSamples();

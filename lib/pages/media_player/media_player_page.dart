@@ -81,8 +81,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   late WaveformVisualizer _waveformVisualizer;
   double _waveFormWidth = 0;
 
-  Timer? _recordingTimer;
-  Duration _recordingDuration = Duration.zero;
+  Duration _recordingLength = Duration.zero;
 
   bool _processingButtonClick = false;
 
@@ -112,7 +111,13 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       onPlaybackPositionChange: (_) => _updateState(),
     );
 
-    _recorder = Recorder(context.read<AudioSystem>(), context.read<AudioSession>(), context.read<Wakelock>());
+    _recorder = Recorder(
+      context.read<AudioSystem>(),
+      context.read<AudioSession>(),
+      context.read<Wakelock>(),
+      onIsRecordingChange: (_) => _handleIsRecordingChange(),
+      onRecordingLengthChange: _handleRecordingLengthChange,
+    );
 
     _waveformVisualizer = WaveformVisualizer(0, 0, 1, _rmsValues);
 
@@ -331,7 +336,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   void deactivate() {
     _player.stop();
     _recorder.stop();
-    _recordingTimer?.cancel();
     super.deactivate();
   }
 
@@ -339,7 +343,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   void dispose() {
     _tutorial.dispose();
     _player.stop();
-    _recordingTimer?.cancel();
     super.dispose();
   }
 
@@ -392,7 +395,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                                     style: TextStyle(color: ColorTheme.tertiary, fontSize: waveformHeight / 10),
                                   ),
                                   Text(
-                                    context.l10n.formatDuration(_recordingDuration),
+                                    context.l10n.formatDuration(_recordingLength),
                                     style: TextStyle(color: ColorTheme.tertiary, fontSize: waveformHeight / 6),
                                   ),
                                 ],
@@ -833,16 +836,14 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   Future<void> _startRecording() async {
     await _player.stop();
-    final success = await _recorder.start();
-    setState(() {
-      if (success) _startRecordingTimer();
-    });
+    await _recorder.start();
+    setState(() {});
   }
 
   Future<void> _stopRecording() async {
     final success = await _recorder.stop();
     if (success && mounted) {
-      _resetRecordingTimer();
+      setState(() => _recordingLength = Duration.zero);
 
       var projectTitle = widget.isQuickTool ? context.l10n.toolQuickTool : _project!.title;
       var newName = '$projectTitle-${_mediaPlayerBlock.title}';
@@ -918,32 +919,16 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   Future<void> _cancelRecording() async {
     await _recorder.stop();
-    _resetRecordingTimer();
+    setState(() => _recordingLength = Duration.zero);
+  }
+
+  void _handleIsRecordingChange() {
+    if (!mounted) return;
     setState(() {});
   }
 
-  // get this into recorder class?
-  void _startRecordingTimer() {
-    _recordingTimer = Timer.periodic(const Duration(seconds: 1), (_) => _setCountUp());
-  }
-
-  void _stopRecordingTimer() {
-    _recordingTimer?.cancel();
+  void _handleRecordingLengthChange(Duration recordingLength) {
     if (!mounted) return;
-    setState(() => {});
-  }
-
-  void _resetRecordingTimer() {
-    _stopRecordingTimer();
-    setState(() => _recordingDuration = Duration.zero);
-  }
-
-  void _setCountUp() {
-    const countUpBy = 1;
-    if (!mounted) return;
-    setState(() {
-      final seconds = _recordingDuration.inSeconds + countUpBy;
-      _recordingDuration = Duration(seconds: seconds);
-    });
+    setState(() => _recordingLength = recordingLength);
   }
 }
