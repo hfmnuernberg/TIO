@@ -5,7 +5,7 @@ import 'package:tiomusic/util/constants.dart';
 
 class CardListTile extends StatelessWidget {
   final String title;
-  final String? subtitle;
+  final Object? subtitle;
 
   // those three should be of the same type (IconButton or Icon), otherwise the spacing is problematic
   final IconButton trailingIcon;
@@ -55,7 +55,7 @@ class CardListTile extends StatelessWidget {
               style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
             ),
           ),
-          subtitle: Text(subtitle ?? '', style: TextStyle(color: textColor)),
+          subtitle: _buildSubtitle(),
           leading: _showPicture(leadingPicture),
           titleAlignment: ListTileTitleAlignment.titleHeight,
           trailing: Wrap(
@@ -81,6 +81,27 @@ class CardListTile extends StatelessWidget {
       );
     } else {
       return CircleAvatar(backgroundColor: ColorTheme.surface, child: picture as Widget?);
+    }
+  }
+
+  Widget? _buildSubtitle() {
+    switch (subtitle) {
+      case final String text:
+        return Text(text, style: TextStyle(color: textColor));
+      case ImageProvider image:
+        return Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: SizedBox(
+              width: 56,
+              height: 56,
+              child: Image(image: image, fit: BoxFit.cover),
+            ),
+          ),
+        );
+      default:
+        return Text('', style: TextStyle(color: textColor));
     }
   }
 }
