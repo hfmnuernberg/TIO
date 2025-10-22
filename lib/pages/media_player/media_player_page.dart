@@ -184,6 +184,20 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     );
   }
 
+  @override
+  void deactivate() {
+    _player.stop();
+    _recorder.stop();
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    _tutorial.dispose();
+    _player.stop();
+    super.dispose();
+  }
+
   void _addShareOptionToMenu() {
     if (!_menuItems.contains(_shareMenuButton)) _menuItems.add(_shareMenuButton);
   }
@@ -332,336 +346,18 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     }
   }
 
-  @override
-  void deactivate() {
-    _player.stop();
-    _recorder.stop();
-    super.deactivate();
-  }
-
-  @override
-  void dispose() {
-    _tutorial.dispose();
-    _player.stop();
-    super.dispose();
-  }
-
   Future<void> _handleRepeatToggle() async {
     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     _player.setRepeat(_mediaPlayerBlock.looping);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    var waveformHeight = 200.0;
-    final l10n = context.l10n;
-    final isMultiImportEnabled = !widget.isQuickTool;
-
-    return ParentTool(
-      barTitle: _mediaPlayerBlock.title,
-      functionBeforeNavigatingBack: () async {
-        if (_recorder.isRecording) await _askForKeepRecordingOnExit();
-      },
-      isQuickTool: widget.isQuickTool,
-      project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
-      toolBlock: _mediaPlayerBlock,
-      menuItems: _menuItems,
-      islandToolTutorialKey: islandToolTutorialKey,
-      onParentTutorialFinished: () {
-        _createTutorial();
-        _tutorial.show(context);
-      },
-      island: ParentIslandView(project: widget.isQuickTool ? null : _project, toolBlock: _mediaPlayerBlock),
-      centerModule: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  if (_isLoading)
-                    const Center(child: CircularProgressIndicator())
-                  else
-                    Padding(
-                      key: _keyWaveform,
-                      padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
-                      child: _recorder.isRecording
-                          ? Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    context.l10n.mediaPlayerRecording,
-                                    style: TextStyle(color: ColorTheme.tertiary, fontSize: waveformHeight / 10),
-                                  ),
-                                  Text(
-                                    context.l10n.formatDuration(_recordingLength),
-                                    style: TextStyle(color: ColorTheme.tertiary, fontSize: waveformHeight / 6),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : GestureDetector(
-                              onTapDown: (details) => _player.loaded ? _onWaveGesture(details.localPosition) : null,
-                              onHorizontalDragUpdate: (details) =>
-                                  _player.loaded ? _onWaveGesture(details.localPosition) : null,
-                              child: CustomPaint(
-                                painter: _waveformVisualizer,
-                                size: Size(_waveFormWidth, waveformHeight),
-                              ),
-                            ),
-                    ),
-                  Stack(children: _recorder.isRecording ? [] : _buildMarkers()),
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                TextButton(onPressed: () => _skip(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
-                Container(
-                  key: _keyRepeat,
-                  child: MediaPlayerRepeatButton(onToggle: _handleRepeatToggle),
-                ),
-                TextButton(onPressed: () => _skip(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const PlaceholderButton(buttonSize: TIOMusicParams.sizeSmallButtons),
-                _switchMainButton(_keyStartStop),
-                _switchRightButton(),
-              ],
-            ),
-
-            if (_player.loaded)
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Text(
-                  _fs.toBasename(_mediaPlayerBlock.relativePath),
-                  style: TextStyle(color: ColorTheme.primary),
-                ),
-              ),
-
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: TIOFlatButton(
-                      onPressed: () async {
-                        await _pickAudioFilesAndSave(isMultipleAllowed: isMultiImportEnabled);
-                        if (!context.mounted) return;
-                        if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded) {
-                          _createTutorial();
-                          _tutorial.show(context);
-                        }
-                      },
-                      text: Platform.isIOS ? l10n.mediaPlayerOpenMediaLibrary : l10n.mediaPlayerOpenFileSystem,
-                    ),
-                  ),
-
-                  if (Platform.isIOS) ...[
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: TIOFlatButton(
-                        onPressed: () async {
-                          await _pickAudioFilesAndSave(
-                            isMultipleAllowed: isMultiImportEnabled,
-                            pickAudioFromFileSystem: true,
-                          );
-                          if (!context.mounted) return;
-                          if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded) {
-                            _createTutorial();
-                            _tutorial.show(context);
-                          }
-                        },
-                        text: l10n.mediaPlayerOpenFileSystem,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      keySettingsList: _keySettings,
-      settingTiles: [
-        SettingsTile(
-          title: l10n.commonVolume,
-          subtitle: l10n.formatNumber(_mediaPlayerBlock.volume),
-          leadingIcon: Icons.volume_up,
-          settingPage: SetVolume(
-            initialValue: _mediaPlayerBlock.volume,
-            onConfirm: (vol) {
-              _mediaPlayerBlock.volume = vol;
-              _player.setVolume(vol);
-            },
-            onChange: (vol) => _player.setVolume(vol),
-            onCancel: () => _player.setVolume(_mediaPlayerBlock.volume),
-          ),
-          block: _mediaPlayerBlock,
-          callOnReturn: (value) => setState(() {}),
-          inactive: _isLoading,
-        ),
-        SettingsTile(
-          title: l10n.commonBasicBeat,
-          subtitle: '${_mediaPlayerBlock.bpm} ${l10n.commonBpm}',
-          leadingIcon: Icons.touch_app_outlined,
-          settingPage: const SetBPM(),
-          block: _mediaPlayerBlock,
-          callOnReturn: (value) => setState(() {}),
-        ),
-        SettingsTile(
-          title: l10n.mediaPlayerTrim,
-          subtitle: '${(_mediaPlayerBlock.rangeStart * 100).round()}% → ${(_mediaPlayerBlock.rangeEnd * 100).round()}%',
-          leadingIcon: 'assets/icons/arrow_range.svg',
-          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
-          settingPage: SetTrim(rmsValues: _rmsValues, fileDuration: _player.fileDuration),
-          block: _mediaPlayerBlock,
-          callOnReturn: (value) => _updateState(),
-          inactive: _isLoading,
-        ),
-        SettingsTile(
-          title: l10n.mediaPlayerMarkers,
-          subtitle: _mediaPlayerBlock.markerPositions.length.toString(),
-          leadingIcon: Icons.arrow_drop_down,
-          settingPage: EditMarkersPage(
-            mediaPlayerBlock: _mediaPlayerBlock,
-            fileDuration: _player.fileDuration,
-            rmsValues: _rmsValues,
-          ),
-          block: _mediaPlayerBlock,
-          callOnReturn: (value) {
-            _player.markers.positions = _mediaPlayerBlock.markerPositions;
-            setState(() {});
-          },
-          inactive: _isLoading,
-        ),
-        SettingsTile(
-          title: l10n.mediaPlayerPitch,
-          subtitle: getPitchSemitonesString(
-            _mediaPlayerBlock.pitchSemitones,
-            l10n.mediaPlayerSemitones(_mediaPlayerBlock.pitchSemitones.round()),
-          ),
-          leadingIcon: Icons.height,
-          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
-          settingPage: const SetPitch(),
-          block: _mediaPlayerBlock,
-          callOnReturn: (value) => setState(() {}),
-          inactive: _isLoading,
-        ),
-        SettingsTile(
-          title: l10n.mediaPlayerSpeed,
-          subtitle:
-              '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
-          leadingIcon: Icons.speed,
-          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
-          settingPage: const SetSpeed(),
-          block: _mediaPlayerBlock,
-          callOnReturn: (value) => setState(() {}),
-          inactive: _isLoading,
-        ),
-      ],
-    );
-  }
-
-  String getPitchSemitonesString(double semitones, String label) {
+  String _getPitchSemitonesString(double semitones, String label) {
     if (semitones.abs() < 0.001) return '';
     return semitones > 0 ? '↑ $label' : '↓ $label';
   }
 
   void _shareFilePressed() async {
     await _filePicker.shareFile(_fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath));
-  }
-
-  Widget _switchMainButton(Key key) {
-    if (_recorder.isRecording) {
-      return _recordButton(TIOMusicParams.sizeBigButtons, key: key);
-    } else {
-      return _player.loaded
-          ? _playPauseButton(TIOMusicParams.sizeBigButtons, key: key)
-          : _recordButton(TIOMusicParams.sizeBigButtons, key: key);
-    }
-  }
-
-  Widget _switchRightButton() {
-    if (_recorder.isRecording) {
-      return _cancelButton(TIOMusicParams.sizeSmallButtons);
-    } else {
-      return _player.loaded
-          ? _recordButton(TIOMusicParams.sizeSmallButtons)
-          : _playPauseButton(TIOMusicParams.sizeSmallButtons);
-    }
-  }
-
-  Widget _cancelButton(double buttonSize, {Key? key}) {
-    return OnOffButton(
-      key: key,
-      isActive: _recorder.isRecording,
-      onTap: _cancelRecording,
-      buttonSize: buttonSize,
-      iconOff: Icons.close,
-      iconOn: Icons.close,
-      isDisabled: _isLoading,
-    );
-  }
-
-  Widget _recordButton(double buttonSize, {Key? key}) {
-    return OnOffButton(
-      key: key,
-      isActive: _recorder.isRecording,
-      onTap: () async {
-        await _toggleRecording();
-        if (!mounted) return;
-        if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded) {
-          _createTutorial();
-          _tutorial.show(context);
-        }
-      },
-      buttonSize: buttonSize,
-      iconOff: Icons.mic,
-      iconOn: Icons.stop,
-      isDisabled: _isLoading,
-    );
-  }
-
-  Widget _playPauseButton(double buttonSize, {Key? key}) {
-    return OnOffButton(
-      key: key,
-      isActive: _player.isPlaying,
-      onTap: _togglePlaying,
-      buttonSize: buttonSize,
-      iconOff: (_mediaPlayerBlock.icon as Icon).icon!,
-      iconOn: TIOMusicParams.pauseIcon,
-      isDisabled: _isLoading,
-      tooltipOff: context.l10n.mediaPlayerPause,
-      tooltipOn: context.l10n.mediaPlayerPlay,
-    );
-  }
-
-  List<Widget> _buildMarkers() {
-    List<Widget> markers = List.empty(growable: true);
-
-    for (final pos in _mediaPlayerBlock.markerPositions) {
-      var marker = Positioned(
-        left: TIOMusicParams.edgeInset + ((pos * _waveFormWidth) - (MediaPlayerParams.markerButton / 2)),
-        top: 4,
-        child: IconButton(
-          onPressed: () async {
-            await _player.setPlaybackPosition(pos);
-            await _updateState();
-          },
-          icon: const Icon(Icons.arrow_drop_down, color: ColorTheme.primary, size: MediaPlayerParams.markerIconSize),
-        ),
-      );
-      markers.add(marker);
-    }
-
-    return markers;
   }
 
   void _onWaveGesture(Offset localPosition) async {
@@ -931,4 +627,309 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (!mounted) return;
     setState(() => _recordingLength = recordingLength);
   }
+
+  Widget _switchMainButton(Key key) {
+    if (_recorder.isRecording) {
+      return _recordButton(TIOMusicParams.sizeBigButtons, key: key);
+    } else {
+      return _player.loaded
+          ? _playPauseButton(TIOMusicParams.sizeBigButtons, key: key)
+          : _recordButton(TIOMusicParams.sizeBigButtons, key: key);
+    }
+  }
+
+  Widget _switchRightButton() {
+    if (_recorder.isRecording) {
+      return _cancelButton(TIOMusicParams.sizeSmallButtons);
+    } else {
+      return _player.loaded
+          ? _recordButton(TIOMusicParams.sizeSmallButtons)
+          : _playPauseButton(TIOMusicParams.sizeSmallButtons);
+    }
+  }
+
+  Widget _cancelButton(double buttonSize, {Key? key}) {
+    return OnOffButton(
+      key: key,
+      isActive: _recorder.isRecording,
+      onTap: _cancelRecording,
+      buttonSize: buttonSize,
+      iconOff: Icons.close,
+      iconOn: Icons.close,
+      isDisabled: _isLoading,
+    );
+  }
+
+  Widget _recordButton(double buttonSize, {Key? key}) {
+    return OnOffButton(
+      key: key,
+      isActive: _recorder.isRecording,
+      onTap: () async {
+        await _toggleRecording();
+        if (!mounted) return;
+        if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded) {
+          _createTutorial();
+          _tutorial.show(context);
+        }
+      },
+      buttonSize: buttonSize,
+      iconOff: Icons.mic,
+      iconOn: Icons.stop,
+      isDisabled: _isLoading,
+    );
+  }
+
+  Widget _playPauseButton(double buttonSize, {Key? key}) {
+    return OnOffButton(
+      key: key,
+      isActive: _player.isPlaying,
+      onTap: _togglePlaying,
+      buttonSize: buttonSize,
+      iconOff: (_mediaPlayerBlock.icon as Icon).icon!,
+      iconOn: TIOMusicParams.pauseIcon,
+      isDisabled: _isLoading,
+      tooltipOff: context.l10n.mediaPlayerPause,
+      tooltipOn: context.l10n.mediaPlayerPlay,
+    );
+  }
+
+  List<Widget> _buildMarkers() {
+    List<Widget> markers = List.empty(growable: true);
+
+    for (final pos in _mediaPlayerBlock.markerPositions) {
+      var marker = Positioned(
+        left: TIOMusicParams.edgeInset + ((pos * _waveFormWidth) - (MediaPlayerParams.markerButton / 2)),
+        top: 4,
+        child: IconButton(
+          onPressed: () async {
+            await _player.setPlaybackPosition(pos);
+            await _updateState();
+          },
+          icon: const Icon(Icons.arrow_drop_down, color: ColorTheme.primary, size: MediaPlayerParams.markerIconSize),
+        ),
+      );
+      markers.add(marker);
+    }
+
+    return markers;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var waveformHeight = 200.0;
+    final l10n = context.l10n;
+    final isMultiImportEnabled = !widget.isQuickTool;
+
+    return ParentTool(
+      barTitle: _mediaPlayerBlock.title,
+      functionBeforeNavigatingBack: () async {
+        if (_recorder.isRecording) await _askForKeepRecordingOnExit();
+      },
+      isQuickTool: widget.isQuickTool,
+      project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
+      toolBlock: _mediaPlayerBlock,
+      menuItems: _menuItems,
+      islandToolTutorialKey: islandToolTutorialKey,
+      onParentTutorialFinished: () {
+        _createTutorial();
+        _tutorial.show(context);
+      },
+      island: ParentIslandView(project: widget.isQuickTool ? null : _project, toolBlock: _mediaPlayerBlock),
+      centerModule: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  if (_isLoading)
+                    const Center(child: CircularProgressIndicator())
+                  else
+                    Padding(
+                      key: _keyWaveform,
+                      padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
+                      child: _recorder.isRecording
+                          ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              context.l10n.mediaPlayerRecording,
+                              style: TextStyle(color: ColorTheme.tertiary, fontSize: waveformHeight / 10),
+                            ),
+                            Text(
+                              context.l10n.formatDuration(_recordingLength),
+                              style: TextStyle(color: ColorTheme.tertiary, fontSize: waveformHeight / 6),
+                            ),
+                          ],
+                        ),
+                      )
+                          : GestureDetector(
+                        onTapDown: (details) => _player.loaded ? _onWaveGesture(details.localPosition) : null,
+                        onHorizontalDragUpdate: (details) =>
+                        _player.loaded ? _onWaveGesture(details.localPosition) : null,
+                        child: CustomPaint(
+                          painter: _waveformVisualizer,
+                          size: Size(_waveFormWidth, waveformHeight),
+                        ),
+                      ),
+                    ),
+                  Stack(children: _recorder.isRecording ? [] : _buildMarkers()),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(onPressed: () => _skip(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
+                Container(
+                  key: _keyRepeat,
+                  child: MediaPlayerRepeatButton(onToggle: _handleRepeatToggle),
+                ),
+                TextButton(onPressed: () => _skip(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const PlaceholderButton(buttonSize: TIOMusicParams.sizeSmallButtons),
+                _switchMainButton(_keyStartStop),
+                _switchRightButton(),
+              ],
+            ),
+
+            if (_player.loaded)
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Text(
+                  _fs.toBasename(_mediaPlayerBlock.relativePath),
+                  style: TextStyle(color: ColorTheme.primary),
+                ),
+              ),
+
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: TIOFlatButton(
+                      onPressed: () async {
+                        await _pickAudioFilesAndSave(isMultipleAllowed: isMultiImportEnabled);
+                        if (!context.mounted) return;
+                        if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded) {
+                          _createTutorial();
+                          _tutorial.show(context);
+                        }
+                      },
+                      text: Platform.isIOS ? l10n.mediaPlayerOpenMediaLibrary : l10n.mediaPlayerOpenFileSystem,
+                    ),
+                  ),
+
+                  if (Platform.isIOS) ...[
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: TIOFlatButton(
+                        onPressed: () async {
+                          await _pickAudioFilesAndSave(
+                            isMultipleAllowed: isMultiImportEnabled,
+                            pickAudioFromFileSystem: true,
+                          );
+                          if (!context.mounted) return;
+                          if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded) {
+                            _createTutorial();
+                            _tutorial.show(context);
+                          }
+                        },
+                        text: l10n.mediaPlayerOpenFileSystem,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      keySettingsList: _keySettings,
+      settingTiles: [
+        SettingsTile(
+          title: l10n.commonVolume,
+          subtitle: l10n.formatNumber(_mediaPlayerBlock.volume),
+          leadingIcon: Icons.volume_up,
+          settingPage: SetVolume(
+            initialValue: _mediaPlayerBlock.volume,
+            onConfirm: (vol) {
+              _mediaPlayerBlock.volume = vol;
+              _player.setVolume(vol);
+            },
+            onChange: (vol) => _player.setVolume(vol),
+            onCancel: () => _player.setVolume(_mediaPlayerBlock.volume),
+          ),
+          block: _mediaPlayerBlock,
+          callOnReturn: (value) => setState(() {}),
+          inactive: _isLoading,
+        ),
+        SettingsTile(
+          title: l10n.commonBasicBeat,
+          subtitle: '${_mediaPlayerBlock.bpm} ${l10n.commonBpm}',
+          leadingIcon: Icons.touch_app_outlined,
+          settingPage: const SetBPM(),
+          block: _mediaPlayerBlock,
+          callOnReturn: (value) => setState(() {}),
+        ),
+        SettingsTile(
+          title: l10n.mediaPlayerTrim,
+          subtitle: '${(_mediaPlayerBlock.rangeStart * 100).round()}% → ${(_mediaPlayerBlock.rangeEnd * 100).round()}%',
+          leadingIcon: 'assets/icons/arrow_range.svg',
+          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
+          settingPage: SetTrim(rmsValues: _rmsValues, fileDuration: _player.fileDuration),
+          block: _mediaPlayerBlock,
+          callOnReturn: (value) => _updateState(),
+          inactive: _isLoading,
+        ),
+        SettingsTile(
+          title: l10n.mediaPlayerMarkers,
+          subtitle: _mediaPlayerBlock.markerPositions.length.toString(),
+          leadingIcon: Icons.arrow_drop_down,
+          settingPage: EditMarkersPage(
+            mediaPlayerBlock: _mediaPlayerBlock,
+            fileDuration: _player.fileDuration,
+            rmsValues: _rmsValues,
+          ),
+          block: _mediaPlayerBlock,
+          callOnReturn: (value) {
+            _player.markers.positions = _mediaPlayerBlock.markerPositions;
+            setState(() {});
+          },
+          inactive: _isLoading,
+        ),
+        SettingsTile(
+          title: l10n.mediaPlayerPitch,
+          subtitle: _getPitchSemitonesString(
+            _mediaPlayerBlock.pitchSemitones,
+            l10n.mediaPlayerSemitones(_mediaPlayerBlock.pitchSemitones.round()),
+          ),
+          leadingIcon: Icons.height,
+          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
+          settingPage: const SetPitch(),
+          block: _mediaPlayerBlock,
+          callOnReturn: (value) => setState(() {}),
+          inactive: _isLoading,
+        ),
+        SettingsTile(
+          title: l10n.mediaPlayerSpeed,
+          subtitle:
+          '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
+          leadingIcon: Icons.speed,
+          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
+          settingPage: const SetSpeed(),
+          block: _mediaPlayerBlock,
+          callOnReturn: (value) => setState(() {}),
+          inactive: _isLoading,
+        ),
+      ],
+    );
+  }
+
 }
