@@ -334,6 +334,8 @@ class German extends AppLocalizations {
   String get tunerDescription => 'Stimme dein Instrument oder nutze Referenztöne.';
   String get tunerFrequency => 'Frequenz';
   String get tunerInstrument => 'Instrument';
+  String get tunerLowFrequencyWarning =>
+      'Tiefe Frequenzen (<150 Hz) sind auf manchen Geräten möglicherweise schwer zu hören. Die Verwendung von Kopfhörer oder das Erhöhen der Lautstärke kann bedingt helfen.';
   String get tunerPlayReference => 'Referenzton abspielen';
   String get tunerSetConcertPitch => 'Kammerton einstellen';
   String get tunerTutorialAdjust => 'Tippe hier, um den Kammerton anzupassen oder einen Referenzton abzuspielen.';
