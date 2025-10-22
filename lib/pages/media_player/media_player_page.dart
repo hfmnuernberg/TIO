@@ -587,12 +587,24 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   Widget _switchRightButton() {
     if (_recorder.isRecording) {
-      return _playPauseButton(TIOMusicParams.sizeSmallButtons);
+      return _cancelButton(TIOMusicParams.sizeSmallButtons);
     } else {
       return _player.loaded
           ? _recordButton(TIOMusicParams.sizeSmallButtons)
           : _playPauseButton(TIOMusicParams.sizeSmallButtons);
     }
+  }
+
+  Widget _cancelButton(double buttonSize, {Key? key}) {
+    return OnOffButton(
+      key: key,
+      isActive: _recorder.isRecording,
+      onTap: _cancelRecording,
+      buttonSize: buttonSize,
+      iconOff: Icons.close,
+      iconOn: Icons.close,
+      isDisabled: _isLoading,
+    );
   }
 
   Widget _recordButton(double buttonSize, {Key? key}) {
@@ -609,7 +621,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       },
       buttonSize: buttonSize,
       iconOff: Icons.mic,
-      iconOn: TIOMusicParams.pauseIcon,
+      iconOn: Icons.stop,
       isDisabled: _isLoading,
     );
   }
@@ -793,7 +805,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (_player.isPlaying) {
       await _player.stop();
     } else {
-      await _recorder.stop();
+      if (_recorder.isRecording) await _cancelRecording();
       await _player.start();
     }
 
@@ -902,6 +914,12 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       }
     });
+  }
+
+  Future<void> _cancelRecording() async {
+    await _recorder.stop();
+    _resetRecordingTimer();
+    setState(() {});
   }
 
   // get this into recorder class?
