@@ -96,7 +96,6 @@ class _LeadingPicture extends StatelessWidget {
   }
 }
 
-
 class _Subtitle extends StatelessWidget {
   final Object? subtitle;
   final Color textColor;
