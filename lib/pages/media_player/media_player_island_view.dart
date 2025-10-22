@@ -4,8 +4,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/domain/audio/player.dart';
+import 'package:tiomusic/domain/audio/recorder.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
-import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
 import 'package:tiomusic/services/audio_session.dart';
@@ -26,12 +26,11 @@ class MediaPlayerIslandView extends StatefulWidget {
 }
 
 class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
-  late AudioSystem _as;
   late FileSystem _fs;
-  late Wakelock _wakelock;
   late WaveformVisualizer _waveformVisualizer;
 
   late final Player _player;
+  late final Recorder _recorder;
 
   Float32List _rmsValues = Float32List(100);
   int numOfBins = 0;
@@ -48,10 +47,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   void initState() {
     super.initState();
 
-    _as = context.read<AudioSystem>();
     _fs = context.read<FileSystem>();
-    _wakelock = context.read<Wakelock>();
-    _as.mediaPlayerSetVolume(volume: widget.mediaPlayerBlock.volume);
 
     _player = Player(
       context.read<AudioSystem>(),
@@ -60,6 +56,8 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       context.read<Wakelock>(),
     );
 
+    _recorder = Recorder(context.read<AudioSystem>(), context.read<AudioSession>(), context.read<Wakelock>());
+
     _waveformVisualizer = WaveformVisualizer(
       0,
       widget.mediaPlayerBlock.rangeStart,
@@ -67,6 +65,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       _rmsValues,
     );
 
+    _player.setVolume(widget.mediaPlayerBlock.volume);
     _player.setPitch(widget.mediaPlayerBlock.pitchSemitones);
     _player.setSpeed(widget.mediaPlayerBlock.speedFactor);
     _player.setRepeat(widget.mediaPlayerBlock.looping);
@@ -96,7 +95,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   @override
   Future<void> deactivate() async {
     await _player.stop();
-    MediaPlayerFunctions.stopRecording(_as, _wakelock);
+    await _recorder.stop();
 
     _timerPollPlaybackPosition?.cancel();
     super.deactivate();
@@ -145,10 +144,11 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
 
-    if (!_player.isPlaying) {
-      await _player.start();
-    } else {
+    if (_player.isPlaying) {
       await _player.stop();
+    } else {
+      await _recorder.stop();
+      await _player.start();
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));

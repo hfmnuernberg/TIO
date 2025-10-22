@@ -1,45 +1,45 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/domain/audio/player.dart';
+import 'package:tiomusic/domain/audio/recorder.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/edit_markers_page.dart';
-import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/pages/media_player/media_player_repeat_button.dart';
 import 'package:tiomusic/pages/media_player/setting_bpm.dart';
 import 'package:tiomusic/pages/media_player/setting_pitch.dart';
 import 'package:tiomusic/pages/media_player/setting_speed.dart';
 import 'package:tiomusic/pages/media_player/setting_trim.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
-import 'package:tiomusic/services/audio_session.dart';
-import 'package:tiomusic/services/wakelock.dart';
-import 'package:tiomusic/widgets/parent_tool/parent_island_view.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
 import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
+import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_picker.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/services/project_repository.dart';
+import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
-import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
+import 'package:tiomusic/widgets/parent_tool/parent_island_view.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class MediaPlayerPage extends StatefulWidget {
@@ -55,9 +55,6 @@ class MediaPlayerPage extends StatefulWidget {
 class _MediaPlayerPageState extends State<MediaPlayerPage> {
   static final _logger = createPrefixLogger('MediaPlayerPage');
 
-  late AudioSystem _as;
-  late AudioSession _audioSession;
-  late Wakelock _wakelock;
   late FileSystem _fs;
   late FilePicker _filePicker;
   late FileReferences _fileReferences;
@@ -65,8 +62,8 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   late ProjectRepository _projectRepo;
 
   late final Player _player;
+  late final Recorder _recorder;
 
-  late bool _isRecording = false;
   late bool _isLoading = false;
   late bool _wasPlaying = false;
   double _previousPosition = 0;
@@ -96,15 +93,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   final GlobalKey _keyWaveform = GlobalKey();
   final GlobalKey islandToolTutorialKey = GlobalKey();
 
-  AudioSessionInterruptionListenerHandle? recordInterruptionListenerHandle;
-
   @override
   void initState() {
     super.initState();
 
-    _as = context.read<AudioSystem>();
-    _audioSession = context.read<AudioSession>();
-    _wakelock = context.read<Wakelock>();
     _fs = context.read<FileSystem>();
     _filePicker = context.read<FilePicker>();
     _fileReferences = context.read<FileReferences>();
@@ -119,6 +111,8 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       onIsPlayingChange: (_) => _updateState(),
       onPlaybackPositionChange: (_) => _updateState(),
     );
+
+    _recorder = Recorder(context.read<AudioSystem>(), context.read<AudioSession>(), context.read<Wakelock>());
 
     _waveformVisualizer = WaveformVisualizer(0, 0, 1, _rmsValues);
 
@@ -254,6 +248,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   Future<void> _autoplayAfterDelay() async {
     await Future.delayed(const Duration(milliseconds: 500));
     _player.setRepeat(false);
+    await _recorder.stop();
     await _player.start();
   }
 
@@ -335,10 +330,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   @override
   void deactivate() {
     _player.stop();
-    MediaPlayerFunctions.stopRecording(_as, _wakelock);
-    if (recordInterruptionListenerHandle != null) {
-      _audioSession.unregisterInterruptionListener(recordInterruptionListenerHandle!);
-    }
+    _recorder.stop();
     _recordingTimer?.cancel();
     super.deactivate();
   }
@@ -365,7 +357,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     return ParentTool(
       barTitle: _mediaPlayerBlock.title,
       functionBeforeNavigatingBack: () async {
-        if (_isRecording) await _askForKeepRecordingOnExit();
+        if (_recorder.isRecording) await _askForKeepRecordingOnExit();
       },
       isQuickTool: widget.isQuickTool,
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
@@ -390,11 +382,21 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                     Padding(
                       key: _keyWaveform,
                       padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
-                      child: _isRecording
-                          ? MediaPlayerFunctions.displayRecordingTimer(
-                              context.l10n.mediaPlayerRecording,
-                              context.l10n.formatDuration(_recordingDuration),
-                              waveformHeight,
+                      child: _recorder.isRecording
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    context.l10n.mediaPlayerRecording,
+                                    style: TextStyle(color: ColorTheme.tertiary, fontSize: waveformHeight / 10),
+                                  ),
+                                  Text(
+                                    context.l10n.formatDuration(_recordingDuration),
+                                    style: TextStyle(color: ColorTheme.tertiary, fontSize: waveformHeight / 6),
+                                  ),
+                                ],
+                              ),
                             )
                           : GestureDetector(
                               onTapDown: (details) => _player.loaded ? _onWaveGesture(details.localPosition) : null,
@@ -406,7 +408,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                               ),
                             ),
                     ),
-                  Stack(children: _isRecording ? [] : _buildMarkers()),
+                  Stack(children: _recorder.isRecording ? [] : _buildMarkers()),
                 ],
               ),
             ),
@@ -574,7 +576,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   Widget _switchMainButton(Key key) {
-    if (_isRecording) {
+    if (_recorder.isRecording) {
       return _recordButton(TIOMusicParams.sizeBigButtons, key: key);
     } else {
       return _player.loaded
@@ -584,7 +586,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   Widget _switchRightButton() {
-    if (_isRecording) {
+    if (_recorder.isRecording) {
       return _playPauseButton(TIOMusicParams.sizeSmallButtons);
     } else {
       return _player.loaded
@@ -596,7 +598,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   Widget _recordButton(double buttonSize, {Key? key}) {
     return OnOffButton(
       key: key,
-      isActive: _isRecording,
+      isActive: _recorder.isRecording,
       onTap: () async {
         await _toggleRecording();
         if (!mounted) return;
@@ -788,7 +790,12 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
 
-    _player.isPlaying ? await _player.stop() : await _player.start();
+    if (_player.isPlaying) {
+      await _player.stop();
+    } else {
+      await _recorder.stop();
+      await _player.start();
+    }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     setState(() => _processingButtonClick = false);
@@ -798,7 +805,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
 
-    if (!_isRecording && _player.loaded) {
+    if (!_recorder.isRecording && _player.loaded) {
       final overrideFile = await askForOverridingFileOnRecordingStart(context);
       if (overrideFile == null || !overrideFile) {
         setState(() => _processingButtonClick = false);
@@ -806,7 +813,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       }
     }
 
-    _isRecording ? await _stopRecording() : await _startRecording();
+    _recorder.isRecording ? await _stopRecording() : await _startRecording();
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     setState(() => _processingButtonClick = false);
@@ -814,29 +821,21 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   Future<void> _startRecording() async {
     await _player.stop();
-    var success = await MediaPlayerFunctions.startRecording(_as, _audioSession, _wakelock, _player.isPlaying);
+    final success = await _recorder.start();
     setState(() {
-      _isRecording = true;
       if (success) _startRecordingTimer();
     });
-
-    recordInterruptionListenerHandle = await _audioSession.registerInterruptionListener(_stopRecording);
   }
 
   Future<void> _stopRecording() async {
-    if (recordInterruptionListenerHandle != null) {
-      await _audioSession.unregisterInterruptionListener(recordInterruptionListenerHandle!);
-    }
-
-    var success = await MediaPlayerFunctions.stopRecording(_as, _wakelock);
-    if (mounted) setState(() => _isRecording = false);
+    final success = await _recorder.stop();
     if (success && mounted) {
       _resetRecordingTimer();
 
       var projectTitle = widget.isQuickTool ? context.l10n.toolQuickTool : _project!.title;
       var newName = '$projectTitle-${_mediaPlayerBlock.title}';
 
-      final samples = await _as.mediaPlayerGetRecordingSamples();
+      final samples = await _recorder.getRecordingSamples();
       final newRelativePath = await _mediaRepo.saveSamplesToWaveFile(newName, samples);
 
       if (newRelativePath == null) {
@@ -882,12 +881,12 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   Future _askForKeepRecordingOnExit() async {
-    MediaPlayerFunctions.stopRecording(_as, _wakelock).then((success) async {
+    _recorder.stop().then((success) async {
       if (success && mounted) {
         final projectTitle = widget.isQuickTool ? context.l10n.toolQuickTool : _project!.title;
         final newName = '$projectTitle-${_mediaPlayerBlock.title}';
 
-        final samples = await _as.mediaPlayerGetRecordingSamples();
+        final samples = await _recorder.getRecordingSamples();
         final newRelativePath = await _mediaRepo.saveSamplesToWaveFile(newName, samples);
 
         if (newRelativePath == null) return;
@@ -905,6 +904,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     });
   }
 
+  // get this into recorder class?
   void _startRecordingTimer() {
     _recordingTimer = Timer.periodic(const Duration(seconds: 1), (_) => _setCountUp());
   }
