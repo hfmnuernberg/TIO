@@ -55,8 +55,8 @@ class CardListTile extends StatelessWidget {
               style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
             ),
           ),
-          subtitle: _CardListTileSubtitle(subtitle: subtitle, textColor: textColor),
-          leading: _showPicture(leadingPicture),
+          subtitle: _Subtitle(subtitle: subtitle, textColor: textColor),
+          leading: _LeadingPicture(picture: leadingPicture, color: leadingIconColor),
           titleAlignment: ListTileTitleAlignment.titleHeight,
           trailing: Wrap(
             spacing: 2, // space between two icons
@@ -67,29 +67,41 @@ class CardListTile extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _showPicture(Object picture) {
-    if (picture is ImageProvider) {
-      return AspectRatio(
-        aspectRatio: 1,
-        child: Image(image: picture, fit: BoxFit.cover),
-      );
-    } else if (picture is String) {
-      return CircleAvatar(
-        backgroundColor: ColorTheme.surface,
-        child: SvgPicture.asset(picture, colorFilter: ColorFilter.mode(leadingIconColor, BlendMode.srcIn)),
-      );
-    } else {
-      return CircleAvatar(backgroundColor: ColorTheme.surface, child: picture as Widget?);
+class _LeadingPicture extends StatelessWidget {
+  final Object picture;
+  final Color color;
+
+  const _LeadingPicture({required this.picture, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    switch (picture) {
+      case ImageProvider image:
+        return AspectRatio(
+          aspectRatio: 1,
+          child: Image(image: image, fit: BoxFit.cover),
+        );
+      case String assetPath:
+        return CircleAvatar(
+          backgroundColor: ColorTheme.surface,
+          child: SvgPicture.asset(assetPath, colorFilter: ColorFilter.mode(color, BlendMode.srcIn)),
+        );
+      case Widget widget:
+        return CircleAvatar(backgroundColor: ColorTheme.surface, child: widget);
+      default:
+        return const CircleAvatar(backgroundColor: ColorTheme.surface);
     }
   }
 }
 
-class _CardListTileSubtitle extends StatelessWidget {
+
+class _Subtitle extends StatelessWidget {
   final Object? subtitle;
   final Color textColor;
 
-  const _CardListTileSubtitle({required this.subtitle, required this.textColor});
+  const _Subtitle({required this.subtitle, required this.textColor});
 
   @override
   Widget build(BuildContext context) {
