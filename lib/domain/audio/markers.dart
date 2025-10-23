@@ -4,7 +4,6 @@ import 'package:tiomusic/services/audio_system.dart';
 
 typedef MarkerPeepCallback = void Function(double marker);
 
-const epsilon = 0.02;
 const double markerSoundFrequency = 2000;
 const int markerSoundDurationInMilliseconds = 80;
 
@@ -12,6 +11,7 @@ class Markers {
   final Set<double> _triggered = {};
 
   final AudioSystem _as;
+  int binCount = 1;
 
   List<double> _positions = const [];
   UnmodifiableListView<double> get positions => UnmodifiableListView(_positions);
@@ -48,9 +48,10 @@ class Markers {
           (previousPosition < position && currentPosition >= position) ||
           (previousPosition > position && currentPosition <= position);
 
-      final bool closeEnough = (currentPosition - position).abs() <= epsilon;
+      final double binTolerance = binCount <= 1 ? 1.0 : (0.5 / (binCount - 1));
+      final bool closeEnoughAfter = (currentPosition >= position) && ((currentPosition - position) <= binTolerance);
 
-      if (crossed || closeEnough) {
+      if (crossed || closeEnoughAfter) {
         _triggered.add(position);
         await _playSound();
       }
