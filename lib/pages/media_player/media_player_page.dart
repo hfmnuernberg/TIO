@@ -882,8 +882,22 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           title: l10n.mediaPlayerTrim,
           subtitle: '${(_mediaPlayerBlock.rangeStart * 100).round()}% → ${(_mediaPlayerBlock.rangeEnd * 100).round()}%',
           leadingIcon: 'assets/icons/arrow_range.svg',
-          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
-          settingPage: SetTrim(rmsValues: _rmsValues, fileDuration: _player.fileDuration),
+          settingPage: SetTrim(
+            rmsValues: _rmsValues,
+            fileDuration: _player.fileDuration,
+            initialStart: _mediaPlayerBlock.rangeStart,
+            initialEnd: _mediaPlayerBlock.rangeEnd,
+            onChange: _player.setTrim,
+            onConfirm: (start, end) async {
+              _mediaPlayerBlock.rangeStart = start;
+              _mediaPlayerBlock.rangeEnd = end;
+              await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+              await _player.setTrim(start, end);
+            },
+            onCancel: () async => _player.setTrim(_mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd),
+            onReset: () async =>
+                _player.setTrim(MediaPlayerParams.defaultRangeStart, MediaPlayerParams.defaultRangeEnd),
+          ),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => _updateState(),
           inactive: _isLoading,
@@ -911,8 +925,16 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
             l10n.mediaPlayerSemitones(_mediaPlayerBlock.pitchSemitones.round()),
           ),
           leadingIcon: Icons.height,
-          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
-          settingPage: const SetPitch(),
+          settingPage: SetPitch(
+            initialValue: _mediaPlayerBlock.pitchSemitones,
+            onChange: _player.setPitch,
+            onConfirm: (pitch) async {
+              _mediaPlayerBlock.pitchSemitones = pitch;
+              await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+              await _player.setPitch(pitch);
+            },
+            onCancel: () async => _player.setPitch(_mediaPlayerBlock.pitchSemitones),
+          ),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
           inactive: _isLoading,
@@ -922,8 +944,18 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           subtitle:
               '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
           leadingIcon: Icons.speed,
-          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
-          settingPage: const SetSpeed(),
+          settingPage: SetSpeed(
+            initialSpeedFactor: _mediaPlayerBlock.speedFactor,
+            baseBpm: _mediaPlayerBlock.bpm,
+            onChangeSpeed: _player.setSpeed,
+            onChangeBpm: (bpm) async => _player.setSpeed(getSpeedForBpm(bpm, _mediaPlayerBlock.bpm)),
+            onConfirm: (speed) async {
+              _mediaPlayerBlock.speedFactor = speed;
+              await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+              await _player.setSpeed(speed);
+            },
+            onCancel: () async => _player.setSpeed(_mediaPlayerBlock.speedFactor),
+          ),
           block: _mediaPlayerBlock,
           callOnReturn: (value) => setState(() {}),
           inactive: _isLoading,
