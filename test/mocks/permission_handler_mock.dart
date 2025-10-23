@@ -14,8 +14,9 @@ class PermissionHandlerMock with MockPlatformInterfaceMixin implements Permissio
   Future<ServiceStatus> checkServiceStatus(Permission permission) async => ServiceStatus.enabled;
 
   @override
-  Future<Map<Permission, PermissionStatus>> requestPermissions(List<Permission> permissions) async =>
-      {for (final p in permissions) p: _status};
+  Future<Map<Permission, PermissionStatus>> requestPermissions(List<Permission> permissions) async => {
+    for (final p in permissions) p: _status,
+  };
 
   @override
   Future<bool> shouldShowRequestPermissionRationale(Permission permission) async => false;
