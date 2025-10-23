@@ -145,6 +145,14 @@ void main() {
       context.audioSystemMock.verifyMediaPlayerStopCalled();
     });
 
+    testWidgets('unregisters interruption listener on stop', (tester) async {
+      mockPlayerState();
+      await player.start();
+      await player.stop();
+
+      context.audioSessionMock.verifyUnregisterInterruptionListenerCalled();
+    });
+
     testWidgets('allows screen to turn off when stopped', (tester) async {
       mockPlayerState();
       await player.start();
