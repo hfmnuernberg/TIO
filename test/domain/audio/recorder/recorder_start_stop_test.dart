@@ -1,50 +1,33 @@
-import 'package:flutter/services.dart';
+import 'dart:typed_data';
+
+import 'package:permission_handler_platform_interface/permission_handler_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tiomusic/domain/audio/recorder.dart';
 
+import '../../../mocks/permission_handler_mock.dart';
+import '../../../mocks/recorder_handler_mock.dart';
 import '../../../utils/test_context.dart';
 
 void main() {
   late TestContext context;
+  late PermissionHandlerMock permissionHandlerMock;
+  late RecorderHandlerMock recorderHandlerMock;
   late Recorder recorder;
 
-  // Minimal mock for permission_handler to return "granted" in tests.
-  const MethodChannel permChannel = MethodChannel('flutter.baseflow.com/permissions/methods');
-
-  Future<void> mockMicrophonePermissionGranted() async {
-    TestWidgetsFlutterBinding.ensureInitialized();
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(permChannel, (
-      call,
-    ) async {
-      switch (call.method) {
-        case 'checkPermissionStatus':
-          // 1 == granted in permission_handler
-          return 1;
-        case 'requestPermissions':
-          // permission_handler passes a List<int> of permission codes
-          final List<dynamic> permissions = (call.arguments as List?) ?? const [];
-          return {for (final p in permissions) p: 1};
-        case 'shouldShowRequestPermissionRationale':
-          return false;
-        case 'openAppSettings':
-          return true;
-        default:
-          return null;
-      }
-    });
-  }
+  setUpAll(() {
+    registerFallbackValue(Permission.microphone);
+  });
 
   setUp(() async {
     resetMocktailState();
-    await mockMicrophonePermissionGranted();
-
     context = TestContext();
-    recorder = Recorder(context.audioSystem, context.audioSession, context.wakelock);
-  });
 
-  tearDown(() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(permChannel, null);
+    permissionHandlerMock = PermissionHandlerMock()..grant();
+    PermissionHandlerPlatform.instance = permissionHandlerMock;
+    recorderHandlerMock = RecorderHandlerMock();
+
+    recorder = Recorder(context.audioSystem, context.audioSession, context.wakelock);
   });
 
   group('Recorder', () {
@@ -83,6 +66,46 @@ void main() {
       await recorder.stop();
     });
 
+    testWidgets('notifies about recording change when started', (tester) async {
+      recorder = Recorder(
+        context.audioSystem,
+        context.audioSession,
+        context.wakelock,
+        onIsRecordingChange: recorderHandlerMock.onIsRecordingChange,
+      );
+      await recorder.start();
+
+      recorderHandlerMock.verifyOnIsRecordingChangeWith(true);
+
+      await recorder.stop();
+    });
+
+    testWidgets('updates recording length periodically when started', (tester) async {
+      expect(recorder.recordingLength, Duration());
+      await recorder.start();
+
+      await tester.pump(const Duration(milliseconds: 1000 + 1));
+      expect(recorder.recordingLength, Duration(seconds: 1));
+
+      await recorder.stop();
+    });
+
+    testWidgets('notifies about recording length updates periodically when started', (tester) async {
+      recorder = Recorder(
+        context.audioSystem,
+        context.audioSession,
+        context.wakelock,
+        onRecordingLengthChange: recorderHandlerMock.onRecordingLengthChange,
+      );
+      await recorder.start();
+      recorderHandlerMock.verifyOnRecordingLengthChangeCalledWith(Duration());
+
+      await tester.pump(const Duration(milliseconds: 1000 + 1));
+      recorderHandlerMock.verifyOnRecordingLengthChangeCalledWith(Duration(seconds: 1));
+
+      await recorder.stop();
+    });
+
     testWidgets('forces screen to stay on when started', (tester) async {
       await recorder.start();
 
@@ -108,6 +131,20 @@ void main() {
       context.audioSystemMock.verifyMediaPlayerStopRecordingCalled();
     });
 
+    testWidgets('notifies about recording change when stopped', (tester) async {
+      recorder = Recorder(
+        context.audioSystem,
+        context.audioSession,
+        context.wakelock,
+        onIsRecordingChange: recorderHandlerMock.onIsRecordingChange,
+      );
+      await recorder.start();
+      recorderHandlerMock.verifyOnIsRecordingChangeWith(true);
+
+      await recorder.stop();
+      recorderHandlerMock.verifyOnIsRecordingChangeWith(false);
+    });
+
     testWidgets('unregisters interruption listener on stop', (tester) async {
       await recorder.start();
       await recorder.stop();
@@ -129,6 +166,34 @@ void main() {
       await recorder.start();
 
       expect(recorder.isRecording, isFalse);
+    });
+
+    testWidgets('fails to start recorder when microphone permission not granted', (tester) async {
+      permissionHandlerMock.deny();
+
+      await recorder.start();
+
+      expect(recorder.isRecording, isFalse);
+    });
+
+    testWidgets('stops recorder anyways when audio system signals failure', (tester) async {
+      await recorder.start();
+
+      expect(recorder.isRecording, isTrue);
+      context.audioSystemMock.mockMediaPlayerStopRecording(false);
+      await recorder.stop();
+
+      expect(recorder.isRecording, isFalse);
+    });
+
+    testWidgets('returns recording samples from audio system', (tester) async {
+      final expectedSamples = Float64List.fromList([0.1, 0.2, 0.3]);
+      context.audioSystemMock.mockMediaPlayerGetRecordingSamples(expectedSamples);
+
+      final result = await recorder.getRecordingSamples();
+
+      expect(result, expectedSamples);
+      context.audioSystemMock.verifyMediaPlayerGetRecordingSamplesCalled();
     });
   });
 }

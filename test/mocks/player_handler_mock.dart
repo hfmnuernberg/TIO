@@ -1,11 +1,11 @@
 import 'package:mocktail/mocktail.dart';
 
 class PlayerHandlerMock extends Mock {
-  void onIsPlayingChange(bool playing);
+  void onIsPlayingChange(bool isPlaying);
   void onPlaybackPositionChange(double position);
 
-  void verifyOnPlayingChangeCalledWith(bool playing) => verify(() => onIsPlayingChange(playing)).called(1);
-  void verifyOnPlayingChangeNeverCalled() => verifyNever(() => onIsPlayingChange(any()));
+  void verifyOnIsPlayingChangeCalledWith(bool isPlaying) => verify(() => onIsPlayingChange(isPlaying)).called(1);
+  void verifyOnIsPlayingChangeNeverCalled() => verifyNever(() => onIsPlayingChange(any()));
 
   void verifyOnPlaybackPositionChangeCalledWith(double position) =>
       verify(() => onPlaybackPositionChange(position)).called(1);

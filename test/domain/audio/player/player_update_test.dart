@@ -96,15 +96,15 @@ void main() {
       );
       mockPlayerState();
       await player.start();
-      playerHandlerMock.verifyOnPlayingChangeCalledWith(true);
+      playerHandlerMock.verifyOnIsPlayingChangeCalledWith(true);
       mockPlayerState(playing: false);
 
       await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
-      playerHandlerMock.verifyOnPlayingChangeCalledWith(false);
+      playerHandlerMock.verifyOnIsPlayingChangeCalledWith(false);
 
       mockPlayerState();
       await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
-      playerHandlerMock.verifyOnPlayingChangeCalledWith(true);
+      playerHandlerMock.verifyOnIsPlayingChangeCalledWith(true);
 
       await player.stop();
     });
