@@ -4,8 +4,8 @@ import 'package:tiomusic/domain/audio/markers.dart';
 import 'package:tiomusic/domain/audio/player.dart';
 import 'package:tiomusic/src/rust/api/modules/media_player.dart';
 
-import '../../mocks/player_handler_mock.dart';
-import '../../utils/test_context.dart';
+import '../../../mocks/player_handler_mock.dart';
+import '../../../utils/test_context.dart';
 
 void main() {
   late TestContext context;
@@ -96,15 +96,15 @@ void main() {
       );
       mockPlayerState();
       await player.start();
-      playerHandlerMock.verifyOnPlayingChangeCalledWith(true);
+      playerHandlerMock.verifyOnIsPlayingChangeCalledWith(true);
       mockPlayerState(playing: false);
 
       await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
-      playerHandlerMock.verifyOnPlayingChangeCalledWith(false);
+      playerHandlerMock.verifyOnIsPlayingChangeCalledWith(false);
 
       mockPlayerState();
       await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
-      playerHandlerMock.verifyOnPlayingChangeCalledWith(true);
+      playerHandlerMock.verifyOnIsPlayingChangeCalledWith(true);
 
       await player.stop();
     });

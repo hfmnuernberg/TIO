@@ -5,7 +5,6 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:tiomusic/domain/audio/markers.dart';
-import 'package:tiomusic/pages/media_player/media_player_functions.dart';
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -69,7 +68,6 @@ class Player {
 
     _audioSessionInterruptionListenerHandle ??= await _audioSession.registerInterruptionListener(stop);
 
-    await MediaPlayerFunctions.stopRecording(_as, _wakelock);
     await _as.mediaPlayerSetRepeat(repeatOne: _repeat);
     await _audioSession.preparePlayback();
 
