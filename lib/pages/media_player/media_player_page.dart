@@ -160,6 +160,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
             _mediaPlayerBlock.rangeEnd,
             _rmsValues,
           );
+          _player.markers.binCount = _rmsValues.length;
         }
       }
 
@@ -451,7 +452,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           _mediaPlayerBlock.rangeEnd,
           _rmsValues,
         );
-
+        _player.markers.binCount = _rmsValues.length;
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
         if (mounted) await _projectRepo.saveLibrary(projectLibrary);
@@ -579,7 +580,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           _mediaPlayerBlock.rangeEnd,
           _rmsValues,
         );
-
+        _player.markers.binCount = _rmsValues.length;
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
         _player.markers.positions = [];

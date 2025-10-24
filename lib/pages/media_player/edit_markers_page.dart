@@ -28,6 +28,7 @@ class EditMarkersPage extends StatefulWidget {
 }
 
 class _EditMarkersPageState extends State<EditMarkersPage> {
+  final GlobalKey _waveKey = GlobalKey();
   late WaveformVisualizer _waveformVisualizer;
   double _waveFormWidth = 0;
   final double _waveFormHeight = 200;
@@ -38,6 +39,14 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   double? _selectedMarkerPosition;
 
   final List<double> _markerPositions = List.empty(growable: true);
+
+  double get _paintedWaveWidth {
+    final ctx = _waveKey.currentContext;
+    if (ctx == null) return _waveFormWidth;
+    final render = ctx.findRenderObject();
+    if (render is RenderBox) return render.size.width;
+    return _waveFormWidth;
+  }
 
   @override
   void initState() {
@@ -79,7 +88,11 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                   padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
                   child: GestureDetector(
                     onTapDown: _onWaveTap,
-                    child: CustomPaint(painter: _waveformVisualizer, size: Size(_waveFormWidth, _waveFormHeight)),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: _waveFormHeight,
+                      child: CustomPaint(key: _waveKey, painter: _waveformVisualizer),
+                    ),
                   ),
                 ),
 
@@ -147,15 +160,15 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     List<Widget> markers = List.empty(growable: true);
 
     for (final pos in _markerPositions) {
-      bool selected = false;
-      if (_selectedMarkerPosition != null) {
-        if (pos == _selectedMarkerPosition) {
-          selected = true;
-        }
-      }
+      bool selected = _selectedMarkerPosition != null && pos == _selectedMarkerPosition;
+
+      final int rmsValuesLength = widget.rmsValues.isEmpty ? 1 : widget.rmsValues.length;
+      final int idx = rmsValuesLength <= 1 ? 0 : (pos.clamp(0.0, 1.0) * (rmsValuesLength - 1)).round();
+      final double xPainter = WaveformVisualizer.xForIndex(idx, _paintedWaveWidth, rmsValuesLength);
+      final double leftPainter = TIOMusicParams.edgeInset + (xPainter - (MediaPlayerParams.markerButton / 2));
 
       final marker = Positioned(
-        left: TIOMusicParams.edgeInset + ((pos * _waveFormWidth) - (MediaPlayerParams.markerButton / 2)),
+        left: leftPainter,
         top: (_waveFormHeight / 2) - MediaPlayerParams.markerIconSize - 20,
         child: IconButton(
           onPressed: () {
@@ -197,21 +210,25 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   // jump to position on wave tap
   // and select marker if there is one at this position
   void _onWaveTap(TapDownDetails details) async {
-    double relativeTapPosition = details.localPosition.dx / _waveFormWidth;
-    double relativeMarkerClickArea = MediaPlayerParams.binWidth / _waveFormWidth;
+    final double localX = details.localPosition.dx;
+    final int n = widget.rmsValues.isEmpty ? 1 : widget.rmsValues.length;
+    final double width = _paintedWaveWidth;
+
+    final int idx = WaveformVisualizer.indexForX(localX, width, n);
+    final double snappedRel = n <= 1 ? 0.0 : idx / (n - 1);
 
     setState(() {
-      _sliderValue = relativeTapPosition;
+      _sliderValue = snappedRel;
       _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
     });
 
+    final double tolerance = n <= 1 ? 1.0 : (1.0 / (n - 1));
     double? foundMarkerPosition;
 
-    // check if position has marker
     for (final pos in _markerPositions) {
-      if (relativeTapPosition >= pos - relativeMarkerClickArea &&
-          relativeTapPosition <= pos + relativeMarkerClickArea) {
+      if ((snappedRel - pos).abs() <= tolerance) {
         foundMarkerPosition = pos;
+        break;
       }
     }
     if (foundMarkerPosition != null) {
