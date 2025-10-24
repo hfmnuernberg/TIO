@@ -1,23 +1,34 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/models/blocks/media_player_block.dart';
-import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
-import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/src/rust/api/ffi.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 
+const defaultStart = 0.0;
+const defaultEnd = 1.0;
+
 class SetTrim extends StatefulWidget {
   final Float32List rmsValues;
+  final double initialStart;
+  final double initialEnd;
   final Duration fileDuration;
+  final Future<void> Function(double start, double end) onChange;
+  final Future<void> Function(double start, double end) onConfirm;
+  final Future<void> Function() onCancel;
 
-  const SetTrim({super.key, required this.rmsValues, required this.fileDuration});
+  const SetTrim({
+    super.key,
+    required this.initialStart,
+    required this.initialEnd,
+    required this.rmsValues,
+    required this.fileDuration,
+    required this.onChange,
+    required this.onConfirm,
+    required this.onCancel,
+  });
 
   @override
   State<SetTrim> createState() => _SetTrimState();
@@ -25,9 +36,6 @@ class SetTrim extends StatefulWidget {
 
 class _SetTrimState extends State<SetTrim> {
   late RangeValues _rangeValues;
-
-  late MediaPlayerBlock _mediaPlayerBlock;
-
   late WaveformVisualizer _waveformVisualizer;
 
   Duration _rangeStartDuration = Duration.zero;
@@ -37,10 +45,8 @@ class _SetTrimState extends State<SetTrim> {
   void initState() {
     super.initState();
 
-    _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
-    _rangeValues = RangeValues(_mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd);
-
-    _waveformVisualizer = WaveformVisualizer.setTrim(0, 1, widget.rmsValues);
+    _rangeValues = RangeValues(widget.initialStart, widget.initialEnd);
+    _waveformVisualizer = WaveformVisualizer.setTrim(_rangeValues.start, _rangeValues.end, widget.rmsValues);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _rangeStartDuration = widget.fileDuration * _rangeValues.start;
@@ -52,15 +58,37 @@ class _SetTrimState extends State<SetTrim> {
     });
   }
 
+  Future<void> _handleChange(RangeValues values) async {
+    setState(() {
+      _rangeValues = values;
+      _waveformVisualizer = WaveformVisualizer.setTrim(values.start, values.end, widget.rmsValues);
+      _rangeStartDuration = widget.fileDuration * _rangeValues.start;
+      _rangeEndDuration = widget.fileDuration * _rangeValues.end;
+    });
+    if (_rangeValues.start < _rangeValues.end) await widget.onChange(_rangeValues.start, _rangeValues.end);
+  }
+
+  Future<void> _handleConfirm() async {
+    await widget.onConfirm(_rangeValues.start, _rangeValues.end);
+    if (mounted) Navigator.pop(context);
+  }
+
+  Future<void> _handleCancel() async {
+    await widget.onCancel();
+    if (mounted) Navigator.pop(context);
+  }
+
+  Future<void> _handleReset() async => _handleChange(const RangeValues(defaultStart, defaultEnd));
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
     return ParentSettingPage(
       title: l10n.mediaPlayerSetTrim,
-      confirm: _onConfirm,
-      reset: _reset,
-      cancel: _onCancel,
+      confirm: _handleConfirm,
+      reset: _handleReset,
+      cancel: _handleCancel,
       customWidget: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -75,22 +103,12 @@ class _SetTrimState extends State<SetTrim> {
                 RangeSlider(
                   values: _rangeValues,
                   inactiveColor: ColorTheme.primary80,
-                  divisions: 1000, // how many individual values, only showing labels when division is not null
+                  divisions: 1000,
                   labels: RangeLabels(
                     l10n.formatDurationWithMillis(_rangeStartDuration),
                     l10n.formatDurationWithMillis(_rangeEndDuration),
                   ),
-                  onChanged: (values) {
-                    setState(() {
-                      _rangeValues = values;
-                      _waveformVisualizer = WaveformVisualizer.setTrim(values.start, values.end, widget.rmsValues);
-                      _rangeStartDuration = widget.fileDuration * _rangeValues.start;
-                      _rangeEndDuration = widget.fileDuration * _rangeValues.end;
-
-                      _onUserChangesTrim();
-                    });
-                  },
-                  onChangeEnd: (values) {
+                  onChanged: (values) async {
                     var start = values.start;
                     var end = values.end;
                     if (start == end) {
@@ -100,7 +118,7 @@ class _SetTrimState extends State<SetTrim> {
                         start = 0.999;
                       }
                     }
-                    _rangeValues = RangeValues(start, end);
+                    await _handleChange(RangeValues(start, end));
                   },
                 ),
               ],
@@ -109,33 +127,5 @@ class _SetTrimState extends State<SetTrim> {
         ],
       ),
     );
-  }
-
-  Future<void> _onConfirm() async {
-    _mediaPlayerBlock.rangeStart = _rangeValues.start;
-    _mediaPlayerBlock.rangeEnd = _rangeValues.end;
-    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-
-    await mediaPlayerSetTrim(startFactor: _mediaPlayerBlock.rangeStart, endFactor: _mediaPlayerBlock.rangeEnd);
-
-    if (mounted) Navigator.pop(context);
-  }
-
-  void _reset() {
-    setState(() {
-      _rangeValues = const RangeValues(MediaPlayerParams.defaultRangeStart, MediaPlayerParams.defaultRangeEnd);
-      _waveformVisualizer = WaveformVisualizer.setTrim(0, 1, widget.rmsValues);
-    });
-  }
-
-  void _onCancel() async {
-    await mediaPlayerSetTrim(startFactor: _mediaPlayerBlock.rangeStart, endFactor: _mediaPlayerBlock.rangeEnd);
-    if (mounted) Navigator.pop(context);
-  }
-
-  void _onUserChangesTrim() async {
-    if (_rangeValues.start < _rangeValues.end) {
-      await mediaPlayerSetTrim(startFactor: _rangeValues.start, endFactor: _rangeValues.end);
-    }
   }
 }

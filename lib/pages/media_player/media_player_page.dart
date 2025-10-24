@@ -15,10 +15,10 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/edit_markers_page.dart';
 import 'package:tiomusic/pages/media_player/media_player_repeat_button.dart';
-import 'package:tiomusic/pages/media_player/setting_bpm.dart';
-import 'package:tiomusic/pages/media_player/setting_pitch.dart';
-import 'package:tiomusic/pages/media_player/setting_speed.dart';
-import 'package:tiomusic/pages/media_player/setting_trim.dart';
+import 'package:tiomusic/pages/media_player/set_bpm.dart';
+import 'package:tiomusic/pages/media_player/set_pitch.dart';
+import 'package:tiomusic/pages/media_player/set_speed.dart';
+import 'package:tiomusic/pages/media_player/set_trim.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
@@ -858,16 +858,16 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           subtitle: l10n.formatNumber(_mediaPlayerBlock.volume),
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
-            initialValue: _mediaPlayerBlock.volume,
+            initialVolume: _mediaPlayerBlock.volume,
             onConfirm: (vol) {
               _mediaPlayerBlock.volume = vol;
               _player.setVolume(vol);
             },
-            onChange: (vol) => _player.setVolume(vol),
+            onChange: _player.setVolume,
             onCancel: () => _player.setVolume(_mediaPlayerBlock.volume),
           ),
           block: _mediaPlayerBlock,
-          callOnReturn: (value) => setState(() {}),
+          callOnReturn: (_) => setState(() {}),
           inactive: _isLoading,
         ),
         SettingsTile(
@@ -876,16 +876,28 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           leadingIcon: Icons.touch_app_outlined,
           settingPage: const SetBPM(),
           block: _mediaPlayerBlock,
-          callOnReturn: (value) => setState(() {}),
+          callOnReturn: (_) => setState(() {}),
         ),
         SettingsTile(
           title: l10n.mediaPlayerTrim,
           subtitle: '${(_mediaPlayerBlock.rangeStart * 100).round()}% → ${(_mediaPlayerBlock.rangeEnd * 100).round()}%',
           leadingIcon: 'assets/icons/arrow_range.svg',
-          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
-          settingPage: SetTrim(rmsValues: _rmsValues, fileDuration: _player.fileDuration),
+          settingPage: SetTrim(
+            initialStart: _mediaPlayerBlock.rangeStart,
+            initialEnd: _mediaPlayerBlock.rangeEnd,
+            rmsValues: _rmsValues,
+            fileDuration: _player.fileDuration,
+            onChange: _player.setTrim,
+            onConfirm: (start, end) async {
+              _mediaPlayerBlock.rangeStart = start;
+              _mediaPlayerBlock.rangeEnd = end;
+              await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+              await _player.setTrim(start, end);
+            },
+            onCancel: () async => _player.setTrim(_mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd),
+          ),
           block: _mediaPlayerBlock,
-          callOnReturn: (value) => _updateState(),
+          callOnReturn: (_) => _updateState(),
           inactive: _isLoading,
         ),
         SettingsTile(
@@ -898,7 +910,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
             rmsValues: _rmsValues,
           ),
           block: _mediaPlayerBlock,
-          callOnReturn: (value) {
+          callOnReturn: (_) {
             _player.markers.positions = _mediaPlayerBlock.markerPositions;
             setState(() {});
           },
@@ -911,10 +923,18 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
             l10n.mediaPlayerSemitones(_mediaPlayerBlock.pitchSemitones.round()),
           ),
           leadingIcon: Icons.height,
-          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
-          settingPage: const SetPitch(),
+          settingPage: SetPitch(
+            initialPitch: _mediaPlayerBlock.pitchSemitones,
+            onChange: _player.setPitch,
+            onConfirm: (pitch) async {
+              _mediaPlayerBlock.pitchSemitones = pitch;
+              await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+              await _player.setPitch(pitch);
+            },
+            onCancel: () async => _player.setPitch(_mediaPlayerBlock.pitchSemitones),
+          ),
           block: _mediaPlayerBlock,
-          callOnReturn: (value) => setState(() {}),
+          callOnReturn: (_) => setState(() {}),
           inactive: _isLoading,
         ),
         SettingsTile(
@@ -922,10 +942,20 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           subtitle:
               '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
           leadingIcon: Icons.speed,
-          // refactor into onConform, onChange, onCancel callback like for SetVolume, no ffi in settings page
-          settingPage: const SetSpeed(),
+          settingPage: SetSpeed(
+            initialSpeed: _mediaPlayerBlock.speedFactor,
+            baseBpm: _mediaPlayerBlock.bpm,
+            onChangeSpeed: _player.setSpeed,
+            onChangeBpm: (bpm) async => _player.setSpeed(getSpeedForBpm(bpm, _mediaPlayerBlock.bpm)),
+            onConfirm: (speed) async {
+              _mediaPlayerBlock.speedFactor = speed;
+              await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+              await _player.setSpeed(speed);
+            },
+            onCancel: () async => _player.setSpeed(_mediaPlayerBlock.speedFactor),
+          ),
           block: _mediaPlayerBlock,
-          callOnReturn: (value) => setState(() {}),
+          callOnReturn: (_) => setState(() {}),
           inactive: _isLoading,
         ),
       ],
