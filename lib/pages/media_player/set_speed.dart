@@ -7,6 +7,7 @@ import 'package:tiomusic/widgets/input/number_input_int.dart';
 import 'package:tiomusic/widgets/input/slider_dec.dart';
 import 'package:tiomusic/widgets/input/tap_to_tempo.dart';
 
+const defaultSpeed = 1.0;
 const minSpeedFactor = 0.1;
 const maxSpeedFactor = 10.0;
 const step = 0.1;
@@ -18,28 +19,21 @@ int getBpmForSpeed(double speedFactor, int baseBpm) =>
     (speedFactor * baseBpm).clamp(minSpeedFactor * baseBpm, maxSpeedFactor * baseBpm).toInt();
 
 class SetSpeed extends StatefulWidget {
-  final double initialSpeedFactor;
   final int baseBpm;
-
   final Future<void> Function(double newSpeed) onChangeSpeed;
-
   final Future<void> Function(int newBpm) onChangeBpm;
-
   final Future<void> Function(double speed) onConfirm;
-
   final Future<void> Function() onCancel;
-
-  final Future<void> Function()? onReset;
+  final double initialSpeed;
 
   const SetSpeed({
     super.key,
-    required this.initialSpeedFactor,
     required this.baseBpm,
     required this.onChangeSpeed,
     required this.onChangeBpm,
     required this.onConfirm,
     required this.onCancel,
-    this.onReset,
+    required this.initialSpeed,
   });
 
   @override
@@ -52,7 +46,7 @@ class _SetSpeedState extends State<SetSpeed> {
   @override
   void initState() {
     super.initState();
-    speed = widget.initialSpeedFactor;
+    speed = widget.initialSpeed;
   }
 
   Future<void> _handleBpmChange(int newBpm) async {
@@ -67,22 +61,14 @@ class _SetSpeedState extends State<SetSpeed> {
   }
 
   Future<void> _handleConfirm() async {
-    widget.onConfirm(speed);
+    await widget.onConfirm(speed);
     if (mounted) Navigator.pop(context);
   }
 
-  Future<void> _handleReset() async {
-    const resetValue = MediaPlayerParams.defaultSpeedFactor;
-    setState(() => speed = resetValue);
-    if (widget.onReset != null) {
-      await widget.onReset!();
-    } else {
-      await widget.onChangeSpeed(resetValue);
-    }
-  }
+  Future<void> _handleReset() async => _handleSpeedChange(defaultSpeed);
 
   Future<void> _handleCancel() async {
-    widget.onCancel();
+    await widget.onCancel();
     if (mounted) Navigator.pop(context);
   }
 

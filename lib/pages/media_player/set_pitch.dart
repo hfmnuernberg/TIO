@@ -4,23 +4,22 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_dec.dart';
 
+const defaultPitch = 0.0;
 const minPitch = -24.0;
 const maxPitch = 24.0;
 
 class SetPitch extends StatefulWidget {
-  final double initialValue;
+  final double initialPitch;
   final Future<void> Function(double newPitch) onChange;
   final Future<void> Function(double newPitch) onConfirm;
   final Future<void> Function() onCancel;
-  final Future<void> Function()? onReset;
 
   const SetPitch({
     super.key,
-    required this.initialValue,
+    required this.initialPitch,
     required this.onChange,
     required this.onConfirm,
     required this.onCancel,
-    this.onReset,
   });
 
   @override
@@ -33,7 +32,7 @@ class _SetPitchState extends State<SetPitch> {
   @override
   void initState() {
     super.initState();
-    pitch = widget.initialValue;
+    pitch = widget.initialPitch;
   }
 
   Future<void> _handleChange(double newPitch) async {
@@ -41,23 +40,15 @@ class _SetPitchState extends State<SetPitch> {
     await widget.onChange(pitch);
   }
 
-  Future<void> _handleReset() async {
-    const resetValue = MediaPlayerParams.defaultPitchSemitones;
-    setState(() => pitch = resetValue);
-    if (widget.onReset != null) {
-      await widget.onReset!();
-    } else {
-      await widget.onChange(resetValue);
-    }
-  }
+  Future<void> _handleReset() async => _handleChange(defaultPitch);
 
   Future<void> _handleConfirm() async {
-    widget.onConfirm(pitch);
+    await widget.onConfirm(pitch);
     if (mounted) Navigator.pop(context);
   }
 
   Future<void> _handleCancel() async {
-    widget.onCancel();
+    await widget.onCancel();
     if (mounted) Navigator.pop(context);
   }
 

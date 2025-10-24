@@ -7,31 +7,27 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 
+const defaultStart = 0.0;
+const defaultEnd = 1.0;
+
 class SetTrim extends StatefulWidget {
   final Float32List rmsValues;
-  final Duration fileDuration;
-
   final double initialStart;
   final double initialEnd;
-
+  final Duration fileDuration;
   final Future<void> Function(double start, double end) onChange;
-
   final Future<void> Function(double start, double end) onConfirm;
-
   final Future<void> Function() onCancel;
-
-  final Future<void> Function()? onReset;
 
   const SetTrim({
     super.key,
-    required this.rmsValues,
-    required this.fileDuration,
     required this.initialStart,
     required this.initialEnd,
+    required this.rmsValues,
+    required this.fileDuration,
     required this.onChange,
     required this.onConfirm,
     required this.onCancel,
-    this.onReset,
   });
 
   @override
@@ -50,7 +46,7 @@ class _SetTrimState extends State<SetTrim> {
     super.initState();
 
     _rangeValues = RangeValues(widget.initialStart, widget.initialEnd);
-    _waveformVisualizer = WaveformVisualizer.setTrim(0, 1, widget.rmsValues);
+    _waveformVisualizer = WaveformVisualizer.setTrim(_rangeValues.start, _rangeValues.end, widget.rmsValues);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _rangeStartDuration = widget.fileDuration * _rangeValues.start;
@@ -73,30 +69,16 @@ class _SetTrimState extends State<SetTrim> {
   }
 
   Future<void> _handleConfirm() async {
-    widget.onConfirm(_rangeValues.start, _rangeValues.end);
+    await widget.onConfirm(_rangeValues.start, _rangeValues.end);
     if (mounted) Navigator.pop(context);
   }
 
   Future<void> _handleCancel() async {
-    widget.onCancel();
+    await widget.onCancel();
     if (mounted) Navigator.pop(context);
   }
 
-  Future<void> _handleReset() async {
-    const start = MediaPlayerParams.defaultRangeStart;
-    const end = MediaPlayerParams.defaultRangeEnd;
-    setState(() {
-      _rangeValues = const RangeValues(start, end);
-      _waveformVisualizer = WaveformVisualizer.setTrim(0, 1, widget.rmsValues);
-      _rangeStartDuration = widget.fileDuration * start;
-      _rangeEndDuration = widget.fileDuration * end;
-    });
-    if (widget.onReset != null) {
-      await widget.onReset!();
-    } else {
-      await widget.onChange(start, end);
-    }
-  }
+  Future<void> _handleReset() async => _handleChange(const RangeValues(defaultStart, defaultEnd));
 
   @override
   Widget build(BuildContext context) {
