@@ -237,7 +237,7 @@ class _PianoPageState extends State<PianoPage> {
   Future<void> handleOnOpenVolume() async {
     await openSettingPage(
       SetVolume(
-        initialValue: _pianoBlock.volume,
+        initialVolume: _pianoBlock.volume,
         onConfirm: (vol) {
           _pianoBlock.volume = vol;
           piano.setVolume(vol);

@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tiomusic/domain/audio/player.dart';
 
-import '../../utils/test_context.dart';
+import '../../../utils/test_context.dart';
 
 void main() {
   late TestContext context;

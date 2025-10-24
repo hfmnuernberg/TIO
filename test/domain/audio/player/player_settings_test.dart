@@ -3,7 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:tiomusic/domain/audio/player.dart';
 import 'package:tiomusic/src/rust/api/modules/media_player.dart';
 
-import '../../utils/test_context.dart';
+import '../../../utils/test_context.dart';
 
 void main() {
   late TestContext context;

@@ -453,7 +453,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
           subtitle: l10n.formatNumber(metronomeBlock.volume),
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
-            initialValue: metronomeBlock.volume,
+            initialVolume: metronomeBlock.volume,
             onChange: (vol) => metronome.setVolume(vol),
             onConfirm: (vol) {
               metronomeBlock.volume = vol;

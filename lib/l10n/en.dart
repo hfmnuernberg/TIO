@@ -332,7 +332,7 @@ class English extends AppLocalizations {
   String get tunerFrequency => 'Frequency';
   String get tunerInstrument => 'Instrument';
   String get tunerLowFrequencyWarning =>
-      'Low frequencies (<150 Hz) may be hard to hear on some devices. Consider using headphones or increasing the volume.';
+      'Low frequencies (<300 Hz) may be hard to hear on some devices. Consider using headphones or increasing the volume.';
   String get tunerPlayReference => 'Play reference';
   String get tunerSetConcertPitch => 'Set concert pitch';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';

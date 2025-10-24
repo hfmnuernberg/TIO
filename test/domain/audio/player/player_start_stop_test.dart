@@ -3,7 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:tiomusic/domain/audio/player.dart';
 import 'package:tiomusic/src/rust/api/modules/media_player.dart';
 
-import '../../utils/test_context.dart';
+import '../../../utils/test_context.dart';
 
 void main() {
   late TestContext context;
@@ -145,12 +145,20 @@ void main() {
       context.audioSystemMock.verifyMediaPlayerStopCalled();
     });
 
+    testWidgets('unregisters interruption listener on stop', (tester) async {
+      mockPlayerState();
+      await player.start();
+      await player.stop();
+
+      context.audioSessionMock.verifyUnregisterInterruptionListenerCalled();
+    });
+
     testWidgets('allows screen to turn off when stopped', (tester) async {
       mockPlayerState();
       await player.start();
-      context.wakelockMock.verifyDisableCalled();
 
       await player.stop();
+
       context.wakelockMock.verifyDisableCalled();
     });
 
