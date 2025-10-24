@@ -92,7 +92,7 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
     }
 
     final freq = midiToFreq(midiNumber, concertPitch: tunerBlock.chamberNoteHz);
-    const minHzWarningThreshold = 150.0;
+    const minHzWarningThreshold = 300.0;
 
     await _as.generatorNoteOn(newFreq: midiToFreq(midiNumber, concertPitch: tunerBlock.chamberNoteHz));
     setState(() => midi = midiNumber);
