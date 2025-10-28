@@ -114,7 +114,7 @@ jobs:
         JAVA_TOOL_OPTIONS: -Xmx4g
 
     - name: Save bundle
-      uses: actions/upload-artifact@v4.6.2
+      uses: actions/upload-artifact@v5.0.0
       with:
         name: android-${{ inputs.target_env }}-${{ inputs.semver }}+${{ inputs.build_number }}
         path: build/app/outputs/bundle/${{ inputs.target_env }}Release

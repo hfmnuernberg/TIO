@@ -106,7 +106,7 @@ jobs:
       run: scripts/app.sh build ios ${{ inputs.target_env }} ${{ inputs.target_env }} release
 
     - name: Save bundle
-      uses: actions/upload-artifact@v4.6.2
+      uses: actions/upload-artifact@v5.0.0
       with:
         name: ios-${{ inputs.target_env }}-${{ inputs.semver }}+${{ inputs.build_number }}
         path: build/ios/ipa
