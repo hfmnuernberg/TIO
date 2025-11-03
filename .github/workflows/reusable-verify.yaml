@@ -97,7 +97,7 @@ jobs:
     - name: Analyze outdated dependencies
       run: scripts/app.sh outdated
 
-    - name: Analyze files with too many lines
+    - name: Validate files with too many lines
       run: scripts/app.sh analyze:files:validate ${{ env.MAX_FILE_COUNT }} ${{ env.MAX_AVG_LENGTH }}
 
     - name: Analyze TODOs and FIXMEs

@@ -11,6 +11,6 @@ on:
 jobs:
   verify-pr-title:
     name: Verify PR Title
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-verify-pr-title.yaml@main
+    uses: ./.github/workflows/reusable-verify-pr-title.yaml@main
     with:
       jira_key: TIO

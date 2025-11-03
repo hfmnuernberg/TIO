@@ -13,7 +13,7 @@ jobs:
 
   auto-merge:
     name: Auto-merge
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-auto-merge.yaml@main
+    uses: ./.github/workflows/reusable-auto-merge.yaml@main
     secrets: inherit
     permissions:
       contents: write
