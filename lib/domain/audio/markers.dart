@@ -48,8 +48,8 @@ class Markers {
           (previousPosition < position && currentPosition >= position) ||
           (previousPosition > position && currentPosition <= position);
 
-      final double binTolerance = binCount <= 1 ? 1.0 : (0.5 / (binCount - 1));
-      final bool closeEnoughAfter = (currentPosition >= position) && ((currentPosition - position) <= binTolerance);
+      final double halfBinTolerance = binCount <= 1 ? 1.0 : (0.5 / (binCount - 1));
+      final bool closeEnoughAfter = (currentPosition >= position) && ((currentPosition - position) <= halfBinTolerance);
 
       if (crossed || closeEnoughAfter) {
         _triggered.add(position);

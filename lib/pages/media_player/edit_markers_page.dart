@@ -163,13 +163,13 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     for (final pos in _markerPositions) {
       bool selected = _selectedMarkerPosition != null && pos == _selectedMarkerPosition;
 
-      final int rmsValuesLength = widget.rmsValues.isEmpty ? 1 : widget.rmsValues.length;
-      final int idx = rmsValuesLength <= 1 ? 0 : (pos.clamp(0.0, 1.0) * (rmsValuesLength - 1)).round();
-      final double xPainter = WaveformVisualizer.xForIndex(idx, _paintedWaveWidth, rmsValuesLength);
-      final double leftPainter = TIOMusicParams.edgeInset + (xPainter - (MediaPlayerParams.markerButton / 2));
+      final int binCount = widget.rmsValues.length;
+      final int markerBinIndex = (pos.clamp(0.0, 1.0) * (binCount - 1)).round();
+      final double markerCenterX = WaveformVisualizer.xForIndex(markerBinIndex, _paintedWaveWidth, binCount);
+      final double markerLeft = TIOMusicParams.edgeInset + (markerCenterX - (MediaPlayerParams.markerButton / 2));
 
       final marker = Positioned(
-        left: leftPainter,
+        left: markerLeft,
         top: (_waveFormHeight / 2) - MediaPlayerParams.markerIconSize - 20,
         child: IconButton(
           icon: Icon(
@@ -212,32 +212,29 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   // jump to position on wave tap
   // and select marker if there is one at this position
   void _onWaveTap(TapDownDetails details) async {
-    final double localX = details.localPosition.dx;
-    final int n = widget.rmsValues.isEmpty ? 1 : widget.rmsValues.length;
-    final double width = _paintedWaveWidth;
+    final double tapX = details.localPosition.dx;
+    final int binCount = widget.rmsValues.isEmpty ? 1 : widget.rmsValues.length;
 
-    final int idx = WaveformVisualizer.indexForX(localX, width, n);
-    final double snappedRel = n <= 1 ? 0.0 : idx / (n - 1);
+    // Map tap to the nearest bar (bin), then normalize to 0..1
+    final int tappedBinIndex = WaveformVisualizer.indexForX(tapX, _paintedWaveWidth, binCount);
+    final double snappedRelativePosition = binCount <= 1 ? 0.0 : tappedBinIndex / (binCount - 1);
 
     setState(() {
-      _sliderValue = snappedRel;
+      _sliderValue = snappedRelativePosition;
       _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
     });
 
-    final double tolerance = n <= 1 ? 1.0 : (1.0 / (n - 1));
+    // Try selecting an existing marker near the tapped bar (±1 bin tolerance in relative units)
+    final double oneBinRelative = binCount <= 1 ? 1.0 : (1.0 / (binCount - 1));
     double? foundMarkerPosition;
 
     for (final pos in _markerPositions) {
-      if ((snappedRel - pos).abs() <= tolerance) {
+      if ((snappedRelativePosition - pos).abs() <= oneBinRelative) {
         foundMarkerPosition = pos;
         break;
       }
     }
-    if (foundMarkerPosition != null) {
-      _selectedMarkerPosition = foundMarkerPosition;
-    } else {
-      _selectedMarkerPosition = null;
-    }
+    _selectedMarkerPosition = foundMarkerPosition;
 
     setState(() {});
   }
