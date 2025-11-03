@@ -161,6 +161,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
             _rmsValues,
           );
           _player.markers.binCount = _rmsValues.length;
+          _player.markers.startAndEndEpsilon = _effectiveEndEpsilon();
         }
       }
 
@@ -453,6 +454,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           _rmsValues,
         );
         _player.markers.binCount = _rmsValues.length;
+        _player.markers.startAndEndEpsilon = _effectiveEndEpsilon();
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
         if (mounted) await _projectRepo.saveLibrary(projectLibrary);

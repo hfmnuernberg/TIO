@@ -12,6 +12,7 @@ class Markers {
 
   final AudioSystem _as;
   int binCount = 1;
+  double startAndEndEpsilon = 0;
 
   List<double> _positions = const [];
   UnmodifiableListView<double> get positions => UnmodifiableListView(_positions);
@@ -51,7 +52,18 @@ class Markers {
       final double halfBinTolerance = binCount <= 1 ? 1.0 : (0.5 / (binCount - 1));
       final bool closeEnoughAfter = (currentPosition >= position) && ((currentPosition - position) <= halfBinTolerance);
 
-      if (crossed || closeEnoughAfter) {
+      final bool closeEnoughToLastMarker =
+          (startAndEndEpsilon > 0.0) &&
+          (position >= 1.0 - startAndEndEpsilon) &&
+          (currentPosition >= 1.0 - startAndEndEpsilon);
+
+      final bool closeEnoughToFirstMarker =
+          (startAndEndEpsilon > 0.0) &&
+          (position <= startAndEndEpsilon) &&
+          (previousPosition <= startAndEndEpsilon) &&
+          (currentPosition >= position);
+
+      if (crossed || closeEnoughAfter || closeEnoughToLastMarker || closeEnoughToFirstMarker) {
         _triggered.add(position);
         await _playSound();
       }

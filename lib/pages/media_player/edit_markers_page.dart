@@ -186,7 +186,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                 _selectedMarkerPosition = pos;
               });
             }
-          }
+          },
         ),
       );
       markers.add(marker);
@@ -209,8 +209,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     setState(() {});
   }
 
-  // jump to position on wave tap
-  // and select marker if there is one at this position
   void _onWaveTap(TapDownDetails details) async {
     final double tapX = details.localPosition.dx;
     final double snappedRelativePosition = _calculateSnappedRelativePosition(tapX);
