@@ -6,11 +6,15 @@ set -e
 
 # Check if a directory was provided as an argument
 if [ -z "$1" ]; then
-  echo "📖 Usage: $0 <directory>"
+  echo "📖 Usage: $0 <directory> [<max_count> [<max_avg_len>]]"
   exit 1
 fi
 
 DIRECTORY="$1"
+
+shift # consume directory
+MAX_COUNT="${1:-0}"
+MAX_AVG_LEN="${2:-0}"
 
 # ===== configuration =====
 
@@ -105,7 +109,7 @@ fi
 
 # Calculate the percentage of files that exceed the max-line threshold
 if [ "$total_count" -gt 0 ]; then
-  percentage_over_threshold=$(LC_ALL=C awk -v a="$file_count_over_threshold" -v b="$total_count" -v d="${2:-2}" 'BEGIN{printf "%.*f", d, (a/b)*100}')
+  percentage_over_threshold=$(LC_ALL=C awk -v a="$file_count_over_threshold" -v b="$total_count" 'BEGIN{printf "%.1f", (a/b)*100}')
 else
   percentage_over_threshold=0
 fi
@@ -125,7 +129,13 @@ echo "ℹ️ Ignored files: $ignored_count"
 if [ "$file_count_over_threshold" -gt 0 ]; then
   echo "⚠️ Number of files with more than $MAX_LINES lines: $file_count_over_threshold files ($percentage_over_threshold%)"
   echo "⚠️ Average length of files over threshold: $avg_length_over_threshold lines"
-  exit 1
 else
   echo "✅️ No files exceed the max-line threshold of $MAX_LINES lines."
+fi
+
+echo "Validation thresholds — max count: $MAX_COUNT, max avg length: $MAX_AVG_LEN"
+if [ "$file_count_over_threshold" -le "$MAX_COUNT" ] && [ "$avg_length_over_threshold" -le "$MAX_AVG_LEN" ]; then
+  exit 0
+else
+  exit 1
 fi

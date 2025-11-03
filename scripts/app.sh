@@ -130,7 +130,7 @@ help() {
   echo
   echo 'analyze                                       - analyze code and yaml files'
   echo 'analyze:dart                                  - run static code analysis (lint)'
-  echo 'analyze:files                                 - analyze files with too many lines of code'
+  echo 'analyze:files [<max_count>] [<max_avg>]       - validate count and avg length of overlong files'
   echo 'analyze:fix <rule>                            - fix static code analysis rule violations'
   echo 'analyze:fix:dry                               - simulates fixing static code analysis rule violations'
   echo 'analyze:todos                                 - analyze TODOs and FIXMEs in code'
@@ -179,7 +179,7 @@ help() {
 case "$1" in
   analyze)                   bash "$0" analyze:dart; bash "$0" analyze:yaml; bash "$0" widgetbook analyze; bash "$0" rust analyze; ;;
   analyze:dart)              $FLUTTER analyze lib test; ;;
-  analyze:files)             scripts/analyze-files-with-too-many-lines.sh .; ;;
+  analyze:files)             scripts/analyze-files-with-too-many-lines.sh . "$2" "$3"; ;;
   analyze:fix)               $DART fix --apply --code="$2"; ;;
   analyze:fix:dry)           $DART fix --dry-run; ;;
   analyze:todos)             scripts/analyze-todos-and-fixmes.sh .; ;;
