@@ -12,6 +12,35 @@ fi
 
 DIRECTORY="$1"
 
+# ===== optional args =====
+shift # consume directory
+VALIDATE_MODE=false
+MAX_COUNT=""
+MAX_AVG_LEN=""
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    validate)
+      VALIDATE_MODE=true
+      MAX_COUNT="$2"
+      MAX_AVG_LEN="$3"
+      shift 3
+      ;;
+    *)
+      echo "Unknown argument: $1"
+      echo "📖 Usage: $0 <directory> [validate <max_count> <max_avg_len>]"
+      exit 2
+      ;;
+  esac
+done
+
+if $VALIDATE_MODE; then
+  if [ -z "$MAX_COUNT" ] || [ -z "$MAX_AVG_LEN" ]; then
+    echo "📖 Usage: $0 <directory> validate <max_count> <max_avg_len>"
+    exit 2
+  fi
+fi
+
 # ===== configuration =====
 
 FILE_TYPES="*.js *.mjs *.jsx *.ts *.tsx *.dart *.java *.kt *.sh"
@@ -105,7 +134,7 @@ fi
 
 # Calculate the percentage of files that exceed the max-line threshold
 if [ "$total_count" -gt 0 ]; then
-  percentage_over_threshold=$(LC_ALL=C awk -v a="$file_count_over_threshold" -v b="$total_count" -v d="${2:-2}" 'BEGIN{printf "%.*f", d, (a/b)*100}')
+  percentage_over_threshold=$(LC_ALL=C awk -v a="$file_count_over_threshold" -v b="$total_count" 'BEGIN{printf "%.1f", (a/b)*100}')
 else
   percentage_over_threshold=0
 fi
@@ -125,7 +154,22 @@ echo "ℹ️ Ignored files: $ignored_count"
 if [ "$file_count_over_threshold" -gt 0 ]; then
   echo "⚠️ Number of files with more than $MAX_LINES lines: $file_count_over_threshold files ($percentage_over_threshold%)"
   echo "⚠️ Average length of files over threshold: $avg_length_over_threshold lines"
-  exit 1
 else
   echo "✅️ No files exceed the max-line threshold of $MAX_LINES lines."
+fi
+
+if $VALIDATE_MODE; then
+  echo "Validation thresholds — max count: $MAX_COUNT, max avg length: $MAX_AVG_LEN"
+  if [ "$file_count_over_threshold" -le "$MAX_COUNT" ] && [ "$avg_length_over_threshold" -le "$MAX_AVG_LEN" ]; then
+    exit 0
+  else
+    exit 1
+  fi
+else
+  # Original behavior: fail if any file exceeds threshold
+  if [ "$file_count_over_threshold" -gt 0 ]; then
+    exit 1
+  else
+    exit 0
+  fi
 fi
