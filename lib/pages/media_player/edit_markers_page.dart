@@ -213,30 +213,32 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   // and select marker if there is one at this position
   void _onWaveTap(TapDownDetails details) async {
     final double tapX = details.localPosition.dx;
-    final int binCount = widget.rmsValues.isEmpty ? 1 : widget.rmsValues.length;
-
-    // Map tap to the nearest bar (bin), then normalize to 0..1
-    final int tappedBinIndex = WaveformVisualizer.indexForX(tapX, _paintedWaveWidth, binCount);
-    final double snappedRelativePosition = binCount <= 1 ? 0.0 : tappedBinIndex / (binCount - 1);
+    final double snappedRelativePosition = _calculateSnappedRelativePosition(tapX);
 
     setState(() {
       _sliderValue = snappedRelativePosition;
       _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
     });
 
-    // Try selecting an existing marker near the tapped bar (±1 bin tolerance in relative units)
-    final double oneBinRelative = binCount <= 1 ? 1.0 : (1.0 / (binCount - 1));
-    double? foundMarkerPosition;
+    _selectedMarkerPosition = _findMarkerNear(snappedRelativePosition);
+    setState(() {});
+  }
+
+  double _calculateSnappedRelativePosition(double tapX) {
+    final int binCount = widget.rmsValues.length;
+    final int tappedBinIndex = WaveformVisualizer.indexForX(tapX, _paintedWaveWidth, binCount);
+    return tappedBinIndex / (binCount - 1);
+  }
+
+  double? _findMarkerNear(double snappedRelativePosition) {
+    final int binCount = widget.rmsValues.length;
+    final double oneBinRelative = 1.0 / (binCount - 1);
 
     for (final pos in _markerPositions) {
-      if ((snappedRelativePosition - pos).abs() <= oneBinRelative) {
-        foundMarkerPosition = pos;
-        break;
-      }
+      if ((snappedRelativePosition - pos).abs() <= oneBinRelative) return pos;
     }
-    _selectedMarkerPosition = foundMarkerPosition;
 
-    setState(() {});
+    return null;
   }
 
   void _addNewMarker() {
