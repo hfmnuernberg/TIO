@@ -1,5 +1,10 @@
 name: Verify
 
+env:
+  MAX_FILE_COUNT: 28
+  MAX_AVG_LENGTH: 345
+  MIN_COVERAGE: 51.3
+
 on:
   workflow_dispatch:
     inputs:
@@ -92,8 +97,8 @@ jobs:
     - name: Analyze outdated dependencies
       run: scripts/app.sh outdated
 
-    - name: Analyze files with too many lines
-      run: scripts/app.sh analyze:files || true
+    - name: Validate files with too many lines
+      run: scripts/app.sh analyze:files ${{ env.MAX_FILE_COUNT }} ${{ env.MAX_AVG_LENGTH }}
 
     - name: Analyze TODOs and FIXMEs
       run: scripts/app.sh analyze:todos || true
@@ -136,4 +141,4 @@ jobs:
       run: scripts/app.sh coverage:print
 
     - name: Validate coverage
-      run: scripts/app.sh coverage:validate 51.3
+      run: scripts/app.sh coverage:validate ${{ env.MIN_COVERAGE }}
