@@ -373,7 +373,12 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   Future<void> _pickAudioFilesAndSave({required bool isMultipleAllowed, bool pickAudioFromFileSystem = false}) async {
+    if (_player.loaded) {
+      final shouldOverwrite = await askForOverridingFileOnOpenSelectedAudio(context);
+      if (shouldOverwrite != true) return;
+    }
     try {
+      if (!mounted) return;
       final audioPaths = await _pickAudioFiles(
         context: context,
         projectLibrary: context.read<ProjectLibrary>(),

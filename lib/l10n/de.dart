@@ -108,8 +108,10 @@ class German extends AppLocalizations {
   String get mediaPlayerOpenFileSystem => 'Öffne Dateien';
   String get mediaPlayerOpenMediaLibrary => 'Öffne Mediathek';
   String get mediaPlayerOverwriteSound => 'Audio-Datei überschreiben?';
-  String get mediaPlayerOverwriteSoundQuestion =>
+  String get mediaPlayerOverwriteWithRecordingQuestion =>
       'Möchtest du die aktuelle Audio-Datei überschreiben und die Aufnahme starten?';
+  String get mediaPlayerOverwriteWithAudioQuestion =>
+      'Möchtest du die aktuelle Audio-Datei überschreiben und eine neue Datei auswählen?';
   String get mediaPlayerPause => 'Pause';
   String get mediaPlayerPitch => 'Tonhöhe';
   String get mediaPlayerPlay => 'Play';

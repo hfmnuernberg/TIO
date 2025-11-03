@@ -10,18 +10,30 @@ Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => show
 
     return AlertDialog(
       title: Text(l10n.mediaPlayerOverwriteSound, style: const TextStyle(color: ColorTheme.primary)),
-      content: Text(l10n.mediaPlayerOverwriteSoundQuestion, style: const TextStyle(color: ColorTheme.primary)),
+      content: Text(l10n.mediaPlayerOverwriteWithRecordingQuestion, style: const TextStyle(color: ColorTheme.primary)),
       actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.commonNo)),
         TextButton(
-          onPressed: () {
-            Navigator.of(context).pop(false);
-          },
-          child: Text(l10n.commonNo),
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(l10n.commonYes, style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
+      ],
+    );
+  },
+);
+
+Future<bool?> askForOverridingFileOnOpenSelectedAudio(BuildContext context) => showDialog<bool>(
+  context: context,
+  builder: (context) {
+    final l10n = context.l10n;
+
+    return AlertDialog(
+      title: Text(l10n.mediaPlayerOverwriteSound, style: const TextStyle(color: ColorTheme.primary)),
+      content: Text(l10n.mediaPlayerOverwriteWithAudioQuestion, style: const TextStyle(color: ColorTheme.primary)),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.commonNo)),
         TextButton(
-          onPressed: () {
-            Navigator.of(context).pop(true);
-          },
+          onPressed: () => Navigator.of(context).pop(true),
           child: Text(l10n.commonYes, style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
       ],
