@@ -75,6 +75,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       title: l10n.mediaPlayerEditMarkers,
       confirm: _onConfirm,
       reset: _removeAllMarkers,
+      mustBeScrollable: true,
       customWidget: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -171,6 +172,12 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         left: leftPainter,
         top: (_waveFormHeight / 2) - MediaPlayerParams.markerIconSize - 20,
         child: IconButton(
+          icon: Icon(
+            selected ? Icons.arrow_drop_down_circle_outlined : Icons.arrow_drop_down,
+            color: selected ? ColorTheme.tertiary60 : ColorTheme.primary,
+            size: MediaPlayerParams.markerIconSize,
+          ),
+          tooltip: context.l10n.mediaPlayerMarker,
           onPressed: () {
             if (!selected) {
               setState(() {
@@ -179,12 +186,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                 _selectedMarkerPosition = pos;
               });
             }
-          },
-          icon: Icon(
-            selected ? Icons.arrow_drop_down_circle_outlined : Icons.arrow_drop_down,
-            color: selected ? ColorTheme.tertiary60 : ColorTheme.primary,
-            size: MediaPlayerParams.markerIconSize,
-          ),
+          }
         ),
       );
       markers.add(marker);
