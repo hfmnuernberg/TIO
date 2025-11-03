@@ -41,10 +41,10 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   final List<double> _markerPositions = List.empty(growable: true);
 
   double get _paintedWaveWidth {
-    final ctx = _waveKey.currentContext;
-    if (ctx == null) return _waveFormWidth;
-    final render = ctx.findRenderObject();
-    if (render is RenderBox) return render.size.width;
+    final buildContext = _waveKey.currentContext;
+    if (buildContext == null) return _waveFormWidth;
+    final renderObject = buildContext.findRenderObject();
+    if (renderObject is RenderBox) return renderObject.size.width;
     return _waveFormWidth;
   }
 
