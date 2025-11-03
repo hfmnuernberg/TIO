@@ -12,7 +12,6 @@ fi
 
 DIRECTORY="$1"
 
-# ===== optional args =====
 shift # consume directory
 VALIDATE_MODE=false
 MAX_COUNT=""
@@ -134,7 +133,7 @@ fi
 
 # Calculate the percentage of files that exceed the max-line threshold
 if [ "$total_count" -gt 0 ]; then
-  percentage_over_threshold=$(LC_ALL=C awk -v a="$file_count_over_threshold" -v b="$total_count" 'BEGIN{printf "%.1f", (a/b)*100}')
+  percentage_over_threshold=$(LC_ALL=C awk -v a="$file_count_over_threshold" -v b="$total_count" -v d="${2:-2}" 'BEGIN{printf "%.*f", d, (a/b)*100}')
 else
   percentage_over_threshold=0
 fi
@@ -166,7 +165,6 @@ if $VALIDATE_MODE; then
     exit 1
   fi
 else
-  # Original behavior: fail if any file exceeds threshold
   if [ "$file_count_over_threshold" -gt 0 ]; then
     exit 1
   else
