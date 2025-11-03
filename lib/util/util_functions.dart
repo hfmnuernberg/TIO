@@ -24,9 +24,6 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/directional_page_route.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
-// ---------------------------------------------------------------
-// format the settings into Text that can be displayed
-
 String formatSettingValues(List<Object> settingValues) {
   final buffer = StringBuffer();
   bool firstTime = true;
@@ -40,9 +37,6 @@ String formatSettingValues(List<Object> settingValues) {
   }
   return buffer.toString();
 }
-
-// ---------------------------------------------------------------
-// open setting page with the correct provider
 
 void _emptyFunction() {}
 
@@ -98,9 +92,6 @@ Future<dynamic> openSettingPage(
         callbackOnReturn(value);
       });
 }
-
-// ---------------------------------------------------------------
-// show a dialog for editing the title of tool and project
 
 Future<List<String>?> editTwoTitles(BuildContext context, String currentProjectTitle, String currentToolTitle) {
   TextEditingController projectController = TextEditingController(text: currentProjectTitle);
@@ -172,38 +163,6 @@ void _submitTitles(BuildContext context, TextEditingController controllerOne, Te
   controllerTwo.clear();
 }
 
-// ---------------------------------------------------------------
-// show a dialog for asking if user wants to override existing file by starting to record
-
-Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => showDialog<bool>(
-  context: context,
-  builder: (context) {
-    final l10n = context.l10n;
-
-    return AlertDialog(
-      title: Text(l10n.mediaPlayerOverwriteSound, style: const TextStyle(color: ColorTheme.primary)),
-      content: Text(l10n.mediaPlayerOverwriteSoundQuestion, style: const TextStyle(color: ColorTheme.primary)),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop(false);
-          },
-          child: Text(l10n.commonNo),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop(true);
-          },
-          child: Text(l10n.commonYes, style: const TextStyle(fontWeight: FontWeight.bold)),
-        ),
-      ],
-    );
-  },
-);
-
-// ---------------------------------------------------------------
-// show a dialog for asking if user wants to save the quick tool before leaving the tool page and loosing the changes
-
 Future<bool?> askForSavingQuickTool(BuildContext context) => showDialog<bool>(
   context: context,
   builder: (context) {
@@ -228,57 +187,6 @@ Future<bool?> askForSavingQuickTool(BuildContext context) => showDialog<bool>(
     );
   },
 );
-
-// ---------------------------------------------------------------
-// show a dialog to tell the user that the file format is not supported
-
-Future<void> showFormatNotSupportedDialog(BuildContext context, String? format) => showDialog<void>(
-  context: context,
-  builder: (context) {
-    final l10n = context.l10n;
-
-    return AlertDialog(
-      title: Text(l10n.mediaPlayerErrorFileFormat, style: TextStyle(color: ColorTheme.primary)),
-      content: Text(
-        l10n.mediaPlayerErrorFileFormatDescription(format ?? ''),
-        style: const TextStyle(color: ColorTheme.primary),
-      ),
-      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
-    );
-  },
-);
-
-// ---------------------------------------------------------------
-// show a dialog to tell the user that the file could not be opened
-
-Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) {
-  final l10n = context.l10n;
-  fileName = (fileName ?? '').isEmpty ? null : fileName;
-
-  return showDialog<void>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(l10n.mediaPlayerErrorFileOpen, style: TextStyle(color: ColorTheme.primary)),
-      content: Column(
-        children: [
-          Text(l10n.mediaPlayerErrorFileOpenDescription, style: const TextStyle(color: ColorTheme.primary)),
-          if (fileName != null)
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              child: Text(
-                '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
-                style: const TextStyle(color: ColorTheme.primary),
-              ),
-            ),
-        ],
-      ),
-      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
-    ),
-  );
-}
-
-// ---------------------------------------------------------------
-// show a dialog to tell the user that the file is somehow not accessible
 
 Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName}) {
   final l10n = context.l10n;
@@ -306,9 +214,6 @@ Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName
   );
 }
 
-// ---------------------------------------------------------------
-// show a dialog to tell the user that no camera was found
-
 Future<void> showNoCameraFoundDialog(BuildContext context) {
   final l10n = context.l10n;
   return showDialog<void>(
@@ -320,9 +225,6 @@ Future<void> showNoCameraFoundDialog(BuildContext context) {
     ),
   );
 }
-
-// ---------------------------------------------------------------
-// navigate to a new tool page and provide the correct providers
 
 Future<dynamic> goToTool(
   BuildContext context,
@@ -356,15 +258,9 @@ Future<dynamic> goToTool(
   return replace ? Navigator.of(context).pushReplacement(routeWithTransition) : Navigator.of(context).push(route);
 }
 
-// ---------------------------------------------------------------
-// get the current date and time
-
 DateTime getCurrentDateTime() {
   return DateTime.now();
 }
-
-// ---------------------------------------------------------------
-// save tool in existing project
 
 Future<void> saveToolInProject(
   BuildContext context,
@@ -400,9 +296,6 @@ Future<void> saveToolInProject(
     Navigator.of(context).pop(returnData);
   }
 }
-
-// ---------------------------------------------------------------
-// save tool in a new project
 
 void saveToolInNewProject(
   BuildContext context,
@@ -443,18 +336,12 @@ void saveToolInNewProject(
 
 enum ReturnAction { goToNewTool, showTutorial }
 
-// ---------------------------------------------------------------
-// Circle Icon for displaying the tool icons all with the same color
-
 Widget circleToolIcon(Widget icon) {
   return CircleAvatar(backgroundColor: ColorTheme.secondaryContainer, child: icon);
 }
 
-// ---------------------------------------------------------------
-
 enum IncreaseOrDecrease { increase, decrease }
 
-// compare block values to default values
 bool blockValuesSameAsDefaultBlock(ProjectBlock block, AppLocalizations l10n) {
   if (block is MetronomeBlock) {
     if (MetronomeBlock.withDefaults(l10n) == block) return true;
