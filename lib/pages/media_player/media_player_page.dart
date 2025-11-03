@@ -374,7 +374,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   Future<void> _pickAudioFilesAndSave({required bool isMultipleAllowed, bool pickAudioFromFileSystem = false}) async {
     if (_player.loaded) {
-      final shouldOverwrite = await askForOverridingFileOnOpenSelectedAudio(context);
+      final shouldOverwrite = await askForOverridingFileOnOpenFileSelection(context);
       if (shouldOverwrite != true) return;
     }
     try {

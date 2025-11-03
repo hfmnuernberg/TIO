@@ -22,7 +22,7 @@ Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => show
   },
 );
 
-Future<bool?> askForOverridingFileOnOpenSelectedAudio(BuildContext context) => showDialog<bool>(
+Future<bool?> askForOverridingFileOnOpenFileSelection(BuildContext context) => showDialog<bool>(
   context: context,
   builder: (context) {
     final l10n = context.l10n;
