@@ -98,7 +98,7 @@ jobs:
       run: scripts/app.sh outdated
 
     - name: Validate files with too many lines
-      run: scripts/app.sh analyze:files:validate ${{ env.MAX_FILE_COUNT }} ${{ env.MAX_AVG_LENGTH }}
+      run: scripts/app.sh analyze:files ${{ env.MAX_FILE_COUNT }} ${{ env.MAX_AVG_LENGTH }}
 
     - name: Analyze TODOs and FIXMEs
       run: scripts/app.sh analyze:todos || true
