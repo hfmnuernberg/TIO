@@ -13,7 +13,7 @@ jobs:
 
   auto-merge:
     name: Auto-merge
-    uses: ./.github/workflows/reusable-auto-merge.yaml@main
+    uses: ./.github/workflows/reusable-auto-merge.yaml
     secrets: inherit
     permissions:
       contents: write
