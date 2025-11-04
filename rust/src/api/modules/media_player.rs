@@ -1,6 +1,12 @@
+use anyhow::Context;
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use hound::{SampleFormat, WavSpec, WavWriter};
 use lazy_static::__Deref;
+use midly::{MetaMessage, MidiMessage, Smf, TrackEventKind};
 use pitch_shift::PitchShifter;
+use rustysynth::{SoundFont, Synthesizer, SynthesizerSettings};
+use std::fs;
+use std::io::Cursor;
 use std::mem::MaybeUninit;
 use std::ops::DerefMut;
 use std::sync::mpsc::{Receiver, Sender, channel};
@@ -37,6 +43,13 @@ struct AudioProcessingData {
     pitch_shifter: Option<PitchShifter>,
     buffer_after_speed_change: [f32; PITCH_SHIFT_BUFFER_SIZE],
     buffer_after_pitch_shift: [f32; PITCH_SHIFT_BUFFER_SIZE],
+}
+
+#[derive(Clone)]
+struct Ev {
+    t: f64,
+    ch: u8,
+    msg: MidiMessage,
 }
 
 type RingConsumerType = Consumer<f32, Arc<SharedRb<f32, Vec<MaybeUninit<f32>>>>>;
@@ -390,4 +403,139 @@ pub fn media_player_query_state() -> Option<MediaPlayerState> {
         trim_start_factor,
         trim_end_factor,
     })
+}
+
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_render_mid_to_wav(
+    midi_path: String,
+    soundfont_path: String,
+    wav_out_path: String,
+    sample_rate: u32,
+    gain: f32,
+) -> bool {
+    let result = (|| -> anyhow::Result<()> {
+        let midi_bytes =
+            fs::read(&midi_path).with_context(|| format!("reading midi {}", midi_path))?;
+        let smf = Smf::parse(&midi_bytes).context("parsing midi")?;
+
+        let ticks_per_quarter = match smf.header.timing {
+            midly::Timing::Metrical(t) => t.as_int() as f64,
+            _ => 480.0,
+        };
+
+        let mut tempo_changes: Vec<(u32, f64)> = Vec::new();
+        for track in &smf.tracks {
+            let mut tick: u32 = 0;
+            for ev in track {
+                tick = tick.saturating_add(ev.delta.as_int());
+                if let TrackEventKind::Meta(MetaMessage::Tempo(us)) = ev.kind {
+                    tempo_changes.push((tick, us.as_int() as f64));
+                }
+            }
+        }
+        tempo_changes.sort_by_key(|e| e.0);
+
+        let ticks_to_seconds = |abs_tick: u32| -> f64 {
+            let mut secs = 0.0;
+            let mut last_tick: u32 = 0;
+            let mut current_tempo_in_us = 500_000.0;
+            for (t, us) in tempo_changes.iter() {
+                if *t > abs_tick {
+                    break;
+                }
+                let delta_ticks = *t - last_tick;
+                secs +=
+                    (delta_ticks as f64) * current_tempo_in_us / 1_000_000.0 / ticks_per_quarter;
+                last_tick = *t;
+                current_tempo_in_us = *us;
+            }
+            let dt = abs_tick - last_tick;
+            secs += (dt as f64) * current_tempo_in_us / 1_000_000.0 / ticks_per_quarter;
+            secs
+        };
+
+        let sf2_bytes = fs::read(&soundfont_path)
+            .with_context(|| format!("reading soundfont {}", soundfont_path))?;
+        let mut cursor = Cursor::new(sf2_bytes);
+        let sf2 = SoundFont::new(&mut cursor).context("parsing soundfont")?;
+        let sf2 = Arc::new(sf2);
+        let settings = SynthesizerSettings::new(sample_rate as i32);
+        let mut synth = Synthesizer::new(&sf2, &settings).context("creating synthesizer")?;
+        synth.set_master_volume(gain);
+
+        let mut events: Vec<Ev> = Vec::new();
+        for track in &smf.tracks {
+            let mut tick: u32 = 0;
+            for event in track {
+                tick = tick.saturating_add(event.delta.as_int());
+                if let TrackEventKind::Midi { channel, message } = event.kind {
+                    events.push(Ev {
+                        t: ticks_to_seconds(tick),
+                        ch: channel.as_int(),
+                        msg: message,
+                    });
+                }
+            }
+        }
+        events.sort_by(|a, b| a.t.partial_cmp(&b.t).unwrap());
+
+        let spec = WavSpec {
+            channels: 2,
+            sample_rate,
+            bits_per_sample: 16,
+            sample_format: SampleFormat::Int,
+        };
+        let mut writer = WavWriter::create(&wav_out_path, spec)
+            .with_context(|| format!("creating wav {}", wav_out_path))?;
+
+        let mut index = 0usize;
+        let mut time = 0.0f64;
+        let delta_ticks = 128.0 / (sample_rate as f64);
+        let mut left = vec![0.0f32; 128];
+        let mut right = vec![0.0f32; 128];
+        let end = events.last().map(|e| e.t).unwrap_or(0.0) + 2.0;
+
+        while time < end {
+            let next = time + delta_ticks;
+            while index < events.len() && events[index].t < next {
+                let event = &events[index];
+                let ch = event.ch as i32;
+                match event.msg {
+                    MidiMessage::NoteOn { key, vel } => {
+                        let k = key.as_int() as i32;
+                        let v = vel.as_int() as i32;
+                        if v == 0 {
+                            synth.note_off(ch, k);
+                        } else {
+                            synth.note_on(ch, k, v);
+                        }
+                    }
+                    MidiMessage::NoteOff { key, .. } => {
+                        synth.note_off(ch, key.as_int() as i32);
+                    }
+                    _ => {}
+                }
+                index += 1;
+            }
+
+            synth.render(&mut left, &mut right);
+            for i in 0..left.len() {
+                let l = (left[i].clamp(-1.0, 1.0) * i16::MAX as f32) as i16;
+                let r = (right[i].clamp(-1.0, 1.0) * i16::MAX as f32) as i16;
+                writer.write_sample(l)?;
+                writer.write_sample(r)?;
+            }
+            time = next;
+        }
+
+        writer.finalize()?;
+        Ok(())
+    })();
+
+    if let Err(e) = result {
+        log::error!("Error rendering MIDI to WAV: {:?}", e);
+        return false;
+    }
+
+    true
 }

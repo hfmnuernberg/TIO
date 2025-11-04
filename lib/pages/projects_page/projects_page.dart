@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/image_block.dart';
@@ -12,7 +11,7 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/info_pages/about_page.dart';
 import 'package:tiomusic/pages/info_pages/feedback_page.dart';
-import 'package:tiomusic/pages/media_player/media_player.dart';
+import 'package:tiomusic/pages/media_player/media_player_page.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
@@ -25,6 +24,7 @@ import 'package:tiomusic/pages/projects_page/survey_banner.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/project_repository.dart';
+import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
@@ -60,7 +60,10 @@ class _ProjectsPageState extends State<ProjectsPage> {
     _fileReferences = context.read<FileReferences>();
     _projectRepo = context.read<ProjectRepository>();
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
+    });
 
     _showTutorial();
   }
@@ -209,10 +212,10 @@ class _ProjectsPageState extends State<ProjectsPage> {
         toolPage = const Tuner(isQuickTool: true);
       case BlockType.mediaPlayer:
         block = MediaPlayerBlock.withDefaults(context.l10n);
-        toolPage = const MediaPlayer(isQuickTool: true);
+        toolPage = const MediaPlayerPage(isQuickTool: true);
       case BlockType.piano:
         block = PianoBlock.withDefaults(context.l10n);
-        toolPage = const Piano(isQuickTool: true);
+        toolPage = const PianoPage(isQuickTool: true);
       default:
         throw Exception('Wrong BlockType');
     }

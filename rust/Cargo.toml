@@ -19,10 +19,12 @@ chrono = "0.4.42"
 cpal = "0.15.3"
 enum-map = "2.7.3"
 flutter_rust_bridge = "=2.11.1"
+hound = "3.5.1"
 indexed-ring-buffer = "0.1.3"
 lazy_static = "1.5.0"
 lerp = "0.5.0"
 log = "0.4.28"
+midly = "0.5.3"
 num = "0.4.3"
 pitch-detection = "0.3.0"
 pitch_shift = "1.0.0"
@@ -31,7 +33,7 @@ rand = "0.8.5"
 ringbuf = "0.3.3"
 rubato = "0.15.0"
 rustysynth = "1.3.6"
-symphonia = { version = "0.5.4", features = [
+symphonia = { version = "0.5.5", features = [
     "mpa",
     "all-codecs",
     "aiff",

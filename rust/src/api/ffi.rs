@@ -1,7 +1,6 @@
 /***
  * This file contains all functions that are exposed to Flutter.
  */
-
 use flutter_rust_bridge::frb;
 
 use crate::{
@@ -13,9 +12,9 @@ use crate::{
         },
         media_player::{
             MediaPlayerState, media_player_compute_rms, media_player_create_stream,
-            media_player_query_state, media_player_set_buffer, media_player_set_loop_value,
-            media_player_set_new_volume, media_player_set_pitch, media_player_set_pos_factor,
-            media_player_set_speed, media_player_set_trim_by_factor,
+            media_player_query_state, media_player_render_mid_to_wav, media_player_set_buffer,
+            media_player_set_loop_value, media_player_set_new_volume, media_player_set_pitch,
+            media_player_set_pos_factor, media_player_set_speed, media_player_set_trim_by_factor,
             media_player_trigger_destroy_stream,
         },
         metronome::{
@@ -306,6 +305,28 @@ pub fn media_player_set_volume(volume: f32) -> bool {
     log::info!("media player set volume: {}", volume);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
         media_player_set_new_volume(volume)
+    } else {
+        false
+    }
+}
+
+pub fn media_player_render_midi_to_wav(
+    midi_path: String,
+    sound_font_path: String,
+    wav_out_path: String,
+    sample_rate: u32,
+    gain: f32,
+) -> bool {
+    log::info!(
+        "media player render midi to wav: {}, {}, {}, {}, {}",
+        midi_path,
+        sound_font_path,
+        wav_out_path,
+        sample_rate,
+        gain
+    );
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        media_player_render_mid_to_wav(midi_path, sound_font_path, wav_out_path, sample_rate, gain)
     } else {
         false
     }

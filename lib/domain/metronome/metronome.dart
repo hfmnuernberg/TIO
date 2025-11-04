@@ -17,6 +17,7 @@ import 'package:tiomusic/util/log.dart';
 
 const int beatSamplingIntervalInMs = 10;
 const int beatDurationInMs = 100;
+const int visualDelayOnAndroidInMs = 150;
 
 typedef BeatCallback = void Function(MetronomeBeatEvent beat);
 
@@ -142,8 +143,8 @@ class Metronome {
     if (event == null) return;
     if (event.isRandomMute) return;
 
-    final msUntilStart = event.millisecondsBeforeStart;
-    final msUntilStop = event.millisecondsBeforeStart + beatDurationInMs;
+    final msUntilStart = event.millisecondsBeforeStart + (Platform.isAndroid ? visualDelayOnAndroidInMs : 0);
+    final msUntilStop = msUntilStart + beatDurationInMs;
 
     Timer(Duration(milliseconds: msUntilStart), () => _startBeat(event));
     Timer(Duration(milliseconds: msUntilStop), () => _stopBeat(event));

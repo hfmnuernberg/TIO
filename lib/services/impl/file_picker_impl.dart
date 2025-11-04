@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
@@ -31,6 +33,8 @@ class FilePickerImpl implements tio.FilePicker {
 
   @override
   Future<bool> shareFile(String absoluteFilePath) async =>
-      (await SharePlus.instance.share(ShareParams(files: [XFile(absoluteFilePath)]))).status ==
+      (await SharePlus.instance.share(
+        ShareParams(files: [XFile(absoluteFilePath)], sharePositionOrigin: Rect.fromLTWH(0, 0, 1, 1)),
+      )).status ==
       ShareResultStatus.success;
 }

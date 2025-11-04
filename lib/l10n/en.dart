@@ -229,7 +229,8 @@ class English extends AppLocalizations {
   String get pianoLowestKey => 'Lowest piano key';
   String get pianoSetConcertPitch => 'Set concert pitch';
   String get pianoSetSound => 'Set piano sound';
-  String get pianoTutorialAdjust => 'Tap here to adjust concert pitch, volume, and sound.';
+  String get pianoTutorialAdjust =>
+      'Tap here to adjust concert pitch, volume, and sound. If you have selected a sound with a hold function, the H button will no longer appear grayed out.';
   String get pianoTutorialChangeKeyOrOctave => 'Tap the left or right arrows to move up or down per key or per octave.';
   String get pianoTutorialIslandTool =>
       'Tap here to combine your Piano with a Tuner, Media Player, or Metronome.\n\nYou can link your Piano with an existing tool or create a new tool and link it.';
@@ -330,6 +331,8 @@ class English extends AppLocalizations {
   String get tunerDescription => 'Tune your instrument or use reference tones.';
   String get tunerFrequency => 'Frequency';
   String get tunerInstrument => 'Instrument';
+  String get tunerLowFrequencyWarning =>
+      'Low frequencies (<300 Hz) may be hard to hear on some devices. Consider using headphones or increasing the volume.';
   String get tunerPlayReference => 'Play reference';
   String get tunerSetConcertPitch => 'Set concert pitch';
   String get tunerTutorialAdjust => 'Tap here to adjust the concert pitch or play a reference tone.';

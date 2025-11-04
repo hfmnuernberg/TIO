@@ -31,7 +31,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   late WaveformVisualizer _waveformVisualizer;
   double _waveFormWidth = 0;
   final double _waveFormHeight = 200;
-  late int _numOfBins;
   double _sliderValue = 0;
 
   Duration _positionDuration = Duration.zero;
@@ -48,14 +47,13 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     _positionDuration = widget.fileDuration * _sliderValue;
 
-    _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, 0, true);
+    _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, true);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
-      _numOfBins = (_waveFormWidth / MediaPlayerParams.binWidth).floor();
 
       setState(() {
-        _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, _numOfBins, true);
+        _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, true);
       });
     });
   }
@@ -68,64 +66,57 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       title: l10n.mediaPlayerEditMarkers,
       confirm: _onConfirm,
       reset: _removeAllMarkers,
-      customWidget: Expanded(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: TIOMusicParams.edgeInset),
-            Expanded(
-              child:
-                  // stack for waveform and markers
-                  Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
-                        child:
-                            // waveform with gesture detector to jump to position on wave tap
-                            GestureDetector(
-                              onTapDown: _onWaveTap,
-                              child: CustomPaint(
-                                painter: _waveformVisualizer,
-                                size: Size(_waveFormWidth, _waveFormHeight),
-                              ),
-                            ),
-                      ),
-
-                      // markers
-                      Stack(children: _buildMarkers()),
-                    ],
+      customWidget: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: TIOMusicParams.edgeInset),
+          SizedBox(
+            height: _waveFormHeight,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
+                  child: GestureDetector(
+                    onTapDown: _onWaveTap,
+                    child: CustomPaint(painter: _waveformVisualizer, size: Size(_waveFormWidth, _waveFormHeight)),
                   ),
-            ),
-            Slider(
-              value: _sliderValue,
-              inactiveColor: ColorTheme.primary80,
-              divisions: 1000, // how many individual values, only showing labels when division is not null
-              label: l10n.formatDurationWithMillis(_positionDuration),
-              onChanged: (newValue) {
-                setState(() {
-                  _sliderValue = newValue;
-                  _waveformVisualizer = WaveformVisualizer.singleView(newValue, widget.rmsValues, _numOfBins, true);
-                  _positionDuration = widget.fileDuration * _sliderValue;
+                ),
 
-                  if (_selectedMarkerPosition != null) {
-                    for (int i = 0; i < _markerPositions.length; i++) {
-                      if (_markerPositions[i] == _selectedMarkerPosition) {
-                        _markerPositions[i] = _sliderValue;
-                        _selectedMarkerPosition = _sliderValue;
-                      }
+                // markers
+                Stack(children: _buildMarkers()),
+              ],
+            ),
+          ),
+          Slider(
+            value: _sliderValue,
+            inactiveColor: ColorTheme.primary80,
+            divisions: 1000, // how many individual values, only showing labels when division is not null
+            label: l10n.formatDurationWithMillis(_positionDuration),
+            onChanged: (newValue) {
+              setState(() {
+                _sliderValue = newValue;
+                _waveformVisualizer = WaveformVisualizer.singleView(newValue, widget.rmsValues, true);
+                _positionDuration = widget.fileDuration * _sliderValue;
+
+                if (_selectedMarkerPosition != null) {
+                  for (int i = 0; i < _markerPositions.length; i++) {
+                    if (_markerPositions[i] == _selectedMarkerPosition) {
+                      _markerPositions[i] = _sliderValue;
+                      _selectedMarkerPosition = _sliderValue;
                     }
                   }
-                });
-              },
-              onChangeEnd: (newValue) {
-                _sliderValue = newValue;
-              },
-            ),
-            const SizedBox(height: TIOMusicParams.edgeInset),
-            _listButtons(Icons.add, l10n.mediaPlayerAddMarker, _addNewMarker),
-            _listButtons(Icons.delete_outlined, l10n.mediaPlayerRemoveMarker, _removeSelectedMarker),
-          ],
-        ),
+                }
+              });
+            },
+            onChangeEnd: (newValue) {
+              _sliderValue = newValue;
+            },
+          ),
+          const SizedBox(height: TIOMusicParams.edgeInset),
+          _listButtons(Icons.add, l10n.mediaPlayerAddMarker, _addNewMarker),
+          _listButtons(Icons.delete_outlined, l10n.mediaPlayerRemoveMarker, _removeSelectedMarker),
+        ],
       ),
     );
   }
@@ -171,7 +162,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             if (!selected) {
               setState(() {
                 _sliderValue = pos;
-                _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, _numOfBins, true);
+                _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
                 _selectedMarkerPosition = pos;
               });
             }
@@ -211,7 +202,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     setState(() {
       _sliderValue = relativeTapPosition;
-      _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, _numOfBins, true);
+      _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
     });
 
     double? foundMarkerPosition;

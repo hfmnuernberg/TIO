@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project.dart';
@@ -36,9 +35,6 @@ class _TextToolState extends State<TextTool> {
     _textBlock = Provider.of<ProjectBlock>(context, listen: false) as TextBlock;
     _textBlock.timeLastModified = getCurrentDateTime();
 
-    // only allow portrait mode for this tool
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
-
     _textController.text = _textBlock.content;
 
     // Start listening to changes. These functions are called for evey little change in the text field
@@ -49,7 +45,6 @@ class _TextToolState extends State<TextTool> {
   @override
   void dispose() {
     _textController.dispose();
-
     super.dispose();
   }
 

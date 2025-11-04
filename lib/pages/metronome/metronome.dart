@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/app.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -76,7 +75,6 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
   void initState() {
     super.initState();
 
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     VolumeController.instance.addListener(handleVolumeChange);
 
     projectRepo = context.read<ProjectRepository>();
@@ -455,7 +453,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
           subtitle: l10n.formatNumber(metronomeBlock.volume),
           leadingIcon: Icons.volume_up,
           settingPage: SetVolume(
-            initialValue: metronomeBlock.volume,
+            initialVolume: metronomeBlock.volume,
             onChange: (vol) => metronome.setVolume(vol),
             onConfirm: (vol) {
               metronomeBlock.volume = vol;

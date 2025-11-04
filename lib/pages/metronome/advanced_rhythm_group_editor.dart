@@ -239,6 +239,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    const double maxBeatCircleDiameter = 520;
 
     return ParentSettingPage(
       title: l10n.metronomeSetBpm,
@@ -250,45 +251,62 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
         padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
         child: Column(
           children: [
-            Stack(
-              key: keyToggleBeats,
-              alignment: AlignmentDirectional.center,
-              children: [
-                BeatCircle(
-                  beatCount: mainBeats.length,
-                  beatTypes: BeatButtonType.fromMainBeatTypes(mainBeats),
-                  currentBeatIndex: metronome.currentBeat.mainBeatIndex,
-                  isPlaying: metronome.isOn,
-                  centerWidgetRadius: MediaQuery.of(context).size.width / 3,
-                  buttonSize: TIOMusicParams.beatButtonSizeBig,
-                  beatButtonColor: ColorTheme.surfaceTint,
-                  noInnerBorder: true,
-                  onStartStop: startStopBeatPlayback,
-                  onTap: (index) {
-                    setState(() {
-                      mainBeats[index] = getBeatTypeOnTap(mainBeats[index]);
-                      refreshRhythm();
-                    });
-                  },
-                ),
-                BeatCircle(
-                  beatCount: polyBeats.length,
-                  beatTypes: BeatButtonType.fromPolyBeatTypes(polyBeats),
-                  currentBeatIndex: metronome.currentBeat.polyBeatIndex,
-                  isPlaying: metronome.isOn,
-                  centerWidgetRadius: MediaQuery.of(context).size.width / 5,
-                  buttonSize: TIOMusicParams.beatButtonSizeSmall,
-                  beatButtonColor: ColorTheme.primary60,
-                  noInnerBorder: false,
-                  onStartStop: startStopBeatPlayback,
-                  onTap: (index) {
-                    setState(() {
-                      polyBeats[index] = getBeatTypePolyOnTap(polyBeats[index]);
-                      refreshRhythm();
-                    });
-                  },
-                ),
-              ],
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final double diameter = constraints.maxWidth < maxBeatCircleDiameter
+                    ? constraints.maxWidth
+                    : maxBeatCircleDiameter;
+
+                final double outerRadius = (diameter / 2) - (TIOMusicParams.beatButtonSizeBig / 2) - 16;
+                final double innerRadius = outerRadius * 0.6;
+
+                return Center(
+                  child: SizedBox(
+                    width: diameter,
+                    height: diameter,
+                    child: Stack(
+                      key: keyToggleBeats,
+                      alignment: AlignmentDirectional.center,
+                      children: [
+                        BeatCircle(
+                          beatCount: mainBeats.length,
+                          beatTypes: BeatButtonType.fromMainBeatTypes(mainBeats),
+                          currentBeatIndex: metronome.currentBeat.mainBeatIndex,
+                          isPlaying: metronome.isOn,
+                          centerWidgetRadius: outerRadius,
+                          buttonSize: TIOMusicParams.beatButtonSizeBig,
+                          beatButtonColor: ColorTheme.surfaceTint,
+                          noInnerBorder: true,
+                          onStartStop: startStopBeatPlayback,
+                          onTap: (index) {
+                            setState(() {
+                              mainBeats[index] = getBeatTypeOnTap(mainBeats[index]);
+                              refreshRhythm();
+                            });
+                          },
+                        ),
+                        BeatCircle(
+                          beatCount: polyBeats.length,
+                          beatTypes: BeatButtonType.fromPolyBeatTypes(polyBeats),
+                          currentBeatIndex: metronome.currentBeat.polyBeatIndex,
+                          isPlaying: metronome.isOn,
+                          centerWidgetRadius: innerRadius,
+                          buttonSize: TIOMusicParams.beatButtonSizeSmall,
+                          beatButtonColor: ColorTheme.primary60,
+                          noInnerBorder: false,
+                          onStartStop: startStopBeatPlayback,
+                          onTap: (index) {
+                            setState(() {
+                              polyBeats[index] = getBeatTypePolyOnTap(polyBeats[index]);
+                              refreshRhythm();
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
 
             Row(

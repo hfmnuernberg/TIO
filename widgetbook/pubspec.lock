@@ -641,10 +641,10 @@ packages:
     dependency: transitive
     description:
       name: logger
-      sha256: "55d6c23a6c15db14920e037fe7e0dc32e7cdaf3b64b4b25df2d541b5b6b81c0c"
+      sha256: a7967e31b703831a893bbc3c3dd11db08126fe5f369b5c648a36f821979f5be3
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.1"
+    version: "2.6.2"
   logging:
     dependency: transitive
     description:
@@ -1260,10 +1260,10 @@ packages:
     dependency: "direct main"
     description:
       name: widgetbook_annotation
-      sha256: d29eef40efac4beb51f5e9d3bb6dd800db986f7020822b06b60d27f0299dac49
+      sha256: "67b922ebc5d7d9578d4a2d9b7ec6f955fc2ac06aac9d335995e6da255a3825b5"
       url: "https://pub.dev"
     source: hosted
-    version: "3.7.0"
+    version: "3.8.0"
   widgetbook_generator:
     dependency: "direct dev"
     description:

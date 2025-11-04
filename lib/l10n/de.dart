@@ -137,7 +137,7 @@ class German extends AppLocalizations {
   String get mediaPlayerTutorialJumpTo =>
       'Tippe auf eine beliebige Stelle, um zu diesem Teil deiner Audiodatei zu springen.';
   String get mediaPlayerTutorialRepeat =>
-      'Aktiviere die wiederholte Wiedergabe für diesen Media Player. Durch erneutes antippen kannst du auch alle Media Player in diesem Projekt, die eine Sound-Datei beinhalten, hintereinander abspielen.';
+      'Aktiviere die wiederholte Wiedergabe für diesen Media Player. Durch erneutes Antippen kannst du auch alle Media Player in diesem Projekt, die eine Sound-Datei beinhalten, hintereinander abspielen.';
   String get mediaPlayerTutorialStartStop =>
       'Tippe hier, um die Aufnahme zu starten und zu stoppen oder um eine Audiodatei abzuspielen.';
 
@@ -231,7 +231,8 @@ class German extends AppLocalizations {
   String get pianoLowestKey => 'Tiefste Taste';
   String get pianoSetConcertPitch => 'Kammerton einstellen';
   String get pianoSetSound => 'Piano-Sound einstellen';
-  String get pianoTutorialAdjust => 'Tippe hier, um den Kammerton, die Lautstärke oder den Klang anzupassen.';
+  String get pianoTutorialAdjust =>
+      'Tippe hier, um den Kammerton, die Lautstärke oder den Klang anzupassen. Wenn Du einen Klang mit Hold-Funktion ausgewählt hast, erscheint die H-Taste nicht mehr ausgegraut.';
   String get pianoTutorialChangeKeyOrOctave =>
       'Tippe auf die Pfeile links oder rechts, um die Tastatur um eine Taste oder um eine Oktave nach oben oder unten zu verschieben.';
   String get pianoTutorialIslandTool =>
@@ -256,7 +257,7 @@ class German extends AppLocalizations {
   String get projectToolList => 'Tool-Liste';
   String get projectToolListEmpty => 'Leere Tool-Liste';
   String get projectTutorialChangeToolOrder =>
-      'Tippe auf das Plus-Symbol, um ein neues Tool hinzuzufügen oder auf das Stift-Symbol um die Tools zu bearbeiten.';
+      'Tippe auf das Plus-Symbol, um ein neues Tool hinzuzufügen oder auf das Stift-Symbol, um die Tools zu bearbeiten.';
   String get projectTutorialEditTitle => 'Tippe hier, um den Projekttitel zu bearbeiten.';
 
   String get projectsAbout => 'Projekte';
@@ -279,7 +280,7 @@ class German extends AppLocalizations {
   String get projectsTutorialCanIncludeMultipleTools =>
       'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Piano, Media Player, Bild und Text),\nund sogar mehrere Tools desselben Typs.';
   String get projectsTutorialChangeProjectOrder =>
-      'Tippe auf das Plus-Symbol, um ein neues Projekt hinzuzufügen oder auf das Stift-Symbol um die Projekte zu bearbeiten.';
+      'Tippe auf das Plus-Symbol, um ein neues Projekt hinzuzufügen oder auf das Stift-Symbol, um die Projekte zu bearbeiten.';
   String get projectsTutorialHowToUseTio =>
       'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
   String get projectsTutorialStart => 'Tutorial anzeigen';
@@ -333,6 +334,8 @@ class German extends AppLocalizations {
   String get tunerDescription => 'Stimme dein Instrument oder nutze Referenztöne.';
   String get tunerFrequency => 'Frequenz';
   String get tunerInstrument => 'Instrument';
+  String get tunerLowFrequencyWarning =>
+      'Tiefe Frequenzen (<300 Hz) sind auf manchen Geräten möglicherweise schwer zu hören. Die Verwendung von Kopfhörern oder das Erhöhen der Lautstärke kann bedingt helfen.';
   String get tunerPlayReference => 'Referenzton abspielen';
   String get tunerSetConcertPitch => 'Kammerton einstellen';
   String get tunerTutorialAdjust => 'Tippe hier, um den Kammerton anzupassen oder einen Referenzton abzuspielen.';

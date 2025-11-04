@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:tiomusic/src/rust/api/api.dart' as rust;
 import 'package:tiomusic/services/audio_system.dart';
+import 'package:tiomusic/src/rust/api/ffi.dart' as rust;
 import 'package:tiomusic/src/rust/api/modules/media_player.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
@@ -81,6 +81,21 @@ class RustBasedAudioSystem implements AudioSystem {
 
   @override
   Future<bool> mediaPlayerSetVolume({required double volume}) async => rust.mediaPlayerSetVolume(volume: volume);
+
+  @override
+  Future<bool> mediaPlayerRenderMidiToWav({
+    required String midiPath,
+    required String soundFontPath,
+    required String wavOutPath,
+    required int sampleRate,
+    required double gain,
+  }) async => rust.mediaPlayerRenderMidiToWav(
+    midiPath: midiPath,
+    soundFontPath: soundFontPath,
+    wavOutPath: wavOutPath,
+    sampleRate: sampleRate,
+    gain: gain,
+  );
 
   @override
   Future<bool> metronomeStart() async => rust.metronomeStart();

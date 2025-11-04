@@ -4,8 +4,6 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 
 class WaveformVisualizer extends CustomPainter {
-  final int _numOfBins;
-
   final Float32List _rmsValues;
 
   double? _playbackPosition;
@@ -13,11 +11,11 @@ class WaveformVisualizer extends CustomPainter {
   double? _rangeEndPos;
   bool _singleView = false;
 
-  WaveformVisualizer(this._playbackPosition, this._rangeStartPos, this._rangeEndPos, this._rmsValues, this._numOfBins);
+  WaveformVisualizer(this._playbackPosition, this._rangeStartPos, this._rangeEndPos, this._rmsValues);
 
-  WaveformVisualizer.singleView(this._playbackPosition, this._rmsValues, this._numOfBins, this._singleView);
+  WaveformVisualizer.singleView(this._playbackPosition, this._rmsValues, this._singleView);
 
-  WaveformVisualizer.setTrim(this._rangeStartPos, this._rangeEndPos, this._rmsValues, this._numOfBins);
+  WaveformVisualizer.setTrim(this._rangeStartPos, this._rangeEndPos, this._rmsValues);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -35,23 +33,31 @@ class WaveformVisualizer extends CustomPainter {
       ..color = ColorTheme.primary95
       ..strokeWidth = MediaPlayerParams.binWidth / 2.0;
 
-    double stepSize = MediaPlayerParams.binWidth / 2.0;
+    if (_rmsValues.isEmpty || size.width <= 0 || size.height <= 0) return;
 
-    // this is if calling the standard constructor or the singleView constructor
+    final int numberOfBins = _rmsValues.length;
+    final double contentUnits = (numberOfBins > 1 ? (numberOfBins - 1) : 1) * MediaPlayerParams.binWidth;
+
+    final double halfStroke = _halfStroke();
+    final double drawableWidth = (size.width - 2 * halfStroke).clamp(0.0, size.width);
+    final double scaleX = drawableWidth / contentUnits;
+
+    canvas.save();
+    canvas.clipRect(Offset.zero & size);
+
     if (_playbackPosition != null) {
-      double playbackPositionMapped = _playbackPosition! * _numOfBins;
+      double playbackPositionMapped = _playbackPosition! * numberOfBins;
 
       for (int i = 0; i < _rmsValues.length; i++) {
         var brush = blueBrush;
-        // if calling with singleView constructor
+
         if (_singleView) {
           if (i >= playbackPositionMapped - 1.0 && i <= playbackPositionMapped) {
             brush = redBrush;
           }
-          // else calling with standard constructor
         } else {
-          double rangeStartMapped = _rangeStartPos! * _numOfBins;
-          double rangeEndMapped = _rangeEndPos! * _numOfBins;
+          double rangeStartMapped = _rangeStartPos! * numberOfBins;
+          double rangeEndMapped = _rangeEndPos! * numberOfBins;
 
           if (i < rangeStartMapped || i > rangeEndMapped) {
             brush = lightBlueBrush;
@@ -62,45 +68,59 @@ class WaveformVisualizer extends CustomPainter {
           }
         }
 
-        _drawWaveLine(canvas, size, stepSize, midAxisHeight, i, brush);
-        stepSize = stepSize + MediaPlayerParams.binWidth;
+        final double x = halfStroke + (i * MediaPlayerParams.binWidth) * scaleX;
+        _drawWaveLine(canvas, size, x, midAxisHeight, i, brush);
       }
-      // this is if calling the setTrim constructor
     } else if (_rangeStartPos != null && _rangeEndPos != null) {
-      double startPositionMapped = _rangeStartPos! * _numOfBins;
-      double endPositionMapped = _rangeEndPos! * _numOfBins;
+      double startPositionMapped = _rangeStartPos! * numberOfBins;
+      double endPositionMapped = _rangeEndPos! * numberOfBins;
 
       for (int i = 0; i < _rmsValues.length; i++) {
         var brush = i >= startPositionMapped && i <= endPositionMapped ? redBrush : blueBrush;
 
-        _drawWaveLine(canvas, size, stepSize, midAxisHeight, i, brush);
-        stepSize = stepSize + MediaPlayerParams.binWidth;
+        final double x = halfStroke + (i * MediaPlayerParams.binWidth) * scaleX;
+        _drawWaveLine(canvas, size, x, midAxisHeight, i, brush);
       }
     }
+
+    canvas.restore();
   }
 
-  void _drawWaveLine(Canvas canvas, Size size, double stepSize, var midAxisHeight, int i, Paint brush) {
-    canvas.drawLine(
-      Offset(stepSize, midAxisHeight),
-      Offset(stepSize, midAxisHeight - (_rmsValues[i] * (size.height / 2.2))),
-      brush,
-    );
+  void _drawWaveLine(Canvas canvas, Size size, double x, var midAxisHeight, int i, Paint brush) {
+    canvas.drawLine(Offset(x, midAxisHeight), Offset(x, midAxisHeight - (_rmsValues[i] * (size.height / 2.2))), brush);
 
-    canvas.drawLine(
-      Offset(stepSize, midAxisHeight),
-      Offset(stepSize, midAxisHeight + (_rmsValues[i] * (size.height / 2.2))),
-      brush,
-    );
+    canvas.drawLine(Offset(x, midAxisHeight), Offset(x, midAxisHeight + (_rmsValues[i] * (size.height / 2.2))), brush);
+  }
+
+  static double _halfStroke() => MediaPlayerParams.binWidth / 4.0;
+  static double _contentUnits(int n) => (n > 1 ? (n - 1) : 1) * MediaPlayerParams.binWidth;
+  static double computeScaleX(double availableWidth, int n) {
+    final double drawableWidth = (availableWidth - 2 * _halfStroke()).clamp(0.0, availableWidth);
+    final double units = _contentUnits(n);
+    return units > 0 ? (drawableWidth / units) : 1.0;
+  }
+
+  static double xForIndex(int i, double availableWidth, int n) {
+    final double scaleX = computeScaleX(availableWidth, n);
+    return _halfStroke() + (i * MediaPlayerParams.binWidth) * scaleX;
+  }
+
+  static int indexForX(double x, double availableWidth, int n) {
+    if (n <= 1) return 0;
+    final double scaleX = computeScaleX(availableWidth, n);
+    final double raw = (x - _halfStroke()) / (MediaPlayerParams.binWidth * scaleX);
+    final double clamped = raw.clamp(0.0, (n - 1).toDouble());
+    return clamped.round();
+  }
+
+  static int calculateBinCountForWidth(double availableWidth) {
+    final double drawableWidth = (availableWidth - 2 * _halfStroke()).clamp(0.0, availableWidth);
+    if (drawableWidth <= 0) return 1;
+    return drawableWidth ~/ MediaPlayerParams.binWidth + 1;
   }
 
   @override
   bool shouldRepaint(WaveformVisualizer oldDelegate) {
-    if (_playbackPosition != oldDelegate._playbackPosition ||
-        _rmsValues != oldDelegate._rmsValues ||
-        _rangeStartPos != oldDelegate._rangeStartPos ||
-        _rangeEndPos != oldDelegate._rangeEndPos) {
-      return true;
-    }
-    return false;
+    return true;
   }
 }
