@@ -14,6 +14,7 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/markers/edit_markers_page.dart';
+import 'package:tiomusic/pages/media_player/media_player_dialogs.dart';
 import 'package:tiomusic/pages/media_player/media_player_repeat_button.dart';
 import 'package:tiomusic/pages/media_player/set_bpm.dart';
 import 'package:tiomusic/pages/media_player/set_pitch.dart';
@@ -374,7 +375,12 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   Future<void> _pickAudioFilesAndSave({required bool isMultipleAllowed, bool pickAudioFromFileSystem = false}) async {
+    if (_player.loaded) {
+      final shouldOverwrite = await askForOverridingFileOnOpenFileSelection(context);
+      if (shouldOverwrite != true) return;
+    }
     try {
+      if (!mounted) return;
       final audioPaths = await _pickAudioFiles(
         context: context,
         projectLibrary: context.read<ProjectLibrary>(),
