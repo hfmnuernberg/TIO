@@ -27,6 +27,8 @@ class Markers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final int binCount = rmsValues.length;
+    final double markerTop = (waveFormHeight / 2) - MediaPlayerParams.markerIconSize - 20;
+
     return Stack(
       children: markerPositions.map((position) {
         final bool isSelected = selectedMarkerPosition != null && position == selectedMarkerPosition;
@@ -35,7 +37,12 @@ class Markers extends StatelessWidget {
         final double markerCenter = WaveformVisualizer.xForIndex(markerBinIndex, paintedWidth, binCount);
         final double markerLeft = TIOMusicParams.edgeInset + (markerCenter - (MediaPlayerParams.markerButton / 2));
 
-        return MarkerButton(startPosition: markerLeft, isSelected: isSelected, onTap: () => onTap(position));
+        return MarkerButton(
+          startPosition: markerLeft,
+          topPosition: markerTop,
+          isSelected: isSelected,
+          onTap: () => onTap(position),
+        );
       }).toList(),
     );
   }
@@ -43,16 +50,23 @@ class Markers extends StatelessWidget {
 
 class MarkerButton extends StatelessWidget {
   final double startPosition;
+  final double topPosition;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const MarkerButton({super.key, required this.startPosition, required this.isSelected, required this.onTap});
+  const MarkerButton({
+    super.key,
+    required this.startPosition,
+    required this.topPosition,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
       left: startPosition,
-      top: (MediaQuery.of(context).size.height / 2) - MediaPlayerParams.markerIconSize - 20,
+      top: topPosition,
       child: IconButton(
         icon: Icon(
           isSelected ? Icons.arrow_drop_down_circle_outlined : Icons.arrow_drop_down,

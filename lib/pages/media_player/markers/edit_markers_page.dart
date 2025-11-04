@@ -139,7 +139,11 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
           ),
           const SizedBox(height: TIOMusicParams.edgeInset),
           SettingsButton(icon: Icons.add, title: l10n.mediaPlayerAddMarker, onTap: _addNewMarker),
-          SettingsButton(icon: Icons.delete_outlined, title: l10n.mediaPlayerRemoveMarker, onTap: _removeSelectedMarker),
+          SettingsButton(
+            icon: Icons.delete_outlined,
+            title: l10n.mediaPlayerRemoveMarker,
+            onTap: _removeSelectedMarker,
+          ),
         ],
       ),
     );
