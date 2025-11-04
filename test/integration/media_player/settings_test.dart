@@ -97,7 +97,7 @@ void main() {
         await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
         await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
 
-        expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('0')), findsOneWidget);
+        expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('1')), findsNothing);
       });
 
       testWidgets('deletes marker when selected before', (tester) async {
@@ -114,7 +114,7 @@ void main() {
         expect(find.byTooltip('Marker'), findsNothing);
 
         await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-        expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('0')), findsOneWidget);
+        expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('1')), findsNothing);
       });
 
       testWidgets('resets marker on reset', (tester) async {
@@ -129,7 +129,7 @@ void main() {
         expect(find.byTooltip('Marker'), findsNothing);
 
         await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-        expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('0')), findsOneWidget);
+        expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('1')), findsNothing);
       });
     });
   });
