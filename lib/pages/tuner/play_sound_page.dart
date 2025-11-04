@@ -10,6 +10,7 @@ import 'package:tiomusic/pages/tuner/tuner_functions.dart';
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/wakelock.dart';
+import 'package:tiomusic/util/app_snackbar.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
@@ -90,8 +91,16 @@ class _PlaySoundPageState extends State<PlaySoundPage> {
       return;
     }
 
+    final freq = midiToFreq(midiNumber, concertPitch: tunerBlock.chamberNoteHz);
+    const minHzWarningThreshold = 300.0;
+
     await _as.generatorNoteOn(newFreq: midiToFreq(midiNumber, concertPitch: tunerBlock.chamberNoteHz));
     setState(() => midi = midiNumber);
+
+    if (freq < minHzWarningThreshold) {
+      if (!mounted) return;
+      showSnackbar(context: context, message: context.l10n.tunerLowFrequencyWarning)();
+    }
   }
 
   @override

@@ -13,7 +13,7 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/image/image_page.dart';
-import 'package:tiomusic/pages/media_player/media_player.dart';
+import 'package:tiomusic/pages/media_player/media_player_page.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/text/text.dart';
@@ -342,7 +342,7 @@ Future<dynamic> goToTool(
     builder: (context, child) {
       if (block is TunerBlock) return const Tuner(isQuickTool: false);
       if (block is MetronomeBlock) return const MetronomePage(isQuickTool: false);
-      if (block is MediaPlayerBlock) return MediaPlayer(isQuickTool: false, shouldAutoplay: shouldAutoplay);
+      if (block is MediaPlayerBlock) return MediaPlayerPage(isQuickTool: false, shouldAutoplay: shouldAutoplay);
       if (block is ImageBlock) return const ImageTool(isQuickTool: false);
       if (block is PianoBlock) return PianoPage(isQuickTool: false, withoutInitAndStart: pianoAlreadyOn);
       if (block is TextBlock) return const TextTool(isQuickTool: false);
@@ -350,11 +350,8 @@ Future<dynamic> goToTool(
     },
   );
 
-  final route = MaterialPageRoute(builder: (context) => page);
-  final routeWithTransition = DirectionalPageRoute(
-    builder: (context) => page,
-    transitionLeftToRight: transitionLeftToRight,
-  );
+  final route = MaterialPageRoute(builder: (_) => page);
+  final routeWithTransition = DirectionalPageRoute(builder: (_) => page, transitionLeftToRight: transitionLeftToRight);
 
   return replace ? Navigator.of(context).pushReplacement(routeWithTransition) : Navigator.of(context).push(route);
 }
