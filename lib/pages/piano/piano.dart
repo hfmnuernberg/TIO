@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/domain/piano/piano.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -18,6 +17,7 @@ import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
+import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
@@ -80,9 +80,6 @@ class _PianoPageState extends State<PianoPage> {
     _projectRepo = context.read<ProjectRepository>();
     _fs = context.read<FileSystem>();
 
-    // lock screen to only use landscape
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight, DeviceOrientation.landscapeLeft]);
-
     _toolTitleFieldFocus = FocusNode();
 
     _pianoBlock = Provider.of<ProjectBlock>(context, listen: false) as PianoBlock;
@@ -105,6 +102,8 @@ class _PianoPageState extends State<PianoPage> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      AppOrientation.set(context, policy: OrientationPolicy.phoneLandscape);
       _createTutorial();
       _tutorial.show(context);
     });
@@ -143,14 +142,8 @@ class _PianoPageState extends State<PianoPage> {
         CustomTargetFocus(
           _keyChangeTitle,
           l10n.toolTutorialEditTitle,
-          alignText: ContentAlign.custom,
-          customTextPosition: CustomTargetContentPosition(
-            top: MediaQuery.of(context).size.height / 10,
-            left: MediaQuery.of(context).size.width / 4,
-            right: MediaQuery.of(context).size.width,
-          ),
-          pointingDirection: PointingDirection.up,
-          pointerOffset: -60,
+          alignText: ContentAlign.right,
+          pointingDirection: PointingDirection.left,
           shape: ShapeLightFocus.RRect,
           buttonsPosition: ButtonsPosition.bottomright,
         ),
@@ -159,7 +152,6 @@ class _PianoPageState extends State<PianoPage> {
           _keyOctaveSwitch,
           l10n.pianoTutorialChangeKeyOrOctave,
           alignText: ContentAlign.right,
-          pointerPosition: PointerPosition.right,
           pointingDirection: PointingDirection.left,
           shape: ShapeLightFocus.RRect,
           buttonsPosition: ButtonsPosition.bottomright,
@@ -185,8 +177,8 @@ class _PianoPageState extends State<PianoPage> {
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             top: MediaQuery.of(context).size.height / 8,
-            left: MediaQuery.of(context).size.width / 2,
-            right: MediaQuery.of(context).size.width / 2,
+            left: MediaQuery.of(context).size.width / 6,
+            right: MediaQuery.of(context).size.width / 3,
           ),
           pointingDirection: PointingDirection.up,
           pointerOffset: 120,
@@ -245,7 +237,7 @@ class _PianoPageState extends State<PianoPage> {
   Future<void> handleOnOpenVolume() async {
     await openSettingPage(
       SetVolume(
-        initialValue: _pianoBlock.volume,
+        initialVolume: _pianoBlock.volume,
         onConfirm: (vol) {
           _pianoBlock.volume = vol;
           piano.setVolume(vol);
@@ -297,29 +289,30 @@ class _PianoPageState extends State<PianoPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // close button
                 BackButton(
                   color: ColorTheme.primary,
                   onPressed: () async {
-                    // if quick tool and values have been changed: ask for saving
+                    final navigator = Navigator.of(context);
+
                     if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(_pianoBlock, l10n)) {
                       final save = await askForSavingQuickTool(context);
-
-                      // if user taps outside the dialog, we dont want to exit the quick tool and we dont want to save
+                      if (!context.mounted) return;
                       if (save == null) return;
 
                       if (save) {
                         setState(() {
                           _showSavingPage = true;
                         });
-                      } else {
-                        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-                        if (context.mounted) Navigator.of(context).pop();
+                        return;
                       }
-                    } else {
-                      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-                      Navigator.of(context).pop();
+
+                      AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
+                      navigator.pop();
+                      return;
                     }
+
+                    AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
+                    navigator.pop();
                   },
                 ),
 

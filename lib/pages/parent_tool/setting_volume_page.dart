@@ -10,18 +10,19 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_dec.dart';
 import 'package:volume_controller/volume_controller.dart';
 
+const defaultVolume = 0.5;
 const maxVolume = 1.0;
 const minVolume = 0.0;
 
 class SetVolume extends StatefulWidget {
-  final double initialValue;
+  final double initialVolume;
   final Function(double) onConfirm;
   final Function(double) onChange;
   final Function() onCancel;
 
   const SetVolume({
     super.key,
-    required this.initialValue,
+    required this.initialVolume,
     required this.onConfirm,
     required this.onChange,
     required this.onCancel,
@@ -39,7 +40,7 @@ class _SetVolumeState extends State<SetVolume> {
   void initState() {
     super.initState();
     VolumeController.instance.addListener(_handleDeviceVolumeChange);
-    volume = widget.initialValue;
+    volume = widget.initialVolume;
   }
 
   @override
@@ -55,7 +56,7 @@ class _SetVolumeState extends State<SetVolume> {
     widget.onChange(volume);
   }
 
-  void _handleReset() => _handleChange(widget.initialValue);
+  void _handleReset() => _handleChange(defaultVolume);
 
   void _handleConfirm() async {
     widget.onConfirm(volume);

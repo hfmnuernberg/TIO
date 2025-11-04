@@ -5,7 +5,7 @@ import 'package:tiomusic/util/constants.dart';
 
 class CardListTile extends StatelessWidget {
   final String title;
-  final String? subtitle;
+  final Object? subtitle;
 
   // those three should be of the same type (IconButton or Icon), otherwise the spacing is problematic
   final IconButton trailingIcon;
@@ -55,8 +55,8 @@ class CardListTile extends StatelessWidget {
               style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
             ),
           ),
-          subtitle: Text(subtitle ?? '', style: TextStyle(color: textColor)),
-          leading: _showPicture(leadingPicture),
+          subtitle: _Subtitle(subtitle: subtitle, textColor: textColor),
+          leading: _LeadingPicture(picture: leadingPicture, color: leadingIconColor),
           titleAlignment: ListTileTitleAlignment.titleHeight,
           trailing: Wrap(
             spacing: 2, // space between two icons
@@ -67,20 +67,60 @@ class CardListTile extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _showPicture(Object picture) {
-    if (picture is ImageProvider) {
-      return AspectRatio(
-        aspectRatio: 1,
-        child: Image(image: picture, fit: BoxFit.cover),
-      );
-    } else if (picture is String) {
-      return CircleAvatar(
-        backgroundColor: ColorTheme.surface,
-        child: SvgPicture.asset(picture, colorFilter: ColorFilter.mode(leadingIconColor, BlendMode.srcIn)),
-      );
-    } else {
-      return CircleAvatar(backgroundColor: ColorTheme.surface, child: picture as Widget?);
+class _LeadingPicture extends StatelessWidget {
+  final Object picture;
+  final Color color;
+
+  const _LeadingPicture({required this.picture, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    switch (picture) {
+      case ImageProvider image:
+        return AspectRatio(
+          aspectRatio: 1,
+          child: Image(image: image, fit: BoxFit.cover),
+        );
+      case String assetPath:
+        return CircleAvatar(
+          backgroundColor: ColorTheme.surface,
+          child: SvgPicture.asset(assetPath, colorFilter: ColorFilter.mode(color, BlendMode.srcIn)),
+        );
+      case Widget widget:
+        return CircleAvatar(backgroundColor: ColorTheme.surface, child: widget);
+      default:
+        return const CircleAvatar(backgroundColor: ColorTheme.surface);
+    }
+  }
+}
+
+class _Subtitle extends StatelessWidget {
+  final Object? subtitle;
+  final Color textColor;
+
+  const _Subtitle({required this.subtitle, required this.textColor});
+
+  @override
+  Widget build(BuildContext context) {
+    switch (subtitle) {
+      case final String text:
+        return Text(text, style: TextStyle(color: textColor));
+      case ImageProvider image:
+        return Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: SizedBox(
+              width: 56,
+              height: 56,
+              child: Image(image: image, fit: BoxFit.cover),
+            ),
+          ),
+        );
+      default:
+        return Text('', style: TextStyle(color: textColor));
     }
   }
 }
