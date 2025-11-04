@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/pages/media_player/markers/markers.dart';
+import 'package:tiomusic/pages/media_player/markers/setting_button.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -61,9 +63,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
 
-      setState(() {
-        _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, true);
-      });
+      setState(() => _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, true));
     });
   }
 
@@ -97,8 +97,20 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                   ),
                 ),
 
-                // markers
-                Stack(children: _buildMarkers()),
+                Markers(
+                  rmsValues: widget.rmsValues,
+                  paintedWidth: _paintedWaveWidth,
+                  waveFormHeight: _waveFormHeight,
+                  markerPositions: _markerPositions,
+                  selectedMarkerPosition: _selectedMarkerPosition,
+                  onTap: (position) {
+                    setState(() {
+                      _sliderValue = position;
+                      _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
+                      _selectedMarkerPosition = position;
+                    });
+                  },
+                ),
               ],
             ),
           ),
@@ -123,76 +135,14 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                 }
               });
             },
-            onChangeEnd: (newValue) {
-              _sliderValue = newValue;
-            },
+            onChangeEnd: (newValue) => _sliderValue = newValue,
           ),
           const SizedBox(height: TIOMusicParams.edgeInset),
-          _listButtons(Icons.add, l10n.mediaPlayerAddMarker, _addNewMarker),
-          _listButtons(Icons.delete_outlined, l10n.mediaPlayerRemoveMarker, _removeSelectedMarker),
+          SettingButton(icon: Icons.add, title: l10n.mediaPlayerAddMarker, onTap: _addNewMarker),
+          SettingButton(icon: Icons.delete_outlined, title: l10n.mediaPlayerRemoveMarker, onTap: _removeSelectedMarker),
         ],
       ),
     );
-  }
-
-  Widget _listButtons(IconData icon, String title, Function onTapFunction) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: TIOMusicParams.edgeInset,
-        right: TIOMusicParams.edgeInset,
-        top: 4,
-        bottom: 4,
-      ),
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
-        tileColor: ColorTheme.surface,
-        textColor: ColorTheme.surfaceTint,
-        iconColor: ColorTheme.primary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        onTap: () {
-          onTapFunction();
-        },
-      ),
-    );
-  }
-
-  List<Widget> _buildMarkers() {
-    List<Widget> markers = List.empty(growable: true);
-
-    for (final pos in _markerPositions) {
-      bool selected = _selectedMarkerPosition != null && pos == _selectedMarkerPosition;
-
-      final int binCount = widget.rmsValues.length;
-      final int markerBinIndex = (pos.clamp(0.0, 1.0) * (binCount - 1)).round();
-      final double markerCenterX = WaveformVisualizer.xForIndex(markerBinIndex, _paintedWaveWidth, binCount);
-      final double markerLeft = TIOMusicParams.edgeInset + (markerCenterX - (MediaPlayerParams.markerButton / 2));
-
-      final marker = Positioned(
-        left: markerLeft,
-        top: (_waveFormHeight / 2) - MediaPlayerParams.markerIconSize - 20,
-        child: IconButton(
-          icon: Icon(
-            selected ? Icons.arrow_drop_down_circle_outlined : Icons.arrow_drop_down,
-            color: selected ? ColorTheme.tertiary60 : ColorTheme.primary,
-            size: MediaPlayerParams.markerIconSize,
-          ),
-          tooltip: context.l10n.mediaPlayerMarker,
-          onPressed: () {
-            if (!selected) {
-              setState(() {
-                _sliderValue = pos;
-                _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
-                _selectedMarkerPosition = pos;
-              });
-            }
-          },
-        ),
-      );
-      markers.add(marker);
-    }
-
-    return markers;
   }
 
   void _removeSelectedMarker() {
