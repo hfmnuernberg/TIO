@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 
-class SettingButton extends StatelessWidget {
+class SettingsButton extends StatelessWidget {
   final IconData icon;
   final String title;
   final VoidCallback onTap;
 
-  const SettingButton({super.key, required this.icon, required this.title, required this.onTap});
+  const SettingsButton({super.key, required this.icon, required this.title, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

@@ -6,7 +6,7 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/markers/markers.dart';
-import 'package:tiomusic/pages/media_player/markers/setting_button.dart';
+import 'package:tiomusic/pages/media_player/markers/settings_button.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -138,8 +138,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             onChangeEnd: (newValue) => _sliderValue = newValue,
           ),
           const SizedBox(height: TIOMusicParams.edgeInset),
-          SettingButton(icon: Icons.add, title: l10n.mediaPlayerAddMarker, onTap: _addNewMarker),
-          SettingButton(icon: Icons.delete_outlined, title: l10n.mediaPlayerRemoveMarker, onTap: _removeSelectedMarker),
+          SettingsButton(icon: Icons.add, title: l10n.mediaPlayerAddMarker, onTap: _addNewMarker),
+          SettingsButton(icon: Icons.delete_outlined, title: l10n.mediaPlayerRemoveMarker, onTap: _removeSelectedMarker),
         ],
       ),
     );
