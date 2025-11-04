@@ -57,10 +57,11 @@ class English extends AppLocalizations {
   String get feedbackQuestion => 'Do you like TIO Music? Please take part in this survey!';
   String get feedbackTitle => 'Feedback survey';
 
-  String get flashCardsDescription =>
+  String get flashCardDescription =>
       'let someone else take the lead. He/She will guide you by giving instructions or demonstrating how to practice.';
+  String get flashCardTitle => 'When you practice today,';
+
   String get flashCardsPageTitle => 'Flash Cards';
-  String get flashCardsTitle => 'When you practice today,';
 
   String get home => 'Home';
   String get homeAbout => 'About';

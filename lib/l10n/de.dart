@@ -57,10 +57,11 @@ class German extends AppLocalizations {
   String get feedbackQuestion => 'Gefällt dir TIO Music? Bitte mach mit bei unserer Umfrage!';
   String get feedbackTitle => 'Feedback-Umfrage';
 
-  String get flashCardsDescription =>
+  String get flashCardDescription =>
       'überlasse jemand anderem die Führung. Er/Sie wird dich anleiten, indem er/sie dir Anweisungen gibt oder demonstriert, wie du üben kannst.';
+  String get flashCardTitle => 'Wenn du heute übst,';
+
   String get flashCardsPageTitle => 'Lernkarten';
-  String get flashCardsTitle => 'Wenn du heute übst,';
 
   String get home => 'Startseite';
   String get homeAbout => 'Über TIO Music';
