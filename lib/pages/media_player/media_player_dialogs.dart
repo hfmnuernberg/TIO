@@ -12,10 +12,10 @@ Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => show
       title: Text(l10n.mediaPlayerOverwriteSound, style: const TextStyle(color: ColorTheme.primary)),
       content: Text(l10n.mediaPlayerOverwriteWithRecordingQuestion, style: const TextStyle(color: ColorTheme.primary)),
       actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.commonNo)),
+        TextButton(child: Text(l10n.commonNo), onPressed: () => Navigator.of(context).pop(false)),
         TextButton(
-          onPressed: () => Navigator.of(context).pop(true),
           child: Text(l10n.commonYes, style: const TextStyle(fontWeight: FontWeight.bold)),
+          onPressed: () => Navigator.of(context).pop(true),
         ),
       ],
     );
@@ -31,10 +31,10 @@ Future<bool?> askForOverridingFileOnOpenFileSelection(BuildContext context) => s
       title: Text(l10n.mediaPlayerOverwriteSound, style: const TextStyle(color: ColorTheme.primary)),
       content: Text(l10n.mediaPlayerOverwriteWithAudioQuestion, style: const TextStyle(color: ColorTheme.primary)),
       actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.commonNo)),
+        TextButton(child: Text(l10n.commonNo), onPressed: () => Navigator.of(context).pop(false)),
         TextButton(
-          onPressed: () => Navigator.of(context).pop(true),
           child: Text(l10n.commonYes, style: const TextStyle(fontWeight: FontWeight.bold)),
+          onPressed: () => Navigator.of(context).pop(true),
         ),
       ],
     );
@@ -52,7 +52,7 @@ Future<void> showFormatNotSupportedDialog(BuildContext context, String? format) 
         l10n.mediaPlayerErrorFileFormatDescription(format ?? ''),
         style: const TextStyle(color: ColorTheme.primary),
       ),
-      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
+      actions: [TextButton(child: Text(l10n.commonGotIt), onPressed: () => Navigator.pop(context))],
     );
   },
 );
@@ -78,7 +78,7 @@ Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) 
             ),
         ],
       ),
-      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
+      actions: [TextButton(child: Text(l10n.commonGotIt), onPressed: () => Navigator.pop(context))],
     ),
   );
 }
