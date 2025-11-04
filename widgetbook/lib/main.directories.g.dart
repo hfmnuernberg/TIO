@@ -10,6 +10,8 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:tiomusic_widgetbook/widgets/flash_cards/flash_card.dart'
+    as _tiomusic_widgetbook_widgets_flash_cards_flash_card;
 import 'package:tiomusic_widgetbook/widgets/input/number_input_and_slider_int.dart'
     as _tiomusic_widgetbook_widgets_input_number_input_and_slider_int;
 import 'package:tiomusic_widgetbook/widgets/piano/keyboard.dart'
@@ -20,6 +22,21 @@ final directories = <_widgetbook.WidgetbookNode>[
   _widgetbook.WidgetbookFolder(
     name: 'widgets',
     children: [
+      _widgetbook.WidgetbookFolder(
+        name: 'flash_card',
+        children: [
+          _widgetbook.WidgetbookComponent(
+            name: 'FlashCard',
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'FlashCard',
+                builder: _tiomusic_widgetbook_widgets_flash_cards_flash_card
+                    .flashCard,
+              ),
+            ],
+          ),
+        ],
+      ),
       _widgetbook.WidgetbookFolder(
         name: 'input',
         children: [
