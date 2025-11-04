@@ -110,7 +110,9 @@ class English extends AppLocalizations {
   String get mediaPlayerOpenFileSystem => 'Open files';
   String get mediaPlayerOpenMediaLibrary => 'Open media library';
   String get mediaPlayerOverwriteSound => 'Overwrite?';
-  String get mediaPlayerOverwriteSoundQuestion =>
+  String get mediaPlayerOverwriteWithAudioQuestion =>
+      'Do you want to overwrite the current audio file and choose another one?';
+  String get mediaPlayerOverwriteWithRecordingQuestion =>
       'Do you want to overwrite the current audio file and start recording?';
   String get mediaPlayerPause => 'Pause';
   String get mediaPlayerPitch => 'Pitch';
