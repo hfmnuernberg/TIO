@@ -57,6 +57,10 @@ class English extends AppLocalizations {
   String get feedbackQuestion => 'Do you like TIO Music? Please take part in this survey!';
   String get feedbackTitle => 'Feedback survey';
 
+  String get flashcardsTitle => 'When you practice today,';
+  String get flashcardsDescription =>
+      'let someone else take the lead. He/She will guide you by giving instructions or demonstrating how to practice.';
+
   String get home => 'Home';
   String get homeAbout => 'About';
   String get homeFeedback => 'Feedback';

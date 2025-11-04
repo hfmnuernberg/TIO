@@ -47,6 +47,9 @@ abstract class AppLocalizations {
   String get feedbackQuestion;
   String get feedbackTitle;
 
+  String get flashcardsTitle;
+  String get flashcardsDescription;
+
   String get home;
   String get homeAbout;
   String get homeFeedback;
