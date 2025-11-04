@@ -6,7 +6,7 @@ on:
 jobs:
   semantic-release:
     name: Semantic Release
-    uses: hfmnuernberg/TIO/.github/workflows/reusable-semantic-release.yaml@main
+    uses: ./.github/workflows/reusable-semantic-release.yaml
     secrets: inherit
     permissions:
       contents: write
