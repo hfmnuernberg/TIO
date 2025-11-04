@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/pages/media_player/markers/markers.dart';
+import 'package:tiomusic/pages/media_player/markers/settings_button.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -28,6 +30,7 @@ class EditMarkersPage extends StatefulWidget {
 }
 
 class _EditMarkersPageState extends State<EditMarkersPage> {
+  final GlobalKey _waveKey = GlobalKey();
   late WaveformVisualizer _waveformVisualizer;
   double _waveFormWidth = 0;
   final double _waveFormHeight = 200;
@@ -38,6 +41,14 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   double? _selectedMarkerPosition;
 
   final List<double> _markerPositions = List.empty(growable: true);
+
+  double get _paintedWaveWidth {
+    final buildContext = _waveKey.currentContext;
+    if (buildContext == null) return _waveFormWidth;
+    final renderObject = buildContext.findRenderObject();
+    if (renderObject is RenderBox) return renderObject.size.width;
+    return _waveFormWidth;
+  }
 
   @override
   void initState() {
@@ -52,9 +63,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
 
-      setState(() {
-        _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, true);
-      });
+      setState(() => _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, true));
     });
   }
 
@@ -66,6 +75,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       title: l10n.mediaPlayerEditMarkers,
       confirm: _onConfirm,
       reset: _removeAllMarkers,
+      mustBeScrollable: true,
       customWidget: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -79,12 +89,28 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                   padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
                   child: GestureDetector(
                     onTapDown: _onWaveTap,
-                    child: CustomPaint(painter: _waveformVisualizer, size: Size(_waveFormWidth, _waveFormHeight)),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: _waveFormHeight,
+                      child: CustomPaint(key: _waveKey, painter: _waveformVisualizer),
+                    ),
                   ),
                 ),
 
-                // markers
-                Stack(children: _buildMarkers()),
+                Markers(
+                  rmsValues: widget.rmsValues,
+                  paintedWidth: _paintedWaveWidth,
+                  waveFormHeight: _waveFormHeight,
+                  markerPositions: _markerPositions,
+                  selectedMarkerPosition: _selectedMarkerPosition,
+                  onTap: (position) {
+                    setState(() {
+                      _sliderValue = position;
+                      _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
+                      _selectedMarkerPosition = position;
+                    });
+                  },
+                ),
               ],
             ),
           ),
@@ -109,75 +135,18 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                 }
               });
             },
-            onChangeEnd: (newValue) {
-              _sliderValue = newValue;
-            },
+            onChangeEnd: (newValue) => _sliderValue = newValue,
           ),
           const SizedBox(height: TIOMusicParams.edgeInset),
-          _listButtons(Icons.add, l10n.mediaPlayerAddMarker, _addNewMarker),
-          _listButtons(Icons.delete_outlined, l10n.mediaPlayerRemoveMarker, _removeSelectedMarker),
+          SettingsButton(icon: Icons.add, title: l10n.mediaPlayerAddMarker, onTap: _addNewMarker),
+          SettingsButton(
+            icon: Icons.delete_outlined,
+            title: l10n.mediaPlayerRemoveMarker,
+            onTap: _removeSelectedMarker,
+          ),
         ],
       ),
     );
-  }
-
-  Widget _listButtons(IconData icon, String title, Function onTapFunction) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: TIOMusicParams.edgeInset,
-        right: TIOMusicParams.edgeInset,
-        top: 4,
-        bottom: 4,
-      ),
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
-        tileColor: ColorTheme.surface,
-        textColor: ColorTheme.surfaceTint,
-        iconColor: ColorTheme.primary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        onTap: () {
-          onTapFunction();
-        },
-      ),
-    );
-  }
-
-  List<Widget> _buildMarkers() {
-    List<Widget> markers = List.empty(growable: true);
-
-    for (final pos in _markerPositions) {
-      bool selected = false;
-      if (_selectedMarkerPosition != null) {
-        if (pos == _selectedMarkerPosition) {
-          selected = true;
-        }
-      }
-
-      final marker = Positioned(
-        left: TIOMusicParams.edgeInset + ((pos * _waveFormWidth) - (MediaPlayerParams.markerButton / 2)),
-        top: (_waveFormHeight / 2) - MediaPlayerParams.markerIconSize - 20,
-        child: IconButton(
-          onPressed: () {
-            if (!selected) {
-              setState(() {
-                _sliderValue = pos;
-                _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
-                _selectedMarkerPosition = pos;
-              });
-            }
-          },
-          icon: Icon(
-            selected ? Icons.arrow_drop_down_circle_outlined : Icons.arrow_drop_down,
-            color: selected ? ColorTheme.tertiary60 : ColorTheme.primary,
-            size: MediaPlayerParams.markerIconSize,
-          ),
-        ),
-      );
-      markers.add(marker);
-    }
-
-    return markers;
   }
 
   void _removeSelectedMarker() {
@@ -194,33 +163,34 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     setState(() {});
   }
 
-  // jump to position on wave tap
-  // and select marker if there is one at this position
   void _onWaveTap(TapDownDetails details) async {
-    double relativeTapPosition = details.localPosition.dx / _waveFormWidth;
-    double relativeMarkerClickArea = MediaPlayerParams.binWidth / _waveFormWidth;
+    final double tapX = details.localPosition.dx;
+    final double snappedRelativePosition = _calculateSnappedRelativePosition(tapX);
 
     setState(() {
-      _sliderValue = relativeTapPosition;
+      _sliderValue = snappedRelativePosition;
       _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
     });
 
-    double? foundMarkerPosition;
-
-    // check if position has marker
-    for (final pos in _markerPositions) {
-      if (relativeTapPosition >= pos - relativeMarkerClickArea &&
-          relativeTapPosition <= pos + relativeMarkerClickArea) {
-        foundMarkerPosition = pos;
-      }
-    }
-    if (foundMarkerPosition != null) {
-      _selectedMarkerPosition = foundMarkerPosition;
-    } else {
-      _selectedMarkerPosition = null;
-    }
-
+    _selectedMarkerPosition = _findMarkerNear(snappedRelativePosition);
     setState(() {});
+  }
+
+  double _calculateSnappedRelativePosition(double tapX) {
+    final int binCount = widget.rmsValues.length;
+    final int tappedBinIndex = WaveformVisualizer.indexForX(tapX, _paintedWaveWidth, binCount);
+    return tappedBinIndex / (binCount - 1);
+  }
+
+  double? _findMarkerNear(double snappedRelativePosition) {
+    final int binCount = widget.rmsValues.length;
+    final double oneBinRelative = 1.0 / (binCount - 1);
+
+    for (final pos in _markerPositions) {
+      if ((snappedRelativePosition - pos).abs() <= oneBinRelative) return pos;
+    }
+
+    return null;
   }
 
   void _addNewMarker() {

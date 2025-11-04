@@ -53,7 +53,7 @@ jobs:
       run: chmod +x scripts/*.sh
 
     - name: Restore bundle
-      uses: actions/download-artifact@v5.0.0
+      uses: actions/download-artifact@v6.0.0
       with:
         name: ios-${{ inputs.target_env }}-${{ inputs.semver }}+${{ inputs.build_number }}
         path: build/ios/ipa
