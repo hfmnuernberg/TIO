@@ -20,11 +20,11 @@ class FlashCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  context.l10n.flashcardsTitle,
+                  context.l10n.flashCardsTitle,
                   style: const TextStyle(color: ColorTheme.primary, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
-                Text(context.l10n.flashcardsDescription, style: const TextStyle(color: ColorTheme.primary)),
+                Text(context.l10n.flashCardsDescription, style: const TextStyle(color: ColorTheme.primary)),
               ],
             ),
           ),

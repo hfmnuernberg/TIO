@@ -9,6 +9,7 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/pages/flash_cards/flash_cards_page.dart';
 import 'package:tiomusic/pages/info_pages/about_page.dart';
 import 'package:tiomusic/pages/info_pages/feedback_page.dart';
 import 'package:tiomusic/pages/media_player/media_player_page.dart';
@@ -196,6 +197,16 @@ class _ProjectsPageState extends State<ProjectsPage> {
     Future.delayed(Duration.zero, () {
       if (mounted) _tutorial.show(context);
     });
+  }
+
+  void _flashCardsPagePressed() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return FlashCardsPage();
+        },
+      ),
+    );
   }
 
   void _onQuickToolTapped(BlockType blockType) {
@@ -403,6 +414,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
         onPressed: _showTutorialAgainPressed,
         semanticsLabel: l10n.projectsTutorialStart,
         child: Text(l10n.projectsTutorialStart, style: const TextStyle(color: ColorTheme.primary)),
+      ),
+      MenuItemButton(
+        onPressed: _flashCardsPagePressed,
+        semanticsLabel: l10n.projectsFlashCards,
+        child: Text(l10n.projectsFlashCards, style: const TextStyle(color: ColorTheme.primary)),
       ),
     ];
 

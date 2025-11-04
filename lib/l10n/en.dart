@@ -57,9 +57,10 @@ class English extends AppLocalizations {
   String get feedbackQuestion => 'Do you like TIO Music? Please take part in this survey!';
   String get feedbackTitle => 'Feedback survey';
 
-  String get flashcardsTitle => 'When you practice today,';
-  String get flashcardsDescription =>
+  String get flashCardsDescription =>
       'let someone else take the lead. He/She will guide you by giving instructions or demonstrating how to practice.';
+  String get flashCardsPageTitle => 'Flash Cards';
+  String get flashCardsTitle => 'When you practice today,';
 
   String get home => 'Home';
   String get homeAbout => 'About';
@@ -273,6 +274,7 @@ class English extends AppLocalizations {
   String get projectsDeleteConfirmation => 'Do you really want to delete this project?';
   String get projectsEdit => 'Edit projects';
   String get projectsEditDone => 'Finish editing';
+  String get projectsFlashCards => 'Flash Cards';
   String get projectsImport => 'Import project';
   String get projectsImportError => 'Error importing project';
   String get projectsImportNoFileSelected => 'No project file selected';
