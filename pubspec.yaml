@@ -27,7 +27,7 @@ dependencies:
   frontend_server_client: 4.0.0
   image_picker: 1.2.0
   image_picker_android: 0.8.13+1  # TODO: Delete when image_picker fixed limit for images on Android
-  image_picker_platform_interface: 2.11.0  # TODO: Delete when image_picker fixed limit for images on Android
+  image_picker_platform_interface: 2.11.1  # TODO: Delete when image_picker fixed limit for images on Android
   intl: 0.20.2
   json_annotation: 4.9.0
   logger: 2.6.2
