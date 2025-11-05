@@ -16,7 +16,7 @@ import 'package:tiomusic/pages/project_page/project_page.dart';
 import 'package:tiomusic/pages/projects_page/edit_projects_bar.dart';
 import 'package:tiomusic/pages/projects_page/editable_project_list.dart';
 import 'package:tiomusic/pages/projects_page/project_list.dart';
-import 'package:tiomusic/pages/projects_page/projects_page_settings.dart';
+import 'package:tiomusic/pages/projects_page/projects_menu.dart';
 import 'package:tiomusic/pages/projects_page/quick_tool_button.dart';
 import 'package:tiomusic/pages/projects_page/survey_banner.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
@@ -351,7 +351,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
           tooltip: l10n.projectsNew,
         ),
         actions: [
-          ProjectsPageSettings(
+          ProjectsMenu(
             isEditing: _isEditing,
             onSetEditing: (editing) => setState(() => _isEditing = editing),
             onAddNew: _handleNew,

@@ -6,7 +6,7 @@ import 'package:tiomusic/pages/info_pages/feedback_page.dart';
 import 'package:tiomusic/pages/projects_page/import_project.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
-enum ProjectMenuAction {
+enum MenuAction {
   about,
   feedback,
   importProject,
@@ -17,8 +17,8 @@ enum ProjectMenuAction {
   flashCards,
 }
 
-class ProjectsPageSettings extends StatelessWidget {
-  const ProjectsPageSettings({
+class ProjectsMenu extends StatelessWidget {
+  const ProjectsMenu({
     super.key,
     required this.isEditing,
     required this.onSetEditing,
@@ -33,23 +33,23 @@ class ProjectsPageSettings extends StatelessWidget {
   final Future<void> Function() onDeleteAll;
   final VoidCallback onShowTutorialAgain;
 
-  Future<void> _handleAction(BuildContext context, ProjectMenuAction action) async {
+  Future<void> _handleAction(BuildContext context, MenuAction action) async {
     switch (action) {
-      case ProjectMenuAction.about:
+      case MenuAction.about:
         _aboutPage(context);
-      case ProjectMenuAction.feedback:
+      case MenuAction.feedback:
         _feedbackPage(context);
-      case ProjectMenuAction.importProject:
+      case MenuAction.importProject:
         await importProject(context);
-      case ProjectMenuAction.addNew:
+      case MenuAction.addNew:
         onAddNew();
-      case ProjectMenuAction.toggleEditingMode:
+      case MenuAction.toggleEditingMode:
         onSetEditing(!isEditing);
-      case ProjectMenuAction.deleteAll:
+      case MenuAction.deleteAll:
         await onDeleteAll();
-      case ProjectMenuAction.tutorialStart:
+      case MenuAction.tutorialStart:
         onShowTutorialAgain();
-      case ProjectMenuAction.flashCards:
+      case MenuAction.flashCards:
         _flashCardsPage(context);
     }
   }
@@ -72,7 +72,7 @@ class MenuItems extends StatelessWidget {
   const MenuItems({super.key, required this.isEditing, required this.onSelected});
 
   final bool isEditing;
-  final ValueChanged<ProjectMenuAction> onSelected;
+  final ValueChanged<MenuAction> onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -80,27 +80,27 @@ class MenuItems extends StatelessWidget {
 
     final items = [
       MenuItemButton(
-        onPressed: () => onSelected(ProjectMenuAction.about),
+        onPressed: () => onSelected(MenuAction.about),
         semanticsLabel: l10n.homeAbout,
         child: Text(l10n.homeAbout, style: const TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
-        onPressed: () => onSelected(ProjectMenuAction.feedback),
+        onPressed: () => onSelected(MenuAction.feedback),
         semanticsLabel: l10n.homeFeedback,
         child: Text(l10n.homeFeedback, style: const TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
-        onPressed: () => onSelected(ProjectMenuAction.importProject),
+        onPressed: () => onSelected(MenuAction.importProject),
         semanticsLabel: l10n.projectsImport,
         child: Text(l10n.projectsImport, style: const TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
-        onPressed: () => onSelected(ProjectMenuAction.addNew),
+        onPressed: () => onSelected(MenuAction.addNew),
         semanticsLabel: l10n.projectsAddNew,
         child: Text(l10n.projectsAddNew, style: const TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
-        onPressed: () => onSelected(ProjectMenuAction.toggleEditingMode),
+        onPressed: () => onSelected(MenuAction.toggleEditingMode),
         semanticsLabel: isEditing ? l10n.projectsEditDone : l10n.projectsEdit,
         child: Text(
           isEditing ? l10n.projectsEditDone : l10n.projectsEdit,
@@ -108,17 +108,17 @@ class MenuItems extends StatelessWidget {
         ),
       ),
       MenuItemButton(
-        onPressed: () => onSelected(ProjectMenuAction.deleteAll),
+        onPressed: () => onSelected(MenuAction.deleteAll),
         semanticsLabel: l10n.projectsDeleteAll,
         child: Text(l10n.projectsDeleteAll, style: const TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
-        onPressed: () => onSelected(ProjectMenuAction.tutorialStart),
+        onPressed: () => onSelected(MenuAction.tutorialStart),
         semanticsLabel: l10n.projectsTutorialStart,
         child: Text(l10n.projectsTutorialStart, style: const TextStyle(color: ColorTheme.primary)),
       ),
       MenuItemButton(
-        onPressed: () => onSelected(ProjectMenuAction.flashCards),
+        onPressed: () => onSelected(MenuAction.flashCards),
         semanticsLabel: l10n.projectsFlashCards,
         child: Text(l10n.projectsFlashCards, style: const TextStyle(color: ColorTheme.primary)),
       ),
