@@ -1,9 +1,12 @@
 name: Verify
 
+permissions:
+  contents: write
+
 env:
   MAX_FILE_COUNT: 28
   MAX_AVG_LENGTH: 340
-  MIN_COVERAGE: 51.4
+  MIN_COVERAGE: 52.7
 
 on:
   workflow_dispatch:
@@ -102,6 +105,15 @@ jobs:
 
     - name: Analyze TODOs and FIXMEs
       run: scripts/app.sh analyze:todos || true
+
+    - name: Auto-commit pub lockfiles (Dependabot only)
+      if: ${{ github.actor == 'dependabot[bot]' }}
+      uses: stefanzweifel/git-auto-commit-action@v7.0.0
+      with:
+        commit_message: "chore: TIO-84: sync lockfiles for Dependabot PR"
+        branch: ${{ github.head_ref }}
+        file_pattern: |
+          widgetbook/pubspec.lock
 
     - name: Print local changes
       run: git diff
