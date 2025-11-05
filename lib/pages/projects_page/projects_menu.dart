@@ -6,16 +6,7 @@ import 'package:tiomusic/pages/info_pages/feedback_page.dart';
 import 'package:tiomusic/pages/projects_page/import_project.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
-enum MenuAction {
-  about,
-  feedback,
-  importProject,
-  addNew,
-  toggleEditingMode,
-  deleteAll,
-  tutorialStart,
-  flashCards,
-}
+enum MenuAction { about, feedback, importProject, addNew, toggleEditingMode, deleteAll, tutorialStart, flashCards }
 
 class ProjectsMenu extends StatelessWidget {
   const ProjectsMenu({
@@ -117,11 +108,12 @@ class MenuItems extends StatelessWidget {
         semanticsLabel: l10n.projectsTutorialStart,
         child: Text(l10n.projectsTutorialStart, style: const TextStyle(color: ColorTheme.primary)),
       ),
-      MenuItemButton(
-        onPressed: () => onSelected(MenuAction.flashCards),
-        semanticsLabel: l10n.projectsFlashCards,
-        child: Text(l10n.projectsFlashCards, style: const TextStyle(color: ColorTheme.primary)),
-      ),
+      // TODO: Enable flash cards feature with flash cards list and real content
+      // MenuItemButton(
+      //   onPressed: () => onSelected(MenuAction.flashCards),
+      //   semanticsLabel: l10n.projectsFlashCards,
+      //   child: Text(l10n.projectsFlashCards, style: const TextStyle(color: ColorTheme.primary)),
+      // ),
     ];
 
     return MenuAnchor(
