@@ -107,7 +107,6 @@ jobs:
       run: scripts/app.sh analyze:todos || true
 
     - name: Auto-commit pub lockfiles (Dependabot only)
-#      if: ${{ github.actor == 'dependabot[bot]' }}
       uses: stefanzweifel/git-auto-commit-action@v7.0.0
       with:
         commit_message: "chore: TIO-84: sync lockfiles for Dependabot PR"
