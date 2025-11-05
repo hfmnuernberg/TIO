@@ -47,6 +47,11 @@ abstract class AppLocalizations {
   String get feedbackQuestion;
   String get feedbackTitle;
 
+  String get flashCardDescription;
+  String get flashCardTitle;
+
+  String get flashCardsPageTitle;
+
   String get home;
   String get homeAbout;
   String get homeFeedback;
@@ -236,6 +241,7 @@ abstract class AppLocalizations {
   String get projectsDeleteConfirmation;
   String get projectsEdit;
   String get projectsEditDone;
+  String get projectsFlashCards;
   String get projectsImport;
   String get projectsImportError;
   String get projectsImportNoFileSelected;

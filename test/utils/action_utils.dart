@@ -7,6 +7,18 @@ extension WidgetTesterActionxtension on WidgetTester {
     await pumpAndSettle();
   }
 
+  Future<void> tapAndWaitFor(Finder target) async {
+    const int maxSteps = 30;
+
+    await tap(target);
+    await pump();
+
+    for (int i = 0; i < maxSteps; i++) {
+      await pump(Duration(milliseconds: 100));
+      if (target.evaluate().isNotEmpty) return;
+    }
+  }
+
   Future<void> enterTextAndSettle(FinderBase<Element> finder, String text) async {
     await enterText(finder, text);
     await pumpAndSettle();
