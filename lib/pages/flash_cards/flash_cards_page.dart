@@ -18,10 +18,7 @@ class FlashCardsPage extends StatelessWidget {
       backgroundColor: ColorTheme.primary92,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(32),
-            child: FlashCard(),
-          ),
+          child: Padding(padding: const EdgeInsets.all(32), child: FlashCard()),
         ),
       ),
     );

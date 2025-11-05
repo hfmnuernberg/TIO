@@ -249,19 +249,8 @@ class _ProjectsPageState extends State<ProjectsPage> {
             ? Text(l10n.projectsDeleteAllConfirmation, style: TextStyle(color: ColorTheme.primary))
             : Text(l10n.projectsDeleteConfirmation, style: TextStyle(color: ColorTheme.primary)),
         actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: Text(l10n.commonNo),
-          ),
-          TIOFlatButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            text: l10n.commonYes,
-            boldText: true,
-          ),
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: Text(l10n.commonNo)),
+          TIOFlatButton(onPressed: () => Navigator.of(context).pop(true), text: l10n.commonYes, boldText: true),
         ],
       );
     },
