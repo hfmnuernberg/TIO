@@ -16,7 +16,7 @@ import 'package:tiomusic/pages/project_page/project_page.dart';
 import 'package:tiomusic/pages/projects_page/edit_projects_bar.dart';
 import 'package:tiomusic/pages/projects_page/editable_project_list.dart';
 import 'package:tiomusic/pages/projects_page/project_list.dart';
-import 'package:tiomusic/pages/projects_page/projects_page_settings.dart';
+import 'package:tiomusic/pages/projects_page/projects_menu.dart';
 import 'package:tiomusic/pages/projects_page/quick_tool_button.dart';
 import 'package:tiomusic/pages/projects_page/survey_banner.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
@@ -257,21 +257,45 @@ class _ProjectsPageState extends State<ProjectsPage> {
   );
 
   void _handleDelete(int index) async {
-    bool? isConfirmed = await _confirmDeleteProject();
+    final isConfirmed = await _confirmDeleteProject();
     if (isConfirmed != true) return;
-
     if (!mounted) return;
+
     final projectLibrary = context.read<ProjectLibrary>();
     final project = projectLibrary.projects[index];
+    await _deleteProject(project);
+  }
+
+  Future<void> _handleDeleteAll() async {
+    final confirmed = await _confirmDeleteProject(deleteAll: true);
+    if (confirmed != true) return;
+    if (!mounted) return;
+
+    await _deleteAllProjects();
+  }
+
+  Future<void> _deleteProject(Project project) async {
+    final library = context.read<ProjectLibrary>();
 
     for (final block in project.blocks) {
-      if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
-      if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
+      if (block is ImageBlock) _fileReferences.dec(block.relativePath, library);
+      if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, library);
     }
+    library.removeProject(project);
+    await _projectRepo.saveLibrary(library);
+  }
 
-    projectLibrary.removeProject(projectLibrary.projects[index]);
+  Future<void> _deleteAllProjects() async {
+    final library = context.read<ProjectLibrary>();
 
-    await _projectRepo.saveLibrary(projectLibrary);
+    for (final project in library.projects) {
+      for (final block in project.blocks) {
+        if (block is ImageBlock) _fileReferences.dec(block.relativePath, library);
+        if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, library);
+      }
+    }
+    library.clearProjects();
+    await _projectRepo.saveLibrary(library);
   }
 
   void _goToToolOverProjectPage(Project project, ProjectBlock tool, bool pianoAlreadyOn) {
@@ -327,10 +351,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
           tooltip: l10n.projectsNew,
         ),
         actions: [
-          ProjectsPageSettings(
+          ProjectsMenu(
             isEditing: _isEditing,
             onSetEditing: (editing) => setState(() => _isEditing = editing),
             onAddNew: _handleNew,
+            onDeleteAll: _handleDeleteAll,
             onShowTutorialAgain: _showTutorialAgainPressed,
           ),
         ],
