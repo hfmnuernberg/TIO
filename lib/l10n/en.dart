@@ -3,8 +3,9 @@
 
 import 'package:intl/intl.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
+import 'package:tiomusic/l10n/flash_cards/en_flash_cards.dart';
 
-class English extends AppLocalizations {
+class English extends AppLocalizations with EnglishFlashCards {
   String get locale => 'en';
 
   String get appAboutDataProtection => 'Data protection';
@@ -56,12 +57,6 @@ class English extends AppLocalizations {
   String get feedbackCta => 'Fill out';
   String get feedbackQuestion => 'Do you like TIO Music? Please take part in this survey!';
   String get feedbackTitle => 'Feedback survey';
-
-  String get flashCardDescription =>
-      'let someone else take the lead. He/She will guide you by giving instructions or demonstrating how to practice.';
-  String get flashCardTitle => 'When you practice today,';
-
-  String get flashCardsPageTitle => 'Flash cards';
 
   String get home => 'Home';
   String get homeAbout => 'About';

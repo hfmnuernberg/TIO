@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
+import 'package:tiomusic/l10n/flash_cards/flash_cards_localization.dart';
 
-abstract class AppLocalizations {
+abstract class AppLocalizations implements FlashCardsLocalization {
   String get locale;
 
   String get appAboutDataProtection;
@@ -46,11 +47,6 @@ abstract class AppLocalizations {
   String get feedbackCta;
   String get feedbackQuestion;
   String get feedbackTitle;
-
-  String get flashCardDescription;
-  String get flashCardTitle;
-
-  String get flashCardsPageTitle;
 
   String get home;
   String get homeAbout;
