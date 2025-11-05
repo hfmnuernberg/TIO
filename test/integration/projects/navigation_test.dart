@@ -35,7 +35,7 @@ void main() {
       expect(find.bySemanticsLabel('Feedback survey'), findsOneWidget);
     });
 
-    // TODO: Enable flash cards feature with flash cards list and real content
+    // TODO(TIO-293): Enable flash cards feature with flash cards list and real content
     // testWidgets('navigates to flash cards page on menu item tap', (tester) async {
     //   await tester.renderScaffold(ProjectsPage(), context.providers);
     //
