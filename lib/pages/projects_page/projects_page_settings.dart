@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/models/blocks/image_block.dart';
-import 'package:tiomusic/models/blocks/media_player_block.dart';
-import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/flash_cards/flash_cards_page.dart';
 import 'package:tiomusic/pages/info_pages/about_page.dart';
 import 'package:tiomusic/pages/info_pages/feedback_page.dart';
 import 'package:tiomusic/pages/projects_page/import_project.dart';
-import 'package:tiomusic/services/file_references.dart';
-import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/widgets/confirm_setting_button.dart';
 
 enum ProjectMenuAction {
   about,
@@ -30,18 +23,15 @@ class ProjectsPageSettings extends StatelessWidget {
     required this.isEditing,
     required this.onSetEditing,
     required this.onAddNew,
+    required this.onDeleteAll,
     required this.onShowTutorialAgain,
   });
 
   final bool isEditing;
   final ValueChanged<bool> onSetEditing;
   final VoidCallback onAddNew;
+  final Future<void> Function() onDeleteAll;
   final VoidCallback onShowTutorialAgain;
-
-  @override
-  Widget build(BuildContext context) {
-    return MenuItems(isEditing: isEditing, onSelected: (action) => _handleAction(context, action));
-  }
 
   Future<void> _handleAction(BuildContext context, ProjectMenuAction action) async {
     switch (action) {
@@ -56,7 +46,7 @@ class ProjectsPageSettings extends StatelessWidget {
       case ProjectMenuAction.toggleEditingMode:
         onSetEditing(!isEditing);
       case ProjectMenuAction.deleteAll:
-        await _deleteAllProjects(context);
+        await onDeleteAll();
       case ProjectMenuAction.tutorialStart:
         onShowTutorialAgain();
       case ProjectMenuAction.flashCards:
@@ -72,44 +62,9 @@ class ProjectsPageSettings extends StatelessWidget {
   void _flashCardsPage(BuildContext context) =>
       Navigator.of(context).push(MaterialPageRoute(builder: (_) => FlashCardsPage()));
 
-  Future<void> _deleteAllProjects(BuildContext context) async {
-    final confirmed = await _confirmDeleteDialog(context, deleteAll: true);
-    if (confirmed != true) return;
-
-    if (!context.mounted) return;
-
-    final library = context.read<ProjectLibrary>();
-    final fileReferences = context.read<FileReferences>();
-
-    for (final project in library.projects) {
-      for (final block in project.blocks) {
-        if (block is ImageBlock) fileReferences.dec(block.relativePath, library);
-        if (block is MediaPlayerBlock) fileReferences.dec(block.relativePath, library);
-      }
-    }
-
-    library.clearProjects();
-
-    await context.read<ProjectRepository>().saveLibrary(library);
-  }
-
-  Future<bool?> _confirmDeleteDialog(BuildContext context, {required bool deleteAll}) {
-    final l10n = context.l10n;
-
-    return showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.commonDelete, style: const TextStyle(color: ColorTheme.primary)),
-        content: Text(
-          deleteAll ? l10n.projectsDeleteAllConfirmation : l10n.projectsDeleteConfirmation,
-          style: const TextStyle(color: ColorTheme.primary),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(l10n.commonNo)),
-          TIOFlatButton(onPressed: () => Navigator.of(ctx).pop(true), text: l10n.commonYes, boldText: true),
-        ],
-      ),
-    );
+  @override
+  Widget build(BuildContext context) {
+    return MenuItems(isEditing: isEditing, onSelected: (action) => _handleAction(context, action));
   }
 }
 
