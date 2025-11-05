@@ -9,17 +9,14 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/flash_cards/flash_cards_page.dart';
-import 'package:tiomusic/pages/info_pages/about_page.dart';
-import 'package:tiomusic/pages/info_pages/feedback_page.dart';
 import 'package:tiomusic/pages/media_player/media_player_page.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
 import 'package:tiomusic/pages/projects_page/edit_projects_bar.dart';
 import 'package:tiomusic/pages/projects_page/editable_project_list.dart';
-import 'package:tiomusic/pages/projects_page/import_project.dart';
 import 'package:tiomusic/pages/projects_page/project_list.dart';
+import 'package:tiomusic/pages/projects_page/projects_page_settings.dart';
 import 'package:tiomusic/pages/projects_page/quick_tool_button.dart';
 import 'package:tiomusic/pages/projects_page/survey_banner.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
@@ -169,26 +166,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
     _handleGoToProject(newProject, true);
   }
 
-  void _aboutPagePressed() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          return AboutPage();
-        },
-      ),
-    );
-  }
-
-  void _feedbackPagePressed() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          return const FeedbackPage();
-        },
-      ),
-    );
-  }
-
   void _showTutorialAgainPressed() async {
     context.read<ProjectLibrary>().resetAllTutorials();
     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
@@ -197,16 +174,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
     Future.delayed(Duration.zero, () {
       if (mounted) _tutorial.show(context);
     });
-  }
-
-  void _flashCardsPagePressed() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          return FlashCardsPage();
-        },
-      ),
-    );
   }
 
   void _onQuickToolTapped(BlockType blockType) {
@@ -318,25 +285,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
     await _projectRepo.saveLibrary(projectLibrary);
   }
 
-  void _handleDeleteAllProjects() async {
-    bool? isConfirmed = await _confirmDeleteProject();
-    if (isConfirmed != true) return;
-
-    if (!mounted) return;
-    final projectLibrary = context.read<ProjectLibrary>();
-
-    for (final project in projectLibrary.projects) {
-      for (final block in project.blocks) {
-        if (block is ImageBlock) _fileReferences.dec(block.relativePath, projectLibrary);
-        if (block is MediaPlayerBlock) _fileReferences.dec(block.relativePath, projectLibrary);
-      }
-    }
-
-    projectLibrary.clearProjects();
-
-    await _projectRepo.saveLibrary(projectLibrary);
-  }
-
   void _goToToolOverProjectPage(Project project, ProjectBlock tool, bool pianoAlreadyOn) {
     Navigator.of(context)
         .push(
@@ -376,52 +324,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
     final l10n = context.l10n;
     final blockTypes = getBlockTypeInfos(l10n);
 
-    final menuItems = [
-      MenuItemButton(
-        onPressed: _aboutPagePressed,
-        semanticsLabel: l10n.homeAbout,
-        child: Text(l10n.homeAbout, style: const TextStyle(color: ColorTheme.primary)),
-      ),
-      MenuItemButton(
-        onPressed: _feedbackPagePressed,
-        semanticsLabel: l10n.homeFeedback,
-        child: Text(l10n.homeFeedback, style: const TextStyle(color: ColorTheme.primary)),
-      ),
-      MenuItemButton(
-        onPressed: () => importProject(context),
-        semanticsLabel: l10n.projectsImport,
-        child: Text(l10n.projectsImport, style: const TextStyle(color: ColorTheme.primary)),
-      ),
-      MenuItemButton(
-        onPressed: _handleNew,
-        semanticsLabel: l10n.projectsAddNew,
-        child: Text(l10n.projectsAddNew, style: TextStyle(color: ColorTheme.primary)),
-      ),
-      MenuItemButton(
-        onPressed: _toggleEditingMode,
-        semanticsLabel: _isEditing ? l10n.projectsEditDone : l10n.projectsEdit,
-        child: Text(
-          _isEditing ? l10n.projectsEditDone : l10n.projectsEdit,
-          style: TextStyle(color: ColorTheme.primary),
-        ),
-      ),
-      MenuItemButton(
-        onPressed: _handleDeleteAllProjects,
-        semanticsLabel: l10n.projectsDeleteAll,
-        child: Text(l10n.projectsDeleteAll, style: const TextStyle(color: ColorTheme.primary)),
-      ),
-      MenuItemButton(
-        onPressed: _showTutorialAgainPressed,
-        semanticsLabel: l10n.projectsTutorialStart,
-        child: Text(l10n.projectsTutorialStart, style: const TextStyle(color: ColorTheme.primary)),
-      ),
-      MenuItemButton(
-        onPressed: _flashCardsPagePressed,
-        semanticsLabel: l10n.projectsFlashCards,
-        child: Text(l10n.projectsFlashCards, style: const TextStyle(color: ColorTheme.primary)),
-      ),
-    ];
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -436,21 +338,11 @@ class _ProjectsPageState extends State<ProjectsPage> {
           tooltip: l10n.projectsNew,
         ),
         actions: [
-          MenuAnchor(
-            builder: (context, controller, child) {
-              return IconButton(
-                onPressed: () {
-                  controller.isOpen ? controller.close() : controller.open();
-                },
-                icon: const Icon(Icons.more_vert),
-                tooltip: context.l10n.projectsMenu,
-              );
-            },
-            style: const MenuStyle(
-              backgroundColor: WidgetStatePropertyAll(ColorTheme.surface),
-              elevation: WidgetStatePropertyAll(0),
-            ),
-            menuChildren: menuItems,
+          ProjectsPageSettings(
+            isEditing: _isEditing,
+            onSetEditing: (editing) => setState(() => _isEditing = editing),
+            onAddNew: _handleNew,
+            onShowTutorialAgain: _showTutorialAgainPressed,
           ),
         ],
       ),
