@@ -541,7 +541,15 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   Future<void> _startRecording() async {
     await _player.stop();
-    await _recorder.start();
+    final result = await _recorder.start();
+
+    if (!mounted) return;
+
+    if (result == RecorderStartResult.micPermissionDenied) {
+      await showMissingMicrophonePermissionDialog(context);
+      return;
+    }
+
     setState(() {});
   }
 
@@ -665,6 +673,8 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       buttonSize: buttonSize,
       iconOff: Icons.close,
       iconOn: Icons.close,
+      tooltipOff: context.l10n.commonCancel,
+      tooltipOn: context.l10n.commonCancel,
       isDisabled: _isLoading,
     );
   }
@@ -684,6 +694,8 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       buttonSize: buttonSize,
       iconOff: Icons.mic,
       iconOn: Icons.stop,
+      tooltipOff: context.l10n.mediaPlayerStopRecording,
+      tooltipOn: context.l10n.mediaPlayerStartRecording,
       isDisabled: _isLoading,
     );
   }
@@ -696,9 +708,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       buttonSize: buttonSize,
       iconOff: (_mediaPlayerBlock.icon as Icon).icon!,
       iconOn: TIOMusicParams.pauseIcon,
-      isDisabled: _isLoading,
       tooltipOff: context.l10n.mediaPlayerPause,
       tooltipOn: context.l10n.mediaPlayerPlay,
+      isDisabled: _isLoading,
     );
   }
 

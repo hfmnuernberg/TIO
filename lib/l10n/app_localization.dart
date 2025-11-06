@@ -91,6 +91,8 @@ abstract class AppLocalizations {
   String get mediaPlayerErrorFileFormat;
   String get mediaPlayerErrorFileOpen;
   String get mediaPlayerErrorFileOpenDescription;
+  String get mediaPlayerErrorMissingPermission;
+  String get mediaPlayerErrorMissingMicPermissionDescription;
   String get mediaPlayerFactor;
   String get mediaPlayerFactorAndBpm;
   String get mediaPlayerFile;
@@ -116,6 +118,8 @@ abstract class AppLocalizations {
   String get mediaPlayerSetTrim;
   String get mediaPlayerShareAudioFile;
   String get mediaPlayerSpeed;
+  String get mediaPlayerStartRecording;
+  String get mediaPlayerStopRecording;
   String get mediaPlayerTapToTempo;
   String get mediaPlayerTooManyFilesDescription;
   String get mediaPlayerTooManyFilesTitle;

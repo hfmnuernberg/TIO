@@ -108,6 +108,10 @@ class English extends AppLocalizations {
   String get mediaPlayerErrorFileOpen => 'File could not be opened.';
   String get mediaPlayerErrorFileOpenDescription =>
       'Something went wrong while trying to open the file. Please try again.';
+  String get mediaPlayerErrorMissingPermission =>
+      'Missing permission';
+  String get mediaPlayerErrorMissingMicPermissionDescription =>
+      'Microphone permission is required to record audio. Please grant the permission in your device settings.';
   String get mediaPlayerFactor => 'Factor';
   String get mediaPlayerFactorAndBpm => 'Factor and BPM slider';
   String get mediaPlayerFile => 'File';
@@ -135,6 +139,8 @@ class English extends AppLocalizations {
   String get mediaPlayerSetTrim => 'Set trim';
   String get mediaPlayerShareAudioFile => 'Share audio file';
   String get mediaPlayerSpeed => 'Tempo';
+  String get mediaPlayerStartRecording => 'Start recording';
+  String get mediaPlayerStopRecording => 'Stop recording';
   String get mediaPlayerTapToTempo => 'Tap to tempo';
   String get mediaPlayerTooManyFilesDescription =>
       'Due to technical limitations, only 10 files can be loaded at once.\n\nPlease repeat the process for any files that were not loaded this time.';

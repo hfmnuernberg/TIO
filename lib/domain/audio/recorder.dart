@@ -10,6 +10,8 @@ import 'package:tiomusic/util/log.dart';
 typedef OnIsRecordingChange = void Function(bool isRecording);
 typedef OnRecordingLengthChange = void Function(Duration recordingLength);
 
+enum RecorderStartResult { success, micPermissionDenied, alreadyRecording, error }
+
 class Recorder {
   static final logger = createPrefixLogger('AudioRecorder');
 
@@ -39,20 +41,18 @@ class Recorder {
   }) : _onIsRecordingChange = onIsRecordingChange ?? ((_) {}),
        _onRecordingLengthChange = onRecordingLengthChange ?? ((_) {});
 
-  Future<bool> start() async {
-    if (_isRecording) return true;
-
-    final micGranted = await Permission.microphone.request().isGranted;
-    if (!micGranted) {
+  Future<RecorderStartResult> start() async {
+    final status = await Permission.microphone.request();
+    if (!status.isGranted) {
       logger.w('Failed to get microphone permissions.');
-      return false;
+      return RecorderStartResult.micPermissionDenied;
     }
 
     await _audioSession.prepareRecording();
     final success = await _as.mediaPlayerStartRecording();
     if (!success) {
       logger.e('Unable to start Audio Recorder.');
-      return false;
+      return RecorderStartResult.error;
     }
 
     _isRecording = true;
@@ -69,7 +69,7 @@ class Recorder {
       _onRecordingLengthChange(_recordingLength);
     });
 
-    return true;
+    return RecorderStartResult.success;
   }
 
   Future<bool> stop() async {

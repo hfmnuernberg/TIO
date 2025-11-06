@@ -41,6 +41,19 @@ Future<bool?> askForOverridingFileOnOpenFileSelection(BuildContext context) => s
   },
 );
 
+Future<void> showMissingMicrophonePermissionDialog(BuildContext context) => showDialog<void>(
+  context: context,
+  builder: (context) {
+    final l10n = context.l10n;
+
+    return AlertDialog(
+      title: Text(l10n.mediaPlayerErrorMissingPermission, style: TextStyle(color: ColorTheme.primary)),
+      content: Text(l10n.mediaPlayerErrorMissingMicPermissionDescription, style: const TextStyle(color: ColorTheme.primary)),
+      actions: [TextButton(child: Text(l10n.commonGotIt), onPressed: () => Navigator.pop(context))],
+    );
+  },
+);
+
 Future<void> showFormatNotSupportedDialog(BuildContext context, String? format) => showDialog<void>(
   context: context,
   builder: (context) {
