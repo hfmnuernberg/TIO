@@ -387,9 +387,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         pickAudioFromFileSystem: pickAudioFromFileSystem,
         isMultipleAllowed: isMultipleAllowed,
       );
+      if (!mounted) return;
       if (audioPaths == null || audioPaths.isEmpty) return;
       if (audioPaths.length > 10) {
-        await _showTooManyFilesSelectedDialog();
+        await showTooManyFilesSelectedDialog(context);
         audioPaths.removeRange(10, audioPaths.length);
       }
 
@@ -492,19 +493,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   bool _isAcceptedFormat(String? extension) => TIOMusicParams.audioFormats.contains((extension ?? '').toLowerCase());
-
-  Future<void> _showTooManyFilesSelectedDialog() => showDialog<void>(
-    context: context,
-    builder: (context) {
-      final l10n = context.l10n;
-
-      return AlertDialog(
-        title: Text(l10n.mediaPlayerTooManyFilesTitle, style: TextStyle(color: ColorTheme.primary)),
-        content: Text(l10n.mediaPlayerTooManyFilesDescription, style: const TextStyle(color: ColorTheme.primary)),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonGotIt))],
-      );
-    },
-  );
 
   Future<void> _togglePlaying() async {
     if (_processingButtonClick) return;

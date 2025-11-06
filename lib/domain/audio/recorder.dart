@@ -42,6 +42,8 @@ class Recorder {
        _onRecordingLengthChange = onRecordingLengthChange ?? ((_) {});
 
   Future<RecorderStartResult> start() async {
+    if (_isRecording) return RecorderStartResult.alreadyRecording;
+
     final status = await Permission.microphone.request();
     if (!status.isGranted) {
       logger.w('Failed to get microphone permissions.');

@@ -2,44 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/widgets/confirm_dialog.dart';
 import 'package:tiomusic/widgets/info_dialog.dart';
 
-Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => showDialog<bool>(
+Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => showConfirmDialog(
   context: context,
-  builder: (context) {
-    final l10n = context.l10n;
-
-    return AlertDialog(
-      title: Text(l10n.mediaPlayerOverwriteSound, style: const TextStyle(color: ColorTheme.primary)),
-      content: Text(l10n.mediaPlayerOverwriteWithRecordingQuestion, style: const TextStyle(color: ColorTheme.primary)),
-      actions: [
-        TextButton(child: Text(l10n.commonNo), onPressed: () => Navigator.of(context).pop(false)),
-        TextButton(
-          child: Text(l10n.commonYes, style: const TextStyle(fontWeight: FontWeight.bold)),
-          onPressed: () => Navigator.of(context).pop(true),
-        ),
-      ],
-    );
-  },
+  title: context.l10n.mediaPlayerOverwriteSound,
+  content: context.l10n.mediaPlayerOverwriteWithRecordingQuestion,
 );
 
-Future<bool?> askForOverridingFileOnOpenFileSelection(BuildContext context) => showDialog<bool>(
+Future<bool?> askForOverridingFileOnOpenFileSelection(BuildContext context) => showConfirmDialog(
   context: context,
-  builder: (context) {
-    final l10n = context.l10n;
+  title: context.l10n.mediaPlayerOverwriteSound,
+  content: context.l10n.mediaPlayerOverwriteWithAudioQuestion,
+);
 
-    return AlertDialog(
-      title: Text(l10n.mediaPlayerOverwriteSound, style: const TextStyle(color: ColorTheme.primary)),
-      content: Text(l10n.mediaPlayerOverwriteWithAudioQuestion, style: const TextStyle(color: ColorTheme.primary)),
-      actions: [
-        TextButton(child: Text(l10n.commonNo), onPressed: () => Navigator.of(context).pop(false)),
-        TextButton(
-          child: Text(l10n.commonYes, style: const TextStyle(fontWeight: FontWeight.bold)),
-          onPressed: () => Navigator.of(context).pop(true),
-        ),
-      ],
-    );
-  },
+Future<void> showTooManyFilesSelectedDialog(BuildContext context) => showInfoDialog(
+  context: context,
+  title: context.l10n.mediaPlayerTooManyFilesTitle,
+  content: Text(context.l10n.mediaPlayerTooManyFilesDescription, style: const TextStyle(color: ColorTheme.primary)),
 );
 
 Future<void> showMissingMicrophonePermissionDialog(BuildContext context) => showInfoDialog(
