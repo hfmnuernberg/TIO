@@ -107,8 +107,7 @@ class German extends AppLocalizations {
   String get mediaPlayerErrorFileOpen => 'Die Datei konnte nicht geöffnet werden';
   String get mediaPlayerErrorFileOpenDescription =>
       'Die Datei konnte nicht geöffnet werden. Versuche es noch einmal oder wähle eine andere Datei.';
-  String get mediaPlayerErrorMissingPermission =>
-      'Fehlende Berechtigung';
+  String get mediaPlayerErrorMissingPermission => 'Fehlende Berechtigung';
   String get mediaPlayerErrorMissingMicPermissionDescription =>
       'Die App hat keine Berechtigung, auf das Mikrofon zuzugreifen. Bitte erteile die Berechtigung in den Einstellungen deines Geräts, um Audio aufnehmen zu können.';
   String get mediaPlayerFactor => 'Faktor';

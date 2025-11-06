@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/widgets/info_dialog.dart';
 
 Future<bool?> askForOverridingFileOnRecordingStart(BuildContext context) => showDialog<bool>(
   context: context,
@@ -41,57 +42,43 @@ Future<bool?> askForOverridingFileOnOpenFileSelection(BuildContext context) => s
   },
 );
 
-Future<void> showMissingMicrophonePermissionDialog(BuildContext context) => showDialog<void>(
+Future<void> showMissingMicrophonePermissionDialog(BuildContext context) => showInfoDialog(
   context: context,
-  builder: (context) {
-    final l10n = context.l10n;
-
-    return AlertDialog(
-      title: Text(l10n.mediaPlayerErrorMissingPermission, style: TextStyle(color: ColorTheme.primary)),
-      content: Text(l10n.mediaPlayerErrorMissingMicPermissionDescription, style: const TextStyle(color: ColorTheme.primary)),
-      actions: [TextButton(child: Text(l10n.commonGotIt), onPressed: () => Navigator.pop(context))],
-    );
-  },
+  title: context.l10n.mediaPlayerErrorMissingPermission,
+  content: Text(
+    context.l10n.mediaPlayerErrorMissingMicPermissionDescription,
+    style: const TextStyle(color: ColorTheme.primary),
+  ),
 );
 
-Future<void> showFormatNotSupportedDialog(BuildContext context, String? format) => showDialog<void>(
+Future<void> showFormatNotSupportedDialog(BuildContext context, String? format) => showInfoDialog(
   context: context,
-  builder: (context) {
-    final l10n = context.l10n;
-
-    return AlertDialog(
-      title: Text(l10n.mediaPlayerErrorFileFormat, style: TextStyle(color: ColorTheme.primary)),
-      content: Text(
-        l10n.mediaPlayerErrorFileFormatDescription(format ?? ''),
-        style: const TextStyle(color: ColorTheme.primary),
-      ),
-      actions: [TextButton(child: Text(l10n.commonGotIt), onPressed: () => Navigator.pop(context))],
-    );
-  },
+  title: context.l10n.mediaPlayerErrorFileFormat,
+  content: Text(
+    context.l10n.mediaPlayerErrorFileFormatDescription(format ?? ''),
+    style: const TextStyle(color: ColorTheme.primary),
+  ),
 );
 
 Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) {
-  final l10n = context.l10n;
   fileName = (fileName ?? '').isEmpty ? null : fileName;
 
-  return showDialog<void>(
+  return showInfoDialog(
     context: context,
-    builder: (context) => AlertDialog(
-      title: Text(l10n.mediaPlayerErrorFileOpen, style: TextStyle(color: ColorTheme.primary)),
-      content: Column(
-        children: [
-          Text(l10n.mediaPlayerErrorFileOpenDescription, style: const TextStyle(color: ColorTheme.primary)),
-          if (fileName != null)
-            Container(
-              margin: const EdgeInsets.only(top: 8),
-              child: Text(
-                '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
-                style: const TextStyle(color: ColorTheme.primary),
-              ),
+    title: context.l10n.mediaPlayerErrorFileOpen,
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(context.l10n.mediaPlayerErrorFileOpenDescription, style: const TextStyle(color: ColorTheme.primary)),
+        if (fileName != null)
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            child: Text(
+              '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
+              style: const TextStyle(color: ColorTheme.primary),
             ),
-        ],
-      ),
-      actions: [TextButton(child: Text(l10n.commonGotIt), onPressed: () => Navigator.pop(context))],
+          ),
+      ],
     ),
   );
 }

@@ -14,7 +14,6 @@ void main() {
   late TestContext context;
   late PermissionHandlerMock permissionHandlerMock;
 
-
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   setUp(() async {

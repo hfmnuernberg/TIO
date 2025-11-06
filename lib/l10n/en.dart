@@ -108,8 +108,7 @@ class English extends AppLocalizations {
   String get mediaPlayerErrorFileOpen => 'File could not be opened.';
   String get mediaPlayerErrorFileOpenDescription =>
       'Something went wrong while trying to open the file. Please try again.';
-  String get mediaPlayerErrorMissingPermission =>
-      'Missing permission';
+  String get mediaPlayerErrorMissingPermission => 'Missing permission';
   String get mediaPlayerErrorMissingMicPermissionDescription =>
       'Microphone permission is required to record audio. Please grant the permission in your device settings.';
   String get mediaPlayerFactor => 'Factor';
