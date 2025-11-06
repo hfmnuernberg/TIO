@@ -107,6 +107,9 @@ class German extends AppLocalizations {
   String get mediaPlayerErrorFileOpen => 'Die Datei konnte nicht geöffnet werden';
   String get mediaPlayerErrorFileOpenDescription =>
       'Die Datei konnte nicht geöffnet werden. Versuche es noch einmal oder wähle eine andere Datei.';
+  String get mediaPlayerErrorMissingPermission => 'Fehlende Berechtigung';
+  String get mediaPlayerErrorMissingMicPermissionDescription =>
+      'Die App hat keine Berechtigung, auf das Mikrofon zuzugreifen. Bitte erteile die Berechtigung in den Einstellungen deines Geräts, um Audio aufnehmen zu können.';
   String get mediaPlayerFactor => 'Faktor';
   String get mediaPlayerFactorAndBpm => 'Faktor und BPM-Regler';
   String get mediaPlayerFile => 'Datei';
@@ -134,6 +137,8 @@ class German extends AppLocalizations {
   String get mediaPlayerSetTrim => 'Trimmbereich festlegen';
   String get mediaPlayerShareAudioFile => 'Audio-Datei teilen';
   String get mediaPlayerSpeed => 'Tempo';
+  String get mediaPlayerStartRecording => 'Aufnahme starten';
+  String get mediaPlayerStopRecording => 'Aufnahme stoppen';
   String get mediaPlayerTapToTempo => 'Tippe im Takt';
   String get mediaPlayerTooManyFilesDescription =>
       'Aus technischen Gründen werden nur 10 Dateien gleichzeitig geladen.\n\nBitte wiederhole den Vorgang mit den übrigen Dateien, die in diesem Schritt nicht geladen wurden.';
