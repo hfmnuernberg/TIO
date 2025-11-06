@@ -1220,10 +1220,10 @@ packages:
     dependency: "direct main"
     description:
       name: widgetbook
-      sha256: "2d0e649fd73f092afc373272bf46d12e7637a540baa549562393fecf3a387eeb"
+      sha256: "877a843650117d214d8874b662b3a04bd6988aad33208d26dbe31edbc7d68e78"
       url: "https://pub.dev"
     source: hosted
-    version: "3.16.0"
+    version: "3.19.0"
   widgetbook_annotation:
     dependency: "direct main"
     description:
