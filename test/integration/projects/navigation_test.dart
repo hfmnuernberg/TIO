@@ -1,0 +1,48 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:tiomusic/pages/projects_page/projects_page.dart';
+
+import '../../utils/action_utils.dart';
+import '../../utils/render_utils.dart';
+import '../../utils/test_context.dart';
+
+void main() {
+  late TestContext context;
+
+  setUpAll(WidgetsFlutterBinding.ensureInitialized);
+
+  setUp(() async {
+    context = TestContext();
+    await context.init();
+  });
+
+  group('ProjectsPage - Navigation', () {
+    testWidgets('navigates to about page on menu item tap', (tester) async {
+      await tester.renderScaffold(ProjectsPage(), context.providers);
+
+      await tester.tapAndSettle(find.byTooltip('Projects menu'));
+      await tester.tapAndWaitFor(find.bySemanticsLabel('About'));
+
+      expect(find.bySemanticsLabel('About'), findsOneWidget);
+    });
+
+    testWidgets('navigates to feedback page on menu item tap', (tester) async {
+      await tester.renderScaffold(ProjectsPage(), context.providers);
+
+      await tester.tapAndSettle(find.byTooltip('Projects menu'));
+      await tester.tapAndWaitFor(find.bySemanticsLabel('Feedback'));
+
+      expect(find.bySemanticsLabel('Feedback survey'), findsOneWidget);
+    });
+
+    // TODO(TIO-293): Enable flash cards feature with flash cards list and real content
+    // testWidgets('navigates to flash cards page on menu item tap', (tester) async {
+    //   await tester.renderScaffold(ProjectsPage(), context.providers);
+    //
+    //   await tester.tapAndSettle(find.byTooltip('Projects menu'));
+    //   await tester.tapAndWaitFor(find.bySemanticsLabel('Flash cards'));
+    //
+    //   expect(find.bySemanticsLabel('Flash cards'), findsOneWidget);
+    // });
+  });
+}
