@@ -11,13 +11,14 @@ class FlashCardsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      extendBody: true,
       appBar: AppBar(
         title: Text(context.l10n.flashCardsPageTitle),
         backgroundColor: ColorTheme.surfaceBright,
         foregroundColor: ColorTheme.primary,
       ),
       backgroundColor: ColorTheme.primary92,
-      body: SafeArea(child: _FlashCardsList()),
+      body: SafeArea(bottom: false, child: _FlashCardsList()),
     );
   }
 }
@@ -26,9 +27,10 @@ class _FlashCardsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cards = FlashCards().load(context.l10n);
+
     return ListView.separated(
-      padding: const EdgeInsets.all(32),
-      itemBuilder: (_, i) => FlashCard(title: cards[i].title, description: cards[i].description),
+      padding: const EdgeInsets.all(16),
+      itemBuilder: (_, i) => FlashCard(description: cards[i].description),
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemCount: cards.length,
     );
