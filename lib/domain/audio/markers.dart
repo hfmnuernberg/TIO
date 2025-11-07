@@ -70,24 +70,6 @@ class Markers {
     }
   }
 
-  double? nextAfter(double pos) {
-    if (_positions.isEmpty) return null;
-    final list = [..._positions]..sort();
-    for (final m in list) {
-      if (m > pos + 1e-6) return m;
-    }
-    return list.first;
-  }
-
-  double? prevBefore(double pos) {
-    if (_positions.isEmpty) return null;
-    final list = [..._positions]..sort();
-    for (final m in list.reversed) {
-      if (m < pos - 1e-6) return m;
-    }
-    return list.last;
-  }
-
   Future<void> _playSound() async {
     await _as.generatorNoteOn(newFreq: markerSoundFrequency);
     Future.delayed(Duration(milliseconds: markerSoundDurationInMilliseconds), _as.generatorNoteOff);

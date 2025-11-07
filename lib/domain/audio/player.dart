@@ -4,6 +4,7 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
+import 'package:tiomusic/domain/audio/marker_navigation.dart';
 import 'package:tiomusic/domain/audio/markers.dart';
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
@@ -152,11 +153,21 @@ class Player {
   }
 
   Future<void> skipToMarker({required bool forward}) async {
-    final target = forward
-        ? _markers.nextAfter(playbackPosition)
-        : _markers.prevBefore(playbackPosition);
-    if (target == null) return;
-    await setPlaybackPosition(target);
+    final sortedMarkers = [..._markers.positions]..sort();
+    if (sortedMarkers.isEmpty) return;
+
+    if (forward) {
+      final targetMarker = MarkerNavigation.next(playbackPosition, sortedMarkers);
+      await setPlaybackPosition(targetMarker);
+      return;
+    }
+
+    final targetMarker = MarkerNavigation.previousWithWindow(
+      position: playbackPosition,
+      sortedMarkers: sortedMarkers,
+      fileDuration: fileDuration,
+    );
+    await setPlaybackPosition(targetMarker);
   }
 
   Future<Float32List> getRmsValues(int numberOfBins) async {
