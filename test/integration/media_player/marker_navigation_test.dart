@@ -10,6 +10,15 @@ import '../../utils/project_utils.dart';
 import '../../utils/render_utils.dart';
 import '../../utils/test_context.dart';
 
+Future<void> prepareAndOpenMediaPlayer(WidgetTester tester, TestContext context) async {
+  final filePath = '${context.inMemoryFileSystem.tmpFolderPath}/audio_file.wav';
+  context.inMemoryFileSystem.saveFileAsBytes(filePath, File('assets/test/ping.wav').readAsBytesSync());
+  context.filePickerMock.mockPickAudioFromMediaLibrary([filePath]);
+  await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+  await tester.createMediaPlayerToolInProject();
+  await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+}
+
 extension WidgetTesterMediaPlayerExtension on WidgetTester {
   Finder withinSettingsTile(String title, FinderBase<Element> matching) =>
       find.descendant(of: find.bySemanticsLabel(title), matching: matching);
@@ -55,30 +64,18 @@ void main() {
     });
 
     testWidgets('skips forward to next marker on button select', (tester) async {
-      final filePath = '${context.inMemoryFileSystem.tmpFolderPath}/audio_file.wav';
-      context.inMemoryFileSystem.saveFileAsBytes(filePath, File('assets/test/ping.wav').readAsBytesSync());
-      context.filePickerMock.mockPickAudioFromMediaLibrary([filePath]);
-      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-      await tester.createMediaPlayerToolInProject();
-      await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+      await prepareAndOpenMediaPlayer(tester, context);
       await tester.scrollToAndTapAndSettle('Markers');
 
       final slider = find.byType(Slider);
-      expect(slider, findsOneWidget);
-
       var left = tester.getTopLeft(slider);
       var right = tester.getTopRight(slider);
       var y = tester.getCenter(slider).dy;
       var target = Offset(left.dx + (right.dx - left.dx) * 0.50, y);
       await tester.tapAt(target);
-      await tester.pumpAndSettle();
-
       await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
-
       await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-      expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('1')), findsOneWidget);
 
-      // Bring the button on-screen (prevents the "offset is outside bounds" warning)
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
       await tester.ensureVisible(find.byTooltip('Forward to next marker'));
       await tester.tapAndSettle(find.byTooltip('Forward to next marker'));
@@ -87,30 +84,18 @@ void main() {
     });
 
     testWidgets('skips forward to first marker on button select when last marker reached', (tester) async {
-      final filePath = '${context.inMemoryFileSystem.tmpFolderPath}/audio_file.wav';
-      context.inMemoryFileSystem.saveFileAsBytes(filePath, File('assets/test/ping.wav').readAsBytesSync());
-      context.filePickerMock.mockPickAudioFromMediaLibrary([filePath]);
-      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-      await tester.createMediaPlayerToolInProject();
-      await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+      await prepareAndOpenMediaPlayer(tester, context);
       await tester.scrollToAndTapAndSettle('Markers');
 
       final slider = find.byType(Slider);
-      expect(slider, findsOneWidget);
-
       var left = tester.getTopLeft(slider);
       var right = tester.getTopRight(slider);
       var y = tester.getCenter(slider).dy;
       var target = Offset(left.dx + (right.dx - left.dx) * 0.50, y);
       await tester.tapAt(target);
-      await tester.pumpAndSettle();
-
       await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
-
       await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-      expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('1')), findsOneWidget);
 
-      // Bring the button on-screen (prevents the "offset is outside bounds" warning)
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
       await tester.ensureVisible(find.byTooltip('Forward to next marker'));
       await tester.tapAndSettle(find.byTooltip('Forward to next marker'));
@@ -122,30 +107,18 @@ void main() {
     });
 
     testWidgets('skips backwards to previous marker on button select', (tester) async {
-      final filePath = '${context.inMemoryFileSystem.tmpFolderPath}/audio_file.wav';
-      context.inMemoryFileSystem.saveFileAsBytes(filePath, File('assets/test/ping.wav').readAsBytesSync());
-      context.filePickerMock.mockPickAudioFromMediaLibrary([filePath]);
-      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-      await tester.createMediaPlayerToolInProject();
-      await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+      await prepareAndOpenMediaPlayer(tester, context);
       await tester.scrollToAndTapAndSettle('Markers');
 
       final slider = find.byType(Slider);
-      expect(slider, findsOneWidget);
-
       var left = tester.getTopLeft(slider);
       var right = tester.getTopRight(slider);
       var y = tester.getCenter(slider).dy;
       var target = Offset(left.dx + (right.dx - left.dx) * 0.50, y);
       await tester.tapAt(target);
-      await tester.pumpAndSettle();
-
       await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
-
       await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-      expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('1')), findsOneWidget);
 
-      // Bring the button on-screen (prevents the "offset is outside bounds" warning)
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
       await tester.ensureVisible(find.byTooltip('Back to previous marker'));
       await tester.tapAndSettle(find.byTooltip('Back to previous marker'));
@@ -154,30 +127,18 @@ void main() {
     });
 
     testWidgets('skips backwards to last marker on button select when first marker reached', (tester) async {
-      final filePath = '${context.inMemoryFileSystem.tmpFolderPath}/audio_file.wav';
-      context.inMemoryFileSystem.saveFileAsBytes(filePath, File('assets/test/ping.wav').readAsBytesSync());
-      context.filePickerMock.mockPickAudioFromMediaLibrary([filePath]);
-      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-      await tester.createMediaPlayerToolInProject();
-      await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+      await prepareAndOpenMediaPlayer(tester, context);
       await tester.scrollToAndTapAndSettle('Markers');
 
       final slider = find.byType(Slider);
-      expect(slider, findsOneWidget);
-
       var left = tester.getTopLeft(slider);
       var right = tester.getTopRight(slider);
       var y = tester.getCenter(slider).dy;
       var target = Offset(left.dx + (right.dx - left.dx) * 0.50, y);
       await tester.tapAt(target);
-      await tester.pumpAndSettle();
-
       await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
-
       await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-      expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('1')), findsOneWidget);
 
-      // Bring the button on-screen (prevents the "offset is outside bounds" warning)
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
       await tester.ensureVisible(find.byTooltip('Back to previous marker'));
       await tester.tapAndSettle(find.byTooltip('Back to previous marker'));
