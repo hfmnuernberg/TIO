@@ -1,6 +1,7 @@
 abstract class FlashCardsLocalization {
-  String get flashCardTitle;
+  String flashCardDescriptionById(String id);
   String get flashCardDescription;
+  String get flashCardTitle;
 
   String get flashCardsPageTitle;
 }
