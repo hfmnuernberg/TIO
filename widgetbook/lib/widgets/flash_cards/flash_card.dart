@@ -21,5 +21,5 @@ class Wrapper extends StatelessWidget {
 
 @widgetbook.UseCase(name: 'FlashCard', type: FlashCard)
 Widget flashCard(BuildContext context) {
-  return Wrapper(child: const FlashCard());
+  return Wrapper(child: const FlashCard(description: 'Some description'));
 }
