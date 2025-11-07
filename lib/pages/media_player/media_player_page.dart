@@ -729,6 +729,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     var waveformHeight = 200.0;
     final l10n = context.l10n;
     final isMultiImportEnabled = !widget.isQuickTool;
+    final hasMarkers = _mediaPlayerBlock.markerPositions.isNotEmpty;
 
     return ParentTool(
       barTitle: _mediaPlayerBlock.title,
@@ -793,25 +794,27 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
               children: [
                 TextButton(onPressed: () {}, child: Text('-10 ${l10n.mediaPlayerSecShort}')),
 
-                IconButton(
-                  onPressed: () async {
-                    await _player.skipToMarker(forward: false);
-                    await _updateState();
-                  },
-                  icon: SkipToMarkerIcon(forward: false),
-                  tooltip: context.l10n.mediaPlayerSkipBackToMarker,
-                ),
+                if (hasMarkers)
+                  IconButton(
+                    onPressed: () async {
+                      await _player.skipToMarker(forward: false);
+                      await _updateState();
+                    },
+                    icon: SkipToMarkerIcon(forward: false),
+                    tooltip: context.l10n.mediaPlayerSkipBackToMarker,
+                  ),
 
                 Container(key: _keyRepeat, child: MediaPlayerRepeatButton(onToggle: _handleRepeatToggle)),
 
-                IconButton(
-                  onPressed: () async {
-                    await _player.skipToMarker(forward: true);
-                    await _updateState();
-                  },
-                  icon: SkipToMarkerIcon(forward: true),
-                  tooltip: context.l10n.mediaPlayerSkipForwardToMarker,
-                ),
+                if (hasMarkers)
+                  IconButton(
+                    onPressed: () async {
+                      await _player.skipToMarker(forward: true);
+                      await _updateState();
+                    },
+                    icon: SkipToMarkerIcon(forward: true),
+                    tooltip: context.l10n.mediaPlayerSkipForwardToMarker,
+                  ),
 
                 TextButton(onPressed: () => _skip(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
               ],
