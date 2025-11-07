@@ -723,6 +723,26 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     return markers;
   }
 
+  Widget _jumpMarkerIcon({required bool forward}) {
+    return SizedBox(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (!forward) Icon(Icons.arrow_drop_down, size: 32, color: ColorTheme.primary),
+          Transform.translate(
+            offset: Offset(forward ? 10 : -10, 0),
+            child: Icon(
+              forward ? Icons.arrow_forward : Icons.arrow_back,
+              size: 20,
+              color: ColorTheme.primary,
+            ),
+          ),
+          if (forward) Icon(Icons.arrow_drop_down, size: 32, color: ColorTheme.primary),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var waveformHeight = 200.0;
@@ -790,11 +810,31 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                TextButton(onPressed: () => _skip(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
+                TextButton(onPressed: () {}, child: Text('-10 ${l10n.mediaPlayerSecShort}')),
+
+                IconButton(
+                  onPressed: () async {
+                    await _player.skipToMarker(forward: false);
+                    await _updateState();
+                  },
+                  icon: _jumpMarkerIcon(forward: false),
+                  tooltip: context.l10n.mediaPlayerSkipBackToMarker,
+                ),
+
                 Container(
                   key: _keyRepeat,
                   child: MediaPlayerRepeatButton(onToggle: _handleRepeatToggle),
                 ),
+
+                IconButton(
+                  onPressed: () async {
+                    await _player.skipToMarker(forward: true);
+                    await _updateState();
+                  },
+                  icon: _jumpMarkerIcon(forward: true),
+                  tooltip: context.l10n.mediaPlayerSkipForwardToMarker,
+                ),
+
                 TextButton(onPressed: () => _skip(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
               ],
             ),

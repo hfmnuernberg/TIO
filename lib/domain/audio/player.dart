@@ -151,6 +151,14 @@ class Player {
     await setPlaybackPosition(newPos);
   }
 
+  Future<void> skipToMarker({required bool forward}) async {
+    final target = forward
+        ? _markers.nextAfter(playbackPosition)
+        : _markers.prevBefore(playbackPosition);
+    if (target == null) return;
+    await setPlaybackPosition(target);
+  }
+
   Future<Float32List> getRmsValues(int numberOfBins) async {
     final rmsList = await _as.mediaPlayerGetRms(nBins: numberOfBins);
 
