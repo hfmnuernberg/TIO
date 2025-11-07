@@ -20,6 +20,7 @@ import 'package:tiomusic/pages/media_player/set_bpm.dart';
 import 'package:tiomusic/pages/media_player/set_pitch.dart';
 import 'package:tiomusic/pages/media_player/set_speed.dart';
 import 'package:tiomusic/pages/media_player/set_trim.dart';
+import 'package:tiomusic/pages/media_player/skip_to_marker_icon.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
@@ -723,26 +724,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     return markers;
   }
 
-  Widget _jumpMarkerIcon({required bool forward}) {
-    return SizedBox(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (!forward) Icon(Icons.arrow_drop_down, size: 32, color: ColorTheme.primary),
-          Transform.translate(
-            offset: Offset(forward ? 10 : -10, 0),
-            child: Icon(
-              forward ? Icons.arrow_forward : Icons.arrow_back,
-              size: 20,
-              color: ColorTheme.primary,
-            ),
-          ),
-          if (forward) Icon(Icons.arrow_drop_down, size: 32, color: ColorTheme.primary),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     var waveformHeight = 200.0;
@@ -817,21 +798,18 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                     await _player.skipToMarker(forward: false);
                     await _updateState();
                   },
-                  icon: _jumpMarkerIcon(forward: false),
+                  icon: SkipToMarkerIcon(forward: false),
                   tooltip: context.l10n.mediaPlayerSkipBackToMarker,
                 ),
 
-                Container(
-                  key: _keyRepeat,
-                  child: MediaPlayerRepeatButton(onToggle: _handleRepeatToggle),
-                ),
+                Container(key: _keyRepeat, child: MediaPlayerRepeatButton(onToggle: _handleRepeatToggle)),
 
                 IconButton(
                   onPressed: () async {
                     await _player.skipToMarker(forward: true);
                     await _updateState();
                   },
-                  icon: _jumpMarkerIcon(forward: true),
+                  icon: SkipToMarkerIcon(forward: true),
                   tooltip: context.l10n.mediaPlayerSkipForwardToMarker,
                 ),
 
