@@ -26,8 +26,9 @@ class MarkerNavigation {
     final totalSecs = fileDuration.inSeconds.toDouble();
     final windowFactor = totalSecs > 0 ? (windowInSeconds / totalSecs) : 0.0;
 
-    final double distanceAfterCandidate =
-    (position >= candidate) ? (position - candidate) : ((1.0 - candidate) + position);
+    final double distanceAfterCandidate = (position >= candidate)
+        ? (position - candidate)
+        : ((1.0 - candidate) + position);
 
     if (distanceAfterCandidate <= windowFactor) {
       final index = sortedMarkers.indexOf(candidate);

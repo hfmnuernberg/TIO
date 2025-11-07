@@ -804,7 +804,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                     tooltip: context.l10n.mediaPlayerSkipBackToMarker,
                   ),
 
-                Container(key: _keyRepeat, child: MediaPlayerRepeatButton(onToggle: _handleRepeatToggle)),
+                Container(
+                  key: _keyRepeat,
+                  child: MediaPlayerRepeatButton(onToggle: _handleRepeatToggle),
+                ),
 
                 if (hasMarkers)
                   IconButton(

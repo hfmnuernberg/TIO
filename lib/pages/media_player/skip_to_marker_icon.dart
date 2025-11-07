@@ -20,11 +20,7 @@ class SkipToMarkerIcon extends StatelessWidget {
         if (!forward) Icon(Icons.arrow_drop_down, size: markerSize, color: color),
         Transform.translate(
           offset: Offset(forward ? arrowOffset : -arrowOffset, 0),
-          child: Icon(
-            forward ? Icons.arrow_forward : Icons.arrow_back,
-            size: arrowSize,
-            color: color,
-          ),
+          child: Icon(forward ? Icons.arrow_forward : Icons.arrow_back, size: arrowSize, color: color),
         ),
         if (forward) Icon(Icons.arrow_drop_down, size: markerSize, color: color),
       ],
