@@ -27,6 +27,18 @@ extension WidgetTesterMediaPlayerExtension on WidgetTester {
     await ensureVisible(find.bySemanticsLabel(label));
     await tapAndSettle(find.bySemanticsLabel(label));
   }
+
+  Future<void> addMarkerAtPosition(double relativePosition) async {
+    final slider = find.byType(Slider);
+    final left = getTopLeft(slider);
+    final right = getTopRight(slider);
+    final y = getCenter(slider).dy;
+    final target = Offset(left.dx + (right.dx - left.dx) * relativePosition, y);
+
+    await tapAt(target);
+    await tapAndSettle(find.bySemanticsLabel('Add marker'));
+    await tapAndSettle(find.bySemanticsLabel('Submit'));
+  }
 }
 
 void main() {
@@ -66,17 +78,9 @@ void main() {
     testWidgets('skips forward to next marker on button select', (tester) async {
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.scrollToAndTapAndSettle('Markers');
-
-      final slider = find.byType(Slider);
-      var left = tester.getTopLeft(slider);
-      var right = tester.getTopRight(slider);
-      var y = tester.getCenter(slider).dy;
-      var target = Offset(left.dx + (right.dx - left.dx) * 0.50, y);
-      await tester.tapAt(target);
-      await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
-      await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-
+      await tester.addMarkerAtPosition(0.5);
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
+
       await tester.ensureVisible(find.byTooltip('Forward to next marker'));
       await tester.tapAndSettle(find.byTooltip('Forward to next marker'));
 
@@ -86,17 +90,9 @@ void main() {
     testWidgets('skips forward to first marker on button select when last marker reached', (tester) async {
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.scrollToAndTapAndSettle('Markers');
-
-      final slider = find.byType(Slider);
-      var left = tester.getTopLeft(slider);
-      var right = tester.getTopRight(slider);
-      var y = tester.getCenter(slider).dy;
-      var target = Offset(left.dx + (right.dx - left.dx) * 0.50, y);
-      await tester.tapAt(target);
-      await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
-      await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-
+      await tester.addMarkerAtPosition(0.5);
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
+
       await tester.ensureVisible(find.byTooltip('Forward to next marker'));
       await tester.tapAndSettle(find.byTooltip('Forward to next marker'));
 
@@ -109,17 +105,9 @@ void main() {
     testWidgets('skips backwards to previous marker on button select', (tester) async {
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.scrollToAndTapAndSettle('Markers');
-
-      final slider = find.byType(Slider);
-      var left = tester.getTopLeft(slider);
-      var right = tester.getTopRight(slider);
-      var y = tester.getCenter(slider).dy;
-      var target = Offset(left.dx + (right.dx - left.dx) * 0.50, y);
-      await tester.tapAt(target);
-      await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
-      await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-
+      await tester.addMarkerAtPosition(0.5);
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
+
       await tester.ensureVisible(find.byTooltip('Back to previous marker'));
       await tester.tapAndSettle(find.byTooltip('Back to previous marker'));
 
@@ -129,17 +117,9 @@ void main() {
     testWidgets('skips backwards to last marker on button select when first marker reached', (tester) async {
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.scrollToAndTapAndSettle('Markers');
-
-      final slider = find.byType(Slider);
-      var left = tester.getTopLeft(slider);
-      var right = tester.getTopRight(slider);
-      var y = tester.getCenter(slider).dy;
-      var target = Offset(left.dx + (right.dx - left.dx) * 0.50, y);
-      await tester.tapAt(target);
-      await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
-      await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-
+      await tester.addMarkerAtPosition(0.5);
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
+
       await tester.ensureVisible(find.byTooltip('Back to previous marker'));
       await tester.tapAndSettle(find.byTooltip('Back to previous marker'));
 
