@@ -26,9 +26,10 @@ class _FlashCardsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cards = FlashCards().load(context.l10n);
+
     return ListView.separated(
       padding: const EdgeInsets.all(32),
-      itemBuilder: (_, i) => FlashCard(title: cards[i].title, description: cards[i].description),
+      itemBuilder: (_, i) => FlashCard(description: cards[i].description),
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemCount: cards.length,
     );
