@@ -35,14 +35,13 @@ void main() {
       expect(find.bySemanticsLabel('Feedback survey'), findsOneWidget);
     });
 
-    // TODO(TIO-293): Enable flash cards feature with flash cards list and real content
-    // testWidgets('navigates to flash cards page on menu item tap', (tester) async {
-    //   await tester.renderScaffold(ProjectsPage(), context.providers);
-    //
-    //   await tester.tapAndSettle(find.byTooltip('Projects menu'));
-    //   await tester.tapAndWaitFor(find.bySemanticsLabel('Flash cards'));
-    //
-    //   expect(find.bySemanticsLabel('Flash cards'), findsOneWidget);
-    // });
+    testWidgets('navigates to practice tips page on menu item tap', (tester) async {
+      await tester.renderScaffold(ProjectsPage(), context.providers);
+
+      await tester.tapAndSettle(find.byTooltip('Projects menu'));
+      await tester.tapAndWaitFor(find.bySemanticsLabel('Practice tips'));
+
+      expect(find.bySemanticsLabel('Practice tips'), findsOneWidget);
+    });
   });
 }

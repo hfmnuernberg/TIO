@@ -108,12 +108,11 @@ class MenuItems extends StatelessWidget {
         semanticsLabel: l10n.projectsTutorialStart,
         child: Text(l10n.projectsTutorialStart, style: const TextStyle(color: ColorTheme.primary)),
       ),
-      // TODO(TIO-293): Enable flash cards feature with flash cards list and real content
-      // MenuItemButton(
-      //   onPressed: () => onSelected(MenuAction.flashCards),
-      //   semanticsLabel: l10n.projectsFlashCards,
-      //   child: Text(l10n.projectsFlashCards, style: const TextStyle(color: ColorTheme.primary)),
-      // ),
+      MenuItemButton(
+        onPressed: () => onSelected(MenuAction.flashCards),
+        semanticsLabel: l10n.projectsFlashCards,
+        child: Text(l10n.projectsFlashCards, style: const TextStyle(color: ColorTheme.primary)),
+      ),
     ];
 
     return MenuAnchor(

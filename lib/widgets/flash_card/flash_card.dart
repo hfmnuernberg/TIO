@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class FlashCard extends StatelessWidget {
-  const FlashCard({super.key});
+  final String title;
+  final String description;
+
+  const FlashCard({super.key, required this.title, required this.description});
 
   @override
   Widget build(BuildContext context) => Material(
@@ -20,11 +22,11 @@ class FlashCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  context.l10n.flashCardTitle,
+                  title,
                   style: const TextStyle(color: ColorTheme.primary, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
-                Text(context.l10n.flashCardDescription, style: const TextStyle(color: ColorTheme.primary)),
+                Text(description, style: const TextStyle(color: ColorTheme.primary)),
               ],
             ),
           ),
