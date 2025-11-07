@@ -29,6 +29,7 @@ extension WidgetTesterMediaPlayerExtension on WidgetTester {
   }
 
   Future<void> addMarkerAtPosition(double relativePosition) async {
+    await scrollToAndTapAndSettle('Markers');
     final slider = find.byType(Slider);
     final left = getTopLeft(slider);
     final right = getTopRight(slider);
@@ -77,7 +78,6 @@ void main() {
 
     testWidgets('skips forward to next marker on button select', (tester) async {
       await prepareAndOpenMediaPlayer(tester, context);
-      await tester.scrollToAndTapAndSettle('Markers');
       await tester.addMarkerAtPosition(0.5);
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
 
@@ -89,7 +89,6 @@ void main() {
 
     testWidgets('skips forward to first marker on button select when last marker reached', (tester) async {
       await prepareAndOpenMediaPlayer(tester, context);
-      await tester.scrollToAndTapAndSettle('Markers');
       await tester.addMarkerAtPosition(0.5);
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
 
@@ -104,7 +103,6 @@ void main() {
 
     testWidgets('skips backwards to previous marker on button select', (tester) async {
       await prepareAndOpenMediaPlayer(tester, context);
-      await tester.scrollToAndTapAndSettle('Markers');
       await tester.addMarkerAtPosition(0.5);
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
 
@@ -116,7 +114,6 @@ void main() {
 
     testWidgets('skips backwards to last marker on button select when first marker reached', (tester) async {
       await prepareAndOpenMediaPlayer(tester, context);
-      await tester.scrollToAndTapAndSettle('Markers');
       await tester.addMarkerAtPosition(0.5);
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
 
