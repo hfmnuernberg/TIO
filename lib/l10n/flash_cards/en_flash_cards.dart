@@ -26,5 +26,5 @@ mixin EnglishFlashCards on Object implements FlashCardsLocalization {
 
   String get flashCardTitle => 'When you practice today,';
 
-  String get flashCardsPageTitle => 'Flash cards';
+  String get flashCardsPageTitle => 'Practice tips';
 }
