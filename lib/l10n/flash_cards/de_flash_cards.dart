@@ -4,6 +4,15 @@
 import 'package:tiomusic/l10n/flash_cards/flash_cards_localization.dart';
 
 mixin GermanFlashCards on Object implements FlashCardsLocalization {
+  String get categoryCulture => 'Kultur';
+  String get categoryJournaling => 'Tagebuch';
+  String get categoryMixUp => 'Abwechslung';
+  String get categoryPracticingTactics => 'Übungstaktik';
+  String get categoryRelaxation => 'Entspannung';
+  String get categorySelfCare => 'Selbstfürsorge';
+  String get categoryTeam => 'Team';
+  String get categoryVision => 'Vision';
+
   String get descriptionAskSomeoneToObserveYou =>
       'bitte jemanden, dich beim Üben zu beobachten. Welchen Rat kann er oder sie dir geben?';
   String get descriptionBreakWaterBeauty =>
