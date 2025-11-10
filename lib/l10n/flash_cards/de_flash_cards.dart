@@ -34,20 +34,6 @@ mixin GermanFlashCards on Object implements FlashCardsLocalization {
   String get descriptionTellObstacleAndBrainstorm =>
       'erzähle jemandem von einem deiner Hindernisse und sucht gemeinsam nach Lösungen.';
 
-  String flashCardDescriptionById(String id) => switch (id) {
-    'descriptionAskSomeoneToObserveYou' => descriptionAskSomeoneToObserveYou,
-    'descriptionBreakWaterBeauty' => descriptionBreakWaterBeauty,
-    'descriptionBreathOutThreeTimes' => descriptionBreathOutThreeTimes,
-    'descriptionCloseEyesReleaseTension' => descriptionCloseEyesReleaseTension,
-    'descriptionDaysOffCongratulations' => descriptionDaysOffCongratulations,
-    'descriptionDescribeGoalTogether' => descriptionDescribeGoalTogether,
-    'descriptionLetSomeoneElseLead' => descriptionLetSomeoneElseLead,
-    'descriptionMeditateFiveMinBefore' => descriptionMeditateFiveMinBefore,
-    'descriptionPlayWithDroneSupport' => descriptionPlayWithDroneSupport,
-    'descriptionTellObstacleAndBrainstorm' => descriptionTellObstacleAndBrainstorm,
-    _ => id,
-  };
-
   String get flashCardTitle => 'Wenn du heute übst,';
 
   String get flashCardsPageTitle => 'Übungstipps';

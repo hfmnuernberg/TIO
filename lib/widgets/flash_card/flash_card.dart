@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:tiomusic/domain/flash_cards/flash_card_ids.dart';
-import 'package:tiomusic/domain/flash_cards/flash_cards.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class FlashCard extends StatelessWidget {
   final String description;
-  final FlashCardCategory category;
+  final String category;
 
   const FlashCard({super.key, required this.description, required this.category});
 
@@ -40,7 +38,7 @@ class FlashCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      category.label(context.l10n),
+                      category,
                       style: const TextStyle(color: ColorTheme.primary, fontSize: 12),
                     ),
                   ),
