@@ -8,7 +8,7 @@ class PlaybackControls extends StatelessWidget {
   final Key repeatKey;
   final Future<void> Function() onRepeatToggle;
   final Future<void> Function(bool forward) onSkip10Seconds;
-  final Future<void> Function(bool forward)? onSkipToMarker;
+  final Future<void> Function(bool forward) onSkipToMarker;
 
   const PlaybackControls({
     super.key,
@@ -29,7 +29,7 @@ class PlaybackControls extends StatelessWidget {
 
         if (hasMarkers)
           IconButton(
-            onPressed: () => onSkipToMarker!(false),
+            onPressed: () => onSkipToMarker(false),
             icon: SkipToMarkerIcon(forward: false),
             tooltip: l10n.mediaPlayerSkipBackToMarker,
           ),
@@ -41,7 +41,7 @@ class PlaybackControls extends StatelessWidget {
 
         if (hasMarkers)
           IconButton(
-            onPressed: () => onSkipToMarker!(true),
+            onPressed: () => onSkipToMarker(true),
             icon: SkipToMarkerIcon(forward: true),
             tooltip: l10n.mediaPlayerSkipForwardToMarker,
           ),

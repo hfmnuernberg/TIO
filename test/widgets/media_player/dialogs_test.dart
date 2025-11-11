@@ -8,69 +8,39 @@ import '../../utils/render_utils.dart';
 class TestWrapper extends StatelessWidget {
   const TestWrapper({super.key});
 
-  Future<void> handleAskForOverridingFileOnRecordingStart(BuildContext context) async {
-    await askForOverridingFileOnRecordingStart(context);
-  }
-
-  Future<void> handleAskForOverridingFileOnOpenFileSelection(BuildContext context) async {
-    await askForOverridingFileOnOpenFileSelection(context);
-  }
-
-  Future<void> handleShowTooManyFilesSelectedDialog(BuildContext context) async {
-    await showTooManyFilesSelectedDialog(context);
-  }
-
-  Future<void> handleShowMissingMicrophonePermissionDialog(BuildContext context) async {
-    await showMissingMicrophonePermissionDialog(context);
-  }
-
-  Future<void> handleShowFormatNotSupportedDialog(BuildContext context) async {
-    await showFormatNotSupportedDialog(context, 'wav');
-  }
-
-  Future<void> handleShowFileOpenFailedDialogNoName(BuildContext context) async {
-    await showFileOpenFailedDialog(context);
-  }
-
-  Future<void> handleShowFileOpenFailedDialogWithName(BuildContext context) async {
-    await showFileOpenFailedDialog(context, fileName: '/tmp/some/path/name.mp3');
-  }
-
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       children: [
         TextButton(
-          onPressed: () => handleAskForOverridingFileOnRecordingStart(context),
+          onPressed: () => askForOverridingFileOnRecordingStart(context),
           child: const Text('Open askForOverridingFileOnRecordingStart'),
         ),
         TextButton(
-          onPressed: () => handleAskForOverridingFileOnOpenFileSelection(context),
+          onPressed: () => askForOverridingFileOnOpenFileSelection(context),
           child: const Text('Open askForOverridingFileOnOpenFileSelection'),
         ),
         TextButton(
-          onPressed: () => handleShowTooManyFilesSelectedDialog(context),
+          onPressed: () => showTooManyFilesSelectedDialog(context),
           child: const Text('Open showTooManyFilesSelectedDialog'),
         ),
         TextButton(
-          onPressed: () => handleShowMissingMicrophonePermissionDialog(context),
+          onPressed: () => showMissingMicrophonePermissionDialog(context),
           child: const Text('Open showMissingMicrophonePermissionDialog'),
         ),
         TextButton(
-          onPressed: () => handleShowFormatNotSupportedDialog(context),
+          onPressed: () => showFormatNotSupportedDialog(context, 'wav'),
           child: const Text('Open showFormatNotSupportedDialog'),
         ),
         TextButton(
-          onPressed: () => handleShowFileOpenFailedDialogNoName(context),
+          onPressed: () => showFileOpenFailedDialog(context),
           child: const Text('Open showFileOpenFailedDialog (no name)'),
         ),
         TextButton(
-          onPressed: () => handleShowFileOpenFailedDialogWithName(context),
+          onPressed: () => showFileOpenFailedDialog(context, fileName: '/tmp/some/path/name.mp3'),
           child: const Text('Open showFileOpenFailedDialog (with name)'),
         ),
       ],
     );
-  }
 }
 
 void main() {
@@ -113,7 +83,7 @@ void main() {
       expect(find.byType(AlertDialog), findsOneWidget);
     });
 
-    testWidgets('showFormatNotSupportedDialogmentions format', (tester) async {
+    testWidgets('showFormatNotSupportedDialog mentions format', (tester) async {
       await tester.renderWidget(const TestWrapper());
       expect(find.byType(AlertDialog), findsNothing);
 

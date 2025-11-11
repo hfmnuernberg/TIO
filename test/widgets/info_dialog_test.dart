@@ -8,14 +8,8 @@ import '../utils/render_utils.dart';
 class TestWrapper extends StatelessWidget {
   const TestWrapper({super.key});
 
-  Future<void> handleOpenDialog(BuildContext context) async {
-    await showInfoDialog(context: context, title: 'Title', content: Text('Content'));
-  }
-
   @override
-  Widget build(BuildContext context) {
-    return TextButton(onPressed: () => handleOpenDialog(context), child: Text('Open dialog'));
-  }
+  Widget build(BuildContext context) => TextButton(onPressed: () => showInfoDialog(context: context, title: 'Title', content: Text('Content')), child: Text('Open dialog'));
 }
 
 void main() {
