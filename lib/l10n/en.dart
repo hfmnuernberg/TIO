@@ -111,6 +111,8 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get mediaPlayerFile => 'File';
   String get mediaPlayerMarker => 'Marker';
   String get mediaPlayerMarkers => 'Markers';
+  String get mediaPlayerSkip10Backwards => '10 seconds back';
+  String get mediaPlayerSkip10Forward => '10 seconds forward';
   String get mediaPlayerSkipBackToMarker => 'Back to previous marker';
   String get mediaPlayerSkipForwardToMarker => 'Forward to next marker';
   String get mediaPlayerOpenFileSystem => 'Open files';
