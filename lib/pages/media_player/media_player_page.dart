@@ -723,7 +723,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     var waveformHeight = 200.0;
     final l10n = context.l10n;
     final isMultiImportEnabled = !widget.isQuickTool;
-    final hasMarkers = _mediaPlayerBlock.markerPositions.isNotEmpty;
 
     return ParentTool(
       barTitle: _mediaPlayerBlock.title,
@@ -784,7 +783,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
               ),
             ),
             PlaybackControls(
-              hasMarkers: hasMarkers,
+              hasMarkers: _mediaPlayerBlock.markerPositions.isNotEmpty,
               repeatKey: _keyRepeat,
               onRepeatToggle: _handleRepeatToggle,
               onSkip10Seconds: (forward) async {
