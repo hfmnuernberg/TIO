@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:tiomusic/widgets/confirm_dialog.dart';
+import 'package:tiomusic/widgets/info_dialog.dart';
 
 import '../utils/action_utils.dart';
 import '../utils/render_utils.dart';
@@ -10,7 +10,7 @@ class TestWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => TextButton(
-    onPressed: () => showConfirmDialog(context: context, title: 'Title', content: 'Content'),
+    onPressed: () => showInfoDialog(context: context, title: 'Title', content: Text('Content')),
     child: Text('Open dialog'),
   );
 }
@@ -18,7 +18,7 @@ class TestWrapper extends StatelessWidget {
 void main() {
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
-  group('ConfirmDialog', () {
+  group('InfoDialog', () {
     testWidgets('shows dialog', (tester) async {
       await tester.renderWidget(TestWrapper());
       expect(find.bySemanticsLabel('Title'), findsNothing);
@@ -28,23 +28,13 @@ void main() {
       expect(find.bySemanticsLabel('Title'), findsOneWidget);
     });
 
-    testWidgets('hides dialog when cancel button is pressed', (tester) async {
+    testWidgets('hides dialog when action button is pressed', (tester) async {
       await tester.renderWidget(TestWrapper());
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open dialog'));
       expect(find.bySemanticsLabel('Title'), findsOneWidget);
 
-      await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
-      expect(find.bySemanticsLabel('Title'), findsNothing);
-    });
-
-    testWidgets('hides dialog when confirm button is pressed', (tester) async {
-      await tester.renderWidget(TestWrapper());
-
-      await tester.tapAndSettle(find.bySemanticsLabel('Open dialog'));
-      expect(find.bySemanticsLabel('Title'), findsOneWidget);
-
-      await tester.tapAndSettle(find.bySemanticsLabel('Proceed'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Got it'));
       expect(find.bySemanticsLabel('Title'), findsNothing);
     });
   });
