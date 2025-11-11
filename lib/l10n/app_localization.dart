@@ -94,8 +94,6 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get mediaPlayerFile;
   String get mediaPlayerMarker;
   String get mediaPlayerMarkers;
-  String get mediaPlayerSkip10Backwards;
-  String get mediaPlayerSkip10Forward;
   String get mediaPlayerSkipBackToMarker;
   String get mediaPlayerSkipForwardToMarker;
   String get mediaPlayerOpenFileSystem;

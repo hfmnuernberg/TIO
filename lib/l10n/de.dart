@@ -110,8 +110,6 @@ class German extends AppLocalizations with GermanFlashCards {
   String get mediaPlayerFile => 'Datei';
   String get mediaPlayerMarker => 'Marker';
   String get mediaPlayerMarkers => 'Marker';
-  String get mediaPlayerSkip10Backwards => '10 Sekunden zurückspringen';
-  String get mediaPlayerSkip10Forward => '10 Sekunden vorspringen';
   String get mediaPlayerSkipBackToMarker => 'Zu vorherigem Marker springen';
   String get mediaPlayerSkipForwardToMarker => 'Zu nächstem Marker springen';
   String get mediaPlayerOpenFileSystem => 'Öffne Dateien';

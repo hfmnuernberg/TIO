@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:tiomusic/pages/media_player/media_player_repeat_button.dart';
-import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-
-const String _back10SecondsIcon = 'assets/icons/back_10_seconds.svg';
-const String _forward10SecondsIcon = 'assets/icons/forward_10_seconds.svg';
-const String _nextMarkerIcon = 'assets/icons/next_marker.svg';
-const String _previousMarkerIcon = 'assets/icons/previous_marker.svg';
+import 'package:tiomusic/pages/media_player/media_player_repeat_button.dart';
+import 'package:tiomusic/pages/media_player/skip_to_marker_icon.dart';
 
 class PlaybackControls extends StatelessWidget {
   final bool hasMarkers;
@@ -31,22 +25,12 @@ class PlaybackControls extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        IconButton(
-          onPressed: () async => onSkip10Seconds(false),
-          icon: SvgPicture.asset(
-            _back10SecondsIcon,
-            colorFilter: ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
-          ),
-          tooltip: l10n.mediaPlayerSkip10Backwards,
-        ),
+        TextButton(onPressed: () => onSkip10Seconds(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
 
         if (hasMarkers)
           IconButton(
-            onPressed: () async => onSkipToMarker!(false),
-            icon: SvgPicture.asset(
-              _previousMarkerIcon,
-              colorFilter: ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
-            ),
+            onPressed: () => onSkipToMarker!(false),
+            icon: SkipToMarkerIcon(forward: false),
             tooltip: l10n.mediaPlayerSkipBackToMarker,
           ),
 
@@ -57,19 +41,12 @@ class PlaybackControls extends StatelessWidget {
 
         if (hasMarkers)
           IconButton(
-            onPressed: () async => onSkipToMarker!(true),
-            icon: SvgPicture.asset(_nextMarkerIcon, colorFilter: ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn)),
+            onPressed: () => onSkipToMarker!(true),
+            icon: SkipToMarkerIcon(forward: true),
             tooltip: l10n.mediaPlayerSkipForwardToMarker,
           ),
 
-        IconButton(
-          onPressed: () async => onSkip10Seconds(true),
-          icon: SvgPicture.asset(
-            _forward10SecondsIcon,
-            colorFilter: ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
-          ),
-          tooltip: l10n.mediaPlayerSkip10Forward,
-        ),
+        TextButton(onPressed: () => onSkip10Seconds(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
       ],
     );
   }
