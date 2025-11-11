@@ -9,13 +9,13 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
   void mockMediaPlayerLoadWav([bool result = true]) =>
       when(() => mediaPlayerLoadWav(wavFilePath: any(named: 'wavFilePath'))).thenAnswer((_) async => result);
   void verifyMediaPlayerLoadWavCalledWith(Pattern wavFilePath) => verify(
-        () => mediaPlayerLoadWav(
+    () => mediaPlayerLoadWav(
       wavFilePath: any(named: 'wavFilePath', that: matches(wavFilePath)),
     ),
   ).called(1);
 
   void mockMediaPlayerRenderMidiToWav([bool result = true]) => when(
-        () => mediaPlayerRenderMidiToWav(
+    () => mediaPlayerRenderMidiToWav(
       midiPath: any(named: 'midiPath'),
       soundFontPath: any(named: 'soundFontPath'),
       wavOutPath: any(named: 'wavOutPath'),
@@ -24,7 +24,7 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
     ),
   ).thenAnswer((_) async => result);
   void verifyMediaPlayerRenderMidiToWavCalled() => verify(
-        () => mediaPlayerRenderMidiToWav(
+    () => mediaPlayerRenderMidiToWav(
       midiPath: any(named: 'midiPath'),
       soundFontPath: any(named: 'soundFontPath'),
       wavOutPath: any(named: 'wavOutPath'),
@@ -55,7 +55,7 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
   void verifyMediaPlayerGetRecordingSamplesNeverCalled() => verifyNever(mediaPlayerGetRecordingSamples);
 
   void mockMediaPlayerSetPitchSemitones([bool result = true]) => when(
-        () => mediaPlayerSetPitchSemitones(pitchSemitones: any(named: 'pitchSemitones')),
+    () => mediaPlayerSetPitchSemitones(pitchSemitones: any(named: 'pitchSemitones')),
   ).thenAnswer((_) async => result);
   void verifyMediaPlayerSetPitchCalledWith(double pitchSemitones) =>
       verify(() => mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones)).called(1);
@@ -66,7 +66,7 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
       verify(() => mediaPlayerSetSpeedFactor(speedFactor: speedFactor)).called(1);
 
   void mockMediaPlayerSetTrim([bool result = true]) => when(
-        () => mediaPlayerSetTrim(
+    () => mediaPlayerSetTrim(
       startFactor: any(named: 'startFactor'),
       endFactor: any(named: 'endFactor'),
     ),
@@ -74,7 +74,7 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
   void verifyMediaPlayerSetTrimCalledWith(double startFactor, double endFactor) =>
       verify(() => mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor)).called(1);
   void verifyMediaPlayerSetTrimNeverCalled() => verifyNever(
-        () => mediaPlayerSetTrim(
+    () => mediaPlayerSetTrim(
       startFactor: any(named: 'startFactor'),
       endFactor: any(named: 'endFactor'),
     ),

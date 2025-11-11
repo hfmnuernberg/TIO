@@ -11,6 +11,7 @@ class TestWrapper extends StatelessWidget {
   Future<void> handleAskForOverridingFileOnRecordingStart(BuildContext context) async {
     await askForOverridingFileOnRecordingStart(context);
   }
+
   Future<void> handleAskForOverridingFileOnOpenFileSelection(BuildContext context) async {
     await askForOverridingFileOnOpenFileSelection(context);
   }

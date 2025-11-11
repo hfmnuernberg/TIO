@@ -10,7 +10,9 @@ import 'metronome_mock.dart';
 import 'piano_mock.dart';
 import 'tuner_mock.dart';
 
-class AudioSystemMock extends Mock with GeneratorMock, MediaPlayerMock, MetronomeMock, PianoMock, TunerMock implements AudioSystem {
+class AudioSystemMock extends Mock
+    with GeneratorMock, MediaPlayerMock, MetronomeMock, PianoMock, TunerMock
+    implements AudioSystem {
   AudioSystemMock() {
     registerFallbackValue(BeatSound.Accented);
 

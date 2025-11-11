@@ -19,20 +19,20 @@ mixin MetronomeMock on Mock implements AudioSystem {
   void verifyMetronomeSetBpmCalledWith(double bpm) => verify(() => metronomeSetBpm(bpm: bpm)).called(1);
 
   void mockMetronomeLoadFile([bool result = true]) => when(
-        () => metronomeLoadFile(
+    () => metronomeLoadFile(
       beatType: any(named: 'beatType'),
       wavFilePath: any(named: 'wavFilePath'),
     ),
   ).thenAnswer((_) async => result);
 
   void mockMetronomeSetRhythm([bool result = true]) => when(
-        () => metronomeSetRhythm(
+    () => metronomeSetRhythm(
       bars: any(named: 'bars'),
       bars2: any(named: 'bars2'),
     ),
   ).thenAnswer((_) async => result);
   void verifyMetronomeSetRhythmCalledWith(List<MetroBar> bars, [List<MetroBar> bars2 = const []]) => verify(
-        () => metronomeSetRhythm(
+    () => metronomeSetRhythm(
       bars: any(named: 'bars', that: metroBarListEquals(bars)),
       bars2: any(named: 'bars2', that: metroBarListEquals(bars2)),
     ),
