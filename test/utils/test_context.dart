@@ -27,7 +27,7 @@ import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/services/wakelock.dart';
 
 import '../mocks/audio_session_mock.dart';
-import '../mocks/audio_system_mock.dart';
+import '../mocks/audio_system/audio_system_mock.dart';
 import '../mocks/file_picker_mock.dart';
 import '../mocks/in_memory_file_system_mock.dart';
 import '../mocks/wakelock_mock.dart';
