@@ -9,7 +9,10 @@ class TestWrapper extends StatelessWidget {
   const TestWrapper({super.key});
 
   @override
-  Widget build(BuildContext context) => TextButton(onPressed: () => showInfoDialog(context: context, title: 'Title', content: Text('Content')), child: Text('Open dialog'));
+  Widget build(BuildContext context) => TextButton(
+    onPressed: () => showInfoDialog(context: context, title: 'Title', content: Text('Content')),
+    child: Text('Open dialog'),
+  );
 }
 
 void main() {

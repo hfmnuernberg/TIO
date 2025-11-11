@@ -10,37 +10,37 @@ class TestWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-      children: [
-        TextButton(
-          onPressed: () => askForOverridingFileOnRecordingStart(context),
-          child: const Text('Open askForOverridingFileOnRecordingStart'),
-        ),
-        TextButton(
-          onPressed: () => askForOverridingFileOnOpenFileSelection(context),
-          child: const Text('Open askForOverridingFileOnOpenFileSelection'),
-        ),
-        TextButton(
-          onPressed: () => showTooManyFilesSelectedDialog(context),
-          child: const Text('Open showTooManyFilesSelectedDialog'),
-        ),
-        TextButton(
-          onPressed: () => showMissingMicrophonePermissionDialog(context),
-          child: const Text('Open showMissingMicrophonePermissionDialog'),
-        ),
-        TextButton(
-          onPressed: () => showFormatNotSupportedDialog(context, 'wav'),
-          child: const Text('Open showFormatNotSupportedDialog'),
-        ),
-        TextButton(
-          onPressed: () => showFileOpenFailedDialog(context),
-          child: const Text('Open showFileOpenFailedDialog (no name)'),
-        ),
-        TextButton(
-          onPressed: () => showFileOpenFailedDialog(context, fileName: '/tmp/some/path/name.mp3'),
-          child: const Text('Open showFileOpenFailedDialog (with name)'),
-        ),
-      ],
-    );
+    children: [
+      TextButton(
+        onPressed: () => askForOverridingFileOnRecordingStart(context),
+        child: const Text('Open askForOverridingFileOnRecordingStart'),
+      ),
+      TextButton(
+        onPressed: () => askForOverridingFileOnOpenFileSelection(context),
+        child: const Text('Open askForOverridingFileOnOpenFileSelection'),
+      ),
+      TextButton(
+        onPressed: () => showTooManyFilesSelectedDialog(context),
+        child: const Text('Open showTooManyFilesSelectedDialog'),
+      ),
+      TextButton(
+        onPressed: () => showMissingMicrophonePermissionDialog(context),
+        child: const Text('Open showMissingMicrophonePermissionDialog'),
+      ),
+      TextButton(
+        onPressed: () => showFormatNotSupportedDialog(context, 'wav'),
+        child: const Text('Open showFormatNotSupportedDialog'),
+      ),
+      TextButton(
+        onPressed: () => showFileOpenFailedDialog(context),
+        child: const Text('Open showFileOpenFailedDialog (no name)'),
+      ),
+      TextButton(
+        onPressed: () => showFileOpenFailedDialog(context, fileName: '/tmp/some/path/name.mp3'),
+        child: const Text('Open showFileOpenFailedDialog (with name)'),
+      ),
+    ],
+  );
 }
 
 void main() {
