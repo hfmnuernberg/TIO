@@ -11,5 +11,5 @@ class FlashCardModel {
 }
 
 class FlashCards {
-  List<FlashCardModel> load() => flashCards;
+  List<FlashCardModel> load() => List.unmodifiable(flashCards);
 }

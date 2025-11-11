@@ -3,7 +3,7 @@
 
 import 'package:intl/intl.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
-import 'package:tiomusic/l10n/flash_cards/de_flash_cards.dart';
+import 'package:tiomusic/l10n/flash_cards/de.dart';
 
 class German extends AppLocalizations with GermanFlashCards {
   String get locale => 'de';
