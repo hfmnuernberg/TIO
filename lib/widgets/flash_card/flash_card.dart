@@ -30,7 +30,7 @@ class FlashCard extends StatelessWidget {
                 Text(description, style: const TextStyle(color: ColorTheme.primary)),
                 const SizedBox(height: 12),
                 Align(
-                  alignment: Alignment.bottomRight,
+                  alignment: Alignment.bottomLeft,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(color: ColorTheme.primary92, borderRadius: BorderRadius.circular(12)),
