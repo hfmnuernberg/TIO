@@ -13,17 +13,11 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/media_player/markers/edit_markers_page.dart';
 import 'package:tiomusic/pages/media_player/media_player_dialogs.dart';
+import 'package:tiomusic/pages/media_player/media_player_settings_tiles.dart';
 import 'package:tiomusic/pages/media_player/playback_controls.dart';
-import 'package:tiomusic/pages/media_player/set_bpm.dart';
-import 'package:tiomusic/pages/media_player/set_pitch.dart';
-import 'package:tiomusic/pages/media_player/set_speed.dart';
-import 'package:tiomusic/pages/media_player/set_trim.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
-import 'package:tiomusic/pages/parent_tool/setting_volume_page.dart';
-import 'package:tiomusic/pages/parent_tool/settings_tile.dart';
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_picker.dart';
@@ -352,11 +346,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   Future<void> _handleRepeatToggle() async {
     await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     _player.setRepeat(_mediaPlayerBlock.looping);
-  }
-
-  String _getPitchSemitonesString(double semitones, String label) {
-    if (semitones.abs() < 0.001) return '';
-    return semitones > 0 ? '↑ $label' : '↓ $label';
   }
 
   void _shareFilePressed() async {
@@ -858,114 +847,15 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         ),
       ),
       keySettingsList: _keySettings,
-      settingTiles: [
-        SettingsTile(
-          title: l10n.commonVolume,
-          subtitle: l10n.formatNumber(_mediaPlayerBlock.volume),
-          leadingIcon: Icons.volume_up,
-          settingPage: SetVolume(
-            initialVolume: _mediaPlayerBlock.volume,
-            onConfirm: (vol) {
-              _mediaPlayerBlock.volume = vol;
-              _player.setVolume(vol);
-            },
-            onChange: _player.setVolume,
-            onCancel: () => _player.setVolume(_mediaPlayerBlock.volume),
-          ),
-          block: _mediaPlayerBlock,
-          callOnReturn: (_) => setState(() {}),
-          inactive: _isLoading,
-        ),
-        SettingsTile(
-          title: l10n.commonBasicBeat,
-          subtitle: '${_mediaPlayerBlock.bpm} ${l10n.commonBpm}',
-          leadingIcon: Icons.touch_app_outlined,
-          settingPage: const SetBPM(),
-          block: _mediaPlayerBlock,
-          callOnReturn: (_) => setState(() {}),
-        ),
-        SettingsTile(
-          title: l10n.mediaPlayerTrim,
-          subtitle: '${(_mediaPlayerBlock.rangeStart * 100).round()}% → ${(_mediaPlayerBlock.rangeEnd * 100).round()}%',
-          leadingIcon: 'assets/icons/arrow_range.svg',
-          settingPage: SetTrim(
-            initialStart: _mediaPlayerBlock.rangeStart,
-            initialEnd: _mediaPlayerBlock.rangeEnd,
-            rmsValues: _rmsValues,
-            fileDuration: _player.fileDuration,
-            onChange: _player.setTrim,
-            onConfirm: (start, end) async {
-              _mediaPlayerBlock.rangeStart = start;
-              _mediaPlayerBlock.rangeEnd = end;
-              await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-              await _player.setTrim(start, end);
-            },
-            onCancel: () async => _player.setTrim(_mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd),
-          ),
-          block: _mediaPlayerBlock,
-          callOnReturn: (_) => _updateState(),
-          inactive: _isLoading,
-        ),
-        SettingsTile(
-          title: l10n.mediaPlayerMarkers,
-          subtitle: _mediaPlayerBlock.markerPositions.length.toString(),
-          leadingIcon: Icons.arrow_drop_down,
-          settingPage: EditMarkersPage(
-            mediaPlayerBlock: _mediaPlayerBlock,
-            fileDuration: _player.fileDuration,
-            rmsValues: _rmsValues,
-            player: _player,
-          ),
-          block: _mediaPlayerBlock,
-          callOnReturn: (_) {
-            _player.markers.positions = _mediaPlayerBlock.markerPositions;
-            setState(() {});
-          },
-          inactive: _isLoading,
-        ),
-        SettingsTile(
-          title: l10n.mediaPlayerPitch,
-          subtitle: _getPitchSemitonesString(
-            _mediaPlayerBlock.pitchSemitones,
-            l10n.mediaPlayerSemitones(_mediaPlayerBlock.pitchSemitones.round()),
-          ),
-          leadingIcon: Icons.height,
-          settingPage: SetPitch(
-            initialPitch: _mediaPlayerBlock.pitchSemitones,
-            onChange: _player.setPitch,
-            onConfirm: (pitch) async {
-              _mediaPlayerBlock.pitchSemitones = pitch;
-              await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-              await _player.setPitch(pitch);
-            },
-            onCancel: () async => _player.setPitch(_mediaPlayerBlock.pitchSemitones),
-          ),
-          block: _mediaPlayerBlock,
-          callOnReturn: (_) => setState(() {}),
-          inactive: _isLoading,
-        ),
-        SettingsTile(
-          title: l10n.mediaPlayerSpeed,
-          subtitle:
-              '${l10n.formatNumber(_mediaPlayerBlock.speedFactor)}x / ${getBpmForSpeed(_mediaPlayerBlock.speedFactor, _mediaPlayerBlock.bpm)} ${l10n.commonBpm}',
-          leadingIcon: Icons.speed,
-          settingPage: SetSpeed(
-            initialSpeed: _mediaPlayerBlock.speedFactor,
-            baseBpm: _mediaPlayerBlock.bpm,
-            onChangeSpeed: _player.setSpeed,
-            onChangeBpm: (bpm) async => _player.setSpeed(getSpeedForBpm(bpm, _mediaPlayerBlock.bpm)),
-            onConfirm: (speed) async {
-              _mediaPlayerBlock.speedFactor = speed;
-              await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-              await _player.setSpeed(speed);
-            },
-            onCancel: () async => _player.setSpeed(_mediaPlayerBlock.speedFactor),
-          ),
-          block: _mediaPlayerBlock,
-          callOnReturn: (_) => setState(() {}),
-          inactive: _isLoading,
-        ),
-      ],
+      settingTiles: buildMediaPlayerSettingsTiles(
+        context: context,
+        block: _mediaPlayerBlock,
+        player: _player,
+        rmsValues: _rmsValues,
+        isLoading: _isLoading,
+        updateState: _updateState,
+        requestRebuild: () => setState(() {}),
+      ),
     );
   }
 }

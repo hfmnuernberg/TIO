@@ -17,17 +17,10 @@ import 'package:tiomusic/widgets/on_off_button.dart';
 
 class EditMarkersPage extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;
-  final Duration fileDuration;
   final Float32List rmsValues;
   final Player player;
 
-  const EditMarkersPage({
-    super.key,
-    required this.mediaPlayerBlock,
-    required this.fileDuration,
-    required this.rmsValues,
-    required this.player,
-  });
+  const EditMarkersPage({super.key, required this.mediaPlayerBlock, required this.rmsValues, required this.player});
 
   @override
   State<EditMarkersPage> createState() => _EditMarkersPageState();
@@ -60,7 +53,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     widget.mediaPlayerBlock.markerPositions.forEach(_markerPositions.add);
 
-    _positionDuration = widget.fileDuration * _sliderValue;
+    _positionDuration = widget.player.fileDuration * _sliderValue;
 
     _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, true);
 
@@ -127,7 +120,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               setState(() {
                 _sliderValue = newValue;
                 _waveformVisualizer = WaveformVisualizer.singleView(newValue, widget.rmsValues, true);
-                _positionDuration = widget.fileDuration * _sliderValue;
+                _positionDuration = widget.player.fileDuration * _sliderValue;
 
                 if (_selectedMarkerPosition != null) {
                   for (int i = 0; i < _markerPositions.length; i++) {
