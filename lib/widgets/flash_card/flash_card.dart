@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/domain/flash_cards/flash_cards.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class FlashCard extends StatelessWidget {
   final String description;
-  final String category;
+  final FlashCardCategory category;
 
   const FlashCard({super.key, required this.description, required this.category});
 
@@ -34,7 +35,14 @@ class FlashCard extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(color: ColorTheme.primary92, borderRadius: BorderRadius.circular(12)),
-                    child: Text(category, style: const TextStyle(color: ColorTheme.primary, fontSize: 12)),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(_iconForCategory(category), color: ColorTheme.surfaceTint, size: 16),
+                        const SizedBox(width: 6),
+                        Text(_categoryLabel(context, category), style: const TextStyle(color: ColorTheme.primary, fontSize: 12)),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -45,3 +53,37 @@ class FlashCard extends StatelessWidget {
     ),
   );
 }
+
+IconData _iconForCategory(FlashCardCategory category) => switch (category) {
+  FlashCardCategory.culture => Icons.museum,
+  FlashCardCategory.journaling => Icons.auto_stories,
+  FlashCardCategory.mixUp => Icons.category,
+  FlashCardCategory.practicingTactics => Icons.playlist_add_check,
+  FlashCardCategory.relaxation => Icons.self_improvement,
+  FlashCardCategory.selfCare => Icons.health_and_safety,
+  FlashCardCategory.team => Icons.diversity_1,
+  FlashCardCategory.vision => Icons.tips_and_updates,
+};
+
+String _categoryLabel(BuildContext context, FlashCardCategory category) {
+  final l10n = context.l10n;
+  switch (category) {
+    case FlashCardCategory.culture:
+      return l10n.categoryCulture;
+    case FlashCardCategory.journaling:
+      return l10n.categoryJournaling;
+    case FlashCardCategory.mixUp:
+      return l10n.categoryMixUp;
+    case FlashCardCategory.practicingTactics:
+      return l10n.categoryPracticingTactics;
+    case FlashCardCategory.relaxation:
+      return l10n.categoryRelaxation;
+    case FlashCardCategory.selfCare:
+      return l10n.categorySelfCare;
+    case FlashCardCategory.team:
+      return l10n.categoryTeam;
+    case FlashCardCategory.vision:
+      return l10n.categoryVision;
+  }
+}
+
