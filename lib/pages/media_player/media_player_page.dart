@@ -914,6 +914,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
             mediaPlayerBlock: _mediaPlayerBlock,
             fileDuration: _player.fileDuration,
             rmsValues: _rmsValues,
+            player: _player,
           ),
           block: _mediaPlayerBlock,
           callOnReturn: (_) {

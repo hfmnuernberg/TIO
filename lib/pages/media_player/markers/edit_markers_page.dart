@@ -12,17 +12,21 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/domain/audio/player.dart';
+import 'package:tiomusic/widgets/on_off_button.dart';
 
 class EditMarkersPage extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;
   final Duration fileDuration;
   final Float32List rmsValues;
+  final Player player;
 
   const EditMarkersPage({
     super.key,
     required this.mediaPlayerBlock,
     required this.fileDuration,
     required this.rmsValues,
+    required this.player,
   });
 
   @override
@@ -96,7 +100,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                     ),
                   ),
                 ),
-
                 Markers(
                   rmsValues: widget.rmsValues,
                   paintedWidth: _paintedWaveWidth,
@@ -109,6 +112,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                       _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
                       _selectedMarkerPosition = position;
                     });
+                    _pauseIfPlaying();
                   },
                 ),
               ],
@@ -134,8 +138,18 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                   }
                 }
               });
+              _pauseIfPlaying();
             },
             onChangeEnd: (newValue) => _sliderValue = newValue,
+          ),
+          if (widget.player.loaded) OnOffButton(
+            isActive: widget.player.isPlaying,
+            onTap: _togglePlaying,
+            buttonSize: TIOMusicParams.sizeSmallButtons,
+            iconOff: Icons.play_arrow,
+            iconOn: TIOMusicParams.pauseIcon,
+            tooltipOff: context.l10n.mediaPlayerPause,
+            tooltipOn: context.l10n.mediaPlayerPlay,
           ),
           const SizedBox(height: TIOMusicParams.edgeInset),
           SettingsButton(icon: Icons.add, title: l10n.mediaPlayerAddMarker, onTap: _addNewMarker),
@@ -171,9 +185,27 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       _sliderValue = snappedRelativePosition;
       _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
     });
-
+    await _pauseIfPlaying();
     _selectedMarkerPosition = _findMarkerNear(snappedRelativePosition);
     setState(() {});
+  }
+
+  Future<void> _togglePlaying() async {
+    if (widget.player.isPlaying) {
+      await widget.player.stop();
+    } else {
+      await widget.player.setPlaybackPosition(_sliderValue.clamp(0, 1));
+      await widget.player.start();
+    }
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  Future<void> _pauseIfPlaying() async {
+    if (widget.player.isPlaying) {
+      await widget.player.stop();
+      if (mounted) setState(() {});
+    }
   }
 
   double _calculateSnappedRelativePosition(double tapX) {
