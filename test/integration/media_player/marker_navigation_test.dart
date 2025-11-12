@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/models/project.dart';
@@ -11,9 +9,6 @@ import '../../utils/render_utils.dart';
 import '../../utils/test_context.dart';
 
 Future<void> prepareAndOpenMediaPlayer(WidgetTester tester, TestContext context) async {
-  final filePath = '${context.inMemoryFileSystem.tmpFolderPath}/audio_file.wav';
-  context.inMemoryFileSystem.saveFileAsBytes(filePath, File('assets/test/ping.wav').readAsBytesSync());
-  context.filePickerMock.mockPickAudioFromMediaLibrary([filePath]);
   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
   await tester.createMediaPlayerToolInProject();
   await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));

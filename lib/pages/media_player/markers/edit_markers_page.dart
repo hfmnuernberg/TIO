@@ -142,15 +142,16 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             },
             onChangeEnd: (newValue) => _sliderValue = newValue,
           ),
-          if (widget.player.loaded) OnOffButton(
-            isActive: widget.player.isPlaying,
-            onTap: _togglePlaying,
-            buttonSize: TIOMusicParams.sizeSmallButtons,
-            iconOff: Icons.play_arrow,
-            iconOn: TIOMusicParams.pauseIcon,
-            tooltipOff: context.l10n.mediaPlayerPause,
-            tooltipOn: context.l10n.mediaPlayerPlay,
-          ),
+          if (widget.player.loaded)
+            OnOffButton(
+              isActive: widget.player.isPlaying,
+              onTap: _togglePlaying,
+              buttonSize: TIOMusicParams.sizeSmallButtons,
+              iconOff: Icons.play_arrow,
+              iconOn: TIOMusicParams.pauseIcon,
+              tooltipOff: context.l10n.mediaPlayerPause,
+              tooltipOn: context.l10n.mediaPlayerPlay,
+            ),
           const SizedBox(height: TIOMusicParams.edgeInset),
           SettingsButton(icon: Icons.add, title: l10n.mediaPlayerAddMarker, onTap: _addNewMarker),
           SettingsButton(
