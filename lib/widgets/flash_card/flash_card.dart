@@ -74,4 +74,3 @@ String _getCategoryLabel(BuildContext context, FlashCardCategory category) {
       return l10n.categoryVision;
   }
 }
-
