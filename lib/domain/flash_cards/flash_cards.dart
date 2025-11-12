@@ -4,7 +4,7 @@ import 'package:tiomusic/l10n/flash_cards/flash_cards_localization.dart';
 enum FlashCardCategory { relaxation, team, selfCare, vision, culture, mixUp, practicingTactics, journaling }
 
 class FlashCardModel {
-  final String Function(FlashCardsLocalization l10n) category;
+  final FlashCardCategory category;
   final String Function(FlashCardsLocalization l10n) description;
 
   const FlashCardModel(this.category, this.description);

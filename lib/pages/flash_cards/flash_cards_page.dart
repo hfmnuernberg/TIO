@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/domain/flash_cards/flash_cards.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/l10n/flash_cards/flash_cards_localization.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/flash_card/flash_card.dart';
 
@@ -33,10 +32,9 @@ class _FlashCardsList extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       itemBuilder: (_, i) {
         final l10n = context.l10n;
-        final categoryText = cards[i].category(l10n);
         return FlashCard(
           description: cards[i].description(l10n),
-          category: _resolveCategory(categoryText, l10n),
+          category: cards[i].category,
         );
       },
       separatorBuilder: (_, _) => const SizedBox(height: 8),
@@ -44,16 +42,3 @@ class _FlashCardsList extends StatelessWidget {
     );
   }
 }
-
-FlashCardCategory _resolveCategory(String text, FlashCardsLocalization l10n) {
-  if (text == l10n.categoryCulture) return FlashCardCategory.culture;
-  if (text == l10n.categoryJournaling) return FlashCardCategory.journaling;
-  if (text == l10n.categoryMixUp) return FlashCardCategory.mixUp;
-  if (text == l10n.categoryPracticingTactics) return FlashCardCategory.practicingTactics;
-  if (text == l10n.categoryRelaxation) return FlashCardCategory.relaxation;
-  if (text == l10n.categorySelfCare) return FlashCardCategory.selfCare;
-  if (text == l10n.categoryTeam) return FlashCardCategory.team;
-  if (text == l10n.categoryVision) return FlashCardCategory.vision;
-  return FlashCardCategory.vision;
-}
-
