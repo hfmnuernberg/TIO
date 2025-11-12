@@ -1,7 +1,20 @@
+import 'package:flutter/material.dart';
 import 'package:tiomusic/domain/flash_cards/flash_cards_list.dart';
 import 'package:tiomusic/l10n/flash_cards/flash_cards_localization.dart';
 
-enum FlashCardCategory { relaxation, team, selfCare, vision, culture, mixUp, practicingTactics, journaling }
+enum FlashCardCategory {
+  relaxation(Icons.self_improvement),
+  team(Icons.diversity_1),
+  selfCare(Icons.health_and_safety),
+  vision(Icons.tips_and_updates),
+  culture(Icons.museum),
+  mixUp(Icons.category),
+  practicingTactics(Icons.playlist_add_check),
+  journaling(Icons.auto_stories);
+
+  final IconData icon;
+  const FlashCardCategory(this.icon);
+}
 
 class FlashCardModel {
   final FlashCardCategory category;

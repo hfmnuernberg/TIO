@@ -4,10 +4,10 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class FlashCard extends StatelessWidget {
-  final String description;
   final FlashCardCategory category;
+  final String description;
 
-  const FlashCard({super.key, required this.description, required this.category});
+  const FlashCard({super.key, required this.category, required this.description});
 
   @override
   Widget build(BuildContext context) => Material(
@@ -38,9 +38,12 @@ class FlashCard extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(_iconForCategory(category), color: ColorTheme.surfaceTint, size: 16),
+                        Icon(category.icon, color: ColorTheme.surfaceTint, size: 16),
                         const SizedBox(width: 6),
-                        Text(_categoryLabel(context, category), style: const TextStyle(color: ColorTheme.primary, fontSize: 12)),
+                        Text(
+                          _categoryLabel(context, category),
+                          style: const TextStyle(color: ColorTheme.primary, fontSize: 12),
+                        ),
                       ],
                     ),
                   ),
@@ -53,17 +56,6 @@ class FlashCard extends StatelessWidget {
     ),
   );
 }
-
-IconData _iconForCategory(FlashCardCategory category) => switch (category) {
-  FlashCardCategory.culture => Icons.museum,
-  FlashCardCategory.journaling => Icons.auto_stories,
-  FlashCardCategory.mixUp => Icons.category,
-  FlashCardCategory.practicingTactics => Icons.playlist_add_check,
-  FlashCardCategory.relaxation => Icons.self_improvement,
-  FlashCardCategory.selfCare => Icons.health_and_safety,
-  FlashCardCategory.team => Icons.diversity_1,
-  FlashCardCategory.vision => Icons.tips_and_updates,
-};
 
 String _categoryLabel(BuildContext context, FlashCardCategory category) {
   final l10n = context.l10n;
