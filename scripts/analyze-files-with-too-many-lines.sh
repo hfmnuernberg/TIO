@@ -28,6 +28,9 @@ IGNORE_FILES=(
   "lib/l10n/app_localization.dart"
   "lib/l10n/de.dart"
   "lib/l10n/en.dart"
+  "lib/l10n/flash_cards/flash_cards_localization"
+  "lib/l10n/flash_cards/de"
+  "lib/l10n/flash_cards/en"
   "lib/src/rust/frb_generated*.dart"   # generated
 )
 
