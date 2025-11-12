@@ -6,14 +6,7 @@ class MarkerNavigation {
     for (final m in sortedMarkers) {
       if (m > pos + eps) return m;
     }
-    return sortedMarkers.first;
-  }
-
-  static double previous(double position, List<double> sortedMarkers) {
-    for (final m in sortedMarkers.reversed) {
-      if (m < position - eps) return m;
-    }
-    return sortedMarkers.last;
+    return 1;
   }
 
   static double previousWithWindow({
@@ -21,20 +14,17 @@ class MarkerNavigation {
     required List<double> sortedMarkers,
     required Duration fileDuration,
   }) {
-    final candidate = previous(position, sortedMarkers);
+    final index = sortedMarkers.lastIndexWhere((m) => m < position - eps);
+
+    if (index == -1) return 0;
+
+    final candidate = sortedMarkers[index];
 
     final totalSecs = fileDuration.inSeconds.toDouble();
     final windowFactor = totalSecs > 0 ? (windowInSeconds / totalSecs) : 0.0;
 
-    final double distanceAfterCandidate = (position >= candidate)
-        ? (position - candidate)
-        : ((1.0 - candidate) + position);
-
-    if (distanceAfterCandidate <= windowFactor) {
-      final index = sortedMarkers.indexOf(candidate);
-      final prevIndex = (index - 1 + sortedMarkers.length) % sortedMarkers.length;
-      return sortedMarkers[prevIndex];
-    }
+    final distance = position - candidate;
+    if (distance <= windowFactor && index > 0) return sortedMarkers[index - 1];
 
     return candidate;
   }
