@@ -9,13 +9,6 @@ class MarkerNavigation {
     return 1;
   }
 
-  static double previous(double position, List<double> sortedMarkers) {
-    for (final m in sortedMarkers.reversed) {
-      if (m < position - eps) return m;
-    }
-    return 0;
-  }
-
   static double previousWithWindow({
     required double position,
     required List<double> sortedMarkers,
