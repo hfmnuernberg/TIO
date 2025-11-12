@@ -32,20 +32,16 @@ class FlashCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.bottomLeft,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(color: ColorTheme.primary92, borderRadius: BorderRadius.circular(12)),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(category.icon, color: ColorTheme.surfaceTint, size: 16),
-                        const SizedBox(width: 6),
-                        Text(
-                          _categoryLabel(context, category),
-                          style: const TextStyle(color: ColorTheme.primary, fontSize: 12),
-                        ),
-                      ],
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(category.icon, color: ColorTheme.surfaceTint, size: 14),
+                      const SizedBox(width: 6),
+                      Text(
+                        _getCategoryLabel(context, category),
+                        style: const TextStyle(color: ColorTheme.primary, fontSize: 12),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -57,7 +53,7 @@ class FlashCard extends StatelessWidget {
   );
 }
 
-String _categoryLabel(BuildContext context, FlashCardCategory category) {
+String _getCategoryLabel(BuildContext context, FlashCardCategory category) {
   final l10n = context.l10n;
   switch (category) {
     case FlashCardCategory.culture:
