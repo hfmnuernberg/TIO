@@ -37,17 +37,6 @@ void main() {
   });
 
   group('MediaPlayerTool - start and stop on marker settings page', () {
-    testWidgets('shows play/pause button when file loaded', (tester) async {
-      await prepareAndOpenMediaPlayer(tester, context);
-      await tester.scrollToAndTapAndSettle('Markers');
-      expect(find.byTooltip('Play'), findsNothing);
-
-      await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-      await tester.scrollToAndTapAndSettle('Open files');
-      await tester.scrollToAndTapAndSettle('Markers');
-      expect(find.byTooltip('Play'), findsOneWidget);
-    });
-
     testWidgets('starts the playback on button click', (tester) async {
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.scrollToAndTapAndSettle('Open files');

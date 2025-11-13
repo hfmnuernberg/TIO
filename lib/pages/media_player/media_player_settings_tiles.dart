@@ -56,6 +56,7 @@ List<SettingsTile> buildMediaPlayerSettingsTiles({
       settingPage: const SetBPM(),
       block: block,
       callOnReturn: (_) => requestRebuild(),
+      inactive: isLoading,
     ),
     SettingsTile(
       title: l10n.mediaPlayerTrim,
@@ -77,7 +78,7 @@ List<SettingsTile> buildMediaPlayerSettingsTiles({
       ),
       block: block,
       callOnReturn: (_) => updateState(),
-      inactive: isLoading,
+      inactive: isLoading || !player.loaded,
     ),
     SettingsTile(
       title: l10n.mediaPlayerMarkers,
@@ -89,7 +90,7 @@ List<SettingsTile> buildMediaPlayerSettingsTiles({
         player.markers.positions = block.markerPositions;
         requestRebuild();
       },
-      inactive: isLoading,
+      inactive: isLoading || !player.loaded,
     ),
     SettingsTile(
       title: l10n.mediaPlayerPitch,

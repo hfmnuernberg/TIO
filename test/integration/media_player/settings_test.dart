@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/models/project.dart';
@@ -7,6 +9,16 @@ import '../../utils/action_utils.dart';
 import '../../utils/project_utils.dart';
 import '../../utils/render_utils.dart';
 import '../../utils/test_context.dart';
+
+Future<void> prepareAndOpenMediaPlayer(WidgetTester tester, TestContext context) async {
+  final filePath = '${context.inMemoryFileSystem.tmpFolderPath}/audio_file.wav';
+  context.inMemoryFileSystem.saveFileAsBytes(filePath, File('assets/test/ping.wav').readAsBytesSync());
+  context.filePickerMock.mockPickAudioFromMediaLibrary([filePath]);
+  await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+  await tester.createMediaPlayerToolInProject();
+  await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+  await tester.scrollToAndTapAndSettle('Open files');
+}
 
 extension WidgetTesterMediaPlayerExtension on WidgetTester {
   Finder withinSettingsTile(String title, FinderBase<Element> matching) =>
@@ -74,10 +86,24 @@ void main() {
     });
 
     group('edit markers page', () {
-      testWidgets('sets marker', (tester) async {
+      testWidgets('setting is only available with loaded audio file', (tester) async {
+        final filePath = '${context.inMemoryFileSystem.tmpFolderPath}/audio_file.wav';
+        context.inMemoryFileSystem.saveFileAsBytes(filePath, File('assets/test/ping.wav').readAsBytesSync());
+        context.filePickerMock.mockPickAudioFromMediaLibrary([filePath]);
         await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
         await tester.createMediaPlayerToolInProject();
         await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+
+        final settingsButton = tester.getSemantics(tester.withinSettingsTile('Markers', find.bySemanticsLabel('0')));
+        expect(settingsButton.flagsCollection.isEnabled, isFalse);
+
+        await tester.scrollToAndTapAndSettle('Open files');
+
+        expect(settingsButton.flagsCollection.isEnabled, isTrue);
+      });
+
+      testWidgets('sets marker', (tester) async {
+        await prepareAndOpenMediaPlayer(tester, context);
         expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('0')), findsOneWidget);
 
         await tester.scrollToAndTapAndSettle('Markers');
@@ -89,9 +115,7 @@ void main() {
       });
 
       testWidgets('does not set marker on cancel', (tester) async {
-        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-        await tester.createMediaPlayerToolInProject();
-        await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+        await prepareAndOpenMediaPlayer(tester, context);
 
         await tester.scrollToAndTapAndSettle('Markers');
         await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
@@ -101,9 +125,7 @@ void main() {
       });
 
       testWidgets('deletes marker when selected before', (tester) async {
-        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-        await tester.createMediaPlayerToolInProject();
-        await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+        await prepareAndOpenMediaPlayer(tester, context);
 
         await tester.scrollToAndTapAndSettle('Markers');
         await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
@@ -118,9 +140,7 @@ void main() {
       });
 
       testWidgets('resets marker on reset', (tester) async {
-        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-        await tester.createMediaPlayerToolInProject();
-        await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+        await prepareAndOpenMediaPlayer(tester, context);
         expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('0')), findsOneWidget);
 
         await tester.scrollToAndTapAndSettle('Markers');
