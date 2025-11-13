@@ -162,9 +162,7 @@ class Player {
   }
 
   Future<void> skipToMarker({required bool forward}) async {
-    print('Skip to marker: forward=$forward, playbackPosition=$_playbackPosition');
     final sortedMarkers = [..._markers.positions]..sort();
-    print('Sorted markers: $sortedMarkers');
     if (sortedMarkers.isEmpty) return;
 
     if (forward) {
