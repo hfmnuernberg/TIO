@@ -28,9 +28,7 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
 
   void _regenerate() {
     final cards = FlashCards().load();
-    setState(() {
-      card = cards[Random().nextInt(cards.length)];
-    });
+    setState(() => card = cards[Random().nextInt(cards.length)]);
   }
 
   @override
