@@ -308,6 +308,8 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get textImportNoFileSelected => 'No text file selected';
   String get textImportSuccess => 'Text imported successfully!';
 
+  String get tipOfTheDayTitle => 'Tip of the day';
+
   String get toolAddNew => 'Add new tool';
   String get toolConnectAnother => 'Connect another tool';
   String get toolConnectExistingTool => 'Connect a tool';

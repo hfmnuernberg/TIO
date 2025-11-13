@@ -12,7 +12,7 @@ class FlashCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Material(
     color: ColorTheme.onPrimary,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     child: Padding(
       padding: const EdgeInsets.all(16),
       child: Row(

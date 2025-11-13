@@ -19,6 +19,12 @@ void main() {
   });
 
   group('ProjectsPage', () {
+    testWidgets('shows tip of the day', (tester) async {
+      await tester.renderScaffold(ProjectsPage(), context.providers);
+
+      expect(find.bySemanticsLabel('Tip of the day'), findsOneWidget);
+    });
+
     testWidgets('shows no projects initially', (tester) async {
       await tester.renderScaffold(ProjectsPage(), context.providers);
 

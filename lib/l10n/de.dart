@@ -311,6 +311,8 @@ class German extends AppLocalizations with GermanFlashCards {
   String get textImportNoFileSelected => 'Keine Text-Datei ausgewählt';
   String get textImportSuccess => 'Text erfolgreich importiert!';
 
+  String get tipOfTheDayTitle => 'Tipp des Tages';
+
   String get toolAddNew => 'Tool hinzufügen';
   String get toolConnectAnother => 'Verbinde ein anderes Tool';
   String get toolConnectExistingTool => 'Verbinde ein Tool';
