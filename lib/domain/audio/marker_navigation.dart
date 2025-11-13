@@ -24,7 +24,9 @@ class MarkerNavigation {
     final windowFactor = totalSecs > 0 ? (windowInSeconds / totalSecs) : 0.0;
 
     final distance = position - candidate;
-    if (distance <= windowFactor && index > 0) return sortedMarkers[index - 1];
+    if (distance <= windowFactor) {
+      return index > 0 ? sortedMarkers[index - 1] : 0;
+    }
 
     return candidate;
   }
