@@ -1,15 +1,28 @@
-import 'package:tiomusic/domain/flash_cards/flash_card_ids.dart';
+import 'package:flutter/material.dart';
+import 'package:tiomusic/domain/flash_cards/flash_cards_list.dart';
 import 'package:tiomusic/l10n/flash_cards/flash_cards_localization.dart';
 
-class FlashCardModel {
-  final String id;
-  final String description;
+enum FlashCardCategory {
+  relaxation(Icons.self_improvement),
+  team(Icons.diversity_1),
+  selfCare(Icons.health_and_safety),
+  vision(Icons.tips_and_updates),
+  culture(Icons.museum),
+  mixUp(Icons.category),
+  practicingTactics(Icons.playlist_add_check),
+  journaling(Icons.auto_stories);
 
-  const FlashCardModel({required this.id, required this.description});
+  final IconData icon;
+  const FlashCardCategory(this.icon);
+}
+
+class FlashCardModel {
+  final FlashCardCategory category;
+  final String Function(FlashCardsLocalization l10n) description;
+
+  const FlashCardModel(this.category, this.description);
 }
 
 class FlashCards {
-  List<FlashCardModel> load(FlashCardsLocalization l10n) => flashCardIds
-      .map((id) => FlashCardModel(id: id, description: l10n.flashCardDescriptionById(id)))
-      .toList(growable: false);
+  List<FlashCardModel> load() => List.unmodifiable(flashCards);
 }
