@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tiomusic/domain/flash_cards/flash_cards.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/flash_card/flash_card.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
@@ -21,5 +22,5 @@ class Wrapper extends StatelessWidget {
 
 @widgetbook.UseCase(name: 'FlashCard', type: FlashCard)
 Widget flashCard(BuildContext context) {
-  return Wrapper(child: const FlashCard(description: 'Some description'));
+  return Wrapper(child: const FlashCard(category: FlashCardCategory.team, description: 'Some description'));
 }
