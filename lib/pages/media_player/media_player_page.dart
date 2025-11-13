@@ -15,7 +15,7 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/markers/edit_markers_page.dart';
 import 'package:tiomusic/pages/media_player/media_player_dialogs.dart';
-import 'package:tiomusic/pages/media_player/media_player_repeat_button.dart';
+import 'package:tiomusic/pages/media_player/playback_controls.dart';
 import 'package:tiomusic/pages/media_player/set_bpm.dart';
 import 'package:tiomusic/pages/media_player/set_pitch.dart';
 import 'package:tiomusic/pages/media_player/set_speed.dart';
@@ -366,11 +366,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   void _onWaveGesture(Offset localPosition) async {
     double relativeTapPosition = localPosition.dx / _waveFormWidth;
     await _player.setPlaybackPosition(relativeTapPosition.clamp(0, 1));
-    await _updateState();
-  }
-
-  void _skip(bool forward) async {
-    await _player.skip(seconds: forward ? 10 : -10);
     await _updateState();
   }
 
@@ -787,16 +782,18 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                TextButton(onPressed: () => _skip(false), child: Text('-10 ${l10n.mediaPlayerSecShort}')),
-                Container(
-                  key: _keyRepeat,
-                  child: MediaPlayerRepeatButton(onToggle: _handleRepeatToggle),
-                ),
-                TextButton(onPressed: () => _skip(true), child: Text('+10 ${l10n.mediaPlayerSecShort}')),
-              ],
+            PlaybackControls(
+              hasMarkers: _mediaPlayerBlock.markerPositions.isNotEmpty,
+              repeatKey: _keyRepeat,
+              onRepeatToggle: _handleRepeatToggle,
+              onSkip10Seconds: (forward) async {
+                await _player.skip(seconds: forward ? 10 : -10);
+                await _updateState();
+              },
+              onSkipToMarker: (forward) async {
+                await _player.skipToMarker(forward: forward);
+                await _updateState();
+              },
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
