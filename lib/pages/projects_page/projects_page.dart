@@ -370,47 +370,53 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
             Column(
               children: [
-                Padding(padding: const EdgeInsets.fromLTRB(16, 16, 16, 0), child: const TipOfTheDay()),
-
                 Expanded(
-                  child: Consumer<ProjectLibrary>(
-                    builder: (context, projectLibrary, child) => Stack(
-                      children: [
-                        if (projectLibrary.projects.isEmpty)
-                          Padding(
-                            padding: const EdgeInsets.all(40),
-                            child: Text(
-                              l10n.projectsNoProjects,
-                              style: const TextStyle(color: Colors.white, fontSize: 42),
-                            ),
-                          )
-                        else if (_isEditing)
-                          EditableProjectList(
-                            projectLibrary: projectLibrary,
-                            onDelete: _handleDelete,
-                            onReorder: _handleReorder,
-                          )
-                        else
-                          ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
+                  child: NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                      SliverToBoxAdapter(
+                        child: Padding(padding: const EdgeInsets.fromLTRB(16, 16, 16, 0), child: const TipOfTheDay()),
+                      ),
+                    ],
+                    body: Consumer<ProjectLibrary>(
+                      builder: (context, projectLibrary, child) => Stack(
+                        children: [
+                          if (projectLibrary.projects.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(40),
+                              child: Text(
+                                l10n.projectsNoProjects,
+                                style: const TextStyle(color: Colors.white, fontSize: 42),
+                              ),
+                            )
+                          else if (_isEditing)
+                            EditableProjectList(
+                              projectLibrary: projectLibrary,
+                              onDelete: _handleDelete,
+                              onReorder: _handleReorder,
+                            )
+                          else
+                            ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
 
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
-                            child: EditProjectsBar(
-                              key: _keyChangeProjectOrder,
-                              isEditing: _isEditing,
-                              onAddProject: _handleNew,
-                              onToggleEditing: _toggleEditingMode,
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
+                              child: EditProjectsBar(
+                                key: _keyChangeProjectOrder,
+                                isEditing: _isEditing,
+                                onAddProject: _handleNew,
+                                onToggleEditing: _toggleEditingMode,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
+
                 Container(
                   padding: EdgeInsets.only(top: TIOMusicParams.edgeInset, bottom: TIOMusicParams.edgeInset),
                   color: ColorTheme.surface,
