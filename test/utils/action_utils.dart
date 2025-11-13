@@ -7,6 +7,11 @@ extension WidgetTesterActionxtension on WidgetTester {
     await pumpAndSettle();
   }
 
+  Future<void> scrollToAndTapAndSettle(String label) async {
+    await ensureVisible(find.bySemanticsLabel(label));
+    await tapAndSettle(find.bySemanticsLabel(label));
+  }
+
   Future<void> tapAndWaitFor(Finder target) async {
     const int maxSteps = 30;
 

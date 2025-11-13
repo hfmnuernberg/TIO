@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tiomusic/domain/audio/player.dart';
-import 'package:tiomusic/src/rust/api/modules/media_player.dart';
 
+import '../../../utils/media_player_utils.dart';
 import '../../../utils/test_context.dart';
 
 void main() {
@@ -14,26 +14,6 @@ void main() {
     context = TestContext();
     player = Player(context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
   });
-
-  void mockPlayerState({
-    bool playing = true,
-    double playbackPositionFactor = 0,
-    double totalLengthSeconds = 1,
-    bool looping = false,
-    double trimStartFactor = 0,
-    double trimEndFactor = 1,
-  }) {
-    context.audioSystemMock.mockMediaPlayerGetState(
-      MediaPlayerState(
-        playing: playing,
-        playbackPositionFactor: playbackPositionFactor,
-        totalLengthSeconds: totalLengthSeconds,
-        looping: looping,
-        trimStartFactor: trimStartFactor,
-        trimEndFactor: trimEndFactor,
-      ),
-    );
-  }
 
   group('Player - Load File', () {
     testWidgets('sets successful loaded state on successful file load', (tester) async {
@@ -68,7 +48,7 @@ void main() {
       context.audioSystemMock.mockMediaPlayerLoadWav();
       expect(player.fileDuration.inSeconds, 0);
 
-      mockPlayerState(totalLengthSeconds: 10);
+      mockPlayerState(context);
       await player.loadAudioFile('/abs/test.wav');
 
       expect(player.fileDuration.inSeconds, 10);
@@ -78,19 +58,19 @@ void main() {
       context.audioSystemMock.mockMediaPlayerLoadWav();
       expect(player.playbackPosition, 0);
 
-      mockPlayerState(playbackPositionFactor: 0.1);
+      mockPlayerState(context, playbackPositionFactor: 0.1);
       await player.loadAudioFile('/abs/test.wav');
 
       expect(player.playbackPosition, 0.1);
     });
 
     testWidgets('does not update playback position on failure', (tester) async {
-      mockPlayerState(playbackPositionFactor: 0.1);
+      mockPlayerState(context, playbackPositionFactor: 0.1);
       await player.setPlaybackPosition(0.1);
       expect(player.playbackPosition, 0.1);
       context.audioSystemMock.mockMediaPlayerLoadWav(false);
 
-      mockPlayerState(playbackPositionFactor: 0.2, totalLengthSeconds: 10);
+      mockPlayerState(context, playbackPositionFactor: 0.2);
       await player.loadAudioFile('/abs/fail.wav');
 
       expect(player.playbackPosition, 0.1);

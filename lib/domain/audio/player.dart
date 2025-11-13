@@ -25,8 +25,8 @@ class Player {
   final FileSystem _fs;
   final Wakelock _wakelock;
 
-  final OnPlaybackPositionChange _onPlaybackPositionChange;
-  final OnIsPlayingChange _onIsPlayingChange;
+  final List<OnPlaybackPositionChange> _onPlaybackPositionChangeListeners = [];
+  final List<OnIsPlayingChange> _onIsPlayingChangeListeners = [];
 
   final Markers _markers;
   Markers get markers => _markers;
@@ -60,9 +60,18 @@ class Player {
     this._wakelock, {
     OnIsPlayingChange? onIsPlayingChange,
     OnPlaybackPositionChange? onPlaybackPositionChange,
-  }) : _markers = Markers(_as),
-       _onIsPlayingChange = onIsPlayingChange ?? ((_) {}),
-       _onPlaybackPositionChange = onPlaybackPositionChange ?? ((_) {});
+  }) : _markers = Markers(_as) {
+    if (onIsPlayingChange != null) _onIsPlayingChangeListeners.add(onIsPlayingChange);
+    if (onPlaybackPositionChange != null) _onPlaybackPositionChangeListeners.add(onPlaybackPositionChange);
+  }
+
+  void addOnPlaybackPositionChangeListener(OnPlaybackPositionChange listener) =>
+      _onPlaybackPositionChangeListeners.add(listener);
+  void removeOnPlaybackPositionChangeListener(OnPlaybackPositionChange listener) =>
+      _onPlaybackPositionChangeListeners.remove(listener);
+
+  void addOnIsPlayingChangeListener(OnIsPlayingChange listener) => _onIsPlayingChangeListeners.add(listener);
+  void removeOnIsPlayingChangeListener(OnIsPlayingChange listener) => _onIsPlayingChangeListeners.remove(listener);
 
   Future<void> start() async {
     if (_isPlaying) return;
@@ -256,13 +265,17 @@ class Player {
 
     if (state.playing != _isPlaying) {
       _isPlaying = state.playing;
-      _onIsPlayingChange(state.playing);
+      for (final listener in _onIsPlayingChangeListeners) {
+        listener(state.playing);
+      }
     }
 
     if (state.playbackPositionFactor != _playbackPosition) {
       final previousPosition = _playbackPosition;
       _playbackPosition = state.playbackPositionFactor;
-      _onPlaybackPositionChange(state.playbackPositionFactor);
+      for (final listener in _onPlaybackPositionChangeListeners) {
+        listener(state.playbackPositionFactor);
+      }
 
       await _markers.onPlaybackPositionChange(previousPosition: previousPosition, currentPosition: _playbackPosition);
     }
