@@ -38,7 +38,7 @@ class FlashCard extends StatelessWidget {
                       Icon(category.icon, color: ColorTheme.surfaceTint, size: 14),
                       const SizedBox(width: 6),
                       Text(
-                        _getCategoryLabel(context, category),
+                        context.l10n.categoryLabel(category),
                         style: const TextStyle(color: ColorTheme.primary, fontSize: 12),
                       ),
                     ],
@@ -51,26 +51,4 @@ class FlashCard extends StatelessWidget {
       ),
     ),
   );
-}
-
-String _getCategoryLabel(BuildContext context, FlashCardCategory category) {
-  final l10n = context.l10n;
-  switch (category) {
-    case FlashCardCategory.culture:
-      return l10n.categoryCulture;
-    case FlashCardCategory.journaling:
-      return l10n.categoryJournaling;
-    case FlashCardCategory.mixUp:
-      return l10n.categoryMixUp;
-    case FlashCardCategory.practicingTactics:
-      return l10n.categoryPracticingTactics;
-    case FlashCardCategory.relaxation:
-      return l10n.categoryRelaxation;
-    case FlashCardCategory.selfCare:
-      return l10n.categorySelfCare;
-    case FlashCardCategory.team:
-      return l10n.categoryTeam;
-    case FlashCardCategory.vision:
-      return l10n.categoryVision;
-  }
 }

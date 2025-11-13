@@ -1,6 +1,7 @@
 // overriding keys do not change something; ignored because soft warning
 // ignore_for_file: annotate_overrides
 
+import 'package:tiomusic/domain/flash_cards/flash_cards.dart';
 import 'package:tiomusic/l10n/flash_cards/flash_cards_localization.dart';
 
 mixin EnglishFlashCards on Object implements FlashCardsLocalization {
@@ -12,6 +13,27 @@ mixin EnglishFlashCards on Object implements FlashCardsLocalization {
   String get categorySelfCare => 'Self-Care';
   String get categoryTeam => 'Team';
   String get categoryVision => 'Vision';
+
+  String categoryLabel(FlashCardCategory category) {
+    switch (category) {
+      case FlashCardCategory.culture:
+        return categoryCulture;
+      case FlashCardCategory.journaling:
+        return categoryJournaling;
+      case FlashCardCategory.mixUp:
+        return categoryMixUp;
+      case FlashCardCategory.practicingTactics:
+        return categoryPracticingTactics;
+      case FlashCardCategory.relaxation:
+        return categoryRelaxation;
+      case FlashCardCategory.selfCare:
+        return categorySelfCare;
+      case FlashCardCategory.team:
+        return categoryTeam;
+      case FlashCardCategory.vision:
+        return categoryVision;
+    }
+  }
 
   String get descriptionCulture001 => "book a ticket for a concert you're really looking forward to!";
   String get descriptionCulture002 => 'reward yourself with whatever you can think of.';
