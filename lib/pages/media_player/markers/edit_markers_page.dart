@@ -63,6 +63,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     _waveformVisualizer = WaveformVisualizer(0, block.rangeStart, block.rangeEnd, widget.rmsValues);
 
+    _syncPlayerMarkers();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
 
@@ -75,8 +77,13 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   @override
   void dispose() {
+    player.markers.positions = block.markerPositions;
     player.removeOnPlaybackPositionChangeListener(_playbackListener);
     super.dispose();
+  }
+
+  void _syncPlayerMarkers() {
+    player.markers.positions = _markerPositions;
   }
 
   void _handlePlaybackPositionChange(double position) {
@@ -94,12 +101,14 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       _markerPositions.removeWhere((pos) => pos == _selectedMarkerPosition);
       _selectedMarkerPosition = null;
     }
+    _syncPlayerMarkers();
     setState(() {});
   }
 
   void _removeAllMarkers() {
     _markerPositions.clear();
     _selectedMarkerPosition = null;
+    _syncPlayerMarkers();
     setState(() {});
   }
 
@@ -148,6 +157,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   void _addNewMarker() {
     _markerPositions.add(_sliderValue);
+    _syncPlayerMarkers();
     setState(() {});
   }
 
@@ -222,7 +232,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
           Slider(
             value: _sliderValue,
             inactiveColor: ColorTheme.primary80,
-            divisions: 1000, // how many individual values, only showing labels when division is not null
+            divisions: 1000,
             label: l10n.formatDurationWithMillis(_positionDuration),
             onChanged: (newValue) {
               setState(() {
@@ -237,6 +247,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                       _selectedMarkerPosition = _sliderValue;
                     }
                   }
+                  _syncPlayerMarkers();
                 }
               });
             },
