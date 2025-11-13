@@ -6,7 +6,6 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/markers/markers.dart';
-import 'package:tiomusic/pages/media_player/markers/settings_button.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -44,6 +43,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   final List<double> _markerPositions = List.empty(growable: true);
 
+  bool get _hasSelectedMarker => _selectedMarkerPosition != null;
+
   double get _paintedWaveWidth {
     final buildContext = _waveKey.currentContext;
     if (buildContext == null) return _waveFormWidth;
@@ -60,22 +61,12 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     _positionDuration = player.fileDuration * _sliderValue;
 
-    _waveformVisualizer = WaveformVisualizer(
-      0,
-      block.rangeStart,
-      block.rangeEnd,
-      widget.rmsValues,
-    );
+    _waveformVisualizer = WaveformVisualizer(0, block.rangeStart, block.rangeEnd, widget.rmsValues);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
 
-      setState(() => _waveformVisualizer = WaveformVisualizer(
-        0,
-        block.rangeStart,
-        block.rangeEnd,
-        widget.rmsValues,
-      ));
+      setState(() => _waveformVisualizer = WaveformVisualizer(0, block.rangeStart, block.rangeEnd, widget.rmsValues));
     });
 
     _playbackListener = _handlePlaybackPositionChange;
@@ -94,12 +85,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     setState(() {
       _sliderValue = position.clamp(0.0, 1.0);
       _positionDuration = player.fileDuration * _sliderValue;
-      _waveformVisualizer = WaveformVisualizer(
-        _sliderValue,
-        block.rangeStart,
-        block.rangeEnd,
-        widget.rmsValues,
-      );
+      _waveformVisualizer = WaveformVisualizer(_sliderValue, block.rangeStart, block.rangeEnd, widget.rmsValues);
     });
   }
 
@@ -122,12 +108,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     setState(() {
       _sliderValue = snappedRelativePosition;
-      _waveformVisualizer = WaveformVisualizer(
-        _sliderValue,
-        block.rangeStart,
-        block.rangeEnd,
-        widget.rmsValues,
-      );
+      _waveformVisualizer = WaveformVisualizer(_sliderValue, block.rangeStart, block.rangeEnd, widget.rmsValues);
       _positionDuration = player.fileDuration * _sliderValue;
     });
 
@@ -240,7 +221,13 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               ],
             ),
           ),
-          Text(l10n.formatDurationWithMillis(_positionDuration), style: const TextStyle(color: ColorTheme.primary)),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 8, 0, 6),
+            child: Text(
+              l10n.formatDurationWithMillis(_positionDuration),
+              style: const TextStyle(color: ColorTheme.primary),
+            ),
+          ),
           Slider(
             value: _sliderValue,
             inactiveColor: ColorTheme.primary80,
@@ -249,12 +236,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             onChanged: (newValue) {
               setState(() {
                 _sliderValue = newValue;
-                _waveformVisualizer = WaveformVisualizer(
-                  newValue,
-                  block.rangeStart,
-                  block.rangeEnd,
-                  widget.rmsValues,
-                );
+                _waveformVisualizer = WaveformVisualizer(newValue, block.rangeStart, block.rangeEnd, widget.rmsValues);
                 _positionDuration = player.fileDuration * _sliderValue;
 
                 if (_selectedMarkerPosition != null) {
@@ -270,21 +252,32 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             },
             onChangeEnd: (newValue) => _sliderValue = newValue,
           ),
-          OnOffButton(
-            isActive: player.isPlaying,
-            onTap: _togglePlaying,
-            buttonSize: TIOMusicParams.sizeSmallButtons,
-            iconOff: Icons.play_arrow,
-            iconOn: TIOMusicParams.pauseIcon,
-            tooltipOff: context.l10n.mediaPlayerPause,
-            tooltipOn: context.l10n.mediaPlayerPlay,
-          ),
-          const SizedBox(height: TIOMusicParams.edgeInset),
-          SettingsButton(icon: Icons.add, title: l10n.mediaPlayerAddMarker, onTap: _addNewMarker),
-          SettingsButton(
-            icon: Icons.delete_outlined,
-            title: l10n.mediaPlayerRemoveMarker,
-            onTap: _removeSelectedMarker,
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const PlaceholderButton(buttonSize: TIOMusicParams.sizeSmallButtons),
+                OnOffButton(
+                  isActive: player.isPlaying,
+                  onTap: _togglePlaying,
+                  buttonSize: TIOMusicParams.sizeBigButtons,
+                  iconOff: Icons.play_arrow,
+                  iconOn: TIOMusicParams.pauseIcon,
+                  tooltipOff: context.l10n.mediaPlayerPause,
+                  tooltipOn: context.l10n.mediaPlayerPlay,
+                ),
+                OnOffButton(
+                  isActive: _hasSelectedMarker,
+                  onTap: _hasSelectedMarker ? _removeSelectedMarker : _addNewMarker,
+                  buttonSize: TIOMusicParams.sizeSmallButtons,
+                  iconOff: _hasSelectedMarker ? Icons.delete_outlined : Icons.add,
+                  iconOn: _hasSelectedMarker ? Icons.delete_outlined : Icons.add,
+                  tooltipOff: _hasSelectedMarker ? l10n.mediaPlayerRemoveMarker : l10n.mediaPlayerAddMarker,
+                  tooltipOn: _hasSelectedMarker ? l10n.mediaPlayerRemoveMarker : l10n.mediaPlayerAddMarker,
+                ),
+              ],
+            ),
           ),
         ],
       ),

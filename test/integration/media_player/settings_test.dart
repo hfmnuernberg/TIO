@@ -107,7 +107,7 @@ void main() {
         expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('0')), findsOneWidget);
 
         await tester.scrollToAndTapAndSettle('Markers');
-        await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
+        await tester.tapAndSettle(find.byTooltip('Add marker'));
         expect(find.byTooltip('Marker'), findsOneWidget);
 
         await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
@@ -118,7 +118,7 @@ void main() {
         await prepareAndOpenMediaPlayer(tester, context);
 
         await tester.scrollToAndTapAndSettle('Markers');
-        await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
+        await tester.tapAndSettle(find.byTooltip('Add marker'));
         await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
 
         expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('1')), findsNothing);
@@ -128,12 +128,12 @@ void main() {
         await prepareAndOpenMediaPlayer(tester, context);
 
         await tester.scrollToAndTapAndSettle('Markers');
-        await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
+        await tester.tapAndSettle(find.byTooltip('Add marker'));
         expect(find.byTooltip('Marker'), findsOneWidget);
 
         await tester.tapAndSettle(find.byTooltip('Marker'));
-        await tester.ensureVisible(find.bySemanticsLabel('Remove selected marker'));
-        await tester.tapAndSettle(find.bySemanticsLabel('Remove selected marker'));
+        await tester.ensureVisible(find.byTooltip('Remove selected marker'));
+        await tester.tapAndSettle(find.byTooltip('Remove selected marker'));
         expect(find.byTooltip('Marker'), findsNothing);
 
         await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
@@ -145,7 +145,7 @@ void main() {
         expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('0')), findsOneWidget);
 
         await tester.scrollToAndTapAndSettle('Markers');
-        await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
+        await tester.tapAndSettle(find.byTooltip('Add marker'));
         await tester.scrollToAndTapAndSettle('Reset');
         expect(find.byTooltip('Marker'), findsNothing);
 

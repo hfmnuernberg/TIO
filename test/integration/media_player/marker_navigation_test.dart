@@ -49,7 +49,7 @@ extension WidgetTesterMediaPlayerExtension on WidgetTester {
     final target = Offset(left.dx + (right.dx - left.dx) * relativePosition, y);
 
     await tapAt(target);
-    await tapAndSettle(find.bySemanticsLabel('Add marker'));
+    await tapAndSettle(find.byTooltip('Add marker'));
     await tapAndSettle(find.bySemanticsLabel('Submit'));
   }
 }
@@ -69,7 +69,7 @@ void main() {
       await prepareAndOpenMediaPlayer(tester, context);
 
       await tester.scrollToAndTapAndSettle('Markers');
-      await tester.tapAndSettle(find.bySemanticsLabel('Add marker'));
+      await tester.tapAndSettle(find.byTooltip('Add marker'));
       await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
       expect(tester.withinSettingsTile('Markers', find.bySemanticsLabel('1')), findsOneWidget);
 
