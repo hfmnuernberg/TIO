@@ -112,7 +112,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       _positionDuration = player.fileDuration * _sliderValue;
     });
 
-    await _pauseIfPlaying();
     await player.setPlaybackPosition(_sliderValue.clamp(0, 1));
 
     _selectedMarkerPosition = _findMarkerNear(snappedRelativePosition);
@@ -128,13 +127,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     }
     if (!mounted) return;
     setState(() {});
-  }
-
-  Future<void> _pauseIfPlaying() async {
-    if (player.isPlaying) {
-      await player.stop();
-      if (mounted) setState(() {});
-    }
   }
 
   double _calculateSnappedRelativePosition(double tapX) {
@@ -215,7 +207,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                       );
                       _selectedMarkerPosition = position;
                     });
-                    _pauseIfPlaying();
                   },
                 ),
               ],
@@ -248,7 +239,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                   }
                 }
               });
-              _pauseIfPlaying();
             },
             onChangeEnd: (newValue) => _sliderValue = newValue,
           ),
