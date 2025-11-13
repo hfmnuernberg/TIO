@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -34,7 +33,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   final double _waveFormHeight = 200;
   double _sliderValue = 0;
 
-  Timer? _playbackTrackingTimer;
+  late final OnPlaybackPositionChange _playbackListener;
 
   Duration _positionDuration = Duration.zero;
 
@@ -66,30 +65,103 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       setState(() => _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, true));
     });
 
-    _playbackTrackingTimer = Timer.periodic(
-      const Duration(milliseconds: playbackSamplingIntervalInMs),
-      (_) => _updateFromPlayerPlayback(),
-    );
+    _playbackListener = _handlePlaybackPositionChange;
+    widget.player.addOnPlaybackPositionChangeListener(_playbackListener);
   }
 
   @override
   void dispose() {
-    _playbackTrackingTimer?.cancel();
+    widget.player.removeOnPlaybackPositionChangeListener(_playbackListener);
     super.dispose();
   }
 
-  void _updateFromPlayerPlayback() {
+  void _handlePlaybackPositionChange(double position) {
     if (!mounted) return;
 
-    if (!widget.player.isPlaying) return;
-
-    final pos = widget.player.playbackPosition.clamp(0.0, 1.0);
-
     setState(() {
-      _sliderValue = pos;
+      _sliderValue = position.clamp(0.0, 1.0);
       _positionDuration = widget.player.fileDuration * _sliderValue;
       _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
     });
+  }
+
+  void _removeSelectedMarker() {
+    if (_selectedMarkerPosition != null) {
+      _markerPositions.removeWhere((pos) => pos == _selectedMarkerPosition);
+      _selectedMarkerPosition = null;
+    }
+    setState(() {});
+  }
+
+  void _removeAllMarkers() {
+    _markerPositions.clear();
+    _selectedMarkerPosition = null;
+    setState(() {});
+  }
+
+  Future<void> _updatePositionFromWave(double tapX) async {
+    final double snappedRelativePosition = _calculateSnappedRelativePosition(tapX);
+
+    setState(() {
+      _sliderValue = snappedRelativePosition;
+      _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
+      _positionDuration = widget.player.fileDuration * _sliderValue;
+    });
+
+    await _pauseIfPlaying();
+    await widget.player.setPlaybackPosition(_sliderValue.clamp(0, 1));
+
+    _selectedMarkerPosition = _findMarkerNear(snappedRelativePosition);
+    setState(() {});
+  }
+
+  Future<void> _togglePlaying() async {
+    if (widget.player.isPlaying) {
+      await widget.player.stop();
+    } else {
+      await widget.player.setPlaybackPosition(_sliderValue.clamp(0, 1));
+      await widget.player.start();
+    }
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  Future<void> _pauseIfPlaying() async {
+    if (widget.player.isPlaying) {
+      await widget.player.stop();
+      if (mounted) setState(() {});
+    }
+  }
+
+  double _calculateSnappedRelativePosition(double tapX) {
+    final int binCount = widget.rmsValues.length;
+    final int tappedBinIndex = WaveformVisualizer.indexForX(tapX, _paintedWaveWidth, binCount);
+    return tappedBinIndex / (binCount - 1);
+  }
+
+  double? _findMarkerNear(double snappedRelativePosition) {
+    final int binCount = widget.rmsValues.length;
+    final double oneBinRelative = 1.0 / (binCount - 1);
+
+    for (final pos in _markerPositions) {
+      if ((snappedRelativePosition - pos).abs() <= oneBinRelative) return pos;
+    }
+
+    return null;
+  }
+
+  void _addNewMarker() {
+    _markerPositions.add(_sliderValue);
+    setState(() {});
+  }
+
+  Future<void> _onConfirm() async {
+    widget.mediaPlayerBlock.markerPositions.clear();
+    _markerPositions.forEach(widget.mediaPlayerBlock.markerPositions.add);
+
+    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    if (!mounted) return;
+    Navigator.pop(context);
   }
 
   @override
@@ -184,84 +256,5 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         ],
       ),
     );
-  }
-
-  void _removeSelectedMarker() {
-    if (_selectedMarkerPosition != null) {
-      _markerPositions.removeWhere((pos) => pos == _selectedMarkerPosition);
-      _selectedMarkerPosition = null;
-    }
-    setState(() {});
-  }
-
-  void _removeAllMarkers() {
-    _markerPositions.clear();
-    _selectedMarkerPosition = null;
-    setState(() {});
-  }
-
-  Future<void> _updatePositionFromWave(double tapX) async {
-    final double snappedRelativePosition = _calculateSnappedRelativePosition(tapX);
-
-    setState(() {
-      _sliderValue = snappedRelativePosition;
-      _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
-      _positionDuration = widget.player.fileDuration * _sliderValue;
-    });
-
-    await _pauseIfPlaying();
-    await widget.player.setPlaybackPosition(_sliderValue.clamp(0, 1));
-
-    _selectedMarkerPosition = _findMarkerNear(snappedRelativePosition);
-    setState(() {});
-  }
-
-  Future<void> _togglePlaying() async {
-    if (widget.player.isPlaying) {
-      await widget.player.stop();
-    } else {
-      await widget.player.setPlaybackPosition(_sliderValue.clamp(0, 1));
-      await widget.player.start();
-    }
-    if (!mounted) return;
-    setState(() {});
-  }
-
-  Future<void> _pauseIfPlaying() async {
-    if (widget.player.isPlaying) {
-      await widget.player.stop();
-      if (mounted) setState(() {});
-    }
-  }
-
-  double _calculateSnappedRelativePosition(double tapX) {
-    final int binCount = widget.rmsValues.length;
-    final int tappedBinIndex = WaveformVisualizer.indexForX(tapX, _paintedWaveWidth, binCount);
-    return tappedBinIndex / (binCount - 1);
-  }
-
-  double? _findMarkerNear(double snappedRelativePosition) {
-    final int binCount = widget.rmsValues.length;
-    final double oneBinRelative = 1.0 / (binCount - 1);
-
-    for (final pos in _markerPositions) {
-      if ((snappedRelativePosition - pos).abs() <= oneBinRelative) return pos;
-    }
-
-    return null;
-  }
-
-  void _addNewMarker() {
-    _markerPositions.add(_sliderValue);
-    setState(() {});
-  }
-
-  Future<void> _onConfirm() async {
-    widget.mediaPlayerBlock.markerPositions.clear();
-    _markerPositions.forEach(widget.mediaPlayerBlock.markerPositions.add);
-
-    await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-    if (!mounted) return;
-    Navigator.pop(context);
   }
 }

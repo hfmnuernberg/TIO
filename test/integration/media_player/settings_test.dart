@@ -132,6 +132,7 @@ void main() {
         expect(find.byTooltip('Marker'), findsOneWidget);
 
         await tester.tapAndSettle(find.byTooltip('Marker'));
+        await tester.ensureVisible(find.bySemanticsLabel('Remove selected marker'));
         await tester.tapAndSettle(find.bySemanticsLabel('Remove selected marker'));
         expect(find.byTooltip('Marker'), findsNothing);
 
