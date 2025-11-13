@@ -8,21 +8,40 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/flash_card/flash_card.dart';
 
-class TipOfTheDay extends StatelessWidget {
+class TipOfTheDay extends StatefulWidget {
   const TipOfTheDay({super.key});
+
+  @override
+  State<TipOfTheDay> createState() => _TipOfTheDayState();
+}
+
+class _TipOfTheDayState extends State<TipOfTheDay> {
+  late FlashCardModel card;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final cards = FlashCards().load();
+    card = cards[Random().nextInt(cards.length)];
+  }
+
+  void _regenerate() {
+    final cards = FlashCards().load();
+    setState(() {
+      card = cards[Random().nextInt(cards.length)];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    final cards = FlashCards().load();
-    final card = cards[Random().nextInt(cards.length)];
-
     return Material(
       color: ColorTheme.primaryContainer,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -46,13 +65,20 @@ class TipOfTheDay extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             FlashCard(category: card.category, description: card.description(l10n)),
-            const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton(
-                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => FlashCardsPage())),
-                child: Text(l10n.tipOfTheDayViewMore, style: const TextStyle(color: ColorTheme.primary)),
-              ),
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => FlashCardsPage())),
+                  child: Text(l10n.tipOfTheDayViewMore, style: const TextStyle(color: ColorTheme.primary)),
+                ),
+                TextButton.icon(
+                  onPressed: _regenerate,
+                  icon: const Icon(Icons.refresh, size: 18, color: ColorTheme.primary),
+                  label: Text(l10n.tipOfTheDayRegenerate, style: const TextStyle(color: ColorTheme.primary)),
+                ),
+              ],
             ),
           ],
         ),
