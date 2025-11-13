@@ -19,13 +19,6 @@ Future<void> prepareAndOpenMediaPlayer(WidgetTester tester, TestContext context)
   await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
 }
 
-extension WidgetTesterMediaPlayerExtension on WidgetTester {
-  Future<void> scrollToAndTapAndSettle(String label) async {
-    await ensureVisible(find.bySemanticsLabel(label));
-    await tapAndSettle(find.bySemanticsLabel(label));
-  }
-}
-
 void main() {
   late TestContext context;
 

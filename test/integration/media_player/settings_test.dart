@@ -23,11 +23,6 @@ Future<void> prepareAndOpenMediaPlayer(WidgetTester tester, TestContext context)
 extension WidgetTesterMediaPlayerExtension on WidgetTester {
   Finder withinSettingsTile(String title, FinderBase<Element> matching) =>
       find.descendant(of: find.bySemanticsLabel(title), matching: matching);
-
-  Future<void> scrollToAndTapAndSettle(String label) async {
-    await ensureVisible(find.bySemanticsLabel(label));
-    await tapAndSettle(find.bySemanticsLabel(label));
-  }
 }
 
 void main() {
