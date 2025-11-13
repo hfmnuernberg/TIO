@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -33,6 +34,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   final double _waveFormHeight = 200;
   double _sliderValue = 0;
 
+  Timer? _playbackTrackingTimer;
+
   Duration _positionDuration = Duration.zero;
 
   double? _selectedMarkerPosition;
@@ -61,6 +64,31 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
 
       setState(() => _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, true));
+    });
+
+    _playbackTrackingTimer = Timer.periodic(
+      const Duration(milliseconds: playbackSamplingIntervalInMs),
+      (_) => _updateFromPlayerPlayback(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _playbackTrackingTimer?.cancel();
+    super.dispose();
+  }
+
+  void _updateFromPlayerPlayback() {
+    if (!mounted) return;
+
+    if (!widget.player.isPlaying) return;
+
+    final pos = widget.player.playbackPosition.clamp(0.0, 1.0);
+
+    setState(() {
+      _sliderValue = pos;
+      _positionDuration = widget.player.fileDuration * _sliderValue;
+      _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
     });
   }
 
