@@ -55,6 +55,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   late bool _originalRepeat;
 
+  bool _wasPlayingBeforeSliderDrag = false;
+
   @override
   void initState() {
     super.initState();
@@ -239,6 +241,14 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             value: _sliderValue,
             inactiveColor: ColorTheme.primary80,
             divisions: 1000,
+            onChangeStart: (startValue) async {
+              _wasPlayingBeforeSliderDrag = player.isPlaying;
+              if (_wasPlayingBeforeSliderDrag) {
+                await player.stop();
+                if (!mounted) return;
+                setState(() {});
+              }
+            },
             onChanged: (newValue) {
               setState(() {
                 _sliderValue = newValue;
@@ -246,7 +256,15 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                 _positionDuration = player.fileDuration * _sliderValue;
               });
             },
-            onChangeEnd: (newValue) => _sliderValue = newValue,
+            onChangeEnd: (newValue) async {
+              _sliderValue = newValue;
+              await player.setPlaybackPosition(_sliderValue.clamp(0, 1));
+              if (_wasPlayingBeforeSliderDrag) {
+                await player.start();
+                if (!mounted) return;
+                setState(() {});
+              }
+            },
           ),
           Padding(
             padding: const EdgeInsets.all(16),
