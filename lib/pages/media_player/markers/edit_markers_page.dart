@@ -244,16 +244,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                 _sliderValue = newValue;
                 _waveformVisualizer = WaveformVisualizer(newValue, block.rangeStart, block.rangeEnd, widget.rmsValues);
                 _positionDuration = player.fileDuration * _sliderValue;
-
-                if (_selectedMarkerPosition != null) {
-                  for (int i = 0; i < _markerPositions.length; i++) {
-                    if (_markerPositions[i] == _selectedMarkerPosition) {
-                      _markerPositions[i] = _sliderValue;
-                      _selectedMarkerPosition = _sliderValue;
-                    }
-                  }
-                  _syncPlayerMarkers();
-                }
               });
             },
             onChangeEnd: (newValue) => _sliderValue = newValue,
