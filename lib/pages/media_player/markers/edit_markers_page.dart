@@ -27,6 +27,9 @@ class EditMarkersPage extends StatefulWidget {
 }
 
 class _EditMarkersPageState extends State<EditMarkersPage> {
+  MediaPlayerBlock get block => widget.mediaPlayerBlock;
+  Player get player => widget.player;
+
   final GlobalKey _waveKey = GlobalKey();
   late WaveformVisualizer _waveformVisualizer;
   double _waveFormWidth = 0;
@@ -53,25 +56,35 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   void initState() {
     super.initState();
 
-    widget.mediaPlayerBlock.markerPositions.forEach(_markerPositions.add);
+    block.markerPositions.forEach(_markerPositions.add);
 
-    _positionDuration = widget.player.fileDuration * _sliderValue;
+    _positionDuration = player.fileDuration * _sliderValue;
 
-    _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, true);
+    _waveformVisualizer = WaveformVisualizer(
+      0,
+      block.rangeStart,
+      block.rangeEnd,
+      widget.rmsValues,
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
 
-      setState(() => _waveformVisualizer = WaveformVisualizer.singleView(0, widget.rmsValues, true));
+      setState(() => _waveformVisualizer = WaveformVisualizer(
+        0,
+        block.rangeStart,
+        block.rangeEnd,
+        widget.rmsValues,
+      ));
     });
 
     _playbackListener = _handlePlaybackPositionChange;
-    widget.player.addOnPlaybackPositionChangeListener(_playbackListener);
+    player.addOnPlaybackPositionChangeListener(_playbackListener);
   }
 
   @override
   void dispose() {
-    widget.player.removeOnPlaybackPositionChangeListener(_playbackListener);
+    player.removeOnPlaybackPositionChangeListener(_playbackListener);
     super.dispose();
   }
 
@@ -80,8 +93,13 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     setState(() {
       _sliderValue = position.clamp(0.0, 1.0);
-      _positionDuration = widget.player.fileDuration * _sliderValue;
-      _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
+      _positionDuration = player.fileDuration * _sliderValue;
+      _waveformVisualizer = WaveformVisualizer(
+        _sliderValue,
+        block.rangeStart,
+        block.rangeEnd,
+        widget.rmsValues,
+      );
     });
   }
 
@@ -104,31 +122,36 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     setState(() {
       _sliderValue = snappedRelativePosition;
-      _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
-      _positionDuration = widget.player.fileDuration * _sliderValue;
+      _waveformVisualizer = WaveformVisualizer(
+        _sliderValue,
+        block.rangeStart,
+        block.rangeEnd,
+        widget.rmsValues,
+      );
+      _positionDuration = player.fileDuration * _sliderValue;
     });
 
     await _pauseIfPlaying();
-    await widget.player.setPlaybackPosition(_sliderValue.clamp(0, 1));
+    await player.setPlaybackPosition(_sliderValue.clamp(0, 1));
 
     _selectedMarkerPosition = _findMarkerNear(snappedRelativePosition);
     setState(() {});
   }
 
   Future<void> _togglePlaying() async {
-    if (widget.player.isPlaying) {
-      await widget.player.stop();
+    if (player.isPlaying) {
+      await player.stop();
     } else {
-      await widget.player.setPlaybackPosition(_sliderValue.clamp(0, 1));
-      await widget.player.start();
+      await player.setPlaybackPosition(_sliderValue.clamp(0, 1));
+      await player.start();
     }
     if (!mounted) return;
     setState(() {});
   }
 
   Future<void> _pauseIfPlaying() async {
-    if (widget.player.isPlaying) {
-      await widget.player.stop();
+    if (player.isPlaying) {
+      await player.stop();
       if (mounted) setState(() {});
     }
   }
@@ -156,8 +179,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   }
 
   Future<void> _onConfirm() async {
-    widget.mediaPlayerBlock.markerPositions.clear();
-    _markerPositions.forEach(widget.mediaPlayerBlock.markerPositions.add);
+    block.markerPositions.clear();
+    _markerPositions.forEach(block.markerPositions.add);
 
     await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     if (!mounted) return;
@@ -203,7 +226,12 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                   onTap: (position) {
                     setState(() {
                       _sliderValue = position;
-                      _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
+                      _waveformVisualizer = WaveformVisualizer(
+                        _sliderValue,
+                        block.rangeStart,
+                        block.rangeEnd,
+                        widget.rmsValues,
+                      );
                       _selectedMarkerPosition = position;
                     });
                     _pauseIfPlaying();
@@ -221,8 +249,13 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             onChanged: (newValue) {
               setState(() {
                 _sliderValue = newValue;
-                _waveformVisualizer = WaveformVisualizer.singleView(newValue, widget.rmsValues, true);
-                _positionDuration = widget.player.fileDuration * _sliderValue;
+                _waveformVisualizer = WaveformVisualizer(
+                  newValue,
+                  block.rangeStart,
+                  block.rangeEnd,
+                  widget.rmsValues,
+                );
+                _positionDuration = player.fileDuration * _sliderValue;
 
                 if (_selectedMarkerPosition != null) {
                   for (int i = 0; i < _markerPositions.length; i++) {
@@ -238,7 +271,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             onChangeEnd: (newValue) => _sliderValue = newValue,
           ),
           OnOffButton(
-            isActive: widget.player.isPlaying,
+            isActive: player.isPlaying,
             onTap: _togglePlaying,
             buttonSize: TIOMusicParams.sizeSmallButtons,
             iconOff: Icons.play_arrow,
