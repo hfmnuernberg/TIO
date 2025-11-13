@@ -143,7 +143,7 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get mediaPlayerTooManyFilesTitle => 'Too many files';
   String get mediaPlayerTrim => 'Trim';
   String get mediaPlayerTutorialAdjust =>
-      'Tap here to adjust your audio file. You can set the volume and the basic beat, trim your file and set markers, as well as change the pitch and tempo afterwards.';
+      'Tap here to adjust your audio file. You can set the volume and the basic beat, trim your file and set and remove markers, as well as change the pitch and tempo afterwards.';
   String get mediaPlayerTutorialIslandTool =>
       'Tap here to combine your Media Player with a Tuner or Metronome.\n\nYou can link your Media Player with an existing tool or create a new tool and link it.';
   String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file.';
