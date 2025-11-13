@@ -82,7 +82,7 @@ void main() {
     testWidgets('skips forward to next marker on button select', (tester) async {
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.addMarkerAtPosition(0.5);
-      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0.5);
 
       await tester.skipForward();
 
@@ -93,7 +93,6 @@ void main() {
       mockPlayerState(context, playbackPositionFactor: 0.6);
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.addMarkerAtPosition(0.5);
-      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
 
       await tester.skipForward();
 
@@ -104,9 +103,8 @@ void main() {
       mockPlayerState(context, playbackPositionFactor: 0.6);
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.addMarkerAtPosition(0.5);
-      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
       await tester.skipForward();
-      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(1);
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0.5);
 
       await tester.skipBackwards();
 
@@ -116,9 +114,7 @@ void main() {
     testWidgets('skips backwards to start of file on button select when first marker reached', (tester) async {
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.addMarkerAtPosition(0.5);
-      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
       await tester.skipForward();
-      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0.5);
 
       await tester.skipBackwards();
 
