@@ -43,5 +43,14 @@ void main() {
 
       expect(find.bySemanticsLabel('Practice tips'), findsOneWidget);
     });
+
+    testWidgets('navigates to practice tips page on tip of the day button tap', (tester) async {
+      await tester.renderScaffold(ProjectsPage(), context.providers);
+
+      await tester.tapAndSettle(find.bySemanticsLabel('View more'));
+      await tester.tapAndWaitFor(find.bySemanticsLabel('Practice tips'));
+
+      expect(find.bySemanticsLabel('Practice tips'), findsOneWidget);
+    });
   });
 }
