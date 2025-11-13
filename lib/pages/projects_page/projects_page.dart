@@ -303,19 +303,15 @@ class _ProjectsPageState extends State<ProjectsPage> {
     Navigator.of(context)
         .push(
           MaterialPageRoute(
-            builder: (context) {
-              return ChangeNotifierProvider<Project>.value(
-                value: project,
-                builder: (context, child) {
-                  return ProjectPage(
-                    goStraightToTool: true,
-                    toolToOpenDirectly: tool,
-                    withoutRealProject: false,
-                    pianoAlreadyOn: pianoAlreadyOn,
-                  );
-                },
-              );
-            },
+            builder: (context) => ChangeNotifierProvider<Project>.value(
+              value: project,
+              builder: (context, child) => ProjectPage(
+                goStraightToTool: true,
+                toolToOpenDirectly: tool,
+                withoutRealProject: false,
+                pianoAlreadyOn: pianoAlreadyOn,
+              ),
+            ),
           ),
         )
         .then(doActionOnReturn);
