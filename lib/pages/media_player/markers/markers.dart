@@ -70,7 +70,7 @@ class MarkerButton extends StatelessWidget {
       child: IconButton(
         icon: Icon(
           isSelected ? Icons.arrow_drop_down_circle_outlined : Icons.arrow_drop_down,
-          color: isSelected ? ColorTheme.tertiary60 : ColorTheme.primary,
+          color: ColorTheme.primary,
           size: MediaPlayerParams.markerIconSize,
         ),
         tooltip: context.l10n.mediaPlayerMarker,

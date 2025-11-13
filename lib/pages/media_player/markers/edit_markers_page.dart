@@ -233,7 +233,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             value: _sliderValue,
             inactiveColor: ColorTheme.primary80,
             divisions: 1000,
-            label: l10n.formatDurationWithMillis(_positionDuration),
             onChanged: (newValue) {
               setState(() {
                 _sliderValue = newValue;
