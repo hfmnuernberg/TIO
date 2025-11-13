@@ -20,21 +20,23 @@ class TipOfTheDay extends StatelessWidget {
       color: ColorTheme.primaryContainer,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 16, 12, 16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.lightbulb_outline, size: TIOMusicParams.titleFontSize, color: ColorTheme.surfaceTint),
-                const SizedBox(width: 8),
-                Text(
-                  context.l10n.tipOfTheDayTitle,
-                  style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
-                ),
-              ],
+            Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.lightbulb_outline, color: ColorTheme.surfaceTint, size: TIOMusicParams.titleFontSize),
+                  const SizedBox(width: 8),
+                  Text(
+                    context.l10n.tipOfTheDayTitle,
+                    style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 8),
             FlashCard(category: card.category, description: description),
