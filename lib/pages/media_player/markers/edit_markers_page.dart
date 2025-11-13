@@ -112,6 +112,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               ],
             ),
           ),
+          Text(l10n.formatDurationWithMillis(_positionDuration), style: const TextStyle(color: ColorTheme.primary)),
           Slider(
             value: _sliderValue,
             inactiveColor: ColorTheme.primary80,
