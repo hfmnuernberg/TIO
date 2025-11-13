@@ -7,13 +7,11 @@ class WaveformVisualizer extends CustomPainter {
   final Float32List _rmsValues;
 
   double? _playbackPosition;
-  double? _rangeStartPos;
-  double? _rangeEndPos;
-  bool _singleView = false;
+  final double? _rangeStartPos;
+  final double? _rangeEndPos;
+  final bool _singleView = false;
 
   WaveformVisualizer(this._playbackPosition, this._rangeStartPos, this._rangeEndPos, this._rmsValues);
-
-  WaveformVisualizer.singleView(this._playbackPosition, this._rmsValues, this._singleView);
 
   WaveformVisualizer.setTrim(this._rangeStartPos, this._rangeEndPos, this._rmsValues);
 
@@ -72,8 +70,8 @@ class WaveformVisualizer extends CustomPainter {
         _drawWaveLine(canvas, size, x, midAxisHeight, i, brush);
       }
     } else if (_rangeStartPos != null && _rangeEndPos != null) {
-      double startPositionMapped = _rangeStartPos! * numberOfBins;
-      double endPositionMapped = _rangeEndPos! * numberOfBins;
+      double startPositionMapped = _rangeStartPos * numberOfBins;
+      double endPositionMapped = _rangeEndPos * numberOfBins;
 
       for (int i = 0; i < _rmsValues.length; i++) {
         var brush = i >= startPositionMapped && i <= endPositionMapped ? redBrush : blueBrush;
