@@ -3,7 +3,7 @@
 
 import 'package:intl/intl.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
-import 'package:tiomusic/l10n/flash_cards/en_flash_cards.dart';
+import 'package:tiomusic/l10n/flash_cards/en.dart';
 
 class English extends AppLocalizations with EnglishFlashCards {
   String get locale => 'en';

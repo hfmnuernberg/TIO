@@ -102,6 +102,11 @@ validateCoverage() {
   awk -v cov="$total" -v th="$threshold" 'BEGIN {exit (cov >= th) ? 0 : 1}'
 }
 
+# Flutter way to exclude files from coverage
+excludeCoverage() {
+  lcov --remove coverage/lcov.info 'lib/l10n/**' -o coverage/lcov.info
+}
+
 aliases=(
   "lint:analyze"
   "start:run"
@@ -189,8 +194,8 @@ case "$1" in
   clean:rust)                cleanRust; ;;
   coverage)                  bash "$0" coverage:measure; bash "$0" coverage:generate; bash "$0" coverage:open; ;;
   coverage:generate)         genhtml --no-function-coverage coverage/lcov.info -o coverage/html; ;;
-  coverage:measure)          $FLUTTER test --coverage test; ;;
-  coverage:measure:random)   $FLUTTER test --coverage --test-randomize-ordering-seed random test; ;;
+  coverage:measure)          $FLUTTER test --coverage test; excludeCoverage; ;;
+  coverage:measure:random)   $FLUTTER test --coverage --test-randomize-ordering-seed random test; excludeCoverage; ;;
   coverage:open)             open coverage/html/index.html; ;;
   coverage:print)            lcov --summary coverage/lcov.info; ;;
   coverage:validate)         validateCoverage "$@"; ;;

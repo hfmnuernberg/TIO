@@ -129,13 +129,13 @@ jobs:
     - name: Setup Flutter
       uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
 
-    - name: Run unit and integration tests with coverage
-      run: scripts/app.sh coverage:measure:random
-
     - name: Install lcov
       run: |
         sudo apt-get update
         sudo apt-get install -y lcov
+
+    - name: Run unit and integration tests with coverage
+      run: scripts/app.sh coverage:measure:random
 
     - name: Print coverage
       run: scripts/app.sh coverage:print
