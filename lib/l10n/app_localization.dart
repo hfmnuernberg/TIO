@@ -270,6 +270,7 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get textImportSuccess;
 
   String get tipOfTheDayTitle;
+  String get tipOfTheDayViewMore;
 
   String get toolAddNew;
   String get toolConnectAnother;

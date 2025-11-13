@@ -370,10 +370,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
             Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                  child: const TipOfTheDay(),
-                ),
+                Padding(padding: const EdgeInsets.fromLTRB(16, 16, 16, 0), child: const TipOfTheDay()),
                 Expanded(
                   child: Consumer<ProjectLibrary>(
                     builder: (context, projectLibrary, child) => Stack(

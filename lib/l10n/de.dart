@@ -312,6 +312,7 @@ class German extends AppLocalizations with GermanFlashCards {
   String get textImportSuccess => 'Text erfolgreich importiert!';
 
   String get tipOfTheDayTitle => 'Tipp des Tages';
+  String get tipOfTheDayViewMore => 'Zeige mehr';
 
   String get toolAddNew => 'Tool hinzufügen';
   String get toolConnectAnother => 'Verbinde ein anderes Tool';

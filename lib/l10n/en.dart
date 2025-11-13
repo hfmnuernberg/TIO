@@ -309,6 +309,7 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get textImportSuccess => 'Text imported successfully!';
 
   String get tipOfTheDayTitle => 'Tip of the day';
+  String get tipOfTheDayViewMore => 'View more';
 
   String get toolAddNew => 'Add new tool';
   String get toolConnectAnother => 'Connect another tool';
