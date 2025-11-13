@@ -311,7 +311,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
     if (!mounted) return;
 
+    final bool isTopRoute = ModalRoute.of(context)?.isCurrent ?? true;
+
     final bool shouldAdvance =
+        isTopRoute &&
         _project!.mediaPlayerRepeatAll &&
         _player.loaded &&
         _didFinishAndStopped(

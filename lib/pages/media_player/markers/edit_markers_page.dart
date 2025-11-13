@@ -53,9 +53,14 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     return _waveFormWidth;
   }
 
+  late bool _originalRepeat;
+
   @override
   void initState() {
     super.initState();
+
+    _originalRepeat = player.repeat;
+    player.setRepeat(false);
 
     block.markerPositions.forEach(_markerPositions.add);
 
@@ -77,6 +82,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   @override
   void dispose() {
+    player.setRepeat(_originalRepeat);
     player.markers.positions = block.markerPositions;
     player.removeOnPlaybackPositionChangeListener(_playbackListener);
     super.dispose();
