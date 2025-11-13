@@ -142,7 +142,7 @@ class German extends AppLocalizations with GermanFlashCards {
   String get mediaPlayerTooManyFilesTitle => 'Zu viele Dateien';
   String get mediaPlayerTrim => 'Trimmen';
   String get mediaPlayerTutorialAdjust =>
-      'Tippe hier, um deine Audiodatei anzupassen. Du kannst die Lautstärke und den Grundschlag einstellen, deine Datei trimmen und Marker setzen, sowie Tonhöhe und Tempo nachträglich verändern.';
+      'Tippe hier, um deine Audiodatei anzupassen. Du kannst die Lautstärke und den Grundschlag einstellen, deine Datei trimmen und Marker setzen und löschen, sowie Tonhöhe und Tempo nachträglich verändern.';
   String get mediaPlayerTutorialIslandTool =>
       'Tippe hier, um deinen Media Player mit einem Stimmgerät oder Metronom zu kombinieren.\n\nDu kannst deinen Media Player mit einem bestehenden Tool verknüpfen oder ein neues Tool erstellen und damit verknüpfen.';
   String get mediaPlayerTutorialJumpTo =>
