@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
-import 'package:tiomusic/src/rust/api/modules/media_player.dart';
 
 import '../../utils/action_utils.dart';
+import '../../utils/media_player_utils.dart';
 import '../../utils/project_utils.dart';
 import '../../utils/render_utils.dart';
 import '../../utils/test_context.dart';
@@ -64,26 +64,6 @@ void main() {
     await context.init(project: Project.defaultThumbnail('Test Project'));
   });
 
-  void mockPlayerState({
-    bool playing = true,
-    double playbackPositionFactor = 0,
-    double totalLengthSeconds = 1,
-    bool looping = false,
-    double trimStartFactor = 0,
-    double trimEndFactor = 1,
-  }) {
-    context.audioSystemMock.mockMediaPlayerGetState(
-      MediaPlayerState(
-        playing: playing,
-        playbackPositionFactor: playbackPositionFactor,
-        totalLengthSeconds: totalLengthSeconds,
-        looping: looping,
-        trimStartFactor: trimStartFactor,
-        trimEndFactor: trimEndFactor,
-      ),
-    );
-  }
-
   group('MediaPlayerTool - marker navigation', () {
     testWidgets('shows marker navigation buttons when markers available', (tester) async {
       await prepareAndOpenMediaPlayer(tester, context);
@@ -115,7 +95,7 @@ void main() {
     });
 
     testWidgets('skips forward to end of file on button select when last marker reached', (tester) async {
-      mockPlayerState(playbackPositionFactor: 0.6);
+      mockPlayerState(context, playbackPositionFactor: 0.6);
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.addMarkerAtPosition(0.5);
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
@@ -126,7 +106,7 @@ void main() {
     });
 
     testWidgets('skips backwards to previous marker on button select', (tester) async {
-      mockPlayerState(playbackPositionFactor: 0.6);
+      mockPlayerState(context, playbackPositionFactor: 0.6);
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.addMarkerAtPosition(0.5);
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();

@@ -85,7 +85,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
                   child: GestureDetector(
-                    onTapDown: _onWaveTap,
+                    onTapDown: (details) => _updatePositionFromWave(details.localPosition.dx),
+                    onHorizontalDragUpdate: (details) => _updatePositionFromWave(details.localPosition.dx),
                     child: SizedBox(
                       width: double.infinity,
                       height: _waveFormHeight,
@@ -170,15 +171,18 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     setState(() {});
   }
 
-  void _onWaveTap(TapDownDetails details) async {
-    final double tapX = details.localPosition.dx;
+  Future<void> _updatePositionFromWave(double tapX) async {
     final double snappedRelativePosition = _calculateSnappedRelativePosition(tapX);
 
     setState(() {
       _sliderValue = snappedRelativePosition;
       _waveformVisualizer = WaveformVisualizer.singleView(_sliderValue, widget.rmsValues, true);
+      _positionDuration = widget.player.fileDuration * _sliderValue;
     });
+
     await _pauseIfPlaying();
+    await widget.player.setPlaybackPosition(_sliderValue.clamp(0, 1));
+
     _selectedMarkerPosition = _findMarkerNear(snappedRelativePosition);
     setState(() {});
   }
