@@ -288,7 +288,6 @@ class German extends AppLocalizations with GermanFlashCards {
   String get projectsMenu => 'Projekte-Menü';
   String get projectsNew => 'Neues Projekt';
   String get projectsNoProjects => 'Bitte klicke auf das "+", um ein neues Projekt zu erstellen.';
-  String get projectsTutorialAddProject => 'Tippe hier, um ein neues Projekt zu erstellen.';
   String get projectsTutorialCanIncludeMultipleTools =>
       'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Piano, Media Player, Bild und Text),\nund sogar mehrere Tools desselben Typs.';
   String get projectsTutorialChangeProjectOrder =>

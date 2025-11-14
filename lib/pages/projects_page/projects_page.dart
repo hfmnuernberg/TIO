@@ -48,8 +48,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
   bool _isEditing = false;
 
   final Tutorial _tutorial = Tutorial();
-  final GlobalKey _keyAddProjectButton = GlobalKey();
-  final GlobalKey _keyChangeProjectOrder = GlobalKey();
+  final GlobalKey _keyEditProjects = GlobalKey();
   final GlobalKey _keyQuickTools = GlobalKey();
 
   @override
@@ -97,12 +96,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
       CustomTargetFocus(
-        _keyAddProjectButton,
-        l10n.projectsTutorialAddProject,
-        alignText: ContentAlign.right,
-        pointingDirection: PointingDirection.left,
-      ),
-      CustomTargetFocus(
         _keyQuickTools,
         l10n.projectsTutorialStartUsingTool,
         alignText: ContentAlign.top,
@@ -111,7 +104,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         shape: ShapeLightFocus.RRect,
       ),
       CustomTargetFocus(
-        _keyChangeProjectOrder,
+        _keyEditProjects,
         l10n.projectsTutorialChangeProjectOrder,
         buttonsPosition: ButtonsPosition.top,
         pointingDirection: PointingDirection.down,
@@ -341,12 +334,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
         centerTitle: true,
         backgroundColor: ColorTheme.surfaceBright,
         foregroundColor: ColorTheme.primary,
-        leading: IconButton(
-          key: _keyAddProjectButton,
-          onPressed: _handleNew,
-          icon: const Icon(Icons.add),
-          tooltip: l10n.projectsNew,
-        ),
         actions: [
           ProjectsMenu(
             isEditing: _isEditing,
@@ -400,7 +387,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
                               child: EditProjectsBar(
-                                key: _keyChangeProjectOrder,
+                                key: _keyEditProjects,
                                 isEditing: _isEditing,
                                 onAddProject: _handleNew,
                                 onToggleEditing: _toggleEditingMode,

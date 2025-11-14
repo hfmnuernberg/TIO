@@ -285,7 +285,6 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get projectsMenu => 'Projects menu';
   String get projectsNew => 'New project';
   String get projectsNoProjects => 'Please click on "+" to create a new project.';
-  String get projectsTutorialAddProject => 'Tap here to create a new project.';
   String get projectsTutorialCanIncludeMultipleTools =>
       'Projects can include multiple tools\n(tuner, metronome, piano, media player, image and text),\neven several tools of the same type.';
   String get projectsTutorialChangeProjectOrder =>
