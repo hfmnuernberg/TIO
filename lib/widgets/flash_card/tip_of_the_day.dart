@@ -37,7 +37,6 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
 
     return Material(
       color: ColorTheme.primaryContainer,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
         child: Column(

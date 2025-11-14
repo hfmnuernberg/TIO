@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
 
 class CardListTile extends StatelessWidget {
   final String title;
@@ -43,7 +42,6 @@ class CardListTile extends StatelessWidget {
       child: Card(
         color: highlightColor ?? ColorTheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-        margin: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 8),
         elevation: 0,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: ListTile(

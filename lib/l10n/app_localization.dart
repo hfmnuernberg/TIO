@@ -235,7 +235,6 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get projectTutorialChangeToolOrder;
   String get projectTutorialEditTitle;
 
-  String get projectsAbout;
   String get projectsAboutExplanation;
   String get projectsAddNew;
   String get projectsDeleteAll;
@@ -251,6 +250,7 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get projectsMenu;
   String get projectsNew;
   String get projectsNoProjects;
+  String get projectsTitle;
   String get projectsTutorialCanIncludeMultipleTools;
   String get projectsTutorialChangeProjectOrder;
   String get projectsTutorialHowToUseTio;

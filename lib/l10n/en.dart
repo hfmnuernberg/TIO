@@ -268,7 +268,6 @@ class English extends AppLocalizations with EnglishFlashCards {
       'Tap the plus icon to add a new tool or the pencil icon to edit the tools.';
   String get projectTutorialEditTitle => 'Tap here to edit the title of your project.';
 
-  String get projectsAbout => 'Projects';
   String get projectsAboutExplanation =>
       "All elements can be collectively saved in projects. You don't need to set the metronome or adjust your tuner each time. You can easily continue from where you left off last time.";
   String get projectsAddNew => 'Add new project';
@@ -285,6 +284,7 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get projectsMenu => 'Projects menu';
   String get projectsNew => 'New project';
   String get projectsNoProjects => 'Please click on "+" to create a new project.';
+  String get projectsTitle => 'Projects';
   String get projectsTutorialCanIncludeMultipleTools =>
       'Projects can include multiple tools\n(tuner, metronome, piano, media player, image and text),\neven several tools of the same type.';
   String get projectsTutorialChangeProjectOrder =>
