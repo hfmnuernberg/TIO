@@ -30,6 +30,30 @@ class EditableProjectList extends StatelessWidget {
 
         await onReorder(projectNewIndex, projectOldIndex);
       },
+      proxyDecorator: (child, index, animation) {
+        if (index == 0) return child;
+
+        final projectIndex = index - 1;
+        final project = projectLibrary.projects[projectIndex];
+        final isFirstProject = projectIndex == 0;
+        final isLastProject = projectIndex == projectLibrary.projects.length - 1;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 4),
+          child: Material(
+            elevation: 6,
+            clipBehavior: Clip.antiAlias,
+            child: _EditableProjectListItem(
+              project: project,
+              index: projectIndex,
+              isFirst: isFirstProject,
+              isLast: isLastProject,
+              onDelete: onDelete,
+              showBackground: false,
+            ),
+          ),
+        );
+      },
       itemBuilder: (context, index) {
         if (index == 0) {
           return const KeyedSubtree(key: ValueKey('projects-header'), child: _ProjectsHeader());
@@ -82,6 +106,7 @@ class _EditableProjectListItem extends StatelessWidget {
   final bool isFirst;
   final bool isLast;
   final void Function(int index) onDelete;
+  final bool showBackground;
 
   const _EditableProjectListItem({
     super.key,
@@ -90,6 +115,7 @@ class _EditableProjectListItem extends StatelessWidget {
     required this.isFirst,
     required this.isLast,
     required this.onDelete,
+    this.showBackground = true,
   });
 
   @override
@@ -97,33 +123,36 @@ class _EditableProjectListItem extends StatelessWidget {
     final l10n = context.l10n;
     final fs = context.read<FileSystem>();
 
+    final tile = CardListTile(
+      title: project.title,
+      subtitle: l10n.formatDateAndTime(project.timeLastModified),
+      trailingIcon: IconButton(
+        tooltip: l10n.commonReorder,
+        icon: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
+        color: ColorTheme.primaryFixedDim,
+        onPressed: () {},
+      ),
+      menuIconOne: IconButton(
+        tooltip: l10n.projectDelete,
+        icon: const Icon(Icons.delete_outlined),
+        color: ColorTheme.tertiary,
+        onPressed: () => onDelete(index),
+      ),
+      leadingPicture: project.thumbnailPath.isEmpty
+          ? AssetImage(TIOMusicParams.tiomusicIconPath)
+          : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
+      onTapFunction: () {},
+    );
+
+    if (!showBackground) {
+      return tile;
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Material(
         color: ColorTheme.primaryContainer,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(12, isFirst ? 0 : 4, 12, isLast ? 12 : 4),
-          child: CardListTile(
-            title: project.title,
-            subtitle: l10n.formatDateAndTime(project.timeLastModified),
-            trailingIcon: IconButton(
-              tooltip: l10n.commonReorder,
-              icon: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
-              color: ColorTheme.primaryFixedDim,
-              onPressed: () {},
-            ),
-            menuIconOne: IconButton(
-              tooltip: l10n.projectDelete,
-              icon: const Icon(Icons.delete_outlined),
-              color: ColorTheme.tertiary,
-              onPressed: () => onDelete(index),
-            ),
-            leadingPicture: project.thumbnailPath.isEmpty
-                ? AssetImage(TIOMusicParams.tiomusicIconPath)
-                : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
-            onTapFunction: () {},
-          ),
-        ),
+        child: Padding(padding: EdgeInsets.fromLTRB(12, isFirst ? 0 : 4, 12, isLast ? 12 : 4), child: tile),
       ),
     );
   }
