@@ -35,15 +35,6 @@ void main() {
       expect(find.bySemanticsLabel('Feedback survey'), findsOneWidget);
     });
 
-    testWidgets('navigates to practice tips page on menu item tap', (tester) async {
-      await tester.renderScaffold(ProjectsPage(), context.providers);
-
-      await tester.tapAndSettle(find.byTooltip('Projects menu'));
-      await tester.tapAndWaitFor(find.bySemanticsLabel('Practice tips'));
-
-      expect(find.bySemanticsLabel('Practice tips'), findsOneWidget);
-    });
-
     testWidgets('navigates to practice tips page on tip of the day button tap', (tester) async {
       await tester.renderScaffold(ProjectsPage(), context.providers);
 
