@@ -43,6 +43,7 @@ class CardListTile extends StatelessWidget {
         color: highlightColor ?? ColorTheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
         elevation: 0,
+        margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         child: ListTile(
           enabled: !disableTap,

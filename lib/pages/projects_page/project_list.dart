@@ -28,16 +28,44 @@ class ProjectList extends StatelessWidget {
         0,
         TIOMusicParams.smallSpaceAboveList - 4,
       ),
-      itemCount: projectLibrary.projects.length,
+      itemCount: projectLibrary.projects.length + 1,
       itemBuilder: (context, index) {
-        final project = projectLibrary.projects[index];
+        if (index == 0) {
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            child: Material(
+              color: ColorTheme.primaryContainer,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
+                child: Center(
+                  child: Text(
+                    context.l10n.projectsTitle,
+                    style: const TextStyle(
+                      color: ColorTheme.primary,
+                      fontSize: TIOMusicParams.titleFontSize,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
 
-        final item = Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
+        final projectIndex = index - 1;
+        final project = projectLibrary.projects[projectIndex];
+        final isLastProject = projectIndex == projectLibrary.projects.length - 1;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Material(
             color: ColorTheme.primaryContainer,
             child: Padding(
-              padding: EdgeInsets.fromLTRB(8, 0, 8, index == projectLibrary.projects.length - 1 ? 8 : 0),
+              padding: EdgeInsets.fromLTRB(
+                12,
+                projectIndex == 0 ? 0 : 4,
+                12,
+                isLastProject ? 12 : 4,
+              ),
               child: CardListTile(
                 title: project.title,
                 subtitle: l10n.formatDateAndTime(project.timeLastModified),
@@ -55,35 +83,6 @@ class ProjectList extends StatelessWidget {
             ),
           ),
         );
-
-        if (index == 0) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                child: Material(
-                  color: ColorTheme.primaryContainer,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 12, 8, 6),
-                    child: Center(
-                      child: Text(
-                        context.l10n.projectsTitle,
-                        style: const TextStyle(
-                          color: ColorTheme.primary,
-                          fontSize: TIOMusicParams.titleFontSize,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              item,
-            ],
-          );
-        }
-
-        return item;
       },
     );
   }
