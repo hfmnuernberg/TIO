@@ -21,16 +21,19 @@ class NewToolsList extends StatelessWidget {
         final blockType = tools[index];
         final info = getBlockTypeInfos(context.l10n)[blockType]!;
 
-        return CardListTile(
-          title: info.name,
-          subtitle: info.description,
-          trailingIcon: IconButton(
-            onPressed: () => onSelect(blockType),
-            icon: const Icon(Icons.add),
-            color: ColorTheme.surfaceTint,
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: CardListTile(
+            title: info.name,
+            subtitle: info.description,
+            trailingIcon: IconButton(
+              onPressed: () => onSelect(blockType),
+              icon: const Icon(Icons.add),
+              color: ColorTheme.surfaceTint,
+            ),
+            leadingPicture: circleToolIcon(info.icon),
+            onTapFunction: () => onSelect(blockType),
           ),
-          leadingPicture: circleToolIcon(info.icon),
-          onTapFunction: () => onSelect(blockType),
         );
       },
     );

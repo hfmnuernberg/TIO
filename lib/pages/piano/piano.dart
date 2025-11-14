@@ -467,19 +467,22 @@ class _PianoPageState extends State<PianoPage> {
                   children: [
                     Column(
                       children: [
-                        CardListTile(
-                          title: _pianoBlock.title,
-                          subtitle: formatSettingValues(_pianoBlock.getSettingsFormatted(l10n)),
-                          trailingIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _showSavingPage = false;
-                              });
-                            },
-                            icon: const Icon(Icons.close, color: ColorTheme.primary),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          child: CardListTile(
+                            title: _pianoBlock.title,
+                            subtitle: formatSettingValues(_pianoBlock.getSettingsFormatted(l10n)),
+                            trailingIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _showSavingPage = false;
+                                });
+                              },
+                              icon: const Icon(Icons.close, color: ColorTheme.primary),
+                            ),
+                            leadingPicture: circleToolIcon(_pianoBlock.icon),
+                            onTapFunction: () {},
                           ),
-                          leadingPicture: circleToolIcon(_pianoBlock.icon),
-                          onTapFunction: () {},
                         ),
                       ],
                     ),
@@ -509,21 +512,26 @@ class _PianoPageState extends State<PianoPage> {
                             itemBuilder: (context, index) {
                               return StatefulBuilder(
                                 builder: (context, setTileState) {
-                                  return CardListTile(
-                                    title: projectLibrary.projects[index].title,
-                                    subtitle: l10n.formatDateAndTime(projectLibrary.projects[index].timeLastModified),
-                                    highlightColor: _highlightColorOnSave,
-                                    trailingIcon: IconButton(
-                                      onPressed: () => _buildTextInputOverlay(setTileState, index),
-                                      icon: _bookmarkIcon,
-                                      color: ColorTheme.surfaceTint,
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                    child: CardListTile(
+                                      title: projectLibrary.projects[index].title,
+                                      subtitle: l10n.formatDateAndTime(projectLibrary.projects[index].timeLastModified),
+                                      highlightColor: _highlightColorOnSave,
+                                      trailingIcon: IconButton(
+                                        onPressed: () => _buildTextInputOverlay(setTileState, index),
+                                        icon: _bookmarkIcon,
+                                        color: ColorTheme.surfaceTint,
+                                      ),
+                                      leadingPicture: projectLibrary.projects[index].thumbnailPath.isEmpty
+                                          ? const AssetImage(TIOMusicParams.tiomusicIconPath)
+                                          : FileImage(
+                                              File(
+                                                _fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath),
+                                              ),
+                                            ),
+                                      onTapFunction: () => _buildTextInputOverlay(setTileState, index),
                                     ),
-                                    leadingPicture: projectLibrary.projects[index].thumbnailPath.isEmpty
-                                        ? const AssetImage(TIOMusicParams.tiomusicIconPath)
-                                        : FileImage(
-                                            File(_fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath)),
-                                          ),
-                                    onTapFunction: () => _buildTextInputOverlay(setTileState, index),
                                   );
                                 },
                               );
