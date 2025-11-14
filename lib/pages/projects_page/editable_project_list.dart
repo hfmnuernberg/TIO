@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -18,23 +19,90 @@ class EditableProjectList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return ReorderableListView.builder(
+      padding: const EdgeInsets.fromLTRB(0, 18, 0, 12),
+      itemCount: projectLibrary.projects.length + 1,
+      onReorder: (oldIndex, newIndex) async {
+        if (oldIndex == 0 || newIndex == 0) return;
+
+        final projectOldIndex = oldIndex - 1;
+        final projectNewIndex = newIndex - 1;
+
+        await onReorder(projectNewIndex, projectOldIndex);
+      },
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return const KeyedSubtree(key: ValueKey('projects-header'), child: _ProjectsHeader());
+        }
+
+        final projectIndex = index - 1;
+        final project = projectLibrary.projects[projectIndex];
+        final isFirstProject = projectIndex == 0;
+        final isLastProject = projectIndex == projectLibrary.projects.length - 1;
+
+        return _EditableProjectListItem(
+          key: ValueKey(project.id),
+          project: project,
+          index: projectIndex,
+          isFirst: isFirstProject,
+          isLast: isLastProject,
+          onDelete: onDelete,
+        );
+      },
+    );
+  }
+}
+
+class _ProjectsHeader extends StatelessWidget {
+  const _ProjectsHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Material(
+        color: ColorTheme.primaryContainer,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
+          child: Center(
+            child: Text(
+              context.l10n.projectsTitle,
+              style: const TextStyle(color: ColorTheme.primary, fontSize: TIOMusicParams.titleFontSize),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EditableProjectListItem extends StatelessWidget {
+  final Project project;
+  final int index;
+  final bool isFirst;
+  final bool isLast;
+  final void Function(int index) onDelete;
+
+  const _EditableProjectListItem({
+    super.key,
+    required this.project,
+    required this.index,
+    required this.isFirst,
+    required this.isLast,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = context.l10n;
     final fs = context.read<FileSystem>();
 
-    return ReorderableListView.builder(
-      padding: const EdgeInsets.fromLTRB(
-        0,
-        TIOMusicParams.smallSpaceAboveList + 2,
-        0,
-        TIOMusicParams.smallSpaceAboveList - 4,
-      ),
-      itemCount: projectLibrary.projects.length,
-      onReorder: onReorder,
-      itemBuilder: (context, index) {
-        final project = projectLibrary.projects[index];
-
-        return Container(
-          key: ValueKey(project.id),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Material(
+        color: ColorTheme.primaryContainer,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(12, isFirst ? 0 : 4, 12, isLast ? 12 : 4),
           child: CardListTile(
             title: project.title,
             subtitle: l10n.formatDateAndTime(project.timeLastModified),
@@ -55,8 +123,8 @@ class EditableProjectList extends StatelessWidget {
                 : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
             onTapFunction: () {},
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
