@@ -38,19 +38,16 @@ class EditableProjectList extends StatelessWidget {
         final isFirstProject = projectIndex == 0;
         final isLastProject = projectIndex == projectLibrary.projects.length - 1;
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 4),
-          child: Material(
-            elevation: 6,
-            clipBehavior: Clip.antiAlias,
-            child: _EditableProjectListItem(
-              project: project,
-              index: projectIndex,
-              isFirst: isFirstProject,
-              isLast: isLastProject,
-              onDelete: onDelete,
-              showBackground: false,
-            ),
+        return Material(
+          elevation: 6,
+          clipBehavior: Clip.antiAlias,
+          child: _EditableProjectListItem(
+            project: project,
+            index: projectIndex,
+            isFirst: isFirstProject,
+            isLast: isLastProject,
+            onDelete: onDelete,
+            showBackground: false,
           ),
         );
       },
