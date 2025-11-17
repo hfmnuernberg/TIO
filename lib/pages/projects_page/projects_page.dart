@@ -371,14 +371,34 @@ class _ProjectsPageState extends State<ProjectsPage> {
                                 style: const TextStyle(color: Colors.white, fontSize: 42),
                               ),
                             )
-                          else if (_isEditing)
-                            EditableProjectList(
-                              projectLibrary: projectLibrary,
-                              onDelete: _handleDelete,
-                              onReorder: _handleReorder,
-                            )
                           else
-                            ProjectList(projectLibrary: projectLibrary, onGoToProject: _handleGoToProject),
+                            Container(
+                              margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                              child: Material(
+                                color: ColorTheme.primaryContainer,
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
+                                      child: Center(
+                                        child: Text(
+                                          l10n.projectsTitle,
+                                          style: const TextStyle(
+                                            color: ColorTheme.primary,
+                                            fontSize: TIOMusicParams.titleFontSize,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: _isEditing
+                                          ? EditableProjectList(onDelete: _handleDelete, onReorder: _handleReorder)
+                                          : ProjectList(onGoToProject: _handleGoToProject),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
 
                           Positioned(
                             left: 0,
