@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
-import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/projects_page/editable_project_list.dart';
-import 'package:tiomusic/pages/projects_page/project_list.dart';
 import 'package:tiomusic/pages/projects_page/projects_page.dart';
+import 'package:tiomusic/widgets/card_list_tile.dart';
 
 import '../../utils/action_utils.dart';
 import '../../utils/render_utils.dart';
@@ -61,22 +58,18 @@ void main() {
       await tester.createProject('Project 1');
       await tester.createProject('Project 2');
 
-      final pageContext = tester.element(find.byType(ProjectsPage));
-      final projectLibrary = pageContext.read<ProjectLibrary>();
-
-      final initialTitles = projectLibrary.projects.map((p) => p.title).toList();
-      expect(initialTitles, equals(['Project 2', 'Project 1']));
+      final projects = tester.widgetList<CardListTile>(find.byType(CardListTile)).toList();
+      final projectTitles = projects.map((tile) => tile.title).toList();
+      expect(projectTitles, equals(['Project 2', 'Project 1']));
 
       await tester.tapAndSettle(find.byTooltip('Projects menu'));
       await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
+      await tester.dragFromCenterToTargetAndSettle(find.byTooltip('Reorder').first, const Offset(0, 500));
 
-      final editableList = tester.widget<EditableProjectList>(find.byType(EditableProjectList));
-      await editableList.onReorder(1, 0);
+      final updatedProjects = tester.widgetList<CardListTile>(find.byType(CardListTile)).toList();
+      final updatedProjectTitles = updatedProjects.map((tile) => tile.title).toList();
 
-      await tester.tapAndSettle(find.byTooltip('Finish editing'));
-
-      final updatedTitles = projectLibrary.projects.map((p) => p.title).toList();
-      expect(updatedTitles, equals(['Project 1', 'Project 2']));
+      expect(updatedProjectTitles, equals(['Project 1', 'Project 2']));
     });
 
     testWidgets('does not change order when project is moved too less during editing', (tester) async {
@@ -84,22 +77,14 @@ void main() {
       await tester.createProject('Project 1');
       await tester.createProject('Project 2');
 
-      final initialProjects = tester.widget<ProjectList>(find.byType(ProjectList));
-      final initialTitles = initialProjects.projectLibrary.projects.map((p) => p.title).toList();
-
-      expect(initialTitles, equals(['Project 2', 'Project 1']));
-
       await tester.tapAndSettle(find.byTooltip('Projects menu'));
       await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
-
       await tester.dragFromCenterToTargetAndSettle(find.byTooltip('Reorder').first, const Offset(0, 10));
 
-      await tester.tapAndSettle(find.byTooltip('Finish editing'));
+      final projects = tester.widgetList<CardListTile>(find.byType(CardListTile)).toList();
+      final projectTitles = projects.map((tile) => tile.title).toList();
 
-      final updatedProjects = tester.widget<ProjectList>(find.byType(ProjectList));
-      final updatedTitles = updatedProjects.projectLibrary.projects.map((p) => p.title).toList();
-
-      expect(updatedTitles, equals(['Project 2', 'Project 1']));
+      expect(projectTitles, equals(['Project 2', 'Project 1']));
     });
   });
 }
