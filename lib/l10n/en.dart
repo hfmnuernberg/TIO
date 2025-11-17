@@ -262,6 +262,7 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get projectMenu => 'Project menu';
   String get projectNew => 'Project title';
   String get projectNewTool => 'Tool title';
+  String get projectTitle => 'Project';
   String get projectToolList => 'Tool list';
   String get projectToolListEmpty => 'Empty tool list';
   String get projectTutorialChangeToolOrder =>

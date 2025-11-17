@@ -19,30 +19,40 @@ class ProjectList extends StatelessWidget {
   Widget build(BuildContext context) {
     final ProjectLibrary projectLibrary = context.read<ProjectLibrary>();
 
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(0, 4, 0, 12),
-      itemCount: projectLibrary.projects.length,
-      itemBuilder: (context, index) {
-        final project = projectLibrary.projects[index];
+    return Semantics(
+      container: true,
+      hint: context.l10n.projectsTitle,
+      child: ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        padding: const EdgeInsets.fromLTRB(0, 4, 0, 12),
+        itemCount: projectLibrary.projects.length,
+        itemBuilder: (context, index) {
+          final project = projectLibrary.projects[index];
 
-        return Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
-          child: CardListTile(
-            title: project.title,
-            subtitle: context.l10n.formatDateAndTime(project.timeLastModified),
-            trailingIcon: IconButton(
-              tooltip: context.l10n.projectDetails,
-              icon: const Icon(Icons.arrow_forward),
-              color: ColorTheme.primaryFixedDim,
-              onPressed: () => onGoToProject(project, false),
+          return Semantics(
+            container: true,
+            hint: context.l10n.projectTitle,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: CardListTile(
+                title: project.title,
+                subtitle: context.l10n.formatDateAndTime(project.timeLastModified),
+                trailingIcon: IconButton(
+                  tooltip: context.l10n.projectDetails,
+                  icon: const Icon(Icons.arrow_forward),
+                  color: ColorTheme.primaryFixedDim,
+                  onPressed: () => onGoToProject(project, false),
+                ),
+                leadingPicture: project.thumbnailPath.isEmpty
+                    ? AssetImage(TIOMusicParams.tiomusicIconPath)
+                    : FileImage(File(context.read<FileSystem>().toAbsoluteFilePath(project.thumbnailPath))),
+                onTapFunction: () => onGoToProject(project, false),
+              ),
             ),
-            leadingPicture: project.thumbnailPath.isEmpty
-                ? AssetImage(TIOMusicParams.tiomusicIconPath)
-                : FileImage(File(context.read<FileSystem>().toAbsoluteFilePath(project.thumbnailPath))),
-            onTapFunction: () => onGoToProject(project, false),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

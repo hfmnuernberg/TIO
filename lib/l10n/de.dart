@@ -265,6 +265,7 @@ class German extends AppLocalizations with GermanFlashCards {
   String get projectMenu => 'Projektmenü';
   String get projectNew => 'Projekttitel';
   String get projectNewTool => 'Tool-Titel';
+  String get projectTitle => 'Projekt';
   String get projectToolList => 'Tool-Liste';
   String get projectToolListEmpty => 'Leere Tool-Liste';
   String get projectTutorialChangeToolOrder =>
