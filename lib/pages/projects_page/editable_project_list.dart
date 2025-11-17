@@ -13,7 +13,7 @@ import 'package:tiomusic/widgets/card_list_tile.dart';
 class EditableProjectList extends StatelessWidget {
   final ProjectLibrary projectLibrary;
   final void Function(int index) onDelete;
-  final Future<void> Function(int newIndex, int oldIndex) onReorder;
+  final Future<void> Function(int oldIndex, int newIndex) onReorder;
 
   const EditableProjectList({super.key, required this.projectLibrary, required this.onDelete, required this.onReorder});
 
@@ -28,7 +28,7 @@ class EditableProjectList extends StatelessWidget {
         final projectOldIndex = oldIndex - 1;
         final projectNewIndex = newIndex - 1;
 
-        await onReorder(projectNewIndex, projectOldIndex);
+        await onReorder(projectOldIndex, projectNewIndex);
       },
       proxyDecorator: (child, index, animation) {
         if (index == 0) return child;
