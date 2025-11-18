@@ -99,18 +99,18 @@ void main() {
     await tester.completeInitialTutorial();
     await tester.createProjectWithoutTool('Project 1');
 
-    // await tester.createAndOpenTool('Text');
-    // await tester.completeTextTutorial();
-    // await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+    await tester.createAndOpenTool('Text');
+    await tester.completeTextTutorial();
+    await tester.tapAndSettle(find.bySemanticsLabel('Back'));
 
-    // await tester.waitForTutorialNext();
-    // expect(find.bySemanticsLabel('Tap here to edit the title of your project.'), findsOneWidget);
+    await tester.waitForTutorialNext();
+    expect(find.bySemanticsLabel('Tap here to edit the title of your project.'), findsOneWidget);
 
-    // await tester.tapAndSettle(find.bySemanticsLabel('Next'));
-    // expect(find.bySemanticsLabel(RegExp('Tap the plus icon to add')), findsOneWidget);
+    await tester.tapAndSettle(find.bySemanticsLabel('Next'));
+    expect(find.bySemanticsLabel(RegExp('Tap the plus icon to add')), findsOneWidget);
 
-    // await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
-    // expect(find.bySemanticsLabel(RegExp('Tap the plus icon to add')), findsNothing);
+    await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
+    expect(find.bySemanticsLabel(RegExp('Tap the plus icon to add')), findsNothing);
   });
 
   testWidgets('shows text tool tutorial initially', (tester) async {
