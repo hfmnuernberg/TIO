@@ -33,7 +33,7 @@ ProjectLibrary _$ProjectLibraryFromJson(Map<String, dynamic> json) =>
       json['showWaveformTip'] as bool? ?? true,
       json['showBeatToggleTip'] as bool? ?? true,
       (json['seenFlashCards'] as List<dynamic>?)
-              ?.map((e) => (e as num).toInt())
+              ?.map((e) => e as String)
               .toList() ??
           [],
     );

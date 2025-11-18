@@ -16,8 +16,9 @@ enum FlashCardCategory {
 }
 
 class FlashCardModel {
+  final String id;
   final FlashCardCategory category;
   final String Function(FlashCardsLocalization l10n) description;
 
-  const FlashCardModel(this.category, this.description);
+  const FlashCardModel(this.id, this.category, this.description);
 }

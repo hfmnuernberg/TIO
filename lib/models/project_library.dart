@@ -15,7 +15,7 @@ class ProjectLibrary extends ChangeNotifier {
   set projects(List<Project> newProjects) => _projects = newProjects;
 
   @JsonKey(defaultValue: [])
-  late List<int> seenFlashCards;
+  late List<String> seenFlashCards;
 
   late int _visitedToolsCounter;
   @JsonKey(defaultValue: 0)

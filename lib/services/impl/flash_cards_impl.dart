@@ -21,29 +21,28 @@ class FlashCardsImpl implements FlashCards {
     final cards = load();
     final totalCount = cards.length;
 
-    final seenFlashCards = library.seenFlashCards;
+    final seenCards = library.seenFlashCards;
 
-    if (seenFlashCards.length >= totalCount) {
-      seenFlashCards.clear();
+    if (seenCards.length >= totalCount) {
+      seenCards.clear();
     }
 
-    final unseenFlashCards = <int>[];
-    for (var i = 0; i < totalCount; i++) {
-      if (!seenFlashCards.contains(i)) {
-        unseenFlashCards.add(i);
+    final unseenCards = <FlashCardModel>[];
+    for (final card in cards) {
+      if (!seenCards.contains(card.id)) {
+        unseenCards.add(card);
       }
     }
 
-    if (unseenFlashCards.isEmpty) {
-      for (var i = 0; i < totalCount; i++) {
-        unseenFlashCards.add(i);
-      }
-      seenFlashCards.clear();
+    if (unseenCards.isEmpty) {
+      unseenCards.addAll(cards);
+      seenCards.clear();
     }
 
-    final currentIndex = unseenFlashCards[Random().nextInt(unseenFlashCards.length)];
-    seenFlashCards.add(currentIndex);
+    final currentCard = unseenCards[Random().nextInt(unseenCards.length)];
 
-    return cards[currentIndex];
+    seenCards.add(currentCard.id);
+
+    return currentCard;
   }
 }
