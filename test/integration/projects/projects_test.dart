@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:tiomusic/domain/flash_cards/flash_cards_list.dart';
 import 'package:tiomusic/pages/projects_page/projects_page.dart';
 
 import '../../utils/action_utils.dart';
@@ -24,6 +26,7 @@ void main() {
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   setUp(() async {
+    resetMocktailState();
     context = TestContext();
     await context.init();
   });
@@ -33,6 +36,21 @@ void main() {
       await tester.renderScaffold(ProjectsPage(), context.providers);
 
       expect(find.bySemanticsLabel('Tip of the day'), findsOneWidget);
+    });
+
+    testWidgets('shows new tip of the day after regenerating', (tester) async {
+      final firstCard = flashCards[0];
+      final secondCard = flashCards[1];
+      context.flashCardsMock.cards = [firstCard, secondCard];
+
+      context.flashCardsMock.nextRandomCard = firstCard;
+      await tester.renderScaffold(const ProjectsPage(), context.providers);
+      expect(find.bySemanticsLabel(RegExp('book a ticket for a concert')), findsOneWidget);
+
+      context.flashCardsMock.nextRandomCard = secondCard;
+      await tester.tapAndSettle(find.bySemanticsLabel('Regenerate'));
+      expect(find.bySemanticsLabel(RegExp('book a ticket for a concert')), findsNothing);
+      expect(find.bySemanticsLabel(RegExp('reward yourself with whatever')), findsOneWidget);
     });
 
     testWidgets('shows no projects initially', (tester) async {

@@ -57,7 +57,8 @@ class TestContext {
   final WakelockMock wakelockMock = WakelockMock();
   late final wakelock = WakelockLogDecorator(wakelockMock);
 
-  late final flashCards = FlashCardsLogDecorator(FlashCardsMock());
+  late final flashCardsMock = FlashCardsMock();
+  late final flashCards = FlashCardsLogDecorator(flashCardsMock);
 
   late final List<SingleChildWidget> providers;
 
