@@ -11,7 +11,9 @@ TextBlock _$TextBlockFromJson(Map<String, dynamic> json) => TextBlock(
   json['id'] as String? ?? '',
   json['islandToolID'] as String?,
   json['content'] as String? ?? '',
-  json['timeLastModified'] == null ? getCurrentDateTime() : DateTime.parse(json['timeLastModified'] as String),
+  json['timeLastModified'] == null
+      ? getCurrentDateTime()
+      : DateTime.parse(json['timeLastModified'] as String),
 );
 
 Map<String, dynamic> _$TextBlockToJson(TextBlock instance) => <String, dynamic>{

@@ -14,6 +14,9 @@ class ProjectLibrary extends ChangeNotifier {
   UnmodifiableListView<Project> get projects => UnmodifiableListView(_projects);
   set projects(List<Project> newProjects) => _projects = newProjects;
 
+  @JsonKey(defaultValue: [])
+  late List<int> seenFlashCards;
+
   late int _visitedToolsCounter;
   @JsonKey(defaultValue: 0)
   int get visitedToolsCounter => _visitedToolsCounter;
@@ -97,6 +100,7 @@ class ProjectLibrary extends ChangeNotifier {
     this.showImageTutorial,
     this.showWaveformTip,
     this.showBeatToggleTip,
+    this.seenFlashCards,
   ) {
     _projects = projects;
     _visitedToolsCounter = visitedToolsCounter;
@@ -126,6 +130,7 @@ class ProjectLibrary extends ChangeNotifier {
     showImageTutorial = true;
     showWaveformTip = true;
     showBeatToggleTip = true;
+    seenFlashCards = [];
   }
 
   factory ProjectLibrary.fromJson(Map<String, dynamic> json) => _$ProjectLibraryFromJson(json);
