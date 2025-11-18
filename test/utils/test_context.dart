@@ -12,12 +12,14 @@ import 'package:tiomusic/services/decorators/audio_system_log_decorator.dart';
 import 'package:tiomusic/services/decorators/file_picker_log_decorator.dart';
 import 'package:tiomusic/services/decorators/file_references_log_decorator.dart';
 import 'package:tiomusic/services/decorators/file_system_log_decorator.dart';
+import 'package:tiomusic/services/decorators/flash_cards_log_decorator.dart';
 import 'package:tiomusic/services/decorators/media_repository_log_decorator.dart';
 import 'package:tiomusic/services/decorators/project_repository_log_decorator.dart';
 import 'package:tiomusic/services/decorators/wakelock_log_decorator.dart';
 import 'package:tiomusic/services/file_picker.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/flash_cards.dart';
 import 'package:tiomusic/services/impl/file_based_archiver.dart';
 import 'package:tiomusic/services/impl/file_based_media_repository.dart';
 import 'package:tiomusic/services/impl/file_based_project_repository.dart';
@@ -29,6 +31,7 @@ import 'package:tiomusic/services/wakelock.dart';
 import '../mocks/audio_session_mock.dart';
 import '../mocks/audio_system/audio_system_mock.dart';
 import '../mocks/file_picker_mock.dart';
+import '../mocks/flash_cards_mock.dart';
 import '../mocks/in_memory_file_system_mock.dart';
 import '../mocks/wakelock_mock.dart';
 
@@ -54,6 +57,8 @@ class TestContext {
   final WakelockMock wakelockMock = WakelockMock();
   late final wakelock = WakelockLogDecorator(wakelockMock);
 
+  late final flashCards = FlashCardsLogDecorator(FlashCardsMock());
+
   late final List<SingleChildWidget> providers;
 
   Future<void> init({bool dismissTutorials = true, Project? project}) async {
@@ -77,6 +82,7 @@ class TestContext {
       Provider<FileReferences>(create: (_) => fileReferences),
       Provider<Archiver>(create: (_) => archiver),
       Provider<Wakelock>(create: (_) => wakelock),
+      Provider<FlashCards>(create: (_) => flashCards),
       ChangeNotifierProvider<ProjectLibrary>.value(value: projectLibrary),
       if (project != null) ChangeNotifierProvider<Project>.value(value: project),
     ];

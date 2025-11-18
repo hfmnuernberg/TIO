@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:tiomusic/domain/flash_cards/flash_cards_list.dart';
 import 'package:tiomusic/l10n/flash_cards/flash_cards_localization.dart';
 
 enum FlashCardCategory {
@@ -23,15 +20,4 @@ class FlashCardModel {
   final String Function(FlashCardsLocalization l10n) description;
 
   const FlashCardModel(this.category, this.description);
-}
-
-class FlashCards {
-  final _random = Random();
-
-  List<FlashCardModel> load() => List.unmodifiable(flashCards);
-
-  FlashCardModel loadRandom() {
-    final cards = load();
-    return cards[_random.nextInt(cards.length)];
-  }
 }

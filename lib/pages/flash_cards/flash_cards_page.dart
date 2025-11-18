@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tiomusic/domain/flash_cards/flash_cards.dart';
+import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/services/flash_cards.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/flash_card/flash_card.dart';
 
@@ -26,7 +27,7 @@ class FlashCardsPage extends StatelessWidget {
 class _FlashCardsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final cards = FlashCards().load();
+    final cards = context.read<FlashCards>().load();
     final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return ListView.separated(
