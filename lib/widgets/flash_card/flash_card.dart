@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tiomusic/domain/flash_cards/flash_cards.dart';
+import 'package:tiomusic/models/flash_cards.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 

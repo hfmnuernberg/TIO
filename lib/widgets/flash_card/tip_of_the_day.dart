@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tiomusic/domain/flash_cards/flash_cards.dart';
+import 'package:tiomusic/models/flash_cards.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/pages/flash_cards/flash_cards_page.dart';
 import 'package:tiomusic/services/flash_cards.dart';

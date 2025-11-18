@@ -1,7 +1,7 @@
 // overriding keys do not change something; ignored because soft warning
 // ignore_for_file: annotate_overrides
 
-import 'package:tiomusic/domain/flash_cards/flash_cards.dart';
+import 'package:tiomusic/models/flash_cards.dart';
 import 'package:tiomusic/l10n/flash_cards/flash_cards_localization.dart';
 
 mixin EnglishFlashCards on Object implements FlashCardsLocalization {
