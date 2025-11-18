@@ -73,6 +73,7 @@ void main() {
       await tester.renderScaffold(ProjectsPage(), context.providers);
 
       await tester.createProject('Project 1');
+      await tester.minimizeTipOfTheDay();
       await tester.tapAndSettle(find.byTooltip('Edit projects'));
       await tester.tapAndSettle(find.byTooltip('Delete project'));
       await tester.tapAndSettle(find.bySemanticsLabel('Yes'));
@@ -85,6 +86,7 @@ void main() {
       await tester.renderScaffold(ProjectsPage(), context.providers);
 
       await tester.createProject('Project 1');
+      await tester.minimizeTipOfTheDay();
       await tester.tapAndSettle(find.byTooltip('Projects menu'));
       await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
       await tester.tapAndSettle(find.byTooltip('Delete project'));
