@@ -50,13 +50,57 @@ void main() {
       expect(find.bySemanticsLabel('Please click on "+" to create a new project.'), findsNothing);
     });
 
+    testWidgets('shows one project when one project was added using menu', (tester) async {
+      await tester.renderScaffold(ProjectsPage(), context.providers);
+
+      await tester.tapAndSettle(find.byTooltip('Projects menu'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Add new project'));
+      await tester.enterTextAndSettle(find.bySemanticsLabel('New project'), 'Project 1');
+      await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Text'));
+      await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Text 1');
+      await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+
+      expect(find.bySemanticsLabel('Project 1'), findsOneWidget);
+      expect(find.bySemanticsLabel('Please click on "+" to create a new project.'), findsNothing);
+    });
+
     testWidgets('deletes project when project was deleted', (tester) async {
+      await tester.renderScaffold(ProjectsPage(), context.providers);
+
+      await tester.createProject('Project 1');
+      await tester.tapAndSettle(find.byTooltip('Edit projects'));
+      await tester.tapAndSettle(find.byTooltip('Delete project'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Yes'));
+
+      expect(find.bySemanticsLabel('Project 1'), findsNothing);
+      expect(find.bySemanticsLabel('Please click on "+" to create a new project.'), findsOneWidget);
+    });
+
+    testWidgets('deletes project when project was deleted using menu', (tester) async {
       await tester.renderScaffold(ProjectsPage(), context.providers);
 
       await tester.createProject('Project 1');
       await tester.tapAndSettle(find.byTooltip('Projects menu'));
       await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
       await tester.tapAndSettle(find.byTooltip('Delete project'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Yes'));
+
+      expect(find.bySemanticsLabel('Project 1'), findsNothing);
+      expect(find.bySemanticsLabel('Please click on "+" to create a new project.'), findsOneWidget);
+    });
+
+    testWidgets('deletes all projects when all projects were deleted using menu', (tester) async {
+      await tester.renderScaffold(ProjectsPage(), context.providers);
+
+      await tester.createProject('Project 1');
+      await tester.createProject('Project 2');
+      await tester.tapAndSettle(find.byTooltip('Projects menu'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Delete all projects'));
       await tester.tapAndSettle(find.bySemanticsLabel('Yes'));
 
       expect(find.bySemanticsLabel('Project 1'), findsNothing);
