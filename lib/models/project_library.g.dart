@@ -6,6 +6,18 @@ part of 'project_library.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+SeenFlashCard _$SeenFlashCardFromJson(Map<String, dynamic> json) =>
+    SeenFlashCard(
+      id: json['id'] as String,
+      seenAt: DateTime.parse(json['seenAt'] as String),
+    );
+
+Map<String, dynamic> _$SeenFlashCardToJson(SeenFlashCard instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'seenAt': instance.seenAt.toIso8601String(),
+    };
+
 ProjectLibrary _$ProjectLibraryFromJson(Map<String, dynamic> json) =>
     ProjectLibrary(
       (json['projects'] as List<dynamic>?)
@@ -33,7 +45,7 @@ ProjectLibrary _$ProjectLibraryFromJson(Map<String, dynamic> json) =>
       json['showWaveformTip'] as bool? ?? true,
       json['showBeatToggleTip'] as bool? ?? true,
       (json['seenFlashCards'] as List<dynamic>?)
-              ?.map((e) => e as String)
+              ?.map((e) => SeenFlashCard.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
     );
@@ -41,7 +53,7 @@ ProjectLibrary _$ProjectLibraryFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$ProjectLibraryToJson(ProjectLibrary instance) =>
     <String, dynamic>{
       'projects': instance.projects.map((e) => e.toJson()).toList(),
-      'seenFlashCards': instance.seenFlashCards,
+      'seenFlashCards': instance.seenFlashCards.map((e) => e.toJson()).toList(),
       'visitedToolsCounter': instance.visitedToolsCounter,
       'neverShowSurveyAgain': instance.neverShowSurveyAgain,
       'idxCheckShowSurvey': instance.idxCheckShowSurvey,

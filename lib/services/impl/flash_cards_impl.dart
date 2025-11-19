@@ -20,9 +20,8 @@ class FlashCardsImpl implements FlashCards {
     }
 
     for (final card in cards) {
-      if (!seenCards.contains(card.id)) {
-        unseenCards.add(card);
-      }
+      final alreadySeen = seenCards.any((seen) => seen.id == card.id);
+      if (!alreadySeen) unseenCards.add(card);
     }
 
     if (unseenCards.isEmpty) {
@@ -32,7 +31,7 @@ class FlashCardsImpl implements FlashCards {
 
     final currentCard = unseenCards[Random().nextInt(unseenCards.length)];
 
-    seenCards.add(currentCard.id);
+    seenCards.add(SeenFlashCard(id: currentCard.id, seenAt: DateTime.now()));
 
     return currentCard;
   }

@@ -7,6 +7,17 @@ import 'package:tiomusic/models/project.dart';
 
 part 'project_library.g.dart';
 
+@JsonSerializable()
+class SeenFlashCard {
+  final String id;
+  final DateTime seenAt;
+
+  SeenFlashCard({required this.id, required this.seenAt});
+
+  factory SeenFlashCard.fromJson(Map<String, dynamic> json) => _$SeenFlashCardFromJson(json);
+  Map<String, dynamic> toJson() => _$SeenFlashCardToJson(this);
+}
+
 @JsonSerializable(explicitToJson: true)
 class ProjectLibrary extends ChangeNotifier {
   late List<Project> _projects;
@@ -15,7 +26,7 @@ class ProjectLibrary extends ChangeNotifier {
   set projects(List<Project> newProjects) => _projects = newProjects;
 
   @JsonKey(defaultValue: [])
-  late List<String> seenFlashCards;
+  late List<SeenFlashCard> seenFlashCards;
 
   late int _visitedToolsCounter;
   @JsonKey(defaultValue: 0)
