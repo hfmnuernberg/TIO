@@ -66,4 +66,34 @@ class FlashCardsImpl implements FlashCards {
 
     return currentCard;
   }
+
+  @override
+  FlashCardModel regenerateNext(ProjectLibrary library) {
+    final now = DateTime.now();
+    final cards = load();
+    final seenCards = library.seenFlashCards;
+    final unseenCards = <FlashCardModel>[];
+
+    if (seenCards.length >= cards.length) {
+      seenCards.clear();
+    }
+
+    for (final card in cards) {
+      final alreadySeen = seenCards.any((seen) => seen.id == card.id);
+      if (!alreadySeen) {
+        unseenCards.add(card);
+      }
+    }
+
+    if (unseenCards.isEmpty) {
+      unseenCards.addAll(cards);
+      seenCards.clear();
+    }
+
+    final currentCard = unseenCards[Random().nextInt(unseenCards.length)];
+
+    seenCards.add(SeenFlashCard(id: currentCard.id, seenAt: now));
+
+    return currentCard;
+  }
 }

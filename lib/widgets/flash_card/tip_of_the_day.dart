@@ -35,7 +35,7 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
   }
 
   void _regenerate() => setState(() {
-    card = _flashCards.loadNext(_projectLibrary);
+    card = _flashCards.regenerateNext(_projectLibrary);
     _projectRepo.saveLibrary(_projectLibrary);
   });
 

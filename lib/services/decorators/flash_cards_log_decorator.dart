@@ -23,4 +23,11 @@ class FlashCardsLogDecorator implements FlashCards {
     _logger.t('loadNext(): ${card.category}');
     return card;
   }
+
+  @override
+  FlashCardModel regenerateNext(ProjectLibrary library) {
+    final card = _flashCards.regenerateNext(library);
+    _logger.t('regenerateNext(): ${card.category}');
+    return card;
+  }
 }

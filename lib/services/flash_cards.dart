@@ -5,4 +5,6 @@ mixin FlashCards {
   List<FlashCardModel> load();
 
   FlashCardModel loadNext(ProjectLibrary library);
+
+  FlashCardModel regenerateNext(ProjectLibrary library);
 }
