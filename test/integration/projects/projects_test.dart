@@ -18,6 +18,8 @@ extension WidgetTesterPumpExtension on WidgetTester {
     final semanticNodesList = list.evaluate().cast<SemanticsNode>().toList();
     return semanticNodesList.map((node) => node.label).toList();
   }
+
+  Future<void> simulateAppClose() async => pumpWidget(const SizedBox.shrink());
 }
 
 void main() {
@@ -51,6 +53,22 @@ void main() {
       await tester.tapAndSettle(find.bySemanticsLabel('Regenerate'));
       expect(find.bySemanticsLabel(RegExp('book a ticket for a concert')), findsNothing);
       expect(find.bySemanticsLabel(RegExp('reward yourself with whatever')), findsOneWidget);
+    });
+
+    testWidgets('shows same tip of the day when reopening on the same day', (tester) async {
+      final firstCard = flashCards[0];
+      final secondCard = flashCards[1];
+      context.flashCardsMock.cards = [firstCard, secondCard];
+
+      context.flashCardsMock.nextRandomCard = firstCard;
+      await tester.renderScaffold(const ProjectsPage(), context.providers);
+      expect(find.bySemanticsLabel(RegExp('book a ticket for a concert')), findsOneWidget);
+
+      await tester.simulateAppClose();
+
+      await tester.renderScaffold(const ProjectsPage(), context.providers);
+      expect(find.bySemanticsLabel(RegExp('book a ticket for a concert')), findsOneWidget);
+      expect(find.bySemanticsLabel(RegExp('reward yourself with whatever')), findsNothing);
     });
 
     testWidgets('shows no projects initially', (tester) async {
