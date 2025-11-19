@@ -13,14 +13,18 @@ class FlashCardsMock implements FlashCards {
   @override
   List<FlashCardModel> load() => cards;
 
-  @override
-  FlashCardModel loadNext(ProjectLibrary library) {
+  FlashCardModel _consumeNextCard() {
     if (nextRandomCard != null) {
       final card = nextRandomCard!;
       nextRandomCard = null;
       return card;
     }
-
     return cards.first;
   }
+
+  @override
+  FlashCardModel loadNext(ProjectLibrary library) => _consumeNextCard();
+
+  @override
+  FlashCardModel regenerateNext(ProjectLibrary library) => _consumeNextCard();
 }
