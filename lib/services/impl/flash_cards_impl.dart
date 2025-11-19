@@ -10,24 +10,15 @@ class FlashCardsImpl implements FlashCards {
   List<FlashCardModel> load() => List.unmodifiable(flashCards);
 
   @override
-  FlashCardModel loadRandom() {
-    final cards = load();
-    return cards[Random().nextInt(cards.length)];
-  }
-
-
-  @override
   FlashCardModel loadNext(ProjectLibrary library) {
     final cards = load();
-    final totalCount = cards.length;
-
     final seenCards = library.seenFlashCards;
+    final unseenCards = <FlashCardModel>[];
 
-    if (seenCards.length >= totalCount) {
+    if (seenCards.length >= cards.length) {
       seenCards.clear();
     }
 
-    final unseenCards = <FlashCardModel>[];
     for (final card in cards) {
       if (!seenCards.contains(card.id)) {
         unseenCards.add(card);

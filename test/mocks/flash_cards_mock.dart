@@ -1,5 +1,6 @@
 import 'package:tiomusic/models/flash_cards.dart';
 import 'package:tiomusic/domain/flash_cards/flash_cards_list.dart';
+import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/services/flash_cards.dart';
 
 class FlashCardsMock implements FlashCards {
@@ -13,7 +14,7 @@ class FlashCardsMock implements FlashCards {
   List<FlashCardModel> load() => cards;
 
   @override
-  FlashCardModel loadRandom() {
+  FlashCardModel loadNext(ProjectLibrary library) {
     if (nextRandomCard != null) {
       final card = nextRandomCard!;
       nextRandomCard = null;
