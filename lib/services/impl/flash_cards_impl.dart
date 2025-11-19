@@ -14,6 +14,29 @@ FlashCardModel? findCardById(List<FlashCardModel> cards, String id) {
   return null;
 }
 
+FlashCardModel pickNewCard(ProjectLibrary library, DateTime now, List<FlashCardModel> cards) {
+  final seenCards = library.seenFlashCards;
+  final unseenCards = <FlashCardModel>[];
+
+  if (seenCards.length >= cards.length) seenCards.clear();
+
+  for (final card in cards) {
+    final alreadySeen = seenCards.any((seen) => seen.id == card.id);
+    if (!alreadySeen) unseenCards.add(card);
+  }
+
+  if (unseenCards.isEmpty) {
+    unseenCards.addAll(cards);
+    seenCards.clear();
+  }
+
+  final currentCard = unseenCards[Random().nextInt(unseenCards.length)];
+
+  seenCards.add(SeenFlashCard(id: currentCard.id, seenAt: now));
+
+  return currentCard;
+}
+
 class FlashCardsImpl implements FlashCards {
   @override
   List<FlashCardModel> load() => List.unmodifiable(flashCards);
@@ -23,12 +46,12 @@ class FlashCardsImpl implements FlashCards {
     final now = DateTime.now();
     final cards = load();
     final seenCards = library.seenFlashCards;
-    final unseenCards = <FlashCardModel>[];
 
     SeenFlashCard? todaysEntry;
 
     for (var i = seenCards.length - 1; i >= 0; i--) {
       final card = seenCards[i];
+
       if (isSameDay(card.seenAt, now)) {
         todaysEntry = card;
         break;
@@ -43,57 +66,9 @@ class FlashCardsImpl implements FlashCards {
       }
     }
 
-
-    if (seenCards.length >= cards.length) {
-      seenCards.clear();
-    }
-
-    for (final card in cards) {
-      final alreadySeen = seenCards.any((seen) => seen.id == card.id);
-      if (!alreadySeen) {
-        unseenCards.add(card);
-      }
-    }
-
-    if (unseenCards.isEmpty) {
-      unseenCards.addAll(cards);
-      seenCards.clear();
-    }
-
-    final currentCard = unseenCards[Random().nextInt(unseenCards.length)];
-
-    seenCards.add(SeenFlashCard(id: currentCard.id, seenAt: now));
-
-    return currentCard;
+    return pickNewCard(library, now, cards);
   }
 
   @override
-  FlashCardModel regenerateNext(ProjectLibrary library) {
-    final now = DateTime.now();
-    final cards = load();
-    final seenCards = library.seenFlashCards;
-    final unseenCards = <FlashCardModel>[];
-
-    if (seenCards.length >= cards.length) {
-      seenCards.clear();
-    }
-
-    for (final card in cards) {
-      final alreadySeen = seenCards.any((seen) => seen.id == card.id);
-      if (!alreadySeen) {
-        unseenCards.add(card);
-      }
-    }
-
-    if (unseenCards.isEmpty) {
-      unseenCards.addAll(cards);
-      seenCards.clear();
-    }
-
-    final currentCard = unseenCards[Random().nextInt(unseenCards.length)];
-
-    seenCards.add(SeenFlashCard(id: currentCard.id, seenAt: now));
-
-    return currentCard;
-  }
+  FlashCardModel regenerateNext(ProjectLibrary library) => pickNewCard(library, DateTime.now(), load());
 }
