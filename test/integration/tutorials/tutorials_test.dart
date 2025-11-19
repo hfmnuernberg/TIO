@@ -191,4 +191,20 @@ void main() {
     await tester.waitForTutorialNext();
     expect(find.bySemanticsLabel(RegExp('Tap here to combine your Tuner with a')), findsOneWidget);
   });
+
+  testWidgets('resets projects tutorial when reset using projects menu', (tester) async {
+    await tester.renderScaffold(ProjectsPage(), context.providers);
+
+    await tester.waitForTutorialNext();
+    expect(find.bySemanticsLabel(RegExp('Welcome! You can use')), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
+    expect(find.bySemanticsLabel('Welcome! You can use'), findsNothing);
+
+    await tester.tapAndSettle(find.byTooltip('Projects menu'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Show tutorial'));
+
+    await tester.waitForTutorialNext();
+    expect(find.bySemanticsLabel(RegExp('Welcome! You can use')), findsOneWidget);
+  });
 }
