@@ -3,7 +3,7 @@ name: Verify
 env:
   MAX_FILE_COUNT: 27
   MAX_AVG_LENGTH: 338
-  MIN_COVERAGE: 57.0
+  MIN_COVERAGE: 57.2
 
 on:
   workflow_dispatch:
