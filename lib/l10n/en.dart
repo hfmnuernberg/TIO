@@ -277,7 +277,6 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get projectsDeleteConfirmation => 'Do you really want to delete this project?';
   String get projectsEdit => 'Edit projects';
   String get projectsEditDone => 'Finish editing';
-  String get projectsFlashCards => 'Practice tips';
   String get projectsImport => 'Import project';
   String get projectsImportError => 'Error importing project';
   String get projectsImportNoFileSelected => 'No project file selected';

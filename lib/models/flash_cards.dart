@@ -3,13 +3,13 @@ import 'package:tiomusic/l10n/flash_cards/flash_cards_localization.dart';
 
 enum FlashCardCategory {
   relaxation(Icons.self_improvement),
-  team(Icons.diversity_1),
-  selfCare(Icons.health_and_safety),
-  vision(Icons.tips_and_updates),
+  team(Icons.group),
+  selfCare(Icons.volunteer_activism),
+  vision(Icons.filter_tilt_shift),
   culture(Icons.museum),
   mixUp(Icons.category),
-  practicing(Icons.playlist_add_check),
-  journaling(Icons.auto_stories);
+  practicing(Icons.auto_graph),
+  journaling(Icons.edit_note);
 
   final IconData icon;
   const FlashCardCategory(this.icon);

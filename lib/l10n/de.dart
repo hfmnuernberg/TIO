@@ -280,7 +280,6 @@ class German extends AppLocalizations with GermanFlashCards {
   String get projectsDeleteConfirmation => 'Möchtest du dieses Projekt wirklich löschen?';
   String get projectsEdit => 'Projekte editieren';
   String get projectsEditDone => 'Editieren beenden';
-  String get projectsFlashCards => 'Übungstipps';
   String get projectsImport => 'Projekt importieren';
   String get projectsImportError => 'Fehler beim Importieren des Projekts';
   String get projectsImportNoFileSelected => 'Keine Projektdatei ausgewählt';
