@@ -316,6 +316,7 @@ class German extends AppLocalizations with GermanFlashCards {
   String get tipOfTheDayViewMore => 'Zeige mehr';
 
   String get toolAddNew => 'Tool hinzufügen';
+  String get toolBookmark => 'Tool speichern';
   String get toolConnectAnother => 'Verbinde ein anderes Tool';
   String get toolConnectExistingTool => 'Verbinde ein Tool';
   String get toolConnectNewTool => 'Verbinde ein neues Tool';

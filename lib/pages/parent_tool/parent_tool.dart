@@ -160,11 +160,13 @@ class _ParentToolState extends State<ParentTool> {
 
   PreferredSizeWidget _appBar(BuildContext context) {
     List<Widget> appBarActions = [
-      // Icon Button for saving the tool
-      IconButton(
-        key: widget.isQuickTool ? _keyBookmarkSaveEmpty : _keyBookmarkSave,
-        onPressed: _openBottomSheetAndSaveTool,
-        icon: Icon(widget.isQuickTool ? Icons.bookmark_outline : Icons.bookmark_add_outlined),
+      Semantics(
+        label: context.l10n.toolBookmark,
+        child: IconButton(
+          key: widget.isQuickTool ? _keyBookmarkSaveEmpty : _keyBookmarkSave,
+          onPressed: _openBottomSheetAndSaveTool,
+          icon: Icon(widget.isQuickTool ? Icons.bookmark_outline : Icons.bookmark_add_outlined),
+        ),
       ),
     ];
 

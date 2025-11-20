@@ -37,6 +37,12 @@ extension WidgetTesterPumpExtension on WidgetTester {
     await tapAndSettle(find.bySemanticsLabel('Next'));
   }
 
+  Future<void> completeProjectTutorial() async {
+    await waitForTutorialNext();
+    await tapAndSettle(find.bySemanticsLabel('Next'));
+    await tapAndSettle(find.bySemanticsLabel('Next'));
+  }
+
   Future<void> completeTunerTutorial() async {
     await waitForTutorialNext();
     await tapAndSettle(find.bySemanticsLabel('Next'));
@@ -192,19 +198,45 @@ void main() {
     expect(find.bySemanticsLabel(RegExp('Tap here to combine your Tuner with a')), findsOneWidget);
   });
 
-  testWidgets('resets projects tutorial when reset using projects menu', (tester) async {
+  testWidgets('resets projects tutorial when reset tutorial using projects menu', (tester) async {
     await tester.renderScaffold(ProjectsPage(), context.providers);
 
     await tester.waitForTutorialNext();
     expect(find.bySemanticsLabel(RegExp('Welcome! You can use')), findsOneWidget);
 
     await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
-    expect(find.bySemanticsLabel('Welcome! You can use'), findsNothing);
+    expect(find.bySemanticsLabel(RegExp('Welcome! You can use')), findsNothing);
 
     await tester.tapAndSettle(find.byTooltip('Projects menu'));
     await tester.tapAndSettle(find.bySemanticsLabel('Show tutorial'));
 
     await tester.waitForTutorialNext();
     expect(find.bySemanticsLabel(RegExp('Welcome! You can use')), findsOneWidget);
+  });
+
+  testWidgets('resets other tutorials when reset tutorial using projects menu', (tester) async {
+    await tester.renderScaffold(ProjectsPage(), context.providers);
+    await tester.completeInitialTutorial();
+    await tester.createProjectWithoutTool('Project 1');
+
+    await tester.createAndOpenTool('Text');
+    await tester.waitForTutorialNext();
+    expect(find.bySemanticsLabel(RegExp('Tap here to copy your tool')), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
+    expect(find.bySemanticsLabel(RegExp('Tap here to copy your tool')), findsNothing);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+    await tester.tapAndSettle(find.byTooltip('Projects menu'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Show tutorial'));
+    await tester.waitForTutorialNext();
+    await tester.completeInitialTutorial();
+    await tester.tapAndSettle(find.bySemanticsLabel('Project 1'));
+    await tester.completeProjectTutorial();
+    await tester.tapAndSettle(find.bySemanticsLabel('Text 1'));
+
+    await tester.waitForTutorialNext();
+    expect(find.bySemanticsLabel(RegExp('Tap here to copy your tool')), findsOneWidget);
   });
 }
