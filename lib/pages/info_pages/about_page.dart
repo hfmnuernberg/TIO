@@ -51,7 +51,7 @@ class _AboutPageState extends State<AboutPage> {
       textSections: [
         TextSection(content: l10n.appAboutParagraphOne),
         TextSection(content: l10n.appAboutFeatures, sectionType: SectionType.headline2),
-        TextSection(content: l10n.projectsAbout, sectionType: SectionType.headline3),
+        TextSection(content: l10n.projectsTitle, sectionType: SectionType.headline3),
         TextSection(content: l10n.projectsAboutExplanation),
         TextSection(content: l10n.tunerAbout, sectionType: SectionType.headline3),
         TextSection(content: l10n.tunerAboutExplanation),

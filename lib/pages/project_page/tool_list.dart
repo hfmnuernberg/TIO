@@ -31,16 +31,19 @@ class ToolList extends StatelessWidget {
               ? FileImage(File(fs.toAbsoluteFilePath(block.relativePath)))
               : formatSettingValues(block.getSettingsFormatted(context.l10n));
 
-          return CardListTile(
-            title: block.title,
-            subtitle: subtitle,
-            leadingPicture: circleToolIcon(block.icon),
-            trailingIcon: IconButton(
-              onPressed: () => onOpenTool(block),
-              icon: const Icon(Icons.arrow_forward),
-              color: ColorTheme.primaryFixedDim,
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: CardListTile(
+              title: block.title,
+              subtitle: subtitle,
+              leadingPicture: circleToolIcon(block.icon),
+              trailingIcon: IconButton(
+                onPressed: () => onOpenTool(block),
+                icon: const Icon(Icons.arrow_forward),
+                color: ColorTheme.primaryFixedDim,
+              ),
+              onTapFunction: () => onOpenTool(block),
             ),
-            onTapFunction: () => onOpenTool(block),
           );
         },
       ),

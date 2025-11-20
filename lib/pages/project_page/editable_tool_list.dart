@@ -37,23 +37,26 @@ class EditableToolList extends StatelessWidget {
 
           return Container(
             key: ValueKey(block.id),
-            child: CardListTile(
-              title: block.title,
-              subtitle: subtitle,
-              leadingPicture: circleToolIcon(block.icon),
-              trailingIcon: IconButton(
-                tooltip: l10n.commonReorder,
-                icon: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
-                color: ColorTheme.primaryFixedDim,
-                onPressed: () {},
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: CardListTile(
+                title: block.title,
+                subtitle: subtitle,
+                leadingPicture: circleToolIcon(block.icon),
+                trailingIcon: IconButton(
+                  tooltip: l10n.commonReorder,
+                  icon: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
+                  color: ColorTheme.primaryFixedDim,
+                  onPressed: () {},
+                ),
+                menuIconOne: IconButton(
+                  tooltip: l10n.projectDeleteTool,
+                  icon: const Icon(Icons.delete_outlined),
+                  color: ColorTheme.tertiary,
+                  onPressed: () => onDeleteBlock(index),
+                ),
+                onTapFunction: () {},
               ),
-              menuIconOne: IconButton(
-                tooltip: l10n.projectDeleteTool,
-                icon: const Icon(Icons.delete_outlined),
-                color: ColorTheme.tertiary,
-                onPressed: () => onDeleteBlock(index),
-              ),
-              onTapFunction: () {},
             ),
           );
         },

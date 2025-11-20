@@ -10,53 +10,58 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 
 class EditableProjectList extends StatelessWidget {
-  final ProjectLibrary projectLibrary;
   final void Function(int index) onDelete;
-  final Future<void> Function(int newIndex, int oldIndex) onReorder;
+  final Future<void> Function(int oldIndex, int newIndex) onReorder;
 
-  const EditableProjectList({super.key, required this.projectLibrary, required this.onDelete, required this.onReorder});
+  const EditableProjectList({super.key, required this.onDelete, required this.onReorder});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final fs = context.read<FileSystem>();
+    final ProjectLibrary projectLibrary = context.read<ProjectLibrary>();
 
-    return ReorderableListView.builder(
-      padding: const EdgeInsets.fromLTRB(
-        0,
-        TIOMusicParams.smallSpaceAboveList + 2,
-        0,
-        TIOMusicParams.smallSpaceAboveList - 4,
+    return Semantics(
+      container: true,
+      hint: context.l10n.projectsTitle,
+      child: ReorderableListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        padding: const EdgeInsets.fromLTRB(0, 4, 0, 12),
+        itemCount: projectLibrary.projects.length,
+        onReorder: onReorder,
+        itemBuilder: (context, index) {
+          final project = projectLibrary.projects[index];
+          final l10n = context.l10n;
+
+          return Semantics(
+            key: ValueKey(project.id),
+            container: true,
+            hint: context.l10n.projectTitle,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(12, 0, 12, 8),
+              child: CardListTile(
+                title: project.title,
+                subtitle: l10n.formatDateAndTime(project.timeLastModified),
+                trailingIcon: IconButton(
+                  tooltip: l10n.commonReorder,
+                  icon: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
+                  color: ColorTheme.primaryFixedDim,
+                  onPressed: () {},
+                ),
+                menuIconOne: IconButton(
+                  tooltip: l10n.projectDelete,
+                  icon: const Icon(Icons.delete_outlined),
+                  color: ColorTheme.tertiary,
+                  onPressed: () => onDelete(index),
+                ),
+                leadingPicture: project.thumbnailPath.isEmpty
+                    ? AssetImage(TIOMusicParams.tiomusicIconPath)
+                    : FileImage(File(context.read<FileSystem>().toAbsoluteFilePath(project.thumbnailPath))),
+                onTapFunction: () {},
+              ),
+            ),
+          );
+        },
       ),
-      itemCount: projectLibrary.projects.length,
-      onReorder: onReorder,
-      itemBuilder: (context, index) {
-        final project = projectLibrary.projects[index];
-
-        return Container(
-          key: ValueKey(project.id),
-          child: CardListTile(
-            title: project.title,
-            subtitle: l10n.formatDateAndTime(project.timeLastModified),
-            trailingIcon: IconButton(
-              tooltip: l10n.commonReorder,
-              icon: ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
-              color: ColorTheme.primaryFixedDim,
-              onPressed: () {},
-            ),
-            menuIconOne: IconButton(
-              tooltip: l10n.projectDelete,
-              icon: const Icon(Icons.delete_outlined),
-              color: ColorTheme.tertiary,
-              onPressed: () => onDelete(index),
-            ),
-            leadingPicture: project.thumbnailPath.isEmpty
-                ? AssetImage(TIOMusicParams.tiomusicIconPath)
-                : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
-            onTapFunction: () {},
-          ),
-        );
-      },
     );
   }
 }

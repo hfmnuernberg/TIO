@@ -11,42 +11,48 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 
 class ProjectList extends StatelessWidget {
-  final ProjectLibrary projectLibrary;
   final void Function(Project project, bool withoutProject) onGoToProject;
 
-  const ProjectList({super.key, required this.projectLibrary, required this.onGoToProject});
+  const ProjectList({super.key, required this.onGoToProject});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final fs = context.read<FileSystem>();
+    final ProjectLibrary projectLibrary = context.read<ProjectLibrary>();
 
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(
-        0,
-        TIOMusicParams.smallSpaceAboveList + 2,
-        0,
-        TIOMusicParams.smallSpaceAboveList - 4,
+    return Semantics(
+      container: true,
+      hint: context.l10n.projectsTitle,
+      child: ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        padding: const EdgeInsets.fromLTRB(0, 4, 0, 12),
+        itemCount: projectLibrary.projects.length,
+        itemBuilder: (context, index) {
+          final project = projectLibrary.projects[index];
+
+          return Semantics(
+            container: true,
+            hint: context.l10n.projectTitle,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(12, 0, 12, 8),
+              child: CardListTile(
+                title: project.title,
+                subtitle: context.l10n.formatDateAndTime(project.timeLastModified),
+                trailingIcon: IconButton(
+                  tooltip: context.l10n.projectDetails,
+                  icon: const Icon(Icons.arrow_forward),
+                  color: ColorTheme.primaryFixedDim,
+                  onPressed: () => onGoToProject(project, false),
+                ),
+                leadingPicture: project.thumbnailPath.isEmpty
+                    ? AssetImage(TIOMusicParams.tiomusicIconPath)
+                    : FileImage(File(context.read<FileSystem>().toAbsoluteFilePath(project.thumbnailPath))),
+                onTapFunction: () => onGoToProject(project, false),
+              ),
+            ),
+          );
+        },
       ),
-      itemCount: projectLibrary.projects.length,
-      itemBuilder: (context, index) {
-        final project = projectLibrary.projects[index];
-
-        return CardListTile(
-          title: project.title,
-          subtitle: l10n.formatDateAndTime(project.timeLastModified),
-          trailingIcon: IconButton(
-            tooltip: l10n.projectDetails,
-            icon: const Icon(Icons.arrow_forward),
-            color: ColorTheme.primaryFixedDim,
-            onPressed: () => onGoToProject(project, false),
-          ),
-          leadingPicture: project.thumbnailPath.isEmpty
-              ? AssetImage(TIOMusicParams.tiomusicIconPath)
-              : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
-          onTapFunction: () => onGoToProject(project, false),
-        );
-      },
     );
   }
 }

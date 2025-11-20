@@ -262,13 +262,13 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get projectMenu => 'Project menu';
   String get projectNew => 'Project title';
   String get projectNewTool => 'Tool title';
+  String get projectTitle => 'Project';
   String get projectToolList => 'Tool list';
   String get projectToolListEmpty => 'Empty tool list';
   String get projectTutorialChangeToolOrder =>
       'Tap the plus icon to add a new tool or the pencil icon to edit the tools.';
   String get projectTutorialEditTitle => 'Tap here to edit the title of your project.';
 
-  String get projectsAbout => 'Projects';
   String get projectsAboutExplanation =>
       "All elements can be collectively saved in projects. You don't need to set the metronome or adjust your tuner each time. You can easily continue from where you left off last time.";
   String get projectsAddNew => 'Add new project';
@@ -277,7 +277,6 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get projectsDeleteConfirmation => 'Do you really want to delete this project?';
   String get projectsEdit => 'Edit projects';
   String get projectsEditDone => 'Finish editing';
-  String get projectsFlashCards => 'Practice tips';
   String get projectsImport => 'Import project';
   String get projectsImportError => 'Error importing project';
   String get projectsImportNoFileSelected => 'No project file selected';
@@ -285,7 +284,7 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get projectsMenu => 'Projects menu';
   String get projectsNew => 'New project';
   String get projectsNoProjects => 'Please click on "+" to create a new project.';
-  String get projectsTutorialAddProject => 'Tap here to create a new project.';
+  String get projectsTitle => 'Projects';
   String get projectsTutorialCanIncludeMultipleTools =>
       'Projects can include multiple tools\n(tuner, metronome, piano, media player, image and text),\neven several tools of the same type.';
   String get projectsTutorialChangeProjectOrder =>

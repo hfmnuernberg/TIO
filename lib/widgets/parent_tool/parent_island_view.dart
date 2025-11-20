@@ -84,14 +84,17 @@ class _ParentIslandViewState extends State<ParentIslandView> {
       builder: (context) => ModalBottomSheet(
         label: l10n.toolConnectAnother,
         titleChildren: [
-          CardListTile(
-            title: project.title,
-            subtitle: l10n.formatDateAndTime(project.timeLastModified),
-            trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
-            leadingPicture: project.thumbnailPath.isEmpty
-                ? const AssetImage(TIOMusicParams.tiomusicIconPath)
-                : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
-            onTapFunction: () {},
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: CardListTile(
+              title: project.title,
+              subtitle: l10n.formatDateAndTime(project.timeLastModified),
+              trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
+              leadingPicture: project.thumbnailPath.isEmpty
+                  ? const AssetImage(TIOMusicParams.tiomusicIconPath)
+                  : FileImage(File(fs.toAbsoluteFilePath(project.thumbnailPath))),
+              onTapFunction: () {},
+            ),
           ),
         ],
         contentChildren: [

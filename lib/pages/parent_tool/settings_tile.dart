@@ -32,37 +32,40 @@ class SettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CardListTile(
-      title: title,
-      subtitle: subtitle,
-      textColor: inactive ? ColorTheme.secondary : ColorTheme.primary,
-      leadingIconColor: inactive ? ColorTheme.secondary : ColorTheme.primary,
-      trailingIcon: IconButton(
-        onPressed: inactive
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: CardListTile(
+        title: title,
+        subtitle: subtitle,
+        textColor: inactive ? ColorTheme.secondary : ColorTheme.primary,
+        leadingIconColor: inactive ? ColorTheme.secondary : ColorTheme.primary,
+        trailingIcon: IconButton(
+          onPressed: inactive
+              ? null
+              : () {
+                  if (callBeforeOpen != null) {
+                    callBeforeOpen!();
+                  }
+                  openSettingPage(settingPage, context, block, callbackOnReturn: callOnReturn ?? (value) {});
+                },
+          icon: const Icon(Icons.arrow_forward),
+          color: ColorTheme.primaryFixedDim,
+          disabledColor: ColorTheme.secondary,
+        ),
+        menuIconOne: onIconPressed == null
             ? null
-            : () {
-                if (callBeforeOpen != null) {
-                  callBeforeOpen!();
-                }
-                openSettingPage(settingPage, context, block, callbackOnReturn: callOnReturn ?? (value) {});
-              },
-        icon: const Icon(Icons.arrow_forward),
-        color: ColorTheme.primaryFixedDim,
-        disabledColor: ColorTheme.secondary,
+            : IconButton(onPressed: onIconPressed, icon: icon, color: ColorTheme.surfaceTint),
+        leadingPicture: leadingIcon is String
+            ? leadingIcon
+            : Icon(leadingIcon, color: inactive ? ColorTheme.secondary : ColorTheme.primary),
+        onTapFunction: () {
+          if (callBeforeOpen != null) {
+            callBeforeOpen!();
+          }
+          openSettingPage(settingPage, context, block, callbackOnReturn: callOnReturn ?? (value) {});
+        },
+        disableTap: inactive,
       ),
-      menuIconOne: onIconPressed == null
-          ? null
-          : IconButton(onPressed: onIconPressed, icon: icon, color: ColorTheme.surfaceTint),
-      leadingPicture: leadingIcon is String
-          ? leadingIcon
-          : Icon(leadingIcon, color: inactive ? ColorTheme.secondary : ColorTheme.primary),
-      onTapFunction: () {
-        if (callBeforeOpen != null) {
-          callBeforeOpen!();
-        }
-        openSettingPage(settingPage, context, block, callbackOnReturn: callOnReturn ?? (value) {});
-      },
-      disableTap: inactive,
     );
   }
 }

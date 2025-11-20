@@ -22,12 +22,15 @@ class ExistingToolsList extends StatelessWidget {
         final tool = toolEntry.value;
         final originalIndex = toolEntry.key;
 
-        return CardListTile(
-          title: tool.title,
-          subtitle: formatSettingValues(tool.getSettingsFormatted(context.l10n)),
-          trailingIcon: IconButton(onPressed: () => onSelect(originalIndex), icon: const SizedBox()),
-          leadingPicture: circleToolIcon(tool.icon),
-          onTapFunction: () => onSelect(originalIndex),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: CardListTile(
+            title: tool.title,
+            subtitle: formatSettingValues(tool.getSettingsFormatted(context.l10n)),
+            trailingIcon: IconButton(onPressed: () => onSelect(originalIndex), icon: const SizedBox()),
+            leadingPicture: circleToolIcon(tool.icon),
+            onTapFunction: () => onSelect(originalIndex),
+          ),
         );
       },
     );

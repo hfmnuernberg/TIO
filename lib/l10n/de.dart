@@ -265,13 +265,13 @@ class German extends AppLocalizations with GermanFlashCards {
   String get projectMenu => 'Projektmenü';
   String get projectNew => 'Projekttitel';
   String get projectNewTool => 'Tool-Titel';
+  String get projectTitle => 'Projekt';
   String get projectToolList => 'Tool-Liste';
   String get projectToolListEmpty => 'Leere Tool-Liste';
   String get projectTutorialChangeToolOrder =>
       'Tippe auf das Plus-Symbol, um ein neues Tool hinzuzufügen oder auf das Stift-Symbol, um die Tools zu bearbeiten.';
   String get projectTutorialEditTitle => 'Tippe hier, um den Projekttitel zu bearbeiten.';
 
-  String get projectsAbout => 'Projekte';
   String get projectsAboutExplanation =>
       'Alle Elemente lassen sich gemeinsam in Projekten abspeichern. So musst du z.B. das Metronom nicht jedes Mal neu einstellen oder dein Stimmgerät anpassen. Du kannst schnell und reibungslos da weitermachen, wo du beim letzten Mal aufgehört hast.';
   String get projectsAddNew => 'Neues Projekt hinzufügen';
@@ -280,7 +280,6 @@ class German extends AppLocalizations with GermanFlashCards {
   String get projectsDeleteConfirmation => 'Möchtest du dieses Projekt wirklich löschen?';
   String get projectsEdit => 'Projekte editieren';
   String get projectsEditDone => 'Editieren beenden';
-  String get projectsFlashCards => 'Übungstipps';
   String get projectsImport => 'Projekt importieren';
   String get projectsImportError => 'Fehler beim Importieren des Projekts';
   String get projectsImportNoFileSelected => 'Keine Projektdatei ausgewählt';
@@ -288,7 +287,7 @@ class German extends AppLocalizations with GermanFlashCards {
   String get projectsMenu => 'Projekte-Menü';
   String get projectsNew => 'Neues Projekt';
   String get projectsNoProjects => 'Bitte klicke auf das "+", um ein neues Projekt zu erstellen.';
-  String get projectsTutorialAddProject => 'Tippe hier, um ein neues Projekt zu erstellen.';
+  String get projectsTitle => 'Projekte';
   String get projectsTutorialCanIncludeMultipleTools =>
       'Projekte können mehrere Tools enthalten\n(Stimmgerät, Metronom, Piano, Media Player, Bild und Text),\nund sogar mehrere Tools desselben Typs.';
   String get projectsTutorialChangeProjectOrder =>

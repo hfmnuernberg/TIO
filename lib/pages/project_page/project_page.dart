@@ -390,16 +390,19 @@ class _ProjectPageState extends State<ProjectPage> {
               itemCount: BlockType.values.length,
               itemBuilder: (context, index) {
                 var info = getBlockTypeInfos(l10n)[BlockType.values[index]]!;
-                return CardListTile(
-                  title: info.name,
-                  subtitle: info.description,
-                  trailingIcon: IconButton(
-                    onPressed: () => _onNewToolTilePressed(info),
-                    icon: const Icon(Icons.add),
-                    color: ColorTheme.surfaceTint,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: CardListTile(
+                    title: info.name,
+                    subtitle: info.description,
+                    trailingIcon: IconButton(
+                      onPressed: () => _onNewToolTilePressed(info),
+                      icon: const Icon(Icons.add),
+                      color: ColorTheme.surfaceTint,
+                    ),
+                    leadingPicture: circleToolIcon(info.icon),
+                    onTapFunction: () => _onNewToolTilePressed(info),
                   ),
-                  leadingPicture: circleToolIcon(info.icon),
-                  onTapFunction: () => _onNewToolTilePressed(info),
                 );
               },
             ),

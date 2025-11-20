@@ -7,6 +7,11 @@ import '../../utils/render_utils.dart';
 import '../../utils/project_utils.dart';
 import '../../utils/test_context.dart';
 
+extension WidgetTesterPumpExtension on WidgetTester {
+  Future<void> minimizeTipOfTheDay() async =>
+      dragFromCenterToTargetAndSettle(find.bySemanticsLabel('Projects').first, const Offset(0, -1000));
+}
+
 void main() {
   late TestContext context;
 
@@ -24,6 +29,7 @@ void main() {
     await tester.renderScaffold(ProjectsPage(), context.providers);
 
     await tester.createProject('Project 1');
+    await tester.minimizeTipOfTheDay();
     await tester.tapAndSettle(find.byTooltip('Project details'));
 
     await tester.tapAndSettle(find.byTooltip('Project menu'));
@@ -33,8 +39,7 @@ void main() {
 
     expect(find.bySemanticsLabel('Project 1'), findsOneWidget);
 
-    await tester.tapAndSettle(find.byTooltip('Projects menu'));
-    await tester.tapAndSettle(find.bySemanticsLabel('Edit projects'));
+    await tester.tapAndSettle(find.byTooltip('Edit projects'));
     await tester.tapAndSettle(find.byTooltip('Delete project'));
     await tester.tapAndSettle(find.bySemanticsLabel('Yes'));
 
