@@ -17,7 +17,9 @@ void main() {
     await context.init(dismissTutorials: false);
   });
 
-  tearDown(WidgetsBinding.instance.resetEpoch);
+  tearDown(() {
+    WidgetsBinding.instance.resetEpoch();
+  });
 
   testWidgets('shows projects tutorial initially', (tester) async {
     await tester.renderScaffold(ProjectsPage(), context.providers);
