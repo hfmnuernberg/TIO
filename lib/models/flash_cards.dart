@@ -8,7 +8,7 @@ enum FlashCardCategory {
   vision(Icons.tips_and_updates),
   culture(Icons.museum),
   mixUp(Icons.category),
-  practicingTactics(Icons.playlist_add_check),
+  practicing(Icons.playlist_add_check),
   journaling(Icons.auto_stories);
 
   final IconData icon;
