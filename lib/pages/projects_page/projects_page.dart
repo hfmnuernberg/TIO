@@ -13,6 +13,9 @@ import 'package:tiomusic/pages/media_player/media_player_page.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
+import 'package:tiomusic/pages/projects_page/edit_projects_bar.dart';
+import 'package:tiomusic/pages/projects_page/editable_project_list.dart';
+import 'package:tiomusic/pages/projects_page/project_list.dart';
 import 'package:tiomusic/pages/projects_page/projects_menu.dart';
 import 'package:tiomusic/pages/projects_page/quick_tool_button.dart';
 import 'package:tiomusic/pages/projects_page/survey_banner.dart';
@@ -26,8 +29,8 @@ import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tiomusic/widgets/flash_card/tip_of_the_day.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
-import 'package:tiomusic/widgets/projects/projects_list.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProjectsPage extends StatefulWidget {
@@ -351,14 +354,69 @@ class _ProjectsPageState extends State<ProjectsPage> {
             Column(
               children: [
                 Expanded(
-                  child: ProjectsList(
-                    isEditing: _isEditing,
-                    onToggleEditing: _toggleEditingMode,
-                    onAddProject: _handleNew,
-                    onReorder: _handleReorder,
-                    onDelete: _handleDelete,
-                    onGoToProject: _handleGoToProject,
-                    editProjectsKey: _keyEditProjects,
+                  child: NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                      SliverToBoxAdapter(
+                        child: Padding(padding: const EdgeInsets.fromLTRB(16, 16, 16, 0), child: const TipOfTheDay()),
+                      ),
+                    ],
+                    body: Consumer<ProjectLibrary>(
+                      builder: (context, projectLibrary, child) => Stack(
+                        children: [
+                          if (projectLibrary.projects.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(40),
+                              child: Text(
+                                l10n.projectsNoProjects,
+                                style: const TextStyle(color: Colors.white, fontSize: 42),
+                              ),
+                            )
+                          else
+                            Container(
+                              margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                              child: Material(
+                                color: ColorTheme.primaryContainer,
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
+                                      child: Center(
+                                        child: Text(
+                                          l10n.projectsTitle,
+                                          style: const TextStyle(
+                                            color: ColorTheme.primary,
+                                            fontSize: TIOMusicParams.titleFontSize,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: _isEditing
+                                          ? EditableProjectList(onDelete: _handleDelete, onReorder: _handleReorder)
+                                          : ProjectList(onGoToProject: _handleGoToProject),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
+                              child: EditProjectsBar(
+                                key: _keyEditProjects,
+                                isEditing: _isEditing,
+                                onAddProject: _handleNew,
+                                onToggleEditing: _toggleEditingMode,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
 
