@@ -4,19 +4,9 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:tiomusic/models/project.dart';
+import 'package:tiomusic/models/seen_flash_card.dart';
 
 part 'project_library.g.dart';
-
-@JsonSerializable()
-class SeenFlashCard {
-  final String id;
-  final DateTime seenAt;
-
-  SeenFlashCard({required this.id, required this.seenAt});
-
-  factory SeenFlashCard.fromJson(Map<String, dynamic> json) => _$SeenFlashCardFromJson(json);
-  Map<String, dynamic> toJson() => _$SeenFlashCardToJson(this);
-}
 
 @JsonSerializable(explicitToJson: true)
 class ProjectLibrary extends ChangeNotifier {
