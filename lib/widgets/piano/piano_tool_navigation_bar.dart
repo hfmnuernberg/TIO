@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/util/util_functions.dart';
+import 'package:tiomusic/util/tool_navigation_utils.dart';
 import 'package:tiomusic/widgets/piano/piano_navigation_bar.dart';
 
 class PianoToolNavigationBar extends StatelessWidget {
