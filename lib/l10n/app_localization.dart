@@ -243,7 +243,6 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get projectsDeleteConfirmation;
   String get projectsEdit;
   String get projectsEditDone;
-  String get projectsFlashCards;
   String get projectsImport;
   String get projectsImportError;
   String get projectsImportNoFileSelected;

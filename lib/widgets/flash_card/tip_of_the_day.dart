@@ -15,15 +15,15 @@ class TipOfTheDay extends StatefulWidget {
 
 class _TipOfTheDayState extends State<TipOfTheDay> {
   late FlashCardModel card;
-  final _flashCards = FlashCards();
+  final flashCards = FlashCards();
 
   @override
   void initState() {
     super.initState();
-    card = _flashCards.loadRandom();
+    card = flashCards.loadRandom();
   }
 
-  void _regenerate() => setState(() => card = _flashCards.loadRandom());
+  void _regenerate() => setState(() => card = flashCards.loadRandom());
 
   @override
   Widget build(BuildContext context) {
