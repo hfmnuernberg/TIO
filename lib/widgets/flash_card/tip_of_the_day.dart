@@ -19,24 +19,24 @@ class TipOfTheDay extends StatefulWidget {
 
 class _TipOfTheDayState extends State<TipOfTheDay> {
   late FlashCardModel card;
-  late FlashCards _flashCards;
-  late ProjectLibrary _projectLibrary;
-  late ProjectRepository _projectRepo;
+  late FlashCards flashCards;
+  late ProjectLibrary projectLibrary;
+  late ProjectRepository projectRepo;
 
   @override
   void initState() {
     super.initState();
-    _flashCards = context.read<FlashCards>();
-    _projectLibrary = context.read<ProjectLibrary>();
-    _projectRepo = context.read<ProjectRepository>();
+    flashCards = context.read<FlashCards>();
+    projectLibrary = context.read<ProjectLibrary>();
+    projectRepo = context.read<ProjectRepository>();
 
-    card = _flashCards.loadNext(_projectLibrary);
-    _projectRepo.saveLibrary(_projectLibrary);
+    card = flashCards.loadNext(projectLibrary);
+    projectRepo.saveLibrary(projectLibrary);
   }
 
   void _regenerate() => setState(() {
-    card = _flashCards.regenerateNext(_projectLibrary);
-    _projectRepo.saveLibrary(_projectLibrary);
+    card = flashCards.regenerateNext(projectLibrary);
+    projectRepo.saveLibrary(projectLibrary);
   });
 
   @override

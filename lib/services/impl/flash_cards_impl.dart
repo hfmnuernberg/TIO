@@ -27,11 +27,6 @@ class FlashCardsImpl implements FlashCards {
       if (!alreadySeen) unseenCards.add(card);
     }
 
-    if (unseenCards.isEmpty) {
-      unseenCards.addAll(cards);
-      seenCards.clear();
-    }
-
     final currentCard = unseenCards[Random().nextInt(unseenCards.length)];
 
     seenCards.add(SeenFlashCard(id: currentCard.id, seenAt: now));
