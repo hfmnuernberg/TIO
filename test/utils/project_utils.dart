@@ -4,7 +4,7 @@ import 'action_utils.dart';
 
 extension WidgetTesterProjectExtension on WidgetTester {
   Future<void> createProject(String title) async {
-    await tapAndSettle(find.byTooltip('New project'));
+    await tapAndSettle(find.byTooltip('Add new project'));
     await enterTextAndSettle(find.bySemanticsLabel('New project'), title);
     await tapAndSettle(find.bySemanticsLabel('Submit'));
 

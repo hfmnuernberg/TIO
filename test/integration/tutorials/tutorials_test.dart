@@ -8,7 +8,7 @@ import '../../utils/test_context.dart';
 
 extension WidgetTesterPumpExtension on WidgetTester {
   Future<void> createProjectWithoutTool(String title) async {
-    await tapAndSettle(find.byTooltip('New project'));
+    await tapAndSettle(find.byTooltip('Add new project'));
     await enterTextAndSettle(find.bySemanticsLabel('New project'), title);
     await tapAndSettle(find.bySemanticsLabel('Submit'));
   }
@@ -25,7 +25,6 @@ extension WidgetTesterPumpExtension on WidgetTester {
 
   Future<void> completeInitialTutorial() async {
     await waitForTutorialNext();
-    await tapAndSettle(find.bySemanticsLabel('Next'));
     await tapAndSettle(find.bySemanticsLabel('Next'));
     await tapAndSettle(find.bySemanticsLabel('Next'));
     await tapAndSettle(find.bySemanticsLabel('Next'));
@@ -89,10 +88,10 @@ void main() {
     expect(find.bySemanticsLabel(RegExp('Welcome! You can use')), findsOneWidget);
 
     await tester.tapAndSettle(find.bySemanticsLabel('Next'));
-    expect(find.bySemanticsLabel('Tap here to create a new project.'), findsOneWidget);
+    expect(find.bySemanticsLabel('Tap here to start using a tool.'), findsOneWidget);
 
     await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
-    expect(find.bySemanticsLabel('Tap here to create a new project.'), findsNothing);
+    expect(find.bySemanticsLabel('Tap here to start using a tool.'), findsNothing);
   });
 
   testWidgets('shows project tutorial initially', (tester) async {

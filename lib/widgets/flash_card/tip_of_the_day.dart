@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:tiomusic/domain/flash_cards/flash_cards.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -17,19 +15,15 @@ class TipOfTheDay extends StatefulWidget {
 
 class _TipOfTheDayState extends State<TipOfTheDay> {
   late FlashCardModel card;
+  final flashCards = FlashCards();
 
   @override
   void initState() {
     super.initState();
-
-    final cards = FlashCards().load();
-    card = cards[Random().nextInt(cards.length)];
+    card = flashCards.loadRandom();
   }
 
-  void _regenerate() {
-    final cards = FlashCards().load();
-    setState(() => card = cards[Random().nextInt(cards.length)]);
-  }
+  void _regenerate() => setState(() => card = flashCards.loadRandom());
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +31,6 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
 
     return Material(
       color: ColorTheme.primaryContainer,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
         child: Column(

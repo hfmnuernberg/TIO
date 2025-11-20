@@ -252,12 +252,15 @@ class _ParentToolState extends State<ParentTool> {
       builder: (context) => ModalBottomSheet(
         label: label,
         titleChildren: [
-          CardListTile(
-            title: widget.barTitle,
-            subtitle: formatSettingValues(widget.toolBlock.getSettingsFormatted(context.l10n)),
-            trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
-            leadingPicture: circleToolIcon(widget.toolBlock.icon),
-            onTapFunction: () {},
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: CardListTile(
+              title: widget.barTitle,
+              subtitle: formatSettingValues(widget.toolBlock.getSettingsFormatted(context.l10n)),
+              trailingIcon: IconButton(onPressed: () {}, icon: const SizedBox()),
+              leadingPicture: circleToolIcon(widget.toolBlock.icon),
+              onTapFunction: () {},
+            ),
           ),
         ],
         contentChildren: [
@@ -277,23 +280,26 @@ class _ParentToolState extends State<ParentTool> {
                 itemBuilder: (context, index) {
                   return StatefulBuilder(
                     builder: (context, setTileState) {
-                      return CardListTile(
-                        title: projectLibrary.projects[index].title,
-                        subtitle: l10n.formatDateAndTime(projectLibrary.projects[index].timeLastModified),
-                        highlightColor: _highlightColorOnSave,
-                        trailingIcon: IconButton(
-                          onPressed: () {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        child: CardListTile(
+                          title: projectLibrary.projects[index].title,
+                          subtitle: l10n.formatDateAndTime(projectLibrary.projects[index].timeLastModified),
+                          highlightColor: _highlightColorOnSave,
+                          trailingIcon: IconButton(
+                            onPressed: () {
+                              _onSaveInProjectTap(setTileState, index, widget.toolBlock);
+                            },
+                            icon: _bookmarkIcon,
+                            color: ColorTheme.surfaceTint,
+                          ),
+                          leadingPicture: projectLibrary.projects[index].thumbnailPath.isEmpty
+                              ? const AssetImage(TIOMusicParams.tiomusicIconPath)
+                              : FileImage(File(_fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath))),
+                          onTapFunction: () {
                             _onSaveInProjectTap(setTileState, index, widget.toolBlock);
                           },
-                          icon: _bookmarkIcon,
-                          color: ColorTheme.surfaceTint,
                         ),
-                        leadingPicture: projectLibrary.projects[index].thumbnailPath.isEmpty
-                            ? const AssetImage(TIOMusicParams.tiomusicIconPath)
-                            : FileImage(File(_fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath))),
-                        onTapFunction: () {
-                          _onSaveInProjectTap(setTileState, index, widget.toolBlock);
-                        },
                       );
                     },
                   );
