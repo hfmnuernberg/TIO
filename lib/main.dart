@@ -74,7 +74,7 @@ List<SingleChildWidget> _getProviders() {
   final fileReferences = FileReferencesLogDecorator(FileReferencesImpl(mediaRepo));
   final archiver = ArchiverLogDecorator(FileBasedArchiver(fileSystem, mediaRepo));
   final wakelock = WakelockLogDecorator(WakelockPlusDelegate());
-  final flashCards = FlashCardsLogDecorator(FlashCardsImpl());
+  final flashCards = FlashCardsLogDecorator(FlashCardsImpl(projectRepo));
 
   return [
     Provider<AudioSystem>(create: (_) => audioSystem),

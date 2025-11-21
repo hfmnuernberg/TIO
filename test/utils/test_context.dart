@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -24,6 +26,7 @@ import 'package:tiomusic/services/impl/file_based_archiver.dart';
 import 'package:tiomusic/services/impl/file_based_media_repository.dart';
 import 'package:tiomusic/services/impl/file_based_project_repository.dart';
 import 'package:tiomusic/services/impl/file_references_impl.dart';
+import 'package:tiomusic/services/impl/flash_cards_impl.dart';
 import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/services/wakelock.dart';
@@ -31,7 +34,6 @@ import 'package:tiomusic/services/wakelock.dart';
 import '../mocks/audio_session_mock.dart';
 import '../mocks/audio_system/audio_system_mock.dart';
 import '../mocks/file_picker_mock.dart';
-import '../mocks/flash_cards_mock.dart';
 import '../mocks/in_memory_file_system_mock.dart';
 import '../mocks/wakelock_mock.dart';
 
@@ -57,8 +59,7 @@ class TestContext {
   final WakelockMock wakelockMock = WakelockMock();
   late final wakelock = WakelockLogDecorator(wakelockMock);
 
-  late final flashCardsMock = FlashCardsMock();
-  late final flashCards = FlashCardsLogDecorator(flashCardsMock);
+  late final flashCards = FlashCardsLogDecorator(FlashCardsImpl(projectRepo, Random(42)));
 
   late final List<SingleChildWidget> providers;
 

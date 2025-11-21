@@ -27,7 +27,7 @@ class FlashCardsPage extends StatelessWidget {
 class _FlashCardsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final cards = context.read<FlashCards>().load();
+    final cards = context.read<FlashCards>().getAll();
     final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return ListView.separated(

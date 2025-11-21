@@ -1,5 +1,4 @@
-import 'package:tiomusic/models/flash_cards.dart';
-import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/domain/flash_cards/flash_card.dart';
 import 'package:tiomusic/services/flash_cards.dart';
 import 'package:tiomusic/util/log.dart';
 
@@ -11,23 +10,16 @@ class FlashCardsLogDecorator implements FlashCards {
   FlashCardsLogDecorator(this._flashCards);
 
   @override
-  List<FlashCardModel> load() {
-    final cards = _flashCards.load();
-    _logger.t('load(): ${cards.length} cards');
+  List<FlashCard> getAll() {
+    final cards = _flashCards.getAll();
+    _logger.t('getAll(): ${cards.length} cards');
     return cards;
   }
 
   @override
-  FlashCardModel loadNext(ProjectLibrary library) {
-    final card = _flashCards.loadNext(library);
-    _logger.t('loadNext(): ${card.category}');
-    return card;
-  }
-
-  @override
-  FlashCardModel regenerateNext(ProjectLibrary library) {
-    final card = _flashCards.regenerateNext(library);
-    _logger.t('regenerateNext(): ${card.category}');
+  Future<FlashCard> getTipOfTheDay([DateTime? date]) async {
+    final card = await _flashCards.getTipOfTheDay(date);
+    _logger.t('getTipOfTheDay($date): ${card.id}');
     return card;
   }
 }

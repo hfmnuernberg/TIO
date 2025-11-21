@@ -1,10 +1,7 @@
-import 'package:tiomusic/models/flash_cards.dart';
-import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/domain/flash_cards/flash_card.dart';
 
 mixin FlashCards {
-  List<FlashCardModel> load();
+  List<FlashCard> getAll();
 
-  FlashCardModel loadNext(ProjectLibrary library);
-
-  FlashCardModel regenerateNext(ProjectLibrary library);
+  Future<FlashCard> getTipOfTheDay([DateTime? date]);
 }
