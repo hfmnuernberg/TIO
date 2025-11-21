@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tiomusic/domain/flash_cards/flash_card_category.dart';
+import 'package:tiomusic/domain/flash_cards/category.dart';
 
 extension FlashCardCategoryExtension on FlashCardCategory {
   IconData get icon => switch (this) {

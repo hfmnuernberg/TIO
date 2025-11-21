@@ -1,5 +1,5 @@
 import 'package:tiomusic/domain/flash_cards/flash_card.dart';
-import 'package:tiomusic/domain/flash_cards/flash_card_category.dart';
+import 'package:tiomusic/domain/flash_cards/category.dart';
 
 final List<FlashCard> practicingFlashCards = [
   FlashCard('practicing001', FlashCardCategory.practicing, (l10n) => l10n.descriptionPracticing001),

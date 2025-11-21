@@ -1,4 +1,4 @@
-import 'package:tiomusic/domain/flash_cards/flash_card_category.dart';
+import 'package:tiomusic/domain/flash_cards/category.dart';
 import 'package:tiomusic/l10n/flash_cards/flash_cards_localization.dart';
 
 class FlashCard {

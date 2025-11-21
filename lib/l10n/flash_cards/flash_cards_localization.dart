@@ -1,4 +1,4 @@
-import 'package:tiomusic/domain/flash_cards/flash_card_category.dart';
+import 'package:tiomusic/domain/flash_cards/category.dart';
 
 abstract class FlashCardsLocalization {
   String categoryLabel(FlashCardCategory category);

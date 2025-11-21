@@ -1,5 +1,5 @@
 import 'package:tiomusic/domain/flash_cards/flash_card.dart';
-import 'package:tiomusic/domain/flash_cards/flash_card_category.dart';
+import 'package:tiomusic/domain/flash_cards/category.dart';
 
 final List<FlashCard> mixUpFlashCards = [
   FlashCard('mixUp001', FlashCardCategory.mixUp, (l10n) => l10n.descriptionMixUp001),
