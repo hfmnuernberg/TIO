@@ -4,7 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:tiomusic/domain/flash_cards/flash_card.dart';
 import 'package:tiomusic/domain/flash_cards/flash_cards_list.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/seen_flash_card.dart';
+import 'package:tiomusic/models/suggested_flash_card.dart';
 import 'package:tiomusic/services/flash_cards.dart';
 import 'package:tiomusic/services/project_repository.dart';
 
@@ -21,7 +21,7 @@ class FlashCardsImpl implements FlashCards {
   Future<FlashCard> getTipOfTheDay([DateTime? date]) async {
     final library = await _projectRepo.loadLibrary();
     final allCards = getAll();
-    final suggestedCards = library.seenFlashCards;
+    final suggestedCards = library.suggestedFlashCards;
 
     if (date != null) {
       final todaysCard = _getTodaysCard(allCards, suggestedCards, date);
@@ -37,12 +37,12 @@ class FlashCardsImpl implements FlashCards {
     return newCard;
   }
 
-  FlashCard? _getTodaysCard(List<FlashCard> allCards, List<SeenFlashCard> suggestedCards, DateTime date) {
-    final todaysCard = suggestedCards.firstWhereOrNull((suggested) => _isSameDay(suggested.seenAt, date));
+  FlashCard? _getTodaysCard(List<FlashCard> allCards, List<SuggestedFlashCard> suggestedCards, DateTime date) {
+    final todaysCard = suggestedCards.firstWhereOrNull((suggested) => _isSameDay(suggested.suggestedAt, date));
     return todaysCard == null ? null : allCards.firstWhere((card) => card.id == todaysCard.id);
   }
 
-  FlashCard? _getNewCard(List<FlashCard> allCards, List<SeenFlashCard> suggestedCards) {
+  FlashCard? _getNewCard(List<FlashCard> allCards, List<SuggestedFlashCard> suggestedCards) {
     final remainingCards = allCards
         .whereNot((card) => suggestedCards.any((suggested) => suggested.id == card.id))
         .toList();
@@ -51,7 +51,7 @@ class FlashCardsImpl implements FlashCards {
   }
 
   Future<void> _rememberSuggestedCard(FlashCard card, ProjectLibrary library) async {
-    library.seenFlashCards.add(SeenFlashCard(id: card.id, seenAt: DateTime.now()));
+    library.suggestedFlashCards.add(SuggestedFlashCard(id: card.id, suggestedAt: DateTime.now()));
     await _projectRepo.saveLibrary(library);
   }
 

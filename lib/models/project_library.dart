@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:tiomusic/models/project.dart';
-import 'package:tiomusic/models/seen_flash_card.dart';
+import 'package:tiomusic/models/suggested_flash_card.dart';
 
 part 'project_library.g.dart';
 
@@ -16,7 +16,7 @@ class ProjectLibrary extends ChangeNotifier {
   set projects(List<Project> newProjects) => _projects = newProjects;
 
   @JsonKey(defaultValue: [])
-  late List<SeenFlashCard> seenFlashCards;
+  late List<SuggestedFlashCard> suggestedFlashCards;
 
   late int _visitedToolsCounter;
   @JsonKey(defaultValue: 0)
@@ -101,7 +101,7 @@ class ProjectLibrary extends ChangeNotifier {
     this.showImageTutorial,
     this.showWaveformTip,
     this.showBeatToggleTip,
-    this.seenFlashCards,
+    this.suggestedFlashCards,
   ) {
     _projects = projects;
     _visitedToolsCounter = visitedToolsCounter;
@@ -131,7 +131,7 @@ class ProjectLibrary extends ChangeNotifier {
     showImageTutorial = true;
     showWaveformTip = true;
     showBeatToggleTip = true;
-    seenFlashCards = [];
+    suggestedFlashCards = [];
   }
 
   factory ProjectLibrary.fromJson(Map<String, dynamic> json) => _$ProjectLibraryFromJson(json);

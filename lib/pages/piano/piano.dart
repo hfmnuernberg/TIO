@@ -500,7 +500,7 @@ class _PianoPageState extends State<PianoPage> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: widget.isQuickTool
-                              ? Text(l10n.toolSave, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
+                              ? Text(l10n.toolSaveIn, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
                               : Text(l10n.toolSaveCopy, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
                         ),
                       ),

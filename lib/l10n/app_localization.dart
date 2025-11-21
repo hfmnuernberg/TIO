@@ -273,7 +273,6 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get tipOfTheDayViewMore;
 
   String get toolAddNew;
-  String get toolBookmark;
   String get toolConnectAnother;
   String get toolConnectExistingTool;
   String get toolConnectNewTool;
@@ -289,6 +288,7 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get toolQuickToolSave;
   String get toolSave;
   String get toolSaveCopy;
+  String get toolSaveIn;
   String get toolSaveInNewProject;
   String get toolTitleCopy;
   String get toolTutorialEditTitle;

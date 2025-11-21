@@ -35,12 +35,12 @@ void main() {
 
     testWidgets('save no new suggested flash cards when reopening on the same day', (tester) async {
       await tester.renderScaffold(const ProjectsPage(), context.providers);
-      expect((await context.projectRepo.loadLibrary()).seenFlashCards.length, 1);
+      expect((await context.projectRepo.loadLibrary()).suggestedFlashCards.length, 1);
 
       await tester.simulateAppClose();
 
-      expect((await context.projectRepo.loadLibrary()).seenFlashCards.length, 1);
-      expect((await context.projectRepo.loadLibrary()).seenFlashCards[0].id, 'practicing004');
+      expect((await context.projectRepo.loadLibrary()).suggestedFlashCards.length, 1);
+      expect((await context.projectRepo.loadLibrary()).suggestedFlashCards[0].id, 'practicing004');
     });
 
     testWidgets('shows new tip of the day after regenerating', (tester) async {
@@ -55,12 +55,12 @@ void main() {
 
     testWidgets('saves suggested flash cards after regenerating', (tester) async {
       await tester.renderScaffold(const ProjectsPage(), context.providers);
-      expect((await context.projectRepo.loadLibrary()).seenFlashCards.length, 1);
+      expect((await context.projectRepo.loadLibrary()).suggestedFlashCards.length, 1);
 
       await tester.tapAndSettle(find.bySemanticsLabel('Regenerate'));
 
-      expect((await context.projectRepo.loadLibrary()).seenFlashCards.length, 2);
-      expect((await context.projectRepo.loadLibrary()).seenFlashCards[1].id, 'mixUp048');
+      expect((await context.projectRepo.loadLibrary()).suggestedFlashCards.length, 2);
+      expect((await context.projectRepo.loadLibrary()).suggestedFlashCards[1].id, 'mixUp048');
     });
 
     testWidgets('shows one of all flash cards when all cards are suggested once', (tester) async {
@@ -76,14 +76,14 @@ void main() {
 
     testWidgets('resets suggested flash cards when all cards are suggested once', (tester) async {
       await tester.renderScaffold(const ProjectsPage(), context.providers);
-      expect((await context.projectRepo.loadLibrary()).seenFlashCards.length, 1);
+      expect((await context.projectRepo.loadLibrary()).suggestedFlashCards.length, 1);
 
       for (int i = 0; i < context.flashCards.getAll().length; i++) {
         await tester.tapAndSettle(find.bySemanticsLabel('Regenerate'));
       }
 
-      expect((await context.projectRepo.loadLibrary()).seenFlashCards.length, 1);
-      expect((await context.projectRepo.loadLibrary()).seenFlashCards[0].id, 'practicing027');
+      expect((await context.projectRepo.loadLibrary()).suggestedFlashCards.length, 1);
+      expect((await context.projectRepo.loadLibrary()).suggestedFlashCards[0].id, 'practicing027');
     });
   });
 }

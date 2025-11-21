@@ -312,7 +312,6 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get tipOfTheDayViewMore => 'View more';
 
   String get toolAddNew => 'Add new tool';
-  String get toolBookmark => 'Save tool';
   String get toolConnectAnother => 'Connect another tool';
   String get toolConnectExistingTool => 'Connect a tool';
   String get toolConnectNewTool => 'Connect a new tool';
@@ -327,8 +326,9 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get toolGoToPrevOfSameType => 'Go to previous tool of the same type';
   String get toolQuickTool => 'Quick tool';
   String get toolQuickToolSave => 'Save quick tool?';
-  String get toolSave => 'Save in ...';
+  String get toolSave => 'Save tool';
   String get toolSaveCopy => 'Save copy in ...';
+  String get toolSaveIn => 'Save in ...';
   String get toolSaveInNewProject => 'Save in new project';
   String get toolTitleCopy => 'Copy';
   String get toolTutorialEditTitle => 'Tap here to edit the title of your tool.';
