@@ -166,6 +166,7 @@ void main() {
     await tester.tapAndSettle(find.bySemanticsLabel('Show tutorial'));
     await tester.waitForTutorialNext();
     await tester.completeInitialTutorial();
+    await tester.minimizeTipOfTheDay();
     await tester.tapAndSettle(find.bySemanticsLabel('Project 1'));
     await tester.completeProjectTutorial();
     await tester.tapAndSettle(find.bySemanticsLabel('Text 1'));

@@ -34,4 +34,7 @@ extension WidgetTesterActionxtension on WidgetTester {
     await dragFrom(widgetCenter, to);
     await pumpAndSettle();
   }
+
+  Future<void> minimizeTipOfTheDay() async =>
+      dragFromCenterToTargetAndSettle(find.bySemanticsLabel('Projects').first, const Offset(0, -1000));
 }

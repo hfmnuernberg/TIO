@@ -10,9 +10,6 @@ import '../../utils/project_utils.dart';
 import '../../utils/test_context.dart';
 
 extension WidgetTesterPumpExtension on WidgetTester {
-  Future<void> minimizeTipOfTheDay() async =>
-      dragFromCenterToTargetAndSettle(find.bySemanticsLabel('Projects').first, const Offset(0, -1000));
-
   List<String> getProjectTitles(FinderBase<SemanticsNode> list) {
     final semanticNodesList = list.evaluate().cast<SemanticsNode>().toList();
     return semanticNodesList.map((node) => node.label).toList();
