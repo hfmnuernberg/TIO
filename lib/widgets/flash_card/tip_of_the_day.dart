@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:tiomusic/domain/flash_cards/flash_cards.dart';
+import 'package:provider/provider.dart';
+import 'package:tiomusic/domain/flash_cards/flash_card.dart' as domain;
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/pages/flash_cards/flash_cards_page.dart';
+import 'package:tiomusic/services/flash_cards.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/flash_card/flash_card.dart';
@@ -14,16 +18,26 @@ class TipOfTheDay extends StatefulWidget {
 }
 
 class _TipOfTheDayState extends State<TipOfTheDay> {
-  late FlashCardModel card;
-  final flashCards = FlashCards();
+  late FlashCards flashCards;
+
+  domain.FlashCard? card;
 
   @override
   void initState() {
     super.initState();
-    card = flashCards.loadRandom();
+    flashCards = context.read<FlashCards>();
+    unawaited(_loadTipOfTheDay());
   }
 
-  void _regenerate() => setState(() => card = flashCards.loadRandom());
+  Future<void> _loadTipOfTheDay() async {
+    card = await flashCards.getTipOfTheDay(DateTime.now());
+    setState(() {});
+  }
+
+  Future<void> _regenerate() async {
+    card = await flashCards.getTipOfTheDay();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +69,10 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
               ),
             ),
             const SizedBox(height: 8),
-            FlashCard(category: card.category, description: card.description(l10n)),
+            if (card == null)
+              const Center(child: CircularProgressIndicator())
+            else
+              FlashCard(category: card!.category, description: card!.description(l10n)),
             const SizedBox(height: 4),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

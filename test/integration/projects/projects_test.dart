@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:tiomusic/pages/projects_page/projects_page.dart';
 
 import '../../utils/action_utils.dart';
@@ -9,9 +10,6 @@ import '../../utils/project_utils.dart';
 import '../../utils/test_context.dart';
 
 extension WidgetTesterPumpExtension on WidgetTester {
-  Future<void> minimizeTipOfTheDay() async =>
-      dragFromCenterToTargetAndSettle(find.bySemanticsLabel('Projects').first, const Offset(0, -1000));
-
   List<String> getProjectTitles(FinderBase<SemanticsNode> list) {
     final semanticNodesList = list.evaluate().cast<SemanticsNode>().toList();
     return semanticNodesList.map((node) => node.label).toList();
@@ -24,17 +22,12 @@ void main() {
   setUpAll(WidgetsFlutterBinding.ensureInitialized);
 
   setUp(() async {
+    resetMocktailState();
     context = TestContext();
     await context.init();
   });
 
   group('ProjectsPage', () {
-    testWidgets('shows tip of the day', (tester) async {
-      await tester.renderScaffold(ProjectsPage(), context.providers);
-
-      expect(find.bySemanticsLabel('Tip of the day'), findsOneWidget);
-    });
-
     testWidgets('shows no projects initially', (tester) async {
       await tester.renderScaffold(ProjectsPage(), context.providers);
 

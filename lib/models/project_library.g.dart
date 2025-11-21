@@ -28,10 +28,15 @@ ProjectLibrary _$ProjectLibraryFromJson(Map<String, dynamic> json) => ProjectLib
   json['showImageTutorial'] as bool? ?? true,
   json['showWaveformTip'] as bool? ?? true,
   json['showBeatToggleTip'] as bool? ?? true,
+  (json['suggestedFlashCards'] as List<dynamic>?)
+          ?.map((e) => SuggestedFlashCard.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      [],
 );
 
 Map<String, dynamic> _$ProjectLibraryToJson(ProjectLibrary instance) => <String, dynamic>{
   'projects': instance.projects.map((e) => e.toJson()).toList(),
+  'suggestedFlashCards': instance.suggestedFlashCards.map((e) => e.toJson()).toList(),
   'visitedToolsCounter': instance.visitedToolsCounter,
   'neverShowSurveyAgain': instance.neverShowSurveyAgain,
   'idxCheckShowSurvey': instance.idxCheckShowSurvey,

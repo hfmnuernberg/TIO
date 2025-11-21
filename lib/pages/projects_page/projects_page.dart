@@ -13,8 +13,11 @@ import 'package:tiomusic/pages/media_player/media_player_page.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
+import 'package:tiomusic/pages/projects_page/edit_projects_bar.dart';
+import 'package:tiomusic/pages/projects_page/editable_project_list.dart';
+import 'package:tiomusic/pages/projects_page/project_list.dart';
 import 'package:tiomusic/pages/projects_page/projects_menu.dart';
-import 'package:tiomusic/pages/projects_page/quick_tool_button.dart';
+import 'package:tiomusic/pages/projects_page/quick_tools_bar.dart';
 import 'package:tiomusic/pages/projects_page/survey_banner.dart';
 import 'package:tiomusic/pages/tuner/tuner.dart';
 import 'package:tiomusic/services/file_references.dart';
@@ -22,12 +25,12 @@ import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/util/util_functions.dart';
+import 'package:tiomusic/util/tool_navigation_utils.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tiomusic/widgets/flash_card/tip_of_the_day.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
-import 'package:tiomusic/widgets/projects/projects_list.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ProjectsPage extends StatefulWidget {
@@ -189,22 +192,9 @@ class _ProjectsPageState extends State<ProjectsPage> {
         throw Exception('Wrong BlockType');
     }
 
-    provider = ChangeNotifierProvider<ProjectBlock>.value(
-      value: block,
-      builder: (context, child) {
-        return toolPage;
-      },
-    );
+    provider = ChangeNotifierProvider<ProjectBlock>.value(value: block, builder: (context, child) => toolPage);
 
-    Navigator.of(context)
-        .push(
-          MaterialPageRoute(
-            builder: (context) {
-              return provider;
-            },
-          ),
-        )
-        .then(doActionOnReturn);
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => provider)).then(doActionOnReturn);
   }
 
   void doActionOnReturn(Object? returnValue) {
@@ -215,7 +205,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
         _goToToolOverProjectPage(returnValue['project'], returnValue['block'], returnValue['pianoAlreadyOn']);
       }
     } else {
-      // on every return to the home page
       var projectLibrary = context.read<ProjectLibrary>();
       if (!projectLibrary.neverShowSurveyAgain) {
         if (projectLibrary.idxCheckShowSurvey < projectLibrary.showSurveyAtVisits.length) {
@@ -322,7 +311,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final blockTypes = getBlockTypeInfos(l10n);
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -351,57 +339,73 @@ class _ProjectsPageState extends State<ProjectsPage> {
             Column(
               children: [
                 Expanded(
-                  child: ProjectsList(
-                    isEditing: _isEditing,
-                    onToggleEditing: _toggleEditingMode,
-                    onAddProject: _handleNew,
-                    onReorder: _handleReorder,
-                    onDelete: _handleDelete,
-                    onGoToProject: _handleGoToProject,
-                    editProjectsKey: _keyEditProjects,
+                  child: NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                      SliverToBoxAdapter(
+                        child: Padding(padding: const EdgeInsets.fromLTRB(16, 16, 16, 0), child: const TipOfTheDay()),
+                      ),
+                    ],
+                    body: Consumer<ProjectLibrary>(
+                      builder: (context, projectLibrary, child) => Stack(
+                        children: [
+                          if (projectLibrary.projects.isEmpty)
+                            Padding(
+                              padding: const EdgeInsets.all(40),
+                              child: Text(
+                                l10n.projectsNoProjects,
+                                style: const TextStyle(color: Colors.white, fontSize: 42),
+                              ),
+                            )
+                          else
+                            Container(
+                              margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                              child: Material(
+                                color: ColorTheme.primaryContainer,
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
+                                      child: Center(
+                                        child: Text(
+                                          l10n.projectsTitle,
+                                          style: const TextStyle(
+                                            color: ColorTheme.primary,
+                                            fontSize: TIOMusicParams.titleFontSize,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: _isEditing
+                                          ? EditableProjectList(onDelete: _handleDelete, onReorder: _handleReorder)
+                                          : ProjectList(onGoToProject: _handleGoToProject),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: TIOMusicParams.smallSpaceAboveList + 2),
+                              child: EditProjectsBar(
+                                key: _keyEditProjects,
+                                isEditing: _isEditing,
+                                onAddProject: _handleNew,
+                                onToggleEditing: _toggleEditingMode,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
 
-                Container(
-                  padding: EdgeInsets.only(top: TIOMusicParams.edgeInset, bottom: TIOMusicParams.edgeInset),
-                  color: ColorTheme.surface,
-                  child: Column(
-                    key: _keyQuickTools,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          QuickToolButton(
-                            icon: blockTypes[BlockType.metronome]!.icon,
-                            label: l10n.metronome,
-                            onTap: () => _onQuickToolTapped(BlockType.metronome),
-                          ),
-                          QuickToolButton(
-                            icon: blockTypes[BlockType.mediaPlayer]!.icon,
-                            label: l10n.mediaPlayer,
-                            onTap: () => _onQuickToolTapped(BlockType.mediaPlayer),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          QuickToolButton(
-                            icon: blockTypes[BlockType.tuner]!.icon,
-                            label: l10n.tuner,
-                            onTap: () => _onQuickToolTapped(BlockType.tuner),
-                          ),
-                          QuickToolButton(
-                            icon: blockTypes[BlockType.piano]!.icon,
-                            label: l10n.piano,
-                            onTap: () => _onQuickToolTapped(BlockType.piano),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                QuickToolsBar(key: _keyQuickTools, onQuickToolTapped: _onQuickToolTapped),
               ],
             ),
             if (_showBanner) SurveyBanner(onClose: () => setState(() => _showBanner = false)) else const SizedBox(),

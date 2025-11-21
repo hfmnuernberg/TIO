@@ -7,11 +7,6 @@ import '../../utils/render_utils.dart';
 import '../../utils/project_utils.dart';
 import '../../utils/test_context.dart';
 
-extension WidgetTesterPumpExtension on WidgetTester {
-  Future<void> minimizeTipOfTheDay() async =>
-      dragFromCenterToTargetAndSettle(find.bySemanticsLabel('Projects').first, const Offset(0, -1000));
-}
-
 void main() {
   late TestContext context;
 

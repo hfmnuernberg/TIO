@@ -8,6 +8,7 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/util/app_orientation.dart';
+import 'package:tiomusic/util/tool_navigation_utils.dart';
 import 'package:tiomusic/widgets/parent_tool/modal_bottom_sheet.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -71,8 +72,8 @@ class _ParentToolState extends State<ParentTool> {
   final TextEditingController _toolTitle = TextEditingController();
 
   final Tutorial _tutorial = Tutorial();
-  final GlobalKey _keyBookmarkSave = GlobalKey();
-  final GlobalKey _keyBookmarkSaveEmpty = GlobalKey();
+  final GlobalKey _keySaveCopyInProject = GlobalKey();
+  final GlobalKey _keySaveInProject = GlobalKey();
   final GlobalKey _keyChangeTitle = GlobalKey();
 
   @override
@@ -101,7 +102,7 @@ class _ParentToolState extends State<ParentTool> {
     var targets = <CustomTargetFocus>[
       if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool)
         CustomTargetFocus(
-          _keyBookmarkSaveEmpty,
+          _keySaveInProject,
           context.l10n.toolTutorialSave,
           alignText: ContentAlign.left,
           pointingDirection: PointingDirection.right,
@@ -109,7 +110,7 @@ class _ParentToolState extends State<ParentTool> {
         ),
       if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool)
         CustomTargetFocus(
-          _keyBookmarkSave,
+          _keySaveCopyInProject,
           context.l10n.appTutorialToolSave,
           alignText: ContentAlign.left,
           pointingDirection: PointingDirection.right,
@@ -160,11 +161,13 @@ class _ParentToolState extends State<ParentTool> {
 
   PreferredSizeWidget _appBar(BuildContext context) {
     List<Widget> appBarActions = [
-      // Icon Button for saving the tool
-      IconButton(
-        key: widget.isQuickTool ? _keyBookmarkSaveEmpty : _keyBookmarkSave,
-        onPressed: _openBottomSheetAndSaveTool,
-        icon: Icon(widget.isQuickTool ? Icons.bookmark_outline : Icons.bookmark_add_outlined),
+      Semantics(
+        label: context.l10n.toolSave,
+        child: IconButton(
+          key: widget.isQuickTool ? _keySaveInProject : _keySaveCopyInProject,
+          onPressed: _openBottomSheetAndSaveTool,
+          icon: Icon(widget.isQuickTool ? Icons.bookmark_outline : Icons.bookmark_add_outlined),
+        ),
       ),
     ];
 
@@ -244,7 +247,7 @@ class _ParentToolState extends State<ParentTool> {
   void _openBottomSheetAndSaveTool() {
     var projectLibrary = Provider.of<ProjectLibrary>(context, listen: false);
     final l10n = context.l10n;
-    final label = widget.isQuickTool ? l10n.toolSave : l10n.toolSaveCopy;
+    final label = widget.isQuickTool ? l10n.toolSaveIn : l10n.toolSaveCopy;
 
     showModalBottomSheet(
       context: context,

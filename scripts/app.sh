@@ -104,7 +104,9 @@ validateCoverage() {
 
 # Flutter way to exclude files from coverage
 excludeCoverage() {
-  lcov --remove coverage/lcov.info 'lib/l10n/**' -o coverage/lcov.info
+  lcov --remove coverage/lcov.info 'lib/l10n/de.dart' -o coverage/lcov.info
+  lcov --remove coverage/lcov.info 'lib/l10n/flash_cards/de.dart' -o coverage/lcov.info
+#  lcov --remove coverage/lcov.info 'lib/util/l10n/**' -o coverage/lcov.info
 }
 
 aliases=(

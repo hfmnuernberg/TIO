@@ -5,67 +5,7 @@ import 'package:tiomusic/pages/projects_page/projects_page.dart';
 import '../../utils/action_utils.dart';
 import '../../utils/render_utils.dart';
 import '../../utils/test_context.dart';
-
-extension WidgetTesterPumpExtension on WidgetTester {
-  Future<void> createProjectWithoutTool(String title) async {
-    await tapAndSettle(find.byTooltip('Add new project'));
-    await enterTextAndSettle(find.bySemanticsLabel('New project'), title);
-    await tapAndSettle(find.bySemanticsLabel('Submit'));
-  }
-
-  Future<void> createAndOpenTool(String tool) async {
-    await tapAndSettle(find.bySemanticsLabel(tool));
-    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), '$tool 1');
-    await tapAndSettle(find.bySemanticsLabel('Submit'));
-  }
-
-  Future<void> createAndOpenQuickTool(String tool) async {
-    await tapAndSettle(find.bySemanticsLabel(tool));
-  }
-
-  Future<void> completeInitialTutorial() async {
-    await waitForTutorialNext();
-    await tapAndSettle(find.bySemanticsLabel('Next'));
-    await tapAndSettle(find.bySemanticsLabel('Next'));
-    await tapAndSettle(find.bySemanticsLabel('Next'));
-    await tapAndSettle(find.bySemanticsLabel('Next'));
-  }
-
-  Future<void> completeParentToolTutorial() async {
-    await waitForTutorialNext();
-    await tapAndSettle(find.bySemanticsLabel('Next'));
-    await tapAndSettle(find.bySemanticsLabel('Next'));
-  }
-
-  Future<void> completeTunerTutorial() async {
-    await waitForTutorialNext();
-    await tapAndSettle(find.bySemanticsLabel('Next'));
-    await tapAndSettle(find.bySemanticsLabel('Next'));
-  }
-
-  Future<void> completeTextTutorial() async {
-    await waitForTutorialNext();
-    await tapAndSettle(find.bySemanticsLabel('Next'));
-    await tapAndSettle(find.bySemanticsLabel('Next'));
-  }
-
-  Future<void> goBackAndSaveQuickToolInNewProject() async {
-    await tapAndSettle(find.bySemanticsLabel('Back'));
-    await tapAndSettle(find.bySemanticsLabel('Yes'));
-    await tapAndSettle(find.bySemanticsLabel('Save in new project'));
-    await tapAndSettle(find.bySemanticsLabel('Submit'));
-  }
-
-  Future<void> waitForTutorialNext({Duration timeout = const Duration(seconds: 5)}) async {
-    final next = find.bySemanticsLabel('Next');
-    const step = Duration(milliseconds: 100);
-    var waited = Duration.zero;
-    while (next.evaluate().isEmpty && waited < timeout) {
-      await pump(step);
-      waited += step;
-    }
-  }
-}
+import 'tutorials_utils.dart';
 
 void main() {
   late TestContext context;
@@ -190,5 +130,48 @@ void main() {
     await tester.tapAndSettle(find.bySemanticsLabel('Next'));
     await tester.waitForTutorialNext();
     expect(find.bySemanticsLabel(RegExp('Tap here to combine your Tuner with a')), findsOneWidget);
+  });
+
+  testWidgets('resets projects tutorial when reset tutorial using projects menu', (tester) async {
+    await tester.renderScaffold(ProjectsPage(), context.providers);
+
+    await tester.waitForTutorialNext();
+    expect(find.bySemanticsLabel(RegExp('Welcome! You can use')), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
+    expect(find.bySemanticsLabel(RegExp('Welcome! You can use')), findsNothing);
+
+    await tester.tapAndSettle(find.byTooltip('Projects menu'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Show tutorial'));
+
+    await tester.waitForTutorialNext();
+    expect(find.bySemanticsLabel(RegExp('Welcome! You can use')), findsOneWidget);
+  });
+
+  testWidgets('resets other tutorials when reset tutorial using projects menu', (tester) async {
+    await tester.renderScaffold(ProjectsPage(), context.providers);
+    await tester.completeInitialTutorial();
+    await tester.createProjectWithoutTool('Project 1');
+
+    await tester.createAndOpenTool('Text');
+    await tester.waitForTutorialNext();
+    expect(find.bySemanticsLabel(RegExp('Tap here to copy your tool')), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
+    expect(find.bySemanticsLabel(RegExp('Tap here to copy your tool')), findsNothing);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+    await tester.tapAndSettle(find.byTooltip('Projects menu'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Show tutorial'));
+    await tester.waitForTutorialNext();
+    await tester.completeInitialTutorial();
+    await tester.minimizeTipOfTheDay();
+    await tester.tapAndSettle(find.bySemanticsLabel('Project 1'));
+    await tester.completeProjectTutorial();
+    await tester.tapAndSettle(find.bySemanticsLabel('Text 1'));
+
+    await tester.waitForTutorialNext();
+    expect(find.bySemanticsLabel(RegExp('Tap here to copy your tool')), findsOneWidget);
   });
 }

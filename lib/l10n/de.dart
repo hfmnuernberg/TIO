@@ -329,8 +329,9 @@ class German extends AppLocalizations with GermanFlashCards {
   String get toolGoToPrevOfSameType => 'Gehe zu vorherigem Tool des gleichen Typs';
   String get toolQuickTool => 'Tool';
   String get toolQuickToolSave => 'Tool speichern?';
-  String get toolSave => 'Speichern in ...';
+  String get toolSave => 'Tool speichern';
   String get toolSaveCopy => 'Kopie speichern in ...';
+  String get toolSaveIn => 'Speichern in ...';
   String get toolSaveInNewProject => 'In neuem Projekt speichern';
   String get toolTitleCopy => 'Kopie';
   String get toolTutorialEditTitle => 'Tippe hier, um den Titel deines Tools zu bearbeiten.';

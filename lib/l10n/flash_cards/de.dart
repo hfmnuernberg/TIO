@@ -1,14 +1,14 @@
 // overriding keys do not change something; ignored because soft warning
 // ignore_for_file: annotate_overrides
 
-import 'package:tiomusic/domain/flash_cards/flash_cards.dart';
+import 'package:tiomusic/domain/flash_cards/category.dart';
 import 'package:tiomusic/l10n/flash_cards/flash_cards_localization.dart';
 
 mixin GermanFlashCards on Object implements FlashCardsLocalization {
   String get categoryCulture => 'Kultur';
   String get categoryJournaling => 'Dokumentation';
   String get categoryMixUp => 'Abwechslung';
-  String get categoryPracticingTactics => 'Übetaktik';
+  String get categoryPracticing => 'Übetaktik';
   String get categoryRelaxation => 'Entspannung';
   String get categorySelfCare => 'Alltagshygiene';
   String get categoryTeam => 'Team';
@@ -22,8 +22,8 @@ mixin GermanFlashCards on Object implements FlashCardsLocalization {
         return categoryJournaling;
       case FlashCardCategory.mixUp:
         return categoryMixUp;
-      case FlashCardCategory.practicingTactics:
-        return categoryPracticingTactics;
+      case FlashCardCategory.practicing:
+        return categoryPracticing;
       case FlashCardCategory.relaxation:
         return categoryRelaxation;
       case FlashCardCategory.selfCare:
@@ -186,122 +186,120 @@ mixin GermanFlashCards on Object implements FlashCardsLocalization {
       'finde zu jedem Abschnitt deines Stück mindestens ein passendes Adjektiv und schreibe es in die Noten.';
   String get descriptionMixUp066 =>
       'finde zu jedem Abschnitt deines Stück mindestens ein passendes Bild (Sonnenaufgang, Wald, perlendes Mineralwasser etc.). Wenn du magst, suche dir passende Bilder im Internet heraus.';
-  String get descriptionPracticingTactics001 =>
+  String get descriptionPracticing001 =>
       'übe abwechslungsreich: Notiere alle Übestrategien, die du spontan machst und verwende sie auch für andere Stücke.';
-  String get descriptionPracticingTactics002 => 'spiele zu einer Aufnahme.';
-  String get descriptionPracticingTactics003 =>
+  String get descriptionPracticing002 => 'spiele zu einer Aufnahme.';
+  String get descriptionPracticing003 =>
       'spiele deine Stimme auf dem Klavier. Wenn dein Instrument das Klavier ist, singe.';
-  String get descriptionPracticingTactics004 =>
+  String get descriptionPracticing004 =>
       'spiele mit Flatterzunge, beiße auf einen Korken (Gesang), oder überlege dir für dein Instrument etwas ähnliches.';
-  String get descriptionPracticingTactics005 =>
+  String get descriptionPracticing005 =>
       'singe eine Phrase. Wenn möglich und/oder gewünscht, nimm ein (digitales) Klavier zur Hilfe.';
-  String get descriptionPracticingTactics006 => 'singe dein Stück und oktaviere gegebenenfalls.';
-  String get descriptionPracticingTactics007 =>
+  String get descriptionPracticing006 => 'singe dein Stück und oktaviere gegebenenfalls.';
+  String get descriptionPracticing007 =>
       'suche dir die herausforderndste Stelle des Stückes heraus und lerne sie zu singen. Für Sänger: Lerne die Begleitung zu singen, singe deine Stelle mental oder solmisiere sie.';
-  String get descriptionPracticingTactics008 => 'pfeife dein Stück.';
-  String get descriptionPracticingTactics009 => 'greife eine Stelle stumm oder flüstere die Stelle (Gesang).';
-  String get descriptionPracticingTactics010 =>
+  String get descriptionPracticing008 => 'pfeife dein Stück.';
+  String get descriptionPracticing009 => 'greife eine Stelle stumm oder flüstere die Stelle (Gesang).';
+  String get descriptionPracticing010 =>
       'spiele eine Stelle in verschiedenen Tempi - mal sehr langsam, mal sehr schnell.';
-  String get descriptionPracticingTactics011 => 'transponiere eine Stelle in drei weitere Tonarten.';
-  String get descriptionPracticingTactics012 => 'übe eine herausfordernde Stelle im Loop.';
-  String get descriptionPracticingTactics013 => 'fange mitten in einer Stelle (an einem ungewöhnlichen Ort) an.';
-  String get descriptionPracticingTactics014 => 'spiele extrem leise oder übertrieben laut.';
-  String get descriptionPracticingTactics015 => 'baue in dein Stück ungewöhnliche Akzente ein.';
-  String get descriptionPracticingTactics016 =>
+  String get descriptionPracticing011 => 'transponiere eine Stelle in drei weitere Tonarten.';
+  String get descriptionPracticing012 => 'übe eine herausfordernde Stelle im Loop.';
+  String get descriptionPracticing013 => 'fange mitten in einer Stelle (an einem ungewöhnlichen Ort) an.';
+  String get descriptionPracticing014 => 'spiele extrem leise oder übertrieben laut.';
+  String get descriptionPracticing015 => 'baue in dein Stück ungewöhnliche Akzente ein.';
+  String get descriptionPracticing016 =>
       'spiele auf einem Bein, in der Hocke oder auf einem Balanceboard. Nächstes Level: mit geschlossenen Augen.';
-  String get descriptionPracticingTactics017 => 'übertreibe die vorgegebene Artikulation.';
-  String get descriptionPracticingTactics018 =>
+  String get descriptionPracticing017 => 'übertreibe die vorgegebene Artikulation.';
+  String get descriptionPracticing018 =>
       'springe mitten in eine Aufnahme deines Stückes und höre nur 2 Sekunden lang zu. An dieser Stelle, bestenfalls mitten in der Phrase, steige ein und spiele mit.';
-  String get descriptionPracticingTactics019 =>
+  String get descriptionPracticing019 =>
       'spiele die Stelle in einem suboptimalen Zustand: Uneingespielt, im Mittagstief etc. Glänze gleich beim ersten Mal!';
-  String get descriptionPracticingTactics020 => 'erweitere den Ambitus (Tonumfang) einer Stelle.';
-  String get descriptionPracticingTactics021 => 'oktaviere bestimmte Töne einer Stelle.';
-  String get descriptionPracticingTactics022 =>
+  String get descriptionPracticing020 => 'erweitere den Ambitus (Tonumfang) einer Stelle.';
+  String get descriptionPracticing021 => 'oktaviere bestimmte Töne einer Stelle.';
+  String get descriptionPracticing022 =>
       'nimm dich 10 Sekunden lang auf und höre die Aufnahme sofort an. Womit bist du zufrieden, was würdest du verbessern?';
-  String get descriptionPracticingTactics023 => 'welche Übung würdest du deinem*r besten Freund*in empfehlen?';
-  String get descriptionPracticingTactics024 =>
+  String get descriptionPracticing023 => 'welche Übung würdest du deinem*r besten Freund*in empfehlen?';
+  String get descriptionPracticing024 =>
       'lehne dich an eine Wand oder einen Türrahmen. Spiele und beobachte deine Schultern und deinen Kopf, die die Wand berühren sollten. Wenn dir Spannungen auffallen, lass sie los.';
-  String get descriptionPracticingTactics025 =>
+  String get descriptionPracticing025 =>
       'spiele eine Stelle, die du noch nicht kannst, vor dem Spiegel. Was passiert an der Stelle, an der du stolperst?';
-  String get descriptionPracticingTactics026 =>
+  String get descriptionPracticing026 =>
       'spiele einen Ton zu verschiedenen Akkorden am Klavier und spüre, wie er sich anfühlt, wenn er stimmt.';
-  String get descriptionPracticingTactics027 =>
+  String get descriptionPracticing027 =>
       'nimm eine Stelle auf, die du noch nicht kannst, und höre sie dir in halber Geschwindigkeit an. Was fällt dir auf?';
-  String get descriptionPracticingTactics028 =>
+  String get descriptionPracticing028 =>
       'spiele gaaanz langsam, sehr bewusst sauber und entspannt. Spiele so langsam, dass du immer weißt, was du tun musst sowie alles hörst und spürst (wahrnehmen kannst).';
-  String get descriptionPracticingTactics029 =>
+  String get descriptionPracticing029 =>
       'greife die Übung oder die Stelle erst stumm und bewusst, bevor du sie spielst.';
-  String get descriptionPracticingTactics030 => 'übe vor allem herausfordernde Griffverbindungen.';
-  String get descriptionPracticingTactics031 =>
+  String get descriptionPracticing030 => 'übe vor allem herausfordernde Griffverbindungen.';
+  String get descriptionPracticing031 =>
       'achte bei eingeschliffenen Technikübungen auf die Intonation, den Klang und die Phrasierung.';
-  String get descriptionPracticingTactics032 =>
+  String get descriptionPracticing032 =>
       'nimm dir eine Tongruppe und denke sie mental durch. Spiele sie dann ganz langsam und sauber sowie anschließend maximal schnell.';
-  String get descriptionPracticingTactics033 =>
+  String get descriptionPracticing033 =>
       'übe differentiell. Beispiel Flöte: Greife ein Halbloch zu groß, zu klein, zu schief... Setze einen Finger zu weit weg und zu nah dran. Pendle dich über Unterschiede ein.';
-  String get descriptionPracticingTactics034 =>
+  String get descriptionPracticing034 =>
       'teile dein Stück in Charakterabschnitte ein und notiere zu jedem eine Emotion und ihre Intensität.';
-  String get descriptionPracticingTactics035 =>
+  String get descriptionPracticing035 =>
       'nimm dir einen kleinen Abschnitt auf und versuche, eine Emotion zu verkörpern. Höre dir die Aufnahme an, was irritiert dich?';
-  String get descriptionPracticingTactics036 =>
+  String get descriptionPracticing036 =>
       'fühle dich in eine Situation hinein, die du mit deinem Stück assoziierst. Fühle dich beim Spielen genauso, wie du dir die Situation vorstellst.';
-  String get descriptionPracticingTactics037 => 'spiele mit Übertreibung: Maximale dynamische Unterschiede.';
-  String get descriptionPracticingTactics038 => 'spiele mit Übertreibung: Starke Unterschiede in der Artikulation.';
-  String get descriptionPracticingTactics039 =>
+  String get descriptionPracticing037 => 'spiele mit Übertreibung: Maximale dynamische Unterschiede.';
+  String get descriptionPracticing038 => 'spiele mit Übertreibung: Starke Unterschiede in der Artikulation.';
+  String get descriptionPracticing039 =>
       'spiele mit Übertreibung: Maximale Agogik (freie künstlerische Tempoveränderungen).';
-  String get descriptionPracticingTactics040 => 'spiele mit Übertreibung: Maximale klangliche Unterschiede.';
-  String get descriptionPracticingTactics041 => 'bewege dich zu einer Aufnahme deines Stückes.';
-  String get descriptionPracticingTactics042 =>
+  String get descriptionPracticing040 => 'spiele mit Übertreibung: Maximale klangliche Unterschiede.';
+  String get descriptionPracticing041 => 'bewege dich zu einer Aufnahme deines Stückes.';
+  String get descriptionPracticing042 =>
       'stell dir ohne Instrument vor, dein Stück zu spielen oder zu singen und verändere deine Mimik passend dazu vor dem Spiegel.';
-  String get descriptionPracticingTactics043 =>
+  String get descriptionPracticing043 =>
       'nimm dich mit dem Handy oder einem Aufnahmegerät auf. Höre dir die Aufnahme sofort an und markiere in den Noten, welche Stellen noch nicht so gut gelungen sind. Übe anschließend genau diese Stellen.';
-  String get descriptionPracticingTactics044 =>
+  String get descriptionPracticing044 =>
       'nimm dich mit dem Handy oder einem Aufnahmegerät (inkl. Video) auf. Schau dir die Aufnahme sofort an und notiere dir, welche Stellen du überzeugend findest und welche noch nicht. Übe anschließend genau diese letzteren Stellen.';
-  String get descriptionPracticingTactics045 =>
-      'gehe dein Stück mental durch. Welche Stellen sind noch nicht so präsent?';
-  String get descriptionPracticingTactics046 =>
+  String get descriptionPracticing045 => 'gehe dein Stück mental durch. Welche Stellen sind noch nicht so präsent?';
+  String get descriptionPracticing046 =>
       'singe dein Stück auswendig auf Notennamen durch. Welche Stellen laufen noch nicht so flüssig?';
-  String get descriptionPracticingTactics047 => 'mache immer dann eine Pause, wenn es gerade sehr gut läuft.';
-  String get descriptionPracticingTactics048 =>
+  String get descriptionPracticing047 => 'mache immer dann eine Pause, wenn es gerade sehr gut läuft.';
+  String get descriptionPracticing048 =>
       'teile dein Stück in Phrasen ein und übe von der herausfordernsten zur leichtesten.';
-  String get descriptionPracticingTactics049 => 'übe 5 Minuten und mache dann 5 Minuten Pause.';
-  String get descriptionPracticingTactics050 => 'spiele körperlich so entspannt, wie es dir möglich ist.';
-  String get descriptionPracticingTactics051 =>
+  String get descriptionPracticing049 => 'übe 5 Minuten und mache dann 5 Minuten Pause.';
+  String get descriptionPracticing050 => 'spiele körperlich so entspannt, wie es dir möglich ist.';
+  String get descriptionPracticing051 =>
       'nimm knifflige Stellen in Slow Motion auf und analysiere, was noch nicht so gut läuft (oder schaue dir ein Video in normaler Geschwindigkeit verlangsamt an).';
-  String get descriptionPracticingTactics052 => 'stell dir vor, wie du einen Takt langsam spielst.';
-  String get descriptionPracticingTactics053 => 'höre genau dann auf, wenn es am meisten Spaß macht.';
-  String get descriptionPracticingTactics054 =>
+  String get descriptionPracticing052 => 'stell dir vor, wie du einen Takt langsam spielst.';
+  String get descriptionPracticing053 => 'höre genau dann auf, wenn es am meisten Spaß macht.';
+  String get descriptionPracticing054 =>
       'höre kurze Takte deiner Lieblingsaufnahme an und spiele sie dann direkt nach.';
-  String get descriptionPracticingTactics055 => 'erlaube dir, Fehler zu machen.';
-  String get descriptionPracticingTactics056 =>
+  String get descriptionPracticing055 => 'erlaube dir, Fehler zu machen.';
+  String get descriptionPracticing056 =>
       'notiere dir zu einer Stelle, die noch nicht ganz flüssig läuft, Lösungsstrategien und probiere sie aus.';
-  String get descriptionPracticingTactics057 =>
+  String get descriptionPracticing057 =>
       'übe die herausforderndste Phrase des Stückes genau 5 Mal, und zwar in einem Tempo, in dem du alles richtig spielen kannst.';
-  String get descriptionPracticingTactics058 =>
+  String get descriptionPracticing058 =>
       'spiele dein Stück auf einem Ton durch (immer die gleiche Tonhöhe). Achte auf die Phrasierung.';
-  String get descriptionPracticingTactics059 =>
+  String get descriptionPracticing059 =>
       'übe in 15-Minuten-Einheiten (mit Stoppuhr) und mache nach jeder Einheit 5 min Pause.';
-  String get descriptionPracticingTactics060 => 'stoppe die Zeit, wie lange du heute insgesamt übst.';
-  String get descriptionPracticingTactics061 =>
+  String get descriptionPracticing060 => 'stoppe die Zeit, wie lange du heute insgesamt übst.';
+  String get descriptionPracticing061 =>
       'spiele dein Stück einfach mal auswendig und schaue, wie viel schon möglich ist.';
-  String get descriptionPracticingTactics062 => 'spiele bewusst schnelle Stellen sehr langsam.';
-  String get descriptionPracticingTactics063 =>
+  String get descriptionPracticing062 => 'spiele bewusst schnelle Stellen sehr langsam.';
+  String get descriptionPracticing063 =>
       'rotiere mit deiner Aufmerksamkeit bei jedem Durchgang der Phrase auf einen anderen Aspekt (Intonation, Klang, Rhythmus etc.).';
-  String get descriptionPracticingTactics064 =>
+  String get descriptionPracticing064 =>
       'übe eine Phrase vom Ende her: Beginne zum Beispiel mit dem letzten Takt und nimm schrittweise weitere Takte hinzu.';
-  String get descriptionPracticingTactics065 => 'übe eine Phrase rückwärts.';
-  String get descriptionPracticingTactics066 =>
+  String get descriptionPracticing065 => 'übe eine Phrase rückwärts.';
+  String get descriptionPracticing066 =>
       'übe am Produkt: Was kannst du genau jetzt verbessern, um das Ergebnis sofort auf ein anderes Level zu heben?';
-  String get descriptionPracticingTactics067 =>
+  String get descriptionPracticing067 =>
       'spiele eine Phrase einmal in normaler Lautstärke, einmal sehr leise und einmal sehr laut. Wiederhole die Version, die dich am meisten herausgefordert hat, noch vier Mal.';
-  String get descriptionPracticingTactics068 =>
+  String get descriptionPracticing068 =>
       'lerne den Anfang und das Ende von dem Stück, welches du gerade übst, auswendig.';
-  String get descriptionPracticingTactics069 =>
-      'fange mit dem Stück an, welches du für einen baldigen Auftritt brauchst.';
-  String get descriptionPracticingTactics070 =>
+  String get descriptionPracticing069 => 'fange mit dem Stück an, welches du für einen baldigen Auftritt brauchst.';
+  String get descriptionPracticing070 =>
       'variiere den Rhythmus deiner Phrase mindestens drei Mal (zum Beispiel punktiert, triolisch, geswingt).';
-  String get descriptionPracticingTactics071 =>
+  String get descriptionPracticing071 =>
       'suche eine herausfordernde Stelle und steigere noch einmal bewusst den Schwierigkeitsgrad.';
-  String get descriptionPracticingTactics072 => 'lerne die herausforderndste Phrase deines Stückes auswendig.';
+  String get descriptionPracticing072 => 'lerne die herausforderndste Phrase deines Stückes auswendig.';
   String get descriptionRelaxation001 => 'atme vor dem Betreten des Überaums drei Mal so tief aus, wie du kannst.';
   String get descriptionRelaxation002 =>
       'nimm dir alle 10 Minuten Zeit für eine kurze Pause, in der du einen Schluck Wasser trinkst und etwas um dich herum entdeckst, das du wunderschön findest.';

@@ -21,6 +21,7 @@ import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
+import 'package:tiomusic/util/tool_navigation_utils.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
@@ -499,7 +500,7 @@ class _PianoPageState extends State<PianoPage> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: widget.isQuickTool
-                              ? Text(l10n.toolSave, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
+                              ? Text(l10n.toolSaveIn, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint))
                               : Text(l10n.toolSaveCopy, style: TextStyle(fontSize: 18, color: ColorTheme.surfaceTint)),
                         ),
                       ),
