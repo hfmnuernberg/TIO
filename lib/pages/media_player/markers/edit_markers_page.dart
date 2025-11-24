@@ -94,14 +94,16 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     player.markers.positions = _markerPositions;
   }
 
+  void _updateUiForPosition(double position) {
+    final clamped = position.clamp(0.0, 1.0);
+    _sliderValue = clamped;
+    _positionDuration = player.fileDuration * clamped;
+    _waveformVisualizer = WaveformVisualizer(clamped, block.rangeStart, block.rangeEnd, widget.rmsValues);
+  }
+
   void _handlePlaybackPositionChange(double position) {
     if (!mounted) return;
-
-    setState(() {
-      _sliderValue = position.clamp(0.0, 1.0);
-      _positionDuration = player.fileDuration * _sliderValue;
-      _waveformVisualizer = WaveformVisualizer(_sliderValue, block.rangeStart, block.rangeEnd, widget.rmsValues);
-    });
+    setState(() => _updateUiForPosition(position));
   }
 
   void _removeSelectedMarker() {
@@ -122,17 +124,24 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   Future<void> _updatePositionFromWave(double tapX) async {
     final double snappedRelativePosition = _calculateSnappedRelativePosition(tapX);
+    final double? markerPosition = _findMarkerNear(snappedRelativePosition);
+
+    await _seekToPosition(snappedRelativePosition, updateSelectedMarker: true, selectedMarkerPosition: markerPosition);
+  }
+
+  Future<void> _seekToPosition(
+    double position, {
+    bool updateSelectedMarker = false,
+    double? selectedMarkerPosition,
+  }) async {
+    final clamped = position.clamp(0.0, 1.0);
 
     setState(() {
-      _sliderValue = snappedRelativePosition;
-      _waveformVisualizer = WaveformVisualizer(_sliderValue, block.rangeStart, block.rangeEnd, widget.rmsValues);
-      _positionDuration = player.fileDuration * _sliderValue;
+      _updateUiForPosition(clamped);
+      if (updateSelectedMarker) _selectedMarkerPosition = selectedMarkerPosition;
     });
 
-    await player.setPlaybackPosition(_sliderValue.clamp(0, 1));
-
-    _selectedMarkerPosition = _findMarkerNear(snappedRelativePosition);
-    setState(() {});
+    await player.setPlaybackPosition(clamped);
   }
 
   Future<void> _togglePlaying() async {
@@ -214,18 +223,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                   waveFormHeight: _waveFormHeight,
                   markerPositions: _markerPositions,
                   selectedMarkerPosition: _selectedMarkerPosition,
-                  onTap: (position) {
-                    setState(() {
-                      _sliderValue = position;
-                      _waveformVisualizer = WaveformVisualizer(
-                        _sliderValue,
-                        block.rangeStart,
-                        block.rangeEnd,
-                        widget.rmsValues,
-                      );
-                      _selectedMarkerPosition = position;
-                    });
-                  },
+                  onTap: (position) =>
+                      _seekToPosition(position, updateSelectedMarker: true, selectedMarkerPosition: position),
                 ),
               ],
             ),
@@ -249,16 +248,9 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                 setState(() {});
               }
             },
-            onChanged: (newValue) {
-              setState(() {
-                _sliderValue = newValue;
-                _waveformVisualizer = WaveformVisualizer(newValue, block.rangeStart, block.rangeEnd, widget.rmsValues);
-                _positionDuration = player.fileDuration * _sliderValue;
-              });
-            },
+            onChanged: (newValue) => setState(() => _updateUiForPosition(newValue)),
             onChangeEnd: (newValue) async {
-              _sliderValue = newValue;
-              await player.setPlaybackPosition(_sliderValue.clamp(0, 1));
+              await _seekToPosition(newValue);
               if (_wasPlayingBeforeSliderDrag) {
                 await player.start();
                 if (!mounted) return;
