@@ -29,7 +29,7 @@ import 'package:tiomusic/util/tool_navigation_utils.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
-import 'package:tiomusic/widgets/flash_card/tip_of_the_day.dart';
+import 'package:tiomusic/widgets/flash_cards/tip_of_the_day.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 

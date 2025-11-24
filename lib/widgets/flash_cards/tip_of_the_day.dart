@@ -8,7 +8,7 @@ import 'package:tiomusic/pages/flash_cards/flash_cards_page.dart';
 import 'package:tiomusic/services/flash_cards.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/flash_card/flash_card.dart';
+import 'package:tiomusic/widgets/flash_cards/flash_card.dart';
 
 class TipOfTheDay extends StatefulWidget {
   const TipOfTheDay({super.key});

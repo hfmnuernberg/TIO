@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/domain/flash_cards/category.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/widgets/flash_card/category_filter_button.dart';
+import 'package:tiomusic/widgets/flash_cards/category_filter_button.dart';
 import 'package:tiomusic/services/flash_cards.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/widgets/flash_card/flash_card.dart';
+import 'package:tiomusic/widgets/flash_cards/flash_card.dart';
 
 class FlashCardsPage extends StatefulWidget {
   const FlashCardsPage({super.key});
