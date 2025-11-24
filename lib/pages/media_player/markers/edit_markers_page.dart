@@ -256,8 +256,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                   padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
                   child: GestureDetector(
                     onTapDown: (details) => _updatePositionFromWave(details.localPosition.dx),
-                    onHorizontalDragUpdate: (details) => _updatePositionFromWave(details.localPosition.dx),
-
                     onScaleStart: (details) {
                       if (details.pointerCount < 2) return;
                       _initialViewStart = _viewStart;
@@ -300,7 +298,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                         );
                       });
                     },
-
                     child: SizedBox(
                       width: double.infinity,
                       height: _waveFormHeight,
