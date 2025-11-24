@@ -21,9 +21,7 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
   void initState() {
     super.initState();
     final initialCategory = widget.initialCategory;
-    final initialIndex = initialCategory == null
-        ? 0
-        : FlashCardCategory.values.indexOf(initialCategory) + 1;
+    final initialIndex = initialCategory == null ? 0 : FlashCardCategory.values.indexOf(initialCategory) + 1;
 
     currentIndex = initialIndex < 0 ? 0 : initialIndex;
     controller = FixedExtentScrollController(initialItem: currentIndex);

@@ -5,8 +5,15 @@ class ModalBottomSheet extends StatelessWidget {
   final String label;
   final List<Widget> titleChildren;
   final List<Widget> contentChildren;
+  final double? heightFactor;
 
-  const ModalBottomSheet({super.key, required this.label, required this.titleChildren, required this.contentChildren});
+  const ModalBottomSheet({
+    super.key,
+    required this.label,
+    required this.titleChildren,
+    required this.contentChildren,
+    this.heightFactor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +21,7 @@ class ModalBottomSheet extends StatelessWidget {
       label: label,
       container: true,
       child: FractionallySizedBox(
-        heightFactor: 0.75,
+        heightFactor: heightFactor ?? 0.75,
         child: Column(
           children: [
             DecoratedBox(
