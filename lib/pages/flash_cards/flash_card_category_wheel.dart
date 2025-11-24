@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/domain/flash_cards/category.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class FlashCardCategoryWheel extends StatefulWidget {
@@ -13,27 +14,29 @@ class FlashCardCategoryWheel extends StatefulWidget {
 }
 
 class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
-  late final FixedExtentScrollController _controller;
-  late int _currentIndex;
+  late final FixedExtentScrollController controller;
+  late int currentIndex;
 
   @override
   void initState() {
     super.initState();
     final initialCategory = widget.initialCategory;
-    final initialIndex =
-    initialCategory == null ? 0 : FlashCardCategory.values.indexOf(initialCategory) + 1;
-    _currentIndex = initialIndex < 0 ? 0 : initialIndex;
-    _controller = FixedExtentScrollController(initialItem: _currentIndex);
+    final initialIndex = initialCategory == null
+        ? 0
+        : FlashCardCategory.values.indexOf(initialCategory) + 1;
+
+    currentIndex = initialIndex < 0 ? 0 : initialIndex;
+    controller = FixedExtentScrollController(initialItem: currentIndex);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    controller.dispose();
     super.dispose();
   }
 
   void _handleSelectedIndex(int index) {
-    setState(() => _currentIndex = index);
+    setState(() => currentIndex = index);
 
     if (index == 0) {
       widget.onSelect(null);
@@ -44,10 +47,8 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
   }
 
   String _labelForCategory(FlashCardCategory? category) {
-    if (category == null) return 'All cards';
-    final name = category.name;
-    if (name.isEmpty) return '';
-    return name[0].toUpperCase() + name.substring(1);
+    if (category == null) return context.l10n.flashCardsAllCategories;
+    return context.l10n.categoryLabel(category);
   }
 
   @override
@@ -55,7 +56,7 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
     return DecoratedBox(
       decoration: BoxDecoration(color: ColorTheme.surface, borderRadius: BorderRadius.circular(16)),
       child: ListWheelScrollView.useDelegate(
-        controller: _controller,
+        controller: controller,
         itemExtent: 40,
         physics: const FixedExtentScrollPhysics(),
         onSelectedItemChanged: _handleSelectedIndex,
@@ -63,15 +64,11 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
           childCount: FlashCardCategory.values.length + 1,
           builder: (context, index) {
             final category = index == 0 ? null : FlashCardCategory.values[index - 1];
-            final isSelected = index == _currentIndex;
+            final isSelected = index == currentIndex;
             return GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                _controller.animateToItem(
-                  index,
-                  duration: const Duration(milliseconds: 250),
-                  curve: Curves.easeOut,
-                );
+                controller.animateToItem(index, duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
                 _handleSelectedIndex(index);
               },
               child: Center(
@@ -79,8 +76,8 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
                   _labelForCategory(category),
                   style: TextStyle(
                     color: isSelected ? ColorTheme.primary : ColorTheme.primary.withValues(alpha: 0.5),
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                    fontSize: isSelected ? 16 : 14,
+                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
+                    fontSize: isSelected ? 18 : 14,
                   ),
                 ),
               ),

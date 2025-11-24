@@ -5,6 +5,7 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/pages/flash_cards/flash_card_category_wheel.dart';
 import 'package:tiomusic/services/flash_cards.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/flash_card/flash_card.dart';
 
 class FlashCardsPage extends StatefulWidget {
@@ -15,15 +16,15 @@ class FlashCardsPage extends StatefulWidget {
 }
 
 class _FlashCardsPageState extends State<FlashCardsPage> {
-  FlashCardCategory? _selectedCategory;
+  FlashCardCategory? selectedCategory;
 
-  void _openCategoryFilter() async {
+  void openCategoryFilter() async {
     final result = await showModalBottomSheet<FlashCardCategory?>(
       context: context,
-      builder: (context) => _CategoryFilterBottomSheet(initialCategory: _selectedCategory),
+      builder: (context) => _CategoryFilterBottomSheet(initialCategory: selectedCategory),
     );
 
-    setState(() => _selectedCategory = result);
+    setState(() => selectedCategory = result);
   }
 
   @override
@@ -46,21 +47,22 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: TextButton.icon(
-                  onPressed: _openCategoryFilter,
+                  onPressed: openCategoryFilter,
                   icon: const Icon(Icons.filter_list),
-                  label: const Text('Filter category'),
+                  label: Text(context.l10n.flashCardsSelectCategory),
                   style: TextButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
+                    backgroundColor: ColorTheme.onPrimary,
+                    foregroundColor: ColorTheme.primary,
+                    iconColor: ColorTheme.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
-                      side: const BorderSide(),
+                      side: const BorderSide(color: ColorTheme.primary),
                     ),
                   ),
                 ),
               ),
             ),
-            Expanded(child: _FlashCardsList(categoryFilter: _selectedCategory)),
+            Expanded(child: _FlashCardsList(categoryFilter: selectedCategory)),
           ],
         ),
       ),
@@ -78,19 +80,19 @@ class _CategoryFilterBottomSheet extends StatefulWidget {
 }
 
 class _CategoryFilterBottomSheetState extends State<_CategoryFilterBottomSheet> {
-  FlashCardCategory? _current;
+  FlashCardCategory? current;
 
   @override
   void initState() {
     super.initState();
-    _current = widget.initialCategory;
+    current = widget.initialCategory;
   }
 
-  void _handleSelect(FlashCardCategory? category) => setState(() => _current = category);
+  void handleSelect(FlashCardCategory? category) => setState(() => current = category);
 
-  void _apply() => Navigator.of(context).pop(_current);
+  void apply() => Navigator.of(context).pop(current);
 
-  void _clear() => Navigator.of(context).pop();
+  void clear() => Navigator.of(context).pop();
 
   @override
   Widget build(BuildContext context) {
@@ -100,21 +102,13 @@ class _CategoryFilterBottomSheetState extends State<_CategoryFilterBottomSheet> 
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Select category',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: ColorTheme.primary),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 180,
-              child: FlashCardCategoryWheel(initialCategory: _current, onSelect: _handleSelect),
-            ),
+            SizedBox(height: 180, child: FlashCardCategoryWheel(initialCategory: current, onSelect: handleSelect)),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                TextButton(onPressed: _clear, child: const Text('Clear')),
-                ElevatedButton(onPressed: _apply, child: const Text('Apply')),
+                TIOFlatButton(onPressed: clear, text: context.l10n.commonClear),
+                TIOFlatButton(onPressed: apply, text: context.l10n.commonApply, boldText: true),
               ],
             ),
           ],

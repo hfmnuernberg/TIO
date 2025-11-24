@@ -416,5 +416,7 @@ mixin GermanFlashCards on Object implements FlashCardsLocalization {
 
   String get flashCardTitle => 'Wenn du heute übst,';
 
+  String get flashCardsAllCategories => 'Alle Kategorien';
   String get flashCardsPageTitle => 'Übungstipps';
+  String get flashCardsSelectCategory => 'Kategorie wählen';
 }

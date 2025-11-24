@@ -399,5 +399,7 @@ mixin EnglishFlashCards on Object implements FlashCardsLocalization {
 
   String get flashCardTitle => 'When you practice today,';
 
+  String get flashCardsAllCategories => 'All categories';
   String get flashCardsPageTitle => 'Practice tips';
+  String get flashCardsSelectCategory => 'Select category';
 }
