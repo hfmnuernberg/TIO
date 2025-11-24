@@ -16,6 +16,8 @@ import 'package:tiomusic_widgetbook/widgets/input/number_input_and_slider_int.da
     as _tiomusic_widgetbook_widgets_input_number_input_and_slider_int;
 import 'package:tiomusic_widgetbook/widgets/piano/keyboard.dart'
     as _tiomusic_widgetbook_widgets_piano_keyboard;
+import 'package:tiomusic_widgetbook/widgets/waveform/waveform.dart'
+    as _tiomusic_widgetbook_widgets_waveform_waveform;
 import 'package:widgetbook/widgetbook.dart' as _widgetbook;
 
 final directories = <_widgetbook.WidgetbookNode>[
@@ -62,6 +64,21 @@ final directories = <_widgetbook.WidgetbookNode>[
               _widgetbook.WidgetbookUseCase(
                 name: 'Keyboard',
                 builder: _tiomusic_widgetbook_widgets_piano_keyboard.keyboard,
+              ),
+            ],
+          ),
+        ],
+      ),
+      _widgetbook.WidgetbookFolder(
+        name: 'waveform',
+        children: [
+          _widgetbook.WidgetbookComponent(
+            name: 'WaveformPreview',
+            useCases: [
+              _widgetbook.WidgetbookUseCase(
+                name: 'WaveformVisualizer',
+                builder: _tiomusic_widgetbook_widgets_waveform_waveform
+                    .waveformVisualizerUseCase,
               ),
             ],
           ),

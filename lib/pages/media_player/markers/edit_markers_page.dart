@@ -57,6 +57,16 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   bool _wasPlayingBeforeSliderDrag = false;
 
+  double _viewStart = 0;
+  double _viewEnd = 1;
+
+  static const double _minSpan = 1 / 10;
+  static const double _maxSpan = 1;
+
+  double _initialViewStart = 0;
+  double _initialViewEnd = 1;
+  double _pinchFocalPosition = 0.5;
+
   @override
   void initState() {
     super.initState();
@@ -68,14 +78,30 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     _positionDuration = player.fileDuration * _sliderValue;
 
-    _waveformVisualizer = WaveformVisualizer(0, block.rangeStart, block.rangeEnd, widget.rmsValues);
+    _waveformVisualizer = WaveformVisualizer(
+      0,
+      block.rangeStart,
+      block.rangeEnd,
+      widget.rmsValues,
+      viewStart: _viewStart,
+      viewEnd: _viewEnd,
+    );
 
     _syncPlayerMarkers();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
 
-      setState(() => _waveformVisualizer = WaveformVisualizer(0, block.rangeStart, block.rangeEnd, widget.rmsValues));
+      setState(
+        () => _waveformVisualizer = WaveformVisualizer(
+          0,
+          block.rangeStart,
+          block.rangeEnd,
+          widget.rmsValues,
+          viewStart: _viewStart,
+          viewEnd: _viewEnd,
+        ),
+      );
     });
 
     _playbackListener = _handlePlaybackPositionChange;
@@ -98,7 +124,14 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     final clamped = position.clamp(0.0, 1.0);
     _sliderValue = clamped;
     _positionDuration = player.fileDuration * clamped;
-    _waveformVisualizer = WaveformVisualizer(clamped, block.rangeStart, block.rangeEnd, widget.rmsValues);
+    _waveformVisualizer = WaveformVisualizer(
+      clamped,
+      block.rangeStart,
+      block.rangeEnd,
+      widget.rmsValues,
+      viewStart: _viewStart,
+      viewEnd: _viewEnd,
+    );
   }
 
   void _handlePlaybackPositionChange(double position) {
@@ -156,9 +189,23 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   }
 
   double _calculateSnappedRelativePosition(double tapX) {
-    final int binCount = widget.rmsValues.length;
-    final int tappedBinIndex = WaveformVisualizer.indexForX(tapX, _paintedWaveWidth, binCount);
-    return tappedBinIndex / (binCount - 1);
+    final int totalBins = widget.rmsValues.length;
+    if (totalBins <= 1) return 0;
+
+    final double clampedStart = _viewStart.clamp(0.0, 1.0);
+    final double clampedEnd = _viewEnd.clamp(clampedStart, 1.0);
+
+    final int firstVisibleIndex = (clampedStart * (totalBins - 1)).round().clamp(0, totalBins - 1);
+    final int lastVisibleIndex = (clampedEnd * (totalBins - 1)).round().clamp(firstVisibleIndex, totalBins - 1);
+
+    final int visibleBins = (lastVisibleIndex - firstVisibleIndex + 1).clamp(1, totalBins);
+
+    final int localIndex = WaveformVisualizer.indexForX(tapX, _paintedWaveWidth, visibleBins);
+
+    final double localFraction = visibleBins > 1 ? localIndex / (visibleBins - 1) : 0.0;
+
+    final double span = (clampedEnd - clampedStart).clamp(_minSpan, _maxSpan);
+    return clampedStart + localFraction * span;
   }
 
   double? _findMarkerNear(double snappedRelativePosition) {
@@ -210,6 +257,50 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                   child: GestureDetector(
                     onTapDown: (details) => _updatePositionFromWave(details.localPosition.dx),
                     onHorizontalDragUpdate: (details) => _updatePositionFromWave(details.localPosition.dx),
+
+                    onScaleStart: (details) {
+                      if (details.pointerCount < 2) return;
+                      _initialViewStart = _viewStart;
+                      _initialViewEnd = _viewEnd;
+
+                      final dx = details.localFocalPoint.dx;
+                      _pinchFocalPosition = _calculateSnappedRelativePosition(dx);
+                    },
+                    onScaleUpdate: (details) {
+                      if (details.pointerCount < 2) return;
+
+                      final double scale = details.scale;
+                      final double initialSpan = _initialViewEnd - _initialViewStart;
+
+                      double newSpan = (initialSpan / scale).clamp(_minSpan, _maxSpan);
+
+                      double center = _pinchFocalPosition;
+                      double start = center - newSpan / 2;
+                      double end = center + newSpan / 2;
+
+                      if (start < 0) {
+                        end -= start;
+                        start = 0;
+                      }
+                      if (end > 1) {
+                        start -= end - 1;
+                        end = 1;
+                      }
+
+                      setState(() {
+                        _viewStart = start;
+                        _viewEnd = end;
+                        _waveformVisualizer = WaveformVisualizer(
+                          _sliderValue,
+                          block.rangeStart,
+                          block.rangeEnd,
+                          widget.rmsValues,
+                          viewStart: _viewStart,
+                          viewEnd: _viewEnd,
+                        );
+                      });
+                    },
+
                     child: SizedBox(
                       width: double.infinity,
                       height: _waveFormHeight,
