@@ -255,7 +255,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
                   child: GestureDetector(
-                    onTapDown: (details) => _updatePositionFromWave(details.localPosition.dx),
+                    onTapUp: (details) => _updatePositionFromWave(details.localPosition.dx),
                     onScaleStart: (details) {
                       if (details.pointerCount < 2) return;
                       _initialViewStart = _viewStart;
