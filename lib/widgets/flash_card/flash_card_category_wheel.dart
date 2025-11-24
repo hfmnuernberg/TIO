@@ -63,6 +63,7 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
           builder: (context, index) {
             final category = index == 0 ? null : FlashCardCategory.values[index - 1];
             final isSelected = index == currentIndex;
+
             return GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {

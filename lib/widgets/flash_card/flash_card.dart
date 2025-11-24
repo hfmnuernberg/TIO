@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/domain/flash_cards/category.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/widgets/flash_card/flash_card_category_extension.dart';
+import 'package:tiomusic/util/flash_card_category_extension.dart';
 
 class FlashCard extends StatelessWidget {
   final FlashCardCategory category;
