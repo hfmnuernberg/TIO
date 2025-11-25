@@ -73,7 +73,7 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (category != null) ...[
-                      Icon(category.icon, color: ColorTheme.surfaceTint, size: 14),
+                      Icon(category.icon, color: ColorTheme.surfaceTint, size: isSelected ? 18 : 14),
                       const SizedBox(width: 6),
                     ],
                     Flexible(
