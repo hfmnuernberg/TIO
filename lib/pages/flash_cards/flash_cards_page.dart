@@ -17,6 +17,8 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       extendBody: true,
@@ -28,20 +30,21 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
       backgroundColor: ColorTheme.primary92,
       body: SafeArea(
         bottom: false,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: Align(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 32 + bottomInset),
+          child: Column(
+            children: [
+              Align(
                 alignment: Alignment.centerLeft,
                 child: CategoryFilterButton(
                   category: selectedCategory,
                   onSelected: (category) => setState(() => selectedCategory = category),
                 ),
               ),
-            ),
-            Expanded(child: FlashCardsList(categoryFilter: selectedCategory)),
-          ],
+              SizedBox(height: 16),
+              Expanded(child: FlashCardsList(categoryFilter: selectedCategory)),
+            ],
+          ),
         ),
       ),
     );

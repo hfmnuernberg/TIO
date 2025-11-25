@@ -6,6 +6,11 @@ import 'package:tiomusic/widgets/confirm_setting_button.dart';
 import 'package:tiomusic/widgets/flash_cards/flash_card_category_wheel.dart';
 import 'package:tiomusic/widgets/parent_tool/modal_bottom_sheet.dart';
 
+class _CategoryFilterResult {
+  final FlashCardCategory? category;
+  const _CategoryFilterResult(this.category);
+}
+
 class CategoryFilterButton extends StatelessWidget {
   final FlashCardCategory? category;
   final ValueChanged<FlashCardCategory?> onSelected;
@@ -23,7 +28,7 @@ class CategoryFilterButton extends StatelessWidget {
         heightFactor: 0.45,
         titleChildren: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: const EdgeInsets.only(bottom: 16),
             child: Text(
               context.l10n.flashCardsSelectCategory,
               style: const TextStyle(fontSize: 22, color: ColorTheme.primary),
@@ -78,9 +83,4 @@ class CategoryFilterButton extends StatelessWidget {
       ),
     );
   }
-}
-
-class _CategoryFilterResult {
-  final FlashCardCategory? category;
-  const _CategoryFilterResult(this.category);
 }

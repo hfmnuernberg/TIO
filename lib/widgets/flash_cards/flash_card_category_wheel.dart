@@ -80,8 +80,8 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
                       child: Text(
                         labelForCategory(category),
                         style: isSelected
-                          ? TextStyle(color: ColorTheme.primary, fontWeight: FontWeight.w500, fontSize: 18)
-                          : TextStyle(color: ColorTheme.primary.withValues(alpha: 0.5)),
+                            ? TextStyle(color: ColorTheme.primary, fontWeight: FontWeight.w500, fontSize: 18)
+                            : TextStyle(color: ColorTheme.primary.withValues(alpha: 0.5)),
                       ),
                     ),
                   ],
