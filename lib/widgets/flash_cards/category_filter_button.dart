@@ -7,20 +7,20 @@ import 'package:tiomusic/widgets/flash_cards/flash_card_category_wheel.dart';
 import 'package:tiomusic/widgets/parent_tool/modal_bottom_sheet.dart';
 
 class CategoryFilterButton extends StatelessWidget {
-  final FlashCardCategory? selectedCategory;
+  final FlashCardCategory? category;
   final ValueChanged<FlashCardCategory?> onSelected;
 
-  const CategoryFilterButton({super.key, this.selectedCategory, required this.onSelected});
+  const CategoryFilterButton({super.key, this.category, required this.onSelected});
 
   void _openCategoryFilter(BuildContext context) async {
-    FlashCardCategory? tempCategory = selectedCategory;
+    FlashCardCategory? selectedCategory = category;
 
     final result = await showModalBottomSheet<_CategoryFilterResult>(
       context: context,
       isScrollControlled: true,
       builder: (context) => ModalBottomSheet(
         label: context.l10n.flashCardsSelectCategory,
-        heightFactor: 0.5,
+        heightFactor: 0.45,
         titleChildren: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -34,11 +34,11 @@ class CategoryFilterButton extends StatelessWidget {
           Expanded(
             child: Center(
               child: SizedBox(
-                height: 220,
-                width: 200,
+                height: 160,
+                width: 260,
                 child: FlashCardCategoryWheel(
-                  initialCategory: tempCategory,
-                  onSelect: (category) => tempCategory = category,
+                  category: selectedCategory,
+                  onSelect: (category) => selectedCategory = category,
                 ),
               ),
             ),
@@ -49,7 +49,7 @@ class CategoryFilterButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TIOFlatButton(
-                  onPressed: () => Navigator.of(context).pop(_CategoryFilterResult(tempCategory)),
+                  onPressed: () => Navigator.of(context).pop(_CategoryFilterResult(selectedCategory)),
                   text: context.l10n.commonApply,
                 ),
               ],
@@ -74,7 +74,7 @@ class CategoryFilterButton extends StatelessWidget {
         backgroundColor: ColorTheme.onPrimary,
         foregroundColor: ColorTheme.primary,
         iconColor: ColorTheme.primary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }

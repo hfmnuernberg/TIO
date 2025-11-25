@@ -33,6 +33,7 @@ void main() {
       expect(cardTitles.every((title) => title.contains('Culture')), isTrue);
 
       await tester.tapAndSettle(find.bySemanticsLabel('Select category'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Culture'));
       await tester.tapAndSettle(find.bySemanticsLabel('Journaling'));
       await tester.tapAndSettle(find.bySemanticsLabel('Apply'));
 

@@ -35,7 +35,7 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: CategoryFilterButton(
-                  selectedCategory: selectedCategory,
+                  category: selectedCategory,
                   onSelected: (category) => setState(() => selectedCategory = category),
                 ),
               ),

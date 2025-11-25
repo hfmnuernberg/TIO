@@ -4,10 +4,10 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class FlashCardCategoryWheel extends StatefulWidget {
-  final FlashCardCategory? initialCategory;
+  final FlashCardCategory? category;
   final ValueChanged<FlashCardCategory?> onSelect;
 
-  const FlashCardCategoryWheel({super.key, required this.initialCategory, required this.onSelect});
+  const FlashCardCategoryWheel({super.key, required this.category, required this.onSelect});
 
   @override
   State<FlashCardCategoryWheel> createState() => _FlashCardCategoryWheelState();
@@ -20,7 +20,7 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
   @override
   void initState() {
     super.initState();
-    final initialCategory = widget.initialCategory;
+    final initialCategory = widget.category;
     final initialIndex = initialCategory == null ? 0 : FlashCardCategory.values.indexOf(initialCategory) + 1;
 
     currentIndex = initialIndex < 0 ? 0 : initialIndex;
@@ -33,7 +33,7 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
     super.dispose();
   }
 
-  void _handleSelectedIndex(int index) {
+  void handleSelectedIndex(int index) {
     setState(() => currentIndex = index);
 
     if (index == 0) {
@@ -44,7 +44,7 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
     }
   }
 
-  String _labelForCategory(FlashCardCategory? category) {
+  String labelForCategory(FlashCardCategory? category) {
     if (category == null) return context.l10n.flashCardsAllCategories;
     return context.l10n.categoryLabel(category);
   }
@@ -57,7 +57,7 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
         controller: controller,
         itemExtent: 40,
         physics: const FixedExtentScrollPhysics(),
-        onSelectedItemChanged: _handleSelectedIndex,
+        onSelectedItemChanged: handleSelectedIndex,
         childDelegate: ListWheelChildBuilderDelegate(
           childCount: FlashCardCategory.values.length + 1,
           builder: (context, index) {
@@ -68,11 +68,11 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
               behavior: HitTestBehavior.translucent,
               onTap: () {
                 controller.animateToItem(index, duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
-                _handleSelectedIndex(index);
+                handleSelectedIndex(index);
               },
               child: Center(
                 child: Text(
-                  _labelForCategory(category),
+                  labelForCategory(category),
                   style: TextStyle(
                     color: isSelected ? ColorTheme.primary : ColorTheme.primary.withValues(alpha: 0.5),
                     fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
