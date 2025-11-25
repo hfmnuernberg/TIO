@@ -9,9 +9,6 @@ class MediaTimeText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      context.l10n.formatDurationWithMillis(duration),
-      style: const TextStyle(color: ColorTheme.primary),
-    );
+    return Text(context.l10n.formatDurationWithMillis(duration), style: const TextStyle(color: ColorTheme.primary));
   }
 }

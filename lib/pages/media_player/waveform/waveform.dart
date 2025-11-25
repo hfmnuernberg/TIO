@@ -207,10 +207,7 @@ class _WaveformState extends State<Waveform> {
         child: SizedBox(
           width: double.infinity,
           height: widget.height,
-          child: CustomPaint(
-            key: _waveKey,
-            painter: _waveformVisualizer,
-          ),
+          child: CustomPaint(key: _waveKey, painter: _waveformVisualizer),
         ),
       ),
     );

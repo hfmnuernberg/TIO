@@ -7,13 +7,13 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/markers/markers.dart';
 import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform_window_labels.dart';
+import 'package:tiomusic/pages/media_player/markers/edit_markers_controls.dart';
 import 'package:tiomusic/pages/media_player/waveform/waveform.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/domain/audio/player.dart';
-import 'package:tiomusic/widgets/on_off_button.dart';
 
 class EditMarkersPage extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;
@@ -35,54 +35,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   double _sliderValue = 0;
   double _viewStart = 0;
   double _viewEnd = 1;
-
-  Widget _buildWindowLabels(BuildContext context) {
-    final totalMs = player.fileDuration.inMilliseconds;
-    if (totalMs <= 0) return const SizedBox.shrink();
-
-    final windowStartTime = Duration(milliseconds: (totalMs * _viewStart).round());
-    final windowEndTime = Duration(milliseconds: (totalMs * _viewEnd).round());
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
-      child: Row(
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RotatedBox(
-                quarterTurns: 1,
-                child: const Icon(
-                  Icons.vertical_align_bottom,
-                  size: 16,
-                  color: ColorTheme.primary,
-                ),
-              ),
-              const SizedBox(width: 4),
-              MediaTimeText(duration: windowStartTime),
-            ],
-          ),
-          const Spacer(),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              MediaTimeText(duration: windowEndTime),
-              const SizedBox(width: 4),
-              RotatedBox(
-                quarterTurns: 3,
-                child: const Icon(
-                  Icons.vertical_align_bottom,
-                  size: 16,
-                  color: ColorTheme.primary,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   Duration _positionDuration = Duration.zero;
   double? _selectedMarkerPosition;
   bool get _hasSelectedMarker => _selectedMarkerPosition != null;
@@ -215,7 +167,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildWindowLabels(context),
+          WaveformWindowLabels(fileDuration: player.fileDuration, viewStart: _viewStart, viewEnd: _viewEnd),
           const SizedBox(height: 4),
           SizedBox(
             height: _waveFormHeight,
@@ -251,7 +203,9 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               ],
             ),
           ),
-          Padding(padding: const EdgeInsets.all(8), child: MediaTimeText(duration: _positionDuration)),
+          const SizedBox(height: 8),
+          MediaTimeText(duration: _positionDuration),
+          const SizedBox(height: 8),
           Slider(
             value: _sliderValue,
             inactiveColor: ColorTheme.primary80,
@@ -274,32 +228,12 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               }
             },
           ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const PlaceholderButton(buttonSize: TIOMusicParams.sizeSmallButtons),
-                OnOffButton(
-                  isActive: player.isPlaying,
-                  onTap: _togglePlaying,
-                  buttonSize: TIOMusicParams.sizeBigButtons,
-                  iconOff: Icons.play_arrow,
-                  iconOn: TIOMusicParams.pauseIcon,
-                  tooltipOff: context.l10n.mediaPlayerPause,
-                  tooltipOn: context.l10n.mediaPlayerPlay,
-                ),
-                OnOffButton(
-                  isActive: _hasSelectedMarker,
-                  onTap: _hasSelectedMarker ? _removeSelectedMarker : _addNewMarker,
-                  buttonSize: TIOMusicParams.sizeSmallButtons,
-                  iconOff: _hasSelectedMarker ? Icons.delete_outlined : Icons.add,
-                  iconOn: _hasSelectedMarker ? Icons.delete_outlined : Icons.add,
-                  tooltipOff: _hasSelectedMarker ? l10n.mediaPlayerRemoveMarker : l10n.mediaPlayerAddMarker,
-                  tooltipOn: _hasSelectedMarker ? l10n.mediaPlayerRemoveMarker : l10n.mediaPlayerAddMarker,
-                ),
-              ],
-            ),
+          MarkerEditControls(
+            isPlaying: player.isPlaying,
+            hasSelectedMarker: _hasSelectedMarker,
+            onTogglePlaying: _togglePlaying,
+            onRemoveSelectedMarker: _removeSelectedMarker,
+            onAddMarker: _addNewMarker,
           ),
         ],
       ),
