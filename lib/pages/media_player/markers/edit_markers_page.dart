@@ -12,7 +12,6 @@ import 'package:tiomusic/pages/media_player/markers/edit_markers_controls.dart';
 import 'package:tiomusic/pages/media_player/waveform/waveform.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/domain/audio/player.dart';
 
 class EditMarkersPage extends StatefulWidget {
@@ -32,13 +31,12 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   final List<double> _markerPositions = List.empty(growable: true);
   final double _waveFormHeight = 200;
-  double _sliderValue = 0;
+  double _playbackPosition = 0;
   double _viewStart = 0;
   double _viewEnd = 1;
   Duration _positionDuration = Duration.zero;
   double? _selectedMarkerPosition;
   bool get _hasSelectedMarker => _selectedMarkerPosition != null;
-  bool _wasPlayingBeforeSliderDrag = false;
   double _paintedWaveWidth = 0;
 
   late final OnPlaybackPositionChange _playbackListener;
@@ -53,7 +51,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     block.markerPositions.forEach(_markerPositions.add);
 
-    _positionDuration = player.fileDuration * _sliderValue;
+    _positionDuration = player.fileDuration * _playbackPosition;
     _syncPlayerMarkers();
 
     _playbackListener = _handlePlaybackPositionChange;
@@ -70,15 +68,15 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   void _syncPlayerMarkers() => player.markers.positions = _markerPositions;
 
-  void _updateUiForPosition(double position) {
+  void _updateUiForPlaybackPosition(double position) {
     final clamped = position.clamp(0.0, 1.0);
-    _sliderValue = clamped;
+    _playbackPosition = clamped;
     _positionDuration = player.fileDuration * clamped;
   }
 
   void _handlePlaybackPositionChange(double position) {
     if (!mounted) return;
-    setState(() => _updateUiForPosition(position));
+    setState(() => _updateUiForPlaybackPosition(position));
   }
 
   void _removeSelectedMarker() {
@@ -110,7 +108,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     final clamped = position.clamp(0.0, 1.0);
 
     setState(() {
-      _updateUiForPosition(clamped);
+      _updateUiForPlaybackPosition(clamped);
       if (updateSelectedMarker) _selectedMarkerPosition = selectedMarkerPosition;
     });
 
@@ -121,7 +119,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     if (player.isPlaying) {
       await player.stop();
     } else {
-      await player.setPlaybackPosition(_sliderValue.clamp(0, 1));
+      await player.setPlaybackPosition(_playbackPosition.clamp(0, 1));
       await player.start();
     }
     if (!mounted) return;
@@ -140,7 +138,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   }
 
   void _addNewMarker() {
-    _markerPositions.add(_sliderValue);
+    _markerPositions.add(_playbackPosition);
     _syncPlayerMarkers();
     setState(() {});
   }
@@ -175,7 +173,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               children: [
                 Waveform(
                   rmsValues: widget.rmsValues,
-                  playbackPosition: _sliderValue,
+                  playbackPosition: _playbackPosition,
                   rangeStart: block.rangeStart,
                   rangeEnd: block.rangeEnd,
                   height: _waveFormHeight,
@@ -184,12 +182,10 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                     if (width == _paintedWaveWidth) return;
                     setState(() => _paintedWaveWidth = width);
                   },
-                  onViewWindowChange: (start, end) {
-                    setState(() {
-                      _viewStart = start;
-                      _viewEnd = end;
-                    });
-                  },
+                  onViewWindowChange: (start, end) => setState(() {
+                    _viewStart = start;
+                    _viewEnd = end;
+                  }),
                 ),
                 Markers(
                   rmsValues: widget.rmsValues,
@@ -206,28 +202,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
           const SizedBox(height: 8),
           MediaTimeText(duration: _positionDuration),
           const SizedBox(height: 8),
-          Slider(
-            value: _sliderValue,
-            inactiveColor: ColorTheme.primary80,
-            divisions: 1000,
-            onChangeStart: (startValue) async {
-              _wasPlayingBeforeSliderDrag = player.isPlaying;
-              if (_wasPlayingBeforeSliderDrag) {
-                await player.stop();
-                if (!mounted) return;
-                setState(() {});
-              }
-            },
-            onChanged: (newValue) => setState(() => _updateUiForPosition(newValue)),
-            onChangeEnd: (newValue) async {
-              await _seekToPosition(newValue);
-              if (_wasPlayingBeforeSliderDrag) {
-                await player.start();
-                if (!mounted) return;
-                setState(() {});
-              }
-            },
-          ),
           MarkerEditControls(
             isPlaying: player.isPlaying,
             hasSelectedMarker: _hasSelectedMarker,
