@@ -164,7 +164,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(height: TIOMusicParams.edgeInset),
           SizedBox(
             height: _waveFormHeight,
             child: Stack(
@@ -175,6 +174,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                   rangeStart: block.rangeStart,
                   rangeEnd: block.rangeEnd,
                   height: _waveFormHeight,
+                  fileDuration: player.fileDuration,
                   onPositionChange: _handleWaveformPositionChange,
                   onPaintedWidthChange: (width) {
                     if (width == _paintedWaveWidth) return;
