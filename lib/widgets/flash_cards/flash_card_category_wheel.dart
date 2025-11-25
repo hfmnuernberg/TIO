@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/domain/flash_cards/category.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/flash_card_category_extension.dart';
 
 class FlashCardCategoryWheel extends StatefulWidget {
   final FlashCardCategory? category;
@@ -71,13 +72,24 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
                 handleSelectedIndex(index);
               },
               child: Center(
-                child: Text(
-                  labelForCategory(category),
-                  style: TextStyle(
-                    color: isSelected ? ColorTheme.primary : ColorTheme.primary.withValues(alpha: 0.5),
-                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
-                    fontSize: isSelected ? 18 : 14,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (category != null) ...[
+                      Icon(category.icon, color: ColorTheme.surfaceTint, size: 14),
+                      const SizedBox(width: 6),
+                    ],
+                    Flexible(
+                      child: Text(
+                        labelForCategory(category),
+                        style: TextStyle(
+                          color: isSelected ? ColorTheme.primary : ColorTheme.primary.withValues(alpha: 0.5),
+                          fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
+                          fontSize: isSelected ? 18 : 14,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );

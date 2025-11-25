@@ -34,8 +34,15 @@ class _StatefulFlashCardCategoryWheelState extends State<StatefulFlashCardCatego
 
     return Column(
       children: [
-        Semantics(label: 'Category display', value: activeCategory, excludeSemantics: true, child: Text(activeCategory)),
-        Expanded(child: FlashCardCategoryWheel(category: category, onSelect: _handleSelect)),
+        Semantics(
+          label: 'Category display',
+          value: activeCategory,
+          excludeSemantics: true,
+          child: Text(activeCategory),
+        ),
+        Expanded(
+          child: FlashCardCategoryWheel(category: category, onSelect: _handleSelect),
+        ),
       ],
     );
   }
