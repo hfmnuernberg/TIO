@@ -31,14 +31,14 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5.0.1
+      uses: actions/checkout@v6.0.0
       with:
         ref: ${{ inputs.ref }}
         fetch-depth: 0
 
     - name: Create GitHub release
       id: release
-      uses: cycjimmy/semantic-release-action@v5.0.2
+      uses: cycjimmy/semantic-release-action@v6.0.0
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
