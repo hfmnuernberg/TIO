@@ -397,6 +397,7 @@ mixin EnglishFlashCards on Object implements FlashCardsLocalization {
       'write down key euphoric moments from the past. Do they have anything in common? What exactly made your eyes light up?';
   String get descriptionVision006 => 'think about your goal beforehand, and practice with this goal in mind.';
 
+  String get flashCard => 'Flash card';
   String get flashCardTitle => 'When you practice today,';
 
   String get flashCardsAllCategories => 'All categories';

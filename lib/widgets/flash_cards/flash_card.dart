@@ -12,7 +12,8 @@ class FlashCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-    label: description,
+    container: true,
+    hint: context.l10n.flashCard,
     child: Material(
       color: ColorTheme.onPrimary,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

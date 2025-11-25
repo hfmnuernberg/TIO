@@ -245,6 +245,7 @@ abstract class FlashCardsLocalization {
   String get descriptionVision005;
   String get descriptionVision006;
 
+  String get flashCard;
   String get flashCardTitle;
 
   String get flashCardsAllCategories;

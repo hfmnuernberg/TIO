@@ -414,6 +414,7 @@ mixin GermanFlashCards on Object implements FlashCardsLocalization {
       'notiere dir euphorische Schlüsselmomente aus der Vergangenheit. Haben sie eine Gemeinsamkeit? Was genau hat deine Augen zum Leuchten gebracht?';
   String get descriptionVision006 => 'überlege dir vorher dein Ziel und halte es währenddessen präsent.';
 
+  String get flashCard => 'Übetipp';
   String get flashCardTitle => 'Wenn du heute übst,';
 
   String get flashCardsAllCategories => 'Alle Kategorien';

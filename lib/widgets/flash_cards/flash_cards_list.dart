@@ -18,12 +18,16 @@ class FlashCardsList extends StatelessWidget {
         : cards.where((card) => card.category == categoryFilter).toList();
     final bottomInset = MediaQuery.of(context).padding.bottom;
 
-    return ListView.separated(
-      padding: EdgeInsets.fromLTRB(16, 16, 16, 32 + bottomInset),
-      itemBuilder: (_, i) =>
-          FlashCard(category: filteredCards[i].category, description: filteredCards[i].description(context.l10n)),
-      separatorBuilder: (_, _) => const SizedBox(height: 8),
-      itemCount: filteredCards.length,
+    return Semantics(
+      container: true,
+      hint: context.l10n.flashCardsPageTitle,
+      child: ListView.separated(
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 32 + bottomInset),
+        itemBuilder: (_, i) =>
+            FlashCard(category: filteredCards[i].category, description: filteredCards[i].description(context.l10n)),
+        separatorBuilder: (_, _) => const SizedBox(height: 8),
+        itemCount: filteredCards.length,
+      ),
     );
   }
 }
