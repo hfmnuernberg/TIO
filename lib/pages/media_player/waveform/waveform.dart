@@ -117,12 +117,46 @@ class _WaveformState extends State<Waveform> {
     return clampedStart + localFraction * span;
   }
 
+  void _panBy(double dxPixels) {
+    final double width = _paintedWaveWidth;
+    if (width <= 0) return;
+
+    final double span = (_viewEnd - _viewStart).clamp(_minSpan, _maxSpan);
+    if (span <= 0) return;
+
+    final double deltaFraction = -dxPixels / width * span;
+
+    double start = _viewStart + deltaFraction;
+    double end = _viewEnd + deltaFraction;
+
+    if (start < 0) {
+      end -= start;
+      start = 0;
+    }
+    if (end > 1) {
+      start -= end - 1;
+      end = 1;
+    }
+
+    setState(() {
+      _viewStart = start;
+      _viewEnd = end;
+      _rebuildVisualizer();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: widget.padding,
       child: GestureDetector(
         onTapUp: (details) => _handleTap(details.localPosition),
+        onHorizontalDragStart: (_) {},
+        onHorizontalDragUpdate: (details) {
+          final double? dx = details.primaryDelta;
+          if (dx == null) return;
+          _panBy(dx);
+        },
         onScaleStart: (details) {
           if (details.pointerCount < 2) return;
           _initialViewStart = _viewStart;
