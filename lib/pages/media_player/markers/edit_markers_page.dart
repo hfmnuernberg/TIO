@@ -193,6 +193,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                   waveFormHeight: _waveFormHeight,
                   markerPositions: _markerPositions,
                   selectedMarkerPosition: _selectedMarkerPosition,
+                  viewStart: _viewStart,
+                  viewEnd: _viewEnd,
                   onTap: (position) =>
                       _seekToPosition(position, updateSelectedMarker: true, selectedMarkerPosition: position),
                 ),
