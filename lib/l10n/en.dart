@@ -27,6 +27,7 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get appAboutVersionError => 'Could not load app version.';
   String get appTutorialToolSave => 'Tap here to copy your tool to another project.';
 
+  String get commonApply => 'Apply';
   String get commonBasicBeat => 'Basic beat';
   String get commonBasicBeatSetting => 'Set basic beat';
   String get commonBpm => 'BPM';

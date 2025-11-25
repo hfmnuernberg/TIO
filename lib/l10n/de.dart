@@ -27,6 +27,7 @@ class German extends AppLocalizations with GermanFlashCards {
   String get appAboutVersionError => 'Konnte die App-Version nicht laden.';
   String get appTutorialToolSave => 'Tippe hier, um dein Tool in ein anderes Projekt zu kopieren.';
 
+  String get commonApply => 'Anwenden';
   String get commonBasicBeat => 'Grundschlag';
   String get commonBasicBeatSetting => 'Grundschlag einstellen';
   String get commonBpm => 'BPM';

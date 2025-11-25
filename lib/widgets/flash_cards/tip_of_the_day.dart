@@ -8,7 +8,7 @@ import 'package:tiomusic/pages/flash_cards/flash_cards_page.dart';
 import 'package:tiomusic/services/flash_cards.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/flash_card/flash_card.dart';
+import 'package:tiomusic/widgets/flash_cards/flash_card.dart';
 
 class TipOfTheDay extends StatefulWidget {
   const TipOfTheDay({super.key});
@@ -26,15 +26,15 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
   void initState() {
     super.initState();
     flashCards = context.read<FlashCards>();
-    unawaited(_loadTipOfTheDay());
+    unawaited(loadTipOfTheDay());
   }
 
-  Future<void> _loadTipOfTheDay() async {
+  Future<void> loadTipOfTheDay() async {
     card = await flashCards.getTipOfTheDay(DateTime.now());
     setState(() {});
   }
 
-  Future<void> _regenerate() async {
+  Future<void> regenerate() async {
     card = await flashCards.getTipOfTheDay();
     setState(() {});
   }
@@ -82,7 +82,7 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
                   child: Text(l10n.tipOfTheDayViewMore, style: const TextStyle(color: ColorTheme.primary)),
                 ),
                 TextButton.icon(
-                  onPressed: _regenerate,
+                  onPressed: regenerate,
                   icon: const Icon(Icons.refresh, size: 18, color: ColorTheme.primary),
                   label: Text(l10n.tipOfTheDayRegenerate, style: const TextStyle(color: ColorTheme.primary)),
                 ),
