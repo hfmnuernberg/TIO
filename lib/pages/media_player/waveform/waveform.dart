@@ -1,9 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
-import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 
 class Waveform extends StatefulWidget {
@@ -12,10 +10,10 @@ class Waveform extends StatefulWidget {
   final double rangeStart;
   final double rangeEnd;
   final double height;
-  final Duration fileDuration;
   final EdgeInsetsGeometry padding;
   final ValueChanged<double> onPositionChange;
   final ValueChanged<double>? onPaintedWidthChange;
+  final void Function(double viewStart, double viewEnd)? onViewWindowChange;
 
   const Waveform({
     super.key,
@@ -24,9 +22,9 @@ class Waveform extends StatefulWidget {
     required this.rangeStart,
     required this.rangeEnd,
     required this.height,
-    required this.fileDuration,
     required this.onPositionChange,
     this.onPaintedWidthChange,
+    this.onViewWindowChange,
     this.padding = const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
   });
 
@@ -60,7 +58,10 @@ class _WaveformState extends State<Waveform> {
   void initState() {
     super.initState();
     _rebuildVisualizer();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _notifyPaintedWidth());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _notifyPaintedWidth();
+      _notifyViewWindowChanged();
+    });
   }
 
   @override
@@ -147,126 +148,70 @@ class _WaveformState extends State<Waveform> {
       _viewEnd = end;
       _rebuildVisualizer();
     });
+    _notifyViewWindowChanged();
   }
 
-  Widget _buildWindowLabels(BuildContext context) {
-    final totalMs = widget.fileDuration.inMilliseconds;
-    if (totalMs <= 0) return const SizedBox.shrink();
-
-    final startMs = (totalMs * _viewStart).round();
-    final endMs = (totalMs * _viewEnd).round();
-
-    final startDur = Duration(milliseconds: startMs);
-    final endDur = Duration(milliseconds: endMs);
-
-    final startText = context.l10n.formatDurationWithMillis(startDur);
-    final endText = context.l10n.formatDurationWithMillis(endDur);
-
-    const textStyle = TextStyle(color: ColorTheme.primary);
-
-    return Row(
-      children: [
-        // Left: icon then start time
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RotatedBox(
-              quarterTurns: 1,
-              child: const Icon(
-                Icons.vertical_align_bottom,
-                size: 16,
-                color: ColorTheme.primary,
-              ),
-            ),
-            const SizedBox(width: 4),
-            Text(startText, style: textStyle),
-          ],
-        ),
-        const Spacer(),
-        // Right: end time then icon
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(endText, style: textStyle),
-            const SizedBox(width: 4),
-            RotatedBox(
-              quarterTurns: 3,
-              child: const Icon(
-                Icons.vertical_align_bottom,
-                size: 16,
-                color: ColorTheme.primary,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
+  void _notifyViewWindowChanged() {
+    if (widget.onViewWindowChange == null) return;
+    widget.onViewWindowChange!(_viewStart, _viewEnd);
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: widget.padding,
-      child: Column(
-        children: [
-          // Window start/end labels on top
-          _buildWindowLabels(context),
-          const SizedBox(height: 4),
-          // Waveform with gestures filling the remaining height
-          Expanded(
-            child: GestureDetector(
-              onTapUp: (details) => _handleTap(details.localPosition),
-              onHorizontalDragStart: (_) {},
-              onHorizontalDragUpdate: (details) {
-                final double? dx = details.primaryDelta;
-                if (dx == null) return;
-                _panBy(dx);
-              },
-              onScaleStart: (details) {
-                if (details.pointerCount < 2) return;
-                _initialViewStart = _viewStart;
-                _initialViewEnd = _viewEnd;
+      child: GestureDetector(
+        onTapUp: (details) => _handleTap(details.localPosition),
+        onHorizontalDragStart: (_) {},
+        onHorizontalDragUpdate: (details) {
+          final double? dx = details.primaryDelta;
+          if (dx == null) return;
+          _panBy(dx);
+        },
+        onScaleStart: (details) {
+          if (details.pointerCount < 2) return;
+          _initialViewStart = _viewStart;
+          _initialViewEnd = _viewEnd;
 
-                final dx = details.localFocalPoint.dx;
-                _pinchFocalPosition = _calculateSnappedRelativePosition(dx);
-              },
-              onScaleUpdate: (details) {
-                if (details.pointerCount < 2) return;
+          final dx = details.localFocalPoint.dx;
+          _pinchFocalPosition = _calculateSnappedRelativePosition(dx);
+        },
+        onScaleUpdate: (details) {
+          if (details.pointerCount < 2) return;
 
-                final double scale = details.scale;
-                final double initialSpan = _initialViewEnd - _initialViewStart;
+          final double scale = details.scale;
+          final double initialSpan = _initialViewEnd - _initialViewStart;
 
-                double newSpan = (initialSpan / scale).clamp(_minSpan, _maxSpan);
+          double newSpan = (initialSpan / scale).clamp(_minSpan, _maxSpan);
 
-                double center = _pinchFocalPosition;
-                double start = center - newSpan / 2;
-                double end = center + newSpan / 2;
+          double center = _pinchFocalPosition;
+          double start = center - newSpan / 2;
+          double end = center + newSpan / 2;
 
-                if (start < 0) {
-                  end -= start;
-                  start = 0;
-                }
-                if (end > 1) {
-                  start -= end - 1;
-                  end = 1;
-                }
+          if (start < 0) {
+            end -= start;
+            start = 0;
+          }
+          if (end > 1) {
+            start -= end - 1;
+            end = 1;
+          }
 
-                setState(() {
-                  _viewStart = start;
-                  _viewEnd = end;
-                  _rebuildVisualizer();
-                });
-              },
-              child: SizedBox(
-                width: double.infinity,
-                child: CustomPaint(
-                  key: _waveKey,
-                  painter: _waveformVisualizer,
-                ),
-              ),
-            ),
+          setState(() {
+            _viewStart = start;
+            _viewEnd = end;
+            _rebuildVisualizer();
+          });
+          _notifyViewWindowChanged();
+        },
+        child: SizedBox(
+          width: double.infinity,
+          height: widget.height,
+          child: CustomPaint(
+            key: _waveKey,
+            painter: _waveformVisualizer,
           ),
-        ],
+        ),
       ),
     );
   }

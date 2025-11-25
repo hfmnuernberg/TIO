@@ -6,6 +6,7 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/markers/markers.dart';
+import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
 import 'package:tiomusic/pages/media_player/waveform/waveform.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
@@ -32,6 +33,56 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   final List<double> _markerPositions = List.empty(growable: true);
   final double _waveFormHeight = 200;
   double _sliderValue = 0;
+  double _viewStart = 0;
+  double _viewEnd = 1;
+
+  Widget _buildWindowLabels(BuildContext context) {
+    final totalMs = player.fileDuration.inMilliseconds;
+    if (totalMs <= 0) return const SizedBox.shrink();
+
+    final windowStartTime = Duration(milliseconds: (totalMs * _viewStart).round());
+    final windowEndTime = Duration(milliseconds: (totalMs * _viewEnd).round());
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
+      child: Row(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RotatedBox(
+                quarterTurns: 1,
+                child: const Icon(
+                  Icons.vertical_align_bottom,
+                  size: 16,
+                  color: ColorTheme.primary,
+                ),
+              ),
+              const SizedBox(width: 4),
+              MediaTimeText(duration: windowStartTime),
+            ],
+          ),
+          const Spacer(),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              MediaTimeText(duration: windowEndTime),
+              const SizedBox(width: 4),
+              RotatedBox(
+                quarterTurns: 3,
+                child: const Icon(
+                  Icons.vertical_align_bottom,
+                  size: 16,
+                  color: ColorTheme.primary,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Duration _positionDuration = Duration.zero;
   double? _selectedMarkerPosition;
   bool get _hasSelectedMarker => _selectedMarkerPosition != null;
@@ -164,6 +215,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          _buildWindowLabels(context),
+          const SizedBox(height: 4),
           SizedBox(
             height: _waveFormHeight,
             child: Stack(
@@ -174,11 +227,16 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
                   rangeStart: block.rangeStart,
                   rangeEnd: block.rangeEnd,
                   height: _waveFormHeight,
-                  fileDuration: player.fileDuration,
                   onPositionChange: _handleWaveformPositionChange,
                   onPaintedWidthChange: (width) {
                     if (width == _paintedWaveWidth) return;
                     setState(() => _paintedWaveWidth = width);
+                  },
+                  onViewWindowChange: (start, end) {
+                    setState(() {
+                      _viewStart = start;
+                      _viewEnd = end;
+                    });
                   },
                 ),
                 Markers(
@@ -193,13 +251,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 8, 0, 6),
-            child: Text(
-              l10n.formatDurationWithMillis(_positionDuration),
-              style: const TextStyle(color: ColorTheme.primary),
-            ),
-          ),
+          Padding(padding: const EdgeInsets.all(8), child: MediaTimeText(duration: _positionDuration)),
           Slider(
             value: _sliderValue,
             inactiveColor: ColorTheme.primary80,
