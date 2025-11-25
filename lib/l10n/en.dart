@@ -32,7 +32,6 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get commonBasicBeatSetting => 'Set basic beat';
   String get commonBpm => 'BPM';
   String get commonCancel => 'Cancel';
-  String get commonClear => 'Clear';
   String get commonDelete => 'Delete?';
   String get commonGotIt => 'Got it';
   String get commonInput => 'Input';

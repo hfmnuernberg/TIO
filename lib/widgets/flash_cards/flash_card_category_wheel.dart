@@ -22,9 +22,7 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
   void initState() {
     super.initState();
     final initialCategory = widget.category;
-    final initialIndex = initialCategory == null ? 0 : FlashCardCategory.values.indexOf(initialCategory) + 1;
-
-    currentIndex = initialIndex < 0 ? 0 : initialIndex;
+    currentIndex = initialCategory == null ? 0 : FlashCardCategory.values.indexOf(initialCategory) + 1;
     controller = FixedExtentScrollController(initialItem: currentIndex);
   }
 
@@ -46,8 +44,7 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
   }
 
   String labelForCategory(FlashCardCategory? category) {
-    if (category == null) return context.l10n.flashCardsAllCategories;
-    return context.l10n.categoryLabel(category);
+    return category == null ? context.l10n.flashCardsAllCategories : context.l10n.categoryLabel(category);
   }
 
   @override
@@ -82,11 +79,9 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
                     Flexible(
                       child: Text(
                         labelForCategory(category),
-                        style: TextStyle(
-                          color: isSelected ? ColorTheme.primary : ColorTheme.primary.withValues(alpha: 0.5),
-                          fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
-                          fontSize: isSelected ? 18 : 14,
-                        ),
+                        style: isSelected
+                          ? TextStyle(color: ColorTheme.primary, fontWeight: FontWeight.w500, fontSize: 18)
+                          : TextStyle(color: ColorTheme.primary.withValues(alpha: 0.5)),
                       ),
                     ),
                   ],
