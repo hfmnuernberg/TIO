@@ -10,6 +10,12 @@ class FlashCardsLogDecorator implements FlashCards {
   FlashCardsLogDecorator(this._flashCards);
 
   @override
+  Future<void> init() {
+    _logger.t('init()');
+    return _flashCards.init();
+  }
+
+  @override
   List<FlashCard> getAll() {
     final cards = _flashCards.getAll();
     _logger.t('getAll(): ${cards.length} cards');
