@@ -7,7 +7,7 @@ import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
 import 'package:tiomusic/pages/media_player/markers/edit_markers_controls.dart';
-import 'package:tiomusic/pages/media_player/waveform/waveform.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/domain/audio/player.dart';

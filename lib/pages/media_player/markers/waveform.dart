@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/media_player/markers/markers.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform_window_labels.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform_viewport_controller.dart';
 
 const double waveformHeight = 200;
 
@@ -36,17 +37,9 @@ class Waveform extends StatefulWidget {
 class _WaveformState extends State<Waveform> {
   final GlobalKey _waveKey = GlobalKey();
   late WaveformVisualizer _waveformVisualizer;
+  late WaveformViewportController _viewport;
 
-  double _viewStart = 0;
-  double _viewEnd = 1;
   double _availableWidth = 0;
-
-  static const double _minSpan = 1 / 10;
-  static const double _maxSpan = 1;
-
-  double _initialViewStart = 0;
-  double _initialViewEnd = 1;
-  double _pinchFocalPosition = 0.5;
 
   double get _paintedWaveWidth {
     if (_availableWidth > 0) return _availableWidth;
@@ -60,6 +53,7 @@ class _WaveformState extends State<Waveform> {
   @override
   void initState() {
     super.initState();
+    _viewport = WaveformViewportController();
     _rebuildVisualizer();
   }
 
@@ -81,63 +75,28 @@ class _WaveformState extends State<Waveform> {
       widget.rangeStart,
       widget.rangeEnd,
       widget.rmsValues,
-      viewStart: _viewStart,
-      viewEnd: _viewEnd,
+      viewStart: _viewport.viewStart,
+      viewEnd: _viewport.viewEnd,
     );
   }
 
   void _handleTap(TapUpDetails details) {
-    final snappedRelative = _calculateSnappedRelativePosition(details.localPosition.dx);
-    widget.onPositionChange(snappedRelative);
-  }
-
-  double _calculateSnappedRelativePosition(double tapX) {
-    final int totalBins = widget.rmsValues.length;
-    if (totalBins <= 1) return 0;
-
-    final double clampedStart = _viewStart.clamp(0.0, 1.0);
-    final double clampedEnd = _viewEnd.clamp(clampedStart, 1.0);
-
-    final int firstVisibleIndex = (clampedStart * (totalBins - 1)).round().clamp(0, totalBins - 1);
-    final int lastVisibleIndex = (clampedEnd * (totalBins - 1)).round().clamp(firstVisibleIndex, totalBins - 1);
-
-    final int visibleBins = (lastVisibleIndex - firstVisibleIndex + 1).clamp(1, totalBins);
-
     final double width = _paintedWaveWidth;
-    if (width <= 0) return clampedStart;
-
-    final int localIndex = WaveformVisualizer.indexForX(tapX, width, visibleBins);
-
-    final double localFraction = visibleBins > 1 ? localIndex / (visibleBins - 1) : 0.0;
-
-    final double span = (clampedEnd - clampedStart).clamp(_minSpan, _maxSpan);
-    return clampedStart + localFraction * span;
+    final int totalBins = widget.rmsValues.length;
+    final snappedRelative = _viewport.calculateSnappedRelativePosition(
+      tapX: details.localPosition.dx,
+      paintedWidth: width,
+      totalBins: totalBins,
+    );
+    widget.onPositionChange(snappedRelative);
   }
 
   void _panBy(double dxPixels) {
     final double width = _paintedWaveWidth;
     if (width <= 0) return;
 
-    final double span = (_viewEnd - _viewStart).clamp(_minSpan, _maxSpan);
-    if (span <= 0) return;
-
-    final double deltaFraction = -dxPixels / width * span;
-
-    double start = _viewStart + deltaFraction;
-    double end = _viewEnd + deltaFraction;
-
-    if (start < 0) {
-      end -= start;
-      start = 0;
-    }
-    if (end > 1) {
-      start -= end - 1;
-      end = 1;
-    }
-
     setState(() {
-      _viewStart = start;
-      _viewEnd = end;
+      _viewport.panByPixels(dxPixels: dxPixels, paintedWidth: width);
       _rebuildVisualizer();
     });
   }
@@ -145,27 +104,8 @@ class _WaveformState extends State<Waveform> {
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     if (details.pointerCount < 2) return;
 
-    final double scale = details.scale;
-    final double initialSpan = _initialViewEnd - _initialViewStart;
-
-    double newSpan = (initialSpan / scale).clamp(_minSpan, _maxSpan);
-
-    double center = _pinchFocalPosition;
-    double start = center - newSpan / 2;
-    double end = center + newSpan / 2;
-
-    if (start < 0) {
-      end -= start;
-      start = 0;
-    }
-    if (end > 1) {
-      start -= end - 1;
-      end = 1;
-    }
-
     setState(() {
-      _viewStart = start;
-      _viewEnd = end;
+      _viewport.updateScale(details.scale);
       _rebuildVisualizer();
     });
   }
@@ -178,11 +118,14 @@ class _WaveformState extends State<Waveform> {
 
   void _handleScaleStart(ScaleStartDetails details) {
     if (details.pointerCount < 2) return;
-    _initialViewStart = _viewStart;
-    _initialViewEnd = _viewEnd;
 
-    final dx = details.localFocalPoint.dx;
-    _pinchFocalPosition = _calculateSnappedRelativePosition(dx);
+    final double width = _paintedWaveWidth;
+    final int totalBins = widget.rmsValues.length;
+    _viewport.beginScale(
+      focalX: details.localFocalPoint.dx,
+      paintedWidth: width,
+      totalBins: totalBins,
+    );
   }
 
   @override
@@ -191,7 +134,11 @@ class _WaveformState extends State<Waveform> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          WaveformWindowLabels(fileDuration: widget.fileDuration, viewStart: _viewStart, viewEnd: _viewEnd),
+          WaveformWindowLabels(
+            fileDuration: widget.fileDuration,
+            viewStart: _viewport.viewStart,
+            viewEnd: _viewport.viewEnd,
+          ),
           const SizedBox(height: 4),
           SizedBox(
             height: waveformHeight,
@@ -215,8 +162,8 @@ class _WaveformState extends State<Waveform> {
                         waveFormHeight: waveformHeight,
                         markerPositions: widget.markerPositions,
                         selectedMarkerPosition: widget.selectedMarkerPosition,
-                        viewStart: _viewStart,
-                        viewEnd: _viewEnd,
+                        viewStart: _viewport.viewStart,
+                        viewEnd: _viewport.viewEnd,
                         onTap: widget.onPositionChange,
                       ),
                     ],
