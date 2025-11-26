@@ -10,11 +10,10 @@ class Waveform extends StatefulWidget {
   final double rangeStart;
   final double rangeEnd;
   final double height;
-  final ValueChanged<double> onPositionChange;
-  final void Function(double viewStart, double viewEnd) onViewWindowChange;
   final List<double> markerPositions;
   final double? selectedMarkerPosition;
-  final ValueChanged<double> onMarkerTap;
+  final ValueChanged<double> onPositionChange;
+  final void Function(double viewStart, double viewEnd) onViewWindowChange;
 
   const Waveform({
     super.key,
@@ -23,11 +22,10 @@ class Waveform extends StatefulWidget {
     required this.rangeStart,
     required this.rangeEnd,
     required this.height,
-    required this.onPositionChange,
-    required this.onViewWindowChange,
     required this.markerPositions,
     required this.selectedMarkerPosition,
-    required this.onMarkerTap,
+    required this.onPositionChange,
+    required this.onViewWindowChange,
   });
 
   @override
@@ -223,7 +221,7 @@ class _WaveformState extends State<Waveform> {
                     selectedMarkerPosition: widget.selectedMarkerPosition,
                     viewStart: _viewStart,
                     viewEnd: _viewEnd,
-                    onTap: widget.onMarkerTap,
+                    onTap: widget.onPositionChange,
                   ),
                 ],
               );

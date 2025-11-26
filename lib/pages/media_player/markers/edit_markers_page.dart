@@ -178,7 +178,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               selectedMarkerPosition: _selectedMarkerPosition,
               onPositionChange: _handlePositionChange,
               onViewWindowChange: _handleViewWindowChange,
-              onMarkerTap: (position) => _seekToPosition(position, updateMarker: true, markerPosition: position),
             ),
           ),
           const SizedBox(height: 8),
