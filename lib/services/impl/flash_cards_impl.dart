@@ -15,6 +15,9 @@ class FlashCardsImpl implements FlashCards {
   FlashCardsImpl(this._projectRepo, [Random? random]) : _random = random ?? Random();
 
   @override
+  Future<void> init() async {}
+
+  @override
   List<FlashCard> getAll() => List.unmodifiable(flashCards);
 
   @override
