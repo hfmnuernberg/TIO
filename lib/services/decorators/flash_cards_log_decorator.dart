@@ -23,6 +23,13 @@ class FlashCardsLogDecorator implements FlashCards {
   }
 
   @override
+  Future<List<String>> getAllBookmarked() async {
+    final cardIds = await _flashCards.getAllBookmarked();
+    _logger.t('getAllBookmarked(): ${cardIds.length} cards');
+    return cardIds;
+  }
+
+  @override
   Future<FlashCard> getTipOfTheDay([DateTime? date]) async {
     final card = await _flashCards.getTipOfTheDay(date);
     _logger.t('getTipOfTheDay($date): ${card.id}');

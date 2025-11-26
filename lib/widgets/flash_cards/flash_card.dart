@@ -7,19 +7,20 @@ import 'package:tiomusic/util/flash_card_category_extension.dart';
 class FlashCard extends StatelessWidget {
   final FlashCardCategory category;
   final String description;
-  // final bool isBookmarked;
+  final bool isBookmarked;
   final VoidCallback onToggle;
 
   const FlashCard({
     super.key,
     required this.category,
     required this.description,
-    // required this.isBookmarked,
+    required this.isBookmarked,
     required this.onToggle,
   });
 
   @override
-  Widget build(BuildContext context) => Semantics(
+  Widget build(BuildContext context) {
+    return Semantics(
     container: true,
     hint: context.l10n.flashCard,
     child: Material(
@@ -57,9 +58,8 @@ class FlashCard extends StatelessWidget {
                       ),
                       IconButton(
                         onPressed: onToggle,
-                        // icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_outlined),
-                        icon: Icon(Icons.bookmark_outlined),
-                        tooltip: context.l10n.flashCardAddBookmark,
+                        icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_border),
+                        tooltip: isBookmarked ? context.l10n.flashCardRemoveBookmark : context.l10n.flashCardAddBookmark,
                         color: ColorTheme.primary,
                       ),
                     ],
@@ -72,4 +72,5 @@ class FlashCard extends StatelessWidget {
       ),
     ),
   );
+  }
 }

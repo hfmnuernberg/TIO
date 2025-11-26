@@ -21,16 +21,23 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
   late FlashCards flashCards;
 
   domain.FlashCard? card;
+  List<String> bookmarkedCardIds = [];
 
   @override
   void initState() {
     super.initState();
     flashCards = context.read<FlashCards>();
     unawaited(loadTipOfTheDay());
+    unawaited(loadBookmarkedCardIds());
   }
 
   Future<void> loadTipOfTheDay() async {
     card = await flashCards.getTipOfTheDay(DateTime.now());
+    setState(() {});
+  }
+
+  Future<void> loadBookmarkedCardIds() async {
+    bookmarkedCardIds = await flashCards.getAllBookmarked();
     setState(() {});
   }
 
@@ -41,6 +48,7 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
 
   Future<void> handleToggleBookmark(String cardId) async {
     await flashCards.updateBookmarks(cardId);
+    loadBookmarkedCardIds();
   }
 
   @override
@@ -79,6 +87,7 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
               FlashCard(
                 category: card!.category,
                 description: card!.description(l10n),
+                isBookmarked: bookmarkedCardIds.contains(card!.id),
                 onToggle: () => handleToggleBookmark(card!.id),
               ),
             const SizedBox(height: 4),
