@@ -9,6 +9,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/services/archiver.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/file_system.dart';
+import 'package:tiomusic/services/flash_cards.dart';
 import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/src/rust/api/simple.dart';
@@ -41,6 +42,7 @@ class _SplashAppState extends State<SplashApp> {
       final mediaRepo = context.read<MediaRepository>();
       final fileReferences = context.read<FileReferences>();
       final archiver = context.read<Archiver>();
+      final flashCards = context.read<FlashCards>();
 
       await RustLib.init();
       await initRustDefaultsManually();
@@ -50,6 +52,7 @@ class _SplashAppState extends State<SplashApp> {
       final ProjectLibrary projectLibrary = await _initProjectLibrary();
       await fileReferences.init(projectLibrary);
       await archiver.init();
+      await flashCards.init();
 
       return _returnLoadedData(projectLibrary, null);
     });
