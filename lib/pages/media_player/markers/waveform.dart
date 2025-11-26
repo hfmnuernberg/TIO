@@ -17,6 +17,7 @@ class Waveform extends StatefulWidget {
   final List<double> markerPositions;
   final double? selectedMarkerPosition;
   final ValueChanged<double> onPositionChange;
+  final void Function(double viewStart, double viewEnd) onZoomChanged;
 
   const Waveform({
     super.key,
@@ -28,6 +29,7 @@ class Waveform extends StatefulWidget {
     required this.markerPositions,
     required this.selectedMarkerPosition,
     required this.onPositionChange,
+    required this.onZoomChanged,
   });
 
   @override
@@ -110,6 +112,8 @@ class _WaveformState extends State<Waveform> {
     });
   }
 
+  void _handleScaleEnd(ScaleEndDetails details) => widget.onZoomChanged(_viewport.viewStart, _viewport.viewEnd);
+
   void _handleHorizontalDragUpdate(DragUpdateDetails details) {
     final double? dx = details.primaryDelta;
     if (dx == null) return;
@@ -148,6 +152,7 @@ class _WaveformState extends State<Waveform> {
               onHorizontalDragUpdate: _handleHorizontalDragUpdate,
               onScaleStart: _handleScaleStart,
               onScaleUpdate: _handleScaleUpdate,
+              onScaleEnd: _handleScaleEnd,
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   final double width = constraints.maxWidth;

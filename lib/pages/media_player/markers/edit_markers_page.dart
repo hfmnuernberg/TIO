@@ -12,6 +12,8 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/domain/audio/player.dart';
 
+const int maxBins = 2000;
+
 class EditMarkersPage extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;
   final Float32List rmsValues;
@@ -36,6 +38,9 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   late final OnPlaybackPositionChange _playbackListener;
   late bool _originalRepeat;
 
+  late Float32List _rmsValues;
+  late int _targetVisibleBins;
+
   @override
   void initState() {
     super.initState();
@@ -47,6 +52,9 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     _positionDuration = player.fileDuration * _playbackPosition;
     _syncPlayerMarkers();
+
+    _rmsValues = widget.rmsValues;
+    _targetVisibleBins = widget.rmsValues.length;
 
     _playbackListener = _handlePlaybackPositionChange;
     player.addOnPlaybackPositionChangeListener(_playbackListener);
@@ -95,6 +103,24 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     markerPosition: _findMarkerNear(snappedRelativePosition),
   );
 
+  Future<void> _handleZoomChanged(double viewStart, double viewEnd) async {
+    final double span = (viewEnd - viewStart).clamp(0.0001, 1.0);
+    if (_targetVisibleBins <= 0) return;
+
+    int newTotalBins = (_targetVisibleBins / span).round();
+
+    if (newTotalBins < _targetVisibleBins) newTotalBins = _targetVisibleBins;
+    if (newTotalBins > maxBins) newTotalBins = maxBins;
+    if (newTotalBins == _rmsValues.length) return;
+
+    final Float32List newRms = await player.getRmsValues(newTotalBins);
+    if (!mounted) return;
+
+    setState(() {
+      _rmsValues = newRms;
+    });
+  }
+
   Future<void> _seekToPosition(double position, {bool updateMarker = false, double? markerPosition}) async {
     final clamped = position.clamp(0.0, 1.0);
 
@@ -118,7 +144,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   }
 
   double? _findMarkerNear(double snappedRelativePosition) {
-    final int binCount = widget.rmsValues.length;
+    final int binCount = _rmsValues.length;
     final double oneBinRelative = 1.0 / (binCount - 1);
 
     for (final pos in _markerPositions) {
@@ -157,7 +183,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Waveform(
-            rmsValues: widget.rmsValues,
+            rmsValues: _rmsValues,
             position: _playbackPosition,
             rangeStart: block.rangeStart,
             rangeEnd: block.rangeEnd,
@@ -165,6 +191,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             markerPositions: _markerPositions,
             selectedMarkerPosition: _selectedMarkerPosition,
             onPositionChange: _handlePositionChange,
+            onZoomChanged: _handleZoomChanged,
           ),
           const SizedBox(height: 8),
           MediaTimeText(duration: _positionDuration),
