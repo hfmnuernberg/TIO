@@ -8,11 +8,10 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
 import 'package:tiomusic/pages/media_player/markers/edit_markers_controls.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform.dart';
+import 'package:tiomusic/pages/media_player/markers/zoom_rms_helper.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/domain/audio/player.dart';
-
-const int maxBins = 2000;
 
 class EditMarkersPage extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;
@@ -28,7 +27,6 @@ class EditMarkersPage extends StatefulWidget {
 class _EditMarkersPageState extends State<EditMarkersPage> {
   MediaPlayerBlock get block => widget.mediaPlayerBlock;
   Player get player => widget.player;
-
   final List<double> _markerPositions = List.empty(growable: true);
   double _playbackPosition = 0;
   Duration _positionDuration = Duration.zero;
@@ -37,7 +35,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   late final OnPlaybackPositionChange _playbackListener;
   late bool _originalRepeat;
-
   late Float32List _rmsValues;
   late int _targetVisibleBins;
 
@@ -49,9 +46,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     player.setRepeat(false);
 
     block.markerPositions.forEach(_markerPositions.add);
-
     _positionDuration = player.fileDuration * _playbackPosition;
-    _syncPlayerMarkers();
+    player.markers.positions = _markerPositions;
 
     _rmsValues = widget.rmsValues;
     _targetVisibleBins = widget.rmsValues.length;
@@ -67,8 +63,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     player.removeOnPlaybackPositionChangeListener(_playbackListener);
     super.dispose();
   }
-
-  void _syncPlayerMarkers() => player.markers.positions = _markerPositions;
 
   void _updateUiForPlaybackPosition(double position) {
     final clamped = position.clamp(0.0, 1.0);
@@ -86,14 +80,14 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       _markerPositions.removeWhere((pos) => pos == _selectedMarkerPosition);
       _selectedMarkerPosition = null;
     }
-    _syncPlayerMarkers();
+    player.markers.positions = _markerPositions;
     setState(() {});
   }
 
   void _removeAllMarkers() {
     _markerPositions.clear();
     _selectedMarkerPosition = null;
-    _syncPlayerMarkers();
+    player.markers.positions = _markerPositions;
     setState(() {});
   }
 
@@ -104,21 +98,16 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   );
 
   Future<void> _handleZoomChanged(double viewStart, double viewEnd) async {
-    final double span = (viewEnd - viewStart).clamp(0.0001, 1.0);
-    if (_targetVisibleBins <= 0) return;
+    final Float32List? newRms = await recalculateRmsForZoom(
+      player: player,
+      targetVisibleBins: _targetVisibleBins,
+      viewStart: viewStart,
+      viewEnd: viewEnd,
+      currentBinCount: _rmsValues.length,
+    );
 
-    int newTotalBins = (_targetVisibleBins / span).round();
-
-    if (newTotalBins < _targetVisibleBins) newTotalBins = _targetVisibleBins;
-    if (newTotalBins > maxBins) newTotalBins = maxBins;
-    if (newTotalBins == _rmsValues.length) return;
-
-    final Float32List newRms = await player.getRmsValues(newTotalBins);
-    if (!mounted) return;
-
-    setState(() {
-      _rmsValues = newRms;
-    });
+    if (!mounted || newRms == null) return;
+    setState(() => _rmsValues = newRms);
   }
 
   Future<void> _seekToPosition(double position, {bool updateMarker = false, double? markerPosition}) async {
@@ -156,7 +145,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   void _addNewMarker() {
     _markerPositions.add(_playbackPosition);
-    _syncPlayerMarkers();
+    player.markers.positions = _markerPositions;
     setState(() {});
   }
 
@@ -179,8 +168,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       reset: _removeAllMarkers,
       mustBeScrollable: true,
       customWidget: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Waveform(
             rmsValues: _rmsValues,

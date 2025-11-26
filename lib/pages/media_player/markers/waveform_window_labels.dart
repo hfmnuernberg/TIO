@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
 
 class WaveformWindowLabels extends StatelessWidget {
   final Duration fileDuration;
@@ -18,35 +17,32 @@ class WaveformWindowLabels extends StatelessWidget {
     final windowStartTime = Duration(milliseconds: (totalMs * viewStart).round());
     final windowEndTime = Duration(milliseconds: (totalMs * viewEnd).round());
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
-      child: Row(
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RotatedBox(
-                quarterTurns: 1,
-                child: const Icon(Icons.vertical_align_bottom, size: 16, color: ColorTheme.primary),
-              ),
-              const SizedBox(width: 4),
-              MediaTimeText(duration: windowStartTime),
-            ],
-          ),
-          const Spacer(),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              MediaTimeText(duration: windowEndTime),
-              const SizedBox(width: 4),
-              RotatedBox(
-                quarterTurns: 3,
-                child: const Icon(Icons.vertical_align_bottom, size: 16, color: ColorTheme.primary),
-              ),
-            ],
-          ),
-        ],
-      ),
+    return Row(
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            RotatedBox(
+              quarterTurns: 1,
+              child: const Icon(Icons.vertical_align_bottom, size: 16, color: ColorTheme.primary),
+            ),
+            const SizedBox(width: 4),
+            MediaTimeText(duration: windowStartTime),
+          ],
+        ),
+        const Spacer(),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            MediaTimeText(duration: windowEndTime),
+            const SizedBox(width: 4),
+            RotatedBox(
+              quarterTurns: 3,
+              child: const Icon(Icons.vertical_align_bottom, size: 16, color: ColorTheme.primary),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
