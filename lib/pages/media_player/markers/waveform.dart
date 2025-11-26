@@ -125,11 +125,7 @@ class _WaveformState extends State<Waveform> {
 
     final double width = _paintedWaveWidth;
     final int totalBins = widget.rmsValues.length;
-    _viewport.beginScale(
-      focalX: details.localFocalPoint.dx,
-      paintedWidth: width,
-      totalBins: totalBins,
-    );
+    _viewport.beginScale(focalX: details.localFocalPoint.dx, paintedWidth: width, totalBins: totalBins);
   }
 
   @override

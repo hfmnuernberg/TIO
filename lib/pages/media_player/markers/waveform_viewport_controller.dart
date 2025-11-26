@@ -11,12 +11,10 @@ class WaveformViewportController {
   double _initialViewEnd;
   double _pinchFocalPosition;
 
-  WaveformViewportController({
-    this.viewStart = 0.0,
-    this.viewEnd = 1.0,
-  })  : _initialViewStart = viewStart,
-        _initialViewEnd = viewEnd,
-        _pinchFocalPosition = 0.5;
+  WaveformViewportController({this.viewStart = 0.0, this.viewEnd = 1.0})
+    : _initialViewStart = viewStart,
+      _initialViewEnd = viewEnd,
+      _pinchFocalPosition = 0.5;
 
   double calculateSnappedRelativePosition({
     required double tapX,
@@ -29,25 +27,18 @@ class WaveformViewportController {
     final double clampedStart = viewStart.clamp(0.0, 1.0);
     final double clampedEnd = viewEnd.clamp(clampedStart, 1.0);
 
-    final int firstVisibleIndex =
-        (clampedStart * (totalBins - 1)).round().clamp(0, totalBins - 1);
-    final int lastVisibleIndex =
-        (clampedEnd * (totalBins - 1)).round().clamp(firstVisibleIndex, totalBins - 1);
+    final int firstVisibleIndex = (clampedStart * (totalBins - 1)).round().clamp(0, totalBins - 1);
+    final int lastVisibleIndex = (clampedEnd * (totalBins - 1)).round().clamp(firstVisibleIndex, totalBins - 1);
     final int visibleBins = (lastVisibleIndex - firstVisibleIndex + 1).clamp(1, totalBins);
 
-    final int localIndex =
-        WaveformVisualizer.indexForX(tapX, paintedWidth, visibleBins);
-    final double localFraction =
-        visibleBins > 1 ? localIndex / (visibleBins - 1) : 0.0;
+    final int localIndex = WaveformVisualizer.indexForX(tapX, paintedWidth, visibleBins);
+    final double localFraction = visibleBins > 1 ? localIndex / (visibleBins - 1) : 0.0;
 
     final double span = (clampedEnd - clampedStart).clamp(_minSpan, _maxSpan);
     return clampedStart + localFraction * span;
   }
 
-  void panByPixels({
-    required double dxPixels,
-    required double paintedWidth,
-  }) {
+  void panByPixels({required double dxPixels, required double paintedWidth}) {
     if (paintedWidth <= 0) return;
 
     final double span = (viewEnd - viewStart).clamp(_minSpan, _maxSpan);
@@ -71,11 +62,7 @@ class WaveformViewportController {
     viewEnd = end;
   }
 
-  void beginScale({
-    required double focalX,
-    required double paintedWidth,
-    required int totalBins,
-  }) {
+  void beginScale({required double focalX, required double paintedWidth, required int totalBins}) {
     _initialViewStart = viewStart;
     _initialViewEnd = viewEnd;
 
