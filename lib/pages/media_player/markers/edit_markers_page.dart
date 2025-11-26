@@ -100,6 +100,16 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     _seekToPosition(snappedRelativePosition, updateSelectedMarker: true, selectedMarkerPosition: markerPosition);
   }
 
+  void _handlePaintedWidthChange(double width) {
+    if (width == _paintedWaveWidth) return;
+    setState(() => _paintedWaveWidth = width);
+  }
+
+  void _handleViewWindowChange(double start, double end) => setState(() {
+    _viewStart = start;
+    _viewEnd = end;
+  });
+
   Future<void> _seekToPosition(
     double position, {
     bool updateSelectedMarker = false,
@@ -173,20 +183,15 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
               children: [
                 Waveform(
                   rmsValues: widget.rmsValues,
-                  playbackPosition: _playbackPosition,
+                  position: _playbackPosition,
                   rangeStart: block.rangeStart,
                   rangeEnd: block.rangeEnd,
                   height: _waveFormHeight,
                   onPositionChange: _handleWaveformPositionChange,
-                  onPaintedWidthChange: (width) {
-                    if (width == _paintedWaveWidth) return;
-                    setState(() => _paintedWaveWidth = width);
-                  },
-                  onViewWindowChange: (start, end) => setState(() {
-                    _viewStart = start;
-                    _viewEnd = end;
-                  }),
+                  onPaintedWidthChange: _handlePaintedWidthChange,
+                  onViewWindowChange: _handleViewWindowChange,
                 ),
+                // Markers should be painted by Waveform, handle zoom and panning navigation too
                 Markers(
                   rmsValues: widget.rmsValues,
                   paintedWidth: _paintedWaveWidth,
