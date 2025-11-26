@@ -34,19 +34,26 @@ class FlashCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(description, style: const TextStyle(color: ColorTheme.primary)),
                   const SizedBox(height: 12),
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(category.icon, color: ColorTheme.surfaceTint, size: 14),
-                        const SizedBox(width: 6),
-                        Text(
-                          context.l10n.categoryLabel(category),
-                          style: const TextStyle(color: ColorTheme.primary, fontSize: 12),
-                        ),
-                      ],
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(category.icon, color: ColorTheme.surfaceTint, size: 14),
+                          const SizedBox(width: 6),
+                          Text(
+                            context.l10n.categoryLabel(category),
+                            style: const TextStyle(color: ColorTheme.primary, fontSize: 12),
+                          ),
+                        ],
+                      ),
+                      IconButton(
+                        onPressed: () => {},
+                        icon: const Icon(Icons.bookmark_add_outlined),
+                        tooltip: context.l10n.flashCardAddBookmark,
+                        color: ColorTheme.primary,
+                      ),
+                    ],
                   ),
                 ],
               ),

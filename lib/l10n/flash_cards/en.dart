@@ -397,10 +397,15 @@ mixin EnglishFlashCards on Object implements FlashCardsLocalization {
       'write down key euphoric moments from the past. Do they have anything in common? What exactly made your eyes light up?';
   String get descriptionVision006 => 'think about your goal beforehand, and practice with this goal in mind.';
 
+  String get filterAllCategories => 'All categories';
+  String get filterBookmarkDisable => 'Disable bookmark filter';
+  String get filterBookmarkEnable => 'Enable bookmark filter';
+  String get filterSelectCategory => 'Select category';
+
   String get flashCard => 'Flash card';
+  String get flashCardAddBookmark => 'Bookmark this tip';
+  String get flashCardRemoveBookmark => 'Remove bookmark';
   String get flashCardTitle => 'When you practice today,';
 
-  String get flashCardsAllCategories => 'All categories';
   String get flashCardsPageTitle => 'Practice tips';
-  String get flashCardsSelectCategory => 'Select category';
 }

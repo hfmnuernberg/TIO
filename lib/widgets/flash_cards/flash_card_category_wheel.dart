@@ -44,7 +44,7 @@ class _FlashCardCategoryWheelState extends State<FlashCardCategoryWheel> {
   }
 
   String labelForCategory(FlashCardCategory? category) {
-    return category == null ? context.l10n.flashCardsAllCategories : context.l10n.categoryLabel(category);
+    return category == null ? context.l10n.filterAllCategories : context.l10n.categoryLabel(category);
   }
 
   @override

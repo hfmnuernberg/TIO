@@ -34,12 +34,32 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
           padding: EdgeInsets.fromLTRB(16, 16, 16, 32 + bottomInset),
           child: Column(
             children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: CategoryFilterButton(
-                  category: selectedCategory,
-                  onSelected: (category) => setState(() => selectedCategory = category),
-                ),
+              Row(
+                children: [
+                  CategoryFilterButton(
+                    category: selectedCategory,
+                    onSelected: (category) => setState(() => selectedCategory = category),
+                  ),
+                  SizedBox(width: 16),
+                  Semantics(
+                    label: context.l10n.filterBookmarkEnable,
+                    button: true,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: ColorTheme.onPrimary,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: InkWell(
+                        onTap: () {},
+                        borderRadius: BorderRadius.circular(8),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          child: Icon(Icons.bookmark_add_outlined, color: ColorTheme.primary),
+                        ),
+                      ),
+                    ),
+                  ),
+                ]
               ),
               SizedBox(height: 16),
               Expanded(child: FlashCardsList(categoryFilter: selectedCategory)),
