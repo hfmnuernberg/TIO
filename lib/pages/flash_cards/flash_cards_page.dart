@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:tiomusic/domain/flash_cards/category.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/services/flash_cards.dart';
+import 'package:tiomusic/widgets/flash_cards/category_filter_button.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/widgets/flash_card/flash_card.dart';
+import 'package:tiomusic/widgets/flash_cards/flash_cards_list.dart';
 
-class FlashCardsPage extends StatelessWidget {
+class FlashCardsPage extends StatefulWidget {
   const FlashCardsPage({super.key});
 
   @override
+  State<FlashCardsPage> createState() => _FlashCardsPageState();
+}
+
+class _FlashCardsPageState extends State<FlashCardsPage> {
+  FlashCardCategory? selectedCategory;
+
+  @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       extendBody: true,
@@ -19,22 +28,25 @@ class FlashCardsPage extends StatelessWidget {
         foregroundColor: ColorTheme.primary,
       ),
       backgroundColor: ColorTheme.primary92,
-      body: SafeArea(bottom: false, child: _FlashCardsList()),
-    );
-  }
-}
-
-class _FlashCardsList extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final cards = context.read<FlashCards>().getAll();
-    final bottomInset = MediaQuery.of(context).padding.bottom;
-
-    return ListView.separated(
-      padding: EdgeInsets.fromLTRB(16, 16, 16, 32 + bottomInset),
-      itemBuilder: (_, i) => FlashCard(category: cards[i].category, description: cards[i].description(context.l10n)),
-      separatorBuilder: (_, _) => const SizedBox(height: 8),
-      itemCount: cards.length,
+      body: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 32 + bottomInset),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: CategoryFilterButton(
+                  category: selectedCategory,
+                  onSelected: (category) => setState(() => selectedCategory = category),
+                ),
+              ),
+              SizedBox(height: 16),
+              Expanded(child: FlashCardsList(categoryFilter: selectedCategory)),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

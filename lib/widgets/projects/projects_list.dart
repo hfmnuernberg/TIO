@@ -6,7 +6,7 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/flash_card/tip_of_the_day.dart';
+import 'package:tiomusic/widgets/flash_cards/tip_of_the_day.dart';
 import 'package:tiomusic/pages/projects_page/edit_projects_bar.dart';
 import 'package:tiomusic/pages/projects_page/editable_project_list.dart';
 import 'package:tiomusic/pages/projects_page/project_list.dart';

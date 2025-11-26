@@ -1,1 +1,1 @@
-enum FlashCardCategory { relaxation, team, selfCare, vision, culture, mixUp, practicing, journaling }
+enum FlashCardCategory { culture, journaling, practicing, mixUp, relaxation, selfCare, team, vision }
