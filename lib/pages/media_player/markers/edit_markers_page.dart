@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/media_player/markers/markers.dart';
 import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform_window_labels.dart';
 import 'package:tiomusic/pages/media_player/markers/edit_markers_controls.dart';
@@ -37,7 +36,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   Duration _positionDuration = Duration.zero;
   double? _selectedMarkerPosition;
   bool get _hasSelectedMarker => _selectedMarkerPosition != null;
-  double _paintedWaveWidth = 0;
 
   late final OnPlaybackPositionChange _playbackListener;
   late bool _originalRepeat;
@@ -95,14 +93,9 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     setState(() {});
   }
 
-  void _handleWaveformPositionChange(double snappedRelativePosition) {
+  void _handlePositionChange(double snappedRelativePosition) {
     final double? markerPosition = _findMarkerNear(snappedRelativePosition);
-    _seekToPosition(snappedRelativePosition, updateSelectedMarker: true, selectedMarkerPosition: markerPosition);
-  }
-
-  void _handlePaintedWidthChange(double width) {
-    if (width == _paintedWaveWidth) return;
-    setState(() => _paintedWaveWidth = width);
+    _seekToPosition(snappedRelativePosition, updateMarker: true, markerPosition: markerPosition);
   }
 
   void _handleViewWindowChange(double start, double end) => setState(() {
@@ -110,16 +103,12 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     _viewEnd = end;
   });
 
-  Future<void> _seekToPosition(
-    double position, {
-    bool updateSelectedMarker = false,
-    double? selectedMarkerPosition,
-  }) async {
+  Future<void> _seekToPosition(double position, {bool updateMarker = false, double? markerPosition}) async {
     final clamped = position.clamp(0.0, 1.0);
 
     setState(() {
       _updateUiForPlaybackPosition(clamped);
-      if (updateSelectedMarker) _selectedMarkerPosition = selectedMarkerPosition;
+      if (updateMarker) _selectedMarkerPosition = markerPosition;
     });
 
     await player.setPlaybackPosition(clamped);
@@ -179,31 +168,17 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
           const SizedBox(height: 4),
           SizedBox(
             height: _waveFormHeight,
-            child: Stack(
-              children: [
-                Waveform(
-                  rmsValues: widget.rmsValues,
-                  position: _playbackPosition,
-                  rangeStart: block.rangeStart,
-                  rangeEnd: block.rangeEnd,
-                  height: _waveFormHeight,
-                  onPositionChange: _handleWaveformPositionChange,
-                  onPaintedWidthChange: _handlePaintedWidthChange,
-                  onViewWindowChange: _handleViewWindowChange,
-                ),
-                // Markers should be painted by Waveform, handle zoom and panning navigation too
-                Markers(
-                  rmsValues: widget.rmsValues,
-                  paintedWidth: _paintedWaveWidth,
-                  waveFormHeight: _waveFormHeight,
-                  markerPositions: _markerPositions,
-                  selectedMarkerPosition: _selectedMarkerPosition,
-                  viewStart: _viewStart,
-                  viewEnd: _viewEnd,
-                  onTap: (position) =>
-                      _seekToPosition(position, updateSelectedMarker: true, selectedMarkerPosition: position),
-                ),
-              ],
+            child: Waveform(
+              rmsValues: widget.rmsValues,
+              position: _playbackPosition,
+              rangeStart: block.rangeStart,
+              rangeEnd: block.rangeEnd,
+              height: _waveFormHeight,
+              markerPositions: _markerPositions,
+              selectedMarkerPosition: _selectedMarkerPosition,
+              onPositionChange: _handlePositionChange,
+              onViewWindowChange: _handleViewWindowChange,
+              onMarkerTap: (position) => _seekToPosition(position, updateMarker: true, markerPosition: position),
             ),
           ),
           const SizedBox(height: 8),

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
+import 'package:tiomusic/pages/media_player/markers/markers.dart';
 
 class Waveform extends StatefulWidget {
   final Float32List rmsValues;
@@ -10,8 +11,10 @@ class Waveform extends StatefulWidget {
   final double rangeEnd;
   final double height;
   final ValueChanged<double> onPositionChange;
-  final ValueChanged<double> onPaintedWidthChange;
   final void Function(double viewStart, double viewEnd) onViewWindowChange;
+  final List<double> markerPositions;
+  final double? selectedMarkerPosition;
+  final ValueChanged<double> onMarkerTap;
 
   const Waveform({
     super.key,
@@ -21,8 +24,10 @@ class Waveform extends StatefulWidget {
     required this.rangeEnd,
     required this.height,
     required this.onPositionChange,
-    required this.onPaintedWidthChange,
     required this.onViewWindowChange,
+    required this.markerPositions,
+    required this.selectedMarkerPosition,
+    required this.onMarkerTap,
   });
 
   @override
@@ -35,6 +40,7 @@ class _WaveformState extends State<Waveform> {
 
   double _viewStart = 0;
   double _viewEnd = 1;
+  double _availableWidth = 0;
 
   static const double _minSpan = 1 / 10;
   static const double _maxSpan = 1;
@@ -44,6 +50,7 @@ class _WaveformState extends State<Waveform> {
   double _pinchFocalPosition = 0.5;
 
   double get _paintedWaveWidth {
+    if (_availableWidth > 0) return _availableWidth;
     final buildContext = _waveKey.currentContext;
     if (buildContext == null) return 0;
     final renderObject = buildContext.findRenderObject();
@@ -56,7 +63,6 @@ class _WaveformState extends State<Waveform> {
     super.initState();
     _rebuildVisualizer();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _notifyPaintedWidth();
       _notifyViewWindowChanged();
     });
   }
@@ -70,7 +76,6 @@ class _WaveformState extends State<Waveform> {
         oldWidget.rangeStart != widget.rangeStart ||
         oldWidget.rangeEnd != widget.rangeEnd) {
       _rebuildVisualizer();
-      WidgetsBinding.instance.addPostFrameCallback((_) => _notifyPaintedWidth());
     }
   }
 
@@ -85,9 +90,6 @@ class _WaveformState extends State<Waveform> {
     );
   }
 
-  void _notifyPaintedWidth() {
-    if (_paintedWaveWidth > 0) widget.onPaintedWidthChange(_paintedWaveWidth);
-  }
 
   void _handleTap(TapUpDetails details) {
     final snappedRelative = _calculateSnappedRelativePosition(details.localPosition.dx);
@@ -205,7 +207,28 @@ class _WaveformState extends State<Waveform> {
         child: SizedBox(
           width: double.infinity,
           height: widget.height,
-          child: CustomPaint(key: _waveKey, painter: _waveformVisualizer),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final double width = constraints.maxWidth;
+              _availableWidth = width;
+
+              return Stack(
+                children: [
+                  CustomPaint(key: _waveKey, painter: _waveformVisualizer, size: Size(width, widget.height)),
+                  Markers(
+                    rmsValues: widget.rmsValues,
+                    paintedWidth: width,
+                    waveFormHeight: widget.height,
+                    markerPositions: widget.markerPositions,
+                    selectedMarkerPosition: widget.selectedMarkerPosition,
+                    viewStart: _viewStart,
+                    viewEnd: _viewEnd,
+                    onTap: widget.onMarkerTap,
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
