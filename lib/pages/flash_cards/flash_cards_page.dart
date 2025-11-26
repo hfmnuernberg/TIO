@@ -14,6 +14,11 @@ class FlashCardsPage extends StatefulWidget {
 
 class _FlashCardsPageState extends State<FlashCardsPage> {
   FlashCardCategory? selectedCategory;
+  bool bookmarkFilterActive = false;
+
+  void toggleBookmarkFilter() {
+    setState(() => bookmarkFilterActive = !bookmarkFilterActive);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,27 +47,31 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
                   ),
                   SizedBox(width: 16),
                   Semantics(
-                    label: context.l10n.filterBookmarkEnable,
+                    label: bookmarkFilterActive
+                        ? context.l10n.filterBookmarkEnable
+                        : context.l10n.filterBookmarkDisable,
                     button: true,
                     child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: ColorTheme.onPrimary,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      decoration: BoxDecoration(color: ColorTheme.onPrimary, borderRadius: BorderRadius.circular(8)),
                       child: InkWell(
-                        onTap: () {},
+                        onTap: toggleBookmarkFilter,
                         borderRadius: BorderRadius.circular(8),
-                        child: const Padding(
+                        child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                          child: Icon(Icons.bookmark_add_outlined, color: ColorTheme.primary),
+                          child: Icon(
+                            bookmarkFilterActive ? Icons.bookmark : Icons.bookmark_border,
+                            color: ColorTheme.primary,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ]
+                ],
               ),
               SizedBox(height: 16),
-              Expanded(child: FlashCardsList(categoryFilter: selectedCategory)),
+              Expanded(
+                child: FlashCardsList(categoryFilter: selectedCategory, bookmarkFilterActive: bookmarkFilterActive),
+              ),
             ],
           ),
         ),

@@ -51,7 +51,9 @@ class FlashCardsImpl implements FlashCards {
   Future<void> updateBookmarks(String id) async {
     final library = await _projectRepo.loadLibrary();
 
-    library.bookmarkedFlashCards.contains(id) ? library.bookmarkedFlashCards.remove(id) : library.bookmarkedFlashCards.add(id);
+    library.bookmarkedFlashCards.contains(id)
+        ? library.bookmarkedFlashCards.remove(id)
+        : library.bookmarkedFlashCards.add(id);
 
     await _projectRepo.saveLibrary(library);
   }
