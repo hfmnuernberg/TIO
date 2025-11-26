@@ -6,4 +6,6 @@ mixin FlashCards {
   List<FlashCard> getAll();
 
   Future<FlashCard> getTipOfTheDay([DateTime? date]);
+
+  Future<void> updateBookmarks(String id);
 }

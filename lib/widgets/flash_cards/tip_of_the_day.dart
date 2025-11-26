@@ -39,6 +39,10 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
     setState(() {});
   }
 
+  Future<void> handleToggleBookmark(String cardId) async {
+    await flashCards.updateBookmarks(cardId);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -72,7 +76,11 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
             if (card == null)
               const Center(child: CircularProgressIndicator())
             else
-              FlashCard(category: card!.category, description: card!.description(l10n)),
+              FlashCard(
+                category: card!.category,
+                description: card!.description(l10n),
+                onToggle: () => handleToggleBookmark(card!.id),
+              ),
             const SizedBox(height: 4),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

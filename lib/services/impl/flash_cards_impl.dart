@@ -40,6 +40,15 @@ class FlashCardsImpl implements FlashCards {
     return newCard;
   }
 
+  @override
+  Future<void> updateBookmarks(String id) async {
+    final library = await _projectRepo.loadLibrary();
+
+    library.bookmarkedFlashCards.contains(id) ? library.bookmarkedFlashCards.remove(id) : library.bookmarkedFlashCards.add(id);
+
+    await _projectRepo.saveLibrary(library);
+  }
+
   FlashCard? _getTodaysCard(List<FlashCard> allCards, List<SuggestedFlashCard> suggestedCards, DateTime date) {
     final todaysCard = suggestedCards.firstWhereOrNull((suggested) => _isSameDay(suggested.suggestedAt, date));
     return todaysCard == null ? null : allCards.firstWhere((card) => card.id == todaysCard.id);

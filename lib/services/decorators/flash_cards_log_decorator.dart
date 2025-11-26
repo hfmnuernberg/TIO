@@ -28,4 +28,10 @@ class FlashCardsLogDecorator implements FlashCards {
     _logger.t('getTipOfTheDay($date): ${card.id}');
     return card;
   }
+
+  @override
+  Future<void> updateBookmarks(String id) async {
+    _logger.t('toggleBookmark($id)');
+    await _flashCards.updateBookmarks(id);
+  }
 }
