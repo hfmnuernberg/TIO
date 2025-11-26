@@ -6,7 +6,6 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
-import 'package:tiomusic/pages/media_player/markers/waveform_window_labels.dart';
 import 'package:tiomusic/pages/media_player/markers/edit_markers_controls.dart';
 import 'package:tiomusic/pages/media_player/waveform/waveform.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
@@ -29,10 +28,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   Player get player => widget.player;
 
   final List<double> _markerPositions = List.empty(growable: true);
-  final double _waveFormHeight = 200;
   double _playbackPosition = 0;
-  double _viewStart = 0;
-  double _viewEnd = 1;
   Duration _positionDuration = Duration.zero;
   double? _selectedMarkerPosition;
   bool get _hasSelectedMarker => _selectedMarkerPosition != null;
@@ -93,15 +89,11 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     setState(() {});
   }
 
-  void _handlePositionChange(double snappedRelativePosition) {
-    final double? markerPosition = _findMarkerNear(snappedRelativePosition);
-    _seekToPosition(snappedRelativePosition, updateMarker: true, markerPosition: markerPosition);
-  }
-
-  void _handleViewWindowChange(double start, double end) => setState(() {
-    _viewStart = start;
-    _viewEnd = end;
-  });
+  void _handlePositionChange(double snappedRelativePosition) => _seekToPosition(
+    snappedRelativePosition,
+    updateMarker: true,
+    markerPosition: _findMarkerNear(snappedRelativePosition),
+  );
 
   Future<void> _seekToPosition(double position, {bool updateMarker = false, double? markerPosition}) async {
     final clamped = position.clamp(0.0, 1.0);
@@ -164,21 +156,15 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          WaveformWindowLabels(fileDuration: player.fileDuration, viewStart: _viewStart, viewEnd: _viewEnd),
-          const SizedBox(height: 4),
-          SizedBox(
-            height: _waveFormHeight,
-            child: Waveform(
-              rmsValues: widget.rmsValues,
-              position: _playbackPosition,
-              rangeStart: block.rangeStart,
-              rangeEnd: block.rangeEnd,
-              height: _waveFormHeight,
-              markerPositions: _markerPositions,
-              selectedMarkerPosition: _selectedMarkerPosition,
-              onPositionChange: _handlePositionChange,
-              onViewWindowChange: _handleViewWindowChange,
-            ),
+          Waveform(
+            rmsValues: widget.rmsValues,
+            position: _playbackPosition,
+            rangeStart: block.rangeStart,
+            rangeEnd: block.rangeEnd,
+            fileDuration: player.fileDuration,
+            markerPositions: _markerPositions,
+            selectedMarkerPosition: _selectedMarkerPosition,
+            onPositionChange: _handlePositionChange,
           ),
           const SizedBox(height: 8),
           MediaTimeText(duration: _positionDuration),

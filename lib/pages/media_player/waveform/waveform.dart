@@ -3,17 +3,19 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/media_player/markers/markers.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform_window_labels.dart';
+
+const double waveformHeight = 200;
 
 class Waveform extends StatefulWidget {
   final Float32List rmsValues;
   final double position;
   final double rangeStart;
   final double rangeEnd;
-  final double height;
+  final Duration fileDuration;
   final List<double> markerPositions;
   final double? selectedMarkerPosition;
   final ValueChanged<double> onPositionChange;
-  final void Function(double viewStart, double viewEnd) onViewWindowChange;
 
   const Waveform({
     super.key,
@@ -21,11 +23,10 @@ class Waveform extends StatefulWidget {
     required this.position,
     required this.rangeStart,
     required this.rangeEnd,
-    required this.height,
+    required this.fileDuration,
     required this.markerPositions,
     required this.selectedMarkerPosition,
     required this.onPositionChange,
-    required this.onViewWindowChange,
   });
 
   @override
@@ -60,9 +61,6 @@ class _WaveformState extends State<Waveform> {
   void initState() {
     super.initState();
     _rebuildVisualizer();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _notifyViewWindowChanged();
-    });
   }
 
   @override
@@ -87,7 +85,6 @@ class _WaveformState extends State<Waveform> {
       viewEnd: _viewEnd,
     );
   }
-
 
   void _handleTap(TapUpDetails details) {
     final snappedRelative = _calculateSnappedRelativePosition(details.localPosition.dx);
@@ -143,10 +140,7 @@ class _WaveformState extends State<Waveform> {
       _viewEnd = end;
       _rebuildVisualizer();
     });
-    _notifyViewWindowChanged();
   }
-
-  void _notifyViewWindowChanged() => widget.onViewWindowChange(_viewStart, _viewEnd);
 
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     if (details.pointerCount < 2) return;
@@ -174,7 +168,6 @@ class _WaveformState extends State<Waveform> {
       _viewEnd = end;
       _rebuildVisualizer();
     });
-    _notifyViewWindowChanged();
   }
 
   void _handleHorizontalDragUpdate(DragUpdateDetails details) {
@@ -196,38 +189,43 @@ class _WaveformState extends State<Waveform> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: GestureDetector(
-        onTapUp: _handleTap,
-        onHorizontalDragStart: (_) {},
-        onHorizontalDragUpdate: _handleHorizontalDragUpdate,
-        onScaleStart: _handleScaleStart,
-        onScaleUpdate: _handleScaleUpdate,
-        child: SizedBox(
-          width: double.infinity,
-          height: widget.height,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final double width = constraints.maxWidth;
-              _availableWidth = width;
+      child: Column(
+        children: [
+          WaveformWindowLabels(fileDuration: widget.fileDuration, viewStart: _viewStart, viewEnd: _viewEnd),
+          const SizedBox(height: 4),
+          SizedBox(
+            height: waveformHeight,
+            child: GestureDetector(
+              onTapUp: _handleTap,
+              onHorizontalDragStart: (_) {},
+              onHorizontalDragUpdate: _handleHorizontalDragUpdate,
+              onScaleStart: _handleScaleStart,
+              onScaleUpdate: _handleScaleUpdate,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final double width = constraints.maxWidth;
+                  _availableWidth = width;
 
-              return Stack(
-                children: [
-                  CustomPaint(key: _waveKey, painter: _waveformVisualizer, size: Size(width, widget.height)),
-                  Markers(
-                    rmsValues: widget.rmsValues,
-                    paintedWidth: width,
-                    waveFormHeight: widget.height,
-                    markerPositions: widget.markerPositions,
-                    selectedMarkerPosition: widget.selectedMarkerPosition,
-                    viewStart: _viewStart,
-                    viewEnd: _viewEnd,
-                    onTap: widget.onPositionChange,
-                  ),
-                ],
-              );
-            },
+                  return Stack(
+                    children: [
+                      CustomPaint(key: _waveKey, painter: _waveformVisualizer, size: Size(width, waveformHeight)),
+                      Markers(
+                        rmsValues: widget.rmsValues,
+                        paintedWidth: width,
+                        waveFormHeight: waveformHeight,
+                        markerPositions: widget.markerPositions,
+                        selectedMarkerPosition: widget.selectedMarkerPosition,
+                        viewStart: _viewStart,
+                        viewEnd: _viewEnd,
+                        onTap: widget.onPositionChange,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
