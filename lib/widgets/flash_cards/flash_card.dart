@@ -27,7 +27,7 @@ class FlashCard extends StatelessWidget {
         color: ColorTheme.onPrimary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -56,13 +56,13 @@ class FlashCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        IconButton(
-                          onPressed: onToggle,
-                          icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_border),
-                          tooltip: isBookmarked
-                              ? context.l10n.flashCardRemoveBookmark
-                              : context.l10n.flashCardAddBookmark,
-                          color: ColorTheme.primary,
+                        Transform.translate(
+                          offset: const Offset(16, 0),
+                          child: IconButton(
+                            onPressed: onToggle,
+                            icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_border),
+                            color: ColorTheme.primary,
+                          ),
                         ),
                       ],
                     ),
