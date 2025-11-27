@@ -9,7 +9,7 @@ import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/widgets/confirm_setting_button.dart';
+import 'package:tiomusic/widgets/common_buttons.dart';
 
 String formatSettingValues(List<Object> settingValues) {
   final buffer = StringBuffer();

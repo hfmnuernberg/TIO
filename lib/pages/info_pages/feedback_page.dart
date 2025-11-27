@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/widgets/confirm_setting_button.dart';
+import 'package:tiomusic/widgets/common_buttons.dart';
 import 'package:tiomusic/widgets/info_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 

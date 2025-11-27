@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
-import 'package:tiomusic/widgets/confirm_setting_button.dart';
+import 'package:tiomusic/widgets/common_buttons.dart';
 import 'package:tiomusic/widgets/dismiss_keyboard.dart';
 
 class ParentSettingPage extends StatefulWidget {

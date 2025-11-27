@@ -17,7 +17,7 @@ import 'package:tiomusic/src/rust/frb_generated.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/color_schemes.g.dart';
 import 'package:tiomusic/util/log.dart';
-import 'package:tiomusic/widgets/confirm_setting_button.dart';
+import 'package:tiomusic/widgets/common_buttons.dart';
 
 class SplashApp extends StatefulWidget {
   final Function(ProjectLibrary, ThemeData?) returnProjectLibraryAndTheme;
