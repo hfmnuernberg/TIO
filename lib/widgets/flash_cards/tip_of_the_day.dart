@@ -47,8 +47,9 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
   }
 
   Future<void> handleToggleBookmark(String cardId) async {
+    bookmarkedCardIds.contains(cardId) ? bookmarkedCardIds.remove(cardId) : bookmarkedCardIds.add(cardId);
+    setState(() {});
     await flashCards.updateBookmarks(cardId);
-    loadBookmarkedCardIds();
   }
 
   @override
@@ -95,7 +96,9 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => FlashCardsPage())),
+                  onPressed: () => Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => const FlashCardsPage()))
+                      .then((_) => loadBookmarkedCardIds()),
                   child: Text(l10n.tipOfTheDayViewMore, style: const TextStyle(color: ColorTheme.primary)),
                 ),
                 TextButton.icon(

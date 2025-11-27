@@ -24,7 +24,7 @@ class FlashCardsImpl implements FlashCards {
   Future<List<String>> getAllBookmarked() async {
     final library = await _projectRepo.loadLibrary();
 
-    return List<String>.unmodifiable(library.bookmarkedFlashCards);
+    return List<String>.from(library.bookmarkedFlashCards);
   }
 
   @override
