@@ -21,6 +21,13 @@ class FlashCardsImpl implements FlashCards {
   List<FlashCard> getAll() => List.unmodifiable(flashCards);
 
   @override
+  Future<List<String>> getAllBookmarked() async {
+    final library = await _projectRepo.loadLibrary();
+
+    return List<String>.from(library.bookmarkedFlashCards);
+  }
+
+  @override
   Future<FlashCard> getTipOfTheDay([DateTime? date]) async {
     final library = await _projectRepo.loadLibrary();
     final allCards = getAll();
@@ -38,6 +45,17 @@ class FlashCardsImpl implements FlashCards {
     await _rememberSuggestedCard(newCard!, library);
 
     return newCard;
+  }
+
+  @override
+  Future<void> updateBookmark(String id) async {
+    final library = await _projectRepo.loadLibrary();
+
+    library.bookmarkedFlashCards.contains(id)
+        ? library.bookmarkedFlashCards.remove(id)
+        : library.bookmarkedFlashCards.add(id);
+
+    await _projectRepo.saveLibrary(library);
   }
 
   FlashCard? _getTodaysCard(List<FlashCard> allCards, List<SuggestedFlashCard> suggestedCards, DateTime date) {

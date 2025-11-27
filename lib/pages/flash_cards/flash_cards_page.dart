@@ -14,6 +14,11 @@ class FlashCardsPage extends StatefulWidget {
 
 class _FlashCardsPageState extends State<FlashCardsPage> {
   FlashCardCategory? selectedCategory;
+  bool bookmarkFilterActive = false;
+
+  void toggleBookmarkFilter() {
+    setState(() => bookmarkFilterActive = !bookmarkFilterActive);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,15 +39,39 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
           padding: EdgeInsets.fromLTRB(16, 16, 16, 32 + bottomInset),
           child: Column(
             children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: CategoryFilterButton(
-                  category: selectedCategory,
-                  onSelected: (category) => setState(() => selectedCategory = category),
-                ),
+              Row(
+                children: [
+                  CategoryFilterButton(
+                    category: selectedCategory,
+                    onSelected: (category) => setState(() => selectedCategory = category),
+                  ),
+                  SizedBox(width: 16),
+                  Semantics(
+                    label: bookmarkFilterActive
+                        ? context.l10n.filterBookmarkDisable
+                        : context.l10n.filterBookmarkEnable,
+                    button: true,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(color: ColorTheme.onPrimary, borderRadius: BorderRadius.circular(8)),
+                      child: InkWell(
+                        onTap: toggleBookmarkFilter,
+                        borderRadius: BorderRadius.circular(8),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                          child: Icon(
+                            bookmarkFilterActive ? Icons.bookmark : Icons.bookmark_border,
+                            color: ColorTheme.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 16),
-              Expanded(child: FlashCardsList(categoryFilter: selectedCategory)),
+              Expanded(
+                child: FlashCardsList(categoryFilter: selectedCategory, bookmarkFilterActive: bookmarkFilterActive),
+              ),
             ],
           ),
         ),

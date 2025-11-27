@@ -18,6 +18,9 @@ class ProjectLibrary extends ChangeNotifier {
   @JsonKey(defaultValue: [])
   late List<SuggestedFlashCard> suggestedFlashCards;
 
+  @JsonKey(defaultValue: [])
+  late List<String> bookmarkedFlashCards;
+
   late int _visitedToolsCounter;
   @JsonKey(defaultValue: 0)
   int get visitedToolsCounter => _visitedToolsCounter;
@@ -101,6 +104,7 @@ class ProjectLibrary extends ChangeNotifier {
     this.showImageTutorial,
     this.showWaveformTip,
     this.showBeatToggleTip,
+    this.bookmarkedFlashCards,
     this.suggestedFlashCards,
   ) {
     _projects = projects;
@@ -132,6 +136,7 @@ class ProjectLibrary extends ChangeNotifier {
     showWaveformTip = true;
     showBeatToggleTip = true;
     suggestedFlashCards = [];
+    bookmarkedFlashCards = [];
   }
 
   factory ProjectLibrary.fromJson(Map<String, dynamic> json) => _$ProjectLibraryFromJson(json);

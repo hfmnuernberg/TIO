@@ -21,12 +21,14 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
   late FlashCards flashCards;
 
   domain.FlashCard? card;
+  List<String> bookmarkedCardIds = [];
 
   @override
   void initState() {
     super.initState();
     flashCards = context.read<FlashCards>();
     unawaited(loadTipOfTheDay());
+    unawaited(loadBookmarkedCardIds());
   }
 
   Future<void> loadTipOfTheDay() async {
@@ -34,9 +36,20 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
     setState(() {});
   }
 
+  Future<void> loadBookmarkedCardIds() async {
+    bookmarkedCardIds = await flashCards.getAllBookmarked();
+    setState(() {});
+  }
+
   Future<void> regenerate() async {
     card = await flashCards.getTipOfTheDay();
     setState(() {});
+  }
+
+  Future<void> handleToggleBookmark(String cardId) async {
+    bookmarkedCardIds.contains(cardId) ? bookmarkedCardIds.remove(cardId) : bookmarkedCardIds.add(cardId);
+    setState(() {});
+    await flashCards.updateBookmark(cardId);
   }
 
   @override
@@ -72,13 +85,20 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
             if (card == null)
               const Center(child: CircularProgressIndicator())
             else
-              FlashCard(category: card!.category, description: card!.description(l10n)),
+              FlashCard(
+                category: card!.category,
+                description: card!.description(l10n),
+                isBookmarked: bookmarkedCardIds.contains(card!.id),
+                onToggle: () => handleToggleBookmark(card!.id),
+              ),
             const SizedBox(height: 4),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => FlashCardsPage())),
+                  onPressed: () => Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (_) => const FlashCardsPage()))
+                      .then((_) => loadBookmarkedCardIds()),
                   child: Text(l10n.tipOfTheDayViewMore, style: const TextStyle(color: ColorTheme.primary)),
                 ),
                 TextButton.icon(

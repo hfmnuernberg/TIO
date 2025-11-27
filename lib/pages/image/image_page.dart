@@ -21,7 +21,7 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/widgets/confirm_setting_button.dart';
+import 'package:tiomusic/widgets/common_buttons.dart';
 import 'package:tiomusic/widgets/tio_icon_button.dart';
 
 class ImageTool extends StatefulWidget {

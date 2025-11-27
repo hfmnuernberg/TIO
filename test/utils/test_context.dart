@@ -73,6 +73,7 @@ class TestContext {
 
     await projectRepo.saveLibrary(projectLibrary);
     await fileReferences.init(projectLibrary);
+    await flashCards.init();
 
     providers = [
       Provider<AudioSystem>(create: (_) => audioSystem),
