@@ -23,6 +23,11 @@ class Wrapper extends StatelessWidget {
 @widgetbook.UseCase(name: 'FlashCard', type: FlashCard)
 Widget flashCard(BuildContext context) {
   return Wrapper(
-    child: const FlashCard(category: FlashCardCategory.team, description: 'Some description'),
+    child: FlashCard(
+      category: FlashCardCategory.team,
+      description: 'Some description',
+      isBookmarked: false,
+      onToggle: () {},
+    ),
   );
 }
