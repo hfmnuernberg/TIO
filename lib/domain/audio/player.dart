@@ -140,8 +140,21 @@ class Player {
   }
 
   Future<void> setPlaybackPosition(double posFactor) async {
-    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: posFactor.clamp(0, 1));
-    await _update();
+    final clamped = posFactor.clamp(0.0, 1.0);
+    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: clamped);
+
+    final previousPosition = _playbackPosition;
+    if (_playbackPosition != clamped) {
+      _playbackPosition = clamped;
+      for (final listener in _onPlaybackPositionChangeListeners) {
+        listener(_playbackPosition);
+      }
+
+      await _markers.onPlaybackPositionChange(
+        previousPosition: previousPosition,
+        currentPosition: _playbackPosition,
+      );
+    }
   }
 
   Future<void> setTrim(double startPosition, double endPosition) async {
