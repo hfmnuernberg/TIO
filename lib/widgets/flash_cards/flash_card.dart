@@ -61,6 +61,9 @@ class FlashCard extends StatelessWidget {
                           child: IconButton(
                             onPressed: onToggle,
                             icon: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_border),
+                            tooltip: isBookmarked
+                                ? context.l10n.flashCardRemoveBookmark
+                                : context.l10n.flashCardAddBookmark,
                             color: ColorTheme.primary,
                           ),
                         ),

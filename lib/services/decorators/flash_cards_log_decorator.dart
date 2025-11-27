@@ -37,8 +37,8 @@ class FlashCardsLogDecorator implements FlashCards {
   }
 
   @override
-  Future<void> updateBookmarks(String id) async {
-    _logger.t('toggleBookmark($id)');
-    await _flashCards.updateBookmarks(id);
+  Future<void> updateBookmark(String id) async {
+    _logger.t('updateBookmark($id)');
+    await _flashCards.updateBookmark(id);
   }
 }

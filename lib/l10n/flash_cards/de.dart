@@ -415,8 +415,8 @@ mixin GermanFlashCards on Object implements FlashCardsLocalization {
   String get descriptionVision006 => 'überlege dir vorher dein Ziel und halte es währenddessen präsent.';
 
   String get filterAllCategories => 'Alle Kategorien';
-  String get filterBookmarkDisable => 'Disable bookmark filter';
-  String get filterBookmarkEnable => 'Enable bookmark filter';
+  String get filterBookmarkDisable => 'Deaktiviere Lesezeichenfilter';
+  String get filterBookmarkEnable => 'Aktiviere Lesezeichenfilter';
   String get filterSelectCategory => 'Kategorie wählen';
 
   String get flashCard => 'Übetipp';

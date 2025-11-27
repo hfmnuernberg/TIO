@@ -49,7 +49,7 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
   Future<void> handleToggleBookmark(String cardId) async {
     bookmarkedCardIds.contains(cardId) ? bookmarkedCardIds.remove(cardId) : bookmarkedCardIds.add(cardId);
     setState(() {});
-    await flashCards.updateBookmarks(cardId);
+    await flashCards.updateBookmark(cardId);
   }
 
   @override

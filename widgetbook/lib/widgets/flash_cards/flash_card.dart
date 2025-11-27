@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/domain/flash_cards/category.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/flash_cards/flash_card.dart';
+import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
 class Wrapper extends StatelessWidget {
@@ -26,8 +27,8 @@ Widget flashCard(BuildContext context) {
     child: FlashCard(
       category: FlashCardCategory.team,
       description: 'Some description',
-      isBookmarked: false,
-      onToggle: () {},
+      isBookmarked: context.knobs.boolean(label: 'isBookmarked'),
+      onToggle: () => debugPrint('onToggle'),
     ),
   );
 }

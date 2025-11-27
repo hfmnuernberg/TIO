@@ -48,7 +48,7 @@ class FlashCardsImpl implements FlashCards {
   }
 
   @override
-  Future<void> updateBookmarks(String id) async {
+  Future<void> updateBookmark(String id) async {
     final library = await _projectRepo.loadLibrary();
 
     library.bookmarkedFlashCards.contains(id)

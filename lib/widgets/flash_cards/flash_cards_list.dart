@@ -38,7 +38,7 @@ class _FlashCardsListState extends State<FlashCardsList> {
   Future<void> handleToggleBookmark(String cardId) async {
     bookmarkedCardIds.contains(cardId) ? bookmarkedCardIds.remove(cardId) : bookmarkedCardIds.add(cardId);
     setState(() {});
-    await flashCards.updateBookmarks(cardId);
+    await flashCards.updateBookmark(cardId);
   }
 
   List<domain.FlashCard> filterCards() {

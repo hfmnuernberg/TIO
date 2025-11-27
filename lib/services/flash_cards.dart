@@ -9,5 +9,5 @@ mixin FlashCards {
 
   Future<FlashCard> getTipOfTheDay([DateTime? date]);
 
-  Future<void> updateBookmarks(String id);
+  Future<void> updateBookmark(String id);
 }
