@@ -37,10 +37,10 @@ class WaveformViewportController {
     final int visibleBins = (lastVisibleIndex - firstVisibleIndex + 1).clamp(1, totalBins);
 
     final int localIndex = WaveformVisualizer.indexForX(tapX, paintedWidth, visibleBins);
-    final double localFraction = visibleBins > 1 ? localIndex / (visibleBins - 1) : 0.0;
 
-    final double span = (clampedEnd - clampedStart).clamp(_minSpan, _maxSpan);
-    return clampedStart + localFraction * span;
+    final int globalIndex = (firstVisibleIndex + localIndex).clamp(0, totalBins - 1);
+
+    return totalBins > 1 ? globalIndex / (totalBins - 1) : 0.0;
   }
 
   void panByPixels({required double dxPixels, required double paintedWidth}) {

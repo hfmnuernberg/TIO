@@ -41,8 +41,7 @@ class Markers extends StatelessWidget {
     final double clampedEnd = viewEnd.clamp(clampedStart, 1.0);
 
     final int firstVisibleIndex = (clampedStart * (totalBins - 1)).round().clamp(0, totalBins - 1);
-    final int lastVisibleIndex =
-        (clampedEnd * (totalBins - 1)).round().clamp(firstVisibleIndex, totalBins - 1);
+    final int lastVisibleIndex = (clampedEnd * (totalBins - 1)).round().clamp(firstVisibleIndex, totalBins - 1);
     final int visibleBins = (lastVisibleIndex - firstVisibleIndex + 1).clamp(1, totalBins);
 
     final List<Widget> children = [];
