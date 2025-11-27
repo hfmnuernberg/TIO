@@ -25,7 +25,7 @@ final directories = <_widgetbook.WidgetbookNode>[
     name: 'widgets',
     children: [
       _widgetbook.WidgetbookFolder(
-        name: 'flash_card',
+        name: 'flash_cards',
         children: [
           _widgetbook.WidgetbookComponent(
             name: 'FlashCard',

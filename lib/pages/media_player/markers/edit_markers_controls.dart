@@ -4,6 +4,7 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/on_off_button.dart';
 
 class MarkerEditControls extends StatelessWidget {
+  final Key keyAddRemove;
   final bool isPlaying;
   final bool hasSelectedMarker;
   final VoidCallback onTogglePlaying;
@@ -12,6 +13,7 @@ class MarkerEditControls extends StatelessWidget {
 
   const MarkerEditControls({
     super.key,
+    required this.keyAddRemove,
     required this.isPlaying,
     required this.hasSelectedMarker,
     required this.onTogglePlaying,
@@ -44,6 +46,7 @@ class MarkerEditControls extends StatelessWidget {
             tooltipOn: l10n.mediaPlayerPlay,
           ),
           OnOffButton(
+            key: keyAddRemove,
             isActive: markerIsActive,
             onTap: markerOnTap,
             buttonSize: TIOMusicParams.sizeSmallButtons,

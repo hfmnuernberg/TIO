@@ -12,6 +12,9 @@ import 'package:tiomusic/pages/media_player/markers/zoom_rms_helper.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/domain/audio/player.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class EditMarkersPage extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;
@@ -37,11 +40,17 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   late bool _originalRepeat;
   late Float32List _rmsValues;
   late int _targetVisibleBins;
+  late ProjectRepository _projectRepo;
+
+  final Tutorial _tutorial = Tutorial();
+  final GlobalKey _keyWaveform = GlobalKey();
+  final GlobalKey _keyAddRemove = GlobalKey();
 
   @override
   void initState() {
     super.initState();
 
+    _projectRepo = context.read<ProjectRepository>();
     _originalRepeat = player.repeat;
     player.setRepeat(false);
 
@@ -54,14 +63,59 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     _playbackListener = _handlePlaybackPositionChange;
     player.addOnPlaybackPositionChangeListener(_playbackListener);
+
+    _showTutorial();
   }
 
   @override
   void dispose() {
+    _tutorial.dispose();
     player.setRepeat(_originalRepeat);
     player.markers.positions = block.markerPositions;
     player.removeOnPlaybackPositionChangeListener(_playbackListener);
     super.dispose();
+  }
+
+  void _showTutorial() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final projectLibrary = context.read<ProjectLibrary>();
+
+      if (projectLibrary.showMediaPlayerEditMarkersTutorial) {
+        projectLibrary.showMediaPlayerEditMarkersTutorial = false;
+        await context.read<ProjectRepository>().saveLibrary(projectLibrary);
+        _createTutorial();
+        if (!mounted) return;
+        _tutorial.show(context);
+      }
+    });
+  }
+
+  void _createTutorial() {
+    final l10n = context.l10n;
+    var targets = <CustomTargetFocus>[
+      CustomTargetFocus(
+        _keyWaveform,
+        l10n.mediaPlayerEditMarkersTutorialWaveform,
+        alignText: ContentAlign.bottom,
+        buttonsPosition: ButtonsPosition.bottom,
+        pointingDirection: PointingDirection.up,
+        shape: ShapeLightFocus.RRect,
+      ),
+      CustomTargetFocus(
+        _keyAddRemove,
+        l10n.mediaPlayerEditMarkersTutorialAddRemove,
+        alignText: ContentAlign.top,
+        buttonsPosition: ButtonsPosition.bottom,
+        pointingDirection: PointingDirection.down,
+        pointerOffset: 68,
+        shape: ShapeLightFocus.Circle,
+      ),
+    ];
+
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showMediaPlayerEditMarkersTutorial = false;
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }, context);
   }
 
   void _updateUiForPlaybackPosition(double position) {
@@ -170,6 +224,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       customWidget: Column(
         children: [
           Waveform(
+            key: _keyWaveform,
             rmsValues: _rmsValues,
             position: _playbackPosition,
             rangeStart: block.rangeStart,
@@ -184,6 +239,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
           MediaTimeText(duration: _positionDuration),
           const SizedBox(height: 8),
           MarkerEditControls(
+            keyAddRemove: _keyAddRemove,
             isPlaying: player.isPlaying,
             hasSelectedMarker: _hasSelectedMarker,
             onTogglePlaying: _togglePlaying,
