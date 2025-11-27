@@ -55,7 +55,7 @@ class _WaveformState extends State<Waveform> {
   @override
   void initState() {
     super.initState();
-    _viewport = WaveformViewportController();
+    _viewport = WaveformViewportController(fileDuration: widget.fileDuration);
     _rebuildVisualizer();
   }
 

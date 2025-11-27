@@ -1,20 +1,25 @@
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 
 class WaveformViewportController {
+  final Duration fileDuration;
   double viewStart;
   double viewEnd;
 
-  static const double _minSpan = 1 / 10;
-  static const double _maxSpan = 1;
-
+  final double _maxSpan = 1;
   double _initialViewStart;
   double _initialViewEnd;
   double _pinchFocalPosition;
 
-  WaveformViewportController({this.viewStart = 0.0, this.viewEnd = 1.0})
+  WaveformViewportController({required this.fileDuration, this.viewStart = 0.0, this.viewEnd = 1.0})
     : _initialViewStart = viewStart,
       _initialViewEnd = viewEnd,
       _pinchFocalPosition = 0.5;
+
+  double get _minSpan {
+    final seconds = fileDuration.inMilliseconds / 1000.0;
+    if (seconds <= 10.0) return 1;
+    return (10.0 / seconds).clamp(0.0, 1.0);
+  }
 
   double calculateSnappedRelativePosition({
     required double tapX,

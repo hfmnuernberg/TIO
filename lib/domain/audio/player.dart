@@ -150,10 +150,7 @@ class Player {
         listener(_playbackPosition);
       }
 
-      await _markers.onPlaybackPositionChange(
-        previousPosition: previousPosition,
-        currentPosition: _playbackPosition,
-      );
+      await _markers.onPlaybackPositionChange(previousPosition: previousPosition, currentPosition: _playbackPosition);
     }
   }
 
