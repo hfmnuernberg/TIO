@@ -245,10 +245,15 @@ abstract class FlashCardsLocalization {
   String get descriptionVision005;
   String get descriptionVision006;
 
+  String get filterAllCategories;
+  String get filterBookmarkDisable;
+  String get filterBookmarkEnable;
+  String get filterSelectCategory;
+
   String get flashCard;
+  String get flashCardAddBookmark;
+  String get flashCardRemoveBookmark;
   String get flashCardTitle;
 
-  String get flashCardsAllCategories;
   String get flashCardsPageTitle;
-  String get flashCardsSelectCategory;
 }

@@ -414,10 +414,15 @@ mixin GermanFlashCards on Object implements FlashCardsLocalization {
       'notiere dir euphorische Schlüsselmomente aus der Vergangenheit. Haben sie eine Gemeinsamkeit? Was genau hat deine Augen zum Leuchten gebracht?';
   String get descriptionVision006 => 'überlege dir vorher dein Ziel und halte es währenddessen präsent.';
 
+  String get filterAllCategories => 'Alle Kategorien';
+  String get filterBookmarkDisable => 'Deaktiviere Lesezeichenfilter';
+  String get filterBookmarkEnable => 'Aktiviere Lesezeichenfilter';
+  String get filterSelectCategory => 'Kategorie wählen';
+
   String get flashCard => 'Übetipp';
+  String get flashCardAddBookmark => 'Lesezeichen hinzufügen';
+  String get flashCardRemoveBookmark => 'Lesezeichen entfernen';
   String get flashCardTitle => 'Wenn du heute übst,';
 
-  String get flashCardsAllCategories => 'Alle Kategorien';
   String get flashCardsPageTitle => 'Übungstipps';
-  String get flashCardsSelectCategory => 'Kategorie wählen';
 }
