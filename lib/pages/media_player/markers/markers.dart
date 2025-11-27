@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 
 class Markers extends StatelessWidget {
   final Float32List rmsValues;
@@ -31,11 +32,18 @@ class Markers extends StatelessWidget {
   Widget build(BuildContext context) {
     if (paintedWidth <= 0) return const SizedBox.shrink();
 
+    final int totalBins = rmsValues.length;
+    if (totalBins <= 0) return const SizedBox.shrink();
+
     final double markerTop = (waveFormHeight / 2) - MediaPlayerParams.markerIconSize - 20;
 
     final double clampedStart = viewStart.clamp(0.0, 1.0);
     final double clampedEnd = viewEnd.clamp(clampedStart, 1.0);
-    final double span = (clampedEnd - clampedStart).clamp(0.0001, 1.0);
+
+    final int firstVisibleIndex = (clampedStart * (totalBins - 1)).round().clamp(0, totalBins - 1);
+    final int lastVisibleIndex =
+        (clampedEnd * (totalBins - 1)).round().clamp(firstVisibleIndex, totalBins - 1);
+    final int visibleBins = (lastVisibleIndex - firstVisibleIndex + 1).clamp(1, totalBins);
 
     final List<Widget> children = [];
 
@@ -43,13 +51,14 @@ class Markers extends StatelessWidget {
       final bool isSelected = selectedMarkerPosition != null && position == selectedMarkerPosition;
 
       final double clampedPos = position.clamp(0.0, 1.0);
-
       if (clampedPos < clampedStart || clampedPos > clampedEnd) continue;
 
-      final double xFraction = (clampedPos - clampedStart) / span;
+      final int globalIndex = (clampedPos * (totalBins - 1)).round().clamp(0, totalBins - 1);
+      final int localIndex = globalIndex - firstVisibleIndex;
+      if (localIndex < 0 || localIndex >= visibleBins) continue;
 
-      final double markerCenter = xFraction * paintedWidth;
-      final double markerLeft = TIOMusicParams.edgeInset + (markerCenter - (MediaPlayerParams.markerButton / 2));
+      final double markerCenter = WaveformVisualizer.xForIndex(localIndex, paintedWidth, visibleBins);
+      final double markerLeft = markerCenter - (MediaPlayerParams.markerButton / 2);
 
       children.add(
         MarkerButton(
