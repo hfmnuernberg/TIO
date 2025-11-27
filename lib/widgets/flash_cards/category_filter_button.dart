@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/domain/flash_cards/category.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/flash_card_category_extension.dart';
 import 'package:tiomusic/widgets/common_buttons.dart';
 import 'package:tiomusic/widgets/flash_cards/flash_card_category_wheel.dart';
 import 'package:tiomusic/widgets/parent_tool/modal_bottom_sheet.dart';
@@ -71,15 +72,27 @@ class CategoryFilterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton.icon(
-      onPressed: () => _openCategoryFilter(context),
-      icon: const Icon(Icons.filter_list),
-      label: Text(context.l10n.filterSelectCategory),
-      style: TextButton.styleFrom(
-        backgroundColor: ColorTheme.onPrimary,
-        foregroundColor: ColorTheme.primary,
-        iconColor: ColorTheme.primary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    final hasCategory = category != null;
+
+    return SizedBox(
+      width: 180,
+      child: TextButton(
+        onPressed: () => _openCategoryFilter(context),
+        style: TextButton.styleFrom(
+          backgroundColor: ColorTheme.onPrimary,
+          foregroundColor: ColorTheme.primary,
+          iconColor: ColorTheme.primary,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (hasCategory) ...[Icon(category!.icon), const SizedBox(width: 8)],
+            Flexible(
+              child: Text(hasCategory ? context.l10n.categoryLabel(category!) : context.l10n.filterSelectCategory),
+            ),
+          ],
+        ),
       ),
     );
   }

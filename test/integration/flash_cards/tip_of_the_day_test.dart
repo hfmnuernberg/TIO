@@ -86,7 +86,7 @@ void main() {
       expect((await context.projectRepo.loadLibrary()).suggestedFlashCards[0].id, 'practicing027');
     });
 
-    testWidgets('adds and removes tip as bookmarked', (tester) async {
+    testWidgets('adds tip as bookmarked', (tester) async {
       await tester.renderScaffold(const ProjectsPage(), context.providers);
       expect(find.byTooltip('Add bookmark'), findsOneWidget);
 
@@ -94,6 +94,17 @@ void main() {
 
       expect(find.byTooltip('Add bookmark'), findsNothing);
       expect(find.byTooltip('Remove bookmark'), findsOneWidget);
+    });
+
+    testWidgets('removes tip as bookmarked', (tester) async {
+      await tester.renderScaffold(const ProjectsPage(), context.providers);
+      await tester.tapAndSettle(find.byTooltip('Add bookmark'));
+      expect(find.byTooltip('Remove bookmark'), findsOneWidget);
+
+      await tester.tapAndSettle(find.byTooltip('Remove bookmark'));
+
+      expect(find.byTooltip('Remove bookmark'), findsNothing);
+      expect(find.byTooltip('Add bookmark'), findsOneWidget);
     });
   });
 }
