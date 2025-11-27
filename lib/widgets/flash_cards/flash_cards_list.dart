@@ -53,12 +53,14 @@ class _FlashCardsListState extends State<FlashCardsList> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.of(context).padding.bottom;
     final filteredCards = filterCards();
 
     return Semantics(
       container: true,
       hint: context.l10n.flashCardsPageTitle,
       child: ListView.separated(
+        padding: EdgeInsets.only(bottom: 32 + bottomInset),
         itemBuilder: (_, i) {
           final card = filteredCards[i];
 

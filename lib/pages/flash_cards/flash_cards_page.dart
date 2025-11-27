@@ -22,8 +22,6 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).padding.bottom;
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       extendBody: true,
@@ -36,37 +34,40 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
       body: SafeArea(
         bottom: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(16, 16, 16, 32 + bottomInset),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
-              Row(
-                children: [
-                  CategoryFilterButton(
-                    category: selectedCategory,
-                    onSelected: (category) => setState(() => selectedCategory = category),
-                  ),
-                  SizedBox(width: 16),
-                  Semantics(
-                    label: bookmarkFilterActive
-                        ? context.l10n.filterBookmarkDisable
-                        : context.l10n.filterBookmarkEnable,
-                    button: true,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(color: ColorTheme.onPrimary, borderRadius: BorderRadius.circular(8)),
-                      child: InkWell(
-                        onTap: toggleBookmarkFilter,
-                        borderRadius: BorderRadius.circular(8),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                          child: Icon(
-                            bookmarkFilterActive ? Icons.bookmark : Icons.bookmark_border,
-                            color: ColorTheme.primary,
+              Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Row(
+                  children: [
+                    CategoryFilterButton(
+                      category: selectedCategory,
+                      onSelected: (category) => setState(() => selectedCategory = category),
+                    ),
+                    SizedBox(width: 16),
+                    Semantics(
+                      label: bookmarkFilterActive
+                          ? context.l10n.filterBookmarkDisable
+                          : context.l10n.filterBookmarkEnable,
+                      button: true,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(color: ColorTheme.onPrimary, borderRadius: BorderRadius.circular(8)),
+                        child: InkWell(
+                          onTap: toggleBookmarkFilter,
+                          borderRadius: BorderRadius.circular(8),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                            child: Icon(
+                              bookmarkFilterActive ? Icons.bookmark : Icons.bookmark_border,
+                              color: ColorTheme.primary,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               SizedBox(height: 16),
               Expanded(
