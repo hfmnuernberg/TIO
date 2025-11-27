@@ -403,7 +403,7 @@ mixin EnglishFlashCards on Object implements FlashCardsLocalization {
   String get filterSelectCategory => 'Select category';
 
   String get flashCard => 'Flash card';
-  String get flashCardAddBookmark => 'Bookmark this tip';
+  String get flashCardAddBookmark => 'Add bookmark';
   String get flashCardRemoveBookmark => 'Remove bookmark';
   String get flashCardTitle => 'When you practice today,';
 

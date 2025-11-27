@@ -42,5 +42,25 @@ void main() {
 
       expect(cardTitlesFiltered.any((title) => title.contains('Culture')), isFalse);
     });
+
+    testWidgets('filters flash cards by bookmark', (tester) async {
+      await tester.renderScaffold(FlashCardsPage(), context.providers);
+      final cardList = find.semantics.byHint('Practice tips');
+      final cardListItems = find.semantics.descendant(of: cardList, matching: find.semantics.byHint('Flash card'));
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Enable bookmark filter'));
+
+      expect(tester.getCardTitles(cardListItems), isEmpty);
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Disable bookmark filter'));
+      await tester.tapAndSettle(find.byTooltip('Add bookmark').first);
+      await tester.tapAndSettle(find.bySemanticsLabel('Enable bookmark filter'));
+
+      expect(tester.getCardTitles(cardListItems), hasLength(1));
+
+      await tester.tapAndSettle(find.byTooltip('Remove bookmark').first);
+
+      expect(tester.getCardTitles(cardListItems), isEmpty);
+    });
   });
 }

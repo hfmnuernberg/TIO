@@ -48,8 +48,8 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
                   SizedBox(width: 16),
                   Semantics(
                     label: bookmarkFilterActive
-                        ? context.l10n.filterBookmarkEnable
-                        : context.l10n.filterBookmarkDisable,
+                        ? context.l10n.filterBookmarkDisable
+                        : context.l10n.filterBookmarkEnable,
                     button: true,
                     child: DecoratedBox(
                       decoration: BoxDecoration(color: ColorTheme.onPrimary, borderRadius: BorderRadius.circular(8)),
