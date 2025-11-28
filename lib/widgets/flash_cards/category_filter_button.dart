@@ -89,7 +89,7 @@ class CategoryFilterButton extends StatelessWidget {
           children: [
             if (hasCategory) ...[Icon(category!.icon), const SizedBox(width: 8)],
             Flexible(
-              child: Text(hasCategory ? context.l10n.categoryLabel(category!) : context.l10n.filterSelectCategory),
+              child: Text(hasCategory ? context.l10n.categoryLabel(category!) : context.l10n.filterAllCategories),
             ),
           ],
         ),
