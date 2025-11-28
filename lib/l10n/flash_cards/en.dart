@@ -408,4 +408,8 @@ mixin EnglishFlashCards on Object implements FlashCardsLocalization {
   String get flashCardTitle => 'When you practice today,';
 
   String get flashCardsPageTitle => 'Practice tips';
+  String get flashCardsPageTutorialFilter =>
+      'Use the filter button to filter flash cards by category or bookmarked status.';
+  String get flashCardsPageTutorialBookmark =>
+      'Tap the bookmark icon in a flash card to add or remove it to your saved favorite practice tips.';
 }

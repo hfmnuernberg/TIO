@@ -45,14 +45,16 @@ class ProjectLibrary extends ChangeNotifier {
   final List<int> showSurveyAtVisits = [10, 50, 100];
 
   @JsonKey(defaultValue: true)
-  late bool showHomepageTutorial; // on homepage
+  late bool showHomepageTutorial;
   @JsonKey(defaultValue: true)
-  late bool showProjectPageTutorial; // on project page
+  late bool showProjectPageTutorial;
+  @JsonKey(defaultValue: true)
+  late bool showFlashCardsPageTutorial;
 
   @JsonKey(defaultValue: true)
-  late bool showQuickToolTutorial; // on parent tool if quick tool
+  late bool showQuickToolTutorial;
   @JsonKey(defaultValue: true)
-  late bool showToolTutorial; // on parent tool if not quick tool
+  late bool showToolTutorial;
 
   @JsonKey(defaultValue: true)
   late bool showTunerIslandTutorial;
@@ -89,6 +91,7 @@ class ProjectLibrary extends ChangeNotifier {
     bool neverShowSurveyAgain,
     this.showHomepageTutorial,
     this.showProjectPageTutorial,
+    this.showFlashCardsPageTutorial,
     this.showToolTutorial,
     this.showQuickToolTutorial,
     this.showTunerIslandTutorial,
@@ -120,6 +123,7 @@ class ProjectLibrary extends ChangeNotifier {
     _neverShowSurveyAgain = false;
     showHomepageTutorial = true;
     showProjectPageTutorial = true;
+    showFlashCardsPageTutorial = true;
     showToolTutorial = true;
     showQuickToolTutorial = true;
     showTunerIslandTutorial = true;
@@ -146,6 +150,7 @@ class ProjectLibrary extends ChangeNotifier {
   void resetAllTutorials() {
     showHomepageTutorial = true;
     showProjectPageTutorial = true;
+    showFlashCardsPageTutorial = true;
     showToolTutorial = true;
     showQuickToolTutorial = true;
     showTunerIslandTutorial = true;
@@ -166,6 +171,7 @@ class ProjectLibrary extends ChangeNotifier {
   void dismissAllTutorials() {
     showHomepageTutorial = false;
     showProjectPageTutorial = false;
+    showFlashCardsPageTutorial = false;
     showToolTutorial = false;
     showQuickToolTutorial = false;
     showTunerIslandTutorial = false;

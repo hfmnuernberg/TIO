@@ -115,7 +115,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
   void _createTutorial() {
     final l10n = context.l10n;
-    var targets = <CustomTargetFocus>[
+    final targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyChangeTitle,
         l10n.projectTutorialEditTitle,

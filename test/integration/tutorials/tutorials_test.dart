@@ -114,6 +114,19 @@ void main() {
     expect(find.bySemanticsLabel(RegExp('Tap here to start and stop the tuner.')), findsOneWidget);
   });
 
+  testWidgets('shows flash cards tutorial initially', (tester) async {
+    await tester.renderScaffold(ProjectsPage(), context.providers);
+    await tester.completeInitialTutorial();
+
+    await tester.tapAndSettle(find.bySemanticsLabel('View more'));
+    await tester.waitForTutorialNext();
+    expect(find.bySemanticsLabel(RegExp('Use the filter button to filter flash cards')), findsOneWidget);
+
+    await tester.tapAndSettle(find.bySemanticsLabel('Next'));
+    await tester.waitForTutorialNext();
+    expect(find.bySemanticsLabel(RegExp('Tap the bookmark icon in a flash card')), findsOneWidget);
+  });
+
   testWidgets('shows specific tutorial steps after quick tool is saved in project', (tester) async {
     await tester.renderScaffold(ProjectsPage(), context.providers);
     await tester.completeInitialTutorial();

@@ -99,7 +99,7 @@ class _ParentToolState extends State<ParentTool> {
   }
 
   void _createTutorial() {
-    var targets = <CustomTargetFocus>[
+    final targets = <CustomTargetFocus>[
       if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool)
         CustomTargetFocus(
           _keySaveInProject,
