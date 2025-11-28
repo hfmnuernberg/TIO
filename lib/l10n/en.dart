@@ -97,6 +97,10 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get mediaPlayerAddMarker => 'Add marker';
   String get mediaPlayerDescription => 'Make recordings or load audio files, listen to them and edit them.';
   String get mediaPlayerEditMarkers => 'Edit markers';
+  String get mediaPlayerEditMarkersTutorialAddRemove =>
+      'At the selected position, you can add a marker. If you select it again, you can remove it.';
+  String get mediaPlayerEditMarkersTutorialWaveform =>
+      'Here you can see the waveform of your audio file. You can zoom in and out, and then move the zoomed-in view to better inspect specific parts.';
   String get mediaPlayerErrorFileAccessible => 'File is not accessible.';
   String get mediaPlayerErrorFileAccessibleDescription =>
       "Maybe the file needs to be downloaded first if it doesn't exist locally on your phone.";

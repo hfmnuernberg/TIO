@@ -6,14 +6,33 @@ import 'package:tiomusic/util/constants.dart';
 class WaveformVisualizer extends CustomPainter {
   final Float32List _rmsValues;
 
-  double? _playbackPosition;
+  final double? _playbackPosition;
   final double? _rangeStartPos;
   final double? _rangeEndPos;
   final bool _singleView = false;
 
-  WaveformVisualizer(this._playbackPosition, this._rangeStartPos, this._rangeEndPos, this._rmsValues);
+  final double _viewStart;
+  final double _viewEnd;
 
-  WaveformVisualizer.setTrim(this._rangeStartPos, this._rangeEndPos, this._rmsValues);
+  WaveformVisualizer(
+    this._playbackPosition,
+    this._rangeStartPos,
+    this._rangeEndPos,
+    this._rmsValues, {
+    double viewStart = 0.0,
+    double viewEnd = 1.0,
+  }) : _viewStart = viewStart,
+       _viewEnd = viewEnd;
+
+  WaveformVisualizer.setTrim(
+    this._rangeStartPos,
+    this._rangeEndPos,
+    this._rmsValues, {
+    double viewStart = 0.0,
+    double viewEnd = 1.0,
+  }) : _playbackPosition = null,
+       _viewStart = viewStart,
+       _viewEnd = viewEnd;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -33,50 +52,60 @@ class WaveformVisualizer extends CustomPainter {
 
     if (_rmsValues.isEmpty || size.width <= 0 || size.height <= 0) return;
 
-    final int numberOfBins = _rmsValues.length;
-    final double contentUnits = (numberOfBins > 1 ? (numberOfBins - 1) : 1) * MediaPlayerParams.binWidth;
+    final int totalBins = _rmsValues.length;
+    if (totalBins == 0) return;
+
+    final double clampedStart = _viewStart.clamp(0.0, 1.0);
+    final double clampedEnd = _viewEnd.clamp(clampedStart, 1.0);
+
+    final int firstVisibleIndex = (clampedStart * (totalBins - 1)).round().clamp(0, totalBins - 1);
+    final int lastVisibleIndex = (clampedEnd * (totalBins - 1)).round().clamp(firstVisibleIndex, totalBins - 1);
+
+    final int visibleBins = (lastVisibleIndex - firstVisibleIndex + 1).clamp(1, totalBins);
 
     final double halfStroke = _halfStroke();
     final double drawableWidth = (size.width - 2 * halfStroke).clamp(0.0, size.width);
-    final double scaleX = drawableWidth / contentUnits;
+    final double scaleX = visibleBins > 1 ? drawableWidth / _contentUnits(visibleBins) : 1.0;
 
     canvas.save();
     canvas.clipRect(Offset.zero & size);
 
     if (_playbackPosition != null) {
-      double playbackPositionMapped = _playbackPosition! * numberOfBins;
+      final double playbackIndex = _playbackPosition.clamp(0.0, 1.0) * (totalBins - 1);
 
-      for (int i = 0; i < _rmsValues.length; i++) {
+      for (int local = 0; local < visibleBins; local++) {
+        final int i = firstVisibleIndex + local;
+
         var brush = blueBrush;
 
         if (_singleView) {
-          if (i >= playbackPositionMapped - 1.0 && i <= playbackPositionMapped) {
-            brush = redBrush;
-          }
+          if (i >= playbackIndex - 1.0 && i <= playbackIndex) brush = redBrush;
         } else {
-          double rangeStartMapped = _rangeStartPos! * numberOfBins;
-          double rangeEndMapped = _rangeEndPos! * numberOfBins;
+          double rangeStartMapped = _rangeStartPos! * totalBins;
+          double rangeEndMapped = _rangeEndPos! * totalBins;
 
           if (i < rangeStartMapped || i > rangeEndMapped) {
             brush = lightBlueBrush;
-          } else if (i <= playbackPositionMapped) {
+          } else if (i <= playbackIndex) {
             brush = redBrush;
           } else {
             brush = blueBrush;
           }
         }
 
-        final double x = halfStroke + (i * MediaPlayerParams.binWidth) * scaleX;
+        final double x = halfStroke + (local * MediaPlayerParams.binWidth) * scaleX;
         _drawWaveLine(canvas, size, x, midAxisHeight, i, brush);
       }
     } else if (_rangeStartPos != null && _rangeEndPos != null) {
-      double startPositionMapped = _rangeStartPos * numberOfBins;
-      double endPositionMapped = _rangeEndPos * numberOfBins;
+      final double startPositionMapped = _rangeStartPos * totalBins;
+      final double endPositionMapped = _rangeEndPos * totalBins;
 
-      for (int i = 0; i < _rmsValues.length; i++) {
+      for (int local = 0; local < visibleBins; local++) {
+        final int i = firstVisibleIndex + local;
+
         var brush = i >= startPositionMapped && i <= endPositionMapped ? redBrush : blueBrush;
 
-        final double x = halfStroke + (i * MediaPlayerParams.binWidth) * scaleX;
+        final double x = halfStroke + (local * MediaPlayerParams.binWidth) * scaleX;
         _drawWaveLine(canvas, size, x, midAxisHeight, i, brush);
       }
     }

@@ -96,6 +96,10 @@ class German extends AppLocalizations with GermanFlashCards {
   String get mediaPlayerAddMarker => 'Marker hinzufügen';
   String get mediaPlayerDescription => 'Lade Audio-Files oder nimm etwas auf, hör es dir an und bearbeite es.';
   String get mediaPlayerEditMarkers => 'Marker bearbeiten';
+  String get mediaPlayerEditMarkersTutorialAddRemove =>
+      'An der ausgewählten Stelle kannst du einen Marker setzen. Wenn du ihn erneut auswählst, kannst du ihn auch wieder entfernen.';
+  String get mediaPlayerEditMarkersTutorialWaveform =>
+      'Hier siehst du die Wellenform deiner Audiodatei. Du kannst hinein- und herauszoomen und das gezoomte Fenster anschließend verschieben, um bestimmte Stellen besser erkennen zu können.';
   String get mediaPlayerErrorFileAccessible => 'Datei nicht lesbar';
   String get mediaPlayerErrorFileAccessibleDescription =>
       'Die Datei ist nicht lesbar. Bitte überprüfe, ob sie lokal auf deinem Gerät gespeichert ist und das sie lizenzrechtlich in dieser App verwendet werden darf.';

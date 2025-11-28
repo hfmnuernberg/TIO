@@ -5,14 +5,16 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/media_player/markers/markers.dart';
-import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
+import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
+import 'package:tiomusic/pages/media_player/markers/edit_markers_controls.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform.dart';
+import 'package:tiomusic/pages/media_player/markers/zoom_rms_helper.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/domain/audio/player.dart';
-import 'package:tiomusic/widgets/on_off_button.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class EditMarkersPage extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;
@@ -28,159 +30,182 @@ class EditMarkersPage extends StatefulWidget {
 class _EditMarkersPageState extends State<EditMarkersPage> {
   MediaPlayerBlock get block => widget.mediaPlayerBlock;
   Player get player => widget.player;
+  final List<double> markerPositions = List.empty(growable: true);
+  double playbackPosition = 0;
+  Duration positionDuration = Duration.zero;
+  double? selectedMarkerPosition;
+  bool get hasSelectedMarker => selectedMarkerPosition != null;
 
-  final GlobalKey _waveKey = GlobalKey();
-  late WaveformVisualizer _waveformVisualizer;
-  double _waveFormWidth = 0;
-  final double _waveFormHeight = 200;
-  double _sliderValue = 0;
+  late final OnPlaybackPositionChange playbackListener;
+  late bool originalRepeat;
+  late Float32List rmsValues;
+  late int targetVisibleBins;
+  late ProjectRepository projectRepo;
 
-  late final OnPlaybackPositionChange _playbackListener;
-
-  Duration _positionDuration = Duration.zero;
-
-  double? _selectedMarkerPosition;
-
-  final List<double> _markerPositions = List.empty(growable: true);
-
-  bool get _hasSelectedMarker => _selectedMarkerPosition != null;
-
-  double get _paintedWaveWidth {
-    final buildContext = _waveKey.currentContext;
-    if (buildContext == null) return _waveFormWidth;
-    final renderObject = buildContext.findRenderObject();
-    if (renderObject is RenderBox) return renderObject.size.width;
-    return _waveFormWidth;
-  }
-
-  late bool _originalRepeat;
-
-  bool _wasPlayingBeforeSliderDrag = false;
+  final Tutorial tutorial = Tutorial();
+  final GlobalKey keyWaveform = GlobalKey();
+  final GlobalKey keyAddRemove = GlobalKey();
 
   @override
   void initState() {
     super.initState();
 
-    _originalRepeat = player.repeat;
+    projectRepo = context.read<ProjectRepository>();
+    originalRepeat = player.repeat;
     player.setRepeat(false);
 
-    block.markerPositions.forEach(_markerPositions.add);
+    block.markerPositions.forEach(markerPositions.add);
+    positionDuration = player.fileDuration * playbackPosition;
+    player.markers.positions = markerPositions;
 
-    _positionDuration = player.fileDuration * _sliderValue;
+    rmsValues = widget.rmsValues;
+    targetVisibleBins = widget.rmsValues.length;
 
-    _waveformVisualizer = WaveformVisualizer(0, block.rangeStart, block.rangeEnd, widget.rmsValues);
+    playbackListener = handlePlaybackPositionChange;
+    player.addOnPlaybackPositionChangeListener(playbackListener);
 
-    _syncPlayerMarkers();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
-
-      setState(() => _waveformVisualizer = WaveformVisualizer(0, block.rangeStart, block.rangeEnd, widget.rmsValues));
-    });
-
-    _playbackListener = _handlePlaybackPositionChange;
-    player.addOnPlaybackPositionChangeListener(_playbackListener);
+    showTutorial();
   }
 
   @override
   void dispose() {
-    player.setRepeat(_originalRepeat);
+    tutorial.dispose();
+    player.setRepeat(originalRepeat);
     player.markers.positions = block.markerPositions;
-    player.removeOnPlaybackPositionChangeListener(_playbackListener);
+    player.removeOnPlaybackPositionChangeListener(playbackListener);
     super.dispose();
   }
 
-  void _syncPlayerMarkers() {
-    player.markers.positions = _markerPositions;
+  void showTutorial() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final projectLibrary = context.read<ProjectLibrary>();
+
+      if (projectLibrary.showMediaPlayerEditMarkersTutorial) {
+        projectLibrary.showMediaPlayerEditMarkersTutorial = false;
+        await context.read<ProjectRepository>().saveLibrary(projectLibrary);
+        createTutorial();
+        if (!mounted) return;
+        tutorial.show(context);
+      }
+    });
   }
 
-  void _updateUiForPosition(double position) {
+  void createTutorial() {
+    final l10n = context.l10n;
+    var targets = <CustomTargetFocus>[
+      CustomTargetFocus(
+        keyWaveform,
+        l10n.mediaPlayerEditMarkersTutorialWaveform,
+        alignText: ContentAlign.bottom,
+        buttonsPosition: ButtonsPosition.bottom,
+        pointingDirection: PointingDirection.up,
+        shape: ShapeLightFocus.RRect,
+      ),
+      CustomTargetFocus(
+        keyAddRemove,
+        l10n.mediaPlayerEditMarkersTutorialAddRemove,
+        alignText: ContentAlign.top,
+        buttonsPosition: ButtonsPosition.bottom,
+        pointingDirection: PointingDirection.down,
+        pointerOffset: 68,
+        shape: ShapeLightFocus.Circle,
+      ),
+    ];
+
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showMediaPlayerEditMarkersTutorial = false;
+      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }, context);
+  }
+
+  void updateUiForPlaybackPosition(double position) {
     final clamped = position.clamp(0.0, 1.0);
-    _sliderValue = clamped;
-    _positionDuration = player.fileDuration * clamped;
-    _waveformVisualizer = WaveformVisualizer(clamped, block.rangeStart, block.rangeEnd, widget.rmsValues);
+    playbackPosition = clamped;
+    positionDuration = player.fileDuration * clamped;
   }
 
-  void _handlePlaybackPositionChange(double position) {
+  void handlePlaybackPositionChange(double position) {
     if (!mounted) return;
-    setState(() => _updateUiForPosition(position));
+    setState(() => updateUiForPlaybackPosition(position));
   }
 
-  void _removeSelectedMarker() {
-    if (_selectedMarkerPosition != null) {
-      _markerPositions.removeWhere((pos) => pos == _selectedMarkerPosition);
-      _selectedMarkerPosition = null;
+  void removeSelectedMarker() {
+    if (selectedMarkerPosition != null) {
+      markerPositions.removeWhere((pos) => pos == selectedMarkerPosition);
+      selectedMarkerPosition = null;
     }
-    _syncPlayerMarkers();
+    player.markers.positions = markerPositions;
     setState(() {});
   }
 
-  void _removeAllMarkers() {
-    _markerPositions.clear();
-    _selectedMarkerPosition = null;
-    _syncPlayerMarkers();
+  void removeAllMarkers() {
+    markerPositions.clear();
+    selectedMarkerPosition = null;
+    player.markers.positions = markerPositions;
     setState(() {});
   }
 
-  Future<void> _updatePositionFromWave(double tapX) async {
-    final double snappedRelativePosition = _calculateSnappedRelativePosition(tapX);
-    final double? markerPosition = _findMarkerNear(snappedRelativePosition);
+  void handlePositionChange(double snappedRelativePosition) => seekToPosition(
+    snappedRelativePosition,
+    updateMarker: true,
+    markerPosition: findMarkerNear(snappedRelativePosition),
+  );
 
-    await _seekToPosition(snappedRelativePosition, updateSelectedMarker: true, selectedMarkerPosition: markerPosition);
+  Future<void> handleZoomChanged(double viewStart, double viewEnd) async {
+    final Float32List? newRms = await recalculateRmsForZoom(
+      player: player,
+      targetVisibleBins: targetVisibleBins,
+      viewStart: viewStart,
+      viewEnd: viewEnd,
+      currentBinCount: rmsValues.length,
+    );
+
+    if (!mounted || newRms == null) return;
+    setState(() => rmsValues = newRms);
   }
 
-  Future<void> _seekToPosition(
-    double position, {
-    bool updateSelectedMarker = false,
-    double? selectedMarkerPosition,
-  }) async {
+  Future<void> seekToPosition(double position, {bool updateMarker = false, double? markerPosition}) async {
     final clamped = position.clamp(0.0, 1.0);
 
     setState(() {
-      _updateUiForPosition(clamped);
-      if (updateSelectedMarker) _selectedMarkerPosition = selectedMarkerPosition;
+      updateUiForPlaybackPosition(clamped);
+      if (updateMarker) selectedMarkerPosition = markerPosition;
     });
 
     await player.setPlaybackPosition(clamped);
   }
 
-  Future<void> _togglePlaying() async {
+  Future<void> togglePlaying() async {
     if (player.isPlaying) {
       await player.stop();
     } else {
-      await player.setPlaybackPosition(_sliderValue.clamp(0, 1));
+      await player.setPlaybackPosition(playbackPosition.clamp(0, 1));
       await player.start();
     }
     if (!mounted) return;
     setState(() {});
   }
 
-  double _calculateSnappedRelativePosition(double tapX) {
-    final int binCount = widget.rmsValues.length;
-    final int tappedBinIndex = WaveformVisualizer.indexForX(tapX, _paintedWaveWidth, binCount);
-    return tappedBinIndex / (binCount - 1);
-  }
-
-  double? _findMarkerNear(double snappedRelativePosition) {
-    final int binCount = widget.rmsValues.length;
+  double? findMarkerNear(double snappedRelativePosition) {
+    final int binCount = rmsValues.length;
     final double oneBinRelative = 1.0 / (binCount - 1);
 
-    for (final pos in _markerPositions) {
+    for (final pos in markerPositions) {
       if ((snappedRelativePosition - pos).abs() <= oneBinRelative) return pos;
     }
 
     return null;
   }
 
-  void _addNewMarker() {
-    _markerPositions.add(_sliderValue);
-    _syncPlayerMarkers();
+  void addNewMarker() {
+    markerPositions.add(playbackPosition);
+    player.markers.positions = markerPositions;
     setState(() {});
   }
 
-  Future<void> _onConfirm() async {
+  Future<void> onConfirm() async {
     block.markerPositions.clear();
-    _markerPositions.forEach(block.markerPositions.add);
+    markerPositions.forEach(block.markerPositions.add);
 
     await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     if (!mounted) return;
@@ -193,97 +218,33 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     return ParentSettingPage(
       title: l10n.mediaPlayerEditMarkers,
-      confirm: _onConfirm,
-      reset: _removeAllMarkers,
+      confirm: onConfirm,
+      reset: removeAllMarkers,
       mustBeScrollable: true,
       customWidget: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(height: TIOMusicParams.edgeInset),
-          SizedBox(
-            height: _waveFormHeight,
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
-                  child: GestureDetector(
-                    onTapDown: (details) => _updatePositionFromWave(details.localPosition.dx),
-                    onHorizontalDragUpdate: (details) => _updatePositionFromWave(details.localPosition.dx),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: _waveFormHeight,
-                      child: CustomPaint(key: _waveKey, painter: _waveformVisualizer),
-                    ),
-                  ),
-                ),
-                Markers(
-                  rmsValues: widget.rmsValues,
-                  paintedWidth: _paintedWaveWidth,
-                  waveFormHeight: _waveFormHeight,
-                  markerPositions: _markerPositions,
-                  selectedMarkerPosition: _selectedMarkerPosition,
-                  onTap: (position) =>
-                      _seekToPosition(position, updateSelectedMarker: true, selectedMarkerPosition: position),
-                ),
-              ],
-            ),
+          Waveform(
+            key: keyWaveform,
+            rmsValues: rmsValues,
+            position: playbackPosition,
+            rangeStart: block.rangeStart,
+            rangeEnd: block.rangeEnd,
+            fileDuration: player.fileDuration,
+            markerPositions: markerPositions,
+            selectedMarkerPosition: selectedMarkerPosition,
+            onPositionChange: handlePositionChange,
+            onZoomChanged: handleZoomChanged,
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 8, 0, 6),
-            child: Text(
-              l10n.formatDurationWithMillis(_positionDuration),
-              style: const TextStyle(color: ColorTheme.primary),
-            ),
-          ),
-          Slider(
-            value: _sliderValue,
-            inactiveColor: ColorTheme.primary80,
-            divisions: 1000,
-            onChangeStart: (startValue) async {
-              _wasPlayingBeforeSliderDrag = player.isPlaying;
-              if (_wasPlayingBeforeSliderDrag) {
-                await player.stop();
-                if (!mounted) return;
-                setState(() {});
-              }
-            },
-            onChanged: (newValue) => setState(() => _updateUiForPosition(newValue)),
-            onChangeEnd: (newValue) async {
-              await _seekToPosition(newValue);
-              if (_wasPlayingBeforeSliderDrag) {
-                await player.start();
-                if (!mounted) return;
-                setState(() {});
-              }
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const PlaceholderButton(buttonSize: TIOMusicParams.sizeSmallButtons),
-                OnOffButton(
-                  isActive: player.isPlaying,
-                  onTap: _togglePlaying,
-                  buttonSize: TIOMusicParams.sizeBigButtons,
-                  iconOff: Icons.play_arrow,
-                  iconOn: TIOMusicParams.pauseIcon,
-                  tooltipOff: context.l10n.mediaPlayerPause,
-                  tooltipOn: context.l10n.mediaPlayerPlay,
-                ),
-                OnOffButton(
-                  isActive: _hasSelectedMarker,
-                  onTap: _hasSelectedMarker ? _removeSelectedMarker : _addNewMarker,
-                  buttonSize: TIOMusicParams.sizeSmallButtons,
-                  iconOff: _hasSelectedMarker ? Icons.delete_outlined : Icons.add,
-                  iconOn: _hasSelectedMarker ? Icons.delete_outlined : Icons.add,
-                  tooltipOff: _hasSelectedMarker ? l10n.mediaPlayerRemoveMarker : l10n.mediaPlayerAddMarker,
-                  tooltipOn: _hasSelectedMarker ? l10n.mediaPlayerRemoveMarker : l10n.mediaPlayerAddMarker,
-                ),
-              ],
-            ),
+          const SizedBox(height: 8),
+          MediaTimeText(duration: positionDuration),
+          const SizedBox(height: 8),
+          MarkerEditControls(
+            keyAddRemove: keyAddRemove,
+            isPlaying: player.isPlaying,
+            hasSelectedMarker: hasSelectedMarker,
+            onTogglePlaying: togglePlaying,
+            onRemoveSelectedMarker: removeSelectedMarker,
+            onAddMarker: addNewMarker,
           ),
         ],
       ),
