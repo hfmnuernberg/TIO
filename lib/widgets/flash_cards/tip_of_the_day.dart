@@ -59,7 +59,7 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
     return Material(
       color: ColorTheme.primaryContainer,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
+        padding: const EdgeInsets.fromLTRB(8, 12, 8, 6),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,

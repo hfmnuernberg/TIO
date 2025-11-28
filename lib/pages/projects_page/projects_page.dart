@@ -342,7 +342,10 @@ class _ProjectsPageState extends State<ProjectsPage> {
                   child: NestedScrollView(
                     headerSliverBuilder: (context, innerBoxIsScrolled) => [
                       SliverToBoxAdapter(
-                        child: Padding(padding: const EdgeInsets.fromLTRB(16, 16, 16, 0), child: const TipOfTheDay()),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
+                          child: Container(key: _keyTipOfTheDay, child: const TipOfTheDay()),
+                        ),
                       ),
                     ],
                     body: Consumer<ProjectLibrary>(
@@ -358,13 +361,13 @@ class _ProjectsPageState extends State<ProjectsPage> {
                             )
                           else
                             Container(
-                              margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                              margin: const EdgeInsets.fromLTRB(8, 16, 8, 0),
                               child: Material(
                                 color: ColorTheme.primaryContainer,
                                 child: Column(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
+                                      padding: const EdgeInsets.fromLTRB(0, 12, 0, 8),
                                       child: Center(
                                         child: Text(
                                           l10n.projectsTitle,
