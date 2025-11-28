@@ -42,6 +42,10 @@ class _WaveformState extends State<Waveform> {
   late WaveformViewportController viewport;
 
   double availableWidth = 0;
+  bool? isZooming;
+
+  int activePointers = 0;
+  bool multiTouchInProgress = false;
 
   double get paintedWaveWidth {
     if (availableWidth > 0) return availableWidth;
@@ -83,6 +87,8 @@ class _WaveformState extends State<Waveform> {
   }
 
   void handleTap(TapUpDetails details) {
+    if (multiTouchInProgress) return;
+
     final double width = paintedWaveWidth;
     final int totalBins = widget.rmsValues.length;
     final snappedRelative = viewport.calculateSnappedRelativePosition(
@@ -93,39 +99,73 @@ class _WaveformState extends State<Waveform> {
     widget.onPositionChange(snappedRelative);
   }
 
-  void panBy(double dxPixels) {
-    final double width = paintedWaveWidth;
-    if (width <= 0) return;
-
-    setState(() {
-      viewport.panByPixels(dxPixels: dxPixels, paintedWidth: width);
-      rebuildVisualizer();
-    });
-  }
-
   void handleScaleUpdate(ScaleUpdateDetails details) {
-    if (details.pointerCount < 2) return;
+    final double width = paintedWaveWidth;
+    final int totalBins = widget.rmsValues.length;
+    if (width <= 0 || totalBins <= 0) return;
 
-    setState(() {
-      viewport.updateScale(details.scale);
-      rebuildVisualizer();
-    });
+    if (details.pointerCount == 1 && !multiTouchInProgress) {
+      final double snappedRelative = viewport.calculateSnappedRelativePosition(
+        tapX: details.localFocalPoint.dx,
+        paintedWidth: width,
+        totalBins: totalBins,
+      );
+      widget.onPositionChange(snappedRelative);
+    } else if (details.pointerCount >= 2) {
+      setState(() {
+        const double scaleDecisionThreshold = 0.05;
+        const double panDecisionThresholdPx = 2;
+
+        if (isZooming == null) {
+          final bool zoomCandidate = (details.scale - 1.0).abs() > scaleDecisionThreshold;
+          final bool panCandidate = details.focalPointDelta.dx.abs() > panDecisionThresholdPx;
+
+          if (panCandidate && !zoomCandidate) {
+            isZooming = false;
+          } else if (zoomCandidate && !panCandidate) {
+            isZooming = true;
+          } else if (zoomCandidate && panCandidate) {
+            isZooming = false;
+          } else {
+            return;
+          }
+        }
+
+        if (isZooming ?? false) {
+          viewport.updateScale(details.scale);
+        } else {
+          if (details.focalPointDelta.dx != 0) {
+            viewport.panByPixels(dxPixels: details.focalPointDelta.dx, paintedWidth: width);
+          }
+        }
+
+        rebuildVisualizer();
+      });
+    }
   }
 
-  void handleScaleEnd(ScaleEndDetails details) => widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
-
-  void handleHorizontalDragUpdate(DragUpdateDetails details) {
-    final double? dx = details.primaryDelta;
-    if (dx == null) return;
-    panBy(dx);
+  void handleScaleEnd(ScaleEndDetails details) {
+    isZooming = null;
+    widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
   }
 
   void handleScaleStart(ScaleStartDetails details) {
-    if (details.pointerCount < 2) return;
+    isZooming = null;
 
     final double width = paintedWaveWidth;
     final int totalBins = widget.rmsValues.length;
-    viewport.beginScale(focalX: details.localFocalPoint.dx, paintedWidth: width, totalBins: totalBins);
+    if (width <= 0 || totalBins <= 0) return;
+
+    if (details.pointerCount == 1 && !multiTouchInProgress) {
+      final double snappedRelative = viewport.calculateSnappedRelativePosition(
+        tapX: details.localFocalPoint.dx,
+        paintedWidth: width,
+        totalBins: totalBins,
+      );
+      widget.onPositionChange(snappedRelative);
+    } else if (details.pointerCount >= 2) {
+      viewport.beginScale(focalX: details.localFocalPoint.dx, paintedWidth: width, totalBins: totalBins);
+    }
   }
 
   @override
@@ -142,33 +182,45 @@ class _WaveformState extends State<Waveform> {
           const SizedBox(height: 4),
           SizedBox(
             height: waveformHeight,
-            child: GestureDetector(
-              onTapUp: handleTap,
-              onHorizontalDragUpdate: handleHorizontalDragUpdate,
-              onScaleStart: handleScaleStart,
-              onScaleUpdate: handleScaleUpdate,
-              onScaleEnd: handleScaleEnd,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final double width = constraints.maxWidth;
-                  availableWidth = width;
+            child: Listener(
+              onPointerDown: (_) {
+                activePointers++;
+                if (activePointers >= 2) multiTouchInProgress = true;
+              },
+              onPointerUp: (_) {
+                activePointers--;
+                if (activePointers <= 0) {
+                  activePointers = 0;
+                  multiTouchInProgress = false;
+                }
+              },
+              child: GestureDetector(
+                onTapUp: handleTap,
+                onScaleStart: handleScaleStart,
+                onScaleUpdate: handleScaleUpdate,
+                onScaleEnd: handleScaleEnd,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final double width = constraints.maxWidth;
+                    availableWidth = width;
 
-                  return Stack(
-                    children: [
-                      CustomPaint(key: waveKey, painter: waveformVisualizer, size: Size(width, waveformHeight)),
-                      Markers(
-                        rmsValues: widget.rmsValues,
-                        paintedWidth: width,
-                        waveFormHeight: waveformHeight,
-                        markerPositions: widget.markerPositions,
-                        selectedMarkerPosition: widget.selectedMarkerPosition,
-                        viewStart: viewport.viewStart,
-                        viewEnd: viewport.viewEnd,
-                        onTap: widget.onPositionChange,
-                      ),
-                    ],
-                  );
-                },
+                    return Stack(
+                      children: [
+                        CustomPaint(key: waveKey, painter: waveformVisualizer, size: Size(width, waveformHeight)),
+                        Markers(
+                          rmsValues: widget.rmsValues,
+                          paintedWidth: width,
+                          waveFormHeight: waveformHeight,
+                          markerPositions: widget.markerPositions,
+                          selectedMarkerPosition: widget.selectedMarkerPosition,
+                          viewStart: viewport.viewStart,
+                          viewEnd: viewport.viewEnd,
+                          onTap: widget.onPositionChange,
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
           ),
