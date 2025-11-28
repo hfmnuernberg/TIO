@@ -257,6 +257,8 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get projectsTutorialHowToUseTio;
   String get projectsTutorialStart;
   String get projectsTutorialStartUsingTool;
+  String get projectsTutorialTipOfTheDay;
+  String get projectsTutorialTipOfTheDayButtons;
 
   String get text;
   String get textAbout;

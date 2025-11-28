@@ -50,6 +50,8 @@ class _ProjectsPageState extends State<ProjectsPage> {
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyEditProjects = GlobalKey();
   final GlobalKey _keyQuickTools = GlobalKey();
+  final GlobalKey _keyTipOfTheDay = GlobalKey();
+  final GlobalKey _keyTipOfTheDayButtons = GlobalKey();
 
   @override
   void initState() {
@@ -116,6 +118,22 @@ class _ProjectsPageState extends State<ProjectsPage> {
         context: context,
         l10n.projectsTutorialCanIncludeMultipleTools,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
+      ),
+      CustomTargetFocus(
+        _keyTipOfTheDay,
+        l10n.projectsTutorialTipOfTheDay,
+        pointingDirection: PointingDirection.up,
+        alignText: ContentAlign.custom,
+        customTextPosition: CustomTargetContentPosition(bottom: MediaQuery.of(context).size.width / 1.5),
+        shape: ShapeLightFocus.RRect,
+      ),
+      CustomTargetFocus(
+        _keyTipOfTheDayButtons,
+        l10n.projectsTutorialTipOfTheDayButtons,
+        pointingDirection: PointingDirection.up,
+        alignText: ContentAlign.custom,
+        customTextPosition: CustomTargetContentPosition(bottom: MediaQuery.of(context).size.width / 1.5),
+        shape: ShapeLightFocus.RRect,
       ),
     ];
 
@@ -344,7 +362,10 @@ class _ProjectsPageState extends State<ProjectsPage> {
                       SliverToBoxAdapter(
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
-                          child: Container(key: _keyTipOfTheDay, child: const TipOfTheDay()),
+                          child: Container(
+                            key: _keyTipOfTheDay,
+                            child: TipOfTheDay(tutorialButtonsKey: _keyTipOfTheDayButtons),
+                          ),
                         ),
                       ),
                     ],
