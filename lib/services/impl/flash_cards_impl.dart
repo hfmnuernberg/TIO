@@ -59,13 +59,12 @@ class FlashCardsImpl implements FlashCards {
   }
 
   FlashCard? _getTodaysCard(List<FlashCard> allCards, List<SuggestedFlashCard> suggestedCards, DateTime date) {
-    final todaysSuggestions = suggestedCards.where((suggested) => _isSameDay(suggested.suggestedAt, date)).toList();
+    final todaysSuggestions = suggestedCards.where((s) => _isSameDay(s.suggestedAt, date)).toList()
+      ..sort((a, b) => a.suggestedAt.compareTo(b.suggestedAt));
 
     if (todaysSuggestions.isEmpty) return null;
 
-    final lastSuggestion = todaysSuggestions.last;
-
-    return allCards.firstWhere((card) => card.id == lastSuggestion.id);
+    return allCards.firstWhere((card) => card.id == todaysSuggestions.last.id);
   }
 
   FlashCard? _getNewCard(List<FlashCard> allCards, List<SuggestedFlashCard> suggestedCards) {
