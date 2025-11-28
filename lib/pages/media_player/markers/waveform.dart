@@ -37,15 +37,15 @@ class Waveform extends StatefulWidget {
 }
 
 class _WaveformState extends State<Waveform> {
-  final GlobalKey _waveKey = GlobalKey();
-  late WaveformVisualizer _waveformVisualizer;
-  late WaveformViewportController _viewport;
+  final GlobalKey waveKey = GlobalKey();
+  late WaveformVisualizer waveformVisualizer;
+  late WaveformViewportController viewport;
 
-  double _availableWidth = 0;
+  double availableWidth = 0;
 
-  double get _paintedWaveWidth {
-    if (_availableWidth > 0) return _availableWidth;
-    final buildContext = _waveKey.currentContext;
+  double get paintedWaveWidth {
+    if (availableWidth > 0) return availableWidth;
+    final buildContext = waveKey.currentContext;
     if (buildContext == null) return 0;
     final renderObject = buildContext.findRenderObject();
     if (renderObject is RenderBox) return renderObject.size.width;
@@ -55,8 +55,8 @@ class _WaveformState extends State<Waveform> {
   @override
   void initState() {
     super.initState();
-    _viewport = WaveformViewportController(fileDuration: widget.fileDuration);
-    _rebuildVisualizer();
+    viewport = WaveformViewportController(fileDuration: widget.fileDuration);
+    rebuildVisualizer();
   }
 
   @override
@@ -67,25 +67,25 @@ class _WaveformState extends State<Waveform> {
         oldWidget.position != widget.position ||
         oldWidget.rangeStart != widget.rangeStart ||
         oldWidget.rangeEnd != widget.rangeEnd) {
-      _rebuildVisualizer();
+      rebuildVisualizer();
     }
   }
 
-  void _rebuildVisualizer() {
-    _waveformVisualizer = WaveformVisualizer(
+  void rebuildVisualizer() {
+    waveformVisualizer = WaveformVisualizer(
       widget.position,
       widget.rangeStart,
       widget.rangeEnd,
       widget.rmsValues,
-      viewStart: _viewport.viewStart,
-      viewEnd: _viewport.viewEnd,
+      viewStart: viewport.viewStart,
+      viewEnd: viewport.viewEnd,
     );
   }
 
-  void _handleTap(TapUpDetails details) {
-    final double width = _paintedWaveWidth;
+  void handleTap(TapUpDetails details) {
+    final double width = paintedWaveWidth;
     final int totalBins = widget.rmsValues.length;
-    final snappedRelative = _viewport.calculateSnappedRelativePosition(
+    final snappedRelative = viewport.calculateSnappedRelativePosition(
       tapX: details.localPosition.dx,
       paintedWidth: width,
       totalBins: totalBins,
@@ -93,39 +93,39 @@ class _WaveformState extends State<Waveform> {
     widget.onPositionChange(snappedRelative);
   }
 
-  void _panBy(double dxPixels) {
-    final double width = _paintedWaveWidth;
+  void panBy(double dxPixels) {
+    final double width = paintedWaveWidth;
     if (width <= 0) return;
 
     setState(() {
-      _viewport.panByPixels(dxPixels: dxPixels, paintedWidth: width);
-      _rebuildVisualizer();
+      viewport.panByPixels(dxPixels: dxPixels, paintedWidth: width);
+      rebuildVisualizer();
     });
   }
 
-  void _handleScaleUpdate(ScaleUpdateDetails details) {
+  void handleScaleUpdate(ScaleUpdateDetails details) {
     if (details.pointerCount < 2) return;
 
     setState(() {
-      _viewport.updateScale(details.scale);
-      _rebuildVisualizer();
+      viewport.updateScale(details.scale);
+      rebuildVisualizer();
     });
   }
 
-  void _handleScaleEnd(ScaleEndDetails details) => widget.onZoomChanged(_viewport.viewStart, _viewport.viewEnd);
+  void handleScaleEnd(ScaleEndDetails details) => widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
 
-  void _handleHorizontalDragUpdate(DragUpdateDetails details) {
+  void handleHorizontalDragUpdate(DragUpdateDetails details) {
     final double? dx = details.primaryDelta;
     if (dx == null) return;
-    _panBy(dx);
+    panBy(dx);
   }
 
-  void _handleScaleStart(ScaleStartDetails details) {
+  void handleScaleStart(ScaleStartDetails details) {
     if (details.pointerCount < 2) return;
 
-    final double width = _paintedWaveWidth;
+    final double width = paintedWaveWidth;
     final int totalBins = widget.rmsValues.length;
-    _viewport.beginScale(focalX: details.localFocalPoint.dx, paintedWidth: width, totalBins: totalBins);
+    viewport.beginScale(focalX: details.localFocalPoint.dx, paintedWidth: width, totalBins: totalBins);
   }
 
   @override
@@ -136,35 +136,34 @@ class _WaveformState extends State<Waveform> {
         children: [
           WaveformWindowLabels(
             fileDuration: widget.fileDuration,
-            viewStart: _viewport.viewStart,
-            viewEnd: _viewport.viewEnd,
+            viewStart: viewport.viewStart,
+            viewEnd: viewport.viewEnd,
           ),
           const SizedBox(height: 4),
           SizedBox(
             height: waveformHeight,
             child: GestureDetector(
-              onTapUp: _handleTap,
-              onHorizontalDragStart: (_) {},
-              onHorizontalDragUpdate: _handleHorizontalDragUpdate,
-              onScaleStart: _handleScaleStart,
-              onScaleUpdate: _handleScaleUpdate,
-              onScaleEnd: _handleScaleEnd,
+              onTapUp: handleTap,
+              onHorizontalDragUpdate: handleHorizontalDragUpdate,
+              onScaleStart: handleScaleStart,
+              onScaleUpdate: handleScaleUpdate,
+              onScaleEnd: handleScaleEnd,
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   final double width = constraints.maxWidth;
-                  _availableWidth = width;
+                  availableWidth = width;
 
                   return Stack(
                     children: [
-                      CustomPaint(key: _waveKey, painter: _waveformVisualizer, size: Size(width, waveformHeight)),
+                      CustomPaint(key: waveKey, painter: waveformVisualizer, size: Size(width, waveformHeight)),
                       Markers(
                         rmsValues: widget.rmsValues,
                         paintedWidth: width,
                         waveFormHeight: waveformHeight,
                         markerPositions: widget.markerPositions,
                         selectedMarkerPosition: widget.selectedMarkerPosition,
-                        viewStart: _viewport.viewStart,
-                        viewEnd: _viewport.viewEnd,
+                        viewStart: viewport.viewStart,
+                        viewEnd: viewport.viewEnd,
                         onTap: widget.onPositionChange,
                       ),
                     ],

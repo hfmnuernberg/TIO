@@ -30,71 +30,71 @@ class EditMarkersPage extends StatefulWidget {
 class _EditMarkersPageState extends State<EditMarkersPage> {
   MediaPlayerBlock get block => widget.mediaPlayerBlock;
   Player get player => widget.player;
-  final List<double> _markerPositions = List.empty(growable: true);
-  double _playbackPosition = 0;
-  Duration _positionDuration = Duration.zero;
-  double? _selectedMarkerPosition;
-  bool get _hasSelectedMarker => _selectedMarkerPosition != null;
+  final List<double> markerPositions = List.empty(growable: true);
+  double playbackPosition = 0;
+  Duration positionDuration = Duration.zero;
+  double? selectedMarkerPosition;
+  bool get hasSelectedMarker => selectedMarkerPosition != null;
 
-  late final OnPlaybackPositionChange _playbackListener;
-  late bool _originalRepeat;
-  late Float32List _rmsValues;
-  late int _targetVisibleBins;
-  late ProjectRepository _projectRepo;
+  late final OnPlaybackPositionChange playbackListener;
+  late bool originalRepeat;
+  late Float32List rmsValues;
+  late int targetVisibleBins;
+  late ProjectRepository projectRepo;
 
-  final Tutorial _tutorial = Tutorial();
-  final GlobalKey _keyWaveform = GlobalKey();
-  final GlobalKey _keyAddRemove = GlobalKey();
+  final Tutorial tutorial = Tutorial();
+  final GlobalKey keyWaveform = GlobalKey();
+  final GlobalKey keyAddRemove = GlobalKey();
 
   @override
   void initState() {
     super.initState();
 
-    _projectRepo = context.read<ProjectRepository>();
-    _originalRepeat = player.repeat;
+    projectRepo = context.read<ProjectRepository>();
+    originalRepeat = player.repeat;
     player.setRepeat(false);
 
-    block.markerPositions.forEach(_markerPositions.add);
-    _positionDuration = player.fileDuration * _playbackPosition;
-    player.markers.positions = _markerPositions;
+    block.markerPositions.forEach(markerPositions.add);
+    positionDuration = player.fileDuration * playbackPosition;
+    player.markers.positions = markerPositions;
 
-    _rmsValues = widget.rmsValues;
-    _targetVisibleBins = widget.rmsValues.length;
+    rmsValues = widget.rmsValues;
+    targetVisibleBins = widget.rmsValues.length;
 
-    _playbackListener = _handlePlaybackPositionChange;
-    player.addOnPlaybackPositionChangeListener(_playbackListener);
+    playbackListener = handlePlaybackPositionChange;
+    player.addOnPlaybackPositionChangeListener(playbackListener);
 
-    _showTutorial();
+    showTutorial();
   }
 
   @override
   void dispose() {
-    _tutorial.dispose();
-    player.setRepeat(_originalRepeat);
+    tutorial.dispose();
+    player.setRepeat(originalRepeat);
     player.markers.positions = block.markerPositions;
-    player.removeOnPlaybackPositionChangeListener(_playbackListener);
+    player.removeOnPlaybackPositionChangeListener(playbackListener);
     super.dispose();
   }
 
-  void _showTutorial() {
+  void showTutorial() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final projectLibrary = context.read<ProjectLibrary>();
 
       if (projectLibrary.showMediaPlayerEditMarkersTutorial) {
         projectLibrary.showMediaPlayerEditMarkersTutorial = false;
         await context.read<ProjectRepository>().saveLibrary(projectLibrary);
-        _createTutorial();
+        createTutorial();
         if (!mounted) return;
-        _tutorial.show(context);
+        tutorial.show(context);
       }
     });
   }
 
-  void _createTutorial() {
+  void createTutorial() {
     final l10n = context.l10n;
     var targets = <CustomTargetFocus>[
       CustomTargetFocus(
-        _keyWaveform,
+        keyWaveform,
         l10n.mediaPlayerEditMarkersTutorialWaveform,
         alignText: ContentAlign.bottom,
         buttonsPosition: ButtonsPosition.bottom,
@@ -102,7 +102,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         shape: ShapeLightFocus.RRect,
       ),
       CustomTargetFocus(
-        _keyAddRemove,
+        keyAddRemove,
         l10n.mediaPlayerEditMarkersTutorialAddRemove,
         alignText: ContentAlign.top,
         buttonsPosition: ButtonsPosition.bottom,
@@ -112,100 +112,100 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       ),
     ];
 
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showMediaPlayerEditMarkersTutorial = false;
-      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
     }, context);
   }
 
-  void _updateUiForPlaybackPosition(double position) {
+  void updateUiForPlaybackPosition(double position) {
     final clamped = position.clamp(0.0, 1.0);
-    _playbackPosition = clamped;
-    _positionDuration = player.fileDuration * clamped;
+    playbackPosition = clamped;
+    positionDuration = player.fileDuration * clamped;
   }
 
-  void _handlePlaybackPositionChange(double position) {
+  void handlePlaybackPositionChange(double position) {
     if (!mounted) return;
-    setState(() => _updateUiForPlaybackPosition(position));
+    setState(() => updateUiForPlaybackPosition(position));
   }
 
-  void _removeSelectedMarker() {
-    if (_selectedMarkerPosition != null) {
-      _markerPositions.removeWhere((pos) => pos == _selectedMarkerPosition);
-      _selectedMarkerPosition = null;
+  void removeSelectedMarker() {
+    if (selectedMarkerPosition != null) {
+      markerPositions.removeWhere((pos) => pos == selectedMarkerPosition);
+      selectedMarkerPosition = null;
     }
-    player.markers.positions = _markerPositions;
+    player.markers.positions = markerPositions;
     setState(() {});
   }
 
-  void _removeAllMarkers() {
-    _markerPositions.clear();
-    _selectedMarkerPosition = null;
-    player.markers.positions = _markerPositions;
+  void removeAllMarkers() {
+    markerPositions.clear();
+    selectedMarkerPosition = null;
+    player.markers.positions = markerPositions;
     setState(() {});
   }
 
-  void _handlePositionChange(double snappedRelativePosition) => _seekToPosition(
+  void handlePositionChange(double snappedRelativePosition) => seekToPosition(
     snappedRelativePosition,
     updateMarker: true,
-    markerPosition: _findMarkerNear(snappedRelativePosition),
+    markerPosition: findMarkerNear(snappedRelativePosition),
   );
 
-  Future<void> _handleZoomChanged(double viewStart, double viewEnd) async {
+  Future<void> handleZoomChanged(double viewStart, double viewEnd) async {
     final Float32List? newRms = await recalculateRmsForZoom(
       player: player,
-      targetVisibleBins: _targetVisibleBins,
+      targetVisibleBins: targetVisibleBins,
       viewStart: viewStart,
       viewEnd: viewEnd,
-      currentBinCount: _rmsValues.length,
+      currentBinCount: rmsValues.length,
     );
 
     if (!mounted || newRms == null) return;
-    setState(() => _rmsValues = newRms);
+    setState(() => rmsValues = newRms);
   }
 
-  Future<void> _seekToPosition(double position, {bool updateMarker = false, double? markerPosition}) async {
+  Future<void> seekToPosition(double position, {bool updateMarker = false, double? markerPosition}) async {
     final clamped = position.clamp(0.0, 1.0);
 
     setState(() {
-      _updateUiForPlaybackPosition(clamped);
-      if (updateMarker) _selectedMarkerPosition = markerPosition;
+      updateUiForPlaybackPosition(clamped);
+      if (updateMarker) selectedMarkerPosition = markerPosition;
     });
 
     await player.setPlaybackPosition(clamped);
   }
 
-  Future<void> _togglePlaying() async {
+  Future<void> togglePlaying() async {
     if (player.isPlaying) {
       await player.stop();
     } else {
-      await player.setPlaybackPosition(_playbackPosition.clamp(0, 1));
+      await player.setPlaybackPosition(playbackPosition.clamp(0, 1));
       await player.start();
     }
     if (!mounted) return;
     setState(() {});
   }
 
-  double? _findMarkerNear(double snappedRelativePosition) {
-    final int binCount = _rmsValues.length;
+  double? findMarkerNear(double snappedRelativePosition) {
+    final int binCount = rmsValues.length;
     final double oneBinRelative = 1.0 / (binCount - 1);
 
-    for (final pos in _markerPositions) {
+    for (final pos in markerPositions) {
       if ((snappedRelativePosition - pos).abs() <= oneBinRelative) return pos;
     }
 
     return null;
   }
 
-  void _addNewMarker() {
-    _markerPositions.add(_playbackPosition);
-    player.markers.positions = _markerPositions;
+  void addNewMarker() {
+    markerPositions.add(playbackPosition);
+    player.markers.positions = markerPositions;
     setState(() {});
   }
 
-  Future<void> _onConfirm() async {
+  Future<void> onConfirm() async {
     block.markerPositions.clear();
-    _markerPositions.forEach(block.markerPositions.add);
+    markerPositions.forEach(block.markerPositions.add);
 
     await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
     if (!mounted) return;
@@ -218,33 +218,33 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     return ParentSettingPage(
       title: l10n.mediaPlayerEditMarkers,
-      confirm: _onConfirm,
-      reset: _removeAllMarkers,
+      confirm: onConfirm,
+      reset: removeAllMarkers,
       mustBeScrollable: true,
       customWidget: Column(
         children: [
           Waveform(
-            key: _keyWaveform,
-            rmsValues: _rmsValues,
-            position: _playbackPosition,
+            key: keyWaveform,
+            rmsValues: rmsValues,
+            position: playbackPosition,
             rangeStart: block.rangeStart,
             rangeEnd: block.rangeEnd,
             fileDuration: player.fileDuration,
-            markerPositions: _markerPositions,
-            selectedMarkerPosition: _selectedMarkerPosition,
-            onPositionChange: _handlePositionChange,
-            onZoomChanged: _handleZoomChanged,
+            markerPositions: markerPositions,
+            selectedMarkerPosition: selectedMarkerPosition,
+            onPositionChange: handlePositionChange,
+            onZoomChanged: handleZoomChanged,
           ),
           const SizedBox(height: 8),
-          MediaTimeText(duration: _positionDuration),
+          MediaTimeText(duration: positionDuration),
           const SizedBox(height: 8),
           MarkerEditControls(
-            keyAddRemove: _keyAddRemove,
+            keyAddRemove: keyAddRemove,
             isPlaying: player.isPlaying,
-            hasSelectedMarker: _hasSelectedMarker,
-            onTogglePlaying: _togglePlaying,
-            onRemoveSelectedMarker: _removeSelectedMarker,
-            onAddMarker: _addNewMarker,
+            hasSelectedMarker: hasSelectedMarker,
+            onTogglePlaying: togglePlaying,
+            onRemoveSelectedMarker: removeSelectedMarker,
+            onAddMarker: addNewMarker,
           ),
         ],
       ),
