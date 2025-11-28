@@ -86,6 +86,21 @@ class _WaveformState extends State<Waveform> {
     );
   }
 
+  void handlePointerDown(PointerDownEvent event) {
+    activePointers++;
+    if (activePointers >= 2) {
+      multiTouchInProgress = true;
+    }
+  }
+
+  void handlePointerUp(PointerUpEvent event) {
+    activePointers--;
+    if (activePointers <= 0) {
+      activePointers = 0;
+      multiTouchInProgress = false;
+    }
+  }
+
   void handleTap(TapUpDetails details) {
     if (multiTouchInProgress) return;
 
@@ -97,6 +112,25 @@ class _WaveformState extends State<Waveform> {
       totalBins: totalBins,
     );
     widget.onPositionChange(snappedRelative);
+  }
+
+  void handleScaleStart(ScaleStartDetails details) {
+    isZooming = null;
+
+    final double width = paintedWaveWidth;
+    final int totalBins = widget.rmsValues.length;
+    if (width <= 0 || totalBins <= 0) return;
+
+    if (details.pointerCount == 1 && !multiTouchInProgress) {
+      final double snappedRelative = viewport.calculateSnappedRelativePosition(
+        tapX: details.localFocalPoint.dx,
+        paintedWidth: width,
+        totalBins: totalBins,
+      );
+      widget.onPositionChange(snappedRelative);
+    } else if (details.pointerCount >= 2) {
+      viewport.beginScale(focalX: details.localFocalPoint.dx, paintedWidth: width, totalBins: totalBins);
+    }
   }
 
   void handleScaleUpdate(ScaleUpdateDetails details) {
@@ -149,25 +183,6 @@ class _WaveformState extends State<Waveform> {
     widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
   }
 
-  void handleScaleStart(ScaleStartDetails details) {
-    isZooming = null;
-
-    final double width = paintedWaveWidth;
-    final int totalBins = widget.rmsValues.length;
-    if (width <= 0 || totalBins <= 0) return;
-
-    if (details.pointerCount == 1 && !multiTouchInProgress) {
-      final double snappedRelative = viewport.calculateSnappedRelativePosition(
-        tapX: details.localFocalPoint.dx,
-        paintedWidth: width,
-        totalBins: totalBins,
-      );
-      widget.onPositionChange(snappedRelative);
-    } else if (details.pointerCount >= 2) {
-      viewport.beginScale(focalX: details.localFocalPoint.dx, paintedWidth: width, totalBins: totalBins);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -183,17 +198,8 @@ class _WaveformState extends State<Waveform> {
           SizedBox(
             height: waveformHeight,
             child: Listener(
-              onPointerDown: (_) {
-                activePointers++;
-                if (activePointers >= 2) multiTouchInProgress = true;
-              },
-              onPointerUp: (_) {
-                activePointers--;
-                if (activePointers <= 0) {
-                  activePointers = 0;
-                  multiTouchInProgress = false;
-                }
-              },
+              onPointerDown: handlePointerDown,
+              onPointerUp: handlePointerUp,
               child: GestureDetector(
                 onTapUp: handleTap,
                 onScaleStart: handleScaleStart,
