@@ -37,9 +37,13 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+
       AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
-      createTutorial();
-      tutorial.show(context);
+
+      if (context.read<ProjectLibrary>().showFlashCardsPageTutorial) {
+        createTutorial();
+        tutorial.show(context);
+      }
     });
   }
 
