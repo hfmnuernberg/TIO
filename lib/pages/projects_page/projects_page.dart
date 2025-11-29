@@ -9,6 +9,7 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/models/project_library_tutorials.dart';
 import 'package:tiomusic/pages/media_player/media_player_page.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
