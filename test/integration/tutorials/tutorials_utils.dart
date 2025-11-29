@@ -25,6 +25,8 @@ extension WidgetTesterPumpExtension on WidgetTester {
     await tapAndSettle(find.bySemanticsLabel('Next'));
     await tapAndSettle(find.bySemanticsLabel('Next'));
     await tapAndSettle(find.bySemanticsLabel('Next'));
+    await tapAndSettle(find.bySemanticsLabel('Next'));
+    await tapAndSettle(find.bySemanticsLabel('Next'));
   }
 
   Future<void> completeParentToolTutorial() async {

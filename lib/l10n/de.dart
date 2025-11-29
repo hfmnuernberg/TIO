@@ -297,6 +297,10 @@ class German extends AppLocalizations with GermanFlashCards {
       'Willkommen! Du kannst TIO auf zwei Arten verwenden.\n1. Erstelle ein Projekt und füge Tools hinzu.\n2. Starte mit der Verwendung eines Tools und speichere deine spezifischen Einstellungen in einem Projekt.';
   String get projectsTutorialStart => 'Tutorial anzeigen';
   String get projectsTutorialStartUsingTool => 'Tippe hier, um ein Tool zu verwenden.';
+  String get projectsTutorialTipOfTheDay =>
+      'Der Tipp des Tages zeigt eine zufällige Lernkarte aus dem Bereich Lernkarten an. Er wird täglich oder beim Tippen auf "Neuer Tipp" aktualisiert. Sobald alle Karten angezeigt wurden, beginnt der Zyklus von vorne.';
+  String get projectsTutorialTipOfTheDayButtons =>
+      'Tippe auf "Zeige mehr", um alle Lernkarten zu sehen. Tippe auf "Neuer Tipp", um einen neuen zufälligen Tipp zu erhalten. Du kannst einen Tipp als Lesezeichen markieren, indem du auf das Lesezeichen-Symbol tippst.';
 
   String get text => 'Text';
   String get textAbout => 'Text';

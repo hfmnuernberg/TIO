@@ -24,35 +24,31 @@ class ProjectLibrary extends ChangeNotifier {
   late int _visitedToolsCounter;
   @JsonKey(defaultValue: 0)
   int get visitedToolsCounter => _visitedToolsCounter;
-  set visitedToolsCounter(int newValue) {
-    _visitedToolsCounter = newValue;
-  }
+  set visitedToolsCounter(int newValue) => _visitedToolsCounter = newValue;
 
   late bool _neverShowSurveyAgain;
   @JsonKey(defaultValue: false)
   bool get neverShowSurveyAgain => _neverShowSurveyAgain;
-  set neverShowSurveyAgain(bool newValue) {
-    _neverShowSurveyAgain = newValue;
-  }
+  set neverShowSurveyAgain(bool newValue) => _neverShowSurveyAgain = newValue;
 
   late int _idxCheckShowSurvey;
   @JsonKey(defaultValue: 0)
   int get idxCheckShowSurvey => _idxCheckShowSurvey;
-  set idxCheckShowSurvey(int newValue) {
-    _idxCheckShowSurvey = newValue;
-  }
+  set idxCheckShowSurvey(int newValue) => _idxCheckShowSurvey = newValue;
 
   final List<int> showSurveyAtVisits = [10, 50, 100];
 
   @JsonKey(defaultValue: true)
-  late bool showHomepageTutorial; // on homepage
+  late bool showHomepageTutorial;
   @JsonKey(defaultValue: true)
-  late bool showProjectPageTutorial; // on project page
+  late bool showProjectPageTutorial;
+  @JsonKey(defaultValue: true)
+  late bool showFlashCardsPageTutorial;
 
   @JsonKey(defaultValue: true)
-  late bool showQuickToolTutorial; // on parent tool if quick tool
+  late bool showQuickToolTutorial;
   @JsonKey(defaultValue: true)
-  late bool showToolTutorial; // on parent tool if not quick tool
+  late bool showToolTutorial;
 
   @JsonKey(defaultValue: true)
   late bool showTunerIslandTutorial;
@@ -89,6 +85,7 @@ class ProjectLibrary extends ChangeNotifier {
     bool neverShowSurveyAgain,
     this.showHomepageTutorial,
     this.showProjectPageTutorial,
+    this.showFlashCardsPageTutorial,
     this.showToolTutorial,
     this.showQuickToolTutorial,
     this.showTunerIslandTutorial,
@@ -120,6 +117,7 @@ class ProjectLibrary extends ChangeNotifier {
     _neverShowSurveyAgain = false;
     showHomepageTutorial = true;
     showProjectPageTutorial = true;
+    showFlashCardsPageTutorial = true;
     showToolTutorial = true;
     showQuickToolTutorial = true;
     showTunerIslandTutorial = true;
@@ -142,46 +140,6 @@ class ProjectLibrary extends ChangeNotifier {
   factory ProjectLibrary.fromJson(Map<String, dynamic> json) => _$ProjectLibraryFromJson(json);
 
   Map<String, dynamic> toJson() => _$ProjectLibraryToJson(this);
-
-  void resetAllTutorials() {
-    showHomepageTutorial = true;
-    showProjectPageTutorial = true;
-    showToolTutorial = true;
-    showQuickToolTutorial = true;
-    showTunerIslandTutorial = true;
-    showTunerTutorial = true;
-    showMetronomeIslandTutorial = true;
-    showMetronomeTutorial = true;
-    showMetronomeAdvancedTutorial = true;
-    showMetronomeSimpleTutorial = true;
-    showMediaPlayerIslandTutorial = true;
-    showMediaPlayerTutorial = true;
-    showPianoIslandTutorial = true;
-    showPianoTutorial = true;
-    showImageTutorial = true;
-    showWaveformTip = true;
-    showBeatToggleTip = true;
-  }
-
-  void dismissAllTutorials() {
-    showHomepageTutorial = false;
-    showProjectPageTutorial = false;
-    showToolTutorial = false;
-    showQuickToolTutorial = false;
-    showTunerIslandTutorial = false;
-    showTunerTutorial = false;
-    showMetronomeIslandTutorial = false;
-    showMetronomeTutorial = false;
-    showMetronomeAdvancedTutorial = false;
-    showMetronomeSimpleTutorial = false;
-    showMediaPlayerIslandTutorial = false;
-    showMediaPlayerTutorial = false;
-    showPianoIslandTutorial = false;
-    showPianoTutorial = false;
-    showImageTutorial = false;
-    showWaveformTip = false;
-    showBeatToggleTip = false;
-  }
 
   void addProject(Project newProject) {
     _projects.insert(0, newProject);

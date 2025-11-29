@@ -139,7 +139,7 @@ class _TunerState extends State<Tuner> {
 
   void createTutorial() {
     final l10n = context.l10n;
-    var targets = <CustomTargetFocus>[
+    final targets = <CustomTargetFocus>[
       if (context.read<ProjectLibrary>().showTunerTutorial)
         CustomTargetFocus(
           keyStartStop,

@@ -11,8 +11,14 @@ import 'package:tiomusic/widgets/flash_cards/flash_card.dart';
 class FlashCardsList extends StatefulWidget {
   final FlashCardCategory? categoryFilter;
   final bool bookmarkFilterActive;
+  final GlobalKey tutorialBookmarkKey;
 
-  const FlashCardsList({super.key, this.categoryFilter, required this.bookmarkFilterActive});
+  const FlashCardsList({
+    super.key,
+    this.categoryFilter,
+    required this.bookmarkFilterActive,
+    required this.tutorialBookmarkKey,
+  });
 
   @override
   State<FlashCardsList> createState() => _FlashCardsListState();
@@ -65,6 +71,7 @@ class _FlashCardsListState extends State<FlashCardsList> {
           final card = filteredCards[i];
 
           return FlashCard(
+            key: i == 0 ? widget.tutorialBookmarkKey : null,
             category: card.category,
             description: card.description(context.l10n),
             isBookmarked: bookmarkedCardIds.contains(card.id),

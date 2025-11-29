@@ -256,4 +256,6 @@ abstract class FlashCardsLocalization {
   String get flashCardTitle;
 
   String get flashCardsPageTitle;
+  String get flashCardsPageTutorialFilter;
+  String get flashCardsPageTutorialBookmark;
 }

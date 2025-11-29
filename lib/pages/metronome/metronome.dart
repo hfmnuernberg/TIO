@@ -148,7 +148,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
 
   void createTutorial() {
     final l10n = context.l10n;
-    var targets = <CustomTargetFocus>[
+    final targets = <CustomTargetFocus>[
       if (context.read<ProjectLibrary>().showMetronomeTutorial)
         CustomTargetFocus(
           keyStartStop,

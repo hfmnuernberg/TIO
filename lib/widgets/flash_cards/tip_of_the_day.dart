@@ -11,7 +11,9 @@ import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/widgets/flash_cards/flash_card.dart';
 
 class TipOfTheDay extends StatefulWidget {
-  const TipOfTheDay({super.key});
+  final GlobalKey tutorialButtonsKey;
+
+  const TipOfTheDay({super.key, required this.tutorialButtonsKey});
 
   @override
   State<TipOfTheDay> createState() => _TipOfTheDayState();
@@ -57,9 +59,10 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
     final l10n = context.l10n;
 
     return Material(
+      key: widget.tutorialButtonsKey,
       color: ColorTheme.primaryContainer,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
+        padding: const EdgeInsets.fromLTRB(8, 12, 8, 6),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,

@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:tiomusic/domain/flash_cards/category.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/services/project_repository.dart';
+import 'package:tiomusic/util/app_orientation.dart';
+import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/flash_cards/category_filter_button.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/widgets/flash_cards/flash_cards_list.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class FlashCardsPage extends StatefulWidget {
   const FlashCardsPage({super.key});
@@ -15,6 +22,56 @@ class FlashCardsPage extends StatefulWidget {
 class _FlashCardsPageState extends State<FlashCardsPage> {
   FlashCardCategory? selectedCategory;
   bool bookmarkFilterActive = false;
+
+  late ProjectRepository projectRepo;
+
+  final Tutorial tutorial = Tutorial();
+  final GlobalKey keyFilter = GlobalKey();
+  final GlobalKey keyBookmark = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+
+    projectRepo = context.read<ProjectRepository>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      AppOrientation.set(context, policy: OrientationPolicy.phonePortrait);
+
+      if (context.read<ProjectLibrary>().showFlashCardsPageTutorial) {
+        createTutorial();
+        tutorial.show(context);
+      }
+    });
+  }
+
+  void createTutorial() {
+    final targets = <CustomTargetFocus>[
+      CustomTargetFocus(
+        keyFilter,
+        context.l10n.flashCardsPageTutorialFilter,
+        alignText: ContentAlign.bottom,
+        pointingDirection: PointingDirection.up,
+        buttonsPosition: ButtonsPosition.bottom,
+        shape: ShapeLightFocus.RRect,
+      ),
+      CustomTargetFocus(
+        keyBookmark,
+        context.l10n.flashCardsPageTutorialBookmark,
+        alignText: ContentAlign.bottom,
+        pointingDirection: PointingDirection.up,
+        buttonsPosition: ButtonsPosition.bottom,
+        shape: ShapeLightFocus.RRect,
+      ),
+    ];
+
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showFlashCardsPageTutorial = false;
+      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }, context);
+  }
 
   void toggleBookmarkFilter() {
     setState(() => bookmarkFilterActive = !bookmarkFilterActive);
@@ -40,6 +97,7 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
               Padding(
                 padding: EdgeInsets.only(top: 16),
                 child: Row(
+                  key: keyFilter,
                   children: [
                     CategoryFilterButton(
                       category: selectedCategory,
@@ -71,7 +129,11 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
               ),
               SizedBox(height: 16),
               Expanded(
-                child: FlashCardsList(categoryFilter: selectedCategory, bookmarkFilterActive: bookmarkFilterActive),
+                child: FlashCardsList(
+                  categoryFilter: selectedCategory,
+                  bookmarkFilterActive: bookmarkFilterActive,
+                  tutorialBookmarkKey: keyBookmark,
+                ),
               ),
             ],
           ),

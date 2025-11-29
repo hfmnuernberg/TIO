@@ -27,7 +27,7 @@ class FlashCard extends StatelessWidget {
         color: ColorTheme.onPrimary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 2),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -42,7 +42,7 @@ class FlashCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(description, style: const TextStyle(color: ColorTheme.primary)),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 2),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
