@@ -125,7 +125,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         l10n.projectsTutorialTipOfTheDay,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.custom,
-        customTextPosition: CustomTargetContentPosition(bottom: MediaQuery.of(context).size.width / 1.5),
+        customTextPosition: CustomTargetContentPosition(bottom: MediaQuery.of(context).size.width / 1.8),
         shape: ShapeLightFocus.RRect,
       ),
       CustomTargetFocus(
@@ -133,7 +133,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         l10n.projectsTutorialTipOfTheDayButtons,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.custom,
-        customTextPosition: CustomTargetContentPosition(bottom: MediaQuery.of(context).size.width / 1.5),
+        customTextPosition: CustomTargetContentPosition(bottom: MediaQuery.of(context).size.width / 1.8),
         shape: ShapeLightFocus.RRect,
       ),
     ];
