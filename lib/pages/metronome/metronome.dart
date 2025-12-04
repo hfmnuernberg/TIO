@@ -140,11 +140,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     toggleSimpleMode();
   }
 
-  void handleVolumeChange(double newVolume) {
-    setState(() {
-      deviceVolumeLevel = getVolumeLevel(newVolume);
-    });
-  }
+  void handleVolumeChange(double newVolume) => setState(() => deviceVolumeLevel = getVolumeLevel(newVolume));
 
   void createTutorial() {
     final l10n = context.l10n;
@@ -224,9 +220,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final ModalRoute? route = ModalRoute.of(context);
-    if (route is PageRoute) {
-      routeObserver.subscribe(this, route);
-    }
+    if (route is PageRoute) routeObserver.subscribe(this, route);
   }
 
   @override
@@ -353,20 +347,25 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: metronomeBlock,
       islandToolTutorialKey: islandToolTutorialKey,
-      menuItems: <MenuItemButton>[
-        if (!isSimpleModeOn)
-          MenuItemButton(
-            onPressed: clearAllRhythms,
-            child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
-          ),
-        MenuItemButton(
-          onPressed: toggleSimpleModeIfSaveOrUserConfirms,
-          child: Text(
-            isSimpleModeOn ? l10n.metronomeSimpleModeOff : l10n.metronomeSimpleModeOn,
-            style: const TextStyle(color: ColorTheme.primary),
-          ),
-        ),
-      ],
+      customAction: isSimpleModeOn
+          ? IconButton(onPressed: toggleSimpleModeIfSaveOrUserConfirms, icon: Icon(Icons.tune))
+          : null,
+      menuItems: isSimpleModeOn
+          ? null
+          : <MenuItemButton>[
+              if (!isSimpleModeOn)
+                MenuItemButton(
+                  onPressed: clearAllRhythms,
+                  child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
+                ),
+              MenuItemButton(
+                onPressed: toggleSimpleModeIfSaveOrUserConfirms,
+                child: Text(
+                  isSimpleModeOn ? l10n.metronomeSimpleModeOff : l10n.metronomeSimpleModeOn,
+                  style: const TextStyle(color: ColorTheme.primary),
+                ),
+              ),
+            ],
       onParentTutorialFinished: () {
         createTutorial();
         tutorial.show(context);
