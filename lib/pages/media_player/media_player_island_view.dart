@@ -12,7 +12,7 @@ import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 
 class MediaPlayerIslandView extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;

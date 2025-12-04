@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/piano_constants.dart';
 import 'package:tiomusic/widgets/piano/black_key.dart';
 import 'package:tiomusic/widgets/piano/key_note.dart';
 import 'package:tiomusic/widgets/piano/keyboard_utils.dart';

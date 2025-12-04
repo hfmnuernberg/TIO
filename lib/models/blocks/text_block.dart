@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/project_block.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/text_constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 
 part 'text_block.g.dart';

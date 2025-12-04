@@ -3,7 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
+import 'package:tiomusic/util/constants/metronome_constants.dart';
 import 'package:tiomusic/widgets/metronome/group/editable_group.dart';
 
 class Groups extends StatefulWidget {

@@ -6,7 +6,8 @@ import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
+import 'package:tiomusic/util/constants/tuner_constants.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_dec.dart';
 
 const maxConcertPitch = 600.0;

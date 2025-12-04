@@ -2,11 +2,12 @@ import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/metronome_sound.dart';
+import 'package:tiomusic/util/constants/metronome_constants.dart';
 import 'package:tiomusic/util/l10n/metronome_sound_extension.dart';
 
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 
 part 'metronome_block.g.dart';

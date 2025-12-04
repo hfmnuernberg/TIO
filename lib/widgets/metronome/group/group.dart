@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/widgets/metronome/beat/beat_button_type.dart';
 import 'package:tiomusic/widgets/metronome/beat/beats.dart';
 import 'package:tiomusic/widgets/metronome/note/notes.dart';

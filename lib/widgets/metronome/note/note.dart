@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/models/note_handler.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 
 class Note extends StatelessWidget {
   final String noteKey;
