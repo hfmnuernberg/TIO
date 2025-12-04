@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
@@ -52,8 +53,22 @@ class _ChooseSoundState extends State<ChooseSound> {
           isSelected: _selectedSounds,
           children: SoundFont.values
               .map(
-                (soundFont) =>
+                (soundFont) => Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                     Text(soundFont.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)),
+                    if (soundFont.canHold)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 2),
+                        child: SvgPicture.asset(
+                          PianoParams.pedalIcon,
+                          height: 16,
+                          width: 16,
+                          colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
+                        ),
+                      ),
+                  ],
+                ),
               )
               .toList(),
         ),

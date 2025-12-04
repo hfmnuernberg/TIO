@@ -190,6 +190,7 @@ class PianoParams {
   static const int defaultSoundFontIndex = 0;
 
   static const Icon icon = Icon(Icons.piano, color: ColorTheme.primary);
+  static const String pedalIcon = 'assets/icons/piano_pedal.svg';
 }
 
 //---------------------------------------------
