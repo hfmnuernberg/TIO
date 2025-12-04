@@ -31,7 +31,7 @@ class ParentTool extends StatefulWidget {
   final Widget? island;
   final Widget centerModule;
   final List<Widget> settingTiles;
-  final Widget? customAction;
+  final IconButton? customAction;
   final List<MenuItemButton>? menuItems;
   final Function()? functionBeforeNavigatingBack;
   final Widget? floatingActionButton;

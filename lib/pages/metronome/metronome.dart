@@ -353,17 +353,13 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
       menuItems: isSimpleModeOn
           ? null
           : <MenuItemButton>[
-              if (!isSimpleModeOn)
-                MenuItemButton(
-                  onPressed: clearAllRhythms,
-                  child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
-                ),
+              MenuItemButton(
+                onPressed: clearAllRhythms,
+                child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
+              ),
               MenuItemButton(
                 onPressed: toggleSimpleModeIfSaveOrUserConfirms,
-                child: Text(
-                  isSimpleModeOn ? l10n.metronomeSimpleModeOff : l10n.metronomeSimpleModeOn,
-                  style: const TextStyle(color: ColorTheme.primary),
-                ),
+                child: Text(l10n.metronomeSimpleModeOn, style: const TextStyle(color: ColorTheme.primary)),
               ),
             ],
       onParentTutorialFinished: () {
