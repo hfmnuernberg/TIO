@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/models/project.dart';
+import 'package:tiomusic/pages/media_player/markers/edit_markers_page.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
 
 import '../../utils/action_utils.dart';
-import '../../utils/media_player_utils.dart';
 import '../../utils/project_utils.dart';
 import '../../utils/render_utils.dart';
 import '../../utils/test_context.dart';
@@ -37,13 +37,9 @@ extension WidgetTesterMediaPlayerExtension on WidgetTester {
 
   Future<void> addMarkerAtPosition(double relativePosition) async {
     await scrollToAndTapAndSettle('Markers');
-    final slider = find.byType(Slider);
-    final left = getTopLeft(slider);
-    final right = getTopRight(slider);
-    final y = getCenter(slider).dy;
-    final target = Offset(left.dx + (right.dx - left.dx) * relativePosition, y);
 
-    await tapAt(target);
+    await widget<EditMarkersPage>(find.byType(EditMarkersPage)).player.setPlaybackPosition(relativePosition);
+
     await tapAndSettle(find.byTooltip('Add marker'));
     await tapAndSettle(find.bySemanticsLabel('Submit'));
   }
@@ -84,13 +80,13 @@ void main() {
       await tester.addMarkerAtPosition(0.5);
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0.5);
 
+      await tester.skipBackwards();
       await tester.skipForward();
 
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0.5);
     });
 
     testWidgets('skips forward to end of file on button select when last marker reached', (tester) async {
-      mockPlayerState(context, playbackPositionFactor: 0.6);
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.addMarkerAtPosition(0.5);
 
@@ -100,12 +96,11 @@ void main() {
     });
 
     testWidgets('skips backwards to previous marker on button select', (tester) async {
-      mockPlayerState(context, playbackPositionFactor: 0.6);
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.addMarkerAtPosition(0.5);
-      await tester.skipForward();
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0.5);
 
+      await tester.skipForward();
       await tester.skipBackwards();
 
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0.5);
@@ -114,8 +109,9 @@ void main() {
     testWidgets('skips backwards to start of file on button select when first marker reached', (tester) async {
       await prepareAndOpenMediaPlayer(tester, context);
       await tester.addMarkerAtPosition(0.5);
-      await tester.skipForward();
 
+      await tester.skipForward();
+      await tester.skipBackwards();
       await tester.skipBackwards();
 
       context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0);
