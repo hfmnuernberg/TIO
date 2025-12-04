@@ -9,6 +9,7 @@ import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/models/project_library_tutorials_extension.dart';
 import 'package:tiomusic/pages/media_player/media_player_page.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
@@ -50,6 +51,8 @@ class _ProjectsPageState extends State<ProjectsPage> {
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyEditProjects = GlobalKey();
   final GlobalKey _keyQuickTools = GlobalKey();
+  final GlobalKey _keyTipOfTheDay = GlobalKey();
+  final GlobalKey _keyTipOfTheDayButtons = GlobalKey();
 
   @override
   void initState() {
@@ -88,7 +91,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
   void _createTutorial() {
     final l10n = context.l10n;
-    var targets = <CustomTargetFocus>[
+    final targets = <CustomTargetFocus>[
       CustomTargetFocus(
         null,
         context: context,
@@ -116,6 +119,22 @@ class _ProjectsPageState extends State<ProjectsPage> {
         context: context,
         l10n.projectsTutorialCanIncludeMultipleTools,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
+      ),
+      CustomTargetFocus(
+        _keyTipOfTheDay,
+        l10n.projectsTutorialTipOfTheDay,
+        pointingDirection: PointingDirection.up,
+        alignText: ContentAlign.custom,
+        customTextPosition: CustomTargetContentPosition(bottom: MediaQuery.of(context).size.width / 1.8),
+        shape: ShapeLightFocus.RRect,
+      ),
+      CustomTargetFocus(
+        _keyTipOfTheDayButtons,
+        l10n.projectsTutorialTipOfTheDayButtons,
+        pointingDirection: PointingDirection.up,
+        alignText: ContentAlign.custom,
+        customTextPosition: CustomTargetContentPosition(bottom: MediaQuery.of(context).size.width / 1.8),
+        shape: ShapeLightFocus.RRect,
       ),
     ];
 
@@ -342,7 +361,13 @@ class _ProjectsPageState extends State<ProjectsPage> {
                   child: NestedScrollView(
                     headerSliverBuilder: (context, innerBoxIsScrolled) => [
                       SliverToBoxAdapter(
-                        child: Padding(padding: const EdgeInsets.fromLTRB(16, 16, 16, 0), child: const TipOfTheDay()),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
+                          child: Container(
+                            key: _keyTipOfTheDay,
+                            child: TipOfTheDay(tutorialButtonsKey: _keyTipOfTheDayButtons),
+                          ),
+                        ),
                       ),
                     ],
                     body: Consumer<ProjectLibrary>(
@@ -358,13 +383,13 @@ class _ProjectsPageState extends State<ProjectsPage> {
                             )
                           else
                             Container(
-                              margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                              margin: const EdgeInsets.fromLTRB(8, 16, 8, 0),
                               child: Material(
                                 color: ColorTheme.primaryContainer,
                                 child: Column(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
+                                      padding: const EdgeInsets.fromLTRB(0, 12, 0, 8),
                                       child: Center(
                                         child: Text(
                                           l10n.projectsTitle,

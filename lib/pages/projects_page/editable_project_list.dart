@@ -37,7 +37,7 @@ class EditableProjectList extends StatelessWidget {
             container: true,
             hint: context.l10n.projectTitle,
             child: Padding(
-              padding: EdgeInsets.fromLTRB(12, 0, 12, 8),
+              padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
               child: CardListTile(
                 title: project.title,
                 subtitle: l10n.formatDateAndTime(project.timeLastModified),

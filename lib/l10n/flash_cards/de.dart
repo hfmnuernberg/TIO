@@ -425,4 +425,8 @@ mixin GermanFlashCards on Object implements FlashCardsLocalization {
   String get flashCardTitle => 'Wenn du heute übst,';
 
   String get flashCardsPageTitle => 'Übungstipps';
+  String get flashCardsPageTutorialFilter =>
+      'Benutze die Filter-Schaltflächen, um Übetipps nach Kategorie oder Lesezeichenstatus zu filtern.';
+  String get flashCardsPageTutorialBookmark =>
+      'Tippe auf das Lesezeichen-Symbol in einem Übetipp, um es zu deinen gespeicherten Favoriten hinzuzufügen oder daraus zu entfernen.';
 }

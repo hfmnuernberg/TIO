@@ -202,7 +202,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   void _createTutorial() {
     final l10n = context.l10n;
-    var targets = <CustomTargetFocus>[
+    final targets = <CustomTargetFocus>[
       if (context.read<ProjectLibrary>().showMediaPlayerTutorial)
         CustomTargetFocus(
           _keyStartStop,

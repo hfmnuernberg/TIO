@@ -1,9 +1,9 @@
 name: Verify
 
 env:
-  MAX_FILE_COUNT: 29
-  MAX_AVG_LENGTH: 325
-  MIN_COVERAGE: 59.9
+  MAX_FILE_COUNT: 27
+  MAX_AVG_LENGTH: 333
+  MIN_COVERAGE: 60.5
 
 on:
   workflow_dispatch:
@@ -26,7 +26,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v6.0.0
+      uses: actions/checkout@v6.0.1
       with:
         ref: ${{ inputs.ref }}
 
@@ -42,7 +42,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v6.0.0
+      uses: actions/checkout@v6.0.1
       with:
         ref: ${{ inputs.ref }}
 
@@ -116,7 +116,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v6.0.0
+      uses: actions/checkout@v6.0.1
       with:
         ref: ${{ inputs.ref }}
 

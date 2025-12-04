@@ -112,7 +112,7 @@ class _PianoPageState extends State<PianoPage> {
 
   void _createTutorial() {
     final l10n = context.l10n;
-    var targets = <CustomTargetFocus>[
+    final targets = <CustomTargetFocus>[
       if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool)
         CustomTargetFocus(
           _keyBookmarkSave,

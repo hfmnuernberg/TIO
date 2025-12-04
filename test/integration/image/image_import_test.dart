@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
+import 'package:tiomusic/models/project_library_tutorials_extension.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
 import 'package:tiomusic/services/decorators/file_picker_log_decorator.dart';
 import 'package:tiomusic/services/decorators/file_references_log_decorator.dart';

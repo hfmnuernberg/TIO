@@ -7,6 +7,7 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/project_page/edit_project_bar.dart';
+import 'package:tiomusic/pages/project_page/choose_tool_page.dart';
 import 'package:tiomusic/pages/project_page/editable_tool_list.dart';
 import 'package:tiomusic/pages/project_page/export_project.dart';
 import 'package:tiomusic/pages/project_page/tool_list.dart';
@@ -18,7 +19,6 @@ import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/tool_navigation_utils.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
-import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/common_buttons.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';
@@ -115,7 +115,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
   void _createTutorial() {
     final l10n = context.l10n;
-    var targets = <CustomTargetFocus>[
+    final targets = <CustomTargetFocus>[
       CustomTargetFocus(
         _keyChangeTitle,
         l10n.projectTutorialEditTitle,
@@ -254,7 +254,10 @@ class _ProjectPageState extends State<ProjectPage> {
     if (_showBlocks) {
       return _buildProjectPage(context);
     } else {
-      return _buildChooseToolPage();
+      return ChooseToolPage(
+        onBack: () => _project.blocks.isEmpty ? Navigator.of(context).pop() : setState(() => _showBlocks = true),
+        onNewToolSelected: _onNewToolTilePressed,
+      );
     }
   }
 
@@ -352,63 +355,6 @@ class _ProjectPageState extends State<ProjectPage> {
           _isEditing = false;
         }),
         onToggleEditing: _toggleEditingMode,
-      ),
-    );
-  }
-
-  Widget _buildChooseToolPage() {
-    final l10n = context.l10n;
-
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Text(l10n.projectEmpty),
-        backgroundColor: ColorTheme.surfaceBright,
-        foregroundColor: ColorTheme.primary,
-        leading: IconButton(
-          onPressed: () {
-            if (_project.blocks.isEmpty) {
-              Navigator.of(context).pop();
-            } else {
-              setState(() {
-                _showBlocks = true;
-              });
-            }
-          },
-          icon: const Icon(Icons.arrow_back),
-        ),
-      ),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          FittedBox(fit: BoxFit.cover, child: Image.asset('assets/images/tiomusic-bg.png')),
-          Semantics(
-            label: l10n.projectToolListEmpty,
-            child: ListView.builder(
-              padding: const EdgeInsets.only(top: TIOMusicParams.smallSpaceAboveList + 2),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: BlockType.values.length,
-              itemBuilder: (context, index) {
-                var info = getBlockTypeInfos(l10n)[BlockType.values[index]]!;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                  child: CardListTile(
-                    title: info.name,
-                    subtitle: info.description,
-                    trailingIcon: IconButton(
-                      onPressed: () => _onNewToolTilePressed(info),
-                      icon: const Icon(Icons.add),
-                      color: ColorTheme.surfaceTint,
-                    ),
-                    leadingPicture: circleToolIcon(info.icon),
-                    onTapFunction: () => _onNewToolTilePressed(info),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
       ),
     );
   }
