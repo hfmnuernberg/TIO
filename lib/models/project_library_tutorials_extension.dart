@@ -1,6 +1,6 @@
 import 'package:tiomusic/models/project_library.dart';
 
-extension ProjectLibraryTutorials on ProjectLibrary {
+extension ProjectLibraryTutorialsExtension on ProjectLibrary {
   void resetAllTutorials() {
     showHomepageTutorial = true;
     showProjectPageTutorial = true;
