@@ -409,7 +409,7 @@ mixin EnglishFlashCards on Object implements FlashCardsLocalization {
 
   String get flashCardsPageTitle => 'Practice tips';
   String get flashCardsPageTutorialFilter =>
-      'Use the filter button to filter flash cards by category or bookmarked status.';
+      'Use the filter buttons to filter flash cards by category or bookmarked status.';
   String get flashCardsPageTutorialBookmark =>
-      'Tap the bookmark icon in a flash card to add or remove it to your saved favorite practice tips.';
+      'Tap the bookmark icon on a flash card to add or remove it to your saved favorite practice tips.';
 }

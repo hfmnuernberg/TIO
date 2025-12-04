@@ -120,10 +120,10 @@ void main() {
 
     await tester.tapAndSettle(find.bySemanticsLabel('View more'));
     await tester.waitForTutorialNext();
-    expect(find.bySemanticsLabel(RegExp('Use the filter button to filter flash cards')), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('Use the filter buttons to filter flash cards')), findsOneWidget);
 
     await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
-    expect(find.bySemanticsLabel(RegExp('Use the filter button to filter flash cards')), findsNothing);
+    expect(find.bySemanticsLabel(RegExp('Use the filter buttons to filter flash cards')), findsNothing);
   });
 
   testWidgets('shows specific tutorial steps after quick tool is saved in project', (tester) async {
