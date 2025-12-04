@@ -295,9 +295,9 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get projectsTutorialStart => 'Show tutorial';
   String get projectsTutorialStartUsingTool => 'Tap here to start using a tool.';
   String get projectsTutorialTipOfTheDay =>
-      'The tip of the day shows a random flash card from the flash cards section. It updates daily or when you tap “Regenerate.” Once all cards have been shown, the cycle restarts.';
+      'The tip of the day shows a random flash card from the practice tips section. It updates daily or when you tap “Regenerate.” Once all cards have been shown, the cycle restarts.';
   String get projectsTutorialTipOfTheDayButtons =>
-      'Tap on "View more" to see all flash cards. Tap "Regenerate" to get a new random tip. You can bookmark tips for later reference by tapping the bookmark icon.';
+      'Tap on "View more" to see all practice tips. Tap "Regenerate" to get a new random tip. You can bookmark tips for later reference by tapping the bookmark icon.';
 
   String get text => 'Text';
   String get textAbout => 'Text';
