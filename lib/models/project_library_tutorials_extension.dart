@@ -15,6 +15,7 @@ extension ProjectLibraryTutorialsExtension on ProjectLibrary {
     showMetronomeSimpleTutorial = true;
     showMediaPlayerIslandTutorial = true;
     showMediaPlayerTutorial = true;
+    showMediaPlayerEditMarkersTutorial = true;
     showPianoIslandTutorial = true;
     showPianoTutorial = true;
     showImageTutorial = true;
@@ -36,6 +37,7 @@ extension ProjectLibraryTutorialsExtension on ProjectLibrary {
     showMetronomeSimpleTutorial = false;
     showMediaPlayerIslandTutorial = false;
     showMediaPlayerTutorial = false;
+    showMediaPlayerEditMarkersTutorial = false;
     showPianoIslandTutorial = false;
     showPianoTutorial = false;
     showImageTutorial = false;
