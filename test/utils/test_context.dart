@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/project_library_tutorials.dart';
+import 'package:tiomusic/models/project_library_tutorials_extension.dart';
 import 'package:tiomusic/services/archiver.dart';
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
