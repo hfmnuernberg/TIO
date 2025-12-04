@@ -31,6 +31,7 @@ class ParentTool extends StatefulWidget {
   final Widget? island;
   final Widget centerModule;
   final List<Widget> settingTiles;
+  final IconButton? customAction;
   final List<MenuItemButton>? menuItems;
   final Function()? functionBeforeNavigatingBack;
   final Widget? floatingActionButton;
@@ -48,6 +49,7 @@ class ParentTool extends StatefulWidget {
     this.island,
     required this.centerModule,
     required this.settingTiles,
+    this.customAction,
     this.menuItems,
     this.functionBeforeNavigatingBack,
     this.floatingActionButton,
@@ -127,9 +129,7 @@ class _ParentToolState extends State<ParentTool> {
     ];
 
     if (targets.isEmpty) {
-      if (widget.onParentTutorialFinished != null) {
-        widget.onParentTutorialFinished!();
-      }
+      if (widget.onParentTutorialFinished != null) widget.onParentTutorialFinished!();
       return;
     }
 
@@ -146,9 +146,7 @@ class _ParentToolState extends State<ParentTool> {
 
       await _projectRepo.saveLibrary(projectLibrary);
 
-      if (widget.onParentTutorialFinished != null) {
-        widget.onParentTutorialFinished!();
-      }
+      if (widget.onParentTutorialFinished != null) widget.onParentTutorialFinished!();
     }, context);
   }
 
@@ -171,17 +169,15 @@ class _ParentToolState extends State<ParentTool> {
       ),
     ];
 
+    if (widget.customAction != null) appBarActions.add(widget.customAction!);
+
     if (widget.menuItems != null && widget.menuItems!.isNotEmpty) {
       appBarActions.add(
         MenuAnchor(
-          builder: (context, controller, child) {
-            return IconButton(
-              onPressed: () {
-                controller.isOpen ? controller.close() : controller.open();
-              },
-              icon: const Icon(Icons.more_vert),
-            );
-          },
+          builder: (context, controller, child) => IconButton(
+            onPressed: () => controller.isOpen ? controller.close() : controller.open(),
+            icon: const Icon(Icons.more_vert),
+          ),
           style: const MenuStyle(
             backgroundColor: WidgetStatePropertyAll(ColorTheme.surface),
             elevation: WidgetStatePropertyAll(0),
@@ -193,15 +189,11 @@ class _ParentToolState extends State<ParentTool> {
 
     var backButton = BackButton(
       onPressed: () async {
-        if (widget.functionBeforeNavigatingBack != null) {
-          widget.functionBeforeNavigatingBack!();
-        }
+        if (widget.functionBeforeNavigatingBack != null) widget.functionBeforeNavigatingBack!();
 
-        // if quick tool and values have been changed: ask for saving
         if (widget.isQuickTool && !blockValuesSameAsDefaultBlock(widget.toolBlock, context.l10n)) {
           final save = await askForSavingQuickTool(context);
 
-          // if user taps outside the dialog, we dont want to exit the quick tool and we dont want to save
           if (save == null) return;
 
           if (save) {
@@ -290,18 +282,14 @@ class _ParentToolState extends State<ParentTool> {
                           subtitle: l10n.formatDateAndTime(projectLibrary.projects[index].timeLastModified),
                           highlightColor: _highlightColorOnSave,
                           trailingIcon: IconButton(
-                            onPressed: () {
-                              _onSaveInProjectTap(setTileState, index, widget.toolBlock);
-                            },
+                            onPressed: () => _onSaveInProjectTap(setTileState, index, widget.toolBlock),
                             icon: _bookmarkIcon,
                             color: ColorTheme.surfaceTint,
                           ),
                           leadingPicture: projectLibrary.projects[index].thumbnailPath.isEmpty
                               ? const AssetImage(TIOMusicParams.tiomusicIconPath)
                               : FileImage(File(_fs.toAbsoluteFilePath(projectLibrary.projects[index].thumbnailPath))),
-                          onTapFunction: () {
-                            _onSaveInProjectTap(setTileState, index, widget.toolBlock);
-                          },
+                          onTapFunction: () => _onSaveInProjectTap(setTileState, index, widget.toolBlock),
                         ),
                       );
                     },
@@ -343,37 +331,25 @@ class _ParentToolState extends State<ParentTool> {
       isNew: true,
     );
     if (newTitle == null) {
-      if (mounted) {
-        // close the bottom up sheet
-        Navigator.of(context).pop();
-      }
+      if (mounted) Navigator.of(context).pop();
       return;
     }
 
-    // highlight tile and change icon to get a tick mark
     setTileState(() {
       _bookmarkIcon = const Icon(Icons.bookmark_added_outlined);
       _highlightColorOnSave = ColorTheme.primaryFixedDim;
     });
     await Future.delayed(const Duration(seconds: 2));
 
-    if (mounted) {
-      // close the bottom up sheet
-      Navigator.of(context).pop();
-    }
+    if (mounted) Navigator.of(context).pop();
 
-    // saving the tool in a project
-    if (mounted) {
-      await saveToolInProject(context, index, toolBlock, widget.isQuickTool, newTitle);
-    }
+    if (mounted) await saveToolInProject(context, index, toolBlock, widget.isQuickTool, newTitle);
   }
 
   Widget _settingsList(List<Widget> tiles) {
     return ListView.builder(
       key: widget.keySettingsList,
-      itemBuilder: (context, index) {
-        return tiles[index];
-      },
+      itemBuilder: (context, index) => tiles[index],
       itemCount: tiles.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -382,14 +358,11 @@ class _ParentToolState extends State<ParentTool> {
 
   Widget _body() {
     bool hasSettingTiles = true;
-    if (widget.settingTiles.isEmpty) {
-      hasSettingTiles = false;
-    }
+    if (widget.settingTiles.isEmpty) hasSettingTiles = false;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        // island or no island
         if (widget.island == null)
           const SizedBox()
         else
@@ -399,7 +372,6 @@ class _ParentToolState extends State<ParentTool> {
             width: MediaQuery.of(context).size.width,
             child: widget.island,
           ),
-        // center module
         if (hasSettingTiles)
           SizedBox(
             height: widget.heightForCenterModule ?? MediaQuery.of(context).size.height / 2.5,
@@ -407,11 +379,8 @@ class _ParentToolState extends State<ParentTool> {
           )
         else
           widget.centerModule,
-        // empty space between center module and settings
         const SizedBox(height: 8),
-        // setting tiles or no setting tiles
         if (hasSettingTiles) _settingsList(widget.settingTiles) else const SizedBox(),
-        // empty space at the bottom
         const SizedBox(height: 32),
       ],
     );
