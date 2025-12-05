@@ -9,7 +9,12 @@ import 'package:tiomusic/models/blocks/piano_block.dart';
 import 'package:tiomusic/models/blocks/text_block.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/models/icon_converter.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/image_constants.dart';
+import 'package:tiomusic/util/constants/media_player_constants.dart';
+import 'package:tiomusic/util/constants/metronome_constants.dart';
+import 'package:tiomusic/util/constants/piano_constants.dart';
+import 'package:tiomusic/util/constants/text_constants.dart';
+import 'package:tiomusic/util/constants/tuner_constants.dart';
 import 'package:uuid/uuid.dart';
 
 part 'project_block.g.dart';

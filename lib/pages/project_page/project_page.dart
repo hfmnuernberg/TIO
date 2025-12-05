@@ -14,7 +14,7 @@ import 'package:tiomusic/pages/project_page/tool_list.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/tool_navigation_utils.dart';
 import 'package:tiomusic/util/tutorial_util.dart';

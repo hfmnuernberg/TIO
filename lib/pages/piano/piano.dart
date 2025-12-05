@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/domain/piano/piano.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
@@ -19,7 +20,8 @@ import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
+import 'package:tiomusic/util/constants/piano_constants.dart';
 import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
 import 'package:tiomusic/util/tool_navigation_utils.dart';
 import 'package:tiomusic/util/tutorial_util.dart';
@@ -344,11 +346,30 @@ class _PianoPageState extends State<PianoPage> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        Text(
-                          '${l10n.formatNumber(piano.concertPitch)} Hz – ${piano.soundFont.getLabel(l10n)}',
-                          style: const TextStyle(color: ColorTheme.primary),
+                        RichText(
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          text: TextSpan(
+                            style: const TextStyle(color: ColorTheme.primary),
+                            children: [
+                              TextSpan(
+                                text: '${l10n.formatNumber(piano.concertPitch)} Hz – ${piano.soundFont.getLabel(l10n)}',
+                              ),
+                              if (piano.soundFont.canHold)
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 2),
+                                    child: SvgPicture.asset(
+                                      PianoParams.pedalIcon,
+                                      height: 14,
+                                      width: 14,
+                                      colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

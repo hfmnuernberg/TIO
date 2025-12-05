@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tiomusic/services/file_picker.dart' as tio;
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 
 class FilePickerImpl implements tio.FilePicker {
   @override

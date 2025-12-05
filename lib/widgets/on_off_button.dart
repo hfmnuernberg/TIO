@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 
 class OnOffButton extends StatefulWidget {
   final bool isActive;

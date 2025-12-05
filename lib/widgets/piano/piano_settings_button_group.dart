@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/constants/piano_constants.dart';
 
 class PianoSettingsButtonGroup extends StatelessWidget {
   final bool isHolding;
@@ -31,7 +33,10 @@ class PianoSettingsButtonGroup extends StatelessWidget {
               backgroundColor: onToggleHold == null
                   ? ColorTheme.secondary.withValues(alpha: 0.3)
                   : (isHolding ? ColorTheme.tertiary : ColorTheme.primary50),
-              child: Text('H', style: TextStyle(color: ColorTheme.onPrimary, fontSize: 20)),
+              child: SvgPicture.asset(
+                PianoParams.pedalIcon,
+                colorFilter: ColorFilter.mode(ColorTheme.onPrimary, BlendMode.srcIn),
+              ),
             ),
             padding: EdgeInsets.zero,
             onPressed: onToggleHold,

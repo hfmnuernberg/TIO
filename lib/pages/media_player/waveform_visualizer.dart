@@ -1,7 +1,8 @@
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/media_player_constants.dart';
 
 class WaveformVisualizer extends CustomPainter {
   final Float32List _rmsValues;

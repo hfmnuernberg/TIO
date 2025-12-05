@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/piano_block.dart';
@@ -8,7 +9,7 @@ import 'package:tiomusic/models/sound_font.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/piano_constants.dart';
 import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
 
 class ChooseSound extends StatefulWidget {
@@ -52,8 +53,22 @@ class _ChooseSoundState extends State<ChooseSound> {
           isSelected: _selectedSounds,
           children: SoundFont.values
               .map(
-                (soundFont) =>
+                (soundFont) => Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                     Text(soundFont.getLabel(context.l10n), style: const TextStyle(color: ColorTheme.primary)),
+                    if (soundFont.canHold)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 2),
+                        child: SvgPicture.asset(
+                          PianoParams.pedalIcon,
+                          height: 16,
+                          width: 16,
+                          colorFilter: const ColorFilter.mode(ColorTheme.primary, BlendMode.srcIn),
+                        ),
+                      ),
+                  ],
+                ),
               )
               .toList(),
         ),

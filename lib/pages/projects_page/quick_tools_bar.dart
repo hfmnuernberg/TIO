@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/pages/projects_page/quick_tool_button.dart';
 
 class QuickToolsBar extends StatelessWidget {

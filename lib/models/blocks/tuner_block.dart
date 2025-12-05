@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/l10n/app_localization.dart';
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/tuner_type.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/tuner_constants.dart';
 import 'package:tiomusic/util/l10n/tuner_type_extension.dart';
 import 'package:tiomusic/util/util_functions.dart';
 

@@ -1,4 +1,4 @@
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/piano_constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/piano/key_note.dart';
 import 'package:tonic/tonic.dart';

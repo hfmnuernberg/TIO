@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/models/rhythm.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/metronome_constants.dart';
 
 part 'rhythm_group.g.dart';
 

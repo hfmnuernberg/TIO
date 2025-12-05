@@ -4,7 +4,8 @@ import 'package:tiomusic/l10n/app_localization.dart';
 
 import 'package:tiomusic/models/project_block.dart';
 import 'package:tiomusic/models/sound_font.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
+import 'package:tiomusic/util/constants/piano_constants.dart';
 import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/util_midi.dart';

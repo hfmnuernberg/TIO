@@ -18,7 +18,7 @@ import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/media_repository.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/common_buttons.dart';

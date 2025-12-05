@@ -17,7 +17,7 @@ import 'package:tiomusic/widgets/parent_tool/selected_island_view.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/input/edit_text_dialog.dart';

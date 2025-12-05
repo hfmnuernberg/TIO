@@ -2,9 +2,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
+import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/constants/media_player_constants.dart';
 
 class Markers extends StatelessWidget {
   final Float32List rmsValues;

@@ -7,7 +7,7 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/pages/flash_cards/flash_cards_page.dart';
 import 'package:tiomusic/services/flash_cards.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/widgets/flash_cards/flash_card.dart';
 
 class TipOfTheDay extends StatefulWidget {

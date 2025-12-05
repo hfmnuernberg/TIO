@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/metronome_constants.dart';
 
 class NoteToggle extends StatefulWidget {
   final String noteKey;

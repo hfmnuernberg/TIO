@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/piano_constants.dart';
 import 'package:tiomusic/widgets/piano/keyboard.dart';
 
 import '../../utils/render_utils.dart';

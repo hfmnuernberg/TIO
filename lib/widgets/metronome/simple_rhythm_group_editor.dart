@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/rhythm.dart';
 import 'package:tiomusic/models/rhythm_group.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/metronome_constants.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
 import 'package:tiomusic/widgets/metronome/rhythm_wheel.dart';
 

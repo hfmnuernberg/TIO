@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/util/util_functions.dart';
 
 class QuickToolButton extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 
 class SettingsButton extends StatelessWidget {
   final IconData icon;

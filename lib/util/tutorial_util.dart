@@ -7,7 +7,7 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/models/project_library_tutorials_extension.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
-import 'package:tiomusic/util/constants.dart';
+import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/util/log.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
