@@ -247,7 +247,6 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
       confirm: onConfirm,
       reset: reset,
       cancel: onCancel,
-      mustBeScrollable: true,
       customWidget: Padding(
         padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
         child: Column(

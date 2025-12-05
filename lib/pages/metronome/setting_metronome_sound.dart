@@ -111,7 +111,6 @@ class _SetMetronomeSoundState extends State<SetMetronomeSound> {
       confirm: handleConfirm,
       reset: handleReset,
       cancel: handleCancel,
-      mustBeScrollable: true,
       customWidget: Padding(
         padding: const EdgeInsets.all(TIOMusicParams.edgeInset),
         child: Column(
