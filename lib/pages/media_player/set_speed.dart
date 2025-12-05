@@ -79,7 +79,6 @@ class _SetSpeedState extends State<SetSpeed> {
     return ParentSettingPage(
       title: l10n.mediaPlayerSetSpeed,
       displayResetAtTop: true,
-      mustBeScrollable: true,
       numberInput: Column(
         children: [
           SizedBox(height: TIOMusicParams.edgeInset),

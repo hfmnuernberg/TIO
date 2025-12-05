@@ -220,7 +220,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       title: l10n.mediaPlayerEditMarkers,
       confirm: onConfirm,
       reset: removeAllMarkers,
-      mustBeScrollable: true,
       customWidget: Column(
         children: [
           Waveform(

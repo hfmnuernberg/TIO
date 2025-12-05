@@ -27,7 +27,7 @@ class ParentSettingPage extends StatefulWidget {
     this.cancel,
     this.customWidget,
     this.infoWidget,
-    this.mustBeScrollable = false,
+    this.mustBeScrollable = true,
   });
 
   @override
@@ -43,7 +43,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
       child: PopScope(
         canPop: false,
         child: Scaffold(
-          resizeToAvoidBottomInset: false,
+          resizeToAvoidBottomInset: true,
           appBar: AppBar(
             title: Center(child: Text(widget.title)),
             backgroundColor: ColorTheme.surfaceBright,
@@ -157,25 +157,26 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
 
   Widget? _bottomSheet() {
     final bool isLandscapeLayout = _useLandscapeLayout(context);
-    return isLandscapeLayout
-        ? null
-        : ColoredBox(
-            color: ColorTheme.primary80,
-            child: SafeArea(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ColoredBox(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
-                      ConfirmButton(onTap: widget.confirm),
-                    ],
-                  ),
-                ],
-              ),
+    if (isLandscapeLayout) return null;
+
+    return ColoredBox(
+      color: ColorTheme.primary80,
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ColoredBox(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
+                ConfirmButton(onTap: widget.confirm),
+              ],
             ),
-          );
+          ],
+        ),
+      ),
+    );
   }
 }
