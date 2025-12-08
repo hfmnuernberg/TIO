@@ -348,20 +348,11 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: metronomeBlock,
       islandToolTutorialKey: islandToolTutorialKey,
-      customAction: isSimpleModeOn
-          ? IconButton(onPressed: toggleSimpleModeIfSaveOrUserConfirms, icon: Icon(Icons.tune))
-          : null,
-      menuItems: isSimpleModeOn
-          ? null
-          : <MenuItemButton>[
-              MenuItemButton(
-                onPressed: clearAllRhythms,
-                child: Text(l10n.metronomeClearAllRhythms, style: const TextStyle(color: ColorTheme.primary)),
-              ),
-              MenuItemButton(
-                onPressed: toggleSimpleModeIfSaveOrUserConfirms,
-                child: Text(l10n.metronomeSimpleModeOn, style: const TextStyle(color: ColorTheme.primary)),
-              ),
+      customActions: isSimpleModeOn
+          ? [IconButton(onPressed: toggleSimpleModeIfSaveOrUserConfirms, icon: Icon(Icons.tune))]
+          : [
+              IconButton(onPressed: clearAllRhythms, icon: Icon(Icons.delete_outlined)),
+              IconButton(onPressed: toggleSimpleModeIfSaveOrUserConfirms, icon: Icon(Icons.density_medium)),
             ],
       onParentTutorialFinished: () {
         createTutorial();

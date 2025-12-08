@@ -31,7 +31,7 @@ class ParentTool extends StatefulWidget {
   final Widget? island;
   final Widget centerModule;
   final List<Widget> settingTiles;
-  final IconButton? customAction;
+  final List<IconButton>? customActions;
   final List<MenuItemButton>? menuItems;
   final Function()? functionBeforeNavigatingBack;
   final Widget? floatingActionButton;
@@ -49,7 +49,7 @@ class ParentTool extends StatefulWidget {
     this.island,
     required this.centerModule,
     required this.settingTiles,
-    this.customAction,
+    this.customActions,
     this.menuItems,
     this.functionBeforeNavigatingBack,
     this.floatingActionButton,
@@ -169,7 +169,7 @@ class _ParentToolState extends State<ParentTool> {
       ),
     ];
 
-    if (widget.customAction != null) appBarActions.add(widget.customAction!);
+    if (widget.customActions != null && widget.customActions!.isNotEmpty) appBarActions.addAll(widget.customActions!);
 
     if (widget.menuItems != null && widget.menuItems!.isNotEmpty) {
       appBarActions.add(
