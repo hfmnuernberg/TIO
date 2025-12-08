@@ -148,11 +148,15 @@ class _WaveformState extends State<Waveform> {
       widget.onPositionChange(snappedRelative);
     } else if (details.pointerCount >= 2) {
       setState(() {
-        const double scaleDecisionThreshold = 0.2;
+        final double horizontalScale = (details.horizontalScale - 1.0).abs();
+        final double verticalScale = (details.verticalScale - 1.0).abs();
+
+        const double verticalZoomThreshold = 0.15;
+        const double horizontalZoomThreshold = 0.05;
         const double panDecisionThresholdPx = 1;
 
         if (isZooming == null) {
-          final bool zoomCandidate = (details.scale - 1.0).abs() > scaleDecisionThreshold;
+          final bool zoomCandidate = horizontalScale > horizontalZoomThreshold || verticalScale > verticalZoomThreshold;
           final bool panCandidate = details.focalPointDelta.dx.abs() > panDecisionThresholdPx;
 
           if (panCandidate && !zoomCandidate) {
