@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
@@ -87,13 +88,13 @@ class _WaveformState extends State<Waveform> {
   }
 
   void handlePointerDown(PointerDownEvent event) {
+    if (event.kind != PointerDeviceKind.touch) return;
     activePointers++;
-    if (activePointers >= 2) {
-      multiTouchInProgress = true;
-    }
+    if (activePointers >= 2) multiTouchInProgress = true;
   }
 
   void handlePointerUp(PointerUpEvent event) {
+    if (event.kind != PointerDeviceKind.touch) return;
     activePointers--;
     if (activePointers <= 0) {
       activePointers = 0;
@@ -147,8 +148,8 @@ class _WaveformState extends State<Waveform> {
       widget.onPositionChange(snappedRelative);
     } else if (details.pointerCount >= 2) {
       setState(() {
-        const double scaleDecisionThreshold = 0.1;
-        const double panDecisionThresholdPx = 2;
+        const double scaleDecisionThreshold = 0.2;
+        const double panDecisionThresholdPx = 1;
 
         if (isZooming == null) {
           final bool zoomCandidate = (details.scale - 1.0).abs() > scaleDecisionThreshold;

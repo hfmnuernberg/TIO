@@ -44,6 +44,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
         canPop: false,
         child: SafeArea(
           top: false,
+          bottom: false,
           child: Scaffold(
             resizeToAvoidBottomInset: true,
             appBar: AppBar(
@@ -159,6 +160,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
   Widget? _bottomSheet() {
     final bool isLandscapeLayout = _useLandscapeLayout(context);
     if (isLandscapeLayout) return null;
+    final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return ColoredBox(
       color: ColorTheme.primary80,
@@ -173,6 +175,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
               ConfirmButton(onTap: widget.confirm),
             ],
           ),
+          SizedBox(height: bottomInset),
         ],
       ),
     );
