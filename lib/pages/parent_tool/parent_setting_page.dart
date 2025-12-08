@@ -42,17 +42,18 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
     return DismissKeyboard(
       child: PopScope(
         canPop: false,
-        child: Scaffold(
-          resizeToAvoidBottomInset: true,
-          appBar: AppBar(
-            title: Center(child: Text(widget.title)),
-            backgroundColor: ColorTheme.surfaceBright,
-            foregroundColor: ColorTheme.primary,
-            automaticallyImplyLeading: false,
-          ),
-          backgroundColor: ColorTheme.primary92,
-          body: SafeArea(
-            child: (widget.mustBeScrollable && !isLandscapeLayout)
+        child: SafeArea(
+          top: false,
+          child: Scaffold(
+            resizeToAvoidBottomInset: true,
+            appBar: AppBar(
+              title: Center(child: Text(widget.title)),
+              backgroundColor: ColorTheme.surfaceBright,
+              foregroundColor: ColorTheme.primary,
+              automaticallyImplyLeading: false,
+            ),
+            backgroundColor: ColorTheme.primary92,
+            body: (widget.mustBeScrollable && !isLandscapeLayout)
                 ? LayoutBuilder(
                     builder: (context, viewportConstraints) {
                       return SingleChildScrollView(
@@ -64,8 +65,8 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
                     },
                   )
                 : (!isLandscapeLayout ? _buildPortrait() : _buildLandscape()),
+            bottomSheet: _bottomSheet(),
           ),
-          bottomSheet: _bottomSheet(),
         ),
       ),
     );
@@ -161,21 +162,18 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
 
     return ColoredBox(
       color: ColorTheme.primary80,
-      child: SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ColoredBox(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
-                ConfirmButton(onTap: widget.confirm),
-              ],
-            ),
-          ],
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ColoredBox(color: ColorTheme.secondary, child: widget.infoWidget ?? const SizedBox()),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
+              ConfirmButton(onTap: widget.confirm),
+            ],
+          ),
+        ],
       ),
     );
   }
