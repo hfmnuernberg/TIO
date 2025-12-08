@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:tiomusic/domain/audio/player.dart';
 
-const int maxZoomRmsBins = 2000;
+const int maxZoomRmsBins = 150000;
 
 Future<Float32List?> recalculateRmsForZoom({
   required Player player,
