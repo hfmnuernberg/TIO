@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
 import 'package:tiomusic/pages/media_player/markers/edit_markers_controls.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform.dart';
 import 'package:tiomusic/pages/media_player/markers/zoom_rms_helper.dart';
@@ -32,7 +31,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   Player get player => widget.player;
   final List<double> markerPositions = List.empty(growable: true);
   double playbackPosition = 0;
-  Duration positionDuration = Duration.zero;
   double? selectedMarkerPosition;
   bool get hasSelectedMarker => selectedMarkerPosition != null;
 
@@ -55,7 +53,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     player.setRepeat(false);
 
     block.markerPositions.forEach(markerPositions.add);
-    positionDuration = player.fileDuration * playbackPosition;
     player.markers.positions = markerPositions;
 
     rmsValues = widget.rmsValues;
@@ -121,7 +118,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   void updateUiForPlaybackPosition(double position) {
     final clamped = position.clamp(0.0, 1.0);
     playbackPosition = clamped;
-    positionDuration = player.fileDuration * clamped;
   }
 
   void handlePlaybackPositionChange(double position) {
@@ -234,8 +230,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             onPositionChange: handlePositionChange,
             onZoomChanged: handleZoomChanged,
           ),
-          const SizedBox(height: 8),
-          MediaTimeText(duration: positionDuration),
           const SizedBox(height: 8),
           MarkerEditControls(
             keyAddRemove: keyAddRemove,

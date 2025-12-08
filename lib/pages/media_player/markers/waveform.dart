@@ -1,3 +1,4 @@
+import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -233,6 +234,12 @@ class _WaveformState extends State<Waveform> {
                   },
                 ),
               ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          MediaTimeText(
+            duration: Duration(
+              milliseconds: (widget.fileDuration.inMilliseconds * widget.position.clamp(0.0, 1.0)).round(),
             ),
           ),
         ],
