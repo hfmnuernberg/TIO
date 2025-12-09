@@ -155,6 +155,10 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get mediaPlayerTutorialRepeat =>
       'Enable repeated playback for this media player. By tapping again, you can also play all media players in this project that contain a sound file one after another.';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file.';
+  String get mediaPlayerWaveformScrollLeft => 'Scroll left';
+  String get mediaPlayerWaveformScrollRight => 'Scroll right';
+  String get mediaPlayerWaveformZoomIn => 'Zoom in';
+  String get mediaPlayerWaveformZoomOut => 'Zoom out';
 
   String mediaPlayerErrorFileFormatDescription(String format) =>
       'The file format "$format" is not supported. Please choose a different file.';

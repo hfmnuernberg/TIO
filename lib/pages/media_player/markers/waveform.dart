@@ -1,11 +1,12 @@
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/media_player/markers/markers.dart';
-import 'package:tiomusic/pages/media_player/markers/waveform_window_labels.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform_gesture_helper.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform_viewport_controller.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform_gesture_controls.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform_window_labels.dart';
+import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 
 const double waveformHeight = 200;
 
@@ -41,12 +42,9 @@ class _WaveformState extends State<Waveform> {
   final GlobalKey waveKey = GlobalKey();
   late WaveformVisualizer waveformVisualizer;
   late WaveformViewportController viewport;
+  late WaveformGestureHelper gestures;
 
   double availableWidth = 0;
-  bool? isZooming;
-
-  int activePointers = 0;
-  bool multiTouchInProgress = false;
 
   double get paintedWaveWidth {
     if (availableWidth > 0) return availableWidth;
@@ -61,6 +59,15 @@ class _WaveformState extends State<Waveform> {
   void initState() {
     super.initState();
     viewport = WaveformViewportController(fileDuration: widget.fileDuration);
+    gestures = WaveformGestureHelper(
+      viewport: viewport,
+      getPaintedWidth: () => paintedWaveWidth,
+      getTotalBins: () => widget.rmsValues.length,
+      onPositionChange: widget.onPositionChange,
+      onZoomChanged: widget.onZoomChanged,
+      setState: setState,
+      rebuildVisualizer: rebuildVisualizer,
+    );
     rebuildVisualizer();
   }
 
@@ -87,152 +94,86 @@ class _WaveformState extends State<Waveform> {
     );
   }
 
-  void handlePointerDown(PointerDownEvent event) {
-    if (event.kind != PointerDeviceKind.touch) return;
-    activePointers++;
-    if (activePointers >= 2) multiTouchInProgress = true;
+  void handleZoomByFactor({required double factor}) {
+    setState(() {
+      viewport.zoomAroundCenter(factor: factor);
+      rebuildVisualizer();
+    });
+    widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
   }
 
-  void handlePointerUp(PointerUpEvent event) {
-    if (event.kind != PointerDeviceKind.touch) return;
-    activePointers--;
-    if (activePointers <= 0) {
-      activePointers = 0;
-      multiTouchInProgress = false;
-    }
-  }
-
-  void handleTap(TapUpDetails details) {
-    if (multiTouchInProgress) return;
-
-    final double width = paintedWaveWidth;
-    final int totalBins = widget.rmsValues.length;
-    final snappedRelative = viewport.calculateSnappedRelativePosition(
-      tapX: details.localPosition.dx,
-      paintedWidth: width,
-      totalBins: totalBins,
-    );
-    widget.onPositionChange(snappedRelative);
-  }
-
-  void handleScaleStart(ScaleStartDetails details) {
-    isZooming = null;
-
-    final double width = paintedWaveWidth;
-    final int totalBins = widget.rmsValues.length;
-    if (width <= 0 || totalBins <= 0) return;
-
-    if (details.pointerCount == 1 && !multiTouchInProgress) {
-      final double snappedRelative = viewport.calculateSnappedRelativePosition(
-        tapX: details.localFocalPoint.dx,
-        paintedWidth: width,
-        totalBins: totalBins,
-      );
-      widget.onPositionChange(snappedRelative);
-    } else if (details.pointerCount >= 2) {
-      viewport.beginScale(focalX: details.localFocalPoint.dx, paintedWidth: width, totalBins: totalBins);
-    }
-  }
-
-  void handleScaleUpdate(ScaleUpdateDetails details) {
-    final double width = paintedWaveWidth;
-    final int totalBins = widget.rmsValues.length;
-    if (width <= 0 || totalBins <= 0) return;
-
-    if (details.pointerCount == 1 && !multiTouchInProgress) {
-      final double snappedRelative = viewport.calculateSnappedRelativePosition(
-        tapX: details.localFocalPoint.dx,
-        paintedWidth: width,
-        totalBins: totalBins,
-      );
-      widget.onPositionChange(snappedRelative);
-    } else if (details.pointerCount >= 2) {
-      setState(() {
-        const double scaleDecisionThreshold = 0.2;
-        const double panDecisionThresholdPx = 1;
-
-        if (isZooming == null) {
-          final bool zoomCandidate = (details.scale - 1.0).abs() > scaleDecisionThreshold;
-          final bool panCandidate = details.focalPointDelta.dx.abs() > panDecisionThresholdPx;
-
-          if (panCandidate && !zoomCandidate) {
-            isZooming = false;
-          } else if (zoomCandidate && !panCandidate) {
-            isZooming = true;
-          } else if (zoomCandidate && panCandidate) {
-            isZooming = false;
-          } else {
-            return;
-          }
-        }
-
-        if (isZooming ?? false) {
-          viewport.updateScale(details.scale);
-        } else {
-          if (details.focalPointDelta.dx != 0) {
-            viewport.panByPixels(dxPixels: details.focalPointDelta.dx, paintedWidth: width);
-          }
-        }
-
-        rebuildVisualizer();
-      });
-    }
-  }
-
-  void handleScaleEnd(ScaleEndDetails details) {
-    isZooming = null;
+  void handleScrollBySpan({required bool forward}) {
+    setState(() {
+      viewport.scrollBySpan(forward: forward);
+      rebuildVisualizer();
+    });
     widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: [
-          WaveformWindowLabels(
-            fileDuration: widget.fileDuration,
-            viewStart: viewport.viewStart,
-            viewEnd: viewport.viewEnd,
-          ),
-          const SizedBox(height: 4),
-          SizedBox(
-            height: waveformHeight,
-            child: Listener(
-              onPointerDown: handlePointerDown,
-              onPointerUp: handlePointerUp,
-              child: GestureDetector(
-                onTapUp: handleTap,
-                onScaleStart: handleScaleStart,
-                onScaleUpdate: handleScaleUpdate,
-                onScaleEnd: handleScaleEnd,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final double width = constraints.maxWidth;
-                    availableWidth = width;
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              WaveformWindowLabels(
+                fileDuration: widget.fileDuration,
+                viewStart: viewport.viewStart,
+                viewEnd: viewport.viewEnd,
+              ),
+              SizedBox(
+                height: waveformHeight,
+                child: Listener(
+                  onPointerDown: gestures.handlePointerDown,
+                  onPointerUp: gestures.handlePointerUp,
+                  child: GestureDetector(
+                    onTapUp: gestures.handleTap,
+                    onScaleStart: gestures.handleScaleStart,
+                    onScaleUpdate: gestures.handleScaleUpdate,
+                    onScaleEnd: gestures.handleScaleEnd,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final double width = constraints.maxWidth;
+                        availableWidth = width;
 
-                    return Stack(
-                      children: [
-                        CustomPaint(key: waveKey, painter: waveformVisualizer, size: Size(width, waveformHeight)),
-                        Markers(
-                          rmsValues: widget.rmsValues,
-                          paintedWidth: width,
-                          waveFormHeight: waveformHeight,
-                          markerPositions: widget.markerPositions,
-                          selectedMarkerPosition: widget.selectedMarkerPosition,
-                          viewStart: viewport.viewStart,
-                          viewEnd: viewport.viewEnd,
-                          onTap: widget.onPositionChange,
-                        ),
-                      ],
-                    );
-                  },
+                        return Stack(
+                          children: [
+                            CustomPaint(key: waveKey, painter: waveformVisualizer, size: Size(width, waveformHeight)),
+                            Markers(
+                              rmsValues: widget.rmsValues,
+                              paintedWidth: width,
+                              waveFormHeight: waveformHeight,
+                              markerPositions: widget.markerPositions,
+                              selectedMarkerPosition: widget.selectedMarkerPosition,
+                              viewStart: viewport.viewStart,
+                              viewEnd: viewport.viewEnd,
+                              onTap: widget.onPositionChange,
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        ),
+        Transform.translate(
+          offset: const Offset(0, -12),
+          child: WaveformGestureControls(
+            fileDuration: widget.fileDuration,
+            position: widget.position,
+            viewport: viewport,
+            onZoomIn: () => handleZoomByFactor(factor: 0.5),
+            onZoomOut: () => handleZoomByFactor(factor: 2),
+            onScrollLeft: () => handleScrollBySpan(forward: false),
+            onScrollRight: () => handleScrollBySpan(forward: true),
+          ),
+        ),
+      ],
     );
   }
 }

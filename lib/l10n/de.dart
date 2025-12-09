@@ -156,6 +156,10 @@ class German extends AppLocalizations with GermanFlashCards {
       'Aktiviere die wiederholte Wiedergabe für diesen Media Player. Durch erneutes Antippen kannst du auch alle Media Player in diesem Projekt, die eine Sound-Datei beinhalten, hintereinander abspielen.';
   String get mediaPlayerTutorialStartStop =>
       'Tippe hier, um die Aufnahme zu starten und zu stoppen oder um eine Audiodatei abzuspielen.';
+  String get mediaPlayerWaveformScrollLeft => 'Nach links scrollen';
+  String get mediaPlayerWaveformScrollRight => 'Nach rechts scrollen';
+  String get mediaPlayerWaveformZoomIn => 'Hereinzoomen';
+  String get mediaPlayerWaveformZoomOut => 'Herauszoomen';
 
   String mediaPlayerErrorFileFormatDescription(String format) =>
       'Das Dateiformat $format wird nicht unterstützt. Bitte wähle eine andere Datei.';
