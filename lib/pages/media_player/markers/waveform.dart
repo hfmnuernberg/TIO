@@ -1,14 +1,12 @@
-import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/media_player/markers/markers.dart';
-import 'package:tiomusic/pages/media_player/markers/waveform_window_labels.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform_gesture_helper.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform_viewport_controller.dart';
-import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform_gesture_controls.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform_window_labels.dart';
+import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 
 const double waveformHeight = 200;
 
@@ -44,12 +42,9 @@ class _WaveformState extends State<Waveform> {
   final GlobalKey waveKey = GlobalKey();
   late WaveformVisualizer waveformVisualizer;
   late WaveformViewportController viewport;
+  late WaveformGestureHelper gestures;
 
   double availableWidth = 0;
-  bool? isZooming;
-
-  int activePointers = 0;
-  bool multiTouchInProgress = false;
 
   double get paintedWaveWidth {
     if (availableWidth > 0) return availableWidth;
@@ -64,6 +59,15 @@ class _WaveformState extends State<Waveform> {
   void initState() {
     super.initState();
     viewport = WaveformViewportController(fileDuration: widget.fileDuration);
+    gestures = WaveformGestureHelper(
+      viewport: viewport,
+      getPaintedWidth: () => paintedWaveWidth,
+      getTotalBins: () => widget.rmsValues.length,
+      onPositionChange: widget.onPositionChange,
+      onZoomChanged: widget.onZoomChanged,
+      setState: setState,
+      rebuildVisualizer: rebuildVisualizer,
+    );
     rebuildVisualizer();
   }
 
@@ -90,107 +94,6 @@ class _WaveformState extends State<Waveform> {
     );
   }
 
-  void handlePointerDown(PointerDownEvent event) {
-    if (event.kind != PointerDeviceKind.touch) return;
-    activePointers++;
-    if (activePointers >= 2) multiTouchInProgress = true;
-  }
-
-  void handlePointerUp(PointerUpEvent event) {
-    if (event.kind != PointerDeviceKind.touch) return;
-    activePointers--;
-    if (activePointers <= 0) {
-      activePointers = 0;
-      multiTouchInProgress = false;
-    }
-  }
-
-  void handleTap(TapUpDetails details) {
-    if (multiTouchInProgress) return;
-
-    final double width = paintedWaveWidth;
-    final int totalBins = widget.rmsValues.length;
-    final snappedRelative = viewport.calculateSnappedRelativePosition(
-      tapX: details.localPosition.dx,
-      paintedWidth: width,
-      totalBins: totalBins,
-    );
-    widget.onPositionChange(snappedRelative);
-  }
-
-  void handleScaleStart(ScaleStartDetails details) {
-    isZooming = null;
-
-    final double width = paintedWaveWidth;
-    final int totalBins = widget.rmsValues.length;
-    if (width <= 0 || totalBins <= 0) return;
-
-    if (details.pointerCount == 1 && !multiTouchInProgress) {
-      final double snappedRelative = viewport.calculateSnappedRelativePosition(
-        tapX: details.localFocalPoint.dx,
-        paintedWidth: width,
-        totalBins: totalBins,
-      );
-      widget.onPositionChange(snappedRelative);
-    } else if (details.pointerCount >= 2) {
-      viewport.beginScale(focalX: details.localFocalPoint.dx, paintedWidth: width, totalBins: totalBins);
-    }
-  }
-
-  void handleScaleUpdate(ScaleUpdateDetails details) {
-    final double width = paintedWaveWidth;
-    final int totalBins = widget.rmsValues.length;
-    if (width <= 0 || totalBins <= 0) return;
-
-    if (details.pointerCount == 1 && !multiTouchInProgress) {
-      final double snappedRelative = viewport.calculateSnappedRelativePosition(
-        tapX: details.localFocalPoint.dx,
-        paintedWidth: width,
-        totalBins: totalBins,
-      );
-      widget.onPositionChange(snappedRelative);
-    } else if (details.pointerCount >= 2) {
-      setState(() {
-        final double horizontalScale = (details.horizontalScale - 1.0).abs();
-        final double verticalScale = (details.verticalScale - 1.0).abs();
-
-        const double verticalZoomThreshold = 0.15;
-        const double horizontalZoomThreshold = 0.05;
-        const double panDecisionThresholdPx = 1;
-
-        if (isZooming == null) {
-          final bool zoomCandidate = horizontalScale > horizontalZoomThreshold || verticalScale > verticalZoomThreshold;
-          final bool panCandidate = details.focalPointDelta.dx.abs() > panDecisionThresholdPx;
-
-          if (panCandidate && !zoomCandidate) {
-            isZooming = false;
-          } else if (zoomCandidate && !panCandidate) {
-            isZooming = true;
-          } else if (zoomCandidate && panCandidate) {
-            isZooming = false;
-          } else {
-            return;
-          }
-        }
-
-        if (isZooming ?? false) {
-          viewport.updateScale(scale: details.scale);
-        } else {
-          if (details.focalPointDelta.dx != 0) {
-            viewport.panByPixels(dxPixels: details.focalPointDelta.dx, paintedWidth: width);
-          }
-        }
-
-        rebuildVisualizer();
-      });
-    }
-  }
-
-  void handleScaleEnd() {
-    isZooming = null;
-    widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
-  }
-
   void handleZoomByFactor({required double factor}) {
     setState(() {
       viewport.zoomAroundCenter(factor: factor);
@@ -209,15 +112,6 @@ class _WaveformState extends State<Waveform> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    const enabledColor = ColorTheme.primary;
-    const disabledColor = ColorTheme.secondary;
-
-    final bool canZoomIn = viewport.currentSpan > viewport.minSpan;
-    final bool canZoomOut = viewport.currentSpan < viewport.maxSpan;
-    final bool canScrollLeft = viewport.viewStart > 0.0;
-    final bool canScrollRight = viewport.viewEnd < 1.0;
-
     return Column(
       children: [
         Padding(
@@ -232,13 +126,13 @@ class _WaveformState extends State<Waveform> {
               SizedBox(
                 height: waveformHeight,
                 child: Listener(
-                  onPointerDown: handlePointerDown,
-                  onPointerUp: handlePointerUp,
+                  onPointerDown: gestures.handlePointerDown,
+                  onPointerUp: gestures.handlePointerUp,
                   child: GestureDetector(
-                    onTapUp: handleTap,
-                    onScaleStart: handleScaleStart,
-                    onScaleUpdate: handleScaleUpdate,
-                    onScaleEnd: (_) => handleScaleEnd(),
+                    onTapUp: gestures.handleTap,
+                    onScaleStart: gestures.handleScaleStart,
+                    onScaleUpdate: gestures.handleScaleUpdate,
+                    onScaleEnd: gestures.handleScaleEnd,
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         final double width = constraints.maxWidth;
@@ -267,41 +161,14 @@ class _WaveformState extends State<Waveform> {
             ],
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.zoom_out),
-              tooltip: l10n.mediaPlayerWaveformZoomOut,
-              color: canZoomOut ? enabledColor : disabledColor,
-              onPressed: canZoomOut ? () => handleZoomByFactor(factor: 2) : null,
-            ),
-            IconButton(
-              icon: const Icon(Icons.west),
-              tooltip: l10n.mediaPlayerWaveformScrollLeft,
-              color: canScrollLeft ? enabledColor : disabledColor,
-              onPressed: canScrollLeft ? () => handleScrollBySpan(forward: false) : null,
-            ),
-            Center(
-              child: MediaTimeText(
-                duration: Duration(
-                  milliseconds: (widget.fileDuration.inMilliseconds * widget.position.clamp(0.0, 1.0)).round(),
-                ),
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.east),
-              tooltip: l10n.mediaPlayerWaveformScrollRight,
-              color: canScrollRight ? enabledColor : disabledColor,
-              onPressed: canScrollRight ? () => handleScrollBySpan(forward: true) : null,
-            ),
-            IconButton(
-              icon: const Icon(Icons.zoom_in),
-              tooltip: l10n.mediaPlayerWaveformZoomIn,
-              color: canZoomIn ? enabledColor : disabledColor,
-              onPressed: canZoomIn ? () => handleZoomByFactor(factor: 0.5) : null,
-            ),
-          ],
+        WaveformGestureControls(
+          fileDuration: widget.fileDuration,
+          position: widget.position,
+          viewport: viewport,
+          onZoomIn: () => handleZoomByFactor(factor: 0.5),
+          onZoomOut: () => handleZoomByFactor(factor: 2),
+          onScrollLeft: () => handleScrollBySpan(forward: false),
+          onScrollRight: () => handleScrollBySpan(forward: true),
         ),
       ],
     );

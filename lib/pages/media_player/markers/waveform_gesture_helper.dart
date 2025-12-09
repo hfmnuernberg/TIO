@@ -1,0 +1,140 @@
+import 'dart:ui';
+
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform_viewport_controller.dart';
+
+class WaveformGestureHelper {
+  final WaveformViewportController viewport;
+  final double Function() getPaintedWidth;
+  final int Function() getTotalBins;
+  final void Function(double relative) onPositionChange;
+  final void Function(double viewStart, double viewEnd) onZoomChanged;
+  final void Function(void Function()) setState;
+  final VoidCallback rebuildVisualizer;
+
+  bool? isZooming;
+  int activePointers = 0;
+  bool multiTouchInProgress = false;
+
+  WaveformGestureHelper({
+    required this.viewport,
+    required this.getPaintedWidth,
+    required this.getTotalBins,
+    required this.onPositionChange,
+    required this.onZoomChanged,
+    required this.setState,
+    required this.rebuildVisualizer,
+  });
+
+  double get _paintedWidth => getPaintedWidth();
+  int get _totalBins => getTotalBins();
+
+  void handlePointerDown(PointerDownEvent event) {
+    if (event.kind != PointerDeviceKind.touch) return;
+    activePointers++;
+    if (activePointers >= 2) {
+      multiTouchInProgress = true;
+    }
+  }
+
+  void handlePointerUp(PointerUpEvent event) {
+    if (event.kind != PointerDeviceKind.touch) return;
+    activePointers--;
+    if (activePointers <= 0) {
+      activePointers = 0;
+      multiTouchInProgress = false;
+    }
+  }
+
+  void handleTap(TapUpDetails details) {
+    if (multiTouchInProgress) return;
+
+    final double width = _paintedWidth;
+    final int totalBins = _totalBins;
+    if (width <= 0 || totalBins <= 0) return;
+
+    final snappedRelative = viewport.calculateSnappedRelativePosition(
+      tapX: details.localPosition.dx,
+      paintedWidth: width,
+      totalBins: totalBins,
+    );
+    onPositionChange(snappedRelative);
+  }
+
+  void handleScaleStart(ScaleStartDetails details) {
+    isZooming = null;
+
+    final double width = _paintedWidth;
+    final int totalBins = _totalBins;
+    if (width <= 0 || totalBins <= 0) return;
+
+    if (details.pointerCount == 1 && !multiTouchInProgress) {
+      final double snappedRelative = viewport.calculateSnappedRelativePosition(
+        tapX: details.localFocalPoint.dx,
+        paintedWidth: width,
+        totalBins: totalBins,
+      );
+      onPositionChange(snappedRelative);
+    } else if (details.pointerCount >= 2) {
+      viewport.beginScale(focalX: details.localFocalPoint.dx, paintedWidth: width, totalBins: totalBins);
+    }
+  }
+
+  void handleScaleUpdate(ScaleUpdateDetails details) {
+    final double width = _paintedWidth;
+    final int totalBins = _totalBins;
+    if (width <= 0 || totalBins <= 0) return;
+
+    if (details.pointerCount == 1 && !multiTouchInProgress) {
+      final double snappedRelative = viewport.calculateSnappedRelativePosition(
+        tapX: details.localFocalPoint.dx,
+        paintedWidth: width,
+        totalBins: totalBins,
+      );
+      onPositionChange(snappedRelative);
+      return;
+    }
+
+    if (details.pointerCount >= 2) {
+      setState(() {
+        final double horizontalScale = (details.horizontalScale - 1.0).abs();
+        final double verticalScale = (details.verticalScale - 1.0).abs();
+
+        const double verticalZoomThreshold = 0.15;
+        const double horizontalZoomThreshold = 0.05;
+        const double panDecisionThresholdPx = 1;
+
+        if (isZooming == null) {
+          final bool zoomCandidate = horizontalScale > horizontalZoomThreshold || verticalScale > verticalZoomThreshold;
+          final bool panCandidate = details.focalPointDelta.dx.abs() > panDecisionThresholdPx;
+
+          if (panCandidate && !zoomCandidate) {
+            isZooming = false;
+          } else if (zoomCandidate && !panCandidate) {
+            isZooming = true;
+          } else if (zoomCandidate && panCandidate) {
+            isZooming = false;
+          } else {
+            return;
+          }
+        }
+
+        if (isZooming ?? false) {
+          viewport.updateScale(scale: details.scale);
+        } else {
+          if (details.focalPointDelta.dx != 0) {
+            viewport.panByPixels(dxPixels: details.focalPointDelta.dx, paintedWidth: width);
+          }
+        }
+
+        rebuildVisualizer();
+      });
+    }
+  }
+
+  void handleScaleEnd(ScaleEndDetails details) {
+    isZooming = null;
+    onZoomChanged(viewport.viewStart, viewport.viewEnd);
+  }
+}
