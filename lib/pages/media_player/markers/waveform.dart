@@ -174,7 +174,7 @@ class _WaveformState extends State<Waveform> {
         }
 
         if (isZooming ?? false) {
-          viewport.updateScale(details.scale);
+          viewport.updateScale(scale: details.scale);
         } else {
           if (details.focalPointDelta.dx != 0) {
             viewport.panByPixels(dxPixels: details.focalPointDelta.dx, paintedWidth: width);
@@ -186,28 +186,20 @@ class _WaveformState extends State<Waveform> {
     }
   }
 
-  void handleScaleEnd(ScaleEndDetails details) {
+  void handleScaleEnd() {
     isZooming = null;
     widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
   }
 
-  void _handleZoomInButton() {
+  void handleZoomByFactor({required double factor}) {
     setState(() {
-      viewport.zoomAroundCenter(0.5);
+      viewport.zoomAroundCenter(factor: factor);
       rebuildVisualizer();
     });
     widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
   }
 
-  void _handleZoomOutButton() {
-    setState(() {
-      viewport.zoomAroundCenter(2);
-      rebuildVisualizer();
-    });
-    widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
-  }
-
-  void _handleScrollBySpan({required bool forward}) {
+  void handleScrollBySpan({required bool forward}) {
     setState(() {
       viewport.scrollBySpan(forward: forward);
       rebuildVisualizer();
@@ -240,7 +232,7 @@ class _WaveformState extends State<Waveform> {
                     onTapUp: handleTap,
                     onScaleStart: handleScaleStart,
                     onScaleUpdate: handleScaleUpdate,
-                    onScaleEnd: handleScaleEnd,
+                    onScaleEnd: (_) => handleScaleEnd(),
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         final double width = constraints.maxWidth;
@@ -276,13 +268,13 @@ class _WaveformState extends State<Waveform> {
               icon: const Icon(Icons.zoom_out),
               tooltip: l10n.mediaPlayerWaveformZoomOut,
               color: buttonColor,
-              onPressed: _handleZoomOutButton,
+              onPressed: () => handleZoomByFactor(factor: 2),
             ),
             IconButton(
               icon: const Icon(Icons.west),
               tooltip: l10n.mediaPlayerWaveformScrollLeft,
               color: buttonColor,
-              onPressed: () => _handleScrollBySpan(forward: false),
+              onPressed: () => handleScrollBySpan(forward: false),
             ),
             Center(
               child: MediaTimeText(
@@ -295,13 +287,13 @@ class _WaveformState extends State<Waveform> {
               icon: const Icon(Icons.east),
               tooltip: l10n.mediaPlayerWaveformScrollRight,
               color: buttonColor,
-              onPressed: () => _handleScrollBySpan(forward: true),
+              onPressed: () => handleScrollBySpan(forward: true),
             ),
             IconButton(
               icon: const Icon(Icons.zoom_in),
               tooltip: l10n.mediaPlayerWaveformZoomIn,
               color: buttonColor,
-              onPressed: _handleZoomInButton,
+              onPressed: () => handleZoomByFactor(factor: 0.5),
             ),
           ],
         ),

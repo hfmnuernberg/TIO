@@ -43,39 +43,20 @@ class WaveformViewportController {
     return totalBins > 1 ? globalIndex / (totalBins - 1) : 0.0;
   }
 
-  double calcCurrentSpan() => (viewEnd - viewStart).clamp(_minSpan, _maxSpan);
-
-  void _panByFraction(double deltaFraction) {
-    double start = viewStart + deltaFraction;
-    double end = viewEnd + deltaFraction;
-
-    if (start < 0) {
-      end -= start;
-      start = 0;
-    }
-    if (end > 1) {
-      start -= end - 1;
-      end = 1;
-    }
-
-    viewStart = start;
-    viewEnd = end;
-  }
-
   void panByPixels({required double dxPixels, required double paintedWidth}) {
     if (paintedWidth <= 0) return;
 
-    final span = calcCurrentSpan();
+    final span = _calcCurrentSpan();
     if (span <= 0) return;
 
-    _panByFraction(-dxPixels / paintedWidth * span);
+    _panByFraction(deltaFraction: -dxPixels / paintedWidth * span);
   }
 
   void scrollBySpan({required bool forward}) {
-    final span = calcCurrentSpan();
+    final span = _calcCurrentSpan();
     if (span <= 0) return;
 
-    _panByFraction(forward ? span : -span);
+    _panByFraction(deltaFraction: forward ? span : -span);
   }
 
   void beginScale({required double focalX, required double paintedWidth, required int totalBins}) {
@@ -89,13 +70,24 @@ class WaveformViewportController {
     );
   }
 
-  void updateScale(double scale) {
+  void updateScale({required double scale}) {
     final double initialSpan = _initialViewEnd - _initialViewStart;
-    double newSpan = (initialSpan / scale).clamp(_minSpan, _maxSpan);
+    double newSpan = initialSpan / scale;
+    _applyZoom(focalPosition: _pinchFocalPosition, span: newSpan);
+  }
 
-    double center = _pinchFocalPosition;
-    double start = center - newSpan / 2;
-    double end = center + newSpan / 2;
+  void zoomAroundCenter({required double factor}) {
+    final span = _calcCurrentSpan();
+    if (span <= 0) return;
+    double center = (viewStart + viewEnd) / 2;
+    double newSpan = span * factor;
+    _applyZoom(focalPosition: center, span: newSpan);
+  }
+
+  void _applyZoom({required double focalPosition, required double span}) {
+    final newSpan = span.clamp(_minSpan, _maxSpan);
+    double start = focalPosition - newSpan / 2;
+    double end = focalPosition + newSpan / 2;
 
     if (start < 0) {
       end -= start;
@@ -110,15 +102,11 @@ class WaveformViewportController {
     viewEnd = end;
   }
 
-  void zoomAroundCenter(double factor) {
-    final span = calcCurrentSpan();
-    if (span <= 0) return;
+  double _calcCurrentSpan() => (viewEnd - viewStart).clamp(_minSpan, _maxSpan);
 
-    final double center = (viewStart + viewEnd) / 2;
-    double newSpan = (span * factor).clamp(_minSpan, _maxSpan);
-
-    double start = center - newSpan / 2;
-    double end = center + newSpan / 2;
+  void _panByFraction({required double deltaFraction}) {
+    double start = viewStart + deltaFraction;
+    double end = viewEnd + deltaFraction;
 
     if (start < 0) {
       end -= start;
