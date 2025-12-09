@@ -98,4 +98,49 @@ class WaveformViewportController {
     viewStart = start;
     viewEnd = end;
   }
+
+  void zoomAroundCenter(double factor) {
+    final double span = (viewEnd - viewStart).clamp(_minSpan, _maxSpan);
+    if (span <= 0) return;
+
+    final double center = (viewStart + viewEnd) / 2;
+    double newSpan = (span * factor).clamp(_minSpan, _maxSpan);
+
+    double start = center - newSpan / 2;
+    double end = center + newSpan / 2;
+
+    if (start < 0) {
+      end -= start;
+      start = 0;
+    }
+    if (end > 1) {
+      start -= end - 1;
+      end = 1;
+    }
+
+    viewStart = start;
+    viewEnd = end;
+  }
+
+  void scrollBySpan(double direction) {
+    if (direction == 0) return;
+
+    final double span = (viewEnd - viewStart).clamp(_minSpan, _maxSpan);
+    if (span <= 0) return;
+
+    double start = viewStart + direction * span;
+    double end = viewEnd + direction * span;
+
+    if (start < 0) {
+      end -= start;
+      start = 0;
+    }
+    if (end > 1) {
+      start -= end - 1;
+      end = 1;
+    }
+
+    viewStart = start;
+    viewEnd = end;
+  }
 }

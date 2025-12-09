@@ -1,3 +1,4 @@
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -7,6 +8,7 @@ import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/media_player/markers/markers.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform_window_labels.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform_viewport_controller.dart';
+import 'package:tiomusic/util/color_constants.dart';
 
 const double waveformHeight = 200;
 
@@ -189,61 +191,133 @@ class _WaveformState extends State<Waveform> {
     widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
   }
 
+  void _notifyViewChanged() {
+    widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
+  }
+
+  void _handleZoomInButton() {
+    setState(() {
+      viewport.zoomAroundCenter(0.5);
+      rebuildVisualizer();
+    });
+    _notifyViewChanged();
+  }
+
+  void _handleZoomOutButton() {
+    setState(() {
+      viewport.zoomAroundCenter(2);
+      rebuildVisualizer();
+    });
+    _notifyViewChanged();
+  }
+
+  void _handleScrollLeftButton() {
+    setState(() {
+      viewport.scrollBySpan(-1);
+      rebuildVisualizer();
+    });
+    _notifyViewChanged();
+  }
+
+  void _handleScrollRightButton() {
+    setState(() {
+      viewport.scrollBySpan(1);
+      rebuildVisualizer();
+    });
+    _notifyViewChanged();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: [
-          WaveformWindowLabels(
-            fileDuration: widget.fileDuration,
-            viewStart: viewport.viewStart,
-            viewEnd: viewport.viewEnd,
-          ),
-          const SizedBox(height: 4),
-          SizedBox(
-            height: waveformHeight,
-            child: Listener(
-              onPointerDown: handlePointerDown,
-              onPointerUp: handlePointerUp,
-              child: GestureDetector(
-                onTapUp: handleTap,
-                onScaleStart: handleScaleStart,
-                onScaleUpdate: handleScaleUpdate,
-                onScaleEnd: handleScaleEnd,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final double width = constraints.maxWidth;
-                    availableWidth = width;
+    final l10n = context.l10n;
+    const buttonColor = ColorTheme.primary;
 
-                    return Stack(
-                      children: [
-                        CustomPaint(key: waveKey, painter: waveformVisualizer, size: Size(width, waveformHeight)),
-                        Markers(
-                          rmsValues: widget.rmsValues,
-                          paintedWidth: width,
-                          waveFormHeight: waveformHeight,
-                          markerPositions: widget.markerPositions,
-                          selectedMarkerPosition: widget.selectedMarkerPosition,
-                          viewStart: viewport.viewStart,
-                          viewEnd: viewport.viewEnd,
-                          onTap: widget.onPositionChange,
-                        ),
-                      ],
-                    );
-                  },
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              WaveformWindowLabels(
+                fileDuration: widget.fileDuration,
+                viewStart: viewport.viewStart,
+                viewEnd: viewport.viewEnd,
+              ),
+              SizedBox(
+                height: waveformHeight,
+                child: Listener(
+                  onPointerDown: handlePointerDown,
+                  onPointerUp: handlePointerUp,
+                  child: GestureDetector(
+                    onTapUp: handleTap,
+                    onScaleStart: handleScaleStart,
+                    onScaleUpdate: handleScaleUpdate,
+                    onScaleEnd: handleScaleEnd,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final double width = constraints.maxWidth;
+                        availableWidth = width;
+
+                        return Stack(
+                          children: [
+                            CustomPaint(key: waveKey, painter: waveformVisualizer, size: Size(width, waveformHeight)),
+                            Markers(
+                              rmsValues: widget.rmsValues,
+                              paintedWidth: width,
+                              waveFormHeight: waveformHeight,
+                              markerPositions: widget.markerPositions,
+                              selectedMarkerPosition: widget.selectedMarkerPosition,
+                              viewStart: viewport.viewStart,
+                              viewEnd: viewport.viewEnd,
+                              onTap: widget.onPositionChange,
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.zoom_out),
+              tooltip: l10n.mediaPlayerWaveformZoomOut,
+              color: buttonColor,
+              onPressed: _handleZoomOutButton,
+            ),
+            IconButton(
+              icon: const Icon(Icons.west),
+              tooltip: l10n.mediaPlayerWaveformScrollLeft,
+              color: buttonColor,
+              onPressed: _handleScrollLeftButton,
+            ),
+            Center(
+              child: MediaTimeText(
+                duration: Duration(
+                  milliseconds: (widget.fileDuration.inMilliseconds * widget.position.clamp(0.0, 1.0)).round(),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          MediaTimeText(
-            duration: Duration(
-              milliseconds: (widget.fileDuration.inMilliseconds * widget.position.clamp(0.0, 1.0)).round(),
+            IconButton(
+              icon: const Icon(Icons.east),
+              tooltip: l10n.mediaPlayerWaveformScrollRight,
+              color: buttonColor,
+              onPressed: _handleScrollRightButton,
             ),
-          ),
-        ],
-      ),
+            IconButton(
+              icon: const Icon(Icons.zoom_in),
+              tooltip: l10n.mediaPlayerWaveformZoomIn,
+              color: buttonColor,
+              onPressed: _handleZoomInButton,
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
