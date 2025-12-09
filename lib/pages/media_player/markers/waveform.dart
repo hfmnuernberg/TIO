@@ -161,14 +161,17 @@ class _WaveformState extends State<Waveform> {
             ],
           ),
         ),
-        WaveformGestureControls(
-          fileDuration: widget.fileDuration,
-          position: widget.position,
-          viewport: viewport,
-          onZoomIn: () => handleZoomByFactor(factor: 0.5),
-          onZoomOut: () => handleZoomByFactor(factor: 2),
-          onScrollLeft: () => handleScrollBySpan(forward: false),
-          onScrollRight: () => handleScrollBySpan(forward: true),
+        Transform.translate(
+          offset: const Offset(0, -12),
+          child: WaveformGestureControls(
+            fileDuration: widget.fileDuration,
+            position: widget.position,
+            viewport: viewport,
+            onZoomIn: () => handleZoomByFactor(factor: 0.5),
+            onZoomOut: () => handleZoomByFactor(factor: 2),
+            onScrollLeft: () => handleScrollBySpan(forward: false),
+            onScrollRight: () => handleScrollBySpan(forward: true),
+          ),
         ),
       ],
     );

@@ -230,7 +230,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             onPositionChange: handlePositionChange,
             onZoomChanged: handleZoomChanged,
           ),
-          const SizedBox(height: 8),
           MarkerEditControls(
             keyAddRemove: keyAddRemove,
             isPlaying: player.isPlaying,
