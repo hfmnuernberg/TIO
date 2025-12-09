@@ -31,7 +31,7 @@ class WaveformGestureControls extends StatelessWidget {
     const disabledColor = ColorTheme.secondary;
 
     final double span = viewport.currentSpan;
-    final bool canZoomIn = span > viewport.minSpan;
+    final bool canZoomIn = span > viewport.minSpan + 1e-6;
     final bool canZoomOut = span < viewport.maxSpan;
     final bool canScrollLeft = viewport.viewStart > 0.0;
     final bool canScrollRight = viewport.viewEnd < 1.0;
