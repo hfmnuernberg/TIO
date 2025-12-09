@@ -210,7 +210,13 @@ class _WaveformState extends State<Waveform> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    const buttonColor = ColorTheme.primary;
+    const enabledColor = ColorTheme.primary;
+    const disabledColor = ColorTheme.secondary;
+
+    final bool canZoomIn = viewport.currentSpan > viewport.minSpan;
+    final bool canZoomOut = viewport.currentSpan < viewport.maxSpan;
+    final bool canScrollLeft = viewport.viewStart > 0.0;
+    final bool canScrollRight = viewport.viewEnd < 1.0;
 
     return Column(
       children: [
@@ -267,14 +273,14 @@ class _WaveformState extends State<Waveform> {
             IconButton(
               icon: const Icon(Icons.zoom_out),
               tooltip: l10n.mediaPlayerWaveformZoomOut,
-              color: buttonColor,
-              onPressed: () => handleZoomByFactor(factor: 2),
+              color: canZoomOut ? enabledColor : disabledColor,
+              onPressed: canZoomOut ? () => handleZoomByFactor(factor: 2) : null,
             ),
             IconButton(
               icon: const Icon(Icons.west),
               tooltip: l10n.mediaPlayerWaveformScrollLeft,
-              color: buttonColor,
-              onPressed: () => handleScrollBySpan(forward: false),
+              color: canScrollLeft ? enabledColor : disabledColor,
+              onPressed: canScrollLeft ? () => handleScrollBySpan(forward: false) : null,
             ),
             Center(
               child: MediaTimeText(
@@ -286,14 +292,14 @@ class _WaveformState extends State<Waveform> {
             IconButton(
               icon: const Icon(Icons.east),
               tooltip: l10n.mediaPlayerWaveformScrollRight,
-              color: buttonColor,
-              onPressed: () => handleScrollBySpan(forward: true),
+              color: canScrollRight ? enabledColor : disabledColor,
+              onPressed: canScrollRight ? () => handleScrollBySpan(forward: true) : null,
             ),
             IconButton(
               icon: const Icon(Icons.zoom_in),
               tooltip: l10n.mediaPlayerWaveformZoomIn,
-              color: buttonColor,
-              onPressed: () => handleZoomByFactor(factor: 0.5),
+              color: canZoomIn ? enabledColor : disabledColor,
+              onPressed: canZoomIn ? () => handleZoomByFactor(factor: 0.5) : null,
             ),
           ],
         ),

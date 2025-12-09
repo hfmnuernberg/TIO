@@ -6,6 +6,9 @@ class WaveformViewportController {
   double viewEnd;
 
   final double _maxSpan = 1;
+
+  double get minSpan => _minSpan;
+  double get maxSpan => _maxSpan;
   double _initialViewStart;
   double _initialViewEnd;
   double _pinchFocalPosition;
@@ -103,6 +106,8 @@ class WaveformViewportController {
   }
 
   double _calcCurrentSpan() => (viewEnd - viewStart).clamp(_minSpan, _maxSpan);
+
+  double get currentSpan => _calcCurrentSpan();
 
   void _panByFraction({required double deltaFraction}) {
     double start = viewStart + deltaFraction;
