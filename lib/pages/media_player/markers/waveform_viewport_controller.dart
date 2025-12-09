@@ -43,14 +43,9 @@ class WaveformViewportController {
     return totalBins > 1 ? globalIndex / (totalBins - 1) : 0.0;
   }
 
-  void panByPixels({required double dxPixels, required double paintedWidth}) {
-    if (paintedWidth <= 0) return;
+  double calcCurrentSpan() => (viewEnd - viewStart).clamp(_minSpan, _maxSpan);
 
-    final double span = (viewEnd - viewStart).clamp(_minSpan, _maxSpan);
-    if (span <= 0) return;
-
-    final double deltaFraction = -dxPixels / paintedWidth * span;
-
+  void _panByFraction(double deltaFraction) {
     double start = viewStart + deltaFraction;
     double end = viewEnd + deltaFraction;
 
@@ -65,6 +60,22 @@ class WaveformViewportController {
 
     viewStart = start;
     viewEnd = end;
+  }
+
+  void panByPixels({required double dxPixels, required double paintedWidth}) {
+    if (paintedWidth <= 0) return;
+
+    final span = calcCurrentSpan();
+    if (span <= 0) return;
+
+    _panByFraction(-dxPixels / paintedWidth * span);
+  }
+
+  void scrollBySpan({required bool forward}) {
+    final span = calcCurrentSpan();
+    if (span <= 0) return;
+
+    _panByFraction(forward ? span : -span);
   }
 
   void beginScale({required double focalX, required double paintedWidth, required int totalBins}) {
@@ -100,7 +111,7 @@ class WaveformViewportController {
   }
 
   void zoomAroundCenter(double factor) {
-    final double span = (viewEnd - viewStart).clamp(_minSpan, _maxSpan);
+    final span = calcCurrentSpan();
     if (span <= 0) return;
 
     final double center = (viewStart + viewEnd) / 2;
@@ -108,28 +119,6 @@ class WaveformViewportController {
 
     double start = center - newSpan / 2;
     double end = center + newSpan / 2;
-
-    if (start < 0) {
-      end -= start;
-      start = 0;
-    }
-    if (end > 1) {
-      start -= end - 1;
-      end = 1;
-    }
-
-    viewStart = start;
-    viewEnd = end;
-  }
-
-  void scrollBySpan(double direction) {
-    if (direction == 0) return;
-
-    final double span = (viewEnd - viewStart).clamp(_minSpan, _maxSpan);
-    if (span <= 0) return;
-
-    double start = viewStart + direction * span;
-    double end = viewEnd + direction * span;
 
     if (start < 0) {
       end -= start;

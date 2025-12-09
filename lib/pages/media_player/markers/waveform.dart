@@ -191,16 +191,12 @@ class _WaveformState extends State<Waveform> {
     widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
   }
 
-  void _notifyViewChanged() {
-    widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
-  }
-
   void _handleZoomInButton() {
     setState(() {
       viewport.zoomAroundCenter(0.5);
       rebuildVisualizer();
     });
-    _notifyViewChanged();
+    widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
   }
 
   void _handleZoomOutButton() {
@@ -208,23 +204,15 @@ class _WaveformState extends State<Waveform> {
       viewport.zoomAroundCenter(2);
       rebuildVisualizer();
     });
-    _notifyViewChanged();
+    widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
   }
 
-  void _handleScrollLeftButton() {
+  void _handleScrollBySpan({required bool forward}) {
     setState(() {
-      viewport.scrollBySpan(-1);
+      viewport.scrollBySpan(forward: forward);
       rebuildVisualizer();
     });
-    _notifyViewChanged();
-  }
-
-  void _handleScrollRightButton() {
-    setState(() {
-      viewport.scrollBySpan(1);
-      rebuildVisualizer();
-    });
-    _notifyViewChanged();
+    widget.onZoomChanged(viewport.viewStart, viewport.viewEnd);
   }
 
   @override
@@ -294,7 +282,7 @@ class _WaveformState extends State<Waveform> {
               icon: const Icon(Icons.west),
               tooltip: l10n.mediaPlayerWaveformScrollLeft,
               color: buttonColor,
-              onPressed: _handleScrollLeftButton,
+              onPressed: () => _handleScrollBySpan(forward: false),
             ),
             Center(
               child: MediaTimeText(
@@ -307,7 +295,7 @@ class _WaveformState extends State<Waveform> {
               icon: const Icon(Icons.east),
               tooltip: l10n.mediaPlayerWaveformScrollRight,
               color: buttonColor,
-              onPressed: _handleScrollRightButton,
+              onPressed: () => _handleScrollBySpan(forward: true),
             ),
             IconButton(
               icon: const Icon(Icons.zoom_in),
