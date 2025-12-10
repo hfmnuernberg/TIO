@@ -67,6 +67,7 @@ List<SettingsTile> buildMediaPlayerSettingsTiles({
         initialEnd: block.rangeEnd,
         rmsValues: rmsValues,
         fileDuration: player.fileDuration,
+        player: player,
         onChange: player.setTrim,
         onConfirm: (start, end) async {
           block.rangeStart = start;
