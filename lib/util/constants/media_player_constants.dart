@@ -18,4 +18,5 @@ class MediaPlayerParams {
   static const double markerButton = 52;
 
   static const Icon icon = Icon(Icons.play_arrow, color: ColorTheme.primary);
+  static const String arrowRange = 'assets/icons/arrow_range.svg';
 }

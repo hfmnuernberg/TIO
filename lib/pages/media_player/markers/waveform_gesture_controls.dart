@@ -8,22 +8,22 @@ class WaveformGestureControls extends StatelessWidget {
   final Duration fileDuration;
   final double viewStart;
   final double viewEnd;
-  final WaveformViewportController? viewport;
-  final VoidCallback? onZoomIn;
-  final VoidCallback? onZoomOut;
-  final VoidCallback? onScrollLeft;
-  final VoidCallback? onScrollRight;
+  final WaveformViewportController viewport;
+  final VoidCallback onZoomIn;
+  final VoidCallback onZoomOut;
+  final VoidCallback onScrollLeft;
+  final VoidCallback onScrollRight;
 
   const WaveformGestureControls({
     super.key,
     required this.fileDuration,
     required this.viewStart,
     required this.viewEnd,
-    this.viewport,
-    this.onZoomIn,
-    this.onZoomOut,
-    this.onScrollLeft,
-    this.onScrollRight,
+    required this.viewport,
+    required this.onZoomIn,
+    required this.onZoomOut,
+    required this.onScrollLeft,
+    required this.onScrollRight,
   });
 
   @override
@@ -36,11 +36,11 @@ class WaveformGestureControls extends StatelessWidget {
 
     final l10n = context.l10n;
 
-    final span = viewport!.currentSpan;
-    final canZoomIn = span > viewport!.minSpan + 1e-6;
-    final canZoomOut = span < viewport!.maxSpan;
-    final canScrollLeft = viewport!.viewStart > 0.0;
-    final canScrollRight = viewport!.viewEnd < 1.0;
+    final span = viewport.currentSpan;
+    final canZoomIn = span > viewport.minSpan + 1e-6;
+    final canZoomOut = span < viewport.maxSpan;
+    final canScrollLeft = viewport.viewStart > 0.0;
+    final canScrollRight = viewport.viewEnd < 1.0;
 
     return Row(
       children: [

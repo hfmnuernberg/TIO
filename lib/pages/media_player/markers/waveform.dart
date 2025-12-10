@@ -158,11 +158,7 @@ class _WaveformState extends State<Waveform> {
 
                         return Stack(
                           children: [
-                            CustomPaint(
-                              key: waveKey,
-                              painter: waveformVisualizer,
-                              size: Size(width, waveformHeight),
-                            ),
+                            CustomPaint(key: waveKey, painter: waveformVisualizer, size: Size(width, waveformHeight)),
                             if (widget.markerPositions.isNotEmpty)
                               Markers(
                                 rmsValues: widget.rmsValues,
@@ -184,11 +180,13 @@ class _WaveformState extends State<Waveform> {
             ],
           ),
         ),
-        if (widget.position != null) Transform.translate(
+        Transform.translate(
           offset: const Offset(0, -8),
           child: WaveformTimeLabels(
             fileDuration: widget.fileDuration,
-            position: widget.position ?? 0.0,
+            rangeStart: widget.rangeStart,
+            rangeEnd: widget.rangeEnd,
+            position: widget.position,
           ),
         ),
       ],
