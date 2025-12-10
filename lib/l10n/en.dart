@@ -224,8 +224,7 @@ class English extends AppLocalizations with EnglishFlashCards {
       'Tap here to combine your Metronome with a Tuner or Media Player.\n\nYou can link your Metronome with an existing tool or create a new tool and link it.';
   String get metronomeTutorialModeAdvanced =>
       'Hold and drag sideways to relocate a bar, swipe upwards to delete a bar, or tap to edit the selected bar.';
-  String get metronomeTutorialModeChange =>
-      'You can switch between basic and advanced mode using the menu in the top right corner.';
+  String get metronomeTutorialModeChange => 'Here you can switch between basic and advanced mode.';
   String get metronomeTutorialModeSimple => 'Here you can set the basic beats and the rhythm pattern.';
   String get metronomeTutorialEditBeats => 'Tap a beat to switch between accented, unaccented and muted.';
   String get metronomeTutorialStartStop => 'Tap here to start and stop the metronome.';
