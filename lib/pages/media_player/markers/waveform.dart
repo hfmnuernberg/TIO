@@ -2,17 +2,17 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:tiomusic/pages/media_player/markers/markers.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform_time_labels.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform_gesture_helper.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform_viewport_controller.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform_gesture_controls.dart';
-import 'package:tiomusic/pages/media_player/markers/waveform_window_labels.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 
 const double waveformHeight = 200;
 
 class Waveform extends StatefulWidget {
   final Float32List rmsValues;
-  final double position;
+  final double? position;
   final double rangeStart;
   final double rangeEnd;
   final Duration fileDuration;
@@ -84,14 +84,24 @@ class _WaveformState extends State<Waveform> {
   }
 
   void rebuildVisualizer() {
-    waveformVisualizer = WaveformVisualizer(
-      widget.position,
-      widget.rangeStart,
-      widget.rangeEnd,
-      widget.rmsValues,
-      viewStart: viewport.viewStart,
-      viewEnd: viewport.viewEnd,
-    );
+    if (widget.position != null) {
+      waveformVisualizer = WaveformVisualizer(
+        widget.position!,
+        widget.rangeStart,
+        widget.rangeEnd,
+        widget.rmsValues,
+        viewStart: viewport.viewStart,
+        viewEnd: viewport.viewEnd,
+      );
+    } else {
+      waveformVisualizer = WaveformVisualizer.setTrim(
+        widget.rangeStart,
+        widget.rangeEnd,
+        widget.rmsValues,
+        viewStart: viewport.viewStart,
+        viewEnd: viewport.viewEnd,
+      );
+    }
   }
 
   void handleZoomByFactor({required double factor}) {
@@ -118,10 +128,18 @@ class _WaveformState extends State<Waveform> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
-              WaveformWindowLabels(
-                fileDuration: widget.fileDuration,
-                viewStart: viewport.viewStart,
-                viewEnd: viewport.viewEnd,
+              Transform.translate(
+                offset: const Offset(0, 8),
+                child: WaveformGestureControls(
+                  fileDuration: widget.fileDuration,
+                  viewStart: viewport.viewStart,
+                  viewEnd: viewport.viewEnd,
+                  viewport: viewport,
+                  onZoomIn: () => handleZoomByFactor(factor: 0.5),
+                  onZoomOut: () => handleZoomByFactor(factor: 2),
+                  onScrollLeft: () => handleScrollBySpan(forward: false),
+                  onScrollRight: () => handleScrollBySpan(forward: true),
+                ),
               ),
               SizedBox(
                 height: waveformHeight,
@@ -141,16 +159,17 @@ class _WaveformState extends State<Waveform> {
                         return Stack(
                           children: [
                             CustomPaint(key: waveKey, painter: waveformVisualizer, size: Size(width, waveformHeight)),
-                            Markers(
-                              rmsValues: widget.rmsValues,
-                              paintedWidth: width,
-                              waveFormHeight: waveformHeight,
-                              markerPositions: widget.markerPositions,
-                              selectedMarkerPosition: widget.selectedMarkerPosition,
-                              viewStart: viewport.viewStart,
-                              viewEnd: viewport.viewEnd,
-                              onTap: widget.onPositionChange,
-                            ),
+                            if (widget.markerPositions.isNotEmpty)
+                              Markers(
+                                rmsValues: widget.rmsValues,
+                                paintedWidth: width,
+                                waveFormHeight: waveformHeight,
+                                markerPositions: widget.markerPositions,
+                                selectedMarkerPosition: widget.selectedMarkerPosition,
+                                viewStart: viewport.viewStart,
+                                viewEnd: viewport.viewEnd,
+                                onTap: widget.onPositionChange,
+                              ),
                           ],
                         );
                       },
@@ -162,15 +181,12 @@ class _WaveformState extends State<Waveform> {
           ),
         ),
         Transform.translate(
-          offset: const Offset(0, -12),
-          child: WaveformGestureControls(
+          offset: const Offset(0, -8),
+          child: WaveformTimeLabels(
             fileDuration: widget.fileDuration,
+            rangeStart: widget.rangeStart,
+            rangeEnd: widget.rangeEnd,
             position: widget.position,
-            viewport: viewport,
-            onZoomIn: () => handleZoomByFactor(factor: 0.5),
-            onZoomOut: () => handleZoomByFactor(factor: 2),
-            onScrollLeft: () => handleScrollBySpan(forward: false),
-            onScrollRight: () => handleScrollBySpan(forward: true),
           ),
         ),
       ],

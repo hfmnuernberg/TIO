@@ -6,7 +6,8 @@ import 'package:tiomusic/util/color_constants.dart';
 
 class WaveformGestureControls extends StatelessWidget {
   final Duration fileDuration;
-  final double position;
+  final double viewStart;
+  final double viewEnd;
   final WaveformViewportController viewport;
   final VoidCallback onZoomIn;
   final VoidCallback onZoomOut;
@@ -16,7 +17,8 @@ class WaveformGestureControls extends StatelessWidget {
   const WaveformGestureControls({
     super.key,
     required this.fileDuration,
-    required this.position,
+    required this.viewStart,
+    required this.viewEnd,
     required this.viewport,
     required this.onZoomIn,
     required this.onZoomOut,
@@ -26,48 +28,93 @@ class WaveformGestureControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final totalMs = fileDuration.inMilliseconds;
+    if (totalMs <= 0) return const SizedBox.shrink();
+
+    final windowStartTime = Duration(milliseconds: (totalMs * viewStart).round());
+    final windowEndTime = Duration(milliseconds: (totalMs * viewEnd).round());
+
     final l10n = context.l10n;
-    const enabledColor = ColorTheme.primary;
-    const disabledColor = ColorTheme.secondary;
 
-    final double span = viewport.currentSpan;
-    final bool canZoomIn = span > viewport.minSpan + 1e-6;
-    final bool canZoomOut = span < viewport.maxSpan;
-    final bool canScrollLeft = viewport.viewStart > 0.0;
-    final bool canScrollRight = viewport.viewEnd < 1.0;
-
-    final double clampedPos = position.clamp(0.0, 1.0);
-    final duration = Duration(milliseconds: (fileDuration.inMilliseconds * clampedPos).round());
+    final span = viewport.currentSpan;
+    final canZoomIn = span > viewport.minSpan + 1e-6;
+    final canZoomOut = span < viewport.maxSpan;
+    final canScrollLeft = viewport.viewStart > 0.0;
+    final canScrollRight = viewport.viewEnd < 1.0;
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(
-          icon: const Icon(Icons.zoom_out),
-          tooltip: l10n.mediaPlayerWaveformZoomOut,
-          color: canZoomOut ? enabledColor : disabledColor,
-          onPressed: canZoomOut ? onZoomOut : null,
+        Row(
+          children: [
+            RotatedBox(
+              quarterTurns: 1,
+              child: const Icon(Icons.vertical_align_bottom, size: 16, color: ColorTheme.primary),
+            ),
+            const SizedBox(width: 4),
+            MediaTimeText(duration: windowStartTime),
+          ],
         ),
-        IconButton(
-          icon: const Icon(Icons.west),
-          tooltip: l10n.mediaPlayerWaveformScrollLeft,
-          color: canScrollLeft ? enabledColor : disabledColor,
-          onPressed: canScrollLeft ? onScrollLeft : null,
+        Expanded(
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _iconButton(
+                  icon: const Icon(Icons.zoom_out),
+                  tooltip: l10n.mediaPlayerWaveformZoomOut,
+                  enabled: canZoomOut,
+                  onPressed: onZoomOut,
+                ),
+                _iconButton(
+                  icon: const Icon(Icons.west),
+                  tooltip: l10n.mediaPlayerWaveformScrollLeft,
+                  enabled: canScrollLeft,
+                  onPressed: onScrollLeft,
+                ),
+                _iconButton(
+                  icon: const Icon(Icons.east),
+                  tooltip: l10n.mediaPlayerWaveformScrollRight,
+                  enabled: canScrollRight,
+                  onPressed: onScrollRight,
+                ),
+                _iconButton(
+                  icon: const Icon(Icons.zoom_in),
+                  tooltip: l10n.mediaPlayerWaveformZoomIn,
+                  enabled: canZoomIn,
+                  onPressed: onZoomIn,
+                ),
+              ],
+            ),
+          ),
         ),
-        Center(child: MediaTimeText(duration: duration)),
-        IconButton(
-          icon: const Icon(Icons.east),
-          tooltip: l10n.mediaPlayerWaveformScrollRight,
-          color: canScrollRight ? enabledColor : disabledColor,
-          onPressed: canScrollRight ? onScrollRight : null,
-        ),
-        IconButton(
-          icon: const Icon(Icons.zoom_in),
-          tooltip: l10n.mediaPlayerWaveformZoomIn,
-          color: canZoomIn ? enabledColor : disabledColor,
-          onPressed: canZoomIn ? onZoomIn : null,
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            MediaTimeText(duration: windowEndTime),
+            const SizedBox(width: 4),
+            RotatedBox(
+              quarterTurns: 3,
+              child: const Icon(Icons.vertical_align_bottom, size: 16, color: ColorTheme.primary),
+            ),
+          ],
         ),
       ],
+    );
+  }
+
+  Widget _iconButton({
+    required Icon icon,
+    required String tooltip,
+    required bool enabled,
+    required VoidCallback? onPressed,
+  }) {
+    return IconButton(
+      iconSize: 20,
+      visualDensity: VisualDensity(horizontal: -3, vertical: -3),
+      icon: icon,
+      tooltip: tooltip,
+      color: enabled ? ColorTheme.primary : ColorTheme.secondary,
+      onPressed: enabled ? onPressed : null,
     );
   }
 }
