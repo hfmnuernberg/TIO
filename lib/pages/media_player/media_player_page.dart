@@ -776,7 +776,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                 ],
               ),
             ),
-            PlaybackControls(
+            if (_player.loaded) PlaybackControls(
               hasMarkers: _mediaPlayerBlock.markerPositions.isNotEmpty,
               repeatKey: _keyRepeat,
               onRepeatToggle: _handleRepeatToggle,
