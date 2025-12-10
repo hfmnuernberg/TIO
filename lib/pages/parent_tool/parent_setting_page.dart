@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -42,32 +44,28 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
     return DismissKeyboard(
       child: PopScope(
         canPop: false,
-        child: SafeArea(
-          top: false,
-          bottom: false,
-          child: Scaffold(
-            resizeToAvoidBottomInset: true,
-            appBar: AppBar(
-              title: Center(child: Text(widget.title)),
-              backgroundColor: ColorTheme.surfaceBright,
-              foregroundColor: ColorTheme.primary,
-              automaticallyImplyLeading: false,
-            ),
-            backgroundColor: ColorTheme.primary92,
-            body: (widget.mustBeScrollable && !isLandscapeLayout)
-                ? LayoutBuilder(
-                    builder: (context, viewportConstraints) {
-                      return SingleChildScrollView(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
-                          child: _buildPortrait(),
-                        ),
-                      );
-                    },
-                  )
-                : (!isLandscapeLayout ? _buildPortrait() : _buildLandscape()),
-            bottomSheet: _bottomSheet(),
+        child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          appBar: AppBar(
+            title: Center(child: Text(widget.title)),
+            backgroundColor: ColorTheme.surfaceBright,
+            foregroundColor: ColorTheme.primary,
+            automaticallyImplyLeading: false,
           ),
+          backgroundColor: ColorTheme.primary92,
+          body: (widget.mustBeScrollable && !isLandscapeLayout)
+              ? LayoutBuilder(
+                  builder: (context, viewportConstraints) {
+                    return SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
+                        child: _buildPortrait(),
+                      ),
+                    );
+                  },
+                )
+              : (!isLandscapeLayout ? _buildPortrait() : _buildLandscape()),
+          bottomSheet: _bottomSheet(),
         ),
       ),
     );
@@ -101,6 +99,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
   Widget _buildLandscape() {
     final isPhone = MediaQuery.of(context).size.shortestSide < 600;
     final double rightGutter = isPhone ? (TIOMusicParams.sizeBigButtons * 2 + TIOMusicParams.edgeInset * 5) : 0;
+
     return Padding(
       padding: EdgeInsets.all(TIOMusicParams.edgeInset),
       child: Stack(
@@ -143,7 +142,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
           ),
           Positioned(
             right: 0,
-            bottom: 0,
+            bottom: Platform.isAndroid ? MediaQuery.of(context).padding.bottom : 0,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -160,7 +159,6 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
   Widget? _bottomSheet() {
     final bool isLandscapeLayout = _useLandscapeLayout(context);
     if (isLandscapeLayout) return null;
-    final bottomInset = MediaQuery.of(context).padding.bottom;
 
     return ColoredBox(
       color: ColorTheme.primary80,
@@ -175,7 +173,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
               ConfirmButton(onTap: widget.confirm),
             ],
           ),
-          SizedBox(height: bottomInset),
+          if (Platform.isAndroid) SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],
       ),
     );
