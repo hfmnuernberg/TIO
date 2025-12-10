@@ -2,10 +2,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:tiomusic/pages/media_player/markers/markers.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform_time_labels.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform_gesture_helper.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform_viewport_controller.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform_gesture_controls.dart';
-import 'package:tiomusic/pages/media_player/markers/waveform_window_labels.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 
 const double waveformHeight = 200;
@@ -128,10 +128,18 @@ class _WaveformState extends State<Waveform> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: [
-              WaveformWindowLabels(
-                fileDuration: widget.fileDuration,
-                viewStart: viewport.viewStart,
-                viewEnd: viewport.viewEnd,
+              Transform.translate(
+                offset: const Offset(0, 8),
+                child: WaveformGestureControls(
+                  fileDuration: widget.fileDuration,
+                  viewStart: viewport.viewStart,
+                  viewEnd: viewport.viewEnd,
+                  viewport: viewport,
+                  onZoomIn: () => handleZoomByFactor(factor: 0.5),
+                  onZoomOut: () => handleZoomByFactor(factor: 2),
+                  onScrollLeft: () => handleScrollBySpan(forward: false),
+                  onScrollRight: () => handleScrollBySpan(forward: true),
+                ),
               ),
               SizedBox(
                 height: waveformHeight,
@@ -176,16 +184,11 @@ class _WaveformState extends State<Waveform> {
             ],
           ),
         ),
-        Transform.translate(
-          offset: const Offset(0, -12),
-          child: WaveformGestureControls(
+        if (widget.position != null) Transform.translate(
+          offset: const Offset(0, -8),
+          child: WaveformTimeLabels(
             fileDuration: widget.fileDuration,
             position: widget.position ?? 0.0,
-            viewport: viewport,
-            onZoomIn: () => handleZoomByFactor(factor: 0.5),
-            onZoomOut: () => handleZoomByFactor(factor: 2),
-            onScrollLeft: () => handleScrollBySpan(forward: false),
-            onScrollRight: () => handleScrollBySpan(forward: true),
           ),
         ),
       ],
