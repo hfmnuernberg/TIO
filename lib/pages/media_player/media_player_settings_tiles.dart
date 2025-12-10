@@ -60,7 +60,8 @@ List<SettingsTile> buildMediaPlayerSettingsTiles({
     ),
     SettingsTile(
       title: l10n.mediaPlayerTrim,
-      subtitle: '${(block.rangeStart * 100).round()}% → ${(block.rangeEnd * 100).round()}%',
+      subtitle:
+          '${l10n.formatDurationWithMillis(player.fileDuration * block.rangeStart)} → ${l10n.formatDurationWithMillis(player.fileDuration * block.rangeEnd)}',
       leadingIcon: 'assets/icons/arrow_range.svg',
       settingPage: SetTrim(mediaPlayerBlock: block, rmsValues: rmsValues, player: player),
       block: block,

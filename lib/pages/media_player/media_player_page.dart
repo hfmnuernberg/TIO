@@ -119,7 +119,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       onRecordingLengthChange: _handleRecordingLengthChange,
     );
 
-
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
     _mediaPlayerBlock.timeLastModified = getCurrentDateTime();
 
@@ -691,7 +690,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     var waveformHeight = 250.0;
@@ -758,19 +756,20 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                 ],
               ),
             ),
-            if (_player.loaded) PlaybackControls(
-              hasMarkers: _mediaPlayerBlock.markerPositions.isNotEmpty,
-              repeatKey: _keyRepeat,
-              onRepeatToggle: _handleRepeatToggle,
-              onSkip10Seconds: (forward) async {
-                await _player.skip(seconds: forward ? 10 : -10);
-                await _updateState();
-              },
-              onSkipToMarker: (forward) async {
-                await _player.skipToMarker(forward: forward);
-                await _updateState();
-              },
-            ),
+            if (_player.loaded)
+              PlaybackControls(
+                hasMarkers: _mediaPlayerBlock.markerPositions.isNotEmpty,
+                repeatKey: _keyRepeat,
+                onRepeatToggle: _handleRepeatToggle,
+                onSkip10Seconds: (forward) async {
+                  await _player.skip(seconds: forward ? 10 : -10);
+                  await _updateState();
+                },
+                onSkipToMarker: (forward) async {
+                  await _player.skipToMarker(forward: forward);
+                  await _updateState();
+                },
+              ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
