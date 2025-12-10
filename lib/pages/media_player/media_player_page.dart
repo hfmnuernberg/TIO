@@ -75,6 +75,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   Project? _project;
 
   Float32List _rmsValues = Float32List(100);
+  Float32List _baseRmsValues = Float32List(100);
   int _numOfBins = 0;
   late int _targetVisibleBins;
   double _playbackPosition = 0;
@@ -153,6 +154,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
         } else {
           _rmsValues = await _player.getRmsValues(_numOfBins);
+          _baseRmsValues = _rmsValues;
           _player.markers.binCount = _rmsValues.length;
           _player.markers.startAndEndEpsilon = _effectiveEndEpsilon();
         }
@@ -451,6 +453,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
       } else {
         _rmsValues = await _player.getRmsValues(_numOfBins);
+        _baseRmsValues = _rmsValues;
         _player.markers.binCount = _rmsValues.length;
         _player.markers.startAndEndEpsilon = _effectiveEndEpsilon();
         _addShareOptionToMenu();
@@ -569,6 +572,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
       } else {
         _rmsValues = await _player.getRmsValues(_numOfBins);
+        _baseRmsValues = _rmsValues;
         _player.markers.binCount = _rmsValues.length;
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
@@ -834,7 +838,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         context: context,
         block: _mediaPlayerBlock,
         player: _player,
-        rmsValues: _rmsValues,
+        rmsValues: _baseRmsValues,
         isLoading: _isLoading,
         updateState: _updateState,
         requestRebuild: () => setState(() {}),
