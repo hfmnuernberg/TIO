@@ -62,21 +62,7 @@ List<SettingsTile> buildMediaPlayerSettingsTiles({
       title: l10n.mediaPlayerTrim,
       subtitle: '${(block.rangeStart * 100).round()}% → ${(block.rangeEnd * 100).round()}%',
       leadingIcon: 'assets/icons/arrow_range.svg',
-      settingPage: SetTrim(
-        initialStart: block.rangeStart,
-        initialEnd: block.rangeEnd,
-        rmsValues: rmsValues,
-        fileDuration: player.fileDuration,
-        player: player,
-        onChange: player.setTrim,
-        onConfirm: (start, end) async {
-          block.rangeStart = start;
-          block.rangeEnd = end;
-          await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-          await player.setTrim(start, end);
-        },
-        onCancel: () async => player.setTrim(block.rangeStart, block.rangeEnd),
-      ),
+      settingPage: SetTrim(mediaPlayerBlock: block, rmsValues: rmsValues, player: player),
       block: block,
       callOnReturn: (_) => updateState(),
       inactive: isLoading || !player.loaded,
