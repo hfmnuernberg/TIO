@@ -12,7 +12,7 @@ const double waveformHeight = 200;
 
 class Waveform extends StatefulWidget {
   final Float32List rmsValues;
-  final double position;
+  final double? position;
   final double rangeStart;
   final double rangeEnd;
   final Duration fileDuration;
@@ -84,14 +84,24 @@ class _WaveformState extends State<Waveform> {
   }
 
   void rebuildVisualizer() {
-    waveformVisualizer = WaveformVisualizer(
-      widget.position,
-      widget.rangeStart,
-      widget.rangeEnd,
-      widget.rmsValues,
-      viewStart: viewport.viewStart,
-      viewEnd: viewport.viewEnd,
-    );
+    if (widget.position != null) {
+      waveformVisualizer = WaveformVisualizer(
+        widget.position!,
+        widget.rangeStart,
+        widget.rangeEnd,
+        widget.rmsValues,
+        viewStart: viewport.viewStart,
+        viewEnd: viewport.viewEnd,
+      );
+    } else {
+      waveformVisualizer = WaveformVisualizer.setTrim(
+        widget.rangeStart,
+        widget.rangeEnd,
+        widget.rmsValues,
+        viewStart: viewport.viewStart,
+        viewEnd: viewport.viewEnd,
+      );
+    }
   }
 
   void handleZoomByFactor({required double factor}) {
@@ -140,17 +150,22 @@ class _WaveformState extends State<Waveform> {
 
                         return Stack(
                           children: [
-                            CustomPaint(key: waveKey, painter: waveformVisualizer, size: Size(width, waveformHeight)),
-                            Markers(
-                              rmsValues: widget.rmsValues,
-                              paintedWidth: width,
-                              waveFormHeight: waveformHeight,
-                              markerPositions: widget.markerPositions,
-                              selectedMarkerPosition: widget.selectedMarkerPosition,
-                              viewStart: viewport.viewStart,
-                              viewEnd: viewport.viewEnd,
-                              onTap: widget.onPositionChange,
+                            CustomPaint(
+                              key: waveKey,
+                              painter: waveformVisualizer,
+                              size: Size(width, waveformHeight),
                             ),
+                            if (widget.markerPositions.isNotEmpty)
+                              Markers(
+                                rmsValues: widget.rmsValues,
+                                paintedWidth: width,
+                                waveFormHeight: waveformHeight,
+                                markerPositions: widget.markerPositions,
+                                selectedMarkerPosition: widget.selectedMarkerPosition,
+                                viewStart: viewport.viewStart,
+                                viewEnd: viewport.viewEnd,
+                                onTap: widget.onPositionChange,
+                              ),
                           ],
                         );
                       },
@@ -165,7 +180,7 @@ class _WaveformState extends State<Waveform> {
           offset: const Offset(0, -12),
           child: WaveformGestureControls(
             fileDuration: widget.fileDuration,
-            position: widget.position,
+            position: widget.position ?? 0.0,
             viewport: viewport,
             onZoomIn: () => handleZoomByFactor(factor: 0.5),
             onZoomOut: () => handleZoomByFactor(factor: 2),
