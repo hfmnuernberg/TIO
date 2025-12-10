@@ -225,8 +225,7 @@ class German extends AppLocalizations with GermanFlashCards {
       'Tippe hier, um dein Metronom mit einem Stimmgerät oder Media Player zu kombinieren.\n\nDu kannst dein Metronom mit einem bestehenden Tool verknüpfen oder ein neues Tool erstellen und damit verknüpfen.';
   String get metronomeTutorialModeAdvanced =>
       'Halte und ziehe seitlich, um Takte zu verschieben, wische nach oben, um Takte zu löschen oder tippe, um den ausgewählten Takt zu bearbeiten.';
-  String get metronomeTutorialModeChange =>
-      'Über das Menü oben rechts kannst du zwischen einfachem und erweitertem Modus wechseln.';
+  String get metronomeTutorialModeChange => 'Hier kannst du zwischen einfachem und erweitertem Modus wechseln.';
   String get metronomeTutorialModeSimple => 'Hier kannst du die Basic Beats und einen Rhythmus festlegen.';
   String get metronomeTutorialEditBeats =>
       'Tippe auf einen der Schläge, um zwischen betont, unbetont und stumm zu wechseln.';

@@ -68,6 +68,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
   final Tutorial tutorial = Tutorial();
   final GlobalKey keyStartStop = GlobalKey();
   final GlobalKey keySettings = GlobalKey();
+  final GlobalKey keyModeChange = GlobalKey();
   final GlobalKey keySimpleMode = GlobalKey();
   final GlobalKey keyAdvancedMode = GlobalKey();
   final GlobalKey islandToolTutorialKey = GlobalKey();
@@ -164,10 +165,11 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
         ),
       if (context.read<ProjectLibrary>().showMetronomeTutorial)
         CustomTargetFocus(
-          null,
-          context: context,
+          keyModeChange,
           l10n.metronomeTutorialModeChange,
-          customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
+          alignText: ContentAlign.bottom,
+          pointingDirection: PointingDirection.up,
+          shape: ShapeLightFocus.Circle,
         ),
       if (context.read<ProjectLibrary>().showMetronomeSimpleTutorial && isSimpleModeOn)
         CustomTargetFocus(
@@ -349,7 +351,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
       toolBlock: metronomeBlock,
       islandToolTutorialKey: islandToolTutorialKey,
       customActions: isSimpleModeOn
-          ? [IconButton(onPressed: toggleSimpleModeIfSaveOrUserConfirms, icon: Icon(Icons.tune))]
+          ? [IconButton(key: keyModeChange, onPressed: toggleSimpleModeIfSaveOrUserConfirms, icon: Icon(Icons.tune))]
           : [
               IconButton(onPressed: clearAllRhythms, icon: Icon(Icons.delete_outlined)),
               IconButton(onPressed: toggleSimpleModeIfSaveOrUserConfirms, icon: Icon(Icons.density_medium)),
