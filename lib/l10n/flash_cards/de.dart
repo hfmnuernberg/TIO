@@ -10,7 +10,7 @@ mixin GermanFlashCards on Object implements FlashCardsLocalization {
   String get categoryMixUp => 'Abwechslung';
   String get categoryPracticing => 'Übetaktik';
   String get categoryRelaxation => 'Entspannung';
-  String get categorySelfCare => 'Alltagshygiene';
+  String get categorySelfCare => 'Selbstfürsorge';
   String get categoryTeam => 'Team';
   String get categoryVision => 'Vision';
 
