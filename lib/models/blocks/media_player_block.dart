@@ -146,9 +146,6 @@ class MediaPlayerBlock extends ProjectBlock {
     if (_speedFactor != 1) {
       settings.add('${l10n.formatNumber(_speedFactor)}x ${l10n.mediaPlayerSpeed}');
     }
-    if (_rangeStart.abs() >= 0.001 || (_rangeEnd - 1.0).abs() >= 0.001) {
-      settings.add('${l10n.mediaPlayerTrim} ${(_rangeStart * 100).round()}% → ${(_rangeEnd * 100).round()}%');
-    }
     settings.add('$bpm ${l10n.commonBpm}');
     return settings;
   }

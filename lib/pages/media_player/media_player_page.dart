@@ -16,6 +16,8 @@ import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/pages/media_player/media_player_dialogs.dart';
 import 'package:tiomusic/pages/media_player/media_player_settings_tiles.dart';
 import 'package:tiomusic/pages/media_player/playback_controls.dart';
+import 'package:tiomusic/pages/media_player/markers/waveform.dart';
+import 'package:tiomusic/pages/media_player/markers/zoom_rms_helper.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 import 'package:tiomusic/pages/parent_tool/parent_tool.dart';
 import 'package:tiomusic/services/audio_session.dart';
@@ -73,9 +75,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   Project? _project;
 
   Float32List _rmsValues = Float32List(100);
+  Float32List _baseRmsValues = Float32List(100);
   int _numOfBins = 0;
-
-  late WaveformVisualizer _waveformVisualizer;
+  late int _targetVisibleBins;
+  double _playbackPosition = 0;
   double _waveFormWidth = 0;
 
   Duration _recordingLength = Duration.zero;
@@ -116,8 +119,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       onRecordingLengthChange: _handleRecordingLengthChange,
     );
 
-    _waveformVisualizer = WaveformVisualizer(0, 0, 1, _rmsValues);
-
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
     _mediaPlayerBlock.timeLastModified = getCurrentDateTime();
 
@@ -137,6 +138,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _waveFormWidth = MediaQuery.of(context).size.width - (TIOMusicParams.edgeInset * 2);
       _numOfBins = WaveformVisualizer.calculateBinCountForWidth(_waveFormWidth);
+      _targetVisibleBins = _numOfBins;
 
       setState(() => _isLoading = true);
 
@@ -151,12 +153,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
         } else {
           _rmsValues = await _player.getRmsValues(_numOfBins);
-          _waveformVisualizer = WaveformVisualizer(
-            0,
-            _mediaPlayerBlock.rangeStart,
-            _mediaPlayerBlock.rangeEnd,
-            _rmsValues,
-          );
+          _baseRmsValues = _rmsValues;
           _player.markers.binCount = _rmsValues.length;
           _player.markers.startAndEndEpsilon = _effectiveEndEpsilon();
         }
@@ -308,7 +305,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     final double end = _mediaPlayerBlock.rangeEnd;
 
     setState(() {
-      _waveformVisualizer = WaveformVisualizer(currentPosition, start, end, _rmsValues);
+      _playbackPosition = currentPosition;
     });
 
     if (!mounted) return;
@@ -357,10 +354,22 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     await _filePicker.shareFile(_fs.toAbsoluteFilePath(_mediaPlayerBlock.relativePath));
   }
 
-  void _onWaveGesture(Offset localPosition) async {
-    double relativeTapPosition = localPosition.dx / _waveFormWidth;
-    await _player.setPlaybackPosition(relativeTapPosition.clamp(0, 1));
+  Future<void> _handleWaveformPositionChange(double relative) async {
+    final clamped = relative.clamp(0.0, 1.0);
+    await _player.setPlaybackPosition(clamped);
     await _updateState();
+  }
+
+  Future<void> _handleZoomChanged(double viewStart, double viewEnd) async {
+    final Float32List? newRms = await recalculateRmsForZoom(
+      player: _player,
+      targetVisibleBins: _targetVisibleBins,
+      viewStart: viewStart,
+      viewEnd: viewEnd,
+      currentBinCount: _rmsValues.length,
+    );
+    if (!mounted || newRms == null) return;
+    setState(() => _rmsValues = newRms);
   }
 
   Future<void> _pickAudioFilesAndSave({required bool isMultipleAllowed, bool pickAudioFromFileSystem = false}) async {
@@ -433,7 +442,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       await _projectRepo.saveLibrary(projectLibrary);
 
       _rmsValues = Float32List(0);
-      _waveformVisualizer = WaveformVisualizer(0, _mediaPlayerBlock.rangeStart, _mediaPlayerBlock.rangeEnd, _rmsValues);
+      _playbackPosition = 0;
 
       await _player.stop();
       setState(() => _isLoading = true);
@@ -443,12 +452,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
       } else {
         _rmsValues = await _player.getRmsValues(_numOfBins);
-        _waveformVisualizer = WaveformVisualizer(
-          0,
-          _mediaPlayerBlock.rangeStart,
-          _mediaPlayerBlock.rangeEnd,
-          _rmsValues,
-        );
+        _baseRmsValues = _rmsValues;
         _player.markers.binCount = _rmsValues.length;
         _player.markers.startAndEndEpsilon = _effectiveEndEpsilon();
         _addShareOptionToMenu();
@@ -567,12 +571,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
       } else {
         _rmsValues = await _player.getRmsValues(_numOfBins);
-        _waveformVisualizer = WaveformVisualizer(
-          0,
-          _mediaPlayerBlock.rangeStart,
-          _mediaPlayerBlock.rangeEnd,
-          _rmsValues,
-        );
+        _baseRmsValues = _rmsValues;
         _player.markers.binCount = _rmsValues.length;
         _addShareOptionToMenu();
         _mediaPlayerBlock.markerPositions.clear();
@@ -691,30 +690,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     );
   }
 
-  List<Widget> _buildMarkers() {
-    List<Widget> markers = List.empty(growable: true);
-
-    for (final pos in _mediaPlayerBlock.markerPositions) {
-      var marker = Positioned(
-        left: TIOMusicParams.edgeInset + ((pos * _waveFormWidth) - (MediaPlayerParams.markerButton / 2)),
-        top: 4,
-        child: IconButton(
-          onPressed: () async {
-            await _player.setPlaybackPosition(pos);
-            await _updateState();
-          },
-          icon: const Icon(Icons.arrow_drop_down, color: ColorTheme.primary, size: MediaPlayerParams.markerIconSize),
-        ),
-      );
-      markers.add(marker);
-    }
-
-    return markers;
-  }
-
   @override
   Widget build(BuildContext context) {
-    var waveformHeight = 200.0;
+    var waveformHeight = 250.0;
     final l10n = context.l10n;
     final isMultiImportEnabled = !widget.isQuickTool;
 
@@ -733,6 +711,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         _tutorial.show(context);
       },
       island: ParentIslandView(project: widget.isQuickTool ? null : _project, toolBlock: _mediaPlayerBlock),
+      heightForCenterModule: waveformHeight + 250,
       centerModule: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -745,7 +724,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                   else
                     Padding(
                       key: _keyWaveform,
-                      padding: const EdgeInsets.fromLTRB(TIOMusicParams.edgeInset, 0, TIOMusicParams.edgeInset, 0),
+                      padding: EdgeInsets.zero,
                       child: _recorder.isRecording
                           ? Center(
                               child: Column(
@@ -762,33 +741,35 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                                 ],
                               ),
                             )
-                          : GestureDetector(
-                              onTapDown: (details) => _player.loaded ? _onWaveGesture(details.localPosition) : null,
-                              onHorizontalDragUpdate: (details) =>
-                                  _player.loaded ? _onWaveGesture(details.localPosition) : null,
-                              child: CustomPaint(
-                                painter: _waveformVisualizer,
-                                size: Size(_waveFormWidth, waveformHeight),
-                              ),
+                          : Waveform(
+                              rmsValues: _rmsValues,
+                              position: _playbackPosition,
+                              rangeStart: _mediaPlayerBlock.rangeStart,
+                              rangeEnd: _mediaPlayerBlock.rangeEnd,
+                              fileDuration: _player.fileDuration,
+                              markerPositions: _mediaPlayerBlock.markerPositions,
+                              selectedMarkerPosition: null,
+                              onPositionChange: _handleWaveformPositionChange,
+                              onZoomChanged: _handleZoomChanged,
                             ),
                     ),
-                  Stack(children: _recorder.isRecording ? [] : _buildMarkers()),
                 ],
               ),
             ),
-            PlaybackControls(
-              hasMarkers: _mediaPlayerBlock.markerPositions.isNotEmpty,
-              repeatKey: _keyRepeat,
-              onRepeatToggle: _handleRepeatToggle,
-              onSkip10Seconds: (forward) async {
-                await _player.skip(seconds: forward ? 10 : -10);
-                await _updateState();
-              },
-              onSkipToMarker: (forward) async {
-                await _player.skipToMarker(forward: forward);
-                await _updateState();
-              },
-            ),
+            if (_player.loaded)
+              PlaybackControls(
+                hasMarkers: _mediaPlayerBlock.markerPositions.isNotEmpty,
+                repeatKey: _keyRepeat,
+                onRepeatToggle: _handleRepeatToggle,
+                onSkip10Seconds: (forward) async {
+                  await _player.skip(seconds: forward ? 10 : -10);
+                  await _updateState();
+                },
+                onSkipToMarker: (forward) async {
+                  await _player.skipToMarker(forward: forward);
+                  await _updateState();
+                },
+              ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -856,7 +837,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         context: context,
         block: _mediaPlayerBlock,
         player: _player,
-        rmsValues: _rmsValues,
+        rmsValues: _baseRmsValues,
         isLoading: _isLoading,
         updateState: _updateState,
         requestRebuild: () => setState(() {}),
