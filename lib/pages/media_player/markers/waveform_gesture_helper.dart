@@ -98,30 +98,32 @@ class WaveformGestureHelper {
 
     if (details.pointerCount >= 2) {
       setState(() {
-        final double horizontalScale = (details.horizontalScale - 1.0).abs();
-        final double verticalScale = (details.verticalScale - 1.0).abs();
+        const double strongZoomThreshold = 0.07; // 7% change => definitely zoom
+        const double weakZoomThreshold = 0.015; // 1.5% change, easier small pinch zoom
+        const double panDecisionThresholdPx = 1; // keep pan threshold very sensitive
+        const double maxScaleForPan = 0.06; // tolerate up to 6% scale drift for pan
 
-        const double verticalZoomThreshold = 0.15;
-        const double horizontalZoomThreshold = 0.05;
-        const double panDecisionThresholdPx = 1;
+        final double scaleDelta = (details.scale - 1.0).abs();
+        final double dx = details.focalPointDelta.dx.abs();
 
         if (isZooming == null) {
-          final bool zoomCandidate = horizontalScale > horizontalZoomThreshold || verticalScale > verticalZoomThreshold;
-          final bool panCandidate = details.focalPointDelta.dx.abs() > panDecisionThresholdPx;
-
-          if (panCandidate && !zoomCandidate) {
-            isZooming = false;
-          } else if (zoomCandidate && !panCandidate) {
+          if (scaleDelta > strongZoomThreshold) {
+            // Very clear pinch/spread -> zoom.
             isZooming = true;
-          } else if (zoomCandidate && panCandidate) {
+          } else if (dx > panDecisionThresholdPx && scaleDelta < maxScaleForPan) {
+            // Fingers mostly moving together horizontally with only tiny scale drift -> pan.
             isZooming = false;
+          } else if (scaleDelta > weakZoomThreshold && dx <= panDecisionThresholdPx) {
+            // A bit of scale, but almost no horizontal move -> treat as zoom.
+            isZooming = true;
           } else {
+            // Not enough evidence yet, wait for more movement.
             return;
           }
         }
 
         if (isZooming ?? false) {
-          viewport.updateScale(scale: details.scale);
+          if (scaleDelta > 0) viewport.updateScale(scale: details.scale);
         } else {
           if (details.focalPointDelta.dx != 0) {
             viewport.panByPixels(dxPixels: details.focalPointDelta.dx, paintedWidth: width);
