@@ -27,7 +27,7 @@ import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/util/tool_navigation_utils.dart';
-import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/util/tutorial/tutorial_util.dart';
 import 'package:tiomusic/widgets/common_buttons.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/flash_cards/tip_of_the_day.dart';

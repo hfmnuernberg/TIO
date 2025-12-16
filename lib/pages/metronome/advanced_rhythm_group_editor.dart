@@ -18,7 +18,7 @@ import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/domain/metronome/metronome.dart';
 import 'package:tiomusic/util/constants/metronome_constants.dart';
-import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/util/tutorial/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/input/small_number_input_int.dart';
 import 'package:tiomusic/widgets/metronome/beat/beat_button_type.dart';

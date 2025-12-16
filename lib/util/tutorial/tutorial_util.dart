@@ -5,6 +5,8 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/util/log.dart';
+import 'package:tiomusic/util/tutorial/next_button.dart';
+import 'package:tiomusic/util/tutorial/text_button.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -19,12 +21,9 @@ class Tutorial {
   static const backgroundColor = ColorTheme.primary50;
   static const backgroundOpacity = 0.8;
 
-  void show(BuildContext context) {
-    // showing tutorial delayed to avoid misplaced tooltips when new page is animated in from the side
-    Future.delayed(const Duration(milliseconds: 400), () {
-      if (context.mounted) _tutorialCoachMark?.show(context: context);
-    });
-  }
+  void show(BuildContext context) => Future.delayed(const Duration(milliseconds: 400), () {
+    if (context.mounted) _tutorialCoachMark?.show(context: context);
+  });
 
   void create(List<TargetFocus> targets, Function() onFinish, BuildContext context) {
     _tutorialCoachMark = TutorialCoachMark(
@@ -124,12 +123,7 @@ class CustomTargetFocus {
       contents.add(
         TargetContent(
           align: ContentAlign.custom,
-          customPosition: CustomTargetContentPosition(
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-          ), // this covers the whole screen
+          customPosition: CustomTargetContentPosition(left: 0, right: 0, top: 0, bottom: 0),
           padding: EdgeInsets.zero,
           child: ColoredBox(color: Tutorial.backgroundColor.withValues(alpha: Tutorial.backgroundOpacity)),
         ),
@@ -170,110 +164,11 @@ class CustomTargetFocus {
         builder: (context, controller) {
           return SafeArea(
             minimum: EdgeInsets.only(bottom: edgeSpace, left: edgeSpace, right: edgeSpace, top: edgeSpace),
-            child: (buttonsPosition == ButtonsPosition.top || buttonsPosition == ButtonsPosition.bottom)
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // BACK
-                      SizedBox(
-                        width: 80,
-                        child: Center(
-                          child: TextButton(
-                            onPressed: () => controller.previous(),
-                            child: Text(
-                              context.l10n.commonBack,
-                              style: const TextStyle(color: ColorTheme.onPrimary, fontSize: 16),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // NEXT
-                      SizedBox(
-                        width: 110,
-                        child: Center(
-                          child: CircleAvatar(
-                            backgroundColor: ColorTheme.primary,
-                            radius: 50,
-                            child: TextButton(
-                              onPressed: () => controller.next(),
-                              child: Text(
-                                context.l10n.commonNext,
-                                style: const TextStyle(color: ColorTheme.onPrimary, fontSize: 24),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // CANCEL
-                      SizedBox(
-                        width: 80,
-                        child: Center(
-                          child: TextButton(
-                            onPressed: () => controller.skip(),
-                            child: Text(
-                              context.l10n.commonCancel,
-                              style: const TextStyle(color: ColorTheme.onPrimary, fontSize: 16),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                : Column(
-                    crossAxisAlignment: buttonsColumnCrossAlign,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // BACK
-                      SizedBox(
-                        width: 110,
-                        child: Center(
-                          child: TextButton(
-                            onPressed: () => controller.previous(),
-                            child: Text(
-                              context.l10n.commonBack,
-                              style: const TextStyle(color: ColorTheme.onPrimary, fontSize: 16),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-
-                      // NEXT
-                      SizedBox(
-                        width: 110,
-                        child: Center(
-                          child: CircleAvatar(
-                            backgroundColor: ColorTheme.primary,
-                            radius: 50,
-                            child: TextButton(
-                              onPressed: () => controller.next(),
-                              child: Text(
-                                context.l10n.commonNext,
-                                style: const TextStyle(color: ColorTheme.onPrimary, fontSize: 24),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-
-                      // CANCEL
-                      SizedBox(
-                        width: 110,
-                        child: Center(
-                          child: TextButton(
-                            onPressed: () => controller.skip(),
-                            child: Text(
-                              context.l10n.commonCancel,
-                              style: const TextStyle(color: ColorTheme.onPrimary, fontSize: 16),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+            child: _TutorialButtons(
+              buttonsPosition: buttonsPosition,
+              buttonsColumnCrossAlign: buttonsColumnCrossAlign,
+              controller: controller,
+            ),
           );
         },
       ),
@@ -290,3 +185,44 @@ class CustomTargetFocus {
 }
 
 enum ButtonsPosition { top, bottom, left, right, bottomright }
+
+class _TutorialButtons extends StatelessWidget {
+  final ButtonsPosition? buttonsPosition;
+  final CrossAxisAlignment buttonsColumnCrossAlign;
+  final TutorialCoachMarkController controller;
+
+  const _TutorialButtons({
+    required this.buttonsPosition,
+    required this.buttonsColumnCrossAlign,
+    required this.controller,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isRow = buttonsPosition == ButtonsPosition.top || buttonsPosition == ButtonsPosition.bottom;
+
+    final back = TutorialTextButton(
+      width: isRow ? 80 : 110,
+      label: context.l10n.commonBack,
+      onPressed: controller.previous,
+    );
+
+    final next = TutorialNextButton(label: context.l10n.commonNext, onPressed: controller.next);
+
+    final cancel = TutorialTextButton(
+      width: isRow ? 80 : 110,
+      label: context.l10n.commonCancel,
+      onPressed: controller.skip,
+    );
+
+    if (isRow) {
+      return Row(mainAxisAlignment: MainAxisAlignment.center, children: [back, next, cancel]);
+    }
+
+    return Column(
+      crossAxisAlignment: buttonsColumnCrossAlign,
+      mainAxisSize: MainAxisSize.min,
+      children: [back, const SizedBox(height: 10), next, const SizedBox(height: 10), cancel],
+    );
+  }
+}

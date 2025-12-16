@@ -29,7 +29,7 @@ import 'package:tiomusic/util/constants/metronome_constants.dart';
 import 'package:tiomusic/util/l10n/metronome_sound_extension.dart';
 import 'package:tiomusic/domain/metronome/metronome.dart';
 import 'package:tiomusic/domain/metronome/metronome_beat_event.dart';
-import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/util/tutorial/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/confirm_dialog.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';

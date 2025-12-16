@@ -24,7 +24,7 @@ import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/util/constants/piano_constants.dart';
 import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
 import 'package:tiomusic/util/tool_navigation_utils.dart';
-import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/util/tutorial/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/common_buttons.dart';
