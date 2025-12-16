@@ -145,6 +145,7 @@ class _TunerState extends State<Tuner> {
         CustomTargetFocus(
           keyStartStop,
           l10n.tunerTutorialStartStop,
+          hideBack: true,
           alignText: ContentAlign.top,
           pointingDirection: PointingDirection.down,
         ),

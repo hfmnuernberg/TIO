@@ -114,6 +114,7 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
       CustomTargetFocus(
         keyToggleBeats,
         context.l10n.metronomeTutorialEditBeats,
+        hideBack: true,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
       ),

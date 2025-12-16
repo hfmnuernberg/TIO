@@ -78,6 +78,7 @@ class CustomTargetFocus {
     ShapeLightFocus? shape,
     double pointerOffset = 0,
     PointerPosition pointerPosition = PointerPosition.center,
+    bool hideBack = false,
   }) {
     final mediaQuery = (context != null) ? MediaQuery.of(context) : null;
     final safeTop = mediaQuery?.viewPadding.top ?? 0;
@@ -168,6 +169,7 @@ class CustomTargetFocus {
               buttonsPosition: buttonsPosition,
               buttonsColumnCrossAlign: buttonsColumnCrossAlign,
               controller: controller,
+              hideBack: hideBack,
             ),
           );
         },
@@ -190,22 +192,22 @@ class _TutorialButtons extends StatelessWidget {
   final ButtonsPosition? buttonsPosition;
   final CrossAxisAlignment buttonsColumnCrossAlign;
   final TutorialCoachMarkController controller;
+  final bool hideBack;
 
   const _TutorialButtons({
     required this.buttonsPosition,
     required this.buttonsColumnCrossAlign,
     required this.controller,
+    required this.hideBack,
   });
 
   @override
   Widget build(BuildContext context) {
     final isRow = buttonsPosition == ButtonsPosition.top || buttonsPosition == ButtonsPosition.bottom;
 
-    final back = TutorialTextButton(
-      width: isRow ? 80 : 110,
-      label: context.l10n.commonBack,
-      onPressed: controller.previous,
-    );
+    final back = hideBack
+        ? const SizedBox(width: 80)
+        : TutorialTextButton(width: isRow ? 80 : 110, label: context.l10n.commonBack, onPressed: controller.previous);
 
     final next = TutorialNextButton(label: context.l10n.commonNext, onPressed: controller.next);
 

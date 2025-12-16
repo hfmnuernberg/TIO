@@ -205,6 +205,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         CustomTargetFocus(
           _keyStartStop,
           l10n.mediaPlayerTutorialStartStop,
+          hideBack: true,
           alignText: ContentAlign.top,
           pointingDirection: PointingDirection.down,
         ),

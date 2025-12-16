@@ -52,6 +52,7 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
       CustomTargetFocus(
         keyFilter,
         context.l10n.flashCardsPageTutorialFilter,
+        hideBack: true,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,

@@ -151,6 +151,7 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
         CustomTargetFocus(
           keyStartStop,
           l10n.metronomeTutorialStartStop,
+          hideBack: true,
           alignText: ContentAlign.top,
           pointingDirection: PointingDirection.down,
         ),

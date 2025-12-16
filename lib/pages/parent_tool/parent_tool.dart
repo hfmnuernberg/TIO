@@ -106,6 +106,7 @@ class _ParentToolState extends State<ParentTool> {
         CustomTargetFocus(
           _keySaveInProject,
           context.l10n.toolTutorialSave,
+          hideBack: true,
           alignText: ContentAlign.left,
           pointingDirection: PointingDirection.right,
           pointerOffset: -25,

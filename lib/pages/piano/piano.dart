@@ -119,6 +119,7 @@ class _PianoPageState extends State<PianoPage> {
         CustomTargetFocus(
           _keyBookmarkSave,
           l10n.toolTutorialSave,
+          hideBack: true,
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             left: MediaQuery.of(context).size.width / 3,
@@ -131,6 +132,7 @@ class _PianoPageState extends State<PianoPage> {
         CustomTargetFocus(
           _keyBookmarkShare,
           l10n.appTutorialToolSave,
+          hideBack: true,
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             left: MediaQuery.of(context).size.width / 3,

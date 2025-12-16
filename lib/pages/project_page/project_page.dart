@@ -119,6 +119,7 @@ class _ProjectPageState extends State<ProjectPage> {
       CustomTargetFocus(
         _keyChangeTitle,
         l10n.projectTutorialEditTitle,
+        hideBack: true,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
