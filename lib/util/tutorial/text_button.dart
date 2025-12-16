@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/util/color_constants.dart';
 
 class TutorialTextButton extends StatelessWidget {
-  final double width;
   final String label;
   final VoidCallback onPressed;
 
-  const TutorialTextButton({required this.width, required this.label, required this.onPressed, super.key});
+  const TutorialTextButton({required this.label, required this.onPressed, super.key});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width,
+      width: 110,
       child: Center(
         child: TextButton(
           onPressed: onPressed,
