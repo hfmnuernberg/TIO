@@ -243,21 +243,40 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     ];
 
     if (targets.isEmpty) return;
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      if (context.read<ProjectLibrary>().showMediaPlayerTutorial) {
-        context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
-      }
+    _tutorial.create(
+      targets.map((e) => e.targetFocus).toList(),
+      () async {
+        if (context.read<ProjectLibrary>().showMediaPlayerTutorial) {
+          context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
+        }
 
-      if (context.read<ProjectLibrary>().showMediaPlayerIslandTutorial && !widget.isQuickTool) {
-        context.read<ProjectLibrary>().showMediaPlayerIslandTutorial = false;
-      }
+        if (context.read<ProjectLibrary>().showMediaPlayerIslandTutorial && !widget.isQuickTool) {
+          context.read<ProjectLibrary>().showMediaPlayerIslandTutorial = false;
+        }
 
-      if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded) {
-        context.read<ProjectLibrary>().showWaveformTip = false;
-      }
+        if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded) {
+          context.read<ProjectLibrary>().showWaveformTip = false;
+        }
 
-      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    }, context);
+        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      },
+      context,
+      () async {
+        if (context.read<ProjectLibrary>().showMediaPlayerTutorial) {
+          context.read<ProjectLibrary>().showMediaPlayerTutorial = false;
+        }
+
+        if (context.read<ProjectLibrary>().showMediaPlayerIslandTutorial && !widget.isQuickTool) {
+          context.read<ProjectLibrary>().showMediaPlayerIslandTutorial = false;
+        }
+
+        if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded) {
+          context.read<ProjectLibrary>().showWaveformTip = false;
+        }
+
+        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      },
+    );
   }
 
   Future<void> _autoplayAfterDelay() async {

@@ -1,11 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/models/project_library.dart';
-import 'package:tiomusic/models/project_library_tutorials_extension.dart';
-import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/util/log.dart';
@@ -30,8 +26,7 @@ class Tutorial {
     });
   }
 
-  // onSkip will cancel all tutorials
-  void create(List<TargetFocus> targets, Function() onFinish, BuildContext context) {
+  void create(List<TargetFocus> targets, Function() onFinish, BuildContext context, FutureOr<void> Function() onSkip) {
     _tutorialCoachMark = TutorialCoachMark(
       targets: targets,
       colorShadow: backgroundColor,
@@ -44,9 +39,9 @@ class Tutorial {
       onSkip: () {
         _tutorialCoachMark = null;
         if (_isDisposing) return true;
-        final projectLibrary = context.read<ProjectLibrary>();
-        projectLibrary.dismissAllTutorials();
-        unawaited(context.read<ProjectRepository>().saveLibrary(projectLibrary));
+
+        final result = onSkip.call();
+        if (result is Future) unawaited(result);
         return true;
       },
     );

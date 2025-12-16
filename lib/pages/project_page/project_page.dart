@@ -133,10 +133,18 @@ class _ProjectPageState extends State<ProjectPage> {
       ),
     ];
 
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showProjectPageTutorial = false;
-      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    }, context);
+    _tutorial.create(
+      targets.map((e) => e.targetFocus).toList(),
+      () async {
+        context.read<ProjectLibrary>().showProjectPageTutorial = false;
+        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      },
+      context,
+      () async {
+        context.read<ProjectLibrary>().showProjectPageTutorial = false;
+        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      },
+    );
   }
 
   Future<void> _handleDeleteBlock(int index) async {

@@ -138,10 +138,18 @@ class _ProjectsPageState extends State<ProjectsPage> {
       ),
     ];
 
-    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      context.read<ProjectLibrary>().showHomepageTutorial = false;
-      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    }, context);
+    _tutorial.create(
+      targets.map((e) => e.targetFocus).toList(),
+      () async {
+        context.read<ProjectLibrary>().showHomepageTutorial = false;
+        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      },
+      context,
+      () async {
+        context.read<ProjectLibrary>().showHomepageTutorial = false;
+        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      },
+    );
   }
 
   void _toggleEditingMode() => setState(() => _isEditing = !_isEditing);

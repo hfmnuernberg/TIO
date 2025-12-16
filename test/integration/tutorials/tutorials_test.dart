@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tiomusic/models/note_handler.dart';
 import 'package:tiomusic/pages/projects_page/projects_page.dart';
 
 import '../../utils/action_utils.dart';
@@ -10,7 +11,10 @@ import 'tutorials_utils.dart';
 void main() {
   late TestContext context;
 
-  setUpAll(WidgetsFlutterBinding.ensureInitialized);
+  setUpAll(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await NoteHandler.createNoteBeatLengthMap();
+  });
 
   setUp(() async {
     context = TestContext();
@@ -165,14 +169,17 @@ void main() {
     await tester.completeInitialTutorial();
     await tester.createProjectWithoutTool('Project 1');
 
-    await tester.createAndOpenTool('Text');
+    await tester.createAndOpenTool('Metronome');
     await tester.waitForTutorialNext();
     expect(find.bySemanticsLabel(RegExp('Tap here to copy your tool')), findsOneWidget);
 
-    await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
+    await tester.tap(find.bySemanticsLabel('Cancel'));
+    await tester.pumpAndSettle(const Duration(milliseconds: 1100));
     expect(find.bySemanticsLabel(RegExp('Tap here to copy your tool')), findsNothing);
+    await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
 
     await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Cancel'));
     await tester.tapAndSettle(find.bySemanticsLabel('Back'));
     await tester.tapAndSettle(find.byTooltip('Projects menu'));
     await tester.tapAndSettle(find.bySemanticsLabel('Show tutorial'));
@@ -181,7 +188,7 @@ void main() {
     await tester.minimizeTipOfTheDay();
     await tester.tapAndSettle(find.bySemanticsLabel('Project 1'));
     await tester.completeProjectTutorial();
-    await tester.tapAndSettle(find.bySemanticsLabel('Text 1'));
+    await tester.tapAndSettle(find.bySemanticsLabel('Metronome 1'));
 
     await tester.waitForTutorialNext();
     expect(find.bySemanticsLabel(RegExp('Tap here to copy your tool')), findsOneWidget);

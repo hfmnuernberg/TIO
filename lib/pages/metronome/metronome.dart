@@ -198,25 +198,48 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
     ];
 
     if (targets.isEmpty) return;
-    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
-      if (context.read<ProjectLibrary>().showMetronomeTutorial) {
-        context.read<ProjectLibrary>().showMetronomeTutorial = false;
-      }
+    tutorial.create(
+      targets.map((e) => e.targetFocus).toList(),
+      () async {
+        if (context.read<ProjectLibrary>().showMetronomeTutorial) {
+          context.read<ProjectLibrary>().showMetronomeTutorial = false;
+        }
 
-      if (context.read<ProjectLibrary>().showMetronomeIslandTutorial && !widget.isQuickTool) {
-        context.read<ProjectLibrary>().showMetronomeIslandTutorial = false;
-      }
+        if (context.read<ProjectLibrary>().showMetronomeIslandTutorial && !widget.isQuickTool) {
+          context.read<ProjectLibrary>().showMetronomeIslandTutorial = false;
+        }
 
-      if (context.read<ProjectLibrary>().showMetronomeSimpleTutorial && isSimpleModeOn) {
-        context.read<ProjectLibrary>().showMetronomeSimpleTutorial = false;
-      }
+        if (context.read<ProjectLibrary>().showMetronomeSimpleTutorial && isSimpleModeOn) {
+          context.read<ProjectLibrary>().showMetronomeSimpleTutorial = false;
+        }
 
-      if (context.read<ProjectLibrary>().showMetronomeAdvancedTutorial && !isSimpleModeOn) {
-        context.read<ProjectLibrary>().showMetronomeAdvancedTutorial = false;
-      }
+        if (context.read<ProjectLibrary>().showMetronomeAdvancedTutorial && !isSimpleModeOn) {
+          context.read<ProjectLibrary>().showMetronomeAdvancedTutorial = false;
+        }
 
-      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    }, context);
+        await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      },
+      context,
+      () async {
+        if (context.read<ProjectLibrary>().showMetronomeTutorial) {
+          context.read<ProjectLibrary>().showMetronomeTutorial = false;
+        }
+
+        if (context.read<ProjectLibrary>().showMetronomeIslandTutorial && !widget.isQuickTool) {
+          context.read<ProjectLibrary>().showMetronomeIslandTutorial = false;
+        }
+
+        if (context.read<ProjectLibrary>().showMetronomeSimpleTutorial && isSimpleModeOn) {
+          context.read<ProjectLibrary>().showMetronomeSimpleTutorial = false;
+        }
+
+        if (context.read<ProjectLibrary>().showMetronomeAdvancedTutorial && !isSimpleModeOn) {
+          context.read<ProjectLibrary>().showMetronomeAdvancedTutorial = false;
+        }
+
+        await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      },
+    );
   }
 
   @override
