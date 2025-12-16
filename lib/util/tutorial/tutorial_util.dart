@@ -207,15 +207,11 @@ class _TutorialButtons extends StatelessWidget {
 
     final back = hideBack
         ? const SizedBox(width: 80)
-        : TutorialTextButton(width: isRow ? 80 : 110, label: context.l10n.commonBack, onPressed: controller.previous);
+        : TutorialTextButton(label: context.l10n.commonBack, onPressed: controller.previous);
 
     final next = TutorialNextButton(label: context.l10n.commonNext, onPressed: controller.next);
 
-    final cancel = TutorialTextButton(
-      width: isRow ? 80 : 110,
-      label: context.l10n.commonCancel,
-      onPressed: controller.skip,
-    );
+    final cancel = TutorialTextButton(label: context.l10n.commonCancel, onPressed: controller.skip);
 
     if (isRow) {
       return Row(mainAxisAlignment: MainAxisAlignment.center, children: [back, next, cancel]);
