@@ -23,7 +23,7 @@ import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/l10n/tuner_type_extension.dart';
-import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/util/tutorial/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
@@ -145,6 +145,7 @@ class _TunerState extends State<Tuner> {
         CustomTargetFocus(
           keyStartStop,
           l10n.tunerTutorialStartStop,
+          hideBack: true,
           alignText: ContentAlign.top,
           pointingDirection: PointingDirection.down,
         ),

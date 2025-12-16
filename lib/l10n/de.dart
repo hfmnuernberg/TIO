@@ -28,6 +28,7 @@ class German extends AppLocalizations with GermanFlashCards {
   String get appTutorialToolSave => 'Tippe hier, um dein Tool in ein anderes Projekt zu kopieren.';
 
   String get commonApply => 'Anwenden';
+  String get commonBack => 'Zurück';
   String get commonBasicBeat => 'Grundschlag';
   String get commonBasicBeatSetting => 'Grundschlag einstellen';
   String get commonBpm => 'BPM';

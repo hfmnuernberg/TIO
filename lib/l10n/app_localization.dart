@@ -20,6 +20,7 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get appTutorialToolSave;
 
   String get commonApply;
+  String get commonBack;
   String get commonBasicBeat;
   String get commonBasicBeatSetting;
   String get commonBpm;

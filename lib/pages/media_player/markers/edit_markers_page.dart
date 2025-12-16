@@ -11,7 +11,7 @@ import 'package:tiomusic/pages/media_player/markers/zoom_rms_helper.dart';
 import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/domain/audio/player.dart';
-import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/util/tutorial/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -93,8 +93,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       CustomTargetFocus(
         keyWaveform,
         l10n.mediaPlayerEditMarkersTutorialWaveform,
+        hideBack: true,
         alignText: ContentAlign.bottom,
-        buttonsPosition: ButtonsPosition.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
       ),
@@ -102,7 +102,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         keyAddRemove,
         l10n.mediaPlayerEditMarkersTutorialAddRemove,
         alignText: ContentAlign.top,
-        buttonsPosition: ButtonsPosition.bottom,
         pointingDirection: PointingDirection.down,
         pointerOffset: 68,
         shape: ShapeLightFocus.Circle,

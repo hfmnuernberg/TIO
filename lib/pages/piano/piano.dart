@@ -24,7 +24,7 @@ import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/util/constants/piano_constants.dart';
 import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
 import 'package:tiomusic/util/tool_navigation_utils.dart';
-import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/util/tutorial/tutorial_util.dart';
 import 'package:tiomusic/util/util_functions.dart';
 import 'package:tiomusic/widgets/card_list_tile.dart';
 import 'package:tiomusic/widgets/common_buttons.dart';
@@ -119,6 +119,7 @@ class _PianoPageState extends State<PianoPage> {
         CustomTargetFocus(
           _keyBookmarkSave,
           l10n.toolTutorialSave,
+          hideBack: true,
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             left: MediaQuery.of(context).size.width / 3,
@@ -126,12 +127,12 @@ class _PianoPageState extends State<PianoPage> {
           ),
           pointingDirection: PointingDirection.right,
           pointerOffset: -25,
-          buttonsPosition: ButtonsPosition.bottomright,
         ),
       if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool)
         CustomTargetFocus(
           _keyBookmarkShare,
           l10n.appTutorialToolSave,
+          hideBack: true,
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             left: MediaQuery.of(context).size.width / 3,
@@ -139,7 +140,6 @@ class _PianoPageState extends State<PianoPage> {
           ),
           pointingDirection: PointingDirection.right,
           pointerOffset: -5,
-          buttonsPosition: ButtonsPosition.bottomright,
         ),
       if (context.read<ProjectLibrary>().showPianoTutorial)
         CustomTargetFocus(
@@ -148,7 +148,6 @@ class _PianoPageState extends State<PianoPage> {
           alignText: ContentAlign.right,
           pointingDirection: PointingDirection.left,
           shape: ShapeLightFocus.RRect,
-          buttonsPosition: ButtonsPosition.bottomright,
         ),
       if (context.read<ProjectLibrary>().showPianoTutorial)
         CustomTargetFocus(
@@ -157,7 +156,6 @@ class _PianoPageState extends State<PianoPage> {
           alignText: ContentAlign.right,
           pointingDirection: PointingDirection.left,
           shape: ShapeLightFocus.RRect,
-          buttonsPosition: ButtonsPosition.bottomright,
         ),
       if (context.read<ProjectLibrary>().showPianoTutorial)
         CustomTargetFocus(

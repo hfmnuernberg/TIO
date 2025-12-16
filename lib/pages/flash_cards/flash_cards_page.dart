@@ -5,7 +5,7 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/project_library.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/app_orientation.dart';
-import 'package:tiomusic/util/tutorial_util.dart';
+import 'package:tiomusic/util/tutorial/tutorial_util.dart';
 import 'package:tiomusic/widgets/custom_border_shape.dart';
 import 'package:tiomusic/widgets/flash_cards/category_filter_button.dart';
 import 'package:tiomusic/util/color_constants.dart';
@@ -52,9 +52,9 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
       CustomTargetFocus(
         keyFilter,
         context.l10n.flashCardsPageTutorialFilter,
+        hideBack: true,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
-        buttonsPosition: ButtonsPosition.bottom,
         shape: ShapeLightFocus.RRect,
       ),
       CustomTargetFocus(
@@ -62,7 +62,6 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
         context.l10n.flashCardsPageTutorialBookmark,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
-        buttonsPosition: ButtonsPosition.bottom,
         shape: ShapeLightFocus.RRect,
       ),
     ];
