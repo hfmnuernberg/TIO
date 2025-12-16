@@ -191,48 +191,25 @@ class _PianoPageState extends State<PianoPage> {
     ];
 
     if (targets.isEmpty) return;
-    _tutorial.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () async {
-        if (context.read<ProjectLibrary>().showPianoTutorial) {
-          context.read<ProjectLibrary>().showPianoTutorial = false;
-        }
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      if (context.read<ProjectLibrary>().showPianoTutorial) {
+        context.read<ProjectLibrary>().showPianoTutorial = false;
+      }
 
-        if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool) {
-          context.read<ProjectLibrary>().showQuickToolTutorial = false;
-        }
+      if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool) {
+        context.read<ProjectLibrary>().showQuickToolTutorial = false;
+      }
 
-        if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool) {
-          context.read<ProjectLibrary>().showToolTutorial = false;
-        }
+      if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool) {
+        context.read<ProjectLibrary>().showToolTutorial = false;
+      }
 
-        if (context.read<ProjectLibrary>().showPianoIslandTutorial && !widget.isQuickTool) {
-          context.read<ProjectLibrary>().showPianoIslandTutorial = false;
-        }
+      if (context.read<ProjectLibrary>().showPianoIslandTutorial && !widget.isQuickTool) {
+        context.read<ProjectLibrary>().showPianoIslandTutorial = false;
+      }
 
-        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-      },
-      context,
-      () async {
-        if (context.read<ProjectLibrary>().showPianoTutorial) {
-          context.read<ProjectLibrary>().showPianoTutorial = false;
-        }
-
-        if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool) {
-          context.read<ProjectLibrary>().showQuickToolTutorial = false;
-        }
-
-        if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool) {
-          context.read<ProjectLibrary>().showToolTutorial = false;
-        }
-
-        if (context.read<ProjectLibrary>().showPianoIslandTutorial && !widget.isQuickTool) {
-          context.read<ProjectLibrary>().showPianoIslandTutorial = false;
-        }
-
-        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-      },
-    );
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }, context);
   }
 
   @override

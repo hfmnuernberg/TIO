@@ -118,18 +118,10 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
         pointingDirection: PointingDirection.up,
       ),
     ];
-    tutorial.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () async {
-        context.read<ProjectLibrary>().showBeatToggleTip = false;
-        await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-      },
-      context,
-      () async {
-        context.read<ProjectLibrary>().showBeatToggleTip = false;
-        await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
-      },
-    );
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showBeatToggleTip = false;
+      await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());
+    }, context);
   }
 
   void onBeatCountChange(int newBeatCount) {

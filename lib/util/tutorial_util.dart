@@ -26,7 +26,7 @@ class Tutorial {
     });
   }
 
-  void create(List<TargetFocus> targets, Function() onFinish, BuildContext context, FutureOr<void> Function() onSkip) {
+  void create(List<TargetFocus> targets, Function() onFinish, BuildContext context) {
     _tutorialCoachMark = TutorialCoachMark(
       targets: targets,
       colorShadow: backgroundColor,
@@ -34,14 +34,18 @@ class Tutorial {
       pulseEnable: false,
       onFinish: () {
         _tutorialCoachMark = null;
-        if (!_isDisposing) onFinish();
+        if (_isDisposing) return;
+
+        final result = onFinish();
+        if (result is Future) unawaited(result);
       },
       onSkip: () {
         _tutorialCoachMark = null;
         if (_isDisposing) return true;
 
-        final result = onSkip.call();
+        final result = onFinish();
         if (result is Future) unawaited(result);
+
         return true;
       },
     );

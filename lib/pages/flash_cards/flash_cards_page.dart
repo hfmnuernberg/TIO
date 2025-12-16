@@ -67,18 +67,10 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
       ),
     ];
 
-    tutorial.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () async {
-        context.read<ProjectLibrary>().showFlashCardsPageTutorial = false;
-        await projectRepo.saveLibrary(context.read<ProjectLibrary>());
-      },
-      context,
-      () async {
-        context.read<ProjectLibrary>().showFlashCardsPageTutorial = false;
-        await projectRepo.saveLibrary(context.read<ProjectLibrary>());
-      },
-    );
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showFlashCardsPageTutorial = false;
+      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }, context);
   }
 
   void toggleBookmarkFilter() {

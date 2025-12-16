@@ -133,40 +133,21 @@ class _ParentToolState extends State<ParentTool> {
       return;
     }
 
-    _tutorial.create(
-      targets.map((e) => e.targetFocus).toList(),
-      () async {
-        final projectLibrary = context.read<ProjectLibrary>();
+    _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      final projectLibrary = context.read<ProjectLibrary>();
 
-        if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool) {
-          projectLibrary.showQuickToolTutorial = false;
-        }
+      if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool) {
+        projectLibrary.showQuickToolTutorial = false;
+      }
 
-        if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool) {
-          projectLibrary.showToolTutorial = false;
-        }
+      if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool) {
+        projectLibrary.showToolTutorial = false;
+      }
 
-        await _projectRepo.saveLibrary(projectLibrary);
+      await _projectRepo.saveLibrary(projectLibrary);
 
-        if (widget.onParentTutorialFinished != null) widget.onParentTutorialFinished!();
-      },
-      context,
-      () async {
-        final projectLibrary = context.read<ProjectLibrary>();
-
-        if (context.read<ProjectLibrary>().showQuickToolTutorial && widget.isQuickTool) {
-          projectLibrary.showQuickToolTutorial = false;
-        }
-
-        if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool) {
-          projectLibrary.showToolTutorial = false;
-        }
-
-        await _projectRepo.saveLibrary(projectLibrary);
-
-        if (widget.onParentTutorialFinished != null) widget.onParentTutorialFinished!();
-      },
-    );
+      if (widget.onParentTutorialFinished != null) widget.onParentTutorialFinished!();
+    }, context);
   }
 
   @override
