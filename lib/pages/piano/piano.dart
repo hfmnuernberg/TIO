@@ -126,7 +126,6 @@ class _PianoPageState extends State<PianoPage> {
           ),
           pointingDirection: PointingDirection.right,
           pointerOffset: -25,
-          buttonsPosition: ButtonsPosition.bottomright,
         ),
       if (context.read<ProjectLibrary>().showToolTutorial && !widget.isQuickTool)
         CustomTargetFocus(
@@ -139,7 +138,6 @@ class _PianoPageState extends State<PianoPage> {
           ),
           pointingDirection: PointingDirection.right,
           pointerOffset: -5,
-          buttonsPosition: ButtonsPosition.bottomright,
         ),
       if (context.read<ProjectLibrary>().showPianoTutorial)
         CustomTargetFocus(
@@ -148,7 +146,6 @@ class _PianoPageState extends State<PianoPage> {
           alignText: ContentAlign.right,
           pointingDirection: PointingDirection.left,
           shape: ShapeLightFocus.RRect,
-          buttonsPosition: ButtonsPosition.bottomright,
         ),
       if (context.read<ProjectLibrary>().showPianoTutorial)
         CustomTargetFocus(
@@ -157,7 +154,6 @@ class _PianoPageState extends State<PianoPage> {
           alignText: ContentAlign.right,
           pointingDirection: PointingDirection.left,
           shape: ShapeLightFocus.RRect,
-          buttonsPosition: ButtonsPosition.bottomright,
         ),
       if (context.read<ProjectLibrary>().showPianoTutorial)
         CustomTargetFocus(

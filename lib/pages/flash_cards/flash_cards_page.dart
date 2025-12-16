@@ -54,7 +54,6 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
         context.l10n.flashCardsPageTutorialFilter,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
-        buttonsPosition: ButtonsPosition.bottom,
         shape: ShapeLightFocus.RRect,
       ),
       CustomTargetFocus(
@@ -62,7 +61,6 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
         context.l10n.flashCardsPageTutorialBookmark,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
-        buttonsPosition: ButtonsPosition.bottom,
         shape: ShapeLightFocus.RRect,
       ),
     ];
