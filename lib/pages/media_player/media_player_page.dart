@@ -696,7 +696,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
-    var waveformHeight = 250.0;
+    var waveformHeight = 350.0;
     final l10n = context.l10n;
     final isMultiImportEnabled = !widget.isQuickTool;
 

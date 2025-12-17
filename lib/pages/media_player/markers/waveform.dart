@@ -8,7 +8,7 @@ import 'package:tiomusic/pages/media_player/markers/waveform_viewport_controller
 import 'package:tiomusic/pages/media_player/markers/waveform_gesture_controls.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
 
-const double waveformHeight = 200;
+const double waveformHeight = 300;
 
 class Waveform extends StatefulWidget {
   final Float32List rmsValues;
