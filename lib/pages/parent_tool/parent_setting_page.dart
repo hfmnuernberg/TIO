@@ -71,6 +71,12 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
     );
   }
 
+  Future<void> _handleConfirmTap() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    await Future<void>.delayed(Duration.zero);
+    await widget.confirm();
+  }
+
   bool _useLandscapeLayout(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return size.width >= 600 || size.width > size.height;
@@ -147,7 +153,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
-                ConfirmButton(onTap: widget.confirm),
+                ConfirmButton(onTap: _handleConfirmTap),
               ],
             ),
           ),
@@ -170,7 +176,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CancelButton(onTap: widget.cancel ?? () => Navigator.pop(context)),
-              ConfirmButton(onTap: widget.confirm),
+              ConfirmButton(onTap: _handleConfirmTap),
             ],
           ),
           if (Platform.isAndroid) SizedBox(height: MediaQuery.of(context).padding.bottom),
