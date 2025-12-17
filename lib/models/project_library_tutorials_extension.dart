@@ -16,6 +16,7 @@ extension ProjectLibraryTutorialsExtension on ProjectLibrary {
     showMediaPlayerIslandTutorial = true;
     showMediaPlayerTutorial = true;
     showMediaPlayerEditMarkersTutorial = true;
+    showMediaPlayerSetTrimTutorial = true;
     showPianoIslandTutorial = true;
     showPianoTutorial = true;
     showImageTutorial = true;
@@ -38,6 +39,7 @@ extension ProjectLibraryTutorialsExtension on ProjectLibrary {
     showMediaPlayerIslandTutorial = false;
     showMediaPlayerTutorial = false;
     showMediaPlayerEditMarkersTutorial = false;
+    showMediaPlayerSetTrimTutorial = false;
     showPianoIslandTutorial = false;
     showPianoTutorial = false;
     showImageTutorial = false;

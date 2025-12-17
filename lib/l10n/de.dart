@@ -97,10 +97,10 @@ class German extends AppLocalizations with GermanFlashCards {
   String get mediaPlayerAddMarker => 'Marker hinzufügen';
   String get mediaPlayerDescription => 'Lade Audio-Files oder nimm etwas auf, hör es dir an und bearbeite es.';
   String get mediaPlayerEditMarkers => 'Marker bearbeiten';
+  String get mediaPlayerEditMarkersTutorialTap =>
+      'Tippe oder ziehe mit einem Finger, um die Wiedergabeposition zu ändern.';
   String get mediaPlayerEditMarkersTutorialAddRemove =>
-      'An der ausgewählten Stelle kannst du einen Marker setzen. Wenn du ihn erneut auswählst, kannst du ihn auch wieder entfernen.';
-  String get mediaPlayerEditMarkersTutorialWaveform =>
-      'Hier siehst du die Wellenform deiner Audiodatei. Du kannst hinein- und herauszoomen und das gezoomte Fenster anschließend verschieben, um bestimmte Stellen besser erkennen zu können.';
+      'An der ausgewählten Wiedergabeposition kannst du eine Markierung hinzufügen. Wenn du sie erneut auswählst, kannst du sie entfernen.';
   String get mediaPlayerErrorFileAccessible => 'Datei nicht lesbar';
   String get mediaPlayerErrorFileAccessibleDescription =>
       'Die Datei ist nicht lesbar. Bitte überprüfe, ob sie lokal auf deinem Gerät gespeichert ist und das sie lizenzrechtlich in dieser App verwendet werden darf.';
@@ -138,6 +138,8 @@ class German extends AppLocalizations with GermanFlashCards {
   String get mediaPlayerSetPitch => 'Tonhöhe einstellen';
   String get mediaPlayerSetSpeed => 'Tempo einstellen';
   String get mediaPlayerSetTrim => 'Trimmbereich festlegen';
+  String get mediaPlayerSetTrimTutorialTap =>
+      'Tippe oder ziehe mit einem Finger, um den Anfang oder das Ende des Audiobereichs zu ändern.';
   String get mediaPlayerShareAudioFile => 'Audio-Datei teilen';
   String get mediaPlayerSpeed => 'Tempo';
   String get mediaPlayerStartRecording => 'Aufnahme starten';
@@ -151,8 +153,13 @@ class German extends AppLocalizations with GermanFlashCards {
       'Tippe hier, um deine Audiodatei anzupassen. Du kannst die Lautstärke und den Grundschlag einstellen, deine Datei trimmen und Marker setzen und löschen, sowie Tonhöhe und Tempo nachträglich verändern.';
   String get mediaPlayerTutorialIslandTool =>
       'Tippe hier, um deinen Media Player mit einem Stimmgerät oder Metronom zu kombinieren.\n\nDu kannst deinen Media Player mit einem bestehenden Tool verknüpfen oder ein neues Tool erstellen und damit verknüpfen.';
-  String get mediaPlayerTutorialJumpTo =>
-      'Tippe auf eine beliebige Stelle, um zu diesem Teil deiner Audiodatei zu springen.';
+  String get mediaPlayerTutorialWaveform => 'Hier siehst du die Wellenform deiner Audiodatei.';
+  String get mediaPlayerTutorialWaveformZoom =>
+      'Um den sichtbaren Audiobereich zu vergrößern oder zu verkleinern, lege zwei Finger auf die Wellenform, warte einen Moment und ziehe sie auseinander (Vergrößern) oder zusammen (Verkleinern).';
+  String get mediaPlayerTutorialWaveformPan =>
+      'Um den sichtbaren Audiobereich bei vergrößerter Ansicht zu verschieben, lege zwei Finger auf die Wellenform und ziehe sie nach links oder rechts.';
+  String get mediaPlayerTutorialWaveformTap =>
+      'Tippe oder ziehe mit einem Finger, um die Wiedergabeposition zu ändern.';
   String get mediaPlayerTutorialRepeat =>
       'Aktiviere die wiederholte Wiedergabe für diesen Media Player. Durch erneutes Antippen kannst du auch alle Media Player in diesem Projekt, die eine Sound-Datei beinhalten, hintereinander abspielen.';
   String get mediaPlayerTutorialStartStop =>

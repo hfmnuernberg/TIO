@@ -30,7 +30,7 @@ void main() {
       await tester.createMediaPlayerToolInProject();
 
       await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
-      await tester.tapAndSettle(find.bySemanticsLabel('Open files'));
+      await tester.scrollToAndTapAndSettle('Open files');
 
       expect(find.textContaining('audio_file'), findsOneWidget);
     });
@@ -46,7 +46,7 @@ void main() {
 
       await tester.createMediaPlayerToolInProject();
       await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
-      await tester.tapAndSettle(find.bySemanticsLabel('Open files'));
+      await tester.scrollToAndTapAndSettle('Open files');
       await tester.tapAndSettle(find.bySemanticsLabel('Back'));
 
       expect(find.bySemanticsLabel('Media Player 1'), findsOneWidget);

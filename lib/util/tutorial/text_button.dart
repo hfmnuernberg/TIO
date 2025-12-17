@@ -12,9 +12,13 @@ class TutorialTextButton extends StatelessWidget {
     return SizedBox(
       width: 110,
       child: Center(
-        child: TextButton(
-          onPressed: onPressed,
-          child: Text(label, style: const TextStyle(color: ColorTheme.onPrimary, fontSize: 16)),
+        child: CircleAvatar(
+          backgroundColor: ColorTheme.primary.withAlpha(600),
+          radius: 45,
+          child: TextButton(
+            onPressed: onPressed,
+            child: Text(label, style: const TextStyle(color: ColorTheme.onPrimary, fontSize: 12)),
+          ),
         ),
       ),
     );

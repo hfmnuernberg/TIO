@@ -10,6 +10,9 @@ import 'package:tiomusic/pages/parent_tool/parent_setting_page.dart';
 import 'package:tiomusic/domain/audio/player.dart';
 import 'package:tiomusic/pages/media_player/markers/zoom_rms_helper.dart';
 import 'package:tiomusic/services/project_repository.dart';
+import 'package:tiomusic/util/tutorial/tutorial_util.dart';
+import 'package:tiomusic/widgets/custom_border_shape.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class SetTrim extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;
@@ -28,13 +31,61 @@ class _SetTrimState extends State<SetTrim> {
   late RangeValues rangeValues;
   late Float32List rmsValues;
   late int targetVisibleBins;
+  late ProjectRepository projectRepo;
+
+  final Tutorial tutorial = Tutorial();
+  final GlobalKey keyWaveform = GlobalKey();
 
   @override
   void initState() {
     super.initState();
+
+    projectRepo = context.read<ProjectRepository>();
     rangeValues = RangeValues(block.rangeStart, block.rangeEnd);
     rmsValues = widget.rmsValues;
     targetVisibleBins = widget.rmsValues.length;
+
+    showTutorial();
+  }
+
+  @override
+  void dispose() {
+    tutorial.dispose();
+    super.dispose();
+  }
+
+  void showTutorial() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final projectLibrary = context.read<ProjectLibrary>();
+
+      if (projectLibrary.showMediaPlayerSetTrimTutorial) {
+        projectLibrary.showMediaPlayerSetTrimTutorial = false;
+        await context.read<ProjectRepository>().saveLibrary(projectLibrary);
+        createTutorial();
+        if (!mounted) return;
+        tutorial.show(context);
+      }
+    });
+  }
+
+  void createTutorial() {
+    final l10n = context.l10n;
+    final targets = <CustomTargetFocus>[
+      CustomTargetFocus(
+        keyWaveform,
+        l10n.mediaPlayerSetTrimTutorialTap,
+        alignText: ContentAlign.bottom,
+        pointingDirection: PointingDirection.up,
+        shape: ShapeLightFocus.RRect,
+        buttonsPosition: ButtonsPosition.top,
+      ),
+    ];
+
+    targets.first.hideBack = true;
+    tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
+      context.read<ProjectLibrary>().showMediaPlayerSetTrimTutorial = false;
+      await projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }, context);
   }
 
   Future<void> handleChange(RangeValues values) async {
@@ -107,6 +158,7 @@ class _SetTrimState extends State<SetTrim> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Waveform(
+            key: keyWaveform,
             rmsValues: rmsValues,
             position: null,
             rangeStart: rangeValues.start,

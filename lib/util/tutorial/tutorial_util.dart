@@ -160,11 +160,12 @@ class CustomTargetFocus {
     );
     contents.add(
       TargetContent(
+        padding: const EdgeInsets.all(4),
         align: ContentAlign.custom,
         customPosition: positionNextButton,
         builder: (context, controller) {
           return SafeArea(
-            minimum: EdgeInsets.only(bottom: edgeSpace, left: edgeSpace, right: edgeSpace, top: edgeSpace),
+            minimum: EdgeInsets.only(bottom: edgeSpace, top: edgeSpace),
             child: _TutorialButtons(
               buttonsPosition: buttonsPosition,
               buttonsColumnCrossAlign: buttonsColumnCrossAlign,
@@ -206,7 +207,7 @@ class _TutorialButtons extends StatelessWidget {
     final isRow = buttonsPosition == ButtonsPosition.top || buttonsPosition == ButtonsPosition.bottom;
 
     final back = hideBack
-        ? const SizedBox(width: 80)
+        ? const SizedBox(width: 110)
         : TutorialTextButton(label: context.l10n.commonBack, onPressed: controller.previous);
 
     final next = TutorialNextButton(label: context.l10n.commonNext, onPressed: controller.next);

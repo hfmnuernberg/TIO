@@ -84,8 +84,8 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get mediaPlayerAddMarker;
   String get mediaPlayerDescription;
   String get mediaPlayerEditMarkers;
+  String get mediaPlayerEditMarkersTutorialTap;
   String get mediaPlayerEditMarkersTutorialAddRemove;
-  String get mediaPlayerEditMarkersTutorialWaveform;
   String get mediaPlayerErrorFileAccessible;
   String get mediaPlayerErrorFileAccessibleDescription;
   String get mediaPlayerErrorFileFormat;
@@ -118,6 +118,7 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get mediaPlayerSetPitch;
   String get mediaPlayerSetSpeed;
   String get mediaPlayerSetTrim;
+  String get mediaPlayerSetTrimTutorialTap;
   String get mediaPlayerShareAudioFile;
   String get mediaPlayerSpeed;
   String get mediaPlayerStartRecording;
@@ -128,7 +129,10 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get mediaPlayerTrim;
   String get mediaPlayerTutorialAdjust;
   String get mediaPlayerTutorialIslandTool;
-  String get mediaPlayerTutorialJumpTo;
+  String get mediaPlayerTutorialWaveform;
+  String get mediaPlayerTutorialWaveformZoom;
+  String get mediaPlayerTutorialWaveformPan;
+  String get mediaPlayerTutorialWaveformTap;
   String get mediaPlayerTutorialRepeat;
   String get mediaPlayerTutorialStartStop;
   String get mediaPlayerWaveformScrollLeft;

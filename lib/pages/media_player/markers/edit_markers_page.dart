@@ -92,10 +92,11 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
     final targets = <CustomTargetFocus>[
       CustomTargetFocus(
         keyWaveform,
-        l10n.mediaPlayerEditMarkersTutorialWaveform,
+        l10n.mediaPlayerEditMarkersTutorialTap,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
+        buttonsPosition: ButtonsPosition.top,
       ),
       CustomTargetFocus(
         keyAddRemove,

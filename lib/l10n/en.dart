@@ -98,10 +98,9 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get mediaPlayerAddMarker => 'Add marker';
   String get mediaPlayerDescription => 'Make recordings or load audio files, listen to them and edit them.';
   String get mediaPlayerEditMarkers => 'Edit markers';
+  String get mediaPlayerEditMarkersTutorialTap => 'Tap or drag with one finger to change the playback position.';
   String get mediaPlayerEditMarkersTutorialAddRemove =>
-      'At the selected position, you can add a marker. If you select it again, you can remove it.';
-  String get mediaPlayerEditMarkersTutorialWaveform =>
-      'Here you can see the waveform of your audio file. You can zoom in and out, and then move the zoomed-in view to better inspect specific parts.';
+      'At the selected playback position, you can add a marker. If you select it again, you can remove it.';
   String get mediaPlayerErrorFileAccessible => 'File is not accessible.';
   String get mediaPlayerErrorFileAccessibleDescription =>
       "Maybe the file needs to be downloaded first if it doesn't exist locally on your phone.";
@@ -139,6 +138,8 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get mediaPlayerSetPitch => 'Set pitch';
   String get mediaPlayerSetSpeed => 'Set tempo';
   String get mediaPlayerSetTrim => 'Set trim';
+  String get mediaPlayerSetTrimTutorialTap =>
+      'Tap or drag with one finger to change the beginning or end of the audio segment.';
   String get mediaPlayerShareAudioFile => 'Share audio file';
   String get mediaPlayerSpeed => 'Tempo';
   String get mediaPlayerStartRecording => 'Start recording';
@@ -152,7 +153,12 @@ class English extends AppLocalizations with EnglishFlashCards {
       'Tap here to adjust your audio file. You can set the volume and the basic beat, trim your file and set and remove markers, as well as change the pitch and tempo afterwards.';
   String get mediaPlayerTutorialIslandTool =>
       'Tap here to combine your Media Player with a Tuner or Metronome.\n\nYou can link your Media Player with an existing tool or create a new tool and link it.';
-  String get mediaPlayerTutorialJumpTo => 'Tap anywhere to jump to that part of your sound file.';
+  String get mediaPlayerTutorialWaveform => 'Here you can see the waveform of your audio file.';
+  String get mediaPlayerTutorialWaveformZoom =>
+      'To zoom the visible audio segment place two fingers onto the waveform, wait a moment and then move them apart (zoom in) or closer together (zoom out).';
+  String get mediaPlayerTutorialWaveformPan =>
+      'To move the visible audio segment when zoomed in, place two fingers onto the waveform and drag left or right.';
+  String get mediaPlayerTutorialWaveformTap => 'Tap or drag with one finger to change the playback position.';
   String get mediaPlayerTutorialRepeat =>
       'Enable repeated playback for this media player. By tapping again, you can also play all media players in this project that contain a sound file one after another.';
   String get mediaPlayerTutorialStartStop => 'Tap here to start and stop recording or to play a sound file.';
