@@ -145,7 +145,6 @@ class _TunerState extends State<Tuner> {
         CustomTargetFocus(
           keyStartStop,
           l10n.tunerTutorialStartStop,
-          hideBack: true,
           alignText: ContentAlign.top,
           pointingDirection: PointingDirection.down,
         ),
@@ -168,7 +167,11 @@ class _TunerState extends State<Tuner> {
         ),
     ];
 
-    if (targets.isEmpty) return;
+    if (targets.isEmpty) {
+      return;
+    } else {
+      targets.first.hideBack = true;
+    }
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       if (context.read<ProjectLibrary>().showTunerTutorial) {
         context.read<ProjectLibrary>().showTunerTutorial = false;

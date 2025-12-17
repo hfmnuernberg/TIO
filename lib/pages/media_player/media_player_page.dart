@@ -205,7 +205,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         CustomTargetFocus(
           _keyStartStop,
           l10n.mediaPlayerTutorialStartStop,
-          hideBack: true,
           alignText: ContentAlign.top,
           pointingDirection: PointingDirection.down,
         ),
@@ -243,7 +242,11 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         ),
     ];
 
-    if (targets.isEmpty) return;
+    if (targets.isEmpty) {
+      return;
+    } else {
+      targets.first.hideBack = true;
+    }
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       if (context.read<ProjectLibrary>().showMediaPlayerTutorial) {
         context.read<ProjectLibrary>().showMediaPlayerTutorial = false;

@@ -114,11 +114,12 @@ class _AdvancedRhythmGroupEditorState extends State<AdvancedRhythmGroupEditor> {
       CustomTargetFocus(
         keyToggleBeats,
         context.l10n.metronomeTutorialEditBeats,
-        hideBack: true,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
       ),
     ];
+
+    targets.first.hideBack = true;
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showBeatToggleTip = false;
       await context.read<ProjectRepository>().saveLibrary(context.read<ProjectLibrary>());

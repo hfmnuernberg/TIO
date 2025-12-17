@@ -106,7 +106,6 @@ class _ParentToolState extends State<ParentTool> {
         CustomTargetFocus(
           _keySaveInProject,
           context.l10n.toolTutorialSave,
-          hideBack: true,
           alignText: ContentAlign.left,
           pointingDirection: PointingDirection.right,
           pointerOffset: -25,
@@ -115,7 +114,6 @@ class _ParentToolState extends State<ParentTool> {
         CustomTargetFocus(
           _keySaveCopyInProject,
           context.l10n.appTutorialToolSave,
-          hideBack: true,
           alignText: ContentAlign.left,
           pointingDirection: PointingDirection.right,
         ),
@@ -133,8 +131,9 @@ class _ParentToolState extends State<ParentTool> {
     if (targets.isEmpty) {
       if (widget.onParentTutorialFinished != null) widget.onParentTutorialFinished!();
       return;
+    } else {
+      targets.first.hideBack = true;
     }
-
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       final projectLibrary = context.read<ProjectLibrary>();
 

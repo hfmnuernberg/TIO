@@ -151,7 +151,6 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
         CustomTargetFocus(
           keyStartStop,
           l10n.metronomeTutorialStartStop,
-          hideBack: true,
           alignText: ContentAlign.top,
           pointingDirection: PointingDirection.down,
         ),
@@ -198,7 +197,11 @@ class _MetronomePageState extends State<MetronomePage> with RouteAware {
         ),
     ];
 
-    if (targets.isEmpty) return;
+    if (targets.isEmpty) {
+      return;
+    } else {
+      targets.first.hideBack = true;
+    }
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       if (context.read<ProjectLibrary>().showMetronomeTutorial) {
         context.read<ProjectLibrary>().showMetronomeTutorial = false;

@@ -119,7 +119,6 @@ class _ProjectPageState extends State<ProjectPage> {
       CustomTargetFocus(
         _keyChangeTitle,
         l10n.projectTutorialEditTitle,
-        hideBack: true,
         pointingDirection: PointingDirection.up,
         alignText: ContentAlign.bottom,
         shape: ShapeLightFocus.RRect,
@@ -134,6 +133,7 @@ class _ProjectPageState extends State<ProjectPage> {
       ),
     ];
 
+    targets.first.hideBack = true;
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showProjectPageTutorial = false;
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());

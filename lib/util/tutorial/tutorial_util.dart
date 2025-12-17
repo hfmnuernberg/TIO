@@ -65,6 +65,7 @@ class Tutorial {
 
 class CustomTargetFocus {
   late TargetFocus targetFocus;
+  bool hideBack = false;
 
   CustomTargetFocus(
     GlobalKey? key, // set key to null to cover whole screen without specific target (and provide context!)
@@ -78,7 +79,6 @@ class CustomTargetFocus {
     ShapeLightFocus? shape,
     double pointerOffset = 0,
     PointerPosition pointerPosition = PointerPosition.center,
-    bool hideBack = false,
   }) {
     final mediaQuery = (context != null) ? MediaQuery.of(context) : null;
     final safeTop = mediaQuery?.viewPadding.top ?? 0;

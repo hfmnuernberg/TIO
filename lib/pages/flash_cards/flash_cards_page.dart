@@ -52,7 +52,6 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
       CustomTargetFocus(
         keyFilter,
         context.l10n.flashCardsPageTutorialFilter,
-        hideBack: true,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
@@ -66,6 +65,7 @@ class _FlashCardsPageState extends State<FlashCardsPage> {
       ),
     ];
 
+    targets.first.hideBack = true;
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showFlashCardsPageTutorial = false;
       await projectRepo.saveLibrary(context.read<ProjectLibrary>());
