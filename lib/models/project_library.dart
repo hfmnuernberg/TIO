@@ -69,6 +69,8 @@ class ProjectLibrary extends ChangeNotifier {
   @JsonKey(defaultValue: true)
   late bool showMediaPlayerEditMarkersTutorial;
   @JsonKey(defaultValue: true)
+  late bool showMediaPlayerSetTrimTutorial;
+  @JsonKey(defaultValue: true)
   late bool showPianoIslandTutorial;
   @JsonKey(defaultValue: true)
   late bool showPianoTutorial;
@@ -99,6 +101,7 @@ class ProjectLibrary extends ChangeNotifier {
     this.showMediaPlayerIslandTutorial,
     this.showMediaPlayerTutorial,
     this.showMediaPlayerEditMarkersTutorial,
+    this.showMediaPlayerSetTrimTutorial,
     this.showPianoIslandTutorial,
     this.showPianoTutorial,
     this.showImageTutorial,
@@ -132,6 +135,7 @@ class ProjectLibrary extends ChangeNotifier {
     showMediaPlayerIslandTutorial = true;
     showMediaPlayerTutorial = true;
     showMediaPlayerEditMarkersTutorial = true;
+    showMediaPlayerSetTrimTutorial = true;
     showPianoIslandTutorial = true;
     showPianoTutorial = true;
     showImageTutorial = true;

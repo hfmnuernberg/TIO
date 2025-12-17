@@ -206,7 +206,7 @@ class _TutorialButtons extends StatelessWidget {
     final isRow = buttonsPosition == ButtonsPosition.top || buttonsPosition == ButtonsPosition.bottom;
 
     final back = hideBack
-        ? const SizedBox(width: 80)
+        ? const SizedBox(width: 110)
         : TutorialTextButton(label: context.l10n.commonBack, onPressed: controller.previous);
 
     final next = TutorialNextButton(label: context.l10n.commonNext, onPressed: controller.next);

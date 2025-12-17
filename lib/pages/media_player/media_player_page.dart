@@ -207,6 +207,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           l10n.mediaPlayerTutorialStartStop,
           alignText: ContentAlign.top,
           pointingDirection: PointingDirection.down,
+          buttonsPosition: ButtonsPosition.top,
         ),
       if (context.read<ProjectLibrary>().showMediaPlayerTutorial)
         CustomTargetFocus(
@@ -235,10 +236,38 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded)
         CustomTargetFocus(
           _keyWaveform,
-          l10n.mediaPlayerTutorialJumpTo,
+          l10n.mediaPlayerTutorialWaveform,
           alignText: ContentAlign.bottom,
           pointingDirection: PointingDirection.up,
           shape: ShapeLightFocus.RRect,
+          buttonsPosition: ButtonsPosition.top,
+        ),
+      if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded)
+        CustomTargetFocus(
+          _keyWaveform,
+          l10n.mediaPlayerTutorialWaveformZoom,
+          alignText: ContentAlign.bottom,
+          pointingDirection: PointingDirection.up,
+          shape: ShapeLightFocus.RRect,
+          buttonsPosition: ButtonsPosition.top,
+        ),
+      if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded)
+        CustomTargetFocus(
+          _keyWaveform,
+          l10n.mediaPlayerTutorialWaveformPan,
+          alignText: ContentAlign.bottom,
+          pointingDirection: PointingDirection.up,
+          shape: ShapeLightFocus.RRect,
+          buttonsPosition: ButtonsPosition.top,
+        ),
+      if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded)
+        CustomTargetFocus(
+          _keyWaveform,
+          l10n.mediaPlayerTutorialWaveformTap,
+          alignText: ContentAlign.bottom,
+          pointingDirection: PointingDirection.up,
+          shape: ShapeLightFocus.RRect,
+          buttonsPosition: ButtonsPosition.top,
         ),
     ];
 
