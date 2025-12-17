@@ -119,7 +119,6 @@ class _PianoPageState extends State<PianoPage> {
         CustomTargetFocus(
           _keyBookmarkSave,
           l10n.toolTutorialSave,
-          hideBack: true,
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             left: MediaQuery.of(context).size.width / 3,
@@ -132,7 +131,6 @@ class _PianoPageState extends State<PianoPage> {
         CustomTargetFocus(
           _keyBookmarkShare,
           l10n.appTutorialToolSave,
-          hideBack: true,
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             left: MediaQuery.of(context).size.width / 3,
@@ -175,6 +173,7 @@ class _PianoPageState extends State<PianoPage> {
         CustomTargetFocus(
           _keyIsland,
           l10n.pianoTutorialIslandTool,
+          // hideBack: true,
           alignText: ContentAlign.custom,
           customTextPosition: CustomTargetContentPosition(
             top: MediaQuery.of(context).size.height / 8,
@@ -188,7 +187,11 @@ class _PianoPageState extends State<PianoPage> {
         ),
     ];
 
-    if (targets.isEmpty) return;
+    if (targets.isEmpty) {
+      return;
+    } else {
+      targets.first.hideBack = true;
+    }
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       if (context.read<ProjectLibrary>().showPianoTutorial) {
         context.read<ProjectLibrary>().showPianoTutorial = false;

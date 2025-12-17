@@ -89,11 +89,10 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
   void createTutorial() {
     final l10n = context.l10n;
-    var targets = <CustomTargetFocus>[
+    final targets = <CustomTargetFocus>[
       CustomTargetFocus(
         keyWaveform,
         l10n.mediaPlayerEditMarkersTutorialWaveform,
-        hideBack: true,
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
@@ -108,6 +107,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
       ),
     ];
 
+    targets.first.hideBack = true;
     tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showMediaPlayerEditMarkersTutorial = false;
       await projectRepo.saveLibrary(context.read<ProjectLibrary>());

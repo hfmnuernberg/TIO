@@ -96,7 +96,6 @@ class _ProjectsPageState extends State<ProjectsPage> {
         null,
         context: context,
         l10n.projectsTutorialHowToUseTio,
-        hideBack: true,
         customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 2 - 100),
       ),
       CustomTargetFocus(
@@ -139,6 +138,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
       ),
     ];
 
+    targets.first.hideBack = true;
     _tutorial.create(targets.map((e) => e.targetFocus).toList(), () async {
       context.read<ProjectLibrary>().showHomepageTutorial = false;
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
