@@ -151,6 +151,9 @@ class _WaveformState extends State<Waveform> {
                     onScaleStart: gestures.handleScaleStart,
                     onScaleUpdate: gestures.handleScaleUpdate,
                     onScaleEnd: gestures.handleScaleEnd,
+                    onVerticalDragStart: (_) {},
+                    onVerticalDragUpdate: (_) {},
+                    onVerticalDragEnd: (_) {},
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         final double width = constraints.maxWidth;
