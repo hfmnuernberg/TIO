@@ -96,7 +96,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         alignText: ContentAlign.bottom,
         pointingDirection: PointingDirection.up,
         shape: ShapeLightFocus.RRect,
-        // buttonsPosition: ButtonsPosition.top,
+        buttonsPosition: ButtonsPosition.top,
       ),
       CustomTargetFocus(
         keyAddRemove,
@@ -105,7 +105,6 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
         pointingDirection: PointingDirection.down,
         pointerOffset: 68,
         shape: ShapeLightFocus.Circle,
-        // buttonsPosition: ButtonsPosition.top,
       ),
     ];
 

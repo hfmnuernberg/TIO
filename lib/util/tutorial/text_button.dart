@@ -13,7 +13,7 @@ class TutorialTextButton extends StatelessWidget {
       width: 110,
       child: Center(
         child: CircleAvatar(
-          backgroundColor: ColorTheme.primary,
+          backgroundColor: ColorTheme.primary.withAlpha(600),
           radius: 45,
           child: TextButton(
             onPressed: onPressed,

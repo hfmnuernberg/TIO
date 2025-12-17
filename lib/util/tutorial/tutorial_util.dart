@@ -160,11 +160,12 @@ class CustomTargetFocus {
     );
     contents.add(
       TargetContent(
+        padding: const EdgeInsets.all(4),
         align: ContentAlign.custom,
         customPosition: positionNextButton,
         builder: (context, controller) {
           return SafeArea(
-            minimum: EdgeInsets.only(bottom: edgeSpace, left: edgeSpace, right: edgeSpace, top: edgeSpace),
+            minimum: EdgeInsets.only(bottom: edgeSpace, top: edgeSpace),
             child: _TutorialButtons(
               buttonsPosition: buttonsPosition,
               buttonsColumnCrossAlign: buttonsColumnCrossAlign,

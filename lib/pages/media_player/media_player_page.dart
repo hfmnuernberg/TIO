@@ -237,37 +237,41 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         CustomTargetFocus(
           _keyWaveform,
           l10n.mediaPlayerTutorialWaveform,
-          alignText: ContentAlign.bottom,
           pointingDirection: PointingDirection.up,
           shape: ShapeLightFocus.RRect,
           buttonsPosition: ButtonsPosition.top,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 1.6),
         ),
       if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded)
         CustomTargetFocus(
           _keyWaveform,
           l10n.mediaPlayerTutorialWaveformZoom,
-          alignText: ContentAlign.bottom,
           pointingDirection: PointingDirection.up,
           shape: ShapeLightFocus.RRect,
           buttonsPosition: ButtonsPosition.top,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 1.6),
         ),
       if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded)
         CustomTargetFocus(
           _keyWaveform,
           l10n.mediaPlayerTutorialWaveformPan,
-          alignText: ContentAlign.bottom,
           pointingDirection: PointingDirection.up,
           shape: ShapeLightFocus.RRect,
           buttonsPosition: ButtonsPosition.top,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 1.6),
         ),
       if (context.read<ProjectLibrary>().showWaveformTip && _player.loaded)
         CustomTargetFocus(
           _keyWaveform,
           l10n.mediaPlayerTutorialWaveformTap,
-          alignText: ContentAlign.bottom,
           pointingDirection: PointingDirection.up,
           shape: ShapeLightFocus.RRect,
           buttonsPosition: ButtonsPosition.top,
+          alignText: ContentAlign.custom,
+          customTextPosition: CustomTargetContentPosition(top: MediaQuery.of(context).size.height / 1.6),
         ),
     ];
 
