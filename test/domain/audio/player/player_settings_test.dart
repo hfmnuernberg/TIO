@@ -17,9 +17,9 @@ void main() {
 
   group('Player - Settings', () {
     testWidgets('sets volume in audio system', (tester) async {
-      await player.setVolume(1.2);
+      await player.setVolume(0.5);
 
-      context.audioSystemMock.verifyMediaPlayerSetVolumeCalledWith(1.2);
+      context.audioSystemMock.verifyMediaPlayerSetVolumeCalledWith(0.25);
     });
 
     testWidgets('looping can be activated and deactivated', (tester) async {

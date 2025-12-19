@@ -31,9 +31,9 @@ void main() {
     });
 
     testWidgets('sets volume in audio system', (tester) async {
-      await metronome.setVolume(1.2);
+      await metronome.setVolume(0.5);
 
-      context.audioSystemMock.verifyMetronomeSetVolumeCalledWith(1.2);
+      context.audioSystemMock.verifyMetronomeSetVolumeCalledWith(0.25);
     });
 
     testWidgets('sets BPM in audio system', (tester) async {
