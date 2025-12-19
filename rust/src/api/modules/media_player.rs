@@ -248,7 +248,7 @@ fn on_audio_callback(samples_out: &mut [f32], _: &cpal::OutputCallbackInfo) {
                 Some(sample) => {
                     for channel in 0..NUM_CHANNELS {
                         let index_out = i * NUM_CHANNELS + channel;
-                        samples_out[index_out] = sample * vol * 4.0;
+                        samples_out[index_out] = sample * vol;
                     }
                 }
                 None => {

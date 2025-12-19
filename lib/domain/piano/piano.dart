@@ -34,7 +34,7 @@ class Piano {
 
   void releaseNote(int note) => _as.pianoNoteOff(note: note);
 
-  Future<void> setVolume(double volume) async => _as.pianoSetVolume(volume: volume);
+  Future<void> setVolume(double volume) async => _as.pianoSetVolume(volume: (volume * volume).clamp(0, 1));
 
   Future<void> setConcertPitch(double concertPitch) async {
     await _as.pianoSetConcertPitch(newConcertPitch: concertPitch);

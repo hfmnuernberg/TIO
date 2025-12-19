@@ -17,8 +17,8 @@ void main() {
 
   group('Piano - Settings', () {
     testWidgets('sets volume in audio system', (tester) async {
-      await piano.setVolume(1.2);
-      context.audioSystemMock.verifyPianoSetVolumeCalledWith(1.2);
+      await piano.setVolume(0.5);
+      context.audioSystemMock.verifyPianoSetVolumeCalledWith(0.25);
     });
 
     testWidgets('sets concert pitch in audio system and updates getter', (tester) async {

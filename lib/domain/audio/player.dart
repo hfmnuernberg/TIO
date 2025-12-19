@@ -123,7 +123,7 @@ class Player {
   }
 
   Future<void> setVolume(double volume) async {
-    await _as.mediaPlayerSetVolume(volume: volume);
+    await _as.mediaPlayerSetVolume(volume: (volume * volume).clamp(0, 1));
   }
 
   Future<void> setRepeat(bool repeat) async {
