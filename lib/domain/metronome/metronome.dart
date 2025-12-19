@@ -115,7 +115,7 @@ class Metronome {
     await start();
   }
 
-  Future<void> setVolume(double volume) async => _as.metronomeSetVolume(volume: volume);
+  Future<void> setVolume(double volume) async => _as.metronomeSetVolume(volume: (volume * volume).clamp(0, 1));
 
   Future<void> setBpm(int bpm) async => _as.metronomeSetBpm(bpm: bpm.toDouble());
 
