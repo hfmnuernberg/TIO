@@ -10,6 +10,8 @@ class WaveformGestureHelper {
   final int Function() getTotalBins;
   final void Function(double relative) onPositionChange;
   final void Function(double viewStart, double viewEnd) onZoomChanged;
+  final Future<void> Function() onInteractionStart;
+  final Future<void> Function() onInteractionEnd;
   final void Function(void Function()) setState;
   final VoidCallback rebuildVisualizer;
 
@@ -23,6 +25,8 @@ class WaveformGestureHelper {
     required this.getTotalBins,
     required this.onPositionChange,
     required this.onZoomChanged,
+    required this.onInteractionStart,
+    required this.onInteractionEnd,
     required this.setState,
     required this.rebuildVisualizer,
   });
@@ -30,8 +34,9 @@ class WaveformGestureHelper {
   double get _paintedWidth => getPaintedWidth();
   int get _totalBins => getTotalBins();
 
-  void handlePointerDown(PointerDownEvent event) {
+  void handlePointerDown(PointerDownEvent event) async {
     if (event.kind != PointerDeviceKind.touch) return;
+    await onInteractionStart();
     activePointers++;
     if (activePointers >= 2) {
       multiTouchInProgress = true;
@@ -62,7 +67,7 @@ class WaveformGestureHelper {
     onPositionChange(snappedRelative);
   }
 
-  void handleScaleStart(ScaleStartDetails details) {
+  void handleScaleStart(ScaleStartDetails details) async {
     isZooming = null;
 
     final double width = _paintedWidth;
@@ -135,8 +140,9 @@ class WaveformGestureHelper {
     }
   }
 
-  void handleScaleEnd(ScaleEndDetails details) {
+  void handleScaleEnd(ScaleEndDetails details) async {
     isZooming = null;
     onZoomChanged(viewport.viewStart, viewport.viewEnd);
+    await onInteractionEnd();
   }
 }

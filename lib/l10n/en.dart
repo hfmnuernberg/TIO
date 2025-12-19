@@ -100,7 +100,7 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get mediaPlayerEditMarkers => 'Edit markers';
   String get mediaPlayerEditMarkersTutorialTap => 'Tap or drag with one finger to change the playback position.';
   String get mediaPlayerEditMarkersTutorialAddRemove =>
-      'At the selected playback position, you can add a marker. If you select it again, you can remove it.';
+      'At the selected playback position, you can add a marker. If you select the marker again, you can remove it.';
   String get mediaPlayerErrorFileAccessible => 'File is not accessible.';
   String get mediaPlayerErrorFileAccessibleDescription =>
       "Maybe the file needs to be downloaded first if it doesn't exist locally on your phone.";

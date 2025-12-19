@@ -20,6 +20,8 @@ class Waveform extends StatefulWidget {
   final double? selectedMarkerPosition;
   final ValueChanged<double> onPositionChange;
   final void Function(double viewStart, double viewEnd) onZoomChanged;
+  final Future<void> Function() onInteractionStart;
+  final Future<void> Function() onInteractionEnd;
 
   const Waveform({
     super.key,
@@ -32,6 +34,8 @@ class Waveform extends StatefulWidget {
     required this.selectedMarkerPosition,
     required this.onPositionChange,
     required this.onZoomChanged,
+    required this.onInteractionStart,
+    required this.onInteractionEnd,
   });
 
   @override
@@ -65,6 +69,8 @@ class _WaveformState extends State<Waveform> {
       getTotalBins: () => widget.rmsValues.length,
       onPositionChange: widget.onPositionChange,
       onZoomChanged: widget.onZoomChanged,
+      onInteractionStart: widget.onInteractionStart,
+      onInteractionEnd: widget.onInteractionEnd,
       setState: setState,
       rebuildVisualizer: rebuildVisualizer,
     );
@@ -74,7 +80,6 @@ class _WaveformState extends State<Waveform> {
   @override
   void didUpdateWidget(covariant Waveform oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     if (oldWidget.rmsValues != widget.rmsValues ||
         oldWidget.position != widget.position ||
         oldWidget.rangeStart != widget.rangeStart ||
@@ -151,14 +156,10 @@ class _WaveformState extends State<Waveform> {
                     onScaleStart: gestures.handleScaleStart,
                     onScaleUpdate: gestures.handleScaleUpdate,
                     onScaleEnd: gestures.handleScaleEnd,
-                    onVerticalDragStart: (_) {},
-                    onVerticalDragUpdate: (_) {},
-                    onVerticalDragEnd: (_) {},
                     child: LayoutBuilder(
                       builder: (context, constraints) {
                         final double width = constraints.maxWidth;
                         availableWidth = width;
-
                         return Stack(
                           children: [
                             CustomPaint(key: waveKey, painter: waveformVisualizer, size: Size(width, waveformHeight)),

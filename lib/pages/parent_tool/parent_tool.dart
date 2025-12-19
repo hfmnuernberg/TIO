@@ -399,7 +399,10 @@ class _ParentToolState extends State<ParentTool> {
         child: _appBar(context),
       ),
       backgroundColor: ColorTheme.primary92,
-      body: widget.deactivateScroll ? _body() : SingleChildScrollView(child: _body()),
+      body: SingleChildScrollView(
+        physics: widget.deactivateScroll ? const NeverScrollableScrollPhysics() : const AlwaysScrollableScrollPhysics(),
+        child: _body(),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: widget.floatingActionButton,
       bottomNavigationBar: project == null ? null : ToolNavigationBar(project: project, toolBlock: widget.toolBlock),
