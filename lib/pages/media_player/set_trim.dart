@@ -33,6 +33,8 @@ class _SetTrimState extends State<SetTrim> {
   late int targetVisibleBins;
   late ProjectRepository projectRepo;
 
+  bool isScrollingEnabled = true;
+
   final Tutorial tutorial = Tutorial();
   final GlobalKey keyWaveform = GlobalKey();
 
@@ -151,6 +153,7 @@ class _SetTrimState extends State<SetTrim> {
   Widget build(BuildContext context) {
     return ParentSettingPage(
       title: context.l10n.mediaPlayerSetTrim,
+      mustBeScrollable: isScrollingEnabled,
       confirm: handleConfirm,
       reset: handleReset,
       cancel: handleCancel,
@@ -168,6 +171,8 @@ class _SetTrimState extends State<SetTrim> {
             selectedMarkerPosition: null,
             onPositionChange: handleWaveformPositionChange,
             onZoomChanged: handleZoomChanged,
+            onInteractionStart: () async => setState(() => isScrollingEnabled = false),
+            onInteractionEnd: () async => setState(() => isScrollingEnabled = true),
           ),
         ],
       ),

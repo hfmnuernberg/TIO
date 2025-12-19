@@ -40,6 +40,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
   late int targetVisibleBins;
   late ProjectRepository projectRepo;
 
+  bool isScrollingEnabled = true;
+
   final Tutorial tutorial = Tutorial();
   final GlobalKey keyWaveform = GlobalKey();
   final GlobalKey keyAddRemove = GlobalKey();
@@ -214,6 +216,7 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
 
     return ParentSettingPage(
       title: l10n.mediaPlayerEditMarkers,
+      mustBeScrollable: isScrollingEnabled,
       confirm: onConfirm,
       reset: removeAllMarkers,
       customWidget: Column(
@@ -229,6 +232,8 @@ class _EditMarkersPageState extends State<EditMarkersPage> {
             selectedMarkerPosition: selectedMarkerPosition,
             onPositionChange: handlePositionChange,
             onZoomChanged: handleZoomChanged,
+            onInteractionStart: () async => setState(() => isScrollingEnabled = false),
+            onInteractionEnd: () async => setState(() => isScrollingEnabled = true),
           ),
           MarkerEditControls(
             keyAddRemove: keyAddRemove,

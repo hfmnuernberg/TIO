@@ -53,10 +53,13 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
             automaticallyImplyLeading: false,
           ),
           backgroundColor: ColorTheme.primary92,
-          body: (widget.mustBeScrollable && !isLandscapeLayout)
+          body: !isLandscapeLayout
               ? LayoutBuilder(
                   builder: (context, viewportConstraints) {
                     return SingleChildScrollView(
+                      physics: widget.mustBeScrollable
+                          ? const AlwaysScrollableScrollPhysics()
+                          : const NeverScrollableScrollPhysics(),
                       child: ConstrainedBox(
                         constraints: BoxConstraints(minHeight: viewportConstraints.maxHeight),
                         child: _buildPortrait(),
@@ -64,7 +67,7 @@ class _ParentSettingPageState extends State<ParentSettingPage> {
                     );
                   },
                 )
-              : (!isLandscapeLayout ? _buildPortrait() : _buildLandscape()),
+              : _buildLandscape(),
           bottomSheet: _bottomSheet(),
         ),
       ),

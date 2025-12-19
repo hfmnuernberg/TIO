@@ -84,6 +84,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   Duration _recordingLength = Duration.zero;
 
   bool _processingButtonClick = false;
+  bool _isScrollingEnabled = true;
 
   final Tutorial _tutorial = Tutorial();
   final GlobalKey _keyStartStop = GlobalKey();
@@ -742,6 +743,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: _mediaPlayerBlock,
       menuItems: _menuItems,
+      deactivateScroll: !_isScrollingEnabled,
       islandToolTutorialKey: islandToolTutorialKey,
       onParentTutorialFinished: () {
         _createTutorial();
@@ -788,6 +790,8 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
                               selectedMarkerPosition: null,
                               onPositionChange: _handleWaveformPositionChange,
                               onZoomChanged: _handleZoomChanged,
+                              onInteractionStart: () async => setState(() => _isScrollingEnabled = false),
+                              onInteractionEnd: () async => setState(() => _isScrollingEnabled = true),
                             ),
                     ),
                 ],
