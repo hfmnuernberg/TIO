@@ -36,19 +36,23 @@ class WaveformGestureHelper {
 
   void handlePointerDown(PointerDownEvent event) async {
     if (event.kind != PointerDeviceKind.touch) return;
+
     await onInteractionStart();
+
     activePointers++;
     if (activePointers >= 2) {
       multiTouchInProgress = true;
     }
   }
 
-  void handlePointerUp(PointerUpEvent event) {
+  void handlePointerUp(PointerUpEvent event) async {
     if (event.kind != PointerDeviceKind.touch) return;
+
     activePointers--;
     if (activePointers <= 0) {
       activePointers = 0;
       multiTouchInProgress = false;
+      await onInteractionEnd();
     }
   }
 
