@@ -1,18 +1,17 @@
-import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tiomusic/domain/tuner/tuner.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/tuner_block.dart';
 import 'package:tiomusic/pages/parent_tool/parent_inner_island.dart';
-import 'package:tiomusic/pages/tuner/tuner_functions.dart';
+import 'package:tiomusic/pages/tuner/pitch_visualizer.dart';
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants/constants.dart';
-import 'package:tiomusic/util/constants/tuner_constants.dart';
 import 'package:tiomusic/util/util_midi.dart';
 
 class TunerIslandView extends StatefulWidget {
@@ -25,12 +24,9 @@ class TunerIslandView extends StatefulWidget {
 }
 
 class _TunerIslandViewState extends State<TunerIslandView> {
-  Timer? _timerPollFreq;
   final _midiNameText = TextEditingController();
 
-  late AudioSystem _as;
-  late AudioSession _audioSession;
-  late Wakelock _wakelock;
+  late final Tuner _tuner;
 
   late double _pitchFactor = 0.5;
   late String _midiName = 'A';
@@ -43,51 +39,32 @@ class _TunerIslandViewState extends State<TunerIslandView> {
 
   bool _processingButtonClick = false;
 
-  AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
-
-  Future<bool> startTuner() async {
-    _isRunning = true;
-    _audioSessionInterruptionListenerHandle = await _audioSession.registerInterruptionListener(stopTuner);
-    return TunerFunctions.start(_as, _audioSession, _wakelock);
-  }
-
-  Future<bool> stopTuner() async {
-    if (_audioSessionInterruptionListenerHandle != null) {
-      _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
-      _audioSessionInterruptionListenerHandle = null;
-    }
-    _isRunning = false;
-    _midiNameText.text = '';
-    _pitchFactor = 0.5;
-    _freqHistory.fillRange(0, _freqHistory.length, 0);
-    _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
-    return TunerFunctions.stop(_as, _wakelock);
-  }
-
   @override
   void initState() {
     super.initState();
 
-    _as = context.read<AudioSystem>();
-    _audioSession = context.read<AudioSession>();
-    _wakelock = context.read<Wakelock>();
-
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
 
-    _timerPollFreq = Timer.periodic(const Duration(milliseconds: TunerParams.freqPollMillis), (t) async {
-      if (!mounted) {
-        t.cancel();
-        return;
-      }
-      if (!_isRunning) return;
-      _onNewFrequency(await _as.tunerGetFrequency());
-    });
+    _tuner = Tuner(
+      context.read<AudioSystem>(),
+      context.read<AudioSession>(),
+      context.read<Wakelock>(),
+      onRunningChange: (running) {
+        if (!mounted) return;
+        setState(() => _isRunning = running);
+      },
+      onFrequencyChange: (freq) {
+        if (!mounted) return;
+        if (!_isRunning) return;
+        _onNewFrequency(freq);
+      },
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       // start with delay to make sure previous tuner is stopped before new one is started (on copy/save)
       _processingButtonClick = true;
       await Future.delayed(const Duration(milliseconds: 400));
-      startTuner();
+      await _tuner.start();
       Future.delayed(const Duration(milliseconds: 1000), () {
         if (mounted) setState(() => _processingButtonClick = false);
       });
@@ -97,19 +74,25 @@ class _TunerIslandViewState extends State<TunerIslandView> {
   @override
   void deactivate() {
     stopTuner();
-    _timerPollFreq?.cancel();
     super.deactivate();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ParentInnerIsland(
-      onMainIconPressed: _startStop,
-      mainIcon: _isRunning ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.tunerBlock.icon,
-      parameterText: '${context.l10n.formatNumber(widget.tunerBlock.chamberNoteHz)} Hz',
-      centerView: _pitchIslandViewVisualizer,
-      textSpaceWidth: 60,
-    );
+  void dispose() {
+    _midiNameText.dispose();
+    _tuner.dispose();
+    super.dispose();
+  }
+
+  Future<bool> stopTuner() async {
+    final success = await _tuner.stop();
+
+    _midiNameText.text = '';
+    _pitchFactor = 0.5;
+    _freqHistory.fillRange(0, _freqHistory.length, 0);
+    _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
+
+    return success;
   }
 
   double _medianOf(Iterable<double> values) {
@@ -155,76 +138,21 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     if (_isRunning) {
       await stopTuner();
     } else {
-      await startTuner();
+      await _tuner.start();
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
     setState(() => _processingButtonClick = false);
   }
-}
-
-class PitchIslandViewVisualizer extends CustomPainter {
-  late double _pitchFactor;
-  late String _midiName;
-  late bool _show = false;
-
-  final double radiusSideCircles = 10;
-
-  bool dirty = true;
-
-  PitchIslandViewVisualizer(double factor, String midiName, bool show) {
-    _pitchFactor = factor;
-    _midiName = midiName;
-    _show = show;
-  }
 
   @override
-  void paint(Canvas canvas, Size size) {
-    dirty = false;
-
-    var paintCircle = Paint()
-      ..color = ColorTheme.primary
-      ..strokeWidth = 2;
-
-    var paintLine = Paint()
-      ..color = ColorTheme.primaryFixedDim
-      ..strokeWidth = 2;
-
-    var paintEmptyCircle = Paint()
-      ..color = ColorTheme.primary
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-
-    var xPositionFactor = ((size.width - (radiusSideCircles * 2)) * _pitchFactor) + radiusSideCircles;
-    var factorPosition = Offset(xPositionFactor, size.height / 2);
-
-    // the line
-    canvas.drawLine(Offset(0, size.height / 2), Offset(size.width, size.height / 2), paintLine);
-
-    // circles on the sides
-    canvas.drawCircle(Offset(radiusSideCircles, size.height / 2), radiusSideCircles, paintLine);
-    canvas.drawCircle(Offset(size.width - radiusSideCircles, size.height / 2), radiusSideCircles, paintLine);
-
-    // empty circle in the middle
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), 20, paintEmptyCircle);
-
-    if (_show) {
-      // circle showing the deviation
-      canvas.drawCircle(factorPosition, 16, paintCircle);
-
-      const textStyle = TextStyle(color: Colors.white, fontSize: 14);
-      final textSpan = TextSpan(text: _midiName, style: textStyle);
-      final textPainter = TextPainter(text: textSpan, textDirection: TextDirection.ltr, textAlign: TextAlign.center);
-      textPainter.layout();
-      textPainter.paint(
-        canvas,
-        Offset(xPositionFactor - (textPainter.width / 2), size.height / 2 - (textPainter.height / 2)),
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(PitchIslandViewVisualizer oldDelegate) {
-    return oldDelegate.dirty;
+  Widget build(BuildContext context) {
+    return ParentInnerIsland(
+      onMainIconPressed: _startStop,
+      mainIcon: _isRunning ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary) : widget.tunerBlock.icon,
+      parameterText: '${context.l10n.formatNumber(widget.tunerBlock.chamberNoteHz)} Hz',
+      centerView: _pitchIslandViewVisualizer,
+      textSpaceWidth: 60,
+    );
   }
 }

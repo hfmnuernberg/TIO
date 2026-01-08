@@ -94,3 +94,69 @@ class PitchVisualizer extends CustomPainter {
     return oldDelegate._dirty;
   }
 }
+
+class PitchIslandViewVisualizer extends CustomPainter {
+  late double _pitchFactor;
+  late String _midiName;
+  late bool _show = false;
+
+  final double radiusSideCircles = 10;
+
+  bool dirty = true;
+
+  PitchIslandViewVisualizer(double factor, String midiName, bool show) {
+    _pitchFactor = factor;
+    _midiName = midiName;
+    _show = show;
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    dirty = false;
+
+    var paintCircle = Paint()
+      ..color = ColorTheme.primary
+      ..strokeWidth = 2;
+
+    var paintLine = Paint()
+      ..color = ColorTheme.primaryFixedDim
+      ..strokeWidth = 2;
+
+    var paintEmptyCircle = Paint()
+      ..color = ColorTheme.primary
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    var xPositionFactor = ((size.width - (radiusSideCircles * 2)) * _pitchFactor) + radiusSideCircles;
+    var factorPosition = Offset(xPositionFactor, size.height / 2);
+
+    // the line
+    canvas.drawLine(Offset(0, size.height / 2), Offset(size.width, size.height / 2), paintLine);
+
+    // circles on the sides
+    canvas.drawCircle(Offset(radiusSideCircles, size.height / 2), radiusSideCircles, paintLine);
+    canvas.drawCircle(Offset(size.width - radiusSideCircles, size.height / 2), radiusSideCircles, paintLine);
+
+    // empty circle in the middle
+    canvas.drawCircle(Offset(size.width / 2, size.height / 2), 20, paintEmptyCircle);
+
+    if (_show) {
+      // circle showing the deviation
+      canvas.drawCircle(factorPosition, 16, paintCircle);
+
+      const textStyle = TextStyle(color: Colors.white, fontSize: 14);
+      final textSpan = TextSpan(text: _midiName, style: textStyle);
+      final textPainter = TextPainter(text: textSpan, textDirection: TextDirection.ltr, textAlign: TextAlign.center);
+      textPainter.layout();
+      textPainter.paint(
+        canvas,
+        Offset(xPositionFactor - (textPainter.width / 2), size.height / 2 - (textPainter.height / 2)),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(PitchIslandViewVisualizer oldDelegate) {
+    return oldDelegate.dirty;
+  }
+}
