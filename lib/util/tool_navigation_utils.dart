@@ -14,7 +14,7 @@ import 'package:tiomusic/pages/media_player/media_player_page.dart';
 import 'package:tiomusic/pages/metronome/metronome.dart';
 import 'package:tiomusic/pages/piano/piano.dart';
 import 'package:tiomusic/pages/text/text.dart';
-import 'package:tiomusic/pages/tuner/tuner.dart';
+import 'package:tiomusic/pages/tuner/tuner_page.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/directional_page_route.dart';
@@ -37,7 +37,7 @@ Future<dynamic> goToTool(
     ],
 
     builder: (context, child) {
-      if (block is TunerBlock) return const Tuner(isQuickTool: false);
+      if (block is TunerBlock) return const TunerPage(isQuickTool: false);
       if (block is MetronomeBlock) return const MetronomePage(isQuickTool: false);
       if (block is MediaPlayerBlock) return MediaPlayerPage(isQuickTool: false, shouldAutoplay: shouldAutoplay);
       if (block is ImageBlock) return const ImageTool(isQuickTool: false);

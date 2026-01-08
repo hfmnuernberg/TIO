@@ -20,7 +20,7 @@ import 'package:tiomusic/pages/projects_page/project_list.dart';
 import 'package:tiomusic/pages/projects_page/projects_menu.dart';
 import 'package:tiomusic/pages/projects_page/quick_tools_bar.dart';
 import 'package:tiomusic/pages/projects_page/survey_banner.dart';
-import 'package:tiomusic/pages/tuner/tuner.dart';
+import 'package:tiomusic/pages/tuner/tuner_page.dart';
 import 'package:tiomusic/services/file_references.dart';
 import 'package:tiomusic/services/project_repository.dart';
 import 'package:tiomusic/util/app_orientation.dart';
@@ -201,7 +201,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
         toolPage = const MetronomePage(isQuickTool: true);
       case BlockType.tuner:
         block = TunerBlock.withDefaults(context.l10n);
-        toolPage = const Tuner(isQuickTool: true);
+        toolPage = const TunerPage(isQuickTool: true);
       case BlockType.mediaPlayer:
         block = MediaPlayerBlock.withDefaults(context.l10n);
         toolPage = const MediaPlayerPage(isQuickTool: true);

@@ -9,7 +9,6 @@ class TunerParams {
   static const String svgIconPath = 'assets/icons/Tuner.svg';
 
   static const double defaultConcertPitch = 440;
-  static const int freqPollMillis = 35;
 
   static SvgPicture icon = SvgPicture.asset(
     svgIconPath,
