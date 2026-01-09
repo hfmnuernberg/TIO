@@ -60,6 +60,112 @@ static THREAD: Mutex<Option<JoinHandle<()>>> = Mutex::new(None);
 static THREAD_SENDER: Mutex<Option<Sender<CommandGenerator>>> = Mutex::new(None);
 
 static GENERATOR_GLOBAL_AMP: f32 = 0.8;
+// Harmonic enrichment for better audibility of low fundamentals on small speakers.
+// Keeps the true fundamental frequency present, and adds quiet harmonics.
+static GENERATOR_HARMONICS_ENABLED: bool = true;
+
+// Harmonic enrichment ramp:
+// - at/above GENERATOR_HARMONICS_START_HZ: no added harmonics
+// - between START and CURVE_START: linear ramp (gentle)
+// - between CURVE_START and FULL: quadratic ease-out (stronger for very low frequencies)
+// - at/below GENERATOR_HARMONICS_FULL_HZ: full harmonic mix
+static GENERATOR_HARMONICS_START_HZ: f32 = 250.0;
+static GENERATOR_HARMONICS_CURVE_START_HZ: f32 = 130.0;
+static GENERATOR_HARMONICS_FULL_HZ: f32 = 20.0;
+
+// Relative amplitudes for harmonics (added on top of the fundamental).
+// These are multiplied by the ramp factor (0..1).
+static GENERATOR_H2: f32 = 0.60;
+static GENERATOR_H3: f32 = 0.35;
+// Optional 4th harmonic kept subtle; helps audibility on tiny speakers.
+static GENERATOR_H4: f32 = 0.15;
+// Optional 5th harmonic kept very subtle; can help audibility on tiny speakers.
+static GENERATOR_H5: f32 = 0.10;
+
+#[inline]
+fn harmonic_ramp(freq: f32) -> f32 {
+    // Returns 0..1 where 1 means full harmonics.
+    // We keep the original linear behavior above 130Hz, then ramp faster below 130Hz.
+
+    // Guard against invalid configs.
+    if GENERATOR_HARMONICS_FULL_HZ >= GENERATOR_HARMONICS_START_HZ {
+        return if freq < GENERATOR_HARMONICS_START_HZ {
+            1.0
+        } else {
+            0.0
+        };
+    }
+    if GENERATOR_HARMONICS_CURVE_START_HZ >= GENERATOR_HARMONICS_START_HZ {
+        // If curve start is misconfigured, fall back to a simple linear ramp.
+        let t = (GENERATOR_HARMONICS_START_HZ - freq)
+            / (GENERATOR_HARMONICS_START_HZ - GENERATOR_HARMONICS_FULL_HZ);
+        return t.clamp(0.0, 1.0);
+    }
+    if GENERATOR_HARMONICS_FULL_HZ >= GENERATOR_HARMONICS_CURVE_START_HZ {
+        // If FULL is misconfigured, fall back to linear.
+        let t = (GENERATOR_HARMONICS_START_HZ - freq)
+            / (GENERATOR_HARMONICS_START_HZ - GENERATOR_HARMONICS_FULL_HZ);
+        return t.clamp(0.0, 1.0);
+    }
+
+    // No harmonics at/above START.
+    if freq >= GENERATOR_HARMONICS_START_HZ {
+        return 0.0;
+    }
+
+    // Linear segment from START -> CURVE_START.
+    if freq >= GENERATOR_HARMONICS_CURVE_START_HZ {
+        let t = (GENERATOR_HARMONICS_START_HZ - freq)
+            / (GENERATOR_HARMONICS_START_HZ - GENERATOR_HARMONICS_CURVE_START_HZ);
+        return t.clamp(0.0, 1.0);
+    }
+
+    // Below CURVE_START we continue from whatever the linear segment reached at CURVE_START.
+    // At CURVE_START the linear ramp equals 1.0 * (segment complete) => 1.0 for that segment,
+    // but overall we want continuity with the original START->FULL mapping.
+    // Compute the original linear value at CURVE_START (same as old behavior for >130Hz).
+    let ramp_at_curve_start = (GENERATOR_HARMONICS_START_HZ - GENERATOR_HARMONICS_CURVE_START_HZ)
+        / (GENERATOR_HARMONICS_START_HZ - GENERATOR_HARMONICS_FULL_HZ);
+
+    // Curved segment from CURVE_START -> FULL (cubic ease-out: stronger for very low frequencies).
+    let t = (GENERATOR_HARMONICS_CURVE_START_HZ - freq)
+        / (GENERATOR_HARMONICS_CURVE_START_HZ - GENERATOR_HARMONICS_FULL_HZ);
+    let t = t.clamp(0.0, 1.0);
+    let ease_out = 1.0 - (1.0 - t) * (1.0 - t) * (1.0 - t);
+
+    (ramp_at_curve_start + (1.0 - ramp_at_curve_start) * ease_out).clamp(0.0, 1.0)
+}
+
+#[inline]
+fn generator_sample_with_harmonics(phase: f64, freq: f32) -> f32 {
+    // `phase` is the fundamental phase in radians.
+    // Harmonics ramp in linearly from 300Hz down to 20Hz.
+    if !GENERATOR_HARMONICS_ENABLED {
+        return phase.sin() as f32;
+    }
+
+    let ramp = harmonic_ramp(freq);
+    if ramp <= 0.0 {
+        return phase.sin() as f32;
+    }
+
+    let s1 = phase.sin() as f32;
+    let s2 = (2.0 * phase).sin() as f32;
+    let s3 = (3.0 * phase).sin() as f32;
+    let s4 = (4.0 * phase).sin() as f32;
+    let s5 = (5.0 * phase).sin() as f32;
+
+    // Fundamental stays at 1.0, harmonics are scaled by `ramp`.
+    let h2 = GENERATOR_H2 * ramp;
+    let h3 = GENERATOR_H3 * ramp;
+    let h4 = GENERATOR_H4 * ramp;
+    let h5 = GENERATOR_H5 * ramp;
+
+    // Normalize so output level stays roughly comparable across the ramp.
+    let norm = 1.0 / (1.0 + h2 + h3 + h4 + h5);
+
+    (s1 + h2 * s2 + h3 * s3 + h4 * s4 + h5 * s5) * norm
+}
 lazy_static! {
     static ref VALUES: Mutex<GeneratorValuesInterpolated> =
         Mutex::new(GeneratorValuesInterpolated::new());
@@ -141,7 +247,14 @@ fn on_audio_callback(data: &mut [f32], _: &cpal::OutputCallbackInfo) {
         }
 
         *phase += freq as f64 * 2.0 * PI as f64 / (sample_rate as f64);
-        *data = phase.sin() as f32 * amp * GENERATOR_GLOBAL_AMP;
+
+        // Keep the phase bounded to avoid precision loss on very long runs.
+        if *phase > 2.0 * PI as f64 {
+            *phase %= 2.0 * PI as f64;
+        }
+
+        let sample = generator_sample_with_harmonics(*phase, freq);
+        *data = sample * amp * GENERATOR_GLOBAL_AMP;
     }
 }
 
