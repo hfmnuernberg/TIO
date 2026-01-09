@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/l10n/tuner_type_extension.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/tuner/sound_button.dart';
 
@@ -21,11 +22,14 @@ class InstrumentPlayReference extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        Text('${l10n.tunerInstrument}: ${tunerType.getLabel(l10n)}', style: const TextStyle(color: ColorTheme.primary)),
         Text(
-          '${context.l10n.tunerFrequency}: ${context.l10n.formatNumber(double.parse(frequency.toStringAsFixed(1)))} Hz',
+          '${l10n.tunerFrequency}: ${l10n.formatNumber(double.parse(frequency.toStringAsFixed(1)))} Hz',
           style: const TextStyle(color: ColorTheme.primary),
         ),
         const SizedBox(height: 40),
