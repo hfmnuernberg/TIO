@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
+import 'package:tiomusic/models/tuner_type.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants/constants.dart';
+import 'package:tiomusic/util/l10n/tuner_type_extension.dart';
 import 'package:tiomusic/util/util_midi.dart';
 import 'package:tiomusic/widgets/input/number_input_and_slider_int.dart';
 import 'package:tiomusic/widgets/tuner/sound_button.dart';
@@ -9,11 +11,18 @@ import 'package:tiomusic/widgets/tuner/sound_button.dart';
 const defaultOctave = 4;
 
 class ChromaticPlayReference extends StatefulWidget {
+  final TunerType tunerType;
   final int? midi;
   final double frequency;
   final void Function(int midi) onToggle;
 
-  const ChromaticPlayReference({super.key, required this.midi, required this.frequency, required this.onToggle});
+  const ChromaticPlayReference({
+    super.key,
+    required this.tunerType,
+    required this.midi,
+    required this.frequency,
+    required this.onToggle,
+  });
 
   @override
   State<ChromaticPlayReference> createState() => _ChromaticPlayReferenceState();
@@ -28,6 +37,9 @@ class _ChromaticPlayReferenceState extends State<ChromaticPlayReference> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
+    final instrumentText = '${l10n.tunerInstrument}: ${widget.tunerType.getLabel(l10n)}';
+    final isNarrow = MediaQuery.of(context).size.width < 360;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -41,6 +53,10 @@ class _ChromaticPlayReferenceState extends State<ChromaticPlayReference> {
           textFieldWidth: TIOMusicParams.textFieldWidth1Digit,
         ),
         const SizedBox(height: 40),
+        Text(
+          isNarrow ? instrumentText.replaceFirst(': ', ':\n') : instrumentText,
+          style: const TextStyle(color: ColorTheme.primary),
+        ),
         Text(
           '${l10n.tunerFrequency}: ${l10n.formatNumber(double.parse(widget.frequency.toStringAsFixed(1)))} Hz',
           style: const TextStyle(color: ColorTheme.primary),
