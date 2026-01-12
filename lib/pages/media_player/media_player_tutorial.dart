@@ -44,15 +44,24 @@ class MediaPlayerTutorial {
 
     if (_didShowWaveformTutorial) return;
     if (!playerLoaded) return;
-    if (!context.read<ProjectLibrary>().showWaveformTip) return;
+
+    final lib = context.read<ProjectLibrary>();
+
+    final shouldShowAnything =
+        lib.showWaveformTip || lib.showMediaPlayerTutorial || (lib.showMediaPlayerIslandTutorial && !isQuickTool());
+
+    if (!shouldShowAnything) return;
 
     _didShowWaveformTutorial = true;
 
-    // Wait until next frame so the waveform key is definitely mounted.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!context.mounted) return;
       if (!playerLoaded) return;
-      if (!context.read<ProjectLibrary>().showWaveformTip) return;
+
+      final lib = context.read<ProjectLibrary>();
+      final shouldShowAnything =
+          lib.showWaveformTip || lib.showMediaPlayerTutorial || (lib.showMediaPlayerIslandTutorial && !isQuickTool());
+      if (!shouldShowAnything) return;
 
       _create(context, playerLoaded: playerLoaded);
       _tutorial.show(context);
@@ -72,7 +81,7 @@ class MediaPlayerTutorial {
           pointingDirection: PointingDirection.down,
           buttonsPosition: ButtonsPosition.top,
         ),
-      if (lib.showMediaPlayerTutorial)
+      if (lib.showWaveformTip && playerLoaded)
         CustomTargetFocus(
           keyRepeat,
           l10n.mediaPlayerTutorialRepeat,
