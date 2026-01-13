@@ -33,6 +33,20 @@ jobs:
       with:
         ref: ${{ inputs.ref }}
 
+    - name: Show disk usage (before cleanup)
+      run: |
+        df -h
+        echo "Top-level workspace sizes:"
+        du -sh ./* 2>/dev/null | sort -h | tail -n 25 || true
+
+    - name: Free disk space (GitHub runner)
+      run: |
+        set -euxo pipefail
+        sudo rm -rf /usr/share/dotnet /opt/ghc || true
+        sudo apt-get clean
+        sudo rm -rf /var/lib/apt/lists/*
+        df -h
+
     - name: Make scripts executable
       run: chmod +x scripts/*.sh
 
@@ -112,6 +126,13 @@ jobs:
         ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_UPLOAD_PASSWORD }}
         GRADLE_OPTS: -Xmx4g -Dorg.gradle.jvmargs='-Xmx4g -XX:MaxMetaspaceSize=512m'
         JAVA_TOOL_OPTIONS: -Xmx4g
+
+    - name: Show disk usage (after build)
+      if: always()
+      run: |
+        df -h
+        echo "Largest build outputs:"
+        du -sh build android/build rust/target 2>/dev/null || true
 
     - name: Save bundle
       uses: actions/upload-artifact@v5.0.0
