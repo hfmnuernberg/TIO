@@ -31,7 +31,7 @@ pitch_shift = "1.0.0"
 queues = "1.1.0"
 rand = "0.8.5"
 ringbuf = "0.3.3"
-rubato = "0.15.0"
+rubato = "1.0.0"
 rustysynth = "1.3.6"
 symphonia = { version = "0.5.5", features = [
     "mpa",
