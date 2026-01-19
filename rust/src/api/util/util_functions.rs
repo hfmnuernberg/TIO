@@ -119,7 +119,17 @@ pub fn load_audio_file_channels(file_path: String) -> Result<(Vec<Vec<f32>>, u32
     let seconds_to_allocate = 45; // Magic number to avoid reallocations. If the audio file is longer than 45 seconds, it will reallocate.
     let mut samples = vec![];
 
-    while let Ok(packet) = reader.next_packet() {
+    loop {
+        let packet = match reader.next_packet() {
+            Ok(packet) => packet,
+            Err(err) => {
+                log::warn!(
+                    "Audio decoding stopped while reading packets. Reason: {:?}",
+                    err
+                );
+                break;
+            }
+        };
         let decoded = decoder.decode(&packet)?;
 
         match decoded {
@@ -275,6 +285,16 @@ pub fn load_audio_file_channels(file_path: String) -> Result<(Vec<Vec<f32>>, u32
         }
     }
 
+    if !samples.is_empty() {
+        let frames = samples[0].len();
+        let duration_seconds = frames as f64 / sample_rate as f64;
+        log::info!(
+            "Decoded audio length: {} frames (~{:.3} seconds) at {} Hz",
+            frames,
+            duration_seconds,
+            sample_rate
+        );
+    }
     Ok((samples, sample_rate))
 }
 

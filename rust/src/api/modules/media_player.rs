@@ -201,6 +201,7 @@ pub fn media_player_trigger_destroy_stream() -> bool {
         .deref()
     {
         Some(thread_data) => {
+          log::warn!("media_player_trigger_destroy_stream: sending stop signals to audio + pitch threads");
             let succcess_audio_thread = match thread_data.stop_sender.send(()) {
                 Ok(_) => true,
                 Err(_) => {
@@ -219,6 +220,8 @@ pub fn media_player_trigger_destroy_stream() -> bool {
             succcess_audio_thread && success_pitch_shift
         }
         None => {
+          log::warn!("media_player_trigger_destroy_stream: called but THREAD_DATA is None (no stream running)");
+
             log::info!(
                 "Mediaplayer failed to trigger audio stream to stop. No audio stream running.",
             );
@@ -252,7 +255,11 @@ fn on_audio_callback(samples_out: &mut [f32], _: &cpal::OutputCallbackInfo) {
                     }
                 }
                 None => {
-                    log::info!("Mediaplayer ring buffer empty - cannot write to audio output");
+                    log::info!(
+                        "Mediaplayer ring buffer empty - cannot write to audio output (requested {} samples, ring_len={})",
+                        samples_out.len(),
+                        ring_consumer.len()
+                    );
                     break;
                 }
             }
@@ -289,6 +296,7 @@ fn pitch_shift(audio_processing_data: &mut AudioProcessingData) {
 }
 
 fn thread_handle_command(_command: ()) {
+  log::warn!("thread_handle_command: received stop command -> clearing THREAD_DATA/RING_CONSUMER and setting playing=false");
     let _guard = GLOBAL_AUDIO_LOCK
         .lock()
         .expect("Could not lock global audio lock");
@@ -302,10 +310,29 @@ fn thread_handle_command(_command: ()) {
         .lock()
         .expect("Could not lock mutex to SOURCE_DATA to set playing flag")
         .set_playing(false);
+  log::warn!("thread_handle_command: completed stop cleanup");
 }
 
 #[flutter_rust_bridge::frb(ignore)]
 pub fn media_player_set_buffer(new_buffer: Vec<f32>) {
+    let sample_rate = *OUTPUT_SAMPLE_RATE
+        .lock()
+        .expect("Could not lock mutex to get sample rate in media_player_set_buffer");
+
+    let samples_len = new_buffer.len();
+    let secs = if sample_rate > 0 {
+        samples_len as f64 / sample_rate as f64
+    } else {
+        0.0
+    };
+
+    log::info!(
+        "media_player_set_buffer: received {} samples (~{:.3} s @ {} Hz)",
+        samples_len,
+        secs,
+        sample_rate
+    );
+
     *SOURCE_DATA
         .lock()
         .expect("Could not lock mutex to SOURCE_DATA to set buffer") =
@@ -394,6 +421,16 @@ pub fn media_player_query_state() -> Option<MediaPlayerState> {
     let playback_position_factor = source_data.get_playback_position_factor();
     let total_length_seconds = source_data.get_length_seconds(sample_rate as u32);
     let (trim_start_factor, trim_end_factor) = source_data.get_trim();
+
+    log::info!(
+        "media_player_query_state: playing={} posFactor={:.6} totalLengthSeconds={:.3} sr={} trim=[{:.6},{:.6}]",
+        source_data.get_is_playing(),
+        playback_position_factor,
+        total_length_seconds,
+        sample_rate,
+        trim_start_factor,
+        trim_end_factor
+    );
 
     Some(MediaPlayerState {
         playing: source_data.get_is_playing(),
