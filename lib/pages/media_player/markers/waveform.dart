@@ -22,6 +22,7 @@ class Waveform extends StatefulWidget {
   final void Function(double viewStart, double viewEnd) onZoomChanged;
   final Future<void> Function() onInteractionStart;
   final Future<void> Function() onInteractionEnd;
+  final Duration scrubSeekThreshold;
 
   const Waveform({
     super.key,
@@ -36,6 +37,7 @@ class Waveform extends StatefulWidget {
     required this.onZoomChanged,
     required this.onInteractionStart,
     required this.onInteractionEnd,
+    this.scrubSeekThreshold = const Duration(milliseconds: 500),
   });
 
   @override
@@ -51,7 +53,10 @@ class _WaveformState extends State<Waveform> {
   double _availableWidth = 0;
   double? _previewPosition;
   bool _isInteracting = false;
-  double? get _effectivePosition => _previewPosition ?? widget.position;
+  double? get _effectivePosition {
+    if (widget.position == null) return null;
+    return _previewPosition ?? widget.position;
+  }
 
   double get _paintedWaveWidth {
     if (_availableWidth > 0) return _availableWidth;
@@ -67,13 +72,16 @@ class _WaveformState extends State<Waveform> {
     _viewport = WaveformViewportController(fileDuration: widget.fileDuration);
     _gestures = WaveformGestureHelper(
       viewport: _viewport,
+      scrubSeekThreshold: widget.scrubSeekThreshold,
       getPaintedWidth: () => _paintedWaveWidth,
       getTotalBins: () => widget.rmsValues.length,
       onPositionChange: widget.onPositionChange,
-      onScrubPreviewPosition: (relative) => setState(() {
-        _previewPosition = relative;
-        _rebuildVisualizer();
-      }),
+      onScrubPreviewPosition: widget.position == null
+          ? null
+          : (relative) => setState(() {
+              _previewPosition = relative;
+              _rebuildVisualizer();
+            }),
       onZoomChanged: widget.onZoomChanged,
       onInteractionStart: () async {
         setState(() => _isInteracting = true);
@@ -108,10 +116,21 @@ class _WaveformState extends State<Waveform> {
   void _rebuildVisualizer() {
     final pos = _effectivePosition;
     _visualizer = pos != null
-        ? WaveformVisualizer(pos, widget.rangeStart, widget.rangeEnd, widget.rmsValues,
-            viewStart: _viewport.viewStart, viewEnd: _viewport.viewEnd)
-        : WaveformVisualizer.setTrim(widget.rangeStart, widget.rangeEnd, widget.rmsValues,
-            viewStart: _viewport.viewStart, viewEnd: _viewport.viewEnd);
+        ? WaveformVisualizer(
+            pos,
+            widget.rangeStart,
+            widget.rangeEnd,
+            widget.rmsValues,
+            viewStart: _viewport.viewStart,
+            viewEnd: _viewport.viewEnd,
+          )
+        : WaveformVisualizer.setTrim(
+            widget.rangeStart,
+            widget.rangeEnd,
+            widget.rmsValues,
+            viewStart: _viewport.viewStart,
+            viewEnd: _viewport.viewEnd,
+          );
   }
 
   void _zoom(double factor) {
@@ -132,65 +151,73 @@ class _WaveformState extends State<Waveform> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(children: [
-          Transform.translate(
-            offset: const Offset(0, 8),
-            child: WaveformGestureControls(
-              fileDuration: widget.fileDuration,
-              viewStart: _viewport.viewStart,
-              viewEnd: _viewport.viewEnd,
-              viewport: _viewport,
-              onZoomIn: () => _zoom(0.5),
-              onZoomOut: () => _zoom(2),
-              onScrollLeft: () => _scroll(false),
-              onScrollRight: () => _scroll(true),
-            ),
-          ),
-          SizedBox(
-            height: waveformHeight,
-            child: Listener(
-              onPointerDown: _gestures.handlePointerDown,
-              onPointerUp: _gestures.handlePointerUp,
-              child: GestureDetector(
-                onTapUp: _gestures.handleTap,
-                onScaleStart: _gestures.handleScaleStart,
-                onScaleUpdate: _gestures.handleScaleUpdate,
-                onScaleEnd: _gestures.handleScaleEnd,
-                child: LayoutBuilder(builder: (context, constraints) {
-                  _availableWidth = constraints.maxWidth;
-                  final width = _availableWidth;
-                  return Stack(children: [
-                    CustomPaint(key: _waveKey, painter: _visualizer, size: Size(width, waveformHeight)),
-                    if (widget.markerPositions.isNotEmpty)
-                      Markers(
-                        rmsValues: widget.rmsValues,
-                        paintedWidth: width,
-                        waveFormHeight: waveformHeight,
-                        markerPositions: widget.markerPositions,
-                        selectedMarkerPosition: widget.selectedMarkerPosition,
-                        viewStart: _viewport.viewStart,
-                        viewEnd: _viewport.viewEnd,
-                        onTap: widget.onPositionChange,
-                      ),
-                  ]);
-                }),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              Transform.translate(
+                offset: const Offset(0, 8),
+                child: WaveformGestureControls(
+                  fileDuration: widget.fileDuration,
+                  viewStart: _viewport.viewStart,
+                  viewEnd: _viewport.viewEnd,
+                  viewport: _viewport,
+                  onZoomIn: () => _zoom(0.5),
+                  onZoomOut: () => _zoom(2),
+                  onScrollLeft: () => _scroll(false),
+                  onScrollRight: () => _scroll(true),
+                ),
               ),
-            ),
+              SizedBox(
+                height: waveformHeight,
+                child: Listener(
+                  onPointerDown: _gestures.handlePointerDown,
+                  onPointerUp: _gestures.handlePointerUp,
+                  child: GestureDetector(
+                    onTapUp: _gestures.handleTap,
+                    onScaleStart: _gestures.handleScaleStart,
+                    onScaleUpdate: _gestures.handleScaleUpdate,
+                    onScaleEnd: _gestures.handleScaleEnd,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        _availableWidth = constraints.maxWidth;
+                        final width = _availableWidth;
+                        return Stack(
+                          children: [
+                            CustomPaint(key: _waveKey, painter: _visualizer, size: Size(width, waveformHeight)),
+                            if (widget.markerPositions.isNotEmpty)
+                              Markers(
+                                rmsValues: widget.rmsValues,
+                                paintedWidth: width,
+                                waveFormHeight: waveformHeight,
+                                markerPositions: widget.markerPositions,
+                                selectedMarkerPosition: widget.selectedMarkerPosition,
+                                viewStart: _viewport.viewStart,
+                                viewEnd: _viewport.viewEnd,
+                                onTap: widget.onPositionChange,
+                              ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ]),
-      ),
-      Transform.translate(
-        offset: const Offset(0, -8),
-        child: WaveformTimeLabels(
-          fileDuration: widget.fileDuration,
-          rangeStart: widget.rangeStart,
-          rangeEnd: widget.rangeEnd,
-          position: _effectivePosition,
         ),
-      ),
-    ]);
+        Transform.translate(
+          offset: const Offset(0, -8),
+          child: WaveformTimeLabels(
+            fileDuration: widget.fileDuration,
+            rangeStart: widget.rangeStart,
+            rangeEnd: widget.rangeEnd,
+            position: _effectivePosition,
+          ),
+        ),
+      ],
+    );
   }
 }

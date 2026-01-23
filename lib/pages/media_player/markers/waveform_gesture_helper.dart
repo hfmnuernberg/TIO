@@ -6,6 +6,7 @@ import 'package:tiomusic/pages/media_player/markers/waveform_viewport_controller
 
 class WaveformGestureHelper {
   final WaveformViewportController viewport;
+  final Duration scrubSeekThreshold;
   final double Function() getPaintedWidth;
   final int Function() getTotalBins;
   final void Function(double relative) onPositionChange;
@@ -19,16 +20,16 @@ class WaveformGestureHelper {
   bool? isZooming;
   int activePointers = 0;
   bool multiTouchInProgress = false;
-  static const Duration _scrubThreshold = Duration(milliseconds: 500);
   DateTime? _lastSeekSentAt;
   double? _pendingScrubRelative;
 
   WaveformGestureHelper({
     required this.viewport,
+    required this.scrubSeekThreshold,
     required this.getPaintedWidth,
     required this.getTotalBins,
     required this.onPositionChange,
-    required this.onScrubPreviewPosition,
+    this.onScrubPreviewPosition,
     required this.onZoomChanged,
     required this.onInteractionStart,
     required this.onInteractionEnd,
@@ -45,9 +46,7 @@ class WaveformGestureHelper {
     await onInteractionStart();
 
     activePointers++;
-    if (activePointers >= 2) {
-      multiTouchInProgress = true;
-    }
+    if (activePointers >= 2) multiTouchInProgress = true;
   }
 
   void handlePointerUp(PointerUpEvent event) async {
@@ -168,9 +167,17 @@ class WaveformGestureHelper {
   void _scheduleScrubSeek(double relative) {
     _pendingScrubRelative = relative;
 
+    if (scrubSeekThreshold == Duration.zero) {
+      _lastSeekSentAt = DateTime.now();
+      final pending = _pendingScrubRelative;
+      _pendingScrubRelative = null;
+      if (pending != null) onPositionChange(pending);
+      return;
+    }
+
     final now = DateTime.now();
     final last = _lastSeekSentAt;
-    final shouldSendNow = last == null || now.difference(last) >= _scrubThreshold;
+    final shouldSendNow = last == null || now.difference(last) >= scrubSeekThreshold;
 
     if (shouldSendNow) {
       _lastSeekSentAt = now;
