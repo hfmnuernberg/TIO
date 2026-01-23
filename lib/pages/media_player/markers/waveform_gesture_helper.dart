@@ -9,6 +9,7 @@ class WaveformGestureHelper {
   final double Function() getPaintedWidth;
   final int Function() getTotalBins;
   final void Function(double relative) onPositionChange;
+  final void Function(double relative)? onScrubPreviewPosition;
   final void Function(double viewStart, double viewEnd) onZoomChanged;
   final Future<void> Function() onInteractionStart;
   final Future<void> Function() onInteractionEnd;
@@ -18,12 +19,16 @@ class WaveformGestureHelper {
   bool? isZooming;
   int activePointers = 0;
   bool multiTouchInProgress = false;
+  static const Duration _scrubThreshold = Duration(milliseconds: 500);
+  DateTime? _lastSeekSentAt;
+  double? _pendingScrubRelative;
 
   WaveformGestureHelper({
     required this.viewport,
     required this.getPaintedWidth,
     required this.getTotalBins,
     required this.onPositionChange,
+    required this.onScrubPreviewPosition,
     required this.onZoomChanged,
     required this.onInteractionStart,
     required this.onInteractionEnd,
@@ -68,6 +73,9 @@ class WaveformGestureHelper {
       paintedWidth: width,
       totalBins: totalBins,
     );
+    _emitScrubPreview(snappedRelative);
+    _lastSeekSentAt = DateTime.now();
+    _pendingScrubRelative = null;
     onPositionChange(snappedRelative);
   }
 
@@ -84,7 +92,8 @@ class WaveformGestureHelper {
         paintedWidth: width,
         totalBins: totalBins,
       );
-      onPositionChange(snappedRelative);
+      _emitScrubPreview(snappedRelative);
+      _scheduleScrubSeek(snappedRelative);
     } else if (details.pointerCount >= 2) {
       viewport.beginScale(focalX: details.localFocalPoint.dx, paintedWidth: width, totalBins: totalBins);
     }
@@ -101,7 +110,8 @@ class WaveformGestureHelper {
         paintedWidth: width,
         totalBins: totalBins,
       );
-      onPositionChange(snappedRelative);
+      _emitScrubPreview(snappedRelative);
+      _scheduleScrubSeek(snappedRelative);
       return;
     }
 
@@ -146,7 +156,36 @@ class WaveformGestureHelper {
 
   void handleScaleEnd(ScaleEndDetails details) async {
     isZooming = null;
+
+    if (details.pointerCount <= 1 && !multiTouchInProgress) _flushScrubSeek();
+
     onZoomChanged(viewport.viewStart, viewport.viewEnd);
     await onInteractionEnd();
+  }
+
+  void _emitScrubPreview(double relative) => onScrubPreviewPosition?.call(relative);
+
+  void _scheduleScrubSeek(double relative) {
+    _pendingScrubRelative = relative;
+
+    final now = DateTime.now();
+    final last = _lastSeekSentAt;
+    final shouldSendNow = last == null || now.difference(last) >= _scrubThreshold;
+
+    if (shouldSendNow) {
+      _lastSeekSentAt = now;
+      final pending = _pendingScrubRelative;
+      _pendingScrubRelative = null;
+      if (pending != null) onPositionChange(pending);
+    }
+  }
+
+  void _flushScrubSeek() {
+    final pending = _pendingScrubRelative;
+    _pendingScrubRelative = null;
+    if (pending != null) {
+      _lastSeekSentAt = DateTime.now();
+      onPositionChange(pending);
+    }
   }
 }

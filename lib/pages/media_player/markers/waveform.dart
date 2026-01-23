@@ -50,6 +50,11 @@ class _WaveformState extends State<Waveform> {
 
   double availableWidth = 0;
 
+  double? _previewPosition;
+  bool _isInteracting = false;
+
+  double? get _effectivePosition => _previewPosition ?? widget.position;
+
   double get paintedWaveWidth {
     if (availableWidth > 0) return availableWidth;
     final buildContext = waveKey.currentContext;
@@ -68,9 +73,22 @@ class _WaveformState extends State<Waveform> {
       getPaintedWidth: () => paintedWaveWidth,
       getTotalBins: () => widget.rmsValues.length,
       onPositionChange: widget.onPositionChange,
+      onScrubPreviewPosition: (relative) {
+        setState(() {
+          _previewPosition = relative;
+          rebuildVisualizer();
+        });
+      },
       onZoomChanged: widget.onZoomChanged,
-      onInteractionStart: widget.onInteractionStart,
-      onInteractionEnd: widget.onInteractionEnd,
+      onInteractionStart: () async {
+        setState(() => _isInteracting = true);
+        await widget.onInteractionStart();
+      },
+      onInteractionEnd: () async {
+        await widget.onInteractionEnd();
+        if (!mounted) return;
+        setState(() { _isInteracting = false; _previewPosition = null; });
+      },
       setState: setState,
       rebuildVisualizer: rebuildVisualizer,
     );
@@ -80,18 +98,22 @@ class _WaveformState extends State<Waveform> {
   @override
   void didUpdateWidget(covariant Waveform oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.rmsValues != widget.rmsValues ||
-        oldWidget.position != widget.position ||
-        oldWidget.rangeStart != widget.rangeStart ||
-        oldWidget.rangeEnd != widget.rangeEnd) {
+
+    final rmsChanged = oldWidget.rmsValues != widget.rmsValues;
+    final rangeChanged = oldWidget.rangeStart != widget.rangeStart || oldWidget.rangeEnd != widget.rangeEnd;
+    final posChanged = oldWidget.position != widget.position;
+
+    if (rmsChanged || rangeChanged || (posChanged && !_isInteracting)) {
+      if (!_isInteracting) _previewPosition = null;
       rebuildVisualizer();
     }
   }
 
   void rebuildVisualizer() {
-    if (widget.position != null) {
+    final effectivePos = _effectivePosition;
+    if (effectivePos != null) {
       waveformVisualizer = WaveformVisualizer(
-        widget.position!,
+        effectivePos,
         widget.rangeStart,
         widget.rangeEnd,
         widget.rmsValues,
@@ -190,7 +212,7 @@ class _WaveformState extends State<Waveform> {
             fileDuration: widget.fileDuration,
             rangeStart: widget.rangeStart,
             rangeEnd: widget.rangeEnd,
-            position: widget.position,
+            position: _effectivePosition,
           ),
         ),
       ],
