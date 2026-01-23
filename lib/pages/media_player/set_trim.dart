@@ -173,6 +173,7 @@ class _SetTrimState extends State<SetTrim> {
             onZoomChanged: handleZoomChanged,
             onInteractionStart: () async => setState(() => isScrollingEnabled = false),
             onInteractionEnd: () async => setState(() => isScrollingEnabled = true),
+            scrubSeekThreshold: Duration.zero,
           ),
         ],
       ),
