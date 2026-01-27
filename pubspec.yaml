@@ -17,7 +17,7 @@ dependencies:
   collection: 1.19.1
   equatable: 2.0.7
   ffi: 2.1.4
-  file_picker: 10.3.6  # TODO: Newer version opens wrong picker on Android
+  file_picker: 10.3.9  # TODO: Newer version opens wrong picker on Android
   flutter:
     sdk: flutter
   flutter_localizations:
