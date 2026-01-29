@@ -69,7 +69,7 @@ void main() {
       );
       await recorder.start();
 
-      recorderHandlerMock.verifyOnIsRecordingChangeWith(true);
+      recorderHandlerMock.verifyOnIsRecordingChangeCalledWith(true);
 
       await recorder.stop();
     });

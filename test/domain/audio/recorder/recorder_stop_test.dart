@@ -52,10 +52,10 @@ void main() {
         onIsRecordingChange: recorderHandlerMock.onIsRecordingChange,
       );
       await recorder.start();
-      recorderHandlerMock.verifyOnIsRecordingChangeWith(true);
+      recorderHandlerMock.verifyOnIsRecordingChangeCalledWith(true);
 
       await recorder.stop();
-      recorderHandlerMock.verifyOnIsRecordingChangeWith(false);
+      recorderHandlerMock.verifyOnIsRecordingChangeCalledWith(false);
     });
 
     testWidgets('unregisters interruption listener on stop', (tester) async {

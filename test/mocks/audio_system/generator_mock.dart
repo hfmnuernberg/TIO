@@ -12,6 +12,7 @@ mixin GeneratorMock on Mock implements AudioSystem {
   void mockGeneratorNoteOn([bool result = true]) =>
       when(() => generatorNoteOn(newFreq: any(named: 'newFreq'))).thenAnswer((_) async => result);
   void verifyGeneratorNoteOnCalled() => verify(() => generatorNoteOn(newFreq: any(named: 'newFreq'))).called(1);
+  void verifyGeneratorNoteOnCalledWith(double newFreq) => verify(() => generatorNoteOn(newFreq: newFreq)).called(1);
 
   void mockGeneratorNoteOff([bool result = true]) => when(generatorNoteOff).thenAnswer((_) async => result);
   void verifyGeneratorNoteOffCalled() => verify(generatorNoteOff).called(1);

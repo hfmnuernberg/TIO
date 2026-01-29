@@ -38,5 +38,6 @@ class AudioSessionMock extends Mock implements AudioSession {
 
   void verifyPrepareRecordingCalled() => verify(prepareRecording).called(1);
 
+  void verifyRegisterInterruptionListenerCalled() => verify(() => registerInterruptionListener(any())).called(1);
   void verifyUnregisterInterruptionListenerCalled() => verify(() => unregisterInterruptionListener(any())).called(1);
 }

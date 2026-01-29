@@ -84,15 +84,13 @@ class _TunerIslandViewState extends State<TunerIslandView> {
     super.dispose();
   }
 
-  Future<bool> stopTuner() async {
-    final success = await _tuner.stop();
+  Future<void> stopTuner() async {
+    await _tuner.stop();
 
     _midiNameText.text = '';
     _pitchFactor = 0.5;
     _freqHistory.fillRange(0, _freqHistory.length, 0);
     _pitchIslandViewVisualizer = PitchIslandViewVisualizer(_pitchFactor, _midiName, false);
-
-    return success;
   }
 
   double _medianOf(Iterable<double> values) {
