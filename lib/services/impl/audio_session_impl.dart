@@ -31,13 +31,14 @@ class AudioSessionImpl implements AudioSession {
   @override
   Future<void> preparePlayback() async {
     final session = await core.AudioSession.instance;
+
     await session.configure(
       core.AudioSessionConfiguration(
-        avAudioSessionCategory: core.AVAudioSessionCategory.playback,
+        avAudioSessionCategory: core.AVAudioSessionCategory.playAndRecord,
         avAudioSessionCategoryOptions:
-            core.AVAudioSessionCategoryOptions.defaultToSpeaker &
-            core.AVAudioSessionCategoryOptions.allowBluetooth &
-            core.AVAudioSessionCategoryOptions.allowAirPlay,
+            core.AVAudioSessionCategoryOptions.defaultToSpeaker |
+            core.AVAudioSessionCategoryOptions.allowBluetooth |
+            core.AVAudioSessionCategoryOptions.allowBluetoothA2dp,
       ),
     );
   }
@@ -49,9 +50,9 @@ class AudioSessionImpl implements AudioSession {
       core.AudioSessionConfiguration(
         avAudioSessionCategory: core.AVAudioSessionCategory.playAndRecord,
         avAudioSessionCategoryOptions:
-            core.AVAudioSessionCategoryOptions.defaultToSpeaker &
-            core.AVAudioSessionCategoryOptions.allowBluetooth &
-            core.AVAudioSessionCategoryOptions.allowAirPlay,
+            core.AVAudioSessionCategoryOptions.defaultToSpeaker |
+            core.AVAudioSessionCategoryOptions.allowBluetooth |
+            core.AVAudioSessionCategoryOptions.allowBluetoothA2dp,
       ),
     );
   }
