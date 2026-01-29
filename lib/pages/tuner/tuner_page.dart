@@ -95,15 +95,13 @@ class _TunerPageState extends State<TunerPage> {
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // start with delay to make sure previous tuner is stopped before new one is started (on copy/save)
       processingButtonClick = true;
       await Future.delayed(const Duration(milliseconds: 400));
-      startTuner();
+      tuner.start();
       Future.delayed(const Duration(milliseconds: 1000), () {
         if (mounted) {
           setState(() {
             processingButtonClick = false;
-            // after tuner is started, we can set the flag and rebuilt the setting tiles
             isInStartUp = false;
           });
         }
@@ -171,13 +169,8 @@ class _TunerPageState extends State<TunerPage> {
     super.dispose();
   }
 
-  Future<bool> startTuner() async {
-    final success = await tuner.start();
-    return success;
-  }
-
-  Future<bool> stopTuner() async {
-    final success = await tuner.stop();
+  Future<void> stopTuner() async {
+    await tuner.stop();
 
     freqHistory.fillRange(0, freqHistory.length, 0);
     history.fillRange(0, history.length, PitchOffset.withoutValue());
@@ -187,8 +180,6 @@ class _TunerPageState extends State<TunerPage> {
     midiNameText.text = '';
     freqText.text = '';
     centOffsetText.text = '';
-
-    return success;
   }
 
   double medianOf(Iterable<double> values) {
@@ -253,7 +244,6 @@ class _TunerPageState extends State<TunerPage> {
     history.removeAt(0);
   }
 
-  // Start/Stop
   void onToggleButtonClicked() async {
     if (processingButtonClick) return;
     setState(() => processingButtonClick = true);
@@ -261,7 +251,7 @@ class _TunerPageState extends State<TunerPage> {
     if (isRunning) {
       await stopTuner();
     } else {
-      await startTuner();
+      await tuner.start();
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));

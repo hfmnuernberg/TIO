@@ -63,13 +63,13 @@ class Tuner {
   void addOnRunningChangeListener(OnTunerRunningChange listener) => _onRunningChangeListeners.add(listener);
   void removeOnRunningChangeListener(OnTunerRunningChange listener) => _onRunningChangeListeners.remove(listener);
 
-  Future<bool> start() async {
-    if (_isRunning) return true;
+  Future<void> start() async {
+    if (_isRunning) return;
 
     final micGranted = await Permission.microphone.request().isGranted;
     if (!micGranted) {
       _logger.w('Failed to get microphone permissions.');
-      return false;
+      return;
     }
 
     _audioSessionInterruptionListenerHandle ??= await _audioSession.registerInterruptionListener(stop);
@@ -79,7 +79,7 @@ class Tuner {
     final success = await _as.tunerStart();
     if (!success) {
       _logger.e('Unable to start Tuner.');
-      return false;
+      return;
     }
 
     await _wakelock.enable();
@@ -92,27 +92,25 @@ class Tuner {
     _pollTimer = Timer.periodic(const Duration(milliseconds: pollIntervalInMs), (_) async {
       await _pollOnceAndEmit();
     });
-
-    return true;
   }
 
-  Future<bool> stop() async {
+  Future<void> stop() async {
     _pollTimer?.cancel();
     _pollTimer = null;
 
     await _wakelock.disable();
+
+    if (!_isRunning) return;
 
     if (_audioSessionInterruptionListenerHandle != null) {
       await _audioSession.unregisterInterruptionListener(_audioSessionInterruptionListenerHandle!);
       _audioSessionInterruptionListenerHandle = null;
     }
 
-    final success = await _as.tunerStop();
+    await _as.tunerStop();
 
     _setRunning(false);
     _emitFrequency(null);
-
-    return success;
   }
 
   Future<void> dispose() async {
@@ -142,15 +140,15 @@ class Tuner {
     }
   }
 
-  Future<bool> startGenerator() async {
+  Future<void> startGenerator() async {
     await _audioSession.preparePlayback();
-    return _as.generatorStart();
+    await _as.generatorStart();
   }
 
-  Future<bool> stopGenerator() async {
+  Future<void> stopGenerator() async {
     await _as.generatorNoteOff();
     await Future.delayed(const Duration(milliseconds: 70));
-    return _as.generatorStop();
+    await _as.generatorStop();
   }
 
   Future<void> generatorNoteOn({required double frequency}) async {
