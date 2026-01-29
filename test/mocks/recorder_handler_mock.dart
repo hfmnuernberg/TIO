@@ -4,7 +4,7 @@ class RecorderHandlerMock extends Mock {
   void onIsRecordingChange(bool isRecording);
   void onRecordingLengthChange(Duration recordingLength);
 
-  void verifyOnIsRecordingChangeWith(bool isRecording) => verify(() => onIsRecordingChange(isRecording)).called(1);
+  void verifyOnIsRecordingChangeCalledWith(bool isRecording) => verify(() => onIsRecordingChange(isRecording)).called(1);
   void verifyOnIsRecordingChangeNeverCalled() => verifyNever(() => onIsRecordingChange(any()));
 
   void verifyOnRecordingLengthChangeCalledWith(Duration recordingLength) =>
