@@ -171,15 +171,51 @@ pub fn piano_set_concert_pitch(new_concert_pitch: f32) -> bool {
     }
 }
 
+lazy_static! {
+    static ref MEDIA_PLAYER_WAV_CACHE: std::sync::Mutex<std::collections::HashMap<String, Vec<f32>>> =
+        std::sync::Mutex::new(std::collections::HashMap::new());
+}
+
+const MEDIA_PLAYER_WAV_CACHE_MAX_ENTRIES: usize = 4;
+
 // media player
 
 pub fn media_player_load_wav(wav_file_path: String) -> bool {
     log::info!("media player load wav: {}", wav_file_path);
+
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        match load_audio_file(wav_file_path) {
+        // Fast path: return cached decoded buffer (avoid disk I/O on tool switching).
+        {
+            let cache = MEDIA_PLAYER_WAV_CACHE
+                .lock()
+                .expect("Could not lock MEDIA_PLAYER_WAV_CACHE");
+            if let Some(buffer) = cache.get(&wav_file_path) {
+                media_player_set_buffer(buffer.clone());
+                log::info!("media player load wav done (cache hit)");
+                return true;
+            }
+        }
+
+        // Slow path: decode from disk and cache it.
+        match load_audio_file(wav_file_path.clone()) {
             Ok(buffer) => {
-                media_player_set_buffer(buffer);
-                log::info!("media player load wav done");
+                media_player_set_buffer(buffer.clone());
+
+                let mut cache = MEDIA_PLAYER_WAV_CACHE
+                    .lock()
+                    .expect("Could not lock MEDIA_PLAYER_WAV_CACHE");
+
+                // Simple size cap: if full and this is a new entry, drop an arbitrary existing entry.
+                if !cache.contains_key(&wav_file_path)
+                    && cache.len() >= MEDIA_PLAYER_WAV_CACHE_MAX_ENTRIES
+                    && let Some(key) = cache.keys().next().cloned()
+                {
+                    cache.remove(&key);
+                }
+
+                cache.insert(wav_file_path, buffer);
+
+                log::info!("media player load wav done (cached)");
                 true
             }
             Err(e) => {

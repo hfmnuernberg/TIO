@@ -19,6 +19,7 @@ typedef OnIsPlayingChange = void Function(bool isPlaying);
 
 class Player {
   static final logger = createPrefixLogger('AudioPlayer');
+  static Player? _currentlyPlaying;
 
   final AudioSystem _as;
   final AudioSession _audioSession;
@@ -42,6 +43,12 @@ class Player {
 
   bool _loaded = false;
   bool get loaded => _loaded;
+
+  String? _wavFilePath;
+
+  double _volume = 1;
+  double _pitchSemitones = 0;
+  double _speedFactor = 1;
 
   double _startPosition = 0;
   double _endPosition = 1;
@@ -76,16 +83,42 @@ class Player {
   Future<void> start() async {
     if (_isPlaying) return;
 
+    // Only one Player can play at a time (main tool vs island tool).
+    final other = _currentlyPlaying;
+    if (other != null && other != this) await other.stop();
+    _currentlyPlaying = this;
+
+    if (!_loaded || _wavFilePath == null) {
+      logger.e('Cannot start Audio Player - no file loaded.');
+      if (_currentlyPlaying == this) _currentlyPlaying = null;
+      return;
+    }
+
     _audioSessionInterruptionListenerHandle ??= await _audioSession.registerInterruptionListener(stop);
 
-    await _as.mediaPlayerSetRepeat(repeatOne: _repeat);
-    await _audioSession.preparePlayback();
+    // Backend media player is shared globally. Before starting, re-apply this
+    // Player's complete state so the correct tool's audio/settings play.
+    final loaded = await _as.mediaPlayerLoadWav(wavFilePath: _wavFilePath!);
+    if (!loaded) {
+      logger.e('Unable to load Audio Player wav before start.');
+      if (_currentlyPlaying == this) _currentlyPlaying = null;
+      return;
+    }
 
+    await _as.mediaPlayerSetPitchSemitones(pitchSemitones: _pitchSemitones);
+    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: _playbackPosition.clamp(0.0, 1.0));
+    await _as.mediaPlayerSetRepeat(repeatOne: _repeat);
+    await _as.mediaPlayerSetSpeedFactor(speedFactor: _speedFactor);
+    await _as.mediaPlayerSetTrim(startFactor: _startPosition, endFactor: _endPosition);
+    await _as.mediaPlayerSetVolume(volume: (_volume * _volume).clamp(0, 1));
+
+    await _audioSession.preparePlayback();
     await _markers.start();
 
     final success = await _as.mediaPlayerStart();
     if (!success) {
       logger.e('Unable to start Audio Player.');
+      if (_currentlyPlaying == this) _currentlyPlaying = null;
       return;
     }
 
@@ -96,7 +129,6 @@ class Player {
 
     await _update();
     await _wakelock.enable();
-    return;
   }
 
   Future<void> stop() async {
@@ -118,30 +150,52 @@ class Player {
       _audioSessionInterruptionListenerHandle = null;
     }
 
-    await _markers.stop();
+    // Only stop marker beeps if this player owned the backend.
+    if (_currentlyPlaying == this) await _markers.stop();
     await _update();
+
+    if (_currentlyPlaying == this) _currentlyPlaying = null;
   }
 
   Future<void> setVolume(double volume) async {
-    await _as.mediaPlayerSetVolume(volume: (volume * volume).clamp(0, 1));
+    _volume = volume;
+
+    // Shared backend: only the currently playing Player may mutate backend state.
+    final isBackendOwner = _currentlyPlaying == this && _isPlaying;
+    if (isBackendOwner) await _as.mediaPlayerSetVolume(volume: (volume * volume).clamp(0, 1));
   }
 
   Future<void> setRepeat(bool repeat) async {
     _repeat = repeat;
-    await _as.mediaPlayerSetRepeat(repeatOne: repeat);
+
+    // Shared backend: only the currently playing Player may mutate backend state.
+    final isBackendOwner = _currentlyPlaying == this && _isPlaying;
+    if (isBackendOwner) await _as.mediaPlayerSetRepeat(repeatOne: repeat);
   }
 
   Future<void> setPitch(double pitchSemitones) async {
-    await _as.mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones);
+    _pitchSemitones = pitchSemitones;
+
+    // Shared backend: only the currently playing Player may mutate backend state.
+    final isBackendOwner = _currentlyPlaying == this && _isPlaying;
+    if (isBackendOwner) await _as.mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones);
   }
 
   Future<void> setSpeed(double speedFactor) async {
-    await _as.mediaPlayerSetSpeedFactor(speedFactor: speedFactor);
+    _speedFactor = speedFactor;
+
+    // Shared backend: only the currently playing Player may mutate backend state.
+    final isBackendOwner = _currentlyPlaying == this && _isPlaying;
+    if (isBackendOwner) await _as.mediaPlayerSetSpeedFactor(speedFactor: speedFactor);
   }
 
   Future<void> setPlaybackPosition(double posFactor) async {
     final clamped = posFactor.clamp(0.0, 1.0);
-    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: clamped);
+
+    // The backend media player is shared globally. Only the currently playing
+    // Player instance may mutate backend playback state.
+    final bool isBackendOwner = _currentlyPlaying == this && _isPlaying;
+    if (isBackendOwner) await _as.mediaPlayerSetPlaybackPosFactor(posFactor: clamped);
 
     final previousPosition = _playbackPosition;
     if (_playbackPosition != clamped) {
@@ -150,23 +204,31 @@ class Player {
         listener(_playbackPosition);
       }
 
-      await _markers.onPlaybackPositionChange(previousPosition: previousPosition, currentPosition: _playbackPosition);
+      // Only the playing tool should trigger marker sounds.
+      if (isBackendOwner) {
+        await _markers.onPlaybackPositionChange(previousPosition: previousPosition, currentPosition: _playbackPosition);
+      }
     }
   }
 
   Future<void> setTrim(double startPosition, double endPosition) async {
     _startPosition = startPosition;
     _endPosition = endPosition;
-    if (_loaded) _as.mediaPlayerSetTrim(startFactor: startPosition, endFactor: endPosition);
+
+    // Only the currently playing Player may mutate backend playback state.
+    final bool isBackendOwner = _currentlyPlaying == this && _isPlaying;
+    if (_loaded && isBackendOwner) _as.mediaPlayerSetTrim(startFactor: startPosition, endFactor: endPosition);
   }
 
   Future<void> skip({required int seconds}) async {
-    final state = await _as.mediaPlayerGetState();
-    if (state == null) return logger.e('Cannot skip - State is null');
-
+    // Use the Player’s current position instead of querying the backend state.
+    // The backend can lag right after seeking, which would make repeated skips
+    // compute the same target position.
     final totalSecs = _fileDuration.inSeconds;
-    final secondFactor = totalSecs > 0 ? seconds / totalSecs : 1.0;
-    final newPos = state.playbackPositionFactor + secondFactor;
+    if (totalSecs <= 0) return;
+
+    final secondFactor = seconds / totalSecs;
+    final newPos = (_playbackPosition + secondFactor).clamp(0.0, 1.0);
 
     await setPlaybackPosition(newPos);
   }
@@ -208,6 +270,8 @@ class Player {
     final isMidi = absoluteFilePath.toLowerCase().endsWith('.mid');
     final wavFilePath = isMidi ? (await _convertMidiToWav(absoluteFilePath)) : absoluteFilePath;
     if (wavFilePath == null) return false;
+
+    _wavFilePath = wavFilePath;
 
     final loaded = await _as.mediaPlayerLoadWav(wavFilePath: wavFilePath);
     if (!loaded) return false;
