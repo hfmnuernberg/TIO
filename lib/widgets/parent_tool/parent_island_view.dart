@@ -137,18 +137,33 @@ class _ParentIslandViewState extends State<ParentIslandView> {
 
   List<MapEntry<int, ProjectBlock>> getFilteredExistingTools() {
     final allowedKinds = ['tuner', 'metronome', 'media_player'];
+
     return widget.project!.blocks
         .asMap()
         .entries
-        .where((entry) => entry.value.kind != widget.toolBlock.kind && allowedKinds.contains(entry.value.kind))
+        .where((entry) {
+          final isAllowedKind = allowedKinds.contains(entry.value.kind);
+          final isNotSelf = entry.value.id != widget.toolBlock.id;
+
+          final isSameKind = entry.value.kind == widget.toolBlock.kind;
+          final allowSameKind = widget.toolBlock.kind == 'media_player';
+
+          return isAllowedKind && isNotSelf && (!isSameKind || allowSameKind);
+        })
         .toList();
   }
 
   List<BlockType> getFilteredNewToolTypes() {
     final connectableToolTypes = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
-    return connectableToolTypes
-        .where((blockType) => widget.toolBlock.kind != getBlockTypeInfos(context.l10n)[blockType]!.kind)
-        .toList();
+
+    final allowSameKind = widget.toolBlock.kind == 'media_player';
+
+    return connectableToolTypes.where((blockType) {
+      if (allowSameKind) return true;
+
+      final blockTypeKind = getBlockTypeInfos(context.l10n)[blockType]!.kind;
+      return widget.toolBlock.kind != blockTypeKind;
+    }).toList();
   }
 
   Future<void> handleConnectExistingTool(int projectToolIndex) async {
