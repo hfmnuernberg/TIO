@@ -60,7 +60,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  json_serializable: 6.11.2
+  json_serializable: 6.11.4
   mocktail: 1.0.4
   permission_handler_platform_interface: 4.3.0
   plugin_platform_interface: 2.1.8
