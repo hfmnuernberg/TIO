@@ -61,7 +61,7 @@ jobs:
 
     - name: Setup NDK
       id: setup_ndk
-      uses: nttld/setup-ndk@v1.5.0
+      uses: nttld/setup-ndk@v1.6.0
       with:
         ndk-version: r27d
 
