@@ -56,7 +56,7 @@ jobs:
         distribution: temurin
 
     - name: Setup Flutter
-      uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
+      uses: kuhnroyal/flutter-fvm-config-action/setup@v3.2
 
     - name: Install ALSA dev libraries
       run: sudo apt-get update && sudo apt-get install -y libasound2-dev
@@ -127,7 +127,7 @@ jobs:
         distribution: temurin
 
     - name: Setup Flutter
-      uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
+      uses: kuhnroyal/flutter-fvm-config-action/setup@v3.2
 
     - name: Install lcov
       run: |

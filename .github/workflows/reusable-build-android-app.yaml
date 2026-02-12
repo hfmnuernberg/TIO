@@ -57,7 +57,7 @@ jobs:
         distribution: temurin
 
     - name: Setup Flutter
-      uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
+      uses: kuhnroyal/flutter-fvm-config-action/setup@v3.2
 
     - name: Setup NDK
       id: setup_ndk
