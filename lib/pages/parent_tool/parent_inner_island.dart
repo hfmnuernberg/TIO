@@ -9,6 +9,7 @@ class ParentInnerIsland extends StatefulWidget {
   final GlobalKey? customPaintKey;
   final double textSpaceWidth;
   final bool mainButtonIsDisabled;
+  final bool hideMainButton;
 
   const ParentInnerIsland({
     super.key,
@@ -19,6 +20,7 @@ class ParentInnerIsland extends StatefulWidget {
     this.centerView,
     this.customPaintKey,
     this.mainButtonIsDisabled = false,
+    this.hideMainButton = false,
   });
 
   @override
@@ -31,18 +33,19 @@ class _ParentInnerIslandState extends State<ParentInnerIsland> {
     return Expanded(
       child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 8),
-            child: Visibility(
-              visible: !widget.mainButtonIsDisabled,
-              maintainAnimation: true,
-              maintainSize: true,
-              maintainState: true,
-              child: CircleAvatar(
-                child: IconButton(onPressed: () => widget.onMainIconPressed(), icon: widget.mainIcon),
+          if (!widget.hideMainButton)
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Visibility(
+                visible: !widget.mainButtonIsDisabled,
+                maintainAnimation: true,
+                maintainSize: true,
+                maintainState: true,
+                child: CircleAvatar(
+                  child: IconButton(onPressed: () => widget.onMainIconPressed(), icon: widget.mainIcon),
+                ),
               ),
             ),
-          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),

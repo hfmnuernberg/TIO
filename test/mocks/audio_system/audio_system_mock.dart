@@ -40,6 +40,7 @@ class AudioSystemMock extends Mock
     mockMediaPlayerSetSpeedFactor();
     mockMediaPlayerSetTrim();
     mockMediaPlayerGetRms(Float32List(1));
+    mockComputeRmsFromFile(Float32List(1));
     mockMediaPlayerSetRepeat();
     mockMediaPlayerGetState();
     mockMediaPlayerSetPlaybackPosFactor();

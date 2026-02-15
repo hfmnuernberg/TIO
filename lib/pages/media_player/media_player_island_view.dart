@@ -51,11 +51,11 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       context.read<FileSystem>(),
       context.read<Wakelock>(),
       onIsPlayingChange: (_) {
-        if (!mounted) return;
+        if (!mounted || !widget.isPlaybackEnabled) return;
         setState(() {});
       },
       onPlaybackPositionChange: (_) {
-        if (!mounted) return;
+        if (!mounted || !widget.isPlaybackEnabled) return;
         setState(() {
           _waveformVisualizer = WaveformVisualizer(
             _player.playbackPosition,
@@ -108,19 +108,26 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     }
 
     if (widget.mediaPlayerBlock.relativePath.isNotEmpty) {
-      final success = await _player.loadAudioFile(_fs.toAbsoluteFilePath(widget.mediaPlayerBlock.relativePath));
-      if (success) {
-        _rmsValues = await _player.getRmsValues(_numOfBins);
-        if (!mounted) return;
-        setState(() {
-          _waveformVisualizer = WaveformVisualizer(
-            0,
-            widget.mediaPlayerBlock.rangeStart,
-            widget.mediaPlayerBlock.rangeEnd,
-            _rmsValues,
-          );
-        });
+      final absolutePath = _fs.toAbsoluteFilePath(widget.mediaPlayerBlock.relativePath);
+
+      if (widget.isPlaybackEnabled) {
+        final success = await _player.loadAudioFile(absolutePath);
+        if (success) {
+          _rmsValues = await _player.getRmsValues(_numOfBins);
+        }
+      } else {
+        _rmsValues = await _player.getRmsValuesFromFile(absolutePath, _numOfBins);
       }
+
+      if (!mounted) return;
+      setState(() {
+        _waveformVisualizer = WaveformVisualizer(
+          0,
+          widget.mediaPlayerBlock.rangeStart,
+          widget.mediaPlayerBlock.rangeEnd,
+          _rmsValues,
+        );
+      });
     }
 
     if (mounted) setState(() => _isLoading = false);
@@ -149,6 +156,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
           ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary)
           : widget.mediaPlayerBlock.icon,
       mainButtonIsDisabled: _isLoading || !widget.isPlaybackEnabled,
+      hideMainButton: !widget.isPlaybackEnabled,
       parameterText: widget.mediaPlayerBlock.title,
       centerView: _isLoading ? const Center(child: CircularProgressIndicator()) : _waveformVisualizer,
       customPaintKey: _customPaintKey,

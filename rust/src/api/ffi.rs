@@ -4,7 +4,7 @@
 use flutter_rust_bridge::frb;
 
 use crate::{
-    api::audio::global::GLOBAL_AUDIO_LOCK,
+    api::audio::{audio_buffer_interpolated::AudioBufferInterpolated, global::GLOBAL_AUDIO_LOCK},
     api::modules::{
         audio_renderer::render_processed_audio,
         generator::{
@@ -273,6 +273,29 @@ pub fn media_player_get_rms(n_bins: usize) -> Vec<f32> {
     log::info!("media player get rms: n_bins: {}", n_bins);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
         media_player_compute_rms(n_bins)
+    } else {
+        Vec::new()
+    }
+}
+
+#[frb(type_64bit_int)]
+pub fn compute_rms_from_file(wav_file_path: String, n_bins: usize) -> Vec<f32> {
+    log::info!(
+        "compute rms from file: {}, n_bins: {}",
+        wav_file_path,
+        n_bins
+    );
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        match load_audio_file(wav_file_path) {
+            Ok(buffer) => {
+                let source = AudioBufferInterpolated::new(buffer);
+                source.compute_rms(n_bins)
+            }
+            Err(e) => {
+                log::info!("compute rms from file failed: {}", e);
+                Vec::new()
+            }
+        }
     } else {
         Vec::new()
     }

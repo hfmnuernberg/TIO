@@ -55,6 +55,9 @@ Future<void> mediaPlayerSetTrim({required double startFactor, required double en
 Future<Float32List> mediaPlayerGetRms({required int nBins}) =>
     RustLib.instance.api.crateApiFfiMediaPlayerGetRms(nBins: nBins);
 
+Future<Float32List> computeRmsFromFile({required String wavFilePath, required int nBins}) =>
+    RustLib.instance.api.crateApiFfiComputeRmsFromFile(wavFilePath: wavFilePath, nBins: nBins);
+
 Future<void> mediaPlayerSetLoop({required bool looping}) =>
     RustLib.instance.api.crateApiFfiMediaPlayerSetLoop(looping: looping);
 
