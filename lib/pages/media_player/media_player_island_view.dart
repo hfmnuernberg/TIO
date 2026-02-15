@@ -28,6 +28,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   late WaveformVisualizer _waveformVisualizer;
 
   late final Player _player;
+  late final bool _ownsPlayer;
 
   Float32List _rmsValues = Float32List(100);
   int _numOfBins = 0;
@@ -44,27 +45,33 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
     _fs = context.read<FileSystem>();
 
-    _player = Player(
-      context.read<AudioSystem>(),
-      context.read<AudioSession>(),
-      context.read<FileSystem>(),
-      context.read<Wakelock>(),
-      onIsPlayingChange: (_) {
-        if (!mounted) return;
-        setState(() {});
-      },
-      onPlaybackPositionChange: (_) {
-        if (!mounted) return;
-        setState(() {
-          _waveformVisualizer = WaveformVisualizer(
-            _player.playbackPosition,
-            widget.mediaPlayerBlock.rangeStart,
-            widget.mediaPlayerBlock.rangeEnd,
-            _rmsValues,
-          );
-        });
-      },
-    );
+    final contextPlayer = context.read<Player?>();
+    _ownsPlayer = contextPlayer == null;
+    _player =
+        contextPlayer ??
+        Player(
+          0,
+          context.read<AudioSystem>(),
+          context.read<AudioSession>(),
+          context.read<FileSystem>(),
+          context.read<Wakelock>(),
+        );
+
+    _player.addOnIsPlayingChangeListener((_) {
+      if (!mounted) return;
+      setState(() {});
+    });
+    _player.addOnPlaybackPositionChangeListener((_) {
+      if (!mounted) return;
+      setState(() {
+        _waveformVisualizer = WaveformVisualizer(
+          _player.playbackPosition,
+          widget.mediaPlayerBlock.rangeStart,
+          widget.mediaPlayerBlock.rangeEnd,
+          _rmsValues,
+        );
+      });
+    });
 
     _waveformVisualizer = WaveformVisualizer(
       0,
@@ -85,7 +92,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
   @override
   Future<void> deactivate() async {
-    await _player.stop();
+    if (_ownsPlayer) await _player.dispose();
     super.deactivate();
   }
 

@@ -12,7 +12,7 @@ void main() {
   setUp(() async {
     resetMocktailState();
     context = TestContext();
-    player = Player(context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
+    player = Player(0, context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
   });
 
   group('Player - Load File', () {

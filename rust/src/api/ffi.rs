@@ -12,10 +12,10 @@ use crate::{
         },
         media_player::{
             MediaPlayerState, media_player_compute_rms, media_player_create_stream,
-            media_player_query_state, media_player_render_mid_to_wav, media_player_set_buffer,
-            media_player_set_loop_value, media_player_set_new_volume, media_player_set_pitch,
-            media_player_set_pos_factor, media_player_set_speed, media_player_set_trim_by_factor,
-            media_player_trigger_destroy_stream,
+            media_player_destroy, media_player_query_state, media_player_render_mid_to_wav,
+            media_player_set_buffer, media_player_set_loop_value, media_player_set_new_volume,
+            media_player_set_pitch, media_player_set_pos_factor, media_player_set_speed,
+            media_player_set_trim_by_factor, media_player_trigger_destroy_stream,
         },
         metronome::{
             BeatHappenedEvent, metronome_create_audio_stream, metronome_get_beat_event,
@@ -90,10 +90,6 @@ pub fn init_audio() {
         .lock()
         .expect("Could not lock INPUT_SAMPLE_RATE") = input_sample_rate;
 }
-
-// pub fn poll_debug_log_message() -> Option<String> {
-//     dequeue_log_message()
-// }
 
 // tuner
 
@@ -173,17 +169,17 @@ pub fn piano_set_concert_pitch(new_concert_pitch: f32) -> bool {
 
 // media player
 
-pub fn media_player_load_wav(wav_file_path: String) -> bool {
-    log::info!("media player load wav: {}", wav_file_path);
+pub fn media_player_load_wav(id: u32, wav_file_path: String) -> bool {
+    log::info!("media player load wav (id={}): {}", id, wav_file_path);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
         match load_audio_file(wav_file_path) {
             Ok(buffer) => {
-                media_player_set_buffer(buffer);
-                log::info!("media player load wav done");
+                media_player_set_buffer(id, buffer);
+                log::info!("media player load wav done (id={})", id);
                 true
             }
             Err(e) => {
-                log::info!("media player load wav failed: {}", e);
+                log::info!("media player load wav failed (id={}): {}", id, e);
                 false
             }
         }
@@ -192,19 +188,19 @@ pub fn media_player_load_wav(wav_file_path: String) -> bool {
     }
 }
 
-pub fn media_player_start() -> bool {
-    log::info!("media player play start");
+pub fn media_player_start(id: u32) -> bool {
+    log::info!("media player play start (id={})", id);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_create_stream()
+        media_player_create_stream(id)
     } else {
         false
     }
 }
 
-pub fn media_player_stop() -> bool {
-    log::info!("media player play stop");
+pub fn media_player_stop(id: u32) -> bool {
+    log::info!("media player play stop (id={})", id);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_trigger_destroy_stream()
+        media_player_trigger_destroy_stream(id)
     } else {
         false
     }
@@ -237,76 +233,92 @@ pub fn media_player_get_recording_samples() -> Vec<f64> {
     }
 }
 
-pub fn media_player_set_pitch_semitones(pitch_semitones: f32) -> bool {
-    log::info!("media player set pitch semitones: {}", pitch_semitones);
-    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_set_pitch(pitch_semitones)
-    } else {
-        false
-    }
-}
-
-pub fn media_player_set_speed_factor(speed_factor: f32) -> bool {
-    log::info!("media player set speed factor: {}", speed_factor);
-    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_set_speed(speed_factor)
-    } else {
-        false
-    }
-}
-
-pub fn media_player_set_trim(start_factor: f32, end_factor: f32) {
+pub fn media_player_set_pitch_semitones(id: u32, pitch_semitones: f32) -> bool {
     log::info!(
-        "media player set trim: start: {}, end: {}",
+        "media player set pitch semitones (id={}): {}",
+        id,
+        pitch_semitones
+    );
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        media_player_set_pitch(id, pitch_semitones)
+    } else {
+        false
+    }
+}
+
+pub fn media_player_set_speed_factor(id: u32, speed_factor: f32) -> bool {
+    log::info!(
+        "media player set speed factor (id={}): {}",
+        id,
+        speed_factor
+    );
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        media_player_set_speed(id, speed_factor)
+    } else {
+        false
+    }
+}
+
+pub fn media_player_set_trim(id: u32, start_factor: f32, end_factor: f32) {
+    log::info!(
+        "media player set trim (id={}): start: {}, end: {}",
+        id,
         start_factor,
         end_factor
     );
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_set_trim_by_factor(start_factor, end_factor)
+        media_player_set_trim_by_factor(id, start_factor, end_factor)
     }
 }
 
 #[frb(type_64bit_int)]
-pub fn media_player_get_rms(n_bins: usize) -> Vec<f32> {
-    log::info!("media player get rms: n_bins: {}", n_bins);
+pub fn media_player_get_rms(id: u32, n_bins: usize) -> Vec<f32> {
+    log::info!("media player get rms (id={}): n_bins: {}", id, n_bins);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_compute_rms(n_bins)
+        media_player_compute_rms(id, n_bins)
     } else {
         Vec::new()
     }
 }
 
-pub fn media_player_set_loop(looping: bool) {
-    log::info!("media player set loop: {}", looping);
+pub fn media_player_set_loop(id: u32, looping: bool) {
+    log::info!("media player set loop (id={}): {}", id, looping);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_set_loop_value(looping)
+        media_player_set_loop_value(id, looping)
     }
 }
 
-pub fn media_player_get_state() -> Option<MediaPlayerState> {
-    log::info!("media player get state");
+pub fn media_player_get_state(id: u32) -> Option<MediaPlayerState> {
+    log::info!("media player get state (id={})", id);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_query_state()
+        media_player_query_state(id)
     } else {
         None
     }
 }
 
-pub fn media_player_set_playback_pos_factor(pos_factor: f32) -> bool {
-    log::info!("media player set pos factor: {}", pos_factor);
+pub fn media_player_set_playback_pos_factor(id: u32, pos_factor: f32) -> bool {
+    log::info!("media player set pos factor (id={}): {}", id, pos_factor);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_set_pos_factor(pos_factor)
+        media_player_set_pos_factor(id, pos_factor)
     } else {
         false
     }
 }
 
-pub fn media_player_set_volume(volume: f32) -> bool {
-    log::info!("media player set volume: {}", volume);
+pub fn media_player_set_volume(id: u32, volume: f32) -> bool {
+    log::info!("media player set volume (id={}): {}", id, volume);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_set_new_volume(volume)
+        media_player_set_new_volume(id, volume)
     } else {
         false
+    }
+}
+
+pub fn media_player_destroy_instance(id: u32) {
+    log::info!("media player destroy instance (id={})", id);
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        media_player_destroy(id)
     }
 }
 

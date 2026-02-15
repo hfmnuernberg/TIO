@@ -29,12 +29,12 @@ Future<bool> generatorNoteOff() => RustLib.instance.api.crateApiFfiGeneratorNote
 Future<bool> pianoSetConcertPitch({required double newConcertPitch}) =>
     RustLib.instance.api.crateApiFfiPianoSetConcertPitch(newConcertPitch: newConcertPitch);
 
-Future<bool> mediaPlayerLoadWav({required String wavFilePath}) =>
-    RustLib.instance.api.crateApiFfiMediaPlayerLoadWav(wavFilePath: wavFilePath);
+Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerLoadWav(id: id, wavFilePath: wavFilePath);
 
-Future<bool> mediaPlayerStart() => RustLib.instance.api.crateApiFfiMediaPlayerStart();
+Future<bool> mediaPlayerStart({required int id}) => RustLib.instance.api.crateApiFfiMediaPlayerStart(id: id);
 
-Future<bool> mediaPlayerStop() => RustLib.instance.api.crateApiFfiMediaPlayerStop();
+Future<bool> mediaPlayerStop({required int id}) => RustLib.instance.api.crateApiFfiMediaPlayerStop(id: id);
 
 Future<bool> mediaPlayerStartRecording() => RustLib.instance.api.crateApiFfiMediaPlayerStartRecording();
 
@@ -43,28 +43,32 @@ Future<bool> mediaPlayerStopRecording() => RustLib.instance.api.crateApiFfiMedia
 Future<Float64List> mediaPlayerGetRecordingSamples() =>
     RustLib.instance.api.crateApiFfiMediaPlayerGetRecordingSamples();
 
-Future<bool> mediaPlayerSetPitchSemitones({required double pitchSemitones}) =>
-    RustLib.instance.api.crateApiFfiMediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones);
+Future<bool> mediaPlayerSetPitchSemitones({required int id, required double pitchSemitones}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerSetPitchSemitones(id: id, pitchSemitones: pitchSemitones);
 
-Future<bool> mediaPlayerSetSpeedFactor({required double speedFactor}) =>
-    RustLib.instance.api.crateApiFfiMediaPlayerSetSpeedFactor(speedFactor: speedFactor);
+Future<bool> mediaPlayerSetSpeedFactor({required int id, required double speedFactor}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerSetSpeedFactor(id: id, speedFactor: speedFactor);
 
-Future<void> mediaPlayerSetTrim({required double startFactor, required double endFactor}) =>
-    RustLib.instance.api.crateApiFfiMediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor);
+Future<void> mediaPlayerSetTrim({required int id, required double startFactor, required double endFactor}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerSetTrim(id: id, startFactor: startFactor, endFactor: endFactor);
 
-Future<Float32List> mediaPlayerGetRms({required int nBins}) =>
-    RustLib.instance.api.crateApiFfiMediaPlayerGetRms(nBins: nBins);
+Future<Float32List> mediaPlayerGetRms({required int id, required int nBins}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerGetRms(id: id, nBins: nBins);
 
-Future<void> mediaPlayerSetLoop({required bool looping}) =>
-    RustLib.instance.api.crateApiFfiMediaPlayerSetLoop(looping: looping);
+Future<void> mediaPlayerSetLoop({required int id, required bool looping}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerSetLoop(id: id, looping: looping);
 
-Future<MediaPlayerState?> mediaPlayerGetState() => RustLib.instance.api.crateApiFfiMediaPlayerGetState();
+Future<MediaPlayerState?> mediaPlayerGetState({required int id}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerGetState(id: id);
 
-Future<bool> mediaPlayerSetPlaybackPosFactor({required double posFactor}) =>
-    RustLib.instance.api.crateApiFfiMediaPlayerSetPlaybackPosFactor(posFactor: posFactor);
+Future<bool> mediaPlayerSetPlaybackPosFactor({required int id, required double posFactor}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerSetPlaybackPosFactor(id: id, posFactor: posFactor);
 
-Future<bool> mediaPlayerSetVolume({required double volume}) =>
-    RustLib.instance.api.crateApiFfiMediaPlayerSetVolume(volume: volume);
+Future<bool> mediaPlayerSetVolume({required int id, required double volume}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerSetVolume(id: id, volume: volume);
+
+Future<void> mediaPlayerDestroyInstance({required int id}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerDestroyInstance(id: id);
 
 Future<bool> mediaPlayerRenderMidiToWav({
   required String midiPath,

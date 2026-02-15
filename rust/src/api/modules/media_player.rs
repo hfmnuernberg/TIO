@@ -1,14 +1,13 @@
 use anyhow::Context;
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use hound::{SampleFormat, WavSpec, WavWriter};
-use lazy_static::__Deref;
 use midly::{MetaMessage, MidiMessage, Smf, TrackEventKind};
 use pitch_shift::PitchShifter;
 use rustysynth::{SoundFont, Synthesizer, SynthesizerSettings};
+use std::collections::HashMap;
 use std::fs;
 use std::io::Cursor;
 use std::mem::MaybeUninit;
-use std::ops::DerefMut;
 use std::sync::mpsc::{Receiver, Sender, channel};
 use std::sync::{Arc, Mutex};
 use std::thread::{self, JoinHandle};
@@ -41,8 +40,8 @@ struct AudioProcessingData {
     pitch_change_semitones: f32,
     speed_change_factor: f32,
     pitch_shifter: Option<PitchShifter>,
-    buffer_after_speed_change: [f32; PITCH_SHIFT_BUFFER_SIZE],
-    buffer_after_pitch_shift: [f32; PITCH_SHIFT_BUFFER_SIZE],
+    buffer_after_speed_change: Vec<f32>,
+    buffer_after_pitch_shift: Vec<f32>,
 }
 
 #[derive(Clone)]
@@ -54,51 +53,68 @@ struct Ev {
 
 type RingConsumerType = Consumer<f32, Arc<SharedRb<f32, Vec<MaybeUninit<f32>>>>>;
 
-lazy_static! {
-    static ref THREAD_DATA: Mutex<Option<ThreadData>> = Mutex::new(None);
-    static ref SOURCE_DATA: Mutex<AudioBufferInterpolated> =
-        Mutex::new(AudioBufferInterpolated::new(vec![]));
-    static ref PROCESSING_DATA: Mutex<AudioProcessingData> = Mutex::new(AudioProcessingData {
-        pitch_change_semitones: 0.0,
-        speed_change_factor: 1.0,
-        pitch_shifter: None,
-        buffer_after_speed_change: [0.0; PITCH_SHIFT_BUFFER_SIZE],
-        buffer_after_pitch_shift: [0.0; PITCH_SHIFT_BUFFER_SIZE],
-    });
-    static ref RING_CONSUMER: Mutex<Option<RingConsumerType>> = Mutex::new(None);
+#[flutter_rust_bridge::frb(ignore)]
+struct PlayerInstance {
+    thread_data: Option<ThreadData>,
+    source_data: AudioBufferInterpolated,
+    processing_data: Box<AudioProcessingData>,
+    ring_consumer: Arc<Mutex<Option<RingConsumerType>>>,
+    volume: Arc<Mutex<f32>>,
 }
 
-static VOLUME: Mutex<f32> = Mutex::new(1.0);
+impl Default for PlayerInstance {
+    fn default() -> Self {
+        Self {
+            thread_data: None,
+            source_data: AudioBufferInterpolated::new(vec![]),
+            processing_data: Box::new(AudioProcessingData {
+                pitch_change_semitones: 0.0,
+                speed_change_factor: 1.0,
+                pitch_shifter: None,
+                buffer_after_speed_change: vec![0.0; PITCH_SHIFT_BUFFER_SIZE],
+                buffer_after_pitch_shift: vec![0.0; PITCH_SHIFT_BUFFER_SIZE],
+            }),
+            ring_consumer: Arc::new(Mutex::new(None)),
+            volume: Arc::new(Mutex::new(1.0)),
+        }
+    }
+}
+
+lazy_static! {
+    static ref PLAYERS: Mutex<HashMap<u32, PlayerInstance>> = Mutex::new(HashMap::new());
+}
 
 // FUNCTIONS
 
+fn with_player<F, R>(id: u32, f: F) -> R
+where
+    F: FnOnce(&mut PlayerInstance) -> R,
+{
+    let mut players = PLAYERS.lock().expect("Could not lock PLAYERS");
+    let instance = players.entry(id).or_default();
+    f(instance)
+}
+
 #[flutter_rust_bridge::frb(ignore)]
-pub fn media_player_create_stream() -> bool {
-    media_player_trigger_destroy_stream();
+pub fn media_player_create_stream(id: u32) -> bool {
+    media_player_trigger_destroy_stream(id);
 
-    log::info!("Starting media player stream");
+    log::info!("Starting media player stream (id={})", id);
 
-    let mut source_data = SOURCE_DATA
-        .lock()
-        .expect("Could not lock mutex to SOURCE_DATA");
+    let mut players = PLAYERS.lock().expect("Could not lock PLAYERS");
+    let instance = players.entry(id).or_default();
 
-    if source_data.get_is_empty() {
+    if instance.source_data.get_is_empty() {
         return false;
-    } else {
-        source_data.set_playing(true);
     }
+    instance.source_data.set_playing(true);
 
     let sample_rate = *OUTPUT_SAMPLE_RATE
         .lock()
         .expect("Could not lock mutex to get sample rate");
 
-    *THREAD_DATA
-        .lock()
-        .expect("Could not lock mutex to THREAD_DATA") = None;
-    PROCESSING_DATA
-        .lock()
-        .expect("Could not lock mutex to PROCESSING_DATA")
-        .pitch_shifter = Some(PitchShifter::new(
+    instance.thread_data = None;
+    instance.processing_data.pitch_shifter = Some(PitchShifter::new(
         PITCH_SHIFT_WINDOW_DUR_MILLIS,
         sample_rate,
     ));
@@ -119,15 +135,21 @@ pub fn media_player_create_stream() -> bool {
 
     let rb = SharedRb::<f32, Vec<_>>::new(MEDIA_PLAYER_PLAYBACK_MAX_BUFFERING * 2);
     let (mut producer, consumer) = rb.split();
-    *RING_CONSUMER
-        .lock()
-        .expect("Could not lock mutex to RING_CONSUMER") = Some(consumer);
+
+    let ring_consumer = Arc::clone(&instance.ring_consumer);
+    *ring_consumer.lock().expect("Could not lock ring_consumer") = Some(consumer);
+
+    let callback_volume = Arc::clone(&instance.volume);
+    let callback_ring_consumer = Arc::clone(&instance.ring_consumer);
 
     let (channel_sender, channel_receiver): (Sender<()>, Receiver<()>) = channel();
+    let callback_id = id;
     let audio_out_thread = thread::spawn(move || {
         match device.build_output_stream(
             &config,
-            on_audio_callback,
+            move |samples_out: &mut [f32], _: &cpal::OutputCallbackInfo| {
+                on_audio_callback(samples_out, &callback_volume, &callback_ring_consumer);
+            },
             move |_| log::info!("something went wrong with the audio stream"),
             Some(Duration::from_secs(AUDIO_STREAM_CREATE_TIMEOUT_SECONDS)),
         ) {
@@ -135,44 +157,42 @@ pub fn media_player_create_stream() -> bool {
                 stream_out.play().expect("Could not play stream");
 
                 while let Ok(command) = channel_receiver.recv() {
-                    // this waits until stop is sent
-                    thread_handle_command(command);
+                    thread_handle_command(callback_id, command);
                 }
             }
             Err(e) => log::info!("failed to build audio stream: {}", e),
         }
     });
 
+    let pitch_shift_id = id;
     let (channel_sender_ps, channel_receiver_ps): (Sender<()>, Receiver<()>) = channel();
     let pitch_shift_thread = thread::spawn(move || {
         loop {
-            let mut audio_processing_data = PROCESSING_DATA
-                .lock()
-                .expect("Could not lock mutex to PROCESSING_DATA");
+            let mut players = PLAYERS.lock().expect("Could not lock PLAYERS");
+            let Some(instance) = players.get_mut(&pitch_shift_id) else {
+                return;
+            };
 
             if let Ok(_command) = channel_receiver_ps.try_recv() {
                 return;
             }
 
             if producer.len() < MEDIA_PLAYER_PLAYBACK_MAX_BUFFERING {
-                let mut audio_source_data = SOURCE_DATA
-                    .lock()
-                    .expect("Could not lock mutex to SOURCE_DATA");
-
-                if !audio_source_data.get_is_playing() {
-                    media_player_trigger_destroy_stream();
+                if !instance.source_data.get_is_playing() {
+                    drop(players);
+                    media_player_trigger_destroy_stream(pitch_shift_id);
                     return;
                 }
 
-                let read_speed = audio_processing_data.speed_change_factor;
-                audio_source_data.get_samples(
-                    &mut audio_processing_data.buffer_after_speed_change,
+                let read_speed = instance.processing_data.speed_change_factor;
+                instance.source_data.get_samples(
+                    &mut instance.processing_data.buffer_after_speed_change,
                     read_speed,
                 );
 
-                pitch_shift(&mut audio_processing_data);
+                pitch_shift(&mut instance.processing_data);
 
-                for sample in audio_processing_data.buffer_after_pitch_shift.iter() {
+                for sample in instance.processing_data.buffer_after_pitch_shift.iter() {
                     producer
                         .push(*sample)
                         .expect("Could not push samples to ringbuffer");
@@ -181,9 +201,7 @@ pub fn media_player_create_stream() -> bool {
         }
     });
 
-    *THREAD_DATA
-        .lock()
-        .expect("Could not lock mutex to THREAD_DATA") = Some(ThreadData {
+    instance.thread_data = Some(ThreadData {
         _audio_out_thread: audio_out_thread,
         _pitch_shift_thread: pitch_shift_thread,
         stop_sender: channel_sender,
@@ -194,57 +212,69 @@ pub fn media_player_create_stream() -> bool {
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn media_player_trigger_destroy_stream() -> bool {
-    match THREAD_DATA
-        .lock()
-        .expect("Could not lock mutex to THREAD_DATA")
-        .deref()
-    {
+pub fn media_player_trigger_destroy_stream(id: u32) -> bool {
+    let players = PLAYERS.lock().expect("Could not lock PLAYERS");
+    let Some(instance) = players.get(&id) else {
+        log::info!(
+            "Mediaplayer (id={}) failed to trigger audio stream to stop. No player instance.",
+            id,
+        );
+        return false;
+    };
+
+    match &instance.thread_data {
         Some(thread_data) => {
-            let succcess_audio_thread = match thread_data.stop_sender.send(()) {
+            let success_audio_thread = match thread_data.stop_sender.send(()) {
                 Ok(_) => true,
                 Err(_) => {
-                    log::info!("Could not send stop signal to audio stream");
+                    log::info!("Could not send stop signal to audio stream (id={})", id);
                     false
                 }
             };
             let success_pitch_shift = match thread_data.stop_sender_ps.send(()) {
                 Ok(_) => true,
                 Err(_) => {
-                    log::info!("Could not send stop signal to pitch shift thread");
+                    log::info!(
+                        "Could not send stop signal to pitch shift thread (id={})",
+                        id
+                    );
                     false
                 }
             };
 
-            succcess_audio_thread && success_pitch_shift
+            success_audio_thread && success_pitch_shift
         }
         None => {
             log::info!(
-                "Mediaplayer failed to trigger audio stream to stop. No audio stream running.",
+                "Mediaplayer (id={}) failed to trigger audio stream to stop. No audio stream running.",
+                id,
             );
             false
         }
     }
 }
 
-fn on_audio_callback(samples_out: &mut [f32], _: &cpal::OutputCallbackInfo) {
-    let vol = *VOLUME
+fn on_audio_callback(
+    samples_out: &mut [f32],
+    volume: &Arc<Mutex<f32>>,
+    ring_consumer: &Arc<Mutex<Option<RingConsumerType>>>,
+) {
+    let vol = *volume
         .lock()
-        .expect("Could not lock mutex to VOLUME to get it in on_audio_out_callback");
+        .expect("Could not lock volume in on_audio_callback");
 
-    if let Some(ring_consumer) = RING_CONSUMER
+    if let Some(consumer) = ring_consumer
         .lock()
-        .expect("Could not lock mutex to RING_CONSUMER")
-        .deref_mut()
+        .expect("Could not lock ring_consumer in on_audio_callback")
+        .as_mut()
     {
-        if ring_consumer.len() < MEDIA_PLAYER_PLAYBACK_MIN_BUFFERING.max(samples_out.len()) {
+        if consumer.len() < MEDIA_PLAYER_PLAYBACK_MIN_BUFFERING.max(samples_out.len()) {
             log::info!("buffering...");
             return;
         }
 
-        // write to output
         for i in 0..samples_out.len() / NUM_CHANNELS {
-            match ring_consumer.pop() {
+            match consumer.pop() {
                 Some(sample) => {
                     for channel in 0..NUM_CHANNELS {
                         let index_out = i * NUM_CHANNELS + channel;
@@ -264,7 +294,6 @@ fn pitch_shift(audio_processing_data: &mut AudioProcessingData) {
     if (audio_processing_data.speed_change_factor - 1.0).abs() < f32::EPSILON
         && audio_processing_data.pitch_change_semitones.abs() < f32::EPSILON
     {
-        // no pitch shift needed
         for (i, sample) in audio_processing_data
             .buffer_after_speed_change
             .iter()
@@ -272,103 +301,95 @@ fn pitch_shift(audio_processing_data: &mut AudioProcessingData) {
         {
             audio_processing_data.buffer_after_pitch_shift[i] = *sample;
         }
+    } else if let Some(pitch_shifter) = &mut audio_processing_data.pitch_shifter {
+        pitch_shifter.shift_pitch(
+            PITCH_SHIFT_OVERSAMPLING,
+            audio_processing_data.pitch_change_semitones
+                - speed_factor_to_halftones(audio_processing_data.speed_change_factor),
+            &audio_processing_data.buffer_after_speed_change,
+            &mut audio_processing_data.buffer_after_pitch_shift,
+        );
     } else {
-        // pitch shift
-        if let Some(pitch_shifter) = &mut audio_processing_data.pitch_shifter {
-            pitch_shifter.shift_pitch(
-                PITCH_SHIFT_OVERSAMPLING,
-                audio_processing_data.pitch_change_semitones
-                    - speed_factor_to_halftones(audio_processing_data.speed_change_factor),
-                &audio_processing_data.buffer_after_speed_change,
-                &mut audio_processing_data.buffer_after_pitch_shift,
-            );
-        } else {
-            log::info!("pitch shifter not initialized");
-        }
+        log::info!("pitch shifter not initialized");
     }
 }
 
-fn thread_handle_command(_command: ()) {
+fn thread_handle_command(id: u32, _command: ()) {
     let _guard = GLOBAL_AUDIO_LOCK
         .lock()
         .expect("Could not lock global audio lock");
-    *THREAD_DATA
-        .lock()
-        .expect("Could not lock mutex to THREAD_DATA to clear") = None;
-    *RING_CONSUMER
-        .lock()
-        .expect("Could not lock mutex to RING_CONSUMER to clear") = None;
-    SOURCE_DATA
-        .lock()
-        .expect("Could not lock mutex to SOURCE_DATA to set playing flag")
-        .set_playing(false);
+    let mut players = PLAYERS.lock().expect("Could not lock PLAYERS");
+    if let Some(instance) = players.get_mut(&id) {
+        instance.thread_data = None;
+        *instance
+            .ring_consumer
+            .lock()
+            .expect("Could not lock ring_consumer to clear") = None;
+        instance.source_data.set_playing(false);
+    }
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn media_player_set_buffer(new_buffer: Vec<f32>) {
-    *SOURCE_DATA
-        .lock()
-        .expect("Could not lock mutex to SOURCE_DATA to set buffer") =
-        AudioBufferInterpolated::new(new_buffer);
+pub fn media_player_set_buffer(id: u32, new_buffer: Vec<f32>) {
+    with_player(id, |instance| {
+        instance.source_data = AudioBufferInterpolated::new(new_buffer);
+    });
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn media_player_set_pos_factor(pos_factor: f32) -> bool {
-    SOURCE_DATA
-        .lock()
-        .expect("Could not lock mutex to SOURCE_DATA to compute rms")
-        .set_playback_position_factor(pos_factor);
-    true
+pub fn media_player_set_pos_factor(id: u32, pos_factor: f32) -> bool {
+    with_player(id, |instance| {
+        instance
+            .source_data
+            .set_playback_position_factor(pos_factor);
+        true
+    })
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn media_player_set_pitch(semitones: f32) -> bool {
-    PROCESSING_DATA
-        .lock()
-        .expect("Could not lock mutex to PROCESSING_DATA to set pitch")
-        .pitch_change_semitones = semitones;
-    true
+pub fn media_player_set_pitch(id: u32, semitones: f32) -> bool {
+    with_player(id, |instance| {
+        instance.processing_data.pitch_change_semitones = semitones;
+        true
+    })
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn media_player_set_speed(speed_factor: f32) -> bool {
-    PROCESSING_DATA
-        .lock()
-        .expect("Could not lock mutex to PROCESSING_DATA to set speed")
-        .speed_change_factor = speed_factor;
-    true
+pub fn media_player_set_speed(id: u32, speed_factor: f32) -> bool {
+    with_player(id, |instance| {
+        instance.processing_data.speed_change_factor = speed_factor;
+        true
+    })
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn media_player_compute_rms(n_bins: usize) -> Vec<f32> {
-    SOURCE_DATA
-        .lock()
-        .expect("Could not lock mutex to SOURCE_DATA to compute rms")
-        .compute_rms(n_bins)
+pub fn media_player_compute_rms(id: u32, n_bins: usize) -> Vec<f32> {
+    with_player(id, |instance| instance.source_data.compute_rms(n_bins))
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn media_player_set_loop_value(loop_on: bool) {
-    SOURCE_DATA
-        .lock()
-        .expect("Could not lock mutex to SOURCE_DATA to set loop flag")
-        .set_loop(loop_on);
+pub fn media_player_set_loop_value(id: u32, loop_on: bool) {
+    with_player(id, |instance| {
+        instance.source_data.set_loop(loop_on);
+    });
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn media_player_set_trim_by_factor(start_factor: f32, end_factor: f32) {
-    SOURCE_DATA
-        .lock()
-        .expect("Could not lock mutex to SOURCE_DATA to set loop flag")
-        .set_trim(start_factor, end_factor);
+pub fn media_player_set_trim_by_factor(id: u32, start_factor: f32, end_factor: f32) {
+    with_player(id, |instance| {
+        instance.source_data.set_trim(start_factor, end_factor);
+    });
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn media_player_set_new_volume(new_volume: f32) -> bool {
-    *VOLUME
-        .lock()
-        .expect("Could not lock mutex to VOLUME to set new value") = new_volume;
-    true
+pub fn media_player_set_new_volume(id: u32, new_volume: f32) -> bool {
+    with_player(id, |instance| {
+        *instance
+            .volume
+            .lock()
+            .expect("Could not lock volume to set new value") = new_volume;
+        true
+    })
 }
 
 #[flutter_rust_bridge::frb(ignore)]
@@ -382,27 +403,33 @@ pub struct MediaPlayerState {
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn media_player_query_state() -> Option<MediaPlayerState> {
+pub fn media_player_query_state(id: u32) -> Option<MediaPlayerState> {
     let sample_rate = *OUTPUT_SAMPLE_RATE
         .lock()
         .expect("Could not lock mutex to get sample rate");
 
-    let source_data = SOURCE_DATA
-        .lock()
-        .expect("Could not lock mutex to SOURCE_DATA to get media player state");
+    with_player(id, |instance| {
+        let playback_position_factor = instance.source_data.get_playback_position_factor();
+        let total_length_seconds = instance.source_data.get_length_seconds(sample_rate as u32);
+        let (trim_start_factor, trim_end_factor) = instance.source_data.get_trim();
 
-    let playback_position_factor = source_data.get_playback_position_factor();
-    let total_length_seconds = source_data.get_length_seconds(sample_rate as u32);
-    let (trim_start_factor, trim_end_factor) = source_data.get_trim();
-
-    Some(MediaPlayerState {
-        playing: source_data.get_is_playing(),
-        playback_position_factor,
-        total_length_seconds,
-        looping: source_data.get_is_looping(),
-        trim_start_factor,
-        trim_end_factor,
+        Some(MediaPlayerState {
+            playing: instance.source_data.get_is_playing(),
+            playback_position_factor,
+            total_length_seconds,
+            looping: instance.source_data.get_is_looping(),
+            trim_start_factor,
+            trim_end_factor,
+        })
     })
+}
+
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_destroy(id: u32) {
+    let mut players = PLAYERS.lock().expect("Could not lock PLAYERS");
+    if players.remove(&id).is_some() {
+        log::info!("Destroyed media player instance (id={})", id);
+    }
 }
 
 #[flutter_rust_bridge::frb(ignore)]

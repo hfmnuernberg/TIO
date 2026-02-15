@@ -20,6 +20,7 @@ typedef OnIsPlayingChange = void Function(bool isPlaying);
 class Player {
   static final logger = createPrefixLogger('AudioPlayer');
 
+  final int id;
   final AudioSystem _as;
   final AudioSession _audioSession;
   final FileSystem _fs;
@@ -54,6 +55,7 @@ class Player {
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
   Player(
+    this.id,
     this._as,
     this._audioSession,
     this._fs,
@@ -78,12 +80,12 @@ class Player {
 
     _audioSessionInterruptionListenerHandle ??= await _audioSession.registerInterruptionListener(stop);
 
-    await _as.mediaPlayerSetRepeat(repeatOne: _repeat);
+    await _as.mediaPlayerSetRepeat(id: id, repeatOne: _repeat);
     await _audioSession.preparePlayback();
 
     await _markers.start();
 
-    final success = await _as.mediaPlayerStart();
+    final success = await _as.mediaPlayerStart(id: id);
     if (!success) {
       logger.e('Unable to start Audio Player.');
       return;
@@ -107,7 +109,7 @@ class Player {
 
     if (!_isPlaying) return;
 
-    final success = await _as.mediaPlayerStop();
+    final success = await _as.mediaPlayerStop(id: id);
     if (!success) {
       logger.e('Unable to stop Audio Player.');
       return;
@@ -123,25 +125,25 @@ class Player {
   }
 
   Future<void> setVolume(double volume) async {
-    await _as.mediaPlayerSetVolume(volume: (volume * volume).clamp(0, 1));
+    await _as.mediaPlayerSetVolume(id: id, volume: (volume * volume).clamp(0, 1));
   }
 
   Future<void> setRepeat(bool repeat) async {
     _repeat = repeat;
-    await _as.mediaPlayerSetRepeat(repeatOne: repeat);
+    await _as.mediaPlayerSetRepeat(id: id, repeatOne: repeat);
   }
 
   Future<void> setPitch(double pitchSemitones) async {
-    await _as.mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones);
+    await _as.mediaPlayerSetPitchSemitones(id: id, pitchSemitones: pitchSemitones);
   }
 
   Future<void> setSpeed(double speedFactor) async {
-    await _as.mediaPlayerSetSpeedFactor(speedFactor: speedFactor);
+    await _as.mediaPlayerSetSpeedFactor(id: id, speedFactor: speedFactor);
   }
 
   Future<void> setPlaybackPosition(double posFactor) async {
     final clamped = posFactor.clamp(0.0, 1.0);
-    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: clamped);
+    await _as.mediaPlayerSetPlaybackPosFactor(id: id, posFactor: clamped);
 
     final previousPosition = _playbackPosition;
     if (_playbackPosition != clamped) {
@@ -157,11 +159,11 @@ class Player {
   Future<void> setTrim(double startPosition, double endPosition) async {
     _startPosition = startPosition;
     _endPosition = endPosition;
-    if (_loaded) _as.mediaPlayerSetTrim(startFactor: startPosition, endFactor: endPosition);
+    if (_loaded) _as.mediaPlayerSetTrim(id: id, startFactor: startPosition, endFactor: endPosition);
   }
 
   Future<void> skip({required int seconds}) async {
-    final state = await _as.mediaPlayerGetState();
+    final state = await _as.mediaPlayerGetState(id: id);
     if (state == null) return logger.e('Cannot skip - State is null');
 
     final totalSecs = _fileDuration.inSeconds;
@@ -190,7 +192,7 @@ class Player {
   }
 
   Future<Float32List> getRmsValues(int numberOfBins) async {
-    final rmsList = await _as.mediaPlayerGetRms(nBins: numberOfBins);
+    final rmsList = await _as.mediaPlayerGetRms(id: id, nBins: numberOfBins);
 
     Float32List newList = Float32List(rmsList.length);
     var minValue = rmsList.reduce(min);
@@ -209,7 +211,7 @@ class Player {
     final wavFilePath = isMidi ? (await _convertMidiToWav(absoluteFilePath)) : absoluteFilePath;
     if (wavFilePath == null) return false;
 
-    final loaded = await _as.mediaPlayerLoadWav(wavFilePath: wavFilePath);
+    final loaded = await _as.mediaPlayerLoadWav(id: id, wavFilePath: wavFilePath);
     if (!loaded) return false;
     _loaded = true;
 
@@ -243,7 +245,7 @@ class Player {
   }
 
   Future<void> _setFileDuration() async {
-    final state = await _as.mediaPlayerGetState();
+    final state = await _as.mediaPlayerGetState(id: id);
     if (state != null) {
       _fileDuration = Duration(milliseconds: (state.totalLengthSeconds * 1000).toInt());
     }
@@ -269,8 +271,13 @@ class Player {
     }
   }
 
+  Future<void> dispose() async {
+    await stop();
+    await _as.mediaPlayerDestroyInstance(id: id);
+  }
+
   Future<void> _update() async {
-    final state = await _as.mediaPlayerGetState();
+    final state = await _as.mediaPlayerGetState(id: id);
     if (state == null) return;
 
     if (state.playing != _isPlaying) {
