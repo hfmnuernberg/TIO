@@ -84,6 +84,15 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
       when(() => mediaPlayerGetRms(nBins: any(named: 'nBins'))).thenAnswer((_) async => rmsValues);
   void verifyMediaPlayerGetRmsCalledWith(int nBins) => verify(() => mediaPlayerGetRms(nBins: nBins)).called(1);
 
+  void mockComputeRmsFromFile(Float32List rmsValues) => when(
+    () => computeRmsFromFile(
+      wavFilePath: any(named: 'wavFilePath'),
+      nBins: any(named: 'nBins'),
+    ),
+  ).thenAnswer((_) async => rmsValues);
+  void verifyComputeRmsFromFileCalledWith(String wavFilePath, int nBins) =>
+      verify(() => computeRmsFromFile(wavFilePath: wavFilePath, nBins: nBins)).called(1);
+
   void mockMediaPlayerSetRepeat([void result]) =>
       when(() => mediaPlayerSetRepeat(repeatOne: any(named: 'repeatOne'))).thenAnswer((_) async => result);
   void verifyMediaPlayerSetRepeatCalledWith(bool repeat) =>

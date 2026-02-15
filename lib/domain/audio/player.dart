@@ -189,9 +189,7 @@ class Player {
     await setPlaybackPosition(targetMarker);
   }
 
-  Future<Float32List> getRmsValues(int numberOfBins) async {
-    final rmsList = await _as.mediaPlayerGetRms(nBins: numberOfBins);
-
+  Float32List _normalizeRms(Float32List rmsList) {
     Float32List newList = Float32List(rmsList.length);
     var minValue = rmsList.reduce(min);
     var maxValue = rmsList.reduce(max);
@@ -201,6 +199,17 @@ class Player {
       newList[i] = (rmsList[i] - minValue) / (maxValue - minValue);
     }
     return newList;
+  }
+
+  Future<Float32List> getRmsValues(int numberOfBins) async {
+    return _normalizeRms(await _as.mediaPlayerGetRms(nBins: numberOfBins));
+  }
+
+  Future<Float32List> getRmsValuesFromFile(String absoluteFilePath, int numberOfBins) async {
+    final isMidi = absoluteFilePath.toLowerCase().endsWith('.mid');
+    final wavFilePath = isMidi ? (await _convertMidiToWav(absoluteFilePath)) : absoluteFilePath;
+    if (wavFilePath == null) return Float32List(numberOfBins);
+    return _normalizeRms(await _as.computeRmsFromFile(wavFilePath: wavFilePath, nBins: numberOfBins));
   }
 
   Future<bool> loadAudioFile(String absoluteFilePath) async {

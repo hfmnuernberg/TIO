@@ -70,6 +70,10 @@ class RustBasedAudioSystem implements AudioSystem {
   Future<Float32List> mediaPlayerGetRms({required int nBins}) async => rust.mediaPlayerGetRms(nBins: nBins);
 
   @override
+  Future<Float32List> computeRmsFromFile({required String wavFilePath, required int nBins}) async =>
+      rust.computeRmsFromFile(wavFilePath: wavFilePath, nBins: nBins);
+
+  @override
   Future<void> mediaPlayerSetRepeat({required bool repeatOne}) async => rust.mediaPlayerSetLoop(looping: repeatOne);
 
   @override

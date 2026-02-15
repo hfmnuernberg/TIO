@@ -28,6 +28,7 @@ mixin AudioSystem {
   Future<bool> mediaPlayerSetSpeedFactor({required double speedFactor});
   Future<void> mediaPlayerSetTrim({required double startFactor, required double endFactor});
   Future<Float32List> mediaPlayerGetRms({required int nBins});
+  Future<Float32List> computeRmsFromFile({required String wavFilePath, required int nBins});
   Future<void> mediaPlayerSetRepeat({required bool repeatOne});
   Future<MediaPlayerState?> mediaPlayerGetState();
   Future<bool> mediaPlayerSetPlaybackPosFactor({required double posFactor});

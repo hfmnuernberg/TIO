@@ -145,6 +145,13 @@ class AudioSystemLogDecorator implements AudioSystem {
   }
 
   @override
+  Future<Float32List> computeRmsFromFile({required String wavFilePath, required int nBins}) async {
+    final result = await _as.computeRmsFromFile(wavFilePath: wavFilePath, nBins: nBins);
+    _logger.t('computeRmsFromFile(wavFilePath: $wavFilePath, nBins: $nBins): Float32List(length=${result.length})');
+    return result;
+  }
+
+  @override
   Future<void> mediaPlayerSetRepeat({required bool repeatOne}) async {
     await _as.mediaPlayerSetRepeat(repeatOne: repeatOne);
     _logger.t('mediaPlayerSetRepeat(repeatOne: $repeatOne)');
