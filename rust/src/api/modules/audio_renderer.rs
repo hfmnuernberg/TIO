@@ -22,7 +22,12 @@ pub fn render_processed_audio(
         return vec![];
     }
 
-    let estimated_output_len = estimate_output_length(samples.len(), speed_factor, trim_start_factor, trim_end_factor);
+    let estimated_output_len = estimate_output_length(
+        samples.len(),
+        speed_factor,
+        trim_start_factor,
+        trim_end_factor,
+    );
     let mut output = Vec::with_capacity(estimated_output_len);
 
     let mut source = AudioBufferInterpolated::new(samples);
@@ -44,7 +49,12 @@ pub fn render_processed_audio(
 
         if needs_pitch_shift {
             let semitones = pitch_semitones - speed_factor_to_halftones(speed_factor);
-            pitch_shifter.shift_pitch(PITCH_SHIFT_OVERSAMPLING, semitones, &input_chunk, &mut output_chunk);
+            pitch_shifter.shift_pitch(
+                PITCH_SHIFT_OVERSAMPLING,
+                semitones,
+                &input_chunk,
+                &mut output_chunk,
+            );
         } else {
             output_chunk.copy_from_slice(&input_chunk);
         }
