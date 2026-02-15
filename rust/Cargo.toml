@@ -14,7 +14,7 @@ test = []
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
 
 [dependencies]
-anyhow = "1.0.100"
+anyhow = "1.0.101"
 chrono = "0.4.43"
 cpal = "0.15.3"
 enum-map = "2.7.3"

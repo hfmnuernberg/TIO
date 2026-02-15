@@ -61,7 +61,7 @@ jobs:
 
     - name: Setup NDK
       id: setup_ndk
-      uses: nttld/setup-ndk@v1.5.0
+      uses: nttld/setup-ndk@v1.6.0
       with:
         ndk-version: r27d
 
@@ -99,7 +99,7 @@ jobs:
       run: scripts/app.sh generate:json
 
     - name: Setup ruby
-      uses: ruby/setup-ruby@v1.286.0
+      uses: ruby/setup-ruby@v1.288.0
       with:
         ruby-version: 3.3
         working-directory: android
