@@ -174,6 +174,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       if (_player.loaded) _addShareOptionToMenu();
       if (_player.loaded) await _loadSecondaryAudioFromIsland();
 
+      if (!mounted) return;
       _mediaPlayerTutorial.maybeShowWaveformTutorial(context, playerLoaded: _player.loaded);
 
       await _updateState();
