@@ -71,7 +71,6 @@ lazy_static! {
 }
 
 static VOLUME: Mutex<f32> = Mutex::new(1.0);
-static SECONDARY_VOLUME: Mutex<f32> = Mutex::new(1.0);
 
 // FUNCTIONS
 
@@ -270,15 +269,12 @@ fn on_audio_callback(samples_out: &mut [f32], _: &cpal::OutputCallbackInfo) {
             }
         }
 
-        // Mix in secondary audio source
-        let secondary_vol = *SECONDARY_VOLUME
-            .lock()
-            .expect("Could not lock mutex to SECONDARY_VOLUME");
+        // Mix in secondary audio source (volume is pre-baked into the rendered buffer)
         if let Some(ref mut secondary) = *SECONDARY_SOURCE
             .lock()
             .expect("Could not lock mutex to SECONDARY_SOURCE")
         {
-            secondary.add_samples_to_buffer(samples_out, secondary_vol);
+            secondary.add_samples_to_buffer(samples_out, 1.0);
         }
     }
 }
@@ -457,14 +453,6 @@ pub fn media_player_unload_secondary() {
     *SECONDARY_SOURCE
         .lock()
         .expect("Could not lock mutex to SECONDARY_SOURCE to unload") = None;
-}
-
-#[flutter_rust_bridge::frb(ignore)]
-pub fn media_player_set_secondary_volume(new_volume: f32) -> bool {
-    *SECONDARY_VOLUME
-        .lock()
-        .expect("Could not lock mutex to SECONDARY_VOLUME to set new value") = new_volume;
-    true
 }
 
 #[flutter_rust_bridge::frb(ignore)]

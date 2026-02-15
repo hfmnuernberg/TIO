@@ -46,7 +46,6 @@ class AudioSystemMock extends Mock
     mockMediaPlayerSetVolume();
     mockMediaPlayerLoadSecondaryProcessed();
     mockMediaPlayerUnloadSecondaryAudio();
-    mockMediaPlayerSetSecondaryAudioVolume();
 
     mockMetronomeStart();
     mockMetronomeStop();

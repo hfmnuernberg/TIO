@@ -37,7 +37,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -2007801049;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1399932002;
 
 // Section: executor
 
@@ -630,41 +630,6 @@ fn wire__crate__api__ffi__media_player_set_playback_pos_factor_impl(
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(
                         crate::api::ffi::media_player_set_playback_pos_factor(api_pos_factor),
-                    )?;
-                    Ok(output_ok)
-                })())
-            }
-        },
-    )
-}
-fn wire__crate__api__ffi__media_player_set_secondary_audio_volume_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
-    rust_vec_len_: i32,
-    data_len_: i32,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "media_player_set_secondary_audio_volume",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let message = unsafe {
-                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
-                    ptr_,
-                    rust_vec_len_,
-                    data_len_,
-                )
-            };
-            let mut deserializer =
-                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_volume = <f32>::sse_decode(&mut deserializer);
-            deserializer.end();
-            move |context| {
-                transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(
-                        crate::api::ffi::media_player_set_secondary_audio_volume(api_volume),
                     )?;
                     Ok(output_ok)
                 })())
@@ -1917,73 +1882,67 @@ fn pde_ffi_dispatcher_primary_impl(
             rust_vec_len,
             data_len,
         ),
-        18 => wire__crate__api__ffi__media_player_set_secondary_audio_volume_impl(
+        18 => wire__crate__api__ffi__media_player_set_speed_factor_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        19 => wire__crate__api__ffi__media_player_set_speed_factor_impl(
-            port,
-            ptr,
-            rust_vec_len,
-            data_len,
-        ),
-        20 => wire__crate__api__ffi__media_player_set_trim_impl(port, ptr, rust_vec_len, data_len),
-        21 => {
+        19 => wire__crate__api__ffi__media_player_set_trim_impl(port, ptr, rust_vec_len, data_len),
+        20 => {
             wire__crate__api__ffi__media_player_set_volume_impl(port, ptr, rust_vec_len, data_len)
         }
-        22 => wire__crate__api__ffi__media_player_start_impl(port, ptr, rust_vec_len, data_len),
-        23 => wire__crate__api__ffi__media_player_start_recording_impl(
+        21 => wire__crate__api__ffi__media_player_start_impl(port, ptr, rust_vec_len, data_len),
+        22 => wire__crate__api__ffi__media_player_start_recording_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        24 => wire__crate__api__ffi__media_player_stop_impl(port, ptr, rust_vec_len, data_len),
-        25 => wire__crate__api__ffi__media_player_stop_recording_impl(
+        23 => wire__crate__api__ffi__media_player_stop_impl(port, ptr, rust_vec_len, data_len),
+        24 => wire__crate__api__ffi__media_player_stop_recording_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        26 => wire__crate__api__ffi__media_player_unload_secondary_audio_impl(
+        25 => wire__crate__api__ffi__media_player_unload_secondary_audio_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        27 => wire__crate__api__ffi__metronome_load_file_impl(port, ptr, rust_vec_len, data_len),
-        28 => wire__crate__api__ffi__metronome_poll_beat_event_happened_impl(
+        26 => wire__crate__api__ffi__metronome_load_file_impl(port, ptr, rust_vec_len, data_len),
+        27 => wire__crate__api__ffi__metronome_poll_beat_event_happened_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        29 => wire__crate__api__ffi__metronome_set_beat_mute_chance_impl(
+        28 => wire__crate__api__ffi__metronome_set_beat_mute_chance_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        30 => wire__crate__api__ffi__metronome_set_bpm_impl(port, ptr, rust_vec_len, data_len),
-        31 => wire__crate__api__ffi__metronome_set_muted_impl(port, ptr, rust_vec_len, data_len),
-        32 => wire__crate__api__ffi__metronome_set_rhythm_impl(port, ptr, rust_vec_len, data_len),
-        33 => wire__crate__api__ffi__metronome_set_volume_impl(port, ptr, rust_vec_len, data_len),
-        34 => wire__crate__api__ffi__metronome_start_impl(port, ptr, rust_vec_len, data_len),
-        35 => wire__crate__api__ffi__metronome_stop_impl(port, ptr, rust_vec_len, data_len),
-        36 => wire__crate__api__ffi__piano_note_off_impl(port, ptr, rust_vec_len, data_len),
-        37 => wire__crate__api__ffi__piano_note_on_impl(port, ptr, rust_vec_len, data_len),
-        38 => {
+        29 => wire__crate__api__ffi__metronome_set_bpm_impl(port, ptr, rust_vec_len, data_len),
+        30 => wire__crate__api__ffi__metronome_set_muted_impl(port, ptr, rust_vec_len, data_len),
+        31 => wire__crate__api__ffi__metronome_set_rhythm_impl(port, ptr, rust_vec_len, data_len),
+        32 => wire__crate__api__ffi__metronome_set_volume_impl(port, ptr, rust_vec_len, data_len),
+        33 => wire__crate__api__ffi__metronome_start_impl(port, ptr, rust_vec_len, data_len),
+        34 => wire__crate__api__ffi__metronome_stop_impl(port, ptr, rust_vec_len, data_len),
+        35 => wire__crate__api__ffi__piano_note_off_impl(port, ptr, rust_vec_len, data_len),
+        36 => wire__crate__api__ffi__piano_note_on_impl(port, ptr, rust_vec_len, data_len),
+        37 => {
             wire__crate__api__ffi__piano_set_concert_pitch_impl(port, ptr, rust_vec_len, data_len)
         }
-        39 => wire__crate__api__ffi__piano_set_volume_impl(port, ptr, rust_vec_len, data_len),
-        40 => wire__crate__api__ffi__piano_setup_impl(port, ptr, rust_vec_len, data_len),
-        41 => wire__crate__api__ffi__piano_start_impl(port, ptr, rust_vec_len, data_len),
-        42 => wire__crate__api__ffi__piano_stop_impl(port, ptr, rust_vec_len, data_len),
-        43 => wire__crate__api__ffi__tuner_get_frequency_impl(port, ptr, rust_vec_len, data_len),
-        44 => wire__crate__api__ffi__tuner_start_impl(port, ptr, rust_vec_len, data_len),
-        45 => wire__crate__api__ffi__tuner_stop_impl(port, ptr, rust_vec_len, data_len),
+        38 => wire__crate__api__ffi__piano_set_volume_impl(port, ptr, rust_vec_len, data_len),
+        39 => wire__crate__api__ffi__piano_setup_impl(port, ptr, rust_vec_len, data_len),
+        40 => wire__crate__api__ffi__piano_start_impl(port, ptr, rust_vec_len, data_len),
+        41 => wire__crate__api__ffi__piano_stop_impl(port, ptr, rust_vec_len, data_len),
+        42 => wire__crate__api__ffi__tuner_get_frequency_impl(port, ptr, rust_vec_len, data_len),
+        43 => wire__crate__api__ffi__tuner_start_impl(port, ptr, rust_vec_len, data_len),
+        44 => wire__crate__api__ffi__tuner_stop_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }

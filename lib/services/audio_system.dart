@@ -41,7 +41,6 @@ mixin AudioSystem {
     required double volume,
   });
   Future<bool> mediaPlayerUnloadSecondaryAudio();
-  Future<bool> mediaPlayerSetSecondaryAudioVolume({required double volume});
   Future<bool> mediaPlayerRenderMidiToWav({
     required String midiPath,
     required String soundFontPath,

@@ -103,10 +103,6 @@ class RustBasedAudioSystem implements AudioSystem {
   Future<bool> mediaPlayerUnloadSecondaryAudio() async => rust.mediaPlayerUnloadSecondaryAudio();
 
   @override
-  Future<bool> mediaPlayerSetSecondaryAudioVolume({required double volume}) async =>
-      rust.mediaPlayerSetSecondaryAudioVolume(volume: volume);
-
-  @override
   Future<bool> mediaPlayerRenderMidiToWav({
     required String midiPath,
     required String soundFontPath,

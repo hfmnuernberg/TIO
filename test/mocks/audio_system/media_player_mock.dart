@@ -119,7 +119,4 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
 
   void mockMediaPlayerUnloadSecondaryAudio([bool result = true]) =>
       when(mediaPlayerUnloadSecondaryAudio).thenAnswer((_) async => result);
-
-  void mockMediaPlayerSetSecondaryAudioVolume([bool result = true]) =>
-      when(() => mediaPlayerSetSecondaryAudioVolume(volume: any(named: 'volume'))).thenAnswer((_) async => result);
 }

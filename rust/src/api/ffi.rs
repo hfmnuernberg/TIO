@@ -16,9 +16,8 @@ use crate::{
             media_player_query_state, media_player_render_mid_to_wav, media_player_set_buffer,
             media_player_set_loop_value, media_player_set_new_volume, media_player_set_pitch,
             media_player_set_pos_factor, media_player_set_secondary_buffer,
-            media_player_set_secondary_volume, media_player_set_speed,
-            media_player_set_trim_by_factor, media_player_trigger_destroy_stream,
-            media_player_unload_secondary,
+            media_player_set_speed, media_player_set_trim_by_factor,
+            media_player_trigger_destroy_stream, media_player_unload_secondary,
         },
         metronome::{
             BeatHappenedEvent, metronome_create_audio_stream, metronome_get_beat_event,
@@ -354,15 +353,6 @@ pub fn media_player_unload_secondary_audio() -> bool {
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
         media_player_unload_secondary();
         true
-    } else {
-        false
-    }
-}
-
-pub fn media_player_set_secondary_audio_volume(volume: f32) -> bool {
-    log::info!("media player set secondary volume: {}", volume);
-    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        media_player_set_secondary_volume(volume)
     } else {
         false
     }
