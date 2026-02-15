@@ -74,12 +74,14 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       _rmsValues,
     );
 
-    _player.setVolume(widget.mediaPlayerBlock.volume);
-    _player.setPitch(widget.mediaPlayerBlock.pitchSemitones);
-    _player.setSpeed(widget.mediaPlayerBlock.speedFactor);
-    _player.setRepeat(widget.mediaPlayerBlock.looping);
-    _player.markers.positions = widget.mediaPlayerBlock.markerPositions;
-    _player.setTrim(widget.mediaPlayerBlock.rangeStart, widget.mediaPlayerBlock.rangeEnd);
+    if (widget.isPlaybackEnabled) {
+      _player.setVolume(widget.mediaPlayerBlock.volume);
+      _player.setPitch(widget.mediaPlayerBlock.pitchSemitones);
+      _player.setSpeed(widget.mediaPlayerBlock.speedFactor);
+      _player.setRepeat(widget.mediaPlayerBlock.looping);
+      _player.markers.positions = widget.mediaPlayerBlock.markerPositions;
+      _player.setTrim(widget.mediaPlayerBlock.rangeStart, widget.mediaPlayerBlock.rangeEnd);
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) => _initBinsAndLoadRms());
   }

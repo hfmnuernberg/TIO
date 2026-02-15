@@ -90,12 +90,12 @@ pub fn media_player_create_stream() -> bool {
         source_data.set_playing(true);
     }
 
-    // Reset secondary source to start of buffer
+    // Resume secondary source from current position (don't reset)
     if let Some(ref mut secondary) = *SECONDARY_SOURCE
         .lock()
         .expect("Could not lock mutex to SECONDARY_SOURCE")
     {
-        secondary.reset();
+        secondary.is_done = false;
         secondary.set_looping(source_data.get_is_looping());
     }
 
@@ -321,12 +321,6 @@ fn thread_handle_command(_command: ()) {
         .lock()
         .expect("Could not lock mutex to SOURCE_DATA to set playing flag")
         .set_playing(false);
-    if let Some(ref mut secondary) = *SECONDARY_SOURCE
-        .lock()
-        .expect("Could not lock mutex to SECONDARY_SOURCE")
-    {
-        secondary.reset();
-    }
 }
 
 #[flutter_rust_bridge::frb(ignore)]
