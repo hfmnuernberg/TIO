@@ -14,6 +14,7 @@ use std::sync::{Arc, Mutex};
 use std::thread::{self, JoinHandle};
 use std::time::Duration;
 
+use crate::api::audio::audio_buffer::AudioBufferReader;
 use crate::api::audio::audio_buffer_interpolated::AudioBufferInterpolated;
 use crate::api::audio::global::GLOBAL_AUDIO_LOCK;
 use crate::api::util::constants::{
@@ -66,9 +67,11 @@ lazy_static! {
         buffer_after_pitch_shift: [0.0; PITCH_SHIFT_BUFFER_SIZE],
     });
     static ref RING_CONSUMER: Mutex<Option<RingConsumerType>> = Mutex::new(None);
+    static ref SECONDARY_SOURCE: Mutex<Option<AudioBufferReader>> = Mutex::new(None);
 }
 
 static VOLUME: Mutex<f32> = Mutex::new(1.0);
+static SECONDARY_VOLUME: Mutex<f32> = Mutex::new(1.0);
 
 // FUNCTIONS
 
@@ -86,6 +89,15 @@ pub fn media_player_create_stream() -> bool {
         return false;
     } else {
         source_data.set_playing(true);
+    }
+
+    // Reset secondary source to start of buffer
+    if let Some(ref mut secondary) = *SECONDARY_SOURCE
+        .lock()
+        .expect("Could not lock mutex to SECONDARY_SOURCE")
+    {
+        secondary.reset();
+        secondary.set_looping(source_data.get_is_looping());
     }
 
     let sample_rate = *OUTPUT_SAMPLE_RATE
@@ -257,6 +269,17 @@ fn on_audio_callback(samples_out: &mut [f32], _: &cpal::OutputCallbackInfo) {
                 }
             }
         }
+
+        // Mix in secondary audio source
+        let secondary_vol = *SECONDARY_VOLUME
+            .lock()
+            .expect("Could not lock mutex to SECONDARY_VOLUME");
+        if let Some(ref mut secondary) = *SECONDARY_SOURCE
+            .lock()
+            .expect("Could not lock mutex to SECONDARY_SOURCE")
+        {
+            secondary.add_samples_to_buffer(samples_out, secondary_vol);
+        }
     }
 }
 
@@ -302,6 +325,12 @@ fn thread_handle_command(_command: ()) {
         .lock()
         .expect("Could not lock mutex to SOURCE_DATA to set playing flag")
         .set_playing(false);
+    if let Some(ref mut secondary) = *SECONDARY_SOURCE
+        .lock()
+        .expect("Could not lock mutex to SECONDARY_SOURCE")
+    {
+        secondary.reset();
+    }
 }
 
 #[flutter_rust_bridge::frb(ignore)]
@@ -353,6 +382,12 @@ pub fn media_player_set_loop_value(loop_on: bool) {
         .lock()
         .expect("Could not lock mutex to SOURCE_DATA to set loop flag")
         .set_loop(loop_on);
+    if let Some(ref mut secondary) = *SECONDARY_SOURCE
+        .lock()
+        .expect("Could not lock mutex to SECONDARY_SOURCE")
+    {
+        secondary.set_looping(loop_on);
+    }
 }
 
 #[flutter_rust_bridge::frb(ignore)]
@@ -403,6 +438,33 @@ pub fn media_player_query_state() -> Option<MediaPlayerState> {
         trim_start_factor,
         trim_end_factor,
     })
+}
+
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_set_secondary_buffer(new_buffer: Vec<f32>) {
+    let looping = SOURCE_DATA
+        .lock()
+        .expect("Could not lock mutex to SOURCE_DATA to get loop flag")
+        .get_is_looping();
+    *SECONDARY_SOURCE
+        .lock()
+        .expect("Could not lock mutex to SECONDARY_SOURCE to set buffer") =
+        Some(AudioBufferReader::new(Arc::new(new_buffer), looping, -1));
+}
+
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_unload_secondary() {
+    *SECONDARY_SOURCE
+        .lock()
+        .expect("Could not lock mutex to SECONDARY_SOURCE to unload") = None;
+}
+
+#[flutter_rust_bridge::frb(ignore)]
+pub fn media_player_set_secondary_volume(new_volume: f32) -> bool {
+    *SECONDARY_VOLUME
+        .lock()
+        .expect("Could not lock mutex to SECONDARY_VOLUME to set new value") = new_volume;
+    true
 }
 
 #[flutter_rust_bridge::frb(ignore)]

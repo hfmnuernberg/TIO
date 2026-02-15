@@ -172,6 +172,27 @@ class AudioSystemLogDecorator implements AudioSystem {
   }
 
   @override
+  Future<bool> mediaPlayerLoadSecondaryWav({required String wavFilePath}) async {
+    final result = await _as.mediaPlayerLoadSecondaryWav(wavFilePath: wavFilePath);
+    _logger.t('mediaPlayerLoadSecondaryWav(wavFilePath: $wavFilePath): $result');
+    return result;
+  }
+
+  @override
+  Future<bool> mediaPlayerUnloadSecondaryAudio() async {
+    final result = await _as.mediaPlayerUnloadSecondaryAudio();
+    _logger.t('mediaPlayerUnloadSecondaryAudio(): $result');
+    return result;
+  }
+
+  @override
+  Future<bool> mediaPlayerSetSecondaryAudioVolume({required double volume}) async {
+    final result = await _as.mediaPlayerSetSecondaryAudioVolume(volume: volume);
+    _logger.t('mediaPlayerSetSecondaryAudioVolume(volume: $volume): $result');
+    return result;
+  }
+
+  @override
   Future<bool> mediaPlayerRenderMidiToWav({
     required String midiPath,
     required String soundFontPath,

@@ -46,4 +46,15 @@ impl AudioBufferReader {
             }
         }
     }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub fn reset(&mut self) {
+        self.read_head = -1;
+        self.is_done = false;
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub fn set_looping(&mut self, looping: bool) {
+        self.looping = looping;
+    }
 }
