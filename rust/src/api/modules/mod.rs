@@ -1,3 +1,4 @@
+pub mod audio_renderer;
 pub mod generator;
 pub mod media_player;
 pub mod metronome;

@@ -32,7 +32,14 @@ mixin AudioSystem {
   Future<MediaPlayerState?> mediaPlayerGetState();
   Future<bool> mediaPlayerSetPlaybackPosFactor({required double posFactor});
   Future<bool> mediaPlayerSetVolume({required double volume});
-  Future<bool> mediaPlayerLoadSecondaryWav({required String wavFilePath});
+  Future<bool> mediaPlayerLoadSecondaryProcessed({
+    required String wavFilePath,
+    required double pitchSemitones,
+    required double speedFactor,
+    required double trimStartFactor,
+    required double trimEndFactor,
+    required double volume,
+  });
   Future<bool> mediaPlayerUnloadSecondaryAudio();
   Future<bool> mediaPlayerSetSecondaryAudioVolume({required double volume});
   Future<bool> mediaPlayerRenderMidiToWav({

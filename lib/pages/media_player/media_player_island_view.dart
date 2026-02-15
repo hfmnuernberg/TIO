@@ -16,8 +16,9 @@ import 'package:tiomusic/util/constants/constants.dart';
 
 class MediaPlayerIslandView extends StatefulWidget {
   final MediaPlayerBlock mediaPlayerBlock;
+  final bool isPlaybackEnabled;
 
-  const MediaPlayerIslandView({super.key, required this.mediaPlayerBlock});
+  const MediaPlayerIslandView({super.key, required this.mediaPlayerBlock, this.isPlaybackEnabled = true});
 
   @override
   State<MediaPlayerIslandView> createState() => _MediaPlayerIslandViewState();
@@ -126,6 +127,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   }
 
   void _togglePlaying() async {
+    if (!widget.isPlaybackEnabled) return;
     if (_processingButtonClick) return;
     setState(() => _processingButtonClick = true);
 
@@ -146,7 +148,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       mainIcon: _player.isPlaying
           ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary)
           : widget.mediaPlayerBlock.icon,
-      mainButtonIsDisabled: _isLoading,
+      mainButtonIsDisabled: _isLoading || !widget.isPlaybackEnabled,
       parameterText: widget.mediaPlayerBlock.title,
       centerView: _isLoading ? const Center(child: CircularProgressIndicator()) : _waveformVisualizer,
       customPaintKey: _customPaintKey,

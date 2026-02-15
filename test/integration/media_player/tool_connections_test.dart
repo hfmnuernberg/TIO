@@ -97,14 +97,30 @@ void main() {
         expect(tester.withinList(find.bySemanticsLabel('Tuner 1')), findsOneWidget);
       });
 
-      testWidgets('does not show media-player because tool is media-player itself', (tester) async {
+      testWidgets('shows media-player as new tool type when parent is media-player', (tester) async {
         await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
         await tester.createMediaPlayerToolInProject();
 
         await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
         await tester.openConnectionDialog();
 
-        expect(tester.withinConnectionDialog(find.bySemanticsLabel('Media Player')), findsNothing);
+        expect(tester.withinConnectionDialog(find.bySemanticsLabel('Media Player')), findsOneWidget);
+      });
+
+      testWidgets('does not show itself in existing tools list', (tester) async {
+        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+        await tester.createMediaPlayerToolInProject();
+        await tester.tapAndSettle(find.byTooltip('Add new tool'));
+        await tester.tapAndSettle(find.bySemanticsLabel('Media Player'));
+        await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 2');
+        await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
+        await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+
+        await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+        await tester.openConnectionDialog();
+
+        expect(tester.withinConnectionDialog(find.bySemanticsLabel('Media Player 2')), findsOneWidget);
+        expect(tester.withinConnectionDialog(find.bySemanticsLabel('Media Player 1')), findsNothing);
       });
     });
   });

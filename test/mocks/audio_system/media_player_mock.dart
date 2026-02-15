@@ -105,4 +105,21 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
       when(() => mediaPlayerSetVolume(volume: any(named: 'volume'))).thenAnswer((_) async => result);
   void verifyMediaPlayerSetVolumeCalledWith(double volume) =>
       verify(() => mediaPlayerSetVolume(volume: volume)).called(1);
+
+  void mockMediaPlayerLoadSecondaryProcessed([bool result = true]) => when(
+    () => mediaPlayerLoadSecondaryProcessed(
+      wavFilePath: any(named: 'wavFilePath'),
+      pitchSemitones: any(named: 'pitchSemitones'),
+      speedFactor: any(named: 'speedFactor'),
+      trimStartFactor: any(named: 'trimStartFactor'),
+      trimEndFactor: any(named: 'trimEndFactor'),
+      volume: any(named: 'volume'),
+    ),
+  ).thenAnswer((_) async => result);
+
+  void mockMediaPlayerUnloadSecondaryAudio([bool result = true]) =>
+      when(mediaPlayerUnloadSecondaryAudio).thenAnswer((_) async => result);
+
+  void mockMediaPlayerSetSecondaryAudioVolume([bool result = true]) =>
+      when(() => mediaPlayerSetSecondaryAudioVolume(volume: any(named: 'volume'))).thenAnswer((_) async => result);
 }

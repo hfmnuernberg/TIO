@@ -83,8 +83,21 @@ class RustBasedAudioSystem implements AudioSystem {
   Future<bool> mediaPlayerSetVolume({required double volume}) async => rust.mediaPlayerSetVolume(volume: volume);
 
   @override
-  Future<bool> mediaPlayerLoadSecondaryWav({required String wavFilePath}) async =>
-      rust.mediaPlayerLoadSecondaryWav(wavFilePath: wavFilePath);
+  Future<bool> mediaPlayerLoadSecondaryProcessed({
+    required String wavFilePath,
+    required double pitchSemitones,
+    required double speedFactor,
+    required double trimStartFactor,
+    required double trimEndFactor,
+    required double volume,
+  }) async => rust.mediaPlayerLoadSecondaryProcessed(
+    wavFilePath: wavFilePath,
+    pitchSemitones: pitchSemitones,
+    speedFactor: speedFactor,
+    trimStartFactor: trimStartFactor,
+    trimEndFactor: trimEndFactor,
+    volume: volume,
+  );
 
   @override
   Future<bool> mediaPlayerUnloadSecondaryAudio() async => rust.mediaPlayerUnloadSecondaryAudio();

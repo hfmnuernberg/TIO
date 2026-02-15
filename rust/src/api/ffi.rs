@@ -6,6 +6,7 @@ use flutter_rust_bridge::frb;
 use crate::{
     api::audio::global::GLOBAL_AUDIO_LOCK,
     api::modules::{
+        audio_renderer::render_processed_audio,
         generator::{
             generator_create_audio_stream, generator_start_note, generator_stop_current_note,
             generator_trigger_destroy_stream,
@@ -312,17 +313,34 @@ pub fn media_player_set_volume(volume: f32) -> bool {
     }
 }
 
-pub fn media_player_load_secondary_wav(wav_file_path: String) -> bool {
-    log::info!("media player load secondary wav: {}", wav_file_path);
+pub fn media_player_load_secondary_processed(
+    wav_file_path: String,
+    pitch_semitones: f32,
+    speed_factor: f32,
+    trim_start_factor: f32,
+    trim_end_factor: f32,
+    volume: f32,
+) -> bool {
+    log::info!("media player load secondary processed: {}", wav_file_path);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        let sample_rate = get_sample_rate();
         match load_audio_file(wav_file_path) {
-            Ok(buffer) => {
-                media_player_set_secondary_buffer(buffer);
-                log::info!("media player load secondary wav done");
+            Ok(raw_samples) => {
+                let processed = render_processed_audio(
+                    raw_samples,
+                    sample_rate,
+                    pitch_semitones,
+                    speed_factor,
+                    trim_start_factor,
+                    trim_end_factor,
+                    volume,
+                );
+                media_player_set_secondary_buffer(processed);
+                log::info!("media player load secondary processed done");
                 true
             }
             Err(e) => {
-                log::info!("media player load secondary wav failed: {}", e);
+                log::info!("media player load secondary processed failed: {}", e);
                 false
             }
         }

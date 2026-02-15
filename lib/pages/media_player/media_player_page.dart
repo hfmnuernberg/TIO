@@ -172,6 +172,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       setState(() => _isLoading = false);
 
       if (_player.loaded) _addShareOptionToMenu();
+      if (_player.loaded) await _loadSecondaryAudioFromIsland();
 
       _mediaPlayerTutorial.maybeShowWaveformTutorial(context, playerLoaded: _player.loaded);
 
@@ -195,6 +196,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   void deactivate() {
     _player.stop();
     _recorder.stop();
+    context.read<AudioSystem>().mediaPlayerUnloadSecondaryAudio();
     super.deactivate();
   }
 
@@ -203,6 +205,26 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     _mediaPlayerTutorial.dispose();
     _player.stop();
     super.dispose();
+  }
+
+  Future<void> _loadSecondaryAudioFromIsland() async {
+    if (_project == null) return;
+    final islandId = _mediaPlayerBlock.islandToolID;
+    if (islandId == null) return;
+
+    final islandBlock = _project!.blocks.where((block) => block.id == islandId).firstOrNull;
+    if (islandBlock is! MediaPlayerBlock) return;
+    if (islandBlock.relativePath.isEmpty) return;
+
+    final as = context.read<AudioSystem>();
+    await as.mediaPlayerLoadSecondaryProcessed(
+      wavFilePath: _fs.toAbsoluteFilePath(islandBlock.relativePath),
+      pitchSemitones: islandBlock.pitchSemitones,
+      speedFactor: islandBlock.speedFactor,
+      trimStartFactor: islandBlock.rangeStart,
+      trimEndFactor: islandBlock.rangeEnd,
+      volume: islandBlock.volume,
+    );
   }
 
   void _addShareOptionToMenu() {

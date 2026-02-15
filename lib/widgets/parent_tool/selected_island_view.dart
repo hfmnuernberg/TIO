@@ -16,12 +16,14 @@ class SelectedIslandView extends StatelessWidget {
   final ProjectBlock? loadedTool;
   final VoidCallback onShowToolSelection;
   final VoidCallback onEmptyIslandInit;
+  final String parentKind;
 
   const SelectedIslandView({
     super.key,
     required this.loadedTool,
     required this.onShowToolSelection,
     required this.onEmptyIslandInit,
+    required this.parentKind,
   });
 
   @override
@@ -33,7 +35,10 @@ class SelectedIslandView extends StatelessWidget {
     } else if (loadedTool is MetronomeBlock) {
       child = MetronomeIslandView(metronomeBlock: loadedTool! as MetronomeBlock);
     } else if (loadedTool is MediaPlayerBlock) {
-      child = MediaPlayerIslandView(mediaPlayerBlock: loadedTool! as MediaPlayerBlock);
+      child = MediaPlayerIslandView(
+        mediaPlayerBlock: loadedTool! as MediaPlayerBlock,
+        isPlaybackEnabled: parentKind != 'media_player',
+      );
     } else if (loadedTool is EmptyBlock) {
       child = EmptyIsland(callOnInit: onEmptyIslandInit);
     } else {
