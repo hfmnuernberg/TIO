@@ -140,15 +140,22 @@ class _ParentIslandViewState extends State<ParentIslandView> {
     return widget.project!.blocks
         .asMap()
         .entries
-        .where((entry) => entry.value.kind != widget.toolBlock.kind && allowedKinds.contains(entry.value.kind))
+        .where((entry) => allowedKinds.contains(entry.value.kind))
+        .where((entry) => entry.value.id != widget.toolBlock.id)
+        .where((entry) => _isAllowedConnection(entry.value.kind))
         .toList();
   }
 
   List<BlockType> getFilteredNewToolTypes() {
     final connectableToolTypes = [BlockType.metronome, BlockType.mediaPlayer, BlockType.tuner];
     return connectableToolTypes
-        .where((blockType) => widget.toolBlock.kind != getBlockTypeInfos(context.l10n)[blockType]!.kind)
+        .where((blockType) => _isAllowedConnection(getBlockTypeInfos(context.l10n)[blockType]!.kind))
         .toList();
+  }
+
+  bool _isAllowedConnection(String kind) {
+    if (kind == 'media_player' && widget.toolBlock.kind == 'media_player') return true;
+    return kind != widget.toolBlock.kind;
   }
 
   Future<void> handleConnectExistingTool(int projectToolIndex) async {
