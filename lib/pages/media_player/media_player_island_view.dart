@@ -28,7 +28,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   late WaveformVisualizer _waveformVisualizer;
 
   late final Player _player;
-  late final bool _ownsPlayer;
+  Player? _primaryPlayer;
 
   Float32List _rmsValues = Float32List(100);
   int _numOfBins = 0;
@@ -45,17 +45,14 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
     _fs = context.read<FileSystem>();
 
-    final contextPlayer = context.read<Player?>();
-    _ownsPlayer = contextPlayer == null;
-    _player =
-        contextPlayer ??
-        Player(
-          0,
-          context.read<AudioSystem>(),
-          context.read<AudioSession>(),
-          context.read<FileSystem>(),
-          context.read<Wakelock>(),
-        );
+    _player = Player(
+      context.read<AudioSystem>(),
+      context.read<AudioSession>(),
+      context.read<FileSystem>(),
+      context.read<Wakelock>(),
+    );
+
+    _primaryPlayer = context.read<Player?>();
 
     _player.addOnIsPlayingChangeListener((_) {
       if (!mounted) return;
@@ -87,14 +84,61 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     _player.markers.positions = widget.mediaPlayerBlock.markerPositions;
     _player.setTrim(widget.mediaPlayerBlock.rangeStart, widget.mediaPlayerBlock.rangeEnd);
 
+    if (_primaryPlayer != null) {
+      _primaryPlayer!.addOnIsPlayingChangeListener(_onPrimaryIsPlayingChange);
+      _primaryPlayer!.addOnSeekListener(_onPrimarySeek);
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) => _initBinsAndLoadRms());
   }
 
   @override
-  Future<void> deactivate() async {
-    if (_ownsPlayer) await _player.dispose();
+  void deactivate() {
+    _primaryPlayer?.removeOnIsPlayingChangeListener(_onPrimaryIsPlayingChange);
+    _primaryPlayer?.removeOnSeekListener(_onPrimarySeek);
+    _player.dispose();
     super.deactivate();
   }
+
+  void _onPrimaryIsPlayingChange(bool primaryIsPlaying) async {
+    if (!_player.loaded) return;
+
+    if (primaryIsPlaying && !_player.isPlaying) {
+      await _player.setPlaybackPosition(_player.startPosition);
+      await _player.start();
+    } else if (!primaryIsPlaying && _player.isPlaying) {
+      await _player.stop();
+    }
+  }
+
+  void _onPrimarySeek(double primaryPosFactor) async {
+    if (!_player.loaded || _primaryPlayer == null) return;
+
+    final secondaryPosition = _mapPrimaryToSecondaryPosition(primaryPosFactor);
+    if (secondaryPosition == null) return;
+
+    if (_isOutsideSecondaryTrim(secondaryPosition)) {
+      if (_player.isPlaying) await _player.stop();
+    } else {
+      await _player.setPlaybackPosition(secondaryPosition.clamp(0.0, 1.0));
+    }
+  }
+
+  double? _mapPrimaryToSecondaryPosition(double primaryPosFactor) {
+    final primaryTotalMs = _primaryPlayer!.fileDuration.inMilliseconds;
+    final secondaryTotalMs = _player.fileDuration.inMilliseconds;
+    if (primaryTotalMs <= 0 || secondaryTotalMs <= 0) return null;
+
+    final elapsedMs = _elapsedMsFromTrimStart(primaryPosFactor, primaryTotalMs);
+    final secondaryElapsedFactor = elapsedMs / secondaryTotalMs;
+    return _player.startPosition + secondaryElapsedFactor;
+  }
+
+  double _elapsedMsFromTrimStart(double positionFactor, int totalMs) {
+    return (positionFactor - _primaryPlayer!.startPosition) * totalMs;
+  }
+
+  bool _isOutsideSecondaryTrim(double position) => position > _player.endPosition;
 
   Future<void> _initBinsAndLoadRms() async {
     final ctx = _customPaintKey.currentContext;

@@ -16,7 +16,7 @@ void main() {
     resetMocktailState();
     context = TestContext();
     playerHandlerMock = PlayerHandlerMock();
-    player = Player(0, context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
+    player = Player(context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
   });
 
   group('Player', () {
@@ -68,7 +68,6 @@ void main() {
 
     testWidgets('notifies about playing updates when changed', (tester) async {
       player = Player(
-        0,
         context.audioSystem,
         context.audioSession,
         context.inMemoryFileSystem,
@@ -92,7 +91,6 @@ void main() {
 
     testWidgets('notifies about position updates', (tester) async {
       player = Player(
-        0,
         context.audioSystem,
         context.audioSession,
         context.inMemoryFileSystem,
@@ -115,7 +113,6 @@ void main() {
 
     testWidgets('plays a note when marker exists and playback reaches the marker', (tester) async {
       player = Player(
-        0,
         context.audioSystem,
         context.audioSession,
         context.inMemoryFileSystem,
@@ -137,7 +134,6 @@ void main() {
 
     testWidgets('resets markers to play them again when track repeats', (tester) async {
       player = Player(
-        0,
         context.audioSystem,
         context.audioSession,
         context.inMemoryFileSystem,

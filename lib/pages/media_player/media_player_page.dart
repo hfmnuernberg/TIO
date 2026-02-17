@@ -59,7 +59,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   late ProjectRepository _projectRepo;
 
   late final Player _player;
-  late final Player _secondaryPlayer;
   late final Recorder _recorder;
   late final MediaPlayerTutorial _mediaPlayerTutorial;
 
@@ -113,7 +112,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     );
 
     _player = Player(
-      0,
       context.read<AudioSystem>(),
       context.read<AudioSession>(),
       context.read<FileSystem>(),
@@ -121,15 +119,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       onIsPlayingChange: (_) => _updateState(),
       onPlaybackPositionChange: (_) => _updateState(),
     );
-
-    _secondaryPlayer = Player(
-      1,
-      context.read<AudioSystem>(),
-      context.read<AudioSession>(),
-      context.read<FileSystem>(),
-      context.read<Wakelock>(),
-    );
-    _secondaryPlayer.setRepeat(false);
 
     _recorder = Recorder(
       context.read<AudioSystem>(),
@@ -205,7 +194,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   @override
   void deactivate() {
     _player.dispose();
-    _secondaryPlayer.dispose();
     _recorder.stop();
     super.deactivate();
   }
@@ -225,7 +213,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     _player.setRepeat(false);
     await _recorder.stop();
     await _player.start();
-    if (_secondaryPlayer.loaded) await _secondaryPlayer.start();
   }
 
   double _effectiveEndEpsilon() {
@@ -265,22 +252,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     final double start = _mediaPlayerBlock.rangeStart;
     final double end = _mediaPlayerBlock.rangeEnd;
 
-    final bool loopDetected = isPlaying && _wasPlaying && currentPosition < _previousPosition - _endEpsilon;
-
     setState(() {
       _playbackPosition = currentPosition;
     });
-
-    if (loopDetected && _secondaryPlayer.loaded) {
-      await _secondaryPlayer.setPlaybackPosition(0);
-      if (!_secondaryPlayer.isPlaying) await _secondaryPlayer.start();
-    } else if (isPlaying && _secondaryPlayer.loaded) {
-      await _syncSecondaryPosition(currentPosition);
-    }
-
-    if (!_player.isPlaying && _secondaryPlayer.isPlaying) {
-      await _secondaryPlayer.stop();
-    }
 
     if (!mounted) return;
 
@@ -332,25 +306,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   Future<void> _handleWaveformPositionChange(double relative) async {
     final clamped = relative.clamp(0.0, 1.0);
     await _player.setPlaybackPosition(clamped);
-    await _syncSecondaryPosition(clamped);
     await _updateState();
-  }
-
-  Future<void> _syncSecondaryPosition(double primaryPosFactor) async {
-    if (!_secondaryPlayer.loaded) return;
-
-    final primaryMs = _player.fileDuration.inMilliseconds;
-    final secondaryMs = _secondaryPlayer.fileDuration.inMilliseconds;
-    if (primaryMs <= 0 || secondaryMs <= 0) return;
-
-    final absoluteTimeMs = primaryPosFactor * primaryMs;
-    final secondaryFactor = absoluteTimeMs / secondaryMs;
-
-    if (secondaryFactor > 1.0) {
-      await _secondaryPlayer.stop();
-    } else {
-      await _secondaryPlayer.setPlaybackPosition(secondaryFactor.clamp(0.0, 1.0));
-    }
   }
 
   Future<void> _handleZoomChanged(double viewStart, double viewEnd) async {
@@ -488,11 +444,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
     if (_player.isPlaying) {
       await _player.stop();
-      if (_secondaryPlayer.loaded) await _secondaryPlayer.stop();
     } else {
       if (_recorder.isRecording) await _cancelRecording();
       await _player.start();
-      if (_secondaryPlayer.loaded) await _secondaryPlayer.start();
     }
 
     await Future.delayed(const Duration(milliseconds: TIOMusicParams.millisecondsPlayPauseDebounce));
@@ -705,7 +659,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       islandToolTutorialKey: islandToolTutorialKey,
       onParentTutorialFinished: () => _mediaPlayerTutorial.show(context, playerLoaded: _player.loaded),
       island: Provider<Player?>.value(
-        value: _secondaryPlayer,
+        value: _player,
         child: ParentIslandView(project: widget.isQuickTool ? null : _project, toolBlock: _mediaPlayerBlock),
       ),
       heightForCenterModule: waveformHeight + 250,

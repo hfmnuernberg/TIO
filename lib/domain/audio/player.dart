@@ -19,6 +19,7 @@ typedef OnIsPlayingChange = void Function(bool isPlaying);
 
 class Player {
   static final logger = createPrefixLogger('AudioPlayer');
+  static int _nextId = 0;
 
   final int id;
   final AudioSystem _as;
@@ -28,6 +29,7 @@ class Player {
 
   final List<OnPlaybackPositionChange> _onPlaybackPositionChangeListeners = [];
   final List<OnIsPlayingChange> _onIsPlayingChangeListeners = [];
+  final List<OnPlaybackPositionChange> _onSeekListeners = [];
 
   final Markers _markers;
   Markers get markers => _markers;
@@ -45,7 +47,9 @@ class Player {
   bool get loaded => _loaded;
 
   double _startPosition = 0;
+  double get startPosition => _startPosition;
   double _endPosition = 1;
+  double get endPosition => _endPosition;
 
   Duration _fileDuration = Duration.zero;
   Duration get fileDuration => _fileDuration;
@@ -55,14 +59,14 @@ class Player {
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
   Player(
-    this.id,
     this._as,
     this._audioSession,
     this._fs,
     this._wakelock, {
     OnIsPlayingChange? onIsPlayingChange,
     OnPlaybackPositionChange? onPlaybackPositionChange,
-  }) : _markers = Markers(_as) {
+  }) : id = _nextId++,
+       _markers = Markers(_as) {
     if (onIsPlayingChange != null) _onIsPlayingChangeListeners.add(onIsPlayingChange);
     if (onPlaybackPositionChange != null) _onPlaybackPositionChangeListeners.add(onPlaybackPositionChange);
   }
@@ -74,6 +78,9 @@ class Player {
 
   void addOnIsPlayingChangeListener(OnIsPlayingChange listener) => _onIsPlayingChangeListeners.add(listener);
   void removeOnIsPlayingChangeListener(OnIsPlayingChange listener) => _onIsPlayingChangeListeners.remove(listener);
+
+  void addOnSeekListener(OnPlaybackPositionChange listener) => _onSeekListeners.add(listener);
+  void removeOnSeekListener(OnPlaybackPositionChange listener) => _onSeekListeners.remove(listener);
 
   Future<void> start() async {
     if (_isPlaying) return;
@@ -149,6 +156,9 @@ class Player {
     if (_playbackPosition != clamped) {
       _playbackPosition = clamped;
       for (final listener in _onPlaybackPositionChangeListeners) {
+        listener(_playbackPosition);
+      }
+      for (final listener in _onSeekListeners) {
         listener(_playbackPosition);
       }
 
