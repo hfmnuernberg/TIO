@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:tiomusic/domain/audio/markers.dart';
 import 'package:tiomusic/domain/audio/player.dart';
 
 import '../../../mocks/player_handler_mock.dart';
@@ -99,39 +98,29 @@ void main() {
       await player.stop();
     });
 
-    testWidgets('plays a note when marker exists and playback reaches the marker', (tester) async {
-      player.addOnPlaybackPositionChangeListener(playerHandlerMock.onPlaybackPositionChange);
-      player.markers.positions = [0.5];
-      mockPlayerState(context, looping: true, playbackPositionFactor: 0.4);
+    testWidgets('does not notify removed playing change listener', (tester) async {
+      player.addOnIsPlayingChangeListener(playerHandlerMock.onIsPlayingChange);
+      player.removeOnIsPlayingChangeListener(playerHandlerMock.onIsPlayingChange);
+      mockPlayerState(context);
       await player.start();
 
-      mockPlayerState(context, playbackPositionFactor: 0.6);
       await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
-      await tester.pump(const Duration(milliseconds: markerSoundDurationInMilliseconds + 1));
-      context.audioSystemMock.verifyGeneratorNoteOnCalled();
-      context.audioSystemMock.verifyGeneratorNoteOffCalled();
+
+      playerHandlerMock.verifyOnIsPlayingChangeNeverCalled();
 
       await player.stop();
     });
 
-    testWidgets('resets markers to play them again when track repeats', (tester) async {
+    testWidgets('does not notify removed position change listener', (tester) async {
       player.addOnPlaybackPositionChangeListener(playerHandlerMock.onPlaybackPositionChange);
-      player.markers.positions = [0.5];
-      mockPlayerState(context, looping: true, playbackPositionFactor: 0.4);
+      player.removeOnPlaybackPositionChangeListener(playerHandlerMock.onPlaybackPositionChange);
+      mockPlayerState(context);
       await player.start();
+      mockPlayerState(context, playbackPositionFactor: 0.5);
 
-      mockPlayerState(context, playbackPositionFactor: 0.6);
-      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
-      await tester.pump(const Duration(milliseconds: markerSoundDurationInMilliseconds + 1));
-      context.audioSystemMock.verifyGeneratorNoteOnCalled();
-
-      mockPlayerState(context, playbackPositionFactor: 0.4);
       await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
 
-      mockPlayerState(context, playbackPositionFactor: 0.6);
-      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
-      await tester.pump(const Duration(milliseconds: markerSoundDurationInMilliseconds + 1));
-      context.audioSystemMock.verifyGeneratorNoteOnCalled();
+      playerHandlerMock.verifyOnPlaybackPositionChangeNeverCalled();
 
       await player.stop();
     });

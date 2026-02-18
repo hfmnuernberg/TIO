@@ -50,6 +50,13 @@ void main() {
       context.audioSystemMock.verifyMediaPlayerSetSpeedCalledWith(1.2);
     });
 
+    testWidgets('exposes start and end position after setTrim', (tester) async {
+      await player.setTrim(0.2, 0.8);
+
+      expect(player.startPosition, 0.2);
+      expect(player.endPosition, 0.8);
+    });
+
     testWidgets('does not set trim in audio system when no file loaded', (tester) async {
       await player.setTrim(0.1, 0.9);
 
