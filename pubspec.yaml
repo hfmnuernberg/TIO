@@ -9,7 +9,7 @@ environment:
   sdk: 3.9.0
 
 dependencies:
-  archive: 4.0.7
+  archive: 4.0.9
   audio_session: 0.2.2
   audioplayers: 6.5.1
   camera: 0.11.3
