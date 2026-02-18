@@ -15,7 +15,7 @@ void main() {
     player = Player(context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
   });
 
-  group('Player - Dispose', () {
+  group('Player - Lifecycle', () {
     testWidgets('stops playback and destroys audio system instance', (tester) async {
       mockPlayerState(context);
       await player.start();
@@ -30,6 +30,32 @@ void main() {
       await player.dispose();
 
       context.audioSystemMock.verifyMediaPlayerDestroyInstanceCalled();
+    });
+
+    testWidgets('resets loaded state after dispose', (tester) async {
+      mockPlayerState(context);
+      context.audioSystemMock.mockMediaPlayerLoadWav();
+      await player.loadAudioFile('/abs/test.wav');
+      expect(player.loaded, isTrue);
+
+      await player.dispose();
+
+      expect(player.loaded, isFalse);
+    });
+
+    testWidgets('routes audio system calls to its own instance', (tester) async {
+      mockPlayerState(context);
+      final player2 = Player(context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
+
+      await player.start();
+      await player2.start();
+
+      context.audioSystemMock.verifyMediaPlayerStartCalledWithId(player.id);
+      context.audioSystemMock.verifyMediaPlayerStartCalledWithId(player2.id);
+      context.audioSystemMock.verifyMediaPlayerStartNeverCalled();
+
+      await player.stop();
+      await player2.stop();
     });
   });
 }

@@ -272,6 +272,7 @@ class Player {
 
   Future<void> dispose() async {
     await stop();
+    _loaded = false;
     await _as.mediaPlayerDestroyInstance(id: id);
   }
 
