@@ -18,8 +18,19 @@ void main() {
     player = Player(context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
   });
 
-  group('Player - Seek Listener', () {
-    testWidgets('notifies seek listener when playback position is set explicitly', (tester) async {
+  group('Player - Set Playback Position', () {
+    testWidgets('clamps playback position between 0 and 1 in audio system', (tester) async {
+      await player.setPlaybackPosition(-0.2);
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0);
+
+      await player.setPlaybackPosition(0.2);
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0.2);
+
+      await player.setPlaybackPosition(1.2);
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(1);
+    });
+
+    testWidgets('notifies seek listeners when setting playback position', (tester) async {
       player.addOnSeekListener(playerHandlerMock.onSeek);
 
       await player.setPlaybackPosition(0.5);
@@ -27,14 +38,8 @@ void main() {
       playerHandlerMock.verifyOnSeekCalledWith(0.5);
     });
 
-    testWidgets('does not notify seek listener during periodic updates', (tester) async {
-      player = Player(
-        context.audioSystem,
-        context.audioSession,
-        context.inMemoryFileSystem,
-        context.wakelock,
-        onPlaybackPositionChange: playerHandlerMock.onPlaybackPositionChange,
-      );
+    testWidgets('does not notify seek listeners during periodic playback updates', (tester) async {
+      player.addOnPlaybackPositionChangeListener(playerHandlerMock.onPlaybackPositionChange);
       player.addOnSeekListener(playerHandlerMock.onSeek);
       mockPlayerState(context);
       await player.start();
@@ -48,7 +53,7 @@ void main() {
       await player.stop();
     });
 
-    testWidgets('notifies both position change and seek listeners on explicit seek', (tester) async {
+    testWidgets('notifies both position change and seek listeners when setting playback position', (tester) async {
       player.addOnPlaybackPositionChangeListener(playerHandlerMock.onPlaybackPositionChange);
       player.addOnSeekListener(playerHandlerMock.onSeek);
 
@@ -58,7 +63,7 @@ void main() {
       playerHandlerMock.verifyOnSeekCalledWith(0.3);
     });
 
-    testWidgets('does not notify seek listener when position is unchanged', (tester) async {
+    testWidgets('does not notify seek listeners when position is set to same value', (tester) async {
       await player.setPlaybackPosition(0.5);
 
       player.addOnSeekListener(playerHandlerMock.onSeek);
@@ -67,7 +72,7 @@ void main() {
       playerHandlerMock.verifyOnSeekNeverCalled();
     });
 
-    testWidgets('removed seek listener is not notified', (tester) async {
+    testWidgets('does not notify removed seek listener', (tester) async {
       player.addOnSeekListener(playerHandlerMock.onSeek);
       player.removeOnSeekListener(playerHandlerMock.onSeek);
 
@@ -76,7 +81,7 @@ void main() {
       playerHandlerMock.verifyOnSeekNeverCalled();
     });
 
-    testWidgets('skip fires seek listener', (tester) async {
+    testWidgets('notifies seek listeners when skipping', (tester) async {
       mockPlayerState(context);
       context.audioSystemMock.mockMediaPlayerLoadWav();
       await player.loadAudioFile('/abs/test.wav');

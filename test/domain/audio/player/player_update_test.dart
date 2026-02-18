@@ -67,13 +67,7 @@ void main() {
     });
 
     testWidgets('notifies about playing updates when changed', (tester) async {
-      player = Player(
-        context.audioSystem,
-        context.audioSession,
-        context.inMemoryFileSystem,
-        context.wakelock,
-        onIsPlayingChange: playerHandlerMock.onIsPlayingChange,
-      );
+      player.addOnIsPlayingChangeListener(playerHandlerMock.onIsPlayingChange);
       mockPlayerState(context);
       await player.start();
       playerHandlerMock.verifyOnIsPlayingChangeCalledWith(true);
@@ -90,13 +84,7 @@ void main() {
     });
 
     testWidgets('notifies about position updates', (tester) async {
-      player = Player(
-        context.audioSystem,
-        context.audioSession,
-        context.inMemoryFileSystem,
-        context.wakelock,
-        onPlaybackPositionChange: playerHandlerMock.onPlaybackPositionChange,
-      );
+      player.addOnPlaybackPositionChangeListener(playerHandlerMock.onPlaybackPositionChange);
       mockPlayerState(context);
       await player.start();
       mockPlayerState(context, playbackPositionFactor: 0.1);
@@ -112,13 +100,7 @@ void main() {
     });
 
     testWidgets('plays a note when marker exists and playback reaches the marker', (tester) async {
-      player = Player(
-        context.audioSystem,
-        context.audioSession,
-        context.inMemoryFileSystem,
-        context.wakelock,
-        onPlaybackPositionChange: playerHandlerMock.onPlaybackPositionChange,
-      );
+      player.addOnPlaybackPositionChangeListener(playerHandlerMock.onPlaybackPositionChange);
       player.markers.positions = [0.5];
       mockPlayerState(context, looping: true, playbackPositionFactor: 0.4);
       await player.start();
@@ -133,13 +115,7 @@ void main() {
     });
 
     testWidgets('resets markers to play them again when track repeats', (tester) async {
-      player = Player(
-        context.audioSystem,
-        context.audioSession,
-        context.inMemoryFileSystem,
-        context.wakelock,
-        onPlaybackPositionChange: playerHandlerMock.onPlaybackPositionChange,
-      );
+      player.addOnPlaybackPositionChangeListener(playerHandlerMock.onPlaybackPositionChange);
       player.markers.positions = [0.5];
       mockPlayerState(context, looping: true, playbackPositionFactor: 0.4);
       await player.start();

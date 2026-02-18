@@ -50,17 +50,6 @@ void main() {
       context.audioSystemMock.verifyMediaPlayerSetSpeedCalledWith(1.2);
     });
 
-    testWidgets('sets playback position in audio system clamped between 0 and 1', (tester) async {
-      await player.setPlaybackPosition(-0.2);
-      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0);
-
-      await player.setPlaybackPosition(0.2);
-      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0.2);
-
-      await player.setPlaybackPosition(1.2);
-      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(1);
-    });
-
     testWidgets('does not set trim in audio system when no file loaded', (tester) async {
       await player.setTrim(0.1, 0.9);
 

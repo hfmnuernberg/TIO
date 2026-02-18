@@ -116,9 +116,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       context.read<AudioSession>(),
       context.read<FileSystem>(),
       context.read<Wakelock>(),
-      onIsPlayingChange: (_) => _updateState(),
-      onPlaybackPositionChange: (_) => _updateState(),
     );
+    _player.addOnIsPlayingChangeListener((_) => _updateState());
+    _player.addOnPlaybackPositionChangeListener((_) => _updateState());
 
     _recorder = Recorder(
       context.read<AudioSystem>(),

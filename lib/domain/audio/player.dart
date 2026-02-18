@@ -58,18 +58,7 @@ class Player {
 
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
-  Player(
-    this._as,
-    this._audioSession,
-    this._fs,
-    this._wakelock, {
-    OnIsPlayingChange? onIsPlayingChange,
-    OnPlaybackPositionChange? onPlaybackPositionChange,
-  }) : id = _nextId++,
-       _markers = Markers(_as) {
-    if (onIsPlayingChange != null) _onIsPlayingChangeListeners.add(onIsPlayingChange);
-    if (onPlaybackPositionChange != null) _onPlaybackPositionChangeListeners.add(onPlaybackPositionChange);
-  }
+  Player(this._as, this._audioSession, this._fs, this._wakelock) : id = _nextId++, _markers = Markers(_as);
 
   void addOnPlaybackPositionChangeListener(OnPlaybackPositionChange listener) =>
       _onPlaybackPositionChangeListeners.add(listener);
