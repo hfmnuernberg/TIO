@@ -47,6 +47,7 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
   void mockMediaPlayerStop([bool result = true]) =>
       when(() => mediaPlayerStop(id: any(named: 'id'))).thenAnswer((_) async => result);
   void verifyMediaPlayerStopCalled() => verify(() => mediaPlayerStop(id: any(named: 'id'))).called(1);
+  void verifyMediaPlayerStopNeverCalled() => verifyNever(() => mediaPlayerStop(id: any(named: 'id')));
 
   void mockMediaPlayerStartRecording([bool result = true]) =>
       when(mediaPlayerStartRecording).thenAnswer((_) async => result);

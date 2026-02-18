@@ -111,33 +111,9 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   }
 
   void _onPrimarySeek(double primaryPosFactor) async {
-    if (!_player.loaded || _primaryPlayer == null) return;
-
-    final secondaryPosition = _mapPrimaryToSecondaryPosition(primaryPosFactor);
-    if (secondaryPosition == null) return;
-
-    if (_isOutsideSecondaryTrim(secondaryPosition)) {
-      if (_player.isPlaying) await _player.stop();
-    } else {
-      await _player.setPlaybackPosition(secondaryPosition.clamp(0.0, 1.0));
-    }
+    if (_primaryPlayer == null) return;
+    await _player.syncPositionWith(_primaryPlayer!, primaryPosFactor);
   }
-
-  double? _mapPrimaryToSecondaryPosition(double primaryPosFactor) {
-    final primaryTotalMs = _primaryPlayer!.fileDuration.inMilliseconds;
-    final secondaryTotalMs = _player.fileDuration.inMilliseconds;
-    if (primaryTotalMs <= 0 || secondaryTotalMs <= 0) return null;
-
-    final elapsedMs = _elapsedMsFromTrimStart(primaryPosFactor, primaryTotalMs);
-    final secondaryElapsedFactor = elapsedMs / secondaryTotalMs;
-    return _player.startPosition + secondaryElapsedFactor;
-  }
-
-  double _elapsedMsFromTrimStart(double positionFactor, int totalMs) {
-    return (positionFactor - _primaryPlayer!.startPosition) * totalMs;
-  }
-
-  bool _isOutsideSecondaryTrim(double position) => position > _player.endPosition;
 
   Future<void> _initBinsAndLoadRms() async {
     final ctx = _customPaintKey.currentContext;

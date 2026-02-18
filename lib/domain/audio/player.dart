@@ -190,6 +190,32 @@ class Player {
     await setPlaybackPosition(targetMarker);
   }
 
+  Future<void> syncPositionWith(Player other, double otherPosFactor) async {
+    if (!_loaded) return;
+
+    final mappedPosition = _mapPositionFrom(other, otherPosFactor);
+    if (mappedPosition == null) return;
+
+    if (mappedPosition > _endPosition) {
+      if (_isPlaying) await stop();
+    } else {
+      await setPlaybackPosition(mappedPosition.clamp(0.0, 1.0));
+    }
+  }
+
+  double? _mapPositionFrom(Player other, double otherPosFactor) {
+    final otherTotalMs = other.fileDuration.inMilliseconds;
+    final totalMs = _fileDuration.inMilliseconds;
+    if (otherTotalMs <= 0 || totalMs <= 0) return null;
+
+    final elapsedMs = _elapsedMsFromTrimStart(otherPosFactor, other.startPosition, otherTotalMs);
+    return _startPosition + elapsedMs / totalMs;
+  }
+
+  double _elapsedMsFromTrimStart(double posFactor, double trimStart, int totalMs) {
+    return (posFactor - trimStart) * totalMs;
+  }
+
   Future<Float32List> getRmsValues(int numberOfBins) async {
     final rmsList = await _as.mediaPlayerGetRms(id: id, nBins: numberOfBins);
 
