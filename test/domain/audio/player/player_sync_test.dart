@@ -73,10 +73,11 @@ void main() {
       expect(player2.playbackPosition, 0.4);
     });
 
-    testWidgets('stops playback when position exceeds trim end', (tester) async {
+    testWidgets('stops playback when not looping and position exceeds trim end', (tester) async {
       await loadPlayer(player1, totalLengthSeconds: 10);
       await loadPlayer(player2, totalLengthSeconds: 5);
       await player2.setTrim(0, 0.8);
+      await player2.setRepeat(false);
       mockPlayerState(context, playbackPositionFactor: 0.3);
       await player2.start();
       expect(player2.playbackPosition, 0.3);
@@ -87,10 +88,11 @@ void main() {
       expect(player2.playbackPosition, 0.3);
     });
 
-    testWidgets('does not stop when not playing and position exceeds trim end', (tester) async {
+    testWidgets('does not stop when not looping, not playing, and position exceeds trim end', (tester) async {
       await loadPlayer(player1, totalLengthSeconds: 10);
       await loadPlayer(player2, totalLengthSeconds: 5);
       await player2.setTrim(0, 0.8);
+      await player2.setRepeat(false);
       mockPlayerState(context, playbackPositionFactor: 0.3);
       await player2.start();
       mockPlayerState(context, playing: false, playbackPositionFactor: 0.3);
@@ -102,6 +104,37 @@ void main() {
 
       context.audioSystemMock.verifyMediaPlayerStopNeverCalled();
       expect(player2.playbackPosition, 0.3);
+    });
+
+    testWidgets('wraps position when looping and position exceeds trim end', (tester) async {
+      await loadPlayer(player1, totalLengthSeconds: 20);
+      await loadPlayer(player2, totalLengthSeconds: 5);
+      await player2.setRepeat(true);
+
+      await player2.syncPositionWith(player1, 0.5);
+
+      expect(player2.playbackPosition, 0);
+    });
+
+    testWidgets('wraps position with remainder when looping', (tester) async {
+      await loadPlayer(player1, totalLengthSeconds: 20);
+      await loadPlayer(player2, totalLengthSeconds: 6);
+      await player2.setRepeat(true);
+
+      await player2.syncPositionWith(player1, 0.5);
+
+      expect(player2.playbackPosition, closeTo(4 / 6, 0.001));
+    });
+
+    testWidgets('wraps position when looping with trim', (tester) async {
+      await loadPlayer(player1, totalLengthSeconds: 10);
+      await loadPlayer(player2, totalLengthSeconds: 10);
+      await player2.setTrim(0.2, 0.6);
+      await player2.setRepeat(true);
+
+      await player2.syncPositionWith(player1, 0.8);
+
+      expect(player2.playbackPosition, closeTo(0.2, 0.001));
     });
 
     testWidgets('does nothing when not loaded', (tester) async {

@@ -197,7 +197,11 @@ class Player {
     if (mappedPosition == null) return;
 
     if (mappedPosition > _endPosition) {
-      if (_isPlaying) await stop();
+      if (_repeat) {
+        await setPlaybackPosition(_wrapPositionInTrimRange(mappedPosition));
+      } else {
+        if (_isPlaying) await stop();
+      }
     } else {
       await setPlaybackPosition(mappedPosition.clamp(0.0, 1.0));
     }
@@ -214,6 +218,13 @@ class Player {
 
   double _elapsedMsFromTrimStart(double posFactor, double trimStart, int totalMs) {
     return (posFactor - trimStart) * totalMs;
+  }
+
+  double _wrapPositionInTrimRange(double position) {
+    final trimLength = _endPosition - _startPosition;
+    if (trimLength <= 0) return _startPosition;
+    final offset = (position - _startPosition) % trimLength;
+    return _startPosition + offset;
   }
 
   Future<Float32List> getRmsValues(int numberOfBins) async {
