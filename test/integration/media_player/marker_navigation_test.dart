@@ -7,7 +7,7 @@ import 'package:tiomusic/pages/media_player/markers/edit_markers_page.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
 
 import '../../utils/action_utils.dart';
-import '../../utils/project_utils.dart';
+import '../../utils/media_player_utils.dart';
 import '../../utils/render_utils.dart';
 import '../../utils/test_context.dart';
 

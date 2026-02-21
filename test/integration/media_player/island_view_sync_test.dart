@@ -5,8 +5,8 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
 
 import '../../utils/action_utils.dart';
+import '../../utils/connection_utils.dart';
 import '../../utils/media_player_utils.dart';
-import '../../utils/project_utils.dart';
 import '../../utils/render_utils.dart';
 import '../../utils/test_context.dart';
 

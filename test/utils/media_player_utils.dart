@@ -44,6 +44,13 @@ extension WidgetTesterMediaPlayerExtension on WidgetTester {
     await loadAudioOnCurrentMediaPlayer(context, audioFilePath);
   }
 
+  Future<void> createMediaPlayerToolInProject() async {
+    await tapAndSettle(find.bySemanticsLabel('Media Player'));
+    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 1');
+    await tapAndSettle(find.bySemanticsLabel('Submit'));
+    await tapAndSettle(find.bySemanticsLabel('Back'));
+  }
+
   Future<void> createMediaPlayerWithAudio(String title, TestContext context, String audioFilePath) async {
     await tapAndSettle(find.byTooltip('Add new tool'));
     await tapAndSettle(find.bySemanticsLabel('Media Player'));
@@ -51,21 +58,5 @@ extension WidgetTesterMediaPlayerExtension on WidgetTester {
     await tapAndSettle(find.bySemanticsLabel('Submit'));
     await loadAudioOnCurrentMediaPlayer(context, audioFilePath);
     await tapAndSettle(find.bySemanticsLabel('Back'));
-  }
-
-  Future<void> connectExistingTool(String toolTitle) async {
-    await ensureVisible(find.byTooltip('Connect another tool'));
-    await tapAndSettle(find.byTooltip('Connect another tool'));
-    await tapAndSettle(find.bySemanticsLabel(toolTitle));
-    await pumpAndSettle(const Duration(milliseconds: 1100));
-  }
-
-  Future<void> connectNewTool(String toolType, String toolTitle) async {
-    await ensureVisible(find.byTooltip('Connect another tool'));
-    await tapAndSettle(find.byTooltip('Connect another tool'));
-    await tapAndSettle(find.bySemanticsLabel(toolType));
-    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), toolTitle);
-    await tapAndSettle(find.bySemanticsLabel('Submit'));
-    await pumpAndSettle(const Duration(milliseconds: 1100));
   }
 }
