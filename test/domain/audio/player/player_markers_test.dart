@@ -67,6 +67,38 @@ void main() {
       await player.stop();
     });
 
+    testWidgets('plays sound when marker is close to end of track', (tester) async {
+      player.addOnPlaybackPositionChangeListener(playerHandlerMock.onPlaybackPositionChange);
+      player.markers.startAndEndEpsilon = 0.05;
+      player.markers.positions = [0.97];
+      mockPlayerState(context, looping: true, playbackPositionFactor: 0.90);
+      await player.start();
+
+      mockPlayerState(context, playbackPositionFactor: 0.96);
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+      await tester.pump(const Duration(milliseconds: markerSoundDurationInMilliseconds + 1));
+      context.audioSystemMock.verifyGeneratorNoteOnCalled();
+      context.audioSystemMock.verifyGeneratorNoteOffCalled();
+
+      await player.stop();
+    });
+
+    testWidgets('plays sound when marker is close to start of track', (tester) async {
+      player.addOnPlaybackPositionChangeListener(playerHandlerMock.onPlaybackPositionChange);
+      player.markers.startAndEndEpsilon = 0.05;
+      player.markers.positions = [0.03];
+      mockPlayerState(context, looping: true, playbackPositionFactor: 0.01);
+      await player.start();
+
+      mockPlayerState(context, playbackPositionFactor: 0.04);
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+      await tester.pump(const Duration(milliseconds: markerSoundDurationInMilliseconds + 1));
+      context.audioSystemMock.verifyGeneratorNoteOnCalled();
+      context.audioSystemMock.verifyGeneratorNoteOffCalled();
+
+      await player.stop();
+    });
+
     testWidgets('replays markers after track loops back', (tester) async {
       player.addOnPlaybackPositionChangeListener(playerHandlerMock.onPlaybackPositionChange);
       player.markers.positions = [0.5];
