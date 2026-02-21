@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/src/rust/api/modules/media_player.dart';
 
+import 'action_utils.dart';
 import 'test_context.dart';
 
 void mockPlayerState(
@@ -21,4 +25,38 @@ void mockPlayerState(
       trimEndFactor: trimEndFactor,
     ),
   );
+}
+
+String saveTestAudioFile(TestContext context, {String name = 'audio_file'}) {
+  final filePath = '${context.inMemoryFileSystem.tmpFolderPath}/$name.wav';
+  context.inMemoryFileSystem.saveFileAsBytes(filePath, File('assets/test/ping.wav').readAsBytesSync());
+  return filePath;
+}
+
+extension WidgetTesterMediaPlayerExtension on WidgetTester {
+  Future<void> loadAudioOnCurrentMediaPlayer(TestContext context, String audioFilePath) async {
+    context.filePickerMock.mockPickAudioFromMediaLibrary([audioFilePath]);
+    await scrollToAndTapAndSettle('Open files');
+  }
+
+  Future<void> openMediaPlayerAndLoadAudio(String title, TestContext context, String audioFilePath) async {
+    await tapAndSettle(find.bySemanticsLabel(title));
+    await loadAudioOnCurrentMediaPlayer(context, audioFilePath);
+  }
+
+  Future<void> createMediaPlayerToolInProject() async {
+    await tapAndSettle(find.bySemanticsLabel('Media Player'));
+    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 1');
+    await tapAndSettle(find.bySemanticsLabel('Submit'));
+    await tapAndSettle(find.bySemanticsLabel('Back'));
+  }
+
+  Future<void> createMediaPlayerWithAudio(String title, TestContext context, String audioFilePath) async {
+    await tapAndSettle(find.byTooltip('Add new tool'));
+    await tapAndSettle(find.bySemanticsLabel('Media Player'));
+    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), title);
+    await tapAndSettle(find.bySemanticsLabel('Submit'));
+    await loadAudioOnCurrentMediaPlayer(context, audioFilePath);
+    await tapAndSettle(find.bySemanticsLabel('Back'));
+  }
 }

@@ -5,6 +5,7 @@ import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
 
 import '../../utils/action_utils.dart';
+import '../../utils/media_player_utils.dart';
 import '../../utils/project_utils.dart';
 import '../../utils/render_utils.dart';
 import '../../utils/test_context.dart';
@@ -97,14 +98,14 @@ void main() {
         expect(tester.withinList(find.bySemanticsLabel('Tuner 1')), findsOneWidget);
       });
 
-      testWidgets('does not show media-player because tool is media-player itself', (tester) async {
+      testWidgets('shows media-player because media-player to media-player connection is allowed', (tester) async {
         await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
         await tester.createMediaPlayerToolInProject();
 
         await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
         await tester.openConnectionDialog();
 
-        expect(tester.withinConnectionDialog(find.bySemanticsLabel('Media Player')), findsNothing);
+        expect(tester.withinConnectionDialog(find.bySemanticsLabel('Media Player')), findsOneWidget);
       });
     });
   });

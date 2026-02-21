@@ -18,20 +18,21 @@ mixin AudioSystem {
 
   Future<bool> pianoSetConcertPitch({required double newConcertPitch});
 
-  Future<bool> mediaPlayerLoadWav({required String wavFilePath});
-  Future<bool> mediaPlayerStart();
-  Future<bool> mediaPlayerStop();
+  Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath});
+  Future<bool> mediaPlayerStart({required int id});
+  Future<bool> mediaPlayerStop({required int id});
   Future<bool> mediaPlayerStartRecording();
   Future<bool> mediaPlayerStopRecording();
   Future<Float64List> mediaPlayerGetRecordingSamples();
-  Future<bool> mediaPlayerSetPitchSemitones({required double pitchSemitones});
-  Future<bool> mediaPlayerSetSpeedFactor({required double speedFactor});
-  Future<void> mediaPlayerSetTrim({required double startFactor, required double endFactor});
-  Future<Float32List> mediaPlayerGetRms({required int nBins});
-  Future<void> mediaPlayerSetRepeat({required bool repeatOne});
-  Future<MediaPlayerState?> mediaPlayerGetState();
-  Future<bool> mediaPlayerSetPlaybackPosFactor({required double posFactor});
-  Future<bool> mediaPlayerSetVolume({required double volume});
+  Future<bool> mediaPlayerSetPitchSemitones({required int id, required double pitchSemitones});
+  Future<bool> mediaPlayerSetSpeedFactor({required int id, required double speedFactor});
+  Future<void> mediaPlayerSetTrim({required int id, required double startFactor, required double endFactor});
+  Future<Float32List> mediaPlayerGetRms({required int id, required int nBins});
+  Future<void> mediaPlayerSetRepeat({required int id, required bool repeatOne});
+  Future<MediaPlayerState?> mediaPlayerGetState({required int id});
+  Future<bool> mediaPlayerSetPlaybackPosFactor({required int id, required double posFactor});
+  Future<bool> mediaPlayerSetVolume({required int id, required double volume});
+  Future<void> mediaPlayerDestroyInstance({required int id});
   Future<bool> mediaPlayerRenderMidiToWav({
     required String midiPath,
     required String soundFontPath,

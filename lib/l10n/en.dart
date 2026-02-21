@@ -128,6 +128,7 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get mediaPlayerPause => 'Pause';
   String get mediaPlayerPitch => 'Pitch';
   String get mediaPlayerPlay => 'Play';
+  String get mediaPlayerPlayPause => 'Play / Pause';
   String get mediaPlayerRecording => 'Recording...';
   String get mediaPlayerRemoveMarker => 'Remove selected marker';
   String get mediaPlayerRepeatAll => 'Repeat all media player';

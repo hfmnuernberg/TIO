@@ -19,7 +19,9 @@ typedef OnIsPlayingChange = void Function(bool isPlaying);
 
 class Player {
   static final logger = createPrefixLogger('AudioPlayer');
+  static int _nextId = 0;
 
+  final int id;
   final AudioSystem _as;
   final AudioSession _audioSession;
   final FileSystem _fs;
@@ -27,6 +29,7 @@ class Player {
 
   final List<OnPlaybackPositionChange> _onPlaybackPositionChangeListeners = [];
   final List<OnIsPlayingChange> _onIsPlayingChangeListeners = [];
+  final List<OnPlaybackPositionChange> _onSeekListeners = [];
 
   final Markers _markers;
   Markers get markers => _markers;
@@ -44,7 +47,9 @@ class Player {
   bool get loaded => _loaded;
 
   double _startPosition = 0;
+  double get startPosition => _startPosition;
   double _endPosition = 1;
+  double get endPosition => _endPosition;
 
   Duration _fileDuration = Duration.zero;
   Duration get fileDuration => _fileDuration;
@@ -53,17 +58,7 @@ class Player {
 
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
-  Player(
-    this._as,
-    this._audioSession,
-    this._fs,
-    this._wakelock, {
-    OnIsPlayingChange? onIsPlayingChange,
-    OnPlaybackPositionChange? onPlaybackPositionChange,
-  }) : _markers = Markers(_as) {
-    if (onIsPlayingChange != null) _onIsPlayingChangeListeners.add(onIsPlayingChange);
-    if (onPlaybackPositionChange != null) _onPlaybackPositionChangeListeners.add(onPlaybackPositionChange);
-  }
+  Player(this._as, this._audioSession, this._fs, this._wakelock) : id = _nextId++, _markers = Markers(_as);
 
   void addOnPlaybackPositionChangeListener(OnPlaybackPositionChange listener) =>
       _onPlaybackPositionChangeListeners.add(listener);
@@ -73,17 +68,20 @@ class Player {
   void addOnIsPlayingChangeListener(OnIsPlayingChange listener) => _onIsPlayingChangeListeners.add(listener);
   void removeOnIsPlayingChangeListener(OnIsPlayingChange listener) => _onIsPlayingChangeListeners.remove(listener);
 
+  void addOnSeekListener(OnPlaybackPositionChange listener) => _onSeekListeners.add(listener);
+  void removeOnSeekListener(OnPlaybackPositionChange listener) => _onSeekListeners.remove(listener);
+
   Future<void> start() async {
     if (_isPlaying) return;
 
     _audioSessionInterruptionListenerHandle ??= await _audioSession.registerInterruptionListener(stop);
 
-    await _as.mediaPlayerSetRepeat(repeatOne: _repeat);
+    await _as.mediaPlayerSetRepeat(id: id, repeatOne: _repeat);
     await _audioSession.preparePlayback();
 
     await _markers.start();
 
-    final success = await _as.mediaPlayerStart();
+    final success = await _as.mediaPlayerStart(id: id);
     if (!success) {
       logger.e('Unable to start Audio Player.');
       return;
@@ -107,7 +105,7 @@ class Player {
 
     if (!_isPlaying) return;
 
-    final success = await _as.mediaPlayerStop();
+    final success = await _as.mediaPlayerStop(id: id);
     if (!success) {
       logger.e('Unable to stop Audio Player.');
       return;
@@ -123,30 +121,33 @@ class Player {
   }
 
   Future<void> setVolume(double volume) async {
-    await _as.mediaPlayerSetVolume(volume: (volume * volume).clamp(0, 1));
+    await _as.mediaPlayerSetVolume(id: id, volume: (volume * volume).clamp(0, 1));
   }
 
   Future<void> setRepeat(bool repeat) async {
     _repeat = repeat;
-    await _as.mediaPlayerSetRepeat(repeatOne: repeat);
+    await _as.mediaPlayerSetRepeat(id: id, repeatOne: repeat);
   }
 
   Future<void> setPitch(double pitchSemitones) async {
-    await _as.mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones);
+    await _as.mediaPlayerSetPitchSemitones(id: id, pitchSemitones: pitchSemitones);
   }
 
   Future<void> setSpeed(double speedFactor) async {
-    await _as.mediaPlayerSetSpeedFactor(speedFactor: speedFactor);
+    await _as.mediaPlayerSetSpeedFactor(id: id, speedFactor: speedFactor);
   }
 
   Future<void> setPlaybackPosition(double posFactor) async {
     final clamped = posFactor.clamp(0.0, 1.0);
-    await _as.mediaPlayerSetPlaybackPosFactor(posFactor: clamped);
+    await _as.mediaPlayerSetPlaybackPosFactor(id: id, posFactor: clamped);
 
     final previousPosition = _playbackPosition;
     if (_playbackPosition != clamped) {
       _playbackPosition = clamped;
       for (final listener in _onPlaybackPositionChangeListeners) {
+        listener(_playbackPosition);
+      }
+      for (final listener in _onSeekListeners) {
         listener(_playbackPosition);
       }
 
@@ -157,11 +158,11 @@ class Player {
   Future<void> setTrim(double startPosition, double endPosition) async {
     _startPosition = startPosition;
     _endPosition = endPosition;
-    if (_loaded) _as.mediaPlayerSetTrim(startFactor: startPosition, endFactor: endPosition);
+    if (_loaded) _as.mediaPlayerSetTrim(id: id, startFactor: startPosition, endFactor: endPosition);
   }
 
   Future<void> skip({required int seconds}) async {
-    final state = await _as.mediaPlayerGetState();
+    final state = await _as.mediaPlayerGetState(id: id);
     if (state == null) return logger.e('Cannot skip - State is null');
 
     final totalSecs = _fileDuration.inSeconds;
@@ -189,8 +190,45 @@ class Player {
     await setPlaybackPosition(targetMarker);
   }
 
+  Future<void> syncPositionWith(Player other) async {
+    if (!_loaded) return;
+
+    final mappedPosition = _mapPositionFrom(other);
+    if (mappedPosition == null) return;
+
+    if (mappedPosition > _endPosition) {
+      if (_repeat) {
+        await setPlaybackPosition(_wrapPositionInTrimRange(mappedPosition));
+      } else {
+        if (_isPlaying) await stop();
+      }
+    } else {
+      await setPlaybackPosition(mappedPosition.clamp(0.0, 1.0));
+    }
+  }
+
+  double? _mapPositionFrom(Player other) {
+    final otherTotalMs = other.fileDuration.inMilliseconds;
+    final totalMs = _fileDuration.inMilliseconds;
+    if (otherTotalMs <= 0 || totalMs <= 0) return null;
+
+    final elapsedMs = _elapsedMsFromTrimStart(other.playbackPosition, other.startPosition, otherTotalMs);
+    return _startPosition + elapsedMs / totalMs;
+  }
+
+  double _elapsedMsFromTrimStart(double posFactor, double trimStart, int totalMs) {
+    return (posFactor - trimStart) * totalMs;
+  }
+
+  double _wrapPositionInTrimRange(double position) {
+    final trimLength = _endPosition - _startPosition;
+    if (trimLength <= 0) return _startPosition;
+    final offset = (position - _startPosition) % trimLength;
+    return _startPosition + offset;
+  }
+
   Future<Float32List> getRmsValues(int numberOfBins) async {
-    final rmsList = await _as.mediaPlayerGetRms(nBins: numberOfBins);
+    final rmsList = await _as.mediaPlayerGetRms(id: id, nBins: numberOfBins);
 
     Float32List newList = Float32List(rmsList.length);
     var minValue = rmsList.reduce(min);
@@ -209,7 +247,7 @@ class Player {
     final wavFilePath = isMidi ? (await _convertMidiToWav(absoluteFilePath)) : absoluteFilePath;
     if (wavFilePath == null) return false;
 
-    final loaded = await _as.mediaPlayerLoadWav(wavFilePath: wavFilePath);
+    final loaded = await _as.mediaPlayerLoadWav(id: id, wavFilePath: wavFilePath);
     if (!loaded) return false;
     _loaded = true;
 
@@ -243,7 +281,7 @@ class Player {
   }
 
   Future<void> _setFileDuration() async {
-    final state = await _as.mediaPlayerGetState();
+    final state = await _as.mediaPlayerGetState(id: id);
     if (state != null) {
       _fileDuration = Duration(milliseconds: (state.totalLengthSeconds * 1000).toInt());
     }
@@ -269,8 +307,14 @@ class Player {
     }
   }
 
+  Future<void> dispose() async {
+    await stop();
+    _loaded = false;
+    await _as.mediaPlayerDestroyInstance(id: id);
+  }
+
   Future<void> _update() async {
-    final state = await _as.mediaPlayerGetState();
+    final state = await _as.mediaPlayerGetState(id: id);
     if (state == null) return;
 
     if (state.playing != _isPlaying) {

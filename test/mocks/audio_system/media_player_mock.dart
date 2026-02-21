@@ -6,10 +6,15 @@ import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/src/rust/api/modules/media_player.dart';
 
 mixin MediaPlayerMock on Mock implements AudioSystem {
-  void mockMediaPlayerLoadWav([bool result = true]) =>
-      when(() => mediaPlayerLoadWav(wavFilePath: any(named: 'wavFilePath'))).thenAnswer((_) async => result);
+  void mockMediaPlayerLoadWav([bool result = true]) => when(
+    () => mediaPlayerLoadWav(
+      id: any(named: 'id'),
+      wavFilePath: any(named: 'wavFilePath'),
+    ),
+  ).thenAnswer((_) async => result);
   void verifyMediaPlayerLoadWavCalledWith(Pattern wavFilePath) => verify(
     () => mediaPlayerLoadWav(
+      id: any(named: 'id'),
       wavFilePath: any(named: 'wavFilePath', that: matches(wavFilePath)),
     ),
   ).called(1);
@@ -33,11 +38,18 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
     ),
   ).called(1);
 
-  void mockMediaPlayerStart([bool result = true]) => when(mediaPlayerStart).thenAnswer((_) async => result);
-  void verifyMediaPlayerStartCalled() => verify(mediaPlayerStart).called(1);
+  void mockMediaPlayerStart([bool result = true]) =>
+      when(() => mediaPlayerStart(id: any(named: 'id'))).thenAnswer((_) async => result);
+  void verifyMediaPlayerStartCalled() => verify(() => mediaPlayerStart(id: any(named: 'id'))).called(1);
+  void verifyMediaPlayerStartCalledWithId(int id) => verify(() => mediaPlayerStart(id: id)).called(1);
+  void verifyMediaPlayerStartNeverCalled() => verifyNever(() => mediaPlayerStart(id: any(named: 'id')));
+  void verifyMediaPlayerStartNeverCalledWithId(int id) => verifyNever(() => mediaPlayerStart(id: id));
 
-  void mockMediaPlayerStop([bool result = true]) => when(mediaPlayerStop).thenAnswer((_) async => result);
-  void verifyMediaPlayerStopCalled() => verify(mediaPlayerStop).called(1);
+  void mockMediaPlayerStop([bool result = true]) =>
+      when(() => mediaPlayerStop(id: any(named: 'id'))).thenAnswer((_) async => result);
+  void verifyMediaPlayerStopCalled() => verify(() => mediaPlayerStop(id: any(named: 'id'))).called(1);
+  void verifyMediaPlayerStopCalledWithId(int id) => verify(() => mediaPlayerStop(id: id)).called(1);
+  void verifyMediaPlayerStopNeverCalled() => verifyNever(() => mediaPlayerStop(id: any(named: 'id')));
 
   void mockMediaPlayerStartRecording([bool result = true]) =>
       when(mediaPlayerStartRecording).thenAnswer((_) async => result);
@@ -55,54 +67,125 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
   void verifyMediaPlayerGetRecordingSamplesNeverCalled() => verifyNever(mediaPlayerGetRecordingSamples);
 
   void mockMediaPlayerSetPitchSemitones([bool result = true]) => when(
-    () => mediaPlayerSetPitchSemitones(pitchSemitones: any(named: 'pitchSemitones')),
+    () => mediaPlayerSetPitchSemitones(
+      id: any(named: 'id'),
+      pitchSemitones: any(named: 'pitchSemitones'),
+    ),
   ).thenAnswer((_) async => result);
-  void verifyMediaPlayerSetPitchCalledWith(double pitchSemitones) =>
-      verify(() => mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones)).called(1);
+  void verifyMediaPlayerSetPitchCalledWith(double pitchSemitones) => verify(
+    () => mediaPlayerSetPitchSemitones(
+      id: any(named: 'id'),
+      pitchSemitones: pitchSemitones,
+    ),
+  ).called(1);
 
-  void mockMediaPlayerSetSpeedFactor([bool result = true]) =>
-      when(() => mediaPlayerSetSpeedFactor(speedFactor: any(named: 'speedFactor'))).thenAnswer((_) async => result);
-  void verifyMediaPlayerSetSpeedCalledWith(double speedFactor) =>
-      verify(() => mediaPlayerSetSpeedFactor(speedFactor: speedFactor)).called(1);
+  void mockMediaPlayerSetSpeedFactor([bool result = true]) => when(
+    () => mediaPlayerSetSpeedFactor(
+      id: any(named: 'id'),
+      speedFactor: any(named: 'speedFactor'),
+    ),
+  ).thenAnswer((_) async => result);
+  void verifyMediaPlayerSetSpeedCalledWith(double speedFactor) => verify(
+    () => mediaPlayerSetSpeedFactor(
+      id: any(named: 'id'),
+      speedFactor: speedFactor,
+    ),
+  ).called(1);
 
   void mockMediaPlayerSetTrim([bool result = true]) => when(
     () => mediaPlayerSetTrim(
+      id: any(named: 'id'),
       startFactor: any(named: 'startFactor'),
       endFactor: any(named: 'endFactor'),
     ),
   ).thenAnswer((_) async => result);
-  void verifyMediaPlayerSetTrimCalledWith(double startFactor, double endFactor) =>
-      verify(() => mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor)).called(1);
+  void verifyMediaPlayerSetTrimCalledWith(double startFactor, double endFactor) => verify(
+    () => mediaPlayerSetTrim(
+      id: any(named: 'id'),
+      startFactor: startFactor,
+      endFactor: endFactor,
+    ),
+  ).called(1);
   void verifyMediaPlayerSetTrimNeverCalled() => verifyNever(
     () => mediaPlayerSetTrim(
+      id: any(named: 'id'),
       startFactor: any(named: 'startFactor'),
       endFactor: any(named: 'endFactor'),
     ),
   );
 
-  void mockMediaPlayerGetRms(Float32List rmsValues) =>
-      when(() => mediaPlayerGetRms(nBins: any(named: 'nBins'))).thenAnswer((_) async => rmsValues);
-  void verifyMediaPlayerGetRmsCalledWith(int nBins) => verify(() => mediaPlayerGetRms(nBins: nBins)).called(1);
+  void mockMediaPlayerGetRms(Float32List rmsValues) => when(
+    () => mediaPlayerGetRms(
+      id: any(named: 'id'),
+      nBins: any(named: 'nBins'),
+    ),
+  ).thenAnswer((_) async => rmsValues);
+  void verifyMediaPlayerGetRmsCalledWith(int nBins) => verify(
+    () => mediaPlayerGetRms(
+      id: any(named: 'id'),
+      nBins: nBins,
+    ),
+  ).called(1);
 
-  void mockMediaPlayerSetRepeat([void result]) =>
-      when(() => mediaPlayerSetRepeat(repeatOne: any(named: 'repeatOne'))).thenAnswer((_) async => result);
-  void verifyMediaPlayerSetRepeatCalledWith(bool repeat) =>
-      verify(() => mediaPlayerSetRepeat(repeatOne: repeat)).called(1);
+  void mockMediaPlayerSetRepeat([void result]) => when(
+    () => mediaPlayerSetRepeat(
+      id: any(named: 'id'),
+      repeatOne: any(named: 'repeatOne'),
+    ),
+  ).thenAnswer((_) async => result);
+  void verifyMediaPlayerSetRepeatCalledWith(bool repeat) => verify(
+    () => mediaPlayerSetRepeat(
+      id: any(named: 'id'),
+      repeatOne: repeat,
+    ),
+  ).called(1);
 
-  void mockMediaPlayerGetState([MediaPlayerState? state]) => when(mediaPlayerGetState).thenAnswer((_) async => state);
-  void verifyMediaPlayerGetStateCalled() => verify(mediaPlayerGetState).called(1);
+  void mockMediaPlayerGetState([MediaPlayerState? state]) =>
+      when(() => mediaPlayerGetState(id: any(named: 'id'))).thenAnswer((_) async => state);
+  void verifyMediaPlayerGetStateCalled() => verify(() => mediaPlayerGetState(id: any(named: 'id'))).called(1);
 
-  void mockMediaPlayerSetPlaybackPosFactor([bool result = true]) =>
-      when(() => mediaPlayerSetPlaybackPosFactor(posFactor: any(named: 'posFactor'))).thenAnswer((_) async => result);
-  void verifyMediaPlayerSetPlaybackPositionCalled() =>
-      verify(() => mediaPlayerSetPlaybackPosFactor(posFactor: any(named: 'posFactor'))).called(1);
-  void verifyMediaPlayerSetPlaybackPositionCalledWith(double posFactor) =>
-      verify(() => mediaPlayerSetPlaybackPosFactor(posFactor: posFactor)).called(1);
-  void verifyMediaPlayerSetPlaybackPositionNeverCalled() =>
-      verifyNever(() => mediaPlayerSetPlaybackPosFactor(posFactor: any(named: 'posFactor')));
+  void mockMediaPlayerSetPlaybackPosFactor([bool result = true]) => when(
+    () => mediaPlayerSetPlaybackPosFactor(
+      id: any(named: 'id'),
+      posFactor: any(named: 'posFactor'),
+    ),
+  ).thenAnswer((_) async => result);
+  void verifyMediaPlayerSetPlaybackPositionCalled() => verify(
+    () => mediaPlayerSetPlaybackPosFactor(
+      id: any(named: 'id'),
+      posFactor: any(named: 'posFactor'),
+    ),
+  ).called(1);
+  void verifyMediaPlayerSetPlaybackPositionCalledWith(double posFactor) => verify(
+    () => mediaPlayerSetPlaybackPosFactor(
+      id: any(named: 'id'),
+      posFactor: posFactor,
+    ),
+  ).called(1);
+  void verifyMediaPlayerSetPlaybackPositionNeverCalled() => verifyNever(
+    () => mediaPlayerSetPlaybackPosFactor(
+      id: any(named: 'id'),
+      posFactor: any(named: 'posFactor'),
+    ),
+  );
 
-  void mockMediaPlayerSetVolume([bool result = true]) =>
-      when(() => mediaPlayerSetVolume(volume: any(named: 'volume'))).thenAnswer((_) async => result);
-  void verifyMediaPlayerSetVolumeCalledWith(double volume) =>
-      verify(() => mediaPlayerSetVolume(volume: volume)).called(1);
+  void mockMediaPlayerSetVolume([bool result = true]) => when(
+    () => mediaPlayerSetVolume(
+      id: any(named: 'id'),
+      volume: any(named: 'volume'),
+    ),
+  ).thenAnswer((_) async => result);
+  void verifyMediaPlayerSetVolumeCalledWith(double volume) => verify(
+    () => mediaPlayerSetVolume(
+      id: any(named: 'id'),
+      volume: volume,
+    ),
+  ).called(1);
+
+  void mockMediaPlayerDestroyInstance() =>
+      when(() => mediaPlayerDestroyInstance(id: any(named: 'id'))).thenAnswer((_) async {});
+  void verifyMediaPlayerDestroyInstanceCalled() =>
+      verify(() => mediaPlayerDestroyInstance(id: any(named: 'id'))).called(1);
+  void verifyMediaPlayerDestroyInstanceCalledWithId(int id) =>
+      verify(() => mediaPlayerDestroyInstance(id: id)).called(1);
 }

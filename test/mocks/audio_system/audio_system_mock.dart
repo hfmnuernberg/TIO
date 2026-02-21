@@ -44,6 +44,7 @@ class AudioSystemMock extends Mock
     mockMediaPlayerGetState();
     mockMediaPlayerSetPlaybackPosFactor();
     mockMediaPlayerSetVolume();
+    mockMediaPlayerDestroyInstance();
 
     mockMetronomeStart();
     mockMetronomeStop();

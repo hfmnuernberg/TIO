@@ -116,9 +116,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       context.read<AudioSession>(),
       context.read<FileSystem>(),
       context.read<Wakelock>(),
-      onIsPlayingChange: (_) => _updateState(),
-      onPlaybackPositionChange: (_) => _updateState(),
     );
+    _player.addOnIsPlayingChangeListener((_) => _updateState());
+    _player.addOnPlaybackPositionChangeListener((_) => _updateState());
 
     _recorder = Recorder(
       context.read<AudioSystem>(),
@@ -193,7 +193,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   @override
   void deactivate() {
-    _player.stop();
+    _player.dispose();
     _recorder.stop();
     super.deactivate();
   }
@@ -201,7 +201,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   @override
   void dispose() {
     _mediaPlayerTutorial.dispose();
-    _player.stop();
     super.dispose();
   }
 
@@ -659,7 +658,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       deactivateScroll: !_isScrollingEnabled,
       islandToolTutorialKey: islandToolTutorialKey,
       onParentTutorialFinished: () => _mediaPlayerTutorial.show(context, playerLoaded: _player.loaded),
-      island: ParentIslandView(project: widget.isQuickTool ? null : _project, toolBlock: _mediaPlayerBlock),
+      island: Provider<Player?>.value(
+        value: _player,
+        child: ParentIslandView(project: widget.isQuickTool ? null : _project, toolBlock: _mediaPlayerBlock),
+      ),
       heightForCenterModule: waveformHeight + 250,
       centerModule: Center(
         child: Column(

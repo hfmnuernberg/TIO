@@ -76,23 +76,23 @@ class AudioSystemLogDecorator implements AudioSystem {
   }
 
   @override
-  Future<bool> mediaPlayerLoadWav({required String wavFilePath}) async {
-    final result = await _as.mediaPlayerLoadWav(wavFilePath: wavFilePath);
-    _logger.t('mediaPlayerLoadWav(wavFilePath: $wavFilePath): $result');
+  Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath}) async {
+    final result = await _as.mediaPlayerLoadWav(id: id, wavFilePath: wavFilePath);
+    _logger.t('mediaPlayerLoadWav(id: $id, wavFilePath: $wavFilePath): $result');
     return result;
   }
 
   @override
-  Future<bool> mediaPlayerStart() async {
-    final result = await _as.mediaPlayerStart();
-    _logger.t('mediaPlayerStart(): $result');
+  Future<bool> mediaPlayerStart({required int id}) async {
+    final result = await _as.mediaPlayerStart(id: id);
+    _logger.t('mediaPlayerStart(id: $id): $result');
     return result;
   }
 
   @override
-  Future<bool> mediaPlayerStop() async {
-    final result = await _as.mediaPlayerStop();
-    _logger.t('mediaPlayerStop(): $result');
+  Future<bool> mediaPlayerStop({required int id}) async {
+    final result = await _as.mediaPlayerStop(id: id);
+    _logger.t('mediaPlayerStop(id: $id): $result');
     return result;
   }
 
@@ -118,57 +118,63 @@ class AudioSystemLogDecorator implements AudioSystem {
   }
 
   @override
-  Future<bool> mediaPlayerSetPitchSemitones({required double pitchSemitones}) async {
-    final result = await _as.mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones);
-    _logger.t('mediaPlayerSetPitchSemitones(pitchSemitones: $pitchSemitones): $result');
+  Future<bool> mediaPlayerSetPitchSemitones({required int id, required double pitchSemitones}) async {
+    final result = await _as.mediaPlayerSetPitchSemitones(id: id, pitchSemitones: pitchSemitones);
+    _logger.t('mediaPlayerSetPitchSemitones(id: $id, pitchSemitones: $pitchSemitones): $result');
     return result;
   }
 
   @override
-  Future<bool> mediaPlayerSetSpeedFactor({required double speedFactor}) async {
-    final result = await _as.mediaPlayerSetSpeedFactor(speedFactor: speedFactor);
-    _logger.t('mediaPlayerSetSpeedFactor(speedFactor: $speedFactor): $result');
+  Future<bool> mediaPlayerSetSpeedFactor({required int id, required double speedFactor}) async {
+    final result = await _as.mediaPlayerSetSpeedFactor(id: id, speedFactor: speedFactor);
+    _logger.t('mediaPlayerSetSpeedFactor(id: $id, speedFactor: $speedFactor): $result');
     return result;
   }
 
   @override
-  Future<void> mediaPlayerSetTrim({required double startFactor, required double endFactor}) async {
-    await _as.mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor);
-    _logger.t('mediaPlayerSetTrim(startFactor: $startFactor, endFactor: $endFactor)');
+  Future<void> mediaPlayerSetTrim({required int id, required double startFactor, required double endFactor}) async {
+    await _as.mediaPlayerSetTrim(id: id, startFactor: startFactor, endFactor: endFactor);
+    _logger.t('mediaPlayerSetTrim(id: $id, startFactor: $startFactor, endFactor: $endFactor)');
   }
 
   @override
-  Future<Float32List> mediaPlayerGetRms({required int nBins}) async {
-    final result = await _as.mediaPlayerGetRms(nBins: nBins);
-    _logger.t('mediaPlayerGetRms(nBins: $nBins): Float32List(length=${result.length})');
+  Future<Float32List> mediaPlayerGetRms({required int id, required int nBins}) async {
+    final result = await _as.mediaPlayerGetRms(id: id, nBins: nBins);
+    _logger.t('mediaPlayerGetRms(id: $id, nBins: $nBins): Float32List(length=${result.length})');
     return result;
   }
 
   @override
-  Future<void> mediaPlayerSetRepeat({required bool repeatOne}) async {
-    await _as.mediaPlayerSetRepeat(repeatOne: repeatOne);
-    _logger.t('mediaPlayerSetRepeat(repeatOne: $repeatOne)');
+  Future<void> mediaPlayerSetRepeat({required int id, required bool repeatOne}) async {
+    await _as.mediaPlayerSetRepeat(id: id, repeatOne: repeatOne);
+    _logger.t('mediaPlayerSetRepeat(id: $id, repeatOne: $repeatOne)');
   }
 
   @override
-  Future<MediaPlayerState?> mediaPlayerGetState() async {
-    final result = await _as.mediaPlayerGetState();
-    _logger.t('mediaPlayerGetState(): $result');
+  Future<MediaPlayerState?> mediaPlayerGetState({required int id}) async {
+    final result = await _as.mediaPlayerGetState(id: id);
+    _logger.t('mediaPlayerGetState(id: $id): $result');
     return result;
   }
 
   @override
-  Future<bool> mediaPlayerSetPlaybackPosFactor({required double posFactor}) async {
-    final result = await _as.mediaPlayerSetPlaybackPosFactor(posFactor: posFactor);
-    _logger.t('mediaPlayerSetPlaybackPosFactor(posFactor: $posFactor): $result');
+  Future<bool> mediaPlayerSetPlaybackPosFactor({required int id, required double posFactor}) async {
+    final result = await _as.mediaPlayerSetPlaybackPosFactor(id: id, posFactor: posFactor);
+    _logger.t('mediaPlayerSetPlaybackPosFactor(id: $id, posFactor: $posFactor): $result');
     return result;
   }
 
   @override
-  Future<bool> mediaPlayerSetVolume({required double volume}) async {
-    final result = await _as.mediaPlayerSetVolume(volume: volume);
-    _logger.t('mediaPlayerSetVolume(volume: $volume): $result');
+  Future<bool> mediaPlayerSetVolume({required int id, required double volume}) async {
+    final result = await _as.mediaPlayerSetVolume(id: id, volume: volume);
+    _logger.t('mediaPlayerSetVolume(id: $id, volume: $volume): $result');
     return result;
+  }
+
+  @override
+  Future<void> mediaPlayerDestroyInstance({required int id}) async {
+    await _as.mediaPlayerDestroyInstance(id: id);
+    _logger.t('mediaPlayerDestroyInstance(id: $id)');
   }
 
   @override

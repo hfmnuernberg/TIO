@@ -36,14 +36,14 @@ class RustBasedAudioSystem implements AudioSystem {
       rust.pianoSetConcertPitch(newConcertPitch: newConcertPitch);
 
   @override
-  Future<bool> mediaPlayerLoadWav({required String wavFilePath}) async =>
-      rust.mediaPlayerLoadWav(wavFilePath: wavFilePath);
+  Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath}) async =>
+      rust.mediaPlayerLoadWav(id: id, wavFilePath: wavFilePath);
 
   @override
-  Future<bool> mediaPlayerStart() async => rust.mediaPlayerStart();
+  Future<bool> mediaPlayerStart({required int id}) async => rust.mediaPlayerStart(id: id);
 
   @override
-  Future<bool> mediaPlayerStop() async => rust.mediaPlayerStop();
+  Future<bool> mediaPlayerStop({required int id}) async => rust.mediaPlayerStop(id: id);
 
   @override
   Future<bool> mediaPlayerStartRecording() async => rust.mediaPlayerStartRecording();
@@ -55,32 +55,38 @@ class RustBasedAudioSystem implements AudioSystem {
   Future<Float64List> mediaPlayerGetRecordingSamples() async => rust.mediaPlayerGetRecordingSamples();
 
   @override
-  Future<bool> mediaPlayerSetPitchSemitones({required double pitchSemitones}) async =>
-      rust.mediaPlayerSetPitchSemitones(pitchSemitones: pitchSemitones);
+  Future<bool> mediaPlayerSetPitchSemitones({required int id, required double pitchSemitones}) async =>
+      rust.mediaPlayerSetPitchSemitones(id: id, pitchSemitones: pitchSemitones);
 
   @override
-  Future<bool> mediaPlayerSetSpeedFactor({required double speedFactor}) async =>
-      rust.mediaPlayerSetSpeedFactor(speedFactor: speedFactor);
+  Future<bool> mediaPlayerSetSpeedFactor({required int id, required double speedFactor}) async =>
+      rust.mediaPlayerSetSpeedFactor(id: id, speedFactor: speedFactor);
 
   @override
-  Future<void> mediaPlayerSetTrim({required double startFactor, required double endFactor}) async =>
-      rust.mediaPlayerSetTrim(startFactor: startFactor, endFactor: endFactor);
+  Future<void> mediaPlayerSetTrim({required int id, required double startFactor, required double endFactor}) async =>
+      rust.mediaPlayerSetTrim(id: id, startFactor: startFactor, endFactor: endFactor);
 
   @override
-  Future<Float32List> mediaPlayerGetRms({required int nBins}) async => rust.mediaPlayerGetRms(nBins: nBins);
+  Future<Float32List> mediaPlayerGetRms({required int id, required int nBins}) async =>
+      rust.mediaPlayerGetRms(id: id, nBins: nBins);
 
   @override
-  Future<void> mediaPlayerSetRepeat({required bool repeatOne}) async => rust.mediaPlayerSetLoop(looping: repeatOne);
+  Future<void> mediaPlayerSetRepeat({required int id, required bool repeatOne}) async =>
+      rust.mediaPlayerSetLoop(id: id, looping: repeatOne);
 
   @override
-  Future<MediaPlayerState?> mediaPlayerGetState() async => rust.mediaPlayerGetState();
+  Future<MediaPlayerState?> mediaPlayerGetState({required int id}) async => rust.mediaPlayerGetState(id: id);
 
   @override
-  Future<bool> mediaPlayerSetPlaybackPosFactor({required double posFactor}) async =>
-      rust.mediaPlayerSetPlaybackPosFactor(posFactor: posFactor);
+  Future<bool> mediaPlayerSetPlaybackPosFactor({required int id, required double posFactor}) async =>
+      rust.mediaPlayerSetPlaybackPosFactor(id: id, posFactor: posFactor);
 
   @override
-  Future<bool> mediaPlayerSetVolume({required double volume}) async => rust.mediaPlayerSetVolume(volume: volume);
+  Future<bool> mediaPlayerSetVolume({required int id, required double volume}) async =>
+      rust.mediaPlayerSetVolume(id: id, volume: volume);
+
+  @override
+  Future<void> mediaPlayerDestroyInstance({required int id}) async => rust.mediaPlayerDestroyInstance(id: id);
 
   @override
   Future<bool> mediaPlayerRenderMidiToWav({

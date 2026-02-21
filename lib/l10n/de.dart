@@ -128,6 +128,7 @@ class German extends AppLocalizations with GermanFlashCards {
   String get mediaPlayerPause => 'Pause';
   String get mediaPlayerPitch => 'Tonhöhe';
   String get mediaPlayerPlay => 'Play';
+  String get mediaPlayerPlayPause => 'Play / Pause';
   String get mediaPlayerRecording => 'Aufnahme läuft...';
   String get mediaPlayerRemoveMarker => 'Ausgewählten Marker entfernen';
   String get mediaPlayerRepeatAll => 'Alle Media Player wiederholen';

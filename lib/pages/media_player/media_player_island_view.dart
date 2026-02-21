@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/domain/audio/player.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/pages/media_player/media_player_dialogs.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
@@ -28,6 +29,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
   late WaveformVisualizer _waveformVisualizer;
 
   late final Player _player;
+  Player? _primaryPlayer;
 
   Float32List _rmsValues = Float32List(100);
   int _numOfBins = 0;
@@ -49,22 +51,25 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
       context.read<AudioSession>(),
       context.read<FileSystem>(),
       context.read<Wakelock>(),
-      onIsPlayingChange: (_) {
-        if (!mounted) return;
-        setState(() {});
-      },
-      onPlaybackPositionChange: (_) {
-        if (!mounted) return;
-        setState(() {
-          _waveformVisualizer = WaveformVisualizer(
-            _player.playbackPosition,
-            widget.mediaPlayerBlock.rangeStart,
-            widget.mediaPlayerBlock.rangeEnd,
-            _rmsValues,
-          );
-        });
-      },
     );
+
+    _primaryPlayer = context.read<Player?>();
+
+    _player.addOnIsPlayingChangeListener((_) {
+      if (!mounted) return;
+      setState(() {});
+    });
+    _player.addOnPlaybackPositionChangeListener((_) {
+      if (!mounted) return;
+      setState(() {
+        _waveformVisualizer = WaveformVisualizer(
+          _player.playbackPosition,
+          widget.mediaPlayerBlock.rangeStart,
+          widget.mediaPlayerBlock.rangeEnd,
+          _rmsValues,
+        );
+      });
+    });
 
     _waveformVisualizer = WaveformVisualizer(
       0,
@@ -80,13 +85,35 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     _player.markers.positions = widget.mediaPlayerBlock.markerPositions;
     _player.setTrim(widget.mediaPlayerBlock.rangeStart, widget.mediaPlayerBlock.rangeEnd);
 
+    if (_primaryPlayer != null) {
+      _primaryPlayer!.addOnIsPlayingChangeListener(_onPrimaryIsPlayingChange);
+      _primaryPlayer!.addOnSeekListener(_onPrimarySeek);
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) => _initBinsAndLoadRms());
   }
 
   @override
-  Future<void> deactivate() async {
-    await _player.stop();
+  void deactivate() {
+    _primaryPlayer?.removeOnIsPlayingChangeListener(_onPrimaryIsPlayingChange);
+    _primaryPlayer?.removeOnSeekListener(_onPrimarySeek);
+    _player.dispose();
     super.deactivate();
+  }
+
+  void _onPrimaryIsPlayingChange(bool primaryIsPlaying) async {
+    if (!_player.loaded) return;
+
+    if (primaryIsPlaying && !_player.isPlaying) {
+      await _player.start();
+    } else if (!primaryIsPlaying && _player.isPlaying) {
+      await _player.stop();
+    }
+  }
+
+  void _onPrimarySeek(double _) async {
+    if (_primaryPlayer == null) return;
+    await _player.syncPositionWith(_primaryPlayer!);
   }
 
   Future<void> _initBinsAndLoadRms() async {
@@ -147,6 +174,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
           ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary)
           : widget.mediaPlayerBlock.icon,
       mainButtonIsDisabled: _isLoading,
+      mainButtonLabel: '${widget.mediaPlayerBlock.title}: ${context.l10n.mediaPlayerPlayPause}',
       parameterText: widget.mediaPlayerBlock.title,
       centerView: _isLoading ? const Center(child: CircularProgressIndicator()) : _waveformVisualizer,
       customPaintKey: _customPaintKey,
