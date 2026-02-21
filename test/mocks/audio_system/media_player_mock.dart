@@ -43,10 +43,12 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
   void verifyMediaPlayerStartCalled() => verify(() => mediaPlayerStart(id: any(named: 'id'))).called(1);
   void verifyMediaPlayerStartCalledWithId(int id) => verify(() => mediaPlayerStart(id: id)).called(1);
   void verifyMediaPlayerStartNeverCalled() => verifyNever(() => mediaPlayerStart(id: any(named: 'id')));
+  void verifyMediaPlayerStartNeverCalledWithId(int id) => verifyNever(() => mediaPlayerStart(id: id));
 
   void mockMediaPlayerStop([bool result = true]) =>
       when(() => mediaPlayerStop(id: any(named: 'id'))).thenAnswer((_) async => result);
   void verifyMediaPlayerStopCalled() => verify(() => mediaPlayerStop(id: any(named: 'id'))).called(1);
+  void verifyMediaPlayerStopCalledWithId(int id) => verify(() => mediaPlayerStop(id: id)).called(1);
   void verifyMediaPlayerStopNeverCalled() => verifyNever(() => mediaPlayerStop(id: any(named: 'id')));
 
   void mockMediaPlayerStartRecording([bool result = true]) =>
@@ -184,4 +186,6 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
       when(() => mediaPlayerDestroyInstance(id: any(named: 'id'))).thenAnswer((_) async {});
   void verifyMediaPlayerDestroyInstanceCalled() =>
       verify(() => mediaPlayerDestroyInstance(id: any(named: 'id'))).called(1);
+  void verifyMediaPlayerDestroyInstanceCalledWithId(int id) =>
+      verify(() => mediaPlayerDestroyInstance(id: id)).called(1);
 }

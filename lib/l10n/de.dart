@@ -360,6 +360,7 @@ class German extends AppLocalizations with GermanFlashCards {
   String get toolUseBookmarkToSave => 'Verwende das Lesezeichen, um das Tool zu speichern.';
 
   String toolHasNoIslandView(String tool) => '$tool hat keine Kompaktansicht!';
+  String toolIslandPlayPause(String title) => '$title Play Pause';
 
   String get tuner => 'Stimmgerät';
   String get tunerAbout => 'Stimmgerät';

@@ -9,6 +9,7 @@ class ParentInnerIsland extends StatefulWidget {
   final GlobalKey? customPaintKey;
   final double textSpaceWidth;
   final bool mainButtonIsDisabled;
+  final String? mainButtonLabel;
 
   const ParentInnerIsland({
     super.key,
@@ -19,6 +20,7 @@ class ParentInnerIsland extends StatefulWidget {
     this.centerView,
     this.customPaintKey,
     this.mainButtonIsDisabled = false,
+    this.mainButtonLabel,
   });
 
   @override
@@ -39,7 +41,11 @@ class _ParentInnerIslandState extends State<ParentInnerIsland> {
               maintainSize: true,
               maintainState: true,
               child: CircleAvatar(
-                child: IconButton(onPressed: () => widget.onMainIconPressed(), icon: widget.mainIcon),
+                child: IconButton(
+                  onPressed: () => widget.onMainIconPressed(),
+                  icon: widget.mainIcon,
+                  tooltip: widget.mainButtonLabel,
+                ),
               ),
             ),
           ),

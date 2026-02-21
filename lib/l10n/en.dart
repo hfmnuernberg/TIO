@@ -356,6 +356,7 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get toolUseBookmarkToSave => 'Use bookmark to save a tool.';
 
   String toolHasNoIslandView(String tool) => '$tool has no compact view!';
+  String toolIslandPlayPause(String title) => '$title Play Pause';
 
   String get tuner => 'Tuner';
   String get tunerAbout => 'Tuner';

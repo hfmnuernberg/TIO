@@ -310,6 +310,7 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get toolUseBookmarkToSave;
 
   String toolHasNoIslandView(String tool);
+  String toolIslandPlayPause(String title);
 
   String get tuner;
   String get tunerAbout;

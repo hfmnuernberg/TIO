@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tiomusic/domain/audio/player.dart';
+import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/models/blocks/media_player_block.dart';
 import 'package:tiomusic/pages/media_player/media_player_dialogs.dart';
 import 'package:tiomusic/pages/media_player/waveform_visualizer.dart';
@@ -173,6 +174,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
           ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary)
           : widget.mediaPlayerBlock.icon,
       mainButtonIsDisabled: _isLoading,
+      mainButtonLabel: context.l10n.toolIslandPlayPause(widget.mediaPlayerBlock.title),
       parameterText: widget.mediaPlayerBlock.title,
       centerView: _isLoading ? const Center(child: CircularProgressIndicator()) : _waveformVisualizer,
       customPaintKey: _customPaintKey,
