@@ -190,10 +190,10 @@ class Player {
     await setPlaybackPosition(targetMarker);
   }
 
-  Future<void> syncPositionWith(Player other, double otherPosFactor) async {
+  Future<void> syncPositionWith(Player other) async {
     if (!_loaded) return;
 
-    final mappedPosition = _mapPositionFrom(other, otherPosFactor);
+    final mappedPosition = _mapPositionFrom(other);
     if (mappedPosition == null) return;
 
     if (mappedPosition > _endPosition) {
@@ -207,12 +207,12 @@ class Player {
     }
   }
 
-  double? _mapPositionFrom(Player other, double otherPosFactor) {
+  double? _mapPositionFrom(Player other) {
     final otherTotalMs = other.fileDuration.inMilliseconds;
     final totalMs = _fileDuration.inMilliseconds;
     if (otherTotalMs <= 0 || totalMs <= 0) return null;
 
-    final elapsedMs = _elapsedMsFromTrimStart(otherPosFactor, other.startPosition, otherTotalMs);
+    final elapsedMs = _elapsedMsFromTrimStart(other.playbackPosition, other.startPosition, otherTotalMs);
     return _startPosition + elapsedMs / totalMs;
   }
 

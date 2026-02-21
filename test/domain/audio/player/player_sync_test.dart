@@ -28,7 +28,8 @@ void main() {
       await loadPlayer(player1, totalLengthSeconds: 10);
       await loadPlayer(player2, totalLengthSeconds: 10);
 
-      await player2.syncPositionWith(player1, 0.5);
+      await player1.setPlaybackPosition(0.5);
+      await player2.syncPositionWith(player1);
 
       expect(player2.playbackPosition, 0.5);
     });
@@ -37,7 +38,8 @@ void main() {
       await loadPlayer(player1, totalLengthSeconds: 20);
       await loadPlayer(player2, totalLengthSeconds: 10);
 
-      await player2.syncPositionWith(player1, 0.25);
+      await player1.setPlaybackPosition(0.25);
+      await player2.syncPositionWith(player1);
 
       expect(player2.playbackPosition, 0.5);
     });
@@ -47,7 +49,8 @@ void main() {
       await player1.setTrim(0.2, 1);
       await loadPlayer(player2, totalLengthSeconds: 10);
 
-      await player2.syncPositionWith(player1, 0.5);
+      await player1.setPlaybackPosition(0.5);
+      await player2.syncPositionWith(player1);
 
       expect(player2.playbackPosition, 0.3);
     });
@@ -57,7 +60,8 @@ void main() {
       await loadPlayer(player2, totalLengthSeconds: 10);
       await player2.setTrim(0.1, 1);
 
-      await player2.syncPositionWith(player1, 0.5);
+      await player1.setPlaybackPosition(0.5);
+      await player2.syncPositionWith(player1);
 
       expect(player2.playbackPosition, 0.6);
     });
@@ -68,7 +72,8 @@ void main() {
       await loadPlayer(player2, totalLengthSeconds: 10);
       await player2.setTrim(0.1, 1);
 
-      await player2.syncPositionWith(player1, 0.5);
+      await player1.setPlaybackPosition(0.5);
+      await player2.syncPositionWith(player1);
 
       expect(player2.playbackPosition, 0.4);
     });
@@ -82,7 +87,8 @@ void main() {
       await player2.start();
       expect(player2.playbackPosition, 0.3);
 
-      await player2.syncPositionWith(player1, 0.5);
+      await player1.setPlaybackPosition(0.5);
+      await player2.syncPositionWith(player1);
 
       context.audioSystemMock.verifyMediaPlayerStopCalled();
       expect(player2.playbackPosition, 0.3);
@@ -100,7 +106,8 @@ void main() {
       context.audioSystemMock.verifyMediaPlayerStopCalled();
       expect(player2.playbackPosition, 0.3);
 
-      await player2.syncPositionWith(player1, 0.5);
+      await player1.setPlaybackPosition(0.5);
+      await player2.syncPositionWith(player1);
 
       context.audioSystemMock.verifyMediaPlayerStopNeverCalled();
       expect(player2.playbackPosition, 0.3);
@@ -111,7 +118,8 @@ void main() {
       await loadPlayer(player2, totalLengthSeconds: 5);
       await player2.setRepeat(true);
 
-      await player2.syncPositionWith(player1, 0.5);
+      await player1.setPlaybackPosition(0.5);
+      await player2.syncPositionWith(player1);
 
       expect(player2.playbackPosition, 0);
     });
@@ -121,7 +129,8 @@ void main() {
       await loadPlayer(player2, totalLengthSeconds: 6);
       await player2.setRepeat(true);
 
-      await player2.syncPositionWith(player1, 0.5);
+      await player1.setPlaybackPosition(0.5);
+      await player2.syncPositionWith(player1);
 
       expect(player2.playbackPosition, closeTo(4 / 6, 0.001));
     });
@@ -132,7 +141,8 @@ void main() {
       await player2.setTrim(0.2, 0.6);
       await player2.setRepeat(true);
 
-      await player2.syncPositionWith(player1, 0.8);
+      await player1.setPlaybackPosition(0.8);
+      await player2.syncPositionWith(player1);
 
       expect(player2.playbackPosition, closeTo(0.2, 0.001));
     });
@@ -140,7 +150,8 @@ void main() {
     testWidgets('does nothing when not loaded', (tester) async {
       await loadPlayer(player1, totalLengthSeconds: 10);
 
-      await player2.syncPositionWith(player1, 0.5);
+      await player1.setPlaybackPosition(0.5);
+      await player2.syncPositionWith(player1);
 
       expect(player2.playbackPosition, 0);
     });
@@ -149,7 +160,7 @@ void main() {
       await loadPlayer(player1, totalLengthSeconds: 0);
       await loadPlayer(player2, totalLengthSeconds: 10);
 
-      await player2.syncPositionWith(player1, 0.5);
+      await player2.syncPositionWith(player1);
 
       expect(player2.playbackPosition, 0);
     });
@@ -158,7 +169,8 @@ void main() {
       await loadPlayer(player1, totalLengthSeconds: 10);
       await loadPlayer(player2, totalLengthSeconds: 0);
 
-      await player2.syncPositionWith(player1, 0.5);
+      await player1.setPlaybackPosition(0.5);
+      await player2.syncPositionWith(player1);
 
       expect(player2.playbackPosition, 0);
     });
@@ -168,7 +180,8 @@ void main() {
       await player1.setTrim(0.5, 1);
       await loadPlayer(player2, totalLengthSeconds: 10);
 
-      await player2.syncPositionWith(player1, 0.2);
+      await player1.setPlaybackPosition(0.2);
+      await player2.syncPositionWith(player1);
 
       expect(player2.playbackPosition, 0);
     });

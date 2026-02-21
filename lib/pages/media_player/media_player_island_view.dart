@@ -110,9 +110,9 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     }
   }
 
-  void _onPrimarySeek(double primaryPosFactor) async {
+  void _onPrimarySeek(double _) async {
     if (_primaryPlayer == null) return;
-    await _player.syncPositionWith(_primaryPlayer!, primaryPosFactor);
+    await _player.syncPositionWith(_primaryPlayer!);
   }
 
   Future<void> _initBinsAndLoadRms() async {
