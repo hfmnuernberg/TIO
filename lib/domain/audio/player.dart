@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:flutter/services.dart';
 import 'package:tiomusic/domain/audio/marker_navigation.dart';
 import 'package:tiomusic/domain/audio/markers.dart';
+import 'package:tiomusic/domain/audio/midi_converter.dart';
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
@@ -24,14 +23,15 @@ class Player {
   final int id;
   final AudioSystem _as;
   final AudioSession _audioSession;
-  final FileSystem _fs;
   final Wakelock _wakelock;
+
+  final Markers _markers;
+  final MidiConverter _midiConverter;
 
   final List<OnPlaybackPositionChange> _onPlaybackPositionChangeListeners = [];
   final List<OnIsPlayingChange> _onIsPlayingChangeListeners = [];
   final List<OnPlaybackPositionChange> _onSeekListeners = [];
 
-  final Markers _markers;
   Markers get markers => _markers;
 
   bool _isPlaying = false;
@@ -58,7 +58,10 @@ class Player {
 
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
-  Player(this._as, this._audioSession, this._fs, this._wakelock) : id = _nextId++, _markers = Markers(_as);
+  Player(this._as, this._audioSession, FileSystem fs, this._wakelock)
+    : id = _nextId++,
+      _markers = Markers(_as),
+      _midiConverter = MidiConverter(_as, fs);
 
   void addOnPlaybackPositionChangeListener(OnPlaybackPositionChange listener) =>
       _onPlaybackPositionChangeListeners.add(listener);
@@ -244,7 +247,7 @@ class Player {
   Future<bool> loadAudioFile(String absoluteFilePath) async {
     _loaded = false;
     final isMidi = absoluteFilePath.toLowerCase().endsWith('.mid');
-    final wavFilePath = isMidi ? (await _convertMidiToWav(absoluteFilePath)) : absoluteFilePath;
+    final wavFilePath = isMidi ? (await _midiConverter.convertToWav(absoluteFilePath)) : absoluteFilePath;
     if (wavFilePath == null) return false;
 
     final loaded = await _as.mediaPlayerLoadWav(id: id, wavFilePath: wavFilePath);
@@ -258,52 +261,10 @@ class Player {
     return true;
   }
 
-  Future<String?> _convertMidiToWav(String absoluteMidiFilePath) async {
-    final sampleRate = await _as.getSampleRate();
-
-    final ts = DateTime.now().millisecondsSinceEpoch;
-    final base = _fs.toBasename(absoluteMidiFilePath).replaceAll(RegExp(r'[^\w.-]'), '_');
-    final tmpDir = _fs.tmpFolderPath;
-    await _fs.createFolder(tmpDir);
-    final tmpWavAbs = '$tmpDir/$base.$ts.rendered.wav';
-
-    final sf2Abs = await _resolveSoundFontPath();
-    if (sf2Abs == null) return null;
-
-    final success = await _as.mediaPlayerRenderMidiToWav(
-      midiPath: absoluteMidiFilePath,
-      soundFontPath: sf2Abs,
-      wavOutPath: tmpWavAbs,
-      sampleRate: sampleRate,
-      gain: 0.7,
-    );
-    return success ? tmpWavAbs : null;
-  }
-
   Future<void> _setFileDuration() async {
     final state = await _as.mediaPlayerGetState(id: id);
     if (state != null) {
       _fileDuration = Duration(milliseconds: (state.totalLengthSeconds * 1000).toInt());
-    }
-  }
-
-  Future<String?> _resolveSoundFontPath() async {
-    const assetPath = 'assets/sound_fonts/piano_01.sf2';
-    final tmpDir = _fs.tmpFolderPath;
-    await _fs.createFolder(tmpDir);
-    final fileName = assetPath.split('/').last;
-    final outPath = '$tmpDir/$fileName';
-
-    if (_fs.existsFile(outPath)) return outPath;
-
-    try {
-      final data = await rootBundle.load(assetPath);
-      final outFile = File(outPath);
-      await outFile.writeAsBytes(data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes), flush: true);
-      return outPath;
-    } catch (e, st) {
-      logger.e('Failed to load SoundFont asset at "$assetPath": $e\n$st');
-      return null;
     }
   }
 
