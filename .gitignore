@@ -811,6 +811,9 @@ Temporary Items
 
 # Include any specific files here.
 
+# Claude Code
+.claude/
+
 ### ---------------------------- References ---------------------------- ###
 
 # Flutter          - https://github.com/flutter/flutter/blob/master/.gitignore
