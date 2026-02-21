@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -13,57 +11,21 @@ import '../../utils/render_utils.dart';
 import '../../utils/test_context.dart';
 
 Future<void> prepareMediaPlayerWithLoadedIsland(WidgetTester tester, TestContext context) async {
-  final audioBytes = File('assets/test/ping.wav').readAsBytesSync();
-  final filePath1 = '${context.inMemoryFileSystem.tmpFolderPath}/audio_file_1.wav';
-  final filePath2 = '${context.inMemoryFileSystem.tmpFolderPath}/audio_file_2.wav';
-  context.inMemoryFileSystem.saveFileAsBytes(filePath1, audioBytes);
-  context.inMemoryFileSystem.saveFileAsBytes(filePath2, audioBytes);
-
+  final audio1 = saveTestAudioFile(context, name: 'audio_file_1');
+  final audio2 = saveTestAudioFile(context, name: 'audio_file_2');
   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-
-  // Create Media Player 1
   await tester.createMediaPlayerToolInProject();
-
-  // Create Media Player 2 and load audio on it
-  await tester.tapAndSettle(find.byTooltip('Add new tool'));
-  await tester.tapAndSettle(find.bySemanticsLabel('Media Player'));
-  await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 2');
-  await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-  context.filePickerMock.mockPickAudioFromMediaLibrary([filePath2]);
-  await tester.scrollToAndTapAndSettle('Open files');
-  await tester.tapAndSettle(find.bySemanticsLabel('Back'));
-
-  // Open Media Player 1 and load audio
-  await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
-  context.filePickerMock.mockPickAudioFromMediaLibrary([filePath1]);
-  await tester.scrollToAndTapAndSettle('Open files');
-
-  // Connect Media Player 2 as island
-  await tester.ensureVisible(find.byTooltip('Connect another tool'));
-  await tester.tapAndSettle(find.byTooltip('Connect another tool'));
-  await tester.tapAndSettle(find.bySemanticsLabel('Media Player 2'));
-  await tester.pumpAndSettle(const Duration(milliseconds: 1100));
+  await tester.createMediaPlayerWithAudio('Media Player 2', context, audio2);
+  await tester.openMediaPlayerAndLoadAudio('Media Player 1', context, audio1);
+  await tester.connectExistingTool('Media Player 2');
 }
 
 Future<void> prepareMediaPlayerWithUnloadedIsland(WidgetTester tester, TestContext context) async {
-  final filePath = '${context.inMemoryFileSystem.tmpFolderPath}/audio_file.wav';
-  context.inMemoryFileSystem.saveFileAsBytes(filePath, File('assets/test/ping.wav').readAsBytesSync());
-  context.filePickerMock.mockPickAudioFromMediaLibrary([filePath]);
-
+  final audio = saveTestAudioFile(context);
   await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-
-  // Create Media Player 1 and load audio
   await tester.createMediaPlayerToolInProject();
-  await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
-  await tester.scrollToAndTapAndSettle('Open files');
-
-  // Connect and create new Media Player 2 (without audio)
-  await tester.ensureVisible(find.byTooltip('Connect another tool'));
-  await tester.tapAndSettle(find.byTooltip('Connect another tool'));
-  await tester.tapAndSettle(find.bySemanticsLabel('Media Player'));
-  await tester.enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 2');
-  await tester.tapAndSettle(find.bySemanticsLabel('Submit'));
-  await tester.pumpAndSettle(const Duration(milliseconds: 1100));
+  await tester.openMediaPlayerAndLoadAudio('Media Player 1', context, audio);
+  await tester.connectNewTool('Media Player', 'Media Player 2');
 }
 
 void main() {
