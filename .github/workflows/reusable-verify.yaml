@@ -2,8 +2,8 @@ name: Verify
 
 env:
   MAX_FILE_COUNT: 23
-  MAX_AVG_LENGTH: 344
-  MIN_COVERAGE: 61.8
+  MAX_AVG_LENGTH: 342
+  MIN_COVERAGE: 62.7
 
 on:
   workflow_dispatch:
