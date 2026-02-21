@@ -51,7 +51,7 @@ jobs:
       run: xcodebuild -showsdks
 
     - name: Setup flutter
-      uses: kuhnroyal/flutter-fvm-config-action/setup@v3.1
+      uses: kuhnroyal/flutter-fvm-config-action/setup@v3.2
 
     - name: Install key for fastlane repo
       uses: webfactory/ssh-agent@v0.9.1
