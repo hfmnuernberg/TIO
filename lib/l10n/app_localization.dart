@@ -108,6 +108,7 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get mediaPlayerPause;
   String get mediaPlayerPitch;
   String get mediaPlayerPlay;
+  String get mediaPlayerPlayPause;
   String get mediaPlayerRecording;
   String get mediaPlayerRemoveMarker;
   String get mediaPlayerRepeatAll;
@@ -310,7 +311,6 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get toolUseBookmarkToSave;
 
   String toolHasNoIslandView(String tool);
-  String toolIslandPlayPause(String title);
 
   String get tuner;
   String get tunerAbout;

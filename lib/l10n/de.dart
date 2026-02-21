@@ -128,6 +128,7 @@ class German extends AppLocalizations with GermanFlashCards {
   String get mediaPlayerPause => 'Pause';
   String get mediaPlayerPitch => 'Tonhöhe';
   String get mediaPlayerPlay => 'Play';
+  String get mediaPlayerPlayPause => 'Play / Pause';
   String get mediaPlayerRecording => 'Aufnahme läuft...';
   String get mediaPlayerRemoveMarker => 'Ausgewählten Marker entfernen';
   String get mediaPlayerRepeatAll => 'Alle Media Player wiederholen';
@@ -360,7 +361,6 @@ class German extends AppLocalizations with GermanFlashCards {
   String get toolUseBookmarkToSave => 'Verwende das Lesezeichen, um das Tool zu speichern.';
 
   String toolHasNoIslandView(String tool) => '$tool hat keine Kompaktansicht!';
-  String toolIslandPlayPause(String title) => '$title Play Pause';
 
   String get tuner => 'Stimmgerät';
   String get tunerAbout => 'Stimmgerät';

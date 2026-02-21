@@ -53,7 +53,7 @@ void main() {
       testWidgets('renders island view with connected media player', (tester) async {
         await prepareMediaPlayerWithIsland(tester, context);
 
-        expect(find.byTooltip('Media Player 2 Play Pause'), findsOneWidget);
+        expect(find.byTooltip('Media Player 2: Play / Pause'), findsOneWidget);
       });
 
       testWidgets('island starts when primary player starts', (tester) async {
@@ -66,7 +66,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 150));
 
         expect(
-          find.descendant(of: find.byTooltip('Media Player 2 Play Pause'), matching: find.byIcon(Icons.pause)),
+          find.descendant(of: find.byTooltip('Media Player 2: Play / Pause'), matching: find.byIcon(Icons.pause)),
           findsOneWidget,
         );
       });
@@ -81,7 +81,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 150));
 
         expect(
-          find.descendant(of: find.byTooltip('Media Player 2 Play Pause'), matching: find.byIcon(Icons.pause)),
+          find.descendant(of: find.byTooltip('Media Player 2: Play / Pause'), matching: find.byIcon(Icons.pause)),
           findsOneWidget,
         );
 
@@ -92,7 +92,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 150));
 
         expect(
-          find.descendant(of: find.byTooltip('Media Player 2 Play Pause'), matching: find.byIcon(Icons.play_arrow)),
+          find.descendant(of: find.byTooltip('Media Player 2: Play / Pause'), matching: find.byIcon(Icons.play_arrow)),
           findsOneWidget,
         );
       });
@@ -101,12 +101,12 @@ void main() {
         await prepareMediaPlayerWithIsland(tester, context);
         mockPlayerState(context);
 
-        await tester.tap(find.byTooltip('Media Player 2 Play Pause'));
+        await tester.tap(find.byTooltip('Media Player 2: Play / Pause'));
         await tester.pump(const Duration(milliseconds: 150));
         await tester.pump(const Duration(milliseconds: 150));
 
         expect(
-          find.descendant(of: find.byTooltip('Media Player 2 Play Pause'), matching: find.byIcon(Icons.pause)),
+          find.descendant(of: find.byTooltip('Media Player 2: Play / Pause'), matching: find.byIcon(Icons.pause)),
           findsOneWidget,
         );
       });
@@ -154,7 +154,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 150));
 
         expect(
-          find.descendant(of: find.byTooltip('Media Player 2 Play Pause'), matching: find.byIcon(Icons.pause)),
+          find.descendant(of: find.byTooltip('Media Player 2: Play / Pause'), matching: find.byIcon(Icons.pause)),
           findsNothing,
         );
       });
