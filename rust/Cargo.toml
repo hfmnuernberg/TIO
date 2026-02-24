@@ -16,7 +16,7 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
 [dependencies]
 anyhow = "1.0.102"
 chrono = "0.4.44"
-cpal = "0.15.3"
+cpal = "0.17.3"
 enum-map = "2.7.3"
 flutter_rust_bridge = "=2.11.1"
 hound = "3.5.1"
