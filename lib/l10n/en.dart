@@ -113,7 +113,7 @@ class English extends AppLocalizations with EnglishFlashCards {
       'Microphone permission is required to record audio. Please grant the permission in your device settings.';
   String get mediaPlayerErrorSongsNotDownloaded => 'Song(s) not available';
   String get mediaPlayerErrorSongsNotDownloadedDescription =>
-      'Some selected songs are not downloaded to your device. Please download them first in the Music app, then try again.';
+      'Some selected songs are not downloaded to your device. Please download them first in the Music app, then try again. Note: Streamed music cannot be imported.';
   String get mediaPlayerFactor => 'Factor';
   String get mediaPlayerFactorAndBpm => 'Factor and BPM slider';
   String get mediaPlayerFile => 'File';

@@ -119,11 +119,11 @@ void main() {
 
     testWidgets('showSongsNotDownloadedDialog shows title and description', (tester) async {
       await tester.renderWidget(const TestWrapper());
-      expect(find.bySemanticsLabel('Songs not available'), findsNothing);
+      expect(find.bySemanticsLabel('Song(s) not available'), findsNothing);
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open showSongsNotDownloadedDialog'));
 
-      expect(find.bySemanticsLabel('Songs not available'), findsOneWidget);
+      expect(find.bySemanticsLabel('Song(s) not available'), findsOneWidget);
       expect(find.textContaining('Music app'), findsOneWidget);
     });
 
@@ -131,10 +131,10 @@ void main() {
       await tester.renderWidget(const TestWrapper());
 
       await tester.tapAndSettle(find.bySemanticsLabel('Open showSongsNotDownloadedDialog'));
-      expect(find.bySemanticsLabel('Songs not available'), findsOneWidget);
+      expect(find.bySemanticsLabel('Song(s) not available'), findsOneWidget);
 
       await tester.tapAndSettle(find.bySemanticsLabel('Got it'));
-      expect(find.bySemanticsLabel('Songs not available'), findsNothing);
+      expect(find.bySemanticsLabel('Song(s) not available'), findsNothing);
     });
   });
 }

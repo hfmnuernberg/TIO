@@ -44,9 +44,9 @@ extension WidgetTesterMediaPlayerExtension on WidgetTester {
     await loadAudioOnCurrentMediaPlayer(context, audioFilePath);
   }
 
-  Future<void> createMediaPlayerToolInProject() async {
+  Future<void> createMediaPlayerToolInProject({String title = 'Media Player 1'}) async {
     await tapAndSettle(find.bySemanticsLabel('Media Player'));
-    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), 'Media Player 1');
+    await enterTextAndSettle(find.bySemanticsLabel('Tool title'), title);
     await tapAndSettle(find.bySemanticsLabel('Submit'));
     await tapAndSettle(find.bySemanticsLabel('Back'));
   }

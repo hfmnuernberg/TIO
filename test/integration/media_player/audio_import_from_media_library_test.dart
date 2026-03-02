@@ -19,11 +19,26 @@ void main() {
     await context.init(project: Project.defaultThumbnail('Test Project'));
   });
 
-  Future<void> renderAndOpenMediaPlayer(WidgetTester tester) async {
+  Future<void> renderAndOpenMediaPlayer(WidgetTester tester, {String title = 'Media Player 1'}) async {
     await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-    await tester.createMediaPlayerToolInProject();
-    await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+    await tester.createMediaPlayerToolInProject(title: title);
+    await tester.tapAndSettle(find.bySemanticsLabel(title));
   }
+
+  group('Media library import', () {
+    testWidgets('imports two audio files from media library', (tester) async {
+      final filePath1 = saveTestAudioFile(context, name: 'song_one');
+      final filePath2 = saveTestAudioFile(context, name: 'song_two');
+      context.filePickerMock.mockPickAudioFromMediaLibrary([filePath1, filePath2]);
+
+      await renderAndOpenMediaPlayer(tester, title: 'Song Import');
+      await tester.scrollToAndTapAndSettle('Open files');
+      await tester.tapAndSettle(find.bySemanticsLabel('Back'));
+
+      expect(find.bySemanticsLabel('Song Import'), findsOneWidget);
+      expect(find.bySemanticsLabel('Song Import (1)'), findsOneWidget);
+    });
+  });
 
   group('Media library import with skipped songs', () {
     testWidgets('shows not-downloaded dialog when some songs are skipped', (tester) async {
@@ -33,7 +48,7 @@ void main() {
       await renderAndOpenMediaPlayer(tester);
       await tester.scrollToAndTapAndSettle('Open files');
 
-      expect(find.bySemanticsLabel('Songs not available'), findsOneWidget);
+      expect(find.bySemanticsLabel('Song(s) not available'), findsOneWidget);
     });
 
     testWidgets('imports valid file even when some songs are skipped', (tester) async {
@@ -52,7 +67,7 @@ void main() {
       await renderAndOpenMediaPlayer(tester);
       await tester.scrollToAndTapAndSettle('Open files');
 
-      expect(find.bySemanticsLabel('Songs not available'), findsOneWidget);
+      expect(find.bySemanticsLabel('Song(s) not available'), findsOneWidget);
     });
 
     testWidgets('does not show dialog when selection is cancelled', (tester) async {
@@ -63,7 +78,7 @@ void main() {
       await renderAndOpenMediaPlayer(tester);
       await tester.scrollToAndTapAndSettle('Open files');
 
-      expect(find.bySemanticsLabel('Songs not available'), findsNothing);
+      expect(find.bySemanticsLabel('Song(s) not available'), findsNothing);
     });
   });
 }

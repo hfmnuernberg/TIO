@@ -322,45 +322,43 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   Future<void> _pickAudioFilesAndSave({required bool isMultipleAllowed, bool pickAudioFromFileSystem = false}) async {
-    if (_player.loaded) {
-      final shouldOverwrite = await askForOverridingFileOnOpenFileSelection(context);
-      if (shouldOverwrite != true) return;
+    if (_player.loaded && await askForOverridingFileOnOpenFileSelection(context) != true) return;
+    if (!mounted) return;
+    final audioPaths = await _pickAudioFiles(
+      pickAudioFromFileSystem: pickAudioFromFileSystem,
+      isMultipleAllowed: isMultipleAllowed,
+    );
+    if (!mounted || audioPaths == null || audioPaths.isEmpty) return;
+    await _enforceFileLimit(audioPaths);
+    final skippedCount = await _importAudioFiles(audioPaths);
+    if (!mounted) return;
+    await _notifySkippedSongsAndSave(skippedCount);
+  }
+
+  Future<void> _enforceFileLimit(List<String?> audioPaths) async {
+    if (audioPaths.length <= 10) return;
+    await showTooManyFilesSelectedDialog(context);
+    audioPaths.removeRange(10, audioPaths.length);
+  }
+
+  Future<int> _importAudioFiles(List<String?> audioPaths) async {
+    final skippedCount = audioPaths.where((p) => p == null).length;
+    var fileIndex = 0;
+    for (final audioPath in audioPaths) {
+      if (audioPath == null) continue;
+      await _handleAudioFile(fileIndex, audioPath);
+      fileIndex++;
     }
-    try {
+    return skippedCount;
+  }
+
+  Future<void> _notifySkippedSongsAndSave(int skippedCount) async {
+    if (skippedCount > 0) {
+      await showSongsNotDownloadedDialog(context);
       if (!mounted) return;
-      final audioPaths = await _pickAudioFiles(
-        context: context,
-        projectLibrary: context.read<ProjectLibrary>(),
-        pickAudioFromFileSystem: pickAudioFromFileSystem,
-        isMultipleAllowed: isMultipleAllowed,
-      );
-      if (!mounted) return;
-      if (audioPaths == null || audioPaths.isEmpty) return;
-      if (audioPaths.length > 10) {
-        await showTooManyFilesSelectedDialog(context);
-        audioPaths.removeRange(10, audioPaths.length);
-      }
-
-      final skippedCount = audioPaths.where((p) => p == null).length;
-      int fileIndex = 0;
-      for (final audioPath in audioPaths) {
-        if (audioPath == null) continue;
-        await _handleAudioFile(fileIndex, audioPath);
-        fileIndex++;
-      }
-
-      if (!mounted) return;
-
-      if (skippedCount > 0) {
-        await showSongsNotDownloadedDialog(context);
-        if (!mounted) return;
-      }
-
-      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-      setState(() {});
-    } on PlatformException catch (e) {
-      logger.e('Unable to pick audio files.', error: e);
     }
+    await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    setState(() {});
   }
 
   Future<void> _handleAudioFile(int index, String audioPath) async {
@@ -428,8 +426,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   Future<List<String?>?> _pickAudioFiles({
-    required BuildContext context,
-    required ProjectLibrary projectLibrary,
     required bool pickAudioFromFileSystem,
     required bool isMultipleAllowed,
   }) async {
