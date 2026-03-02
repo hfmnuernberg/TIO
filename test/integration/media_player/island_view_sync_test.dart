@@ -109,6 +109,32 @@ void main() {
 
         verify(() => context.audioSystemMock.mediaPlayerDestroyInstance(id: any(named: 'id'))).called(2);
       });
+
+      testWidgets('island does not start when primary position is beyond island range', (tester) async {
+        final audio1 = saveTestAudioFile(context, name: 'audio_file_1');
+        final audio2 = saveTestAudioFile(context, name: 'audio_file_2');
+        await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+        await tester.createMediaPlayerToolInProject();
+        await tester.createMediaPlayerWithAudio('Media Player 2', context, audio2);
+
+        mockPlayerState(context, playing: false);
+        await tester.openMediaPlayerAndLoadAudio('Media Player 1', context, audio1);
+
+        mockPlayerState(context, playing: false, totalLengthSeconds: 5);
+        await tester.connectExistingTool('Media Player 2');
+
+        mockPlayerState(context, playbackPositionFactor: 0.7);
+
+        await tester.ensureVisible(find.byTooltip('Play'));
+        await tester.tap(find.byTooltip('Play'));
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.pump(const Duration(milliseconds: 150));
+
+        expect(
+          find.descendant(of: find.byTooltip('Media Player 2: Play / Pause'), matching: find.byIcon(Icons.play_arrow)),
+          findsOneWidget,
+        );
+      });
     });
 
     group('without loaded audio on island', () {
