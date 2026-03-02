@@ -105,6 +105,10 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     if (!_player.loaded) return;
 
     if (primaryIsPlaying && !_player.isPlaying) {
+      if (_primaryPlayer != null) {
+        final inRange = await _player.syncPositionWith(_primaryPlayer!);
+        if (!inRange) return;
+      }
       await _player.start();
     } else if (!primaryIsPlaying && _player.isPlaying) {
       await _player.stop();
@@ -174,7 +178,8 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
           ? const Icon(TIOMusicParams.pauseIcon, color: ColorTheme.primary)
           : widget.mediaPlayerBlock.icon,
       mainButtonIsDisabled: _isLoading,
-      mainButtonLabel: '${widget.mediaPlayerBlock.title}: ${context.l10n.mediaPlayerPlayPause}',
+      mainButtonLabel:
+          '${widget.mediaPlayerBlock.title}: ${_player.isPlaying ? context.l10n.mediaPlayerPause : context.l10n.mediaPlayerPlay}',
       parameterText: widget.mediaPlayerBlock.title,
       centerView: _isLoading ? const Center(child: CircularProgressIndicator()) : _waveformVisualizer,
       customPaintKey: _customPaintKey,

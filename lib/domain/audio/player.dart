@@ -193,20 +193,23 @@ class Player {
     await setPlaybackPosition(targetMarker);
   }
 
-  Future<void> syncPositionWith(Player other) async {
-    if (!_loaded) return;
+  Future<bool> syncPositionWith(Player other) async {
+    if (!_loaded) return true;
 
     final mappedPosition = _mapPositionFrom(other);
-    if (mappedPosition == null) return;
+    if (mappedPosition == null) return true;
 
     if (mappedPosition > _endPosition) {
       if (_repeat) {
         await setPlaybackPosition(_wrapPositionInTrimRange(mappedPosition));
+        return true;
       } else {
         if (_isPlaying) await stop();
+        return false;
       }
     } else {
       await setPlaybackPosition(mappedPosition.clamp(0.0, 1.0));
+      return true;
     }
   }
 
@@ -278,13 +281,6 @@ class Player {
     final state = await _as.mediaPlayerGetState(id: id);
     if (state == null) return;
 
-    if (state.playing != _isPlaying) {
-      _isPlaying = state.playing;
-      for (final listener in _onIsPlayingChangeListeners) {
-        listener(state.playing);
-      }
-    }
-
     if (state.playbackPositionFactor != _playbackPosition) {
       final previousPosition = _playbackPosition;
       _playbackPosition = state.playbackPositionFactor;
@@ -293,6 +289,13 @@ class Player {
       }
 
       await _markers.onPlaybackPositionChange(previousPosition: previousPosition, currentPosition: _playbackPosition);
+    }
+
+    if (state.playing != _isPlaying) {
+      _isPlaying = state.playing;
+      for (final listener in _onIsPlayingChangeListeners) {
+        listener(state.playing);
+      }
     }
   }
 }
