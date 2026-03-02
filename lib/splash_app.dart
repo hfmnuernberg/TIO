@@ -61,7 +61,11 @@ class _SplashAppState extends State<SplashApp> {
   Future<ProjectLibrary> _initProjectLibrary() async {
     try {
       final projectRepo = context.read<ProjectRepository>();
-      return projectRepo.existsLibrary() ? projectRepo.loadLibrary() : ProjectLibrary.withDefaults();
+      if (projectRepo.existsLibrary()) return projectRepo.loadLibrary();
+
+      final library = ProjectLibrary.withDefaults();
+      await projectRepo.saveLibrary(library);
+      return library;
     } catch (e) {
       _logger.e('Unable to load project library.', error: e);
       _hasError = true;

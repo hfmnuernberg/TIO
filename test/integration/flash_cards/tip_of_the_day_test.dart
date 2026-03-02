@@ -23,6 +23,15 @@ void main() {
   });
 
   group('Tip of the day', () {
+    testWidgets('shows tip of the day on first launch when library does not exist on disk', (tester) async {
+      final firstLaunchContext = TestContext();
+      await firstLaunchContext.init();
+
+      await tester.renderScaffold(const ProjectsPage(), firstLaunchContext.providers);
+
+      expect(find.bySemanticsLabel(RegExp('play your piece with flutter tongue')), findsOneWidget);
+    });
+
     testWidgets('shows same tip of the day when reopening on the same day', (tester) async {
       await tester.renderScaffold(const ProjectsPage(), context.providers);
       expect(find.bySemanticsLabel(RegExp('play your piece with flutter tongue')), findsOneWidget);
