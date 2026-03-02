@@ -105,6 +105,10 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
     if (!_player.loaded) return;
 
     if (primaryIsPlaying && !_player.isPlaying) {
+      if (_primaryPlayer != null) {
+        final inRange = await _player.syncPositionWith(_primaryPlayer!);
+        if (!inRange) return;
+      }
       await _player.start();
     } else if (!primaryIsPlaying && _player.isPlaying) {
       await _player.stop();
