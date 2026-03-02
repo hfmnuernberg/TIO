@@ -39,6 +39,10 @@ class TestWrapper extends StatelessWidget {
         onPressed: () => showFileOpenFailedDialog(context, fileName: '/tmp/some/path/name.mp3'),
         child: const Text('Open showFileOpenFailedDialog (with name)'),
       ),
+      TextButton(
+        onPressed: () => showSongsNotDownloadedDialog(context),
+        child: const Text('Open showSongsNotDownloadedDialog'),
+      ),
     ],
   );
 }
@@ -111,6 +115,26 @@ void main() {
 
       expect(find.byType(AlertDialog), findsOneWidget);
       expect(find.textContaining('name.mp3'), findsWidgets);
+    });
+
+    testWidgets('showSongsNotDownloadedDialog shows title and description', (tester) async {
+      await tester.renderWidget(const TestWrapper());
+      expect(find.bySemanticsLabel('Songs not available'), findsNothing);
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Open showSongsNotDownloadedDialog'));
+
+      expect(find.bySemanticsLabel('Songs not available'), findsOneWidget);
+      expect(find.textContaining('Music app'), findsOneWidget);
+    });
+
+    testWidgets('showSongsNotDownloadedDialog can be dismissed', (tester) async {
+      await tester.renderWidget(const TestWrapper());
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Open showSongsNotDownloadedDialog'));
+      expect(find.bySemanticsLabel('Songs not available'), findsOneWidget);
+
+      await tester.tapAndSettle(find.bySemanticsLabel('Got it'));
+      expect(find.bySemanticsLabel('Songs not available'), findsNothing);
     });
   });
 }

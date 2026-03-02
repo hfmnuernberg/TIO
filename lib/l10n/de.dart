@@ -111,6 +111,9 @@ class German extends AppLocalizations with GermanFlashCards {
   String get mediaPlayerErrorMissingPermission => 'Fehlende Berechtigung';
   String get mediaPlayerErrorMissingMicPermissionDescription =>
       'Die App hat keine Berechtigung, auf das Mikrofon zuzugreifen. Bitte erteile die Berechtigung in den Einstellungen deines Geräts, um Audio aufnehmen zu können.';
+  String get mediaPlayerErrorSongsNotDownloaded => 'Song(s) nicht verfügbar';
+  String get mediaPlayerErrorSongsNotDownloadedDescription =>
+      'Einige ausgewählte Songs sind nicht auf dein Gerät heruntergeladen. Bitte lade sie zuerst in der Musik-App herunter und versuche es dann erneut.';
   String get mediaPlayerFactor => 'Faktor';
   String get mediaPlayerFactorAndBpm => 'Faktor und BPM-Regler';
   String get mediaPlayerFile => 'Datei';

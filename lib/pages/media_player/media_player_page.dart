@@ -341,13 +341,20 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         audioPaths.removeRange(10, audioPaths.length);
       }
 
-      for (int i = 0; i < audioPaths.length; i++) {
-        final audioPath = audioPaths[i];
-        if (audioPath == null) return;
-        await _handleAudioFile(i, audioPath);
+      final skippedCount = audioPaths.where((p) => p == null).length;
+      int fileIndex = 0;
+      for (final audioPath in audioPaths) {
+        if (audioPath == null) continue;
+        await _handleAudioFile(fileIndex, audioPath);
+        fileIndex++;
       }
 
       if (!mounted) return;
+
+      if (skippedCount > 0) {
+        await showSongsNotDownloadedDialog(context);
+        if (!mounted) return;
+      }
 
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
       setState(() {});

@@ -132,6 +132,7 @@ Rust-specific commands:
 - **Test naming**: Name from the user's perspective of the class, not implementation details
 - **Meaningful tests**: Test actual behavior, not getters. Reduce mocking to a minimum.
 - **Test utilities**: Helpers in `test/utils/` (e.g., `media_player_utils.dart`, `project_utils.dart`, `render_utils.dart`)
+- **Widget lookup in tests**: Always use the accessibility API (`find.bySemanticsLabel(...)` or `find.textContaining(...)`) to locate widgets. Never use `find.byType(...)`, `find.byKey(...)`, or test keys/IDs. New UI elements must have semantic labels sourced from localization. Tests assume English localization is active.
 - **Coverage ratcheting**: Thresholds are tightened after improvements — both coverage % and file complexity limits
 
 ## Working with Claude Code

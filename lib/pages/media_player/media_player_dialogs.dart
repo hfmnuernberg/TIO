@@ -41,6 +41,15 @@ Future<void> showFormatNotSupportedDialog(BuildContext context, String? format) 
   ),
 );
 
+Future<void> showSongsNotDownloadedDialog(BuildContext context) => showInfoDialog(
+  context: context,
+  title: context.l10n.mediaPlayerErrorSongsNotDownloaded,
+  content: Text(
+    context.l10n.mediaPlayerErrorSongsNotDownloadedDescription,
+    style: const TextStyle(color: ColorTheme.primary),
+  ),
+);
+
 Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) {
   fileName = (fileName ?? '').isEmpty ? null : fileName;
 
