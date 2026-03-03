@@ -13,6 +13,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		A561702F2F57335C0099C521 /* MediaLibraryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A561702E2F57335C0099C521 /* MediaLibraryPicker.swift */; };
 		D6BC425C29B0B0D700ACF78F /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA2E08ED3C30B79DF06321E9 /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +52,7 @@
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9F39BC3DDAD0F5B2BFE6C5A7 /* Pods-Runner.debug-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-dev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-dev.xcconfig"; sourceTree = "<group>"; };
 		A3671ACD29957A7F00604FF0 /* native.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = native.xcodeproj; path = ../native/native.xcodeproj; sourceTree = "<group>"; };
+		A561702E2F57335C0099C521 /* MediaLibraryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaLibraryPicker.swift; sourceTree = "<group>"; };
 		BAEF61381BECBB7B088A5CC7 /* Pods-Runner.profile-dev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-dev.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-dev.xcconfig"; sourceTree = "<group>"; };
 		CA2E08ED3C30B79DF06321E9 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD3A2CC79BEA283D6BA5AFB3 /* Pods-Runner.debug-prd.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-prd.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-prd.xcconfig"; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 		97C146E51CF9000F007C117D = {
 			isa = PBXGroup;
 			children = (
+				A561702E2F57335C0099C521 /* MediaLibraryPicker.swift */,
 				A3671ACD29957A7F00604FF0 /* native.xcodeproj */,
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
@@ -339,6 +342,7 @@
 			files = (
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+				A561702F2F57335C0099C521 /* MediaLibraryPicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -435,7 +439,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Runner/Info-prd.plist;
+				INFOPLIST_FILE = "Runner/Info-prd.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App uses microphone for the tuner and media-player recordings";
@@ -529,7 +533,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Runner/Info-dev.plist;
+				INFOPLIST_FILE = "Runner/Info-dev.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App uses microphone for the tuner and media-player recordings";
@@ -623,7 +627,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Runner/Info-dev.plist;
+				INFOPLIST_FILE = "Runner/Info-dev.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App uses microphone for the tuner and media-player recordings";
@@ -714,7 +718,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Runner/Info-dev.plist;
+				INFOPLIST_FILE = "Runner/Info-dev.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App uses microphone for the tuner and media-player recordings";
@@ -868,7 +872,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Runner/Info-prd.plist;
+				INFOPLIST_FILE = "Runner/Info-prd.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App uses microphone for the tuner and media-player recordings";
@@ -903,7 +907,7 @@
 				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Runner/Info-prd.plist;
+				INFOPLIST_FILE = "Runner/Info-prd.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App uses microphone for the tuner and media-player recordings";
