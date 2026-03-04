@@ -57,7 +57,7 @@ class PianoBlock extends ProjectBlock {
 
   late String? _islandToolID;
   @override
-  @JsonKey(defaultValue: null)
+  @JsonKey()
   String? get islandToolID => _islandToolID;
   @override
   set islandToolID(String? newToolID) {
