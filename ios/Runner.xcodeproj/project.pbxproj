@@ -437,7 +437,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = WWXF6KP7C7;
+				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Runner/Info-prd.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
@@ -449,7 +449,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cultivate.software.tio.jerome;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hfm-nuernberg.tiomusic";
 				PRODUCT_NAME = Runner;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -531,7 +531,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = WWXF6KP7C7;
+				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Runner/Info-dev.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
@@ -543,7 +543,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cultivate.software.tio.jerome;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hfm-nuernberg.tiomusic.dev";
 				PRODUCT_NAME = Runner;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -625,7 +625,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = WWXF6KP7C7;
+				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Runner/Info-dev.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
@@ -637,7 +637,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cultivate.software.tio.jerome;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hfm-nuernberg.tiomusic.dev";
 				PRODUCT_NAME = Runner;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -716,7 +716,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = WWXF6KP7C7;
+				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Runner/Info-dev.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
@@ -728,7 +728,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cultivate.software.tio.jerome;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hfm-nuernberg.tiomusic.dev";
 				PRODUCT_NAME = Runner;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -870,7 +870,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = WWXF6KP7C7;
+				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Runner/Info-prd.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
@@ -882,7 +882,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cultivate.software.tio.jerome;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hfm-nuernberg.tiomusic";
 				PRODUCT_NAME = Runner;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -901,10 +901,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Apple Distribution: Hochschule fuer Musik Nuernberg (Y8827VPNZ5)";
+        CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = WWXF6KP7C7;
+				DEVELOPMENT_TEAM = Y8827VPNZ5;
+        "DEVELOPMENT_TEAM[sdk=iphoneos*]" = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = "Runner/Info-prd.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
@@ -916,9 +917,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = cultivate.software.tio.jerome;
+				PRODUCT_BUNDLE_IDENTIFIER = "de.hfm-nuernberg.tiomusic";
 				PRODUCT_NAME = Runner;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore de.hfm-nuernberg.tiomusic";
+        "PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore de.hfm-nuernberg.tiomusic";
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
