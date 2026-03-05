@@ -90,11 +90,11 @@ void main() {
         await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
 
         final settingsButton = tester.getSemantics(tester.withinSettingsTile('Markers', find.bySemanticsLabel('0')));
-        expect(settingsButton.flagsCollection.isEnabled, isFalse);
+        expect(settingsButton.flagsCollection.isEnabled.toString(), 'Tristate.isFalse');
 
         await tester.scrollToAndTapAndSettle('Open files');
 
-        expect(settingsButton.flagsCollection.isEnabled, isTrue);
+        expect(settingsButton.flagsCollection.isEnabled.toString(), 'Tristate.isTrue');
       });
 
       testWidgets('sets marker', (tester) async {
