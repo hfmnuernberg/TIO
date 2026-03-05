@@ -17,10 +17,10 @@
 
 1. Identify the newest iOS SDK version by checking the [endoflife.date](https://endoflife.date/ios) page
 2. Change the `platform :ios, 'XX.0'` in the [Podfile](../ios/Podfile) to the last version still receiving security updates
-3. Update Flutter’s engine info [plist](../ios/Flutter/AppFrameworkInfo.plist) and set `MinimumOSVersion` to `18.0`
-4. Update the specific Xcode version in the GitHub Action [build job for iOS](../.github/workflows/reusable-build-ios-app.yaml), e.g. `xcode-version: 16.2.0`
-5. If necessary also update the iOS Simulator version in the GitHub Action [build job for iOS](../.github/workflows/reusable-build-ios-app.yaml), e.g. `iOS 18.2 Simulator`
-6. Change the `IPHONEOS_DEPLOYMENT_TARGET` in the different `ios/**/*.pbxproj` files to the same version 
+3. Update Flutter’s engine info [plist](../ios/Flutter/AppFrameworkInfo.plist) and set `MinimumOSVersion` to `18.0` (minimum supported version)
+4. Update the specific Xcode version in the GitHub Action [build job for iOS](../.github/workflows/reusable-build-ios-app.yaml), e.g. `xcode-version: 16.2.0` (latest version)
+5. If necessary also update the iOS Simulator version in the GitHub Action [build job for iOS](../.github/workflows/reusable-build-ios-app.yaml), e.g. `iOS 18.2 Simulator` (latest version)
+6. Change the `IPHONEOS_DEPLOYMENT_TARGET` in the different `ios/**/*.pbxproj` files to the same version (minimum supported version)
 7. Completely rebuild the app
 8. Upgrade dependencies if possible (or necessary)
 9. Adjust code if necessary
