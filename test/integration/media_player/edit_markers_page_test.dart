@@ -46,21 +46,30 @@ void main() {
         await prepareAndOpenMediaPlayer(tester, context);
         await tester.scrollToAndTapAndSettle('Markers');
 
-        expect(tester.getSemantics(find.byTooltip('Zoom out')).flagsCollection.isEnabled, isFalse);
+        expect(
+          tester.getSemantics(find.byTooltip('Zoom out')).flagsCollection.isEnabled.toString(),
+          'Tristate.isFalse',
+        );
       });
 
       testWidgets('scroll left is not enabled initially', (tester) async {
         await prepareAndOpenMediaPlayer(tester, context);
         await tester.scrollToAndTapAndSettle('Markers');
 
-        expect(tester.getSemantics(find.byTooltip('Scroll left')).flagsCollection.isEnabled, isFalse);
+        expect(
+          tester.getSemantics(find.byTooltip('Scroll left')).flagsCollection.isEnabled.toString(),
+          'Tristate.isFalse',
+        );
       });
 
       testWidgets('scroll right is not enabled initially', (tester) async {
         await prepareAndOpenMediaPlayer(tester, context);
         await tester.scrollToAndTapAndSettle('Markers');
 
-        expect(tester.getSemantics(find.byTooltip('Scroll right')).flagsCollection.isEnabled, isFalse);
+        expect(
+          tester.getSemantics(find.byTooltip('Scroll right')).flagsCollection.isEnabled.toString(),
+          'Tristate.isFalse',
+        );
       });
 
       testWidgets('shows new window times after zoomed in', (tester) async {
@@ -116,7 +125,7 @@ void main() {
         await tester.tapAndSettle(find.byTooltip('Zoom in'));
         await tester.pumpAndSettle();
 
-        expect(tester.getSemantics(find.byTooltip('Zoom in')).flagsCollection.isEnabled, isFalse);
+        expect(tester.getSemantics(find.byTooltip('Zoom in')).flagsCollection.isEnabled.toString(), 'Tristate.isFalse');
         expect(find.textContaining('00:04:500'), findsOneWidget);
         expect(find.textContaining('00:05:500'), findsOneWidget);
       });
