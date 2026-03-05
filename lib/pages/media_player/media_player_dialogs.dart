@@ -51,7 +51,7 @@ Future<void> showSongsNotDownloadedDialog(BuildContext context) => showInfoDialo
 );
 
 Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) {
-  fileName = (fileName ?? '').isEmpty ? null : fileName;
+  final checkedFileName = (fileName ?? '').isEmpty ? null : fileName;
 
   return showInfoDialog(
     context: context,
@@ -60,11 +60,11 @@ Future<void> showFileOpenFailedDialog(BuildContext context, {String? fileName}) 
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(context.l10n.mediaPlayerErrorFileOpenDescription, style: const TextStyle(color: ColorTheme.primary)),
-        if (fileName != null)
+        if (checkedFileName != null)
           Container(
             margin: const EdgeInsets.only(top: 8),
             child: Text(
-              '${context.l10n.mediaPlayerFile}: ${basename(fileName)}',
+              '${context.l10n.mediaPlayerFile}: ${basename(checkedFileName)}',
               style: const TextStyle(color: ColorTheme.primary),
             ),
           ),
