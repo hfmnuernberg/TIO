@@ -9,13 +9,13 @@ environment:
   sdk: 3.11.1
 
 dependencies:
-  archive: 4.0.7
+  archive: 4.0.9
   audio_session: 0.2.2
   audioplayers: 6.5.1
   camera: 0.11.3
   circular_widgets: 3.0.0
   collection: 1.19.1
-  equatable: 2.0.7
+  equatable: 2.0.8
   ffi: 2.1.4
   file_picker: 10.3.6  # TODO: Newer version opens wrong picker on Android
   flutter:
@@ -26,7 +26,7 @@ dependencies:
   flutter_svg: 2.2.3
   frontend_server_client: 4.0.0
   image_picker: 1.2.1
-  image_picker_android: 0.8.13+1  # TODO: Delete when image_picker fixed limit for images on Android
+  image_picker_android: 0.8.13+14  # TODO: Delete when image_picker fixed limit for images on Android
   image_picker_platform_interface: 2.11.1  # TODO: Delete when image_picker fixed limit for images on Android
   intl: 0.20.2
   json_annotation: 4.9.0
@@ -44,8 +44,8 @@ dependencies:
   tutorial_coach_mark: 1.3.3
   url_launcher: 6.3.2
   url_launcher_ios: 6.3.6
-  uuid: 4.5.2
-  volume_controller: 3.4.1
+  uuid: 4.5.3
+  volume_controller: 3.4.2
   wakelock_plus: 1.4.0
   wav: 1.5.0
 
