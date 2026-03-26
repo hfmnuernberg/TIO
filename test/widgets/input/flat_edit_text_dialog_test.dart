@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tiomusic/widgets/input/flat_edit_text_dialog.dart';
@@ -129,7 +131,7 @@ void main() {
       await tester.enterTextAndSettle(tester.withinAlert(find.bySemanticsLabel('Title input')), '');
 
       final submitButton = tester.withinAlert(find.bySemanticsLabel('Submit'));
-      expect(tester.getSemantics(submitButton).flagsCollection.isEnabled.toString(), 'Tristate.isFalse');
+      expect(tester.getSemantics(submitButton).flagsCollection.isEnabled, Tristate.isFalse);
     });
 
     testWidgets('disables submit button when title has not changed', (tester) async {
@@ -138,7 +140,7 @@ void main() {
       await tester.tapAndSettle(find.bySemanticsLabel('Open Dialog'));
 
       final submitButton = tester.withinAlert(find.bySemanticsLabel('Submit'));
-      expect(tester.getSemantics(submitButton).flagsCollection.isEnabled.toString(), 'Tristate.isFalse');
+      expect(tester.getSemantics(submitButton).flagsCollection.isEnabled, Tristate.isFalse);
     });
 
     testWidgets('submits title when title has not changed but is marked as new', (tester) async {
