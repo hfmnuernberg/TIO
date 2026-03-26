@@ -26,6 +26,7 @@ class WidgetbookApp extends StatelessWidget {
           name: 'Accessibility',
           builder: (context, child) => AccessibilityTools(child: child),
         ),
+        // TODO(Jerome-Weiss): Remove this when not experimental anymore
         // ignore: experimental_member_use, SemanticsAddon is experimental in widgetbook but required for semantics testing
         SemanticsAddon(),
       ],

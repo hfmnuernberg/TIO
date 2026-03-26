@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -90,11 +91,11 @@ void main() {
         await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
 
         final settingsButton = tester.getSemantics(tester.withinSettingsTile('Markers', find.bySemanticsLabel('0')));
-        expect(settingsButton.flagsCollection.isEnabled.toString(), 'Tristate.isFalse');
+        expect(settingsButton.flagsCollection.isEnabled, Tristate.isFalse);
 
         await tester.scrollToAndTapAndSettle('Open files');
 
-        expect(settingsButton.flagsCollection.isEnabled.toString(), 'Tristate.isTrue');
+        expect(settingsButton.flagsCollection.isEnabled, Tristate.isTrue);
       });
 
       testWidgets('sets marker', (tester) async {

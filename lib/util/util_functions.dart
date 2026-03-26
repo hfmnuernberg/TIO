@@ -177,7 +177,7 @@ Future<bool?> askForSavingQuickTool(BuildContext context) => showDialog<bool>(
 
 Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName}) {
   final l10n = context.l10n;
-  final checkedFileName = (fileName ?? '').isEmpty ? null : fileName;
+  final sanitizedFileName = (fileName ?? '').isEmpty ? null : fileName;
 
   return showDialog<void>(
     context: context,
@@ -186,11 +186,11 @@ Future<void> showFileNotAccessibleDialog(BuildContext context, {String? fileName
       content: Column(
         children: [
           Text(l10n.mediaPlayerErrorFileAccessibleDescription, style: const TextStyle(color: ColorTheme.primary)),
-          if (checkedFileName != null)
+          if (sanitizedFileName != null)
             Container(
               margin: const EdgeInsets.only(top: 8),
               child: Text(
-                '${context.l10n.mediaPlayerFile}: ${basename(checkedFileName)}',
+                '${context.l10n.mediaPlayerFile}: ${basename(sanitizedFileName)}',
                 style: const TextStyle(color: ColorTheme.primary),
               ),
             ),
