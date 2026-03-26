@@ -47,30 +47,21 @@ void main() {
         await prepareAndOpenMediaPlayer(tester, context);
         await tester.scrollToAndTapAndSettle('Markers');
 
-        expect(
-          tester.getSemantics(find.byTooltip('Zoom out')).flagsCollection.isEnabled,
-          Tristate.isFalse,
-        );
+        expect(tester.getSemantics(find.byTooltip('Zoom out')).flagsCollection.isEnabled, Tristate.isFalse);
       });
 
       testWidgets('scroll left is not enabled initially', (tester) async {
         await prepareAndOpenMediaPlayer(tester, context);
         await tester.scrollToAndTapAndSettle('Markers');
 
-        expect(
-          tester.getSemantics(find.byTooltip('Scroll left')).flagsCollection.isEnabled,
-          Tristate.isFalse,
-        );
+        expect(tester.getSemantics(find.byTooltip('Scroll left')).flagsCollection.isEnabled, Tristate.isFalse);
       });
 
       testWidgets('scroll right is not enabled initially', (tester) async {
         await prepareAndOpenMediaPlayer(tester, context);
         await tester.scrollToAndTapAndSettle('Markers');
 
-        expect(
-          tester.getSemantics(find.byTooltip('Scroll right')).flagsCollection.isEnabled,
-          Tristate.isFalse,
-        );
+        expect(tester.getSemantics(find.byTooltip('Scroll right')).flagsCollection.isEnabled, Tristate.isFalse);
       });
 
       testWidgets('shows new window times after zoomed in', (tester) async {
