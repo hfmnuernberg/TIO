@@ -52,6 +52,12 @@ Studio Fluffy originally developed TIO and left the project in poor shape — no
 └── flutter_rust_bridge.yaml    # Rust-Dart bridge config
 ```
 
+## Environment Setup
+
+- **FVM** is not on `$PATH`. The Flutter binary lives at `$HOME/fvm/versions/<version>/bin/flutter` (check `.fvmrc` for the version). Use it directly or prepend to PATH: `export PATH="$HOME/fvm/versions/$(jq -r .flutter .fvmrc)/bin:$PATH"`
+- **Cargo** is not on `$PATH`. Prepend before running Rust commands: `export PATH="$HOME/.cargo/bin:$PATH"`
+- `scripts/app.sh` handles tool lookup internally but may fail in worktrees if the shell can't find `fvm` or `cargo`. When running from a worktree, call Flutter/Cargo directly instead.
+
 ## Key Commands
 
 All commands via `scripts/app.sh` from repo root:
@@ -74,7 +80,7 @@ All commands via `scripts/app.sh` from repo root:
 | Clean all | `scripts/app.sh clean` |
 | Full reset | `scripts/app.sh reset` |
 
-Rust-specific commands:
+Rust-specific commands (must run from `rust/` directory, or use `scripts/app.sh`; `cargo` needs full path `~/.cargo/bin/cargo` if not in PATH):
 
 | Task | Command |
 |------|---------|
@@ -169,3 +175,7 @@ Rust-specific commands:
 - **In tests, `context.audioSystem` vs `context.audioSystemMock`**: `context.audioSystem` is the `AudioSystemLogDecorator` wrapper. Use `context.audioSystemMock` when stubbing or verifying.
 - **`resetMocktailState()` is dangerous**: It clears ALL stubs and invocations across ALL mocks. Use `clearInteractions(mockObject)` instead to only clear history while keeping stubs.
 - **iOS signing**: Uses Fastlane Match with a private Git repo (`TIO-fastlane`). Profiles are referenced by name, so regenerating certs via `match nuke` + `match appstore` doesn't require project file changes.
+- **Rust `log::info!` not visible in `flutter run`**: FRB routes Rust `log` output to platform loggers (NSLog on iOS, logcat on Android), not to the terminal. Use `eprintln!` for temporary diagnostics visible in `flutter run` output.
+- **Pre-existing `build.rs` clippy warning**: `cargo clippy -- -D warnings` fails on `build.rs` due to an unused `name` variable. This is pre-existing — don't investigate or fix it.
+- **Local `pitch_shift` fork**: The `pitch_shift` crate is a local fork at `rust/pitch_shift/`, referenced via `path = "pitch_shift"` in `Cargo.toml`. It contains fixes for frequency bin mapping and phase accumulation over the upstream v1.0.0.
+- **`OUTPUT_SAMPLE_RATE` is dynamic**: Set once at app init from the device default (typically 48000 on iOS, 44100 fallback on Android). It is not a compile-time constant.

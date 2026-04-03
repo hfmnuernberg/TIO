@@ -55,6 +55,9 @@ class RustBasedAudioSystem implements AudioSystem {
   Future<Float64List> mediaPlayerGetRecordingSamples() async => rust.mediaPlayerGetRecordingSamples();
 
   @override
+  Future<int> mediaPlayerGetRecordingBufferSize() async => (await rust.mediaPlayerGetRecordingBufferSize()).toInt();
+
+  @override
   Future<bool> mediaPlayerSetPitchSemitones({required int id, required double pitchSemitones}) async =>
       rust.mediaPlayerSetPitchSemitones(id: id, pitchSemitones: pitchSemitones);
 

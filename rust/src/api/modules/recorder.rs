@@ -149,6 +149,14 @@ pub fn recorder_trigger_destroy_stream() -> bool {
 }
 
 #[flutter_rust_bridge::frb(ignore)]
+pub fn recorder_get_buffer_sample_count() -> usize {
+    RECORDING_BUFFER
+        .lock()
+        .expect("Could not lock mutex to get RECORDING_BUFFER length")
+        .len()
+}
+
+#[flutter_rust_bridge::frb(ignore)]
 pub fn recorder_get_buffer_samples() -> Vec<f64> {
     let mut rec_buffer_cloned = RECORDING_BUFFER
         .lock()

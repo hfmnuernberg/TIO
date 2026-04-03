@@ -118,6 +118,13 @@ class AudioSystemLogDecorator implements AudioSystem {
   }
 
   @override
+  Future<int> mediaPlayerGetRecordingBufferSize() async {
+    final result = await _as.mediaPlayerGetRecordingBufferSize();
+    _logger.t('mediaPlayerGetRecordingBufferSize(): $result');
+    return result;
+  }
+
+  @override
   Future<bool> mediaPlayerSetPitchSemitones({required int id, required double pitchSemitones}) async {
     final result = await _as.mediaPlayerSetPitchSemitones(id: id, pitchSemitones: pitchSemitones);
     _logger.t('mediaPlayerSetPitchSemitones(id: $id, pitchSemitones: $pitchSemitones): $result');

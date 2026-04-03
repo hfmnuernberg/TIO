@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:permission_handler/permission_handler.dart';
@@ -15,7 +16,11 @@ enum RecorderStartResult { success, micPermissionDenied, alreadyRecording, error
 
 class Recorder {
   static final logger = createPrefixLogger('AudioRecorder');
-  static const maxRecordingDuration = Duration(minutes: 10);
+
+  /// Max buffer size in samples before auto-stopping.
+  /// Peak memory at stop is ~N × 16 bytes (original f32 + clone f32 + f64 conversion).
+  /// e.g., 10M samples → ~160 MB peak, ~3.5 min at 48 kHz.
+  static final maxBufferSamples = Platform.isIOS ? 30000000 : 20000000;
 
   final AudioSystem _as;
   final AudioSession _audioSession;
@@ -74,7 +79,7 @@ class Recorder {
     _recordingTimer ??= Timer.periodic(const Duration(seconds: 1), (_) {
       _recordingLength += const Duration(seconds: 1);
       _onRecordingLengthChange(_recordingLength);
-      if (_recordingLength >= maxRecordingDuration) _stopOnLimitReached();
+      _checkBufferSize();
     });
 
     return RecorderStartResult.success;
@@ -102,9 +107,14 @@ class Recorder {
     return success;
   }
 
-  Future<void> _stopOnLimitReached() async {
-    await stop();
-    _onRecordingLimitReached();
+  Future<void> _checkBufferSize() async {
+    final bufferSize = await _as.mediaPlayerGetRecordingBufferSize();
+
+    if (bufferSize >= maxBufferSamples) {
+      logger.w('Recording buffer limit reached ($bufferSize samples). Auto-stopping.');
+      await stop();
+      _onRecordingLimitReached();
+    }
   }
 
   Future<Float64List> getRecordingSamples() async => _as.mediaPlayerGetRecordingSamples();
