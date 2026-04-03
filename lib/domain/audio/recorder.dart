@@ -9,11 +9,13 @@ import 'package:tiomusic/util/log.dart';
 
 typedef OnIsRecordingChange = void Function(bool isRecording);
 typedef OnRecordingLengthChange = void Function(Duration recordingLength);
+typedef OnRecordingLimitReached = void Function();
 
 enum RecorderStartResult { success, micPermissionDenied, alreadyRecording, error }
 
 class Recorder {
   static final logger = createPrefixLogger('AudioRecorder');
+  static const maxRecordingDuration = Duration(minutes: 10);
 
   final AudioSystem _as;
   final AudioSession _audioSession;
@@ -21,6 +23,7 @@ class Recorder {
 
   final OnIsRecordingChange _onIsRecordingChange;
   final OnRecordingLengthChange _onRecordingLengthChange;
+  final OnRecordingLimitReached _onRecordingLimitReached;
 
   bool _isRecording = false;
   bool get isRecording => _isRecording;
@@ -38,8 +41,10 @@ class Recorder {
     this._wakelock, {
     OnIsRecordingChange? onIsRecordingChange,
     OnRecordingLengthChange? onRecordingLengthChange,
+    OnRecordingLimitReached? onRecordingLimitReached,
   }) : _onIsRecordingChange = onIsRecordingChange ?? ((_) {}),
-       _onRecordingLengthChange = onRecordingLengthChange ?? ((_) {});
+       _onRecordingLengthChange = onRecordingLengthChange ?? ((_) {}),
+       _onRecordingLimitReached = onRecordingLimitReached ?? (() {});
 
   Future<RecorderStartResult> start() async {
     if (_isRecording) return RecorderStartResult.alreadyRecording;
@@ -69,6 +74,7 @@ class Recorder {
     _recordingTimer ??= Timer.periodic(const Duration(seconds: 1), (_) {
       _recordingLength += const Duration(seconds: 1);
       _onRecordingLengthChange(_recordingLength);
+      if (_recordingLength >= maxRecordingDuration) _stopOnLimitReached();
     });
 
     return RecorderStartResult.success;
@@ -94,6 +100,11 @@ class Recorder {
     }
 
     return success;
+  }
+
+  Future<void> _stopOnLimitReached() async {
+    await stop();
+    _onRecordingLimitReached();
   }
 
   Future<Float64List> getRecordingSamples() async => _as.mediaPlayerGetRecordingSamples();
