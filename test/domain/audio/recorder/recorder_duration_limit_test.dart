@@ -31,29 +31,32 @@ void main() {
     );
   });
 
-  group('Recorder duration limit', () {
-    testWidgets('auto-stops when max recording duration is reached', (tester) async {
+  group('Recorder buffer limit', () {
+    testWidgets('auto-stops when buffer reaches max size', (tester) async {
+      context.audioSystemMock.mockMediaPlayerGetRecordingBufferSize(Recorder.maxBufferSamples);
       await recorder.start();
       expect(recorder.isRecording, isTrue);
 
-      await tester.pump(Recorder.maxRecordingDuration + const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 2));
 
       expect(recorder.isRecording, isFalse);
       context.audioSystemMock.verifyMediaPlayerStopRecordingCalled();
     });
 
     testWidgets('notifies about limit reached when auto-stopped', (tester) async {
+      context.audioSystemMock.mockMediaPlayerGetRecordingBufferSize(Recorder.maxBufferSamples);
       await recorder.start();
 
-      await tester.pump(Recorder.maxRecordingDuration + const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 2));
 
       recorderHandlerMock.verifyOnRecordingLimitReachedCalled();
     });
 
-    testWidgets('does not trigger limit callback before max duration', (tester) async {
+    testWidgets('does not trigger limit callback when buffer is below max', (tester) async {
+      context.audioSystemMock.mockMediaPlayerGetRecordingBufferSize(1000);
       await recorder.start();
 
-      await tester.pump(Recorder.maxRecordingDuration - const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 2));
 
       expect(recorder.isRecording, isTrue);
       recorderHandlerMock.verifyOnRecordingLimitReachedNeverCalled();
@@ -62,9 +65,10 @@ void main() {
     });
 
     testWidgets('can be stopped manually before limit is reached', (tester) async {
+      context.audioSystemMock.mockMediaPlayerGetRecordingBufferSize(1000);
       await recorder.start();
 
-      await tester.pump(const Duration(seconds: 5));
+      await tester.pump(const Duration(seconds: 2));
       await recorder.stop();
 
       expect(recorder.isRecording, isFalse);

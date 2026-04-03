@@ -30,7 +30,8 @@ use crate::{
             piano_trigger_set_concert_pitch,
         },
         recorder::{
-            recorder_create_stream, recorder_get_buffer_samples, recorder_trigger_destroy_stream,
+            recorder_create_stream, recorder_get_buffer_sample_count, recorder_get_buffer_samples,
+            recorder_trigger_destroy_stream,
         },
         tuner::{
             tuner_compute_freq_from_ringbuffer, tuner_create_stream, tuner_trigger_destroy_stream,
@@ -230,6 +231,14 @@ pub fn media_player_get_recording_samples() -> Vec<f64> {
         recorder_get_buffer_samples()
     } else {
         Vec::new()
+    }
+}
+
+pub fn media_player_get_recording_buffer_size() -> usize {
+    if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
+        recorder_get_buffer_sample_count()
+    } else {
+        0
     }
 }
 

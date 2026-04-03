@@ -24,6 +24,7 @@ mixin AudioSystem {
   Future<bool> mediaPlayerStartRecording();
   Future<bool> mediaPlayerStopRecording();
   Future<Float64List> mediaPlayerGetRecordingSamples();
+  Future<int> mediaPlayerGetRecordingBufferSize();
   Future<bool> mediaPlayerSetPitchSemitones({required int id, required double pitchSemitones});
   Future<bool> mediaPlayerSetSpeedFactor({required int id, required double speedFactor});
   Future<void> mediaPlayerSetTrim({required int id, required double startFactor, required double endFactor});

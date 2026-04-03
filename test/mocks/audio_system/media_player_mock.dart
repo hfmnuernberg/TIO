@@ -66,6 +66,9 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
   void verifyMediaPlayerGetRecordingSamplesCalled() => verify(mediaPlayerGetRecordingSamples).called(1);
   void verifyMediaPlayerGetRecordingSamplesNeverCalled() => verifyNever(mediaPlayerGetRecordingSamples);
 
+  void mockMediaPlayerGetRecordingBufferSize([int result = 0]) =>
+      when(mediaPlayerGetRecordingBufferSize).thenAnswer((_) async => result);
+
   void mockMediaPlayerSetPitchSemitones([bool result = true]) => when(
     () => mediaPlayerSetPitchSemitones(
       id: any(named: 'id'),
