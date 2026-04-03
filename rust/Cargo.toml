@@ -27,7 +27,7 @@ log = "0.4.29"
 midly = "0.5.3"
 num = "0.4.3"
 pitch-detection = "0.3.0"
-pitch_shift = "1.0.0"
+pitch_shift = { path = "pitch_shift" }
 queues = "1.1.0"
 rand = "0.8.5"
 ringbuf = "0.3.3"

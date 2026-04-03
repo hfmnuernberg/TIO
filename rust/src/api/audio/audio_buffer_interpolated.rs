@@ -63,14 +63,21 @@ impl AudioBufferInterpolated {
 
     fn get_interpolated(&self, index: f32) -> f32 {
         let index_prev = index.floor();
-        let index_next = index.ceil();
-        if index_next >= self.buffer_size_f32 || index_prev < 0.0 {
+        if index_prev < 0.0 {
             return 0.0;
         }
-        self.buffer[index_prev as usize].lerp(
-            self.buffer[index_next as usize],
-            (index - index_prev).clamp(0.0, 1.0),
-        )
+        let prev_idx = index_prev as usize;
+        if prev_idx >= self.buffer.len() {
+            return 0.0;
+        }
+        let next_idx = if prev_idx + 1 < self.buffer.len() {
+            prev_idx + 1
+        } else if self.looping {
+            0
+        } else {
+            return self.buffer[prev_idx];
+        };
+        self.buffer[prev_idx].lerp(self.buffer[next_idx], (index - index_prev).clamp(0.0, 1.0))
     }
 
     #[flutter_rust_bridge::frb(ignore)]
