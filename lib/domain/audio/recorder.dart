@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:permission_handler/permission_handler.dart';
@@ -15,7 +16,14 @@ enum RecorderStartResult { success, micPermissionDenied, alreadyRecording, error
 
 class Recorder {
   static final logger = createPrefixLogger('AudioRecorder');
-  static const maxRecordingDuration = Duration(minutes: 10);
+
+  /// Max buffer size in samples before auto-stopping.
+  /// Peak memory at stop is ~16× sample count bytes (original + clone + f64 conversion).
+  /// iOS: 20M samples → ~320 MB peak, ~7 min at 48 kHz.
+  /// Android: 10M samples → ~160 MB peak, ~3.5 min at 48 kHz.
+  static final maxBufferSamples = Platform.isIOS ? 20000000 : 10000000;
+
+  static const warningThreshold = 0.8;
 
   final AudioSystem _as;
   final AudioSession _audioSession;
@@ -32,6 +40,7 @@ class Recorder {
   Duration get recordingLength => _recordingLength;
 
   Timer? _recordingTimer;
+  bool _warningFired = false;
 
   AudioSessionInterruptionListenerHandle? _interruptionHandle;
 
@@ -64,6 +73,7 @@ class Recorder {
 
     _isRecording = true;
     _recordingLength = Duration.zero;
+    _warningFired = false;
     _onIsRecordingChange(true);
     _onRecordingLengthChange(_recordingLength);
 
@@ -74,7 +84,7 @@ class Recorder {
     _recordingTimer ??= Timer.periodic(const Duration(seconds: 1), (_) {
       _recordingLength += const Duration(seconds: 1);
       _onRecordingLengthChange(_recordingLength);
-      if (_recordingLength >= maxRecordingDuration) _stopOnLimitReached();
+      _checkBufferSize();
     });
 
     return RecorderStartResult.success;
@@ -102,9 +112,17 @@ class Recorder {
     return success;
   }
 
-  Future<void> _stopOnLimitReached() async {
-    await stop();
-    _onRecordingLimitReached();
+  Future<void> _checkBufferSize() async {
+    final bufferSize = await _as.mediaPlayerGetRecordingBufferSize();
+
+    if (bufferSize >= maxBufferSamples) {
+      logger.w('Recording buffer limit reached ($bufferSize samples). Auto-stopping.');
+      await stop();
+      _onRecordingLimitReached();
+    } else if (!_warningFired && bufferSize >= (maxBufferSamples * warningThreshold).toInt()) {
+      _warningFired = true;
+      logger.w('Recording buffer at ${(100 * bufferSize / maxBufferSamples).round()}% capacity.');
+    }
   }
 
   Future<Float64List> getRecordingSamples() async => _as.mediaPlayerGetRecordingSamples();

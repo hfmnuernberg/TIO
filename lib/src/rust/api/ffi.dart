@@ -43,6 +43,9 @@ Future<bool> mediaPlayerStopRecording() => RustLib.instance.api.crateApiFfiMedia
 Future<Float64List> mediaPlayerGetRecordingSamples() =>
     RustLib.instance.api.crateApiFfiMediaPlayerGetRecordingSamples();
 
+Future<BigInt> mediaPlayerGetRecordingBufferSize() =>
+    RustLib.instance.api.crateApiFfiMediaPlayerGetRecordingBufferSize();
+
 Future<bool> mediaPlayerSetPitchSemitones({required int id, required double pitchSemitones}) =>
     RustLib.instance.api.crateApiFfiMediaPlayerSetPitchSemitones(id: id, pitchSemitones: pitchSemitones);
 
