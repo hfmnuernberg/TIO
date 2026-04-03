@@ -30,7 +30,7 @@ use crate::{
             piano_trigger_set_concert_pitch,
         },
         recorder::{
-            recorder_create_stream, recorder_get_buffer_sample_count, recorder_get_buffer_samples,
+            recorder_create_stream, recorder_get_recording_file_path, recorder_get_sample_count,
             recorder_trigger_destroy_stream,
         },
         tuner::{
@@ -207,10 +207,10 @@ pub fn media_player_stop(id: u32) -> bool {
     }
 }
 
-pub fn media_player_start_recording() -> bool {
-    log::info!("media player recording start");
+pub fn media_player_start_recording(file_path: String) -> bool {
+    log::info!("media player recording start: {}", file_path);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        recorder_create_stream()
+        recorder_create_stream(file_path)
     } else {
         false
     }
@@ -225,18 +225,19 @@ pub fn media_player_stop_recording() -> bool {
     }
 }
 
-pub fn media_player_get_recording_samples() -> Vec<f64> {
-    log::info!("media player get recording samples");
+pub fn media_player_get_recording_file_path() -> Option<String> {
+    log::info!("media player get recording file path");
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        recorder_get_buffer_samples()
+        recorder_get_recording_file_path()
     } else {
-        Vec::new()
+        None
     }
 }
 
+#[frb(type_64bit_int)]
 pub fn media_player_get_recording_buffer_size() -> usize {
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        recorder_get_buffer_sample_count()
+        recorder_get_sample_count()
     } else {
         0
     }

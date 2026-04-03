@@ -52,22 +52,26 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
   void verifyMediaPlayerStopNeverCalled() => verifyNever(() => mediaPlayerStop(id: any(named: 'id')));
 
   void mockMediaPlayerStartRecording([bool result = true]) =>
-      when(mediaPlayerStartRecording).thenAnswer((_) async => result);
-  void verifyMediaPlayerStartRecordingCalled() => verify(mediaPlayerStartRecording).called(1);
-  void verifyMediaPlayerStartRecordingNeverCalled() => verifyNever(mediaPlayerStartRecording);
+      when(() => mediaPlayerStartRecording(filePath: any(named: 'filePath'))).thenAnswer((_) async => result);
+  void verifyMediaPlayerStartRecordingCalled() =>
+      verify(() => mediaPlayerStartRecording(filePath: any(named: 'filePath'))).called(1);
+  void verifyMediaPlayerStartRecordingCalledWith(Pattern filePath) => verify(
+    () => mediaPlayerStartRecording(
+      filePath: any(named: 'filePath', that: matches(filePath)),
+    ),
+  ).called(1);
+  void verifyMediaPlayerStartRecordingNeverCalled() =>
+      verifyNever(() => mediaPlayerStartRecording(filePath: any(named: 'filePath')));
 
   void mockMediaPlayerStopRecording([bool result = true]) =>
       when(mediaPlayerStopRecording).thenAnswer((_) async => result);
   void verifyMediaPlayerStopRecordingCalled() => verify(mediaPlayerStopRecording).called(1);
   void verifyMediaPlayerStopRecordingNeverCalled() => verifyNever(mediaPlayerStopRecording);
 
-  void mockMediaPlayerGetRecordingSamples(Float64List samples) =>
-      when(mediaPlayerGetRecordingSamples).thenAnswer((_) async => samples);
-  void verifyMediaPlayerGetRecordingSamplesCalled() => verify(mediaPlayerGetRecordingSamples).called(1);
-  void verifyMediaPlayerGetRecordingSamplesNeverCalled() => verifyNever(mediaPlayerGetRecordingSamples);
-
-  void mockMediaPlayerGetRecordingBufferSize([int result = 0]) =>
-      when(mediaPlayerGetRecordingBufferSize).thenAnswer((_) async => result);
+  void mockMediaPlayerGetRecordingFilePath([String? filePath = '/tmp/recording.wav']) =>
+      when(mediaPlayerGetRecordingFilePath).thenAnswer((_) async => filePath);
+  void verifyMediaPlayerGetRecordingFilePathCalled() => verify(mediaPlayerGetRecordingFilePath).called(1);
+  void verifyMediaPlayerGetRecordingFilePathNeverCalled() => verifyNever(mediaPlayerGetRecordingFilePath);
 
   void mockMediaPlayerSetPitchSemitones([bool result = true]) => when(
     () => mediaPlayerSetPitchSemitones(

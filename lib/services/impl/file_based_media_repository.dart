@@ -1,11 +1,7 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/media_repository.dart';
-import 'package:tiomusic/src/rust/api/ffi.dart';
-import 'package:wav/wav_file.dart';
-import 'package:wav/wav_format.dart';
 
 const _mediaFolderName = 'media';
 
@@ -43,18 +39,6 @@ class FileBasedMediaRepository implements MediaRepository {
   @override
   Future<void> save(String filename, List<int> bytes) async =>
       _fs.saveFileAsBytes('$_mediaFolderPath/${_sanitize(filename)}', bytes);
-
-  @override
-  Future<String?> saveSamplesToWaveFile(String basename, Float64List samples) async {
-    final filename = _getNextAvailableFilename(_sanitize(basename), 'wav');
-    final relativePath = '$_mediaFolderName/$filename';
-    final absolutePath = '$_mediaFolderPath/$filename';
-
-    final wavFile = Wav([samples], await getSampleRate(), WavFormat.float32);
-    await wavFile.writeFile(absolutePath);
-
-    return _fs.existsFile(absolutePath) ? relativePath : null;
-  }
 
   @override
   Future<void> delete(String relativePath) async {

@@ -97,9 +97,9 @@ class AudioSystemLogDecorator implements AudioSystem {
   }
 
   @override
-  Future<bool> mediaPlayerStartRecording() async {
-    final result = await _as.mediaPlayerStartRecording();
-    _logger.t('mediaPlayerStartRecording(): $result');
+  Future<bool> mediaPlayerStartRecording({required String filePath}) async {
+    final result = await _as.mediaPlayerStartRecording(filePath: filePath);
+    _logger.t('mediaPlayerStartRecording(filePath: $filePath): $result');
     return result;
   }
 
@@ -111,16 +111,9 @@ class AudioSystemLogDecorator implements AudioSystem {
   }
 
   @override
-  Future<Float64List> mediaPlayerGetRecordingSamples() async {
-    final result = await _as.mediaPlayerGetRecordingSamples();
-    _logger.t('mediaPlayerGetRecordingSamples(): Float64List(length=${result.length})');
-    return result;
-  }
-
-  @override
-  Future<int> mediaPlayerGetRecordingBufferSize() async {
-    final result = await _as.mediaPlayerGetRecordingBufferSize();
-    _logger.t('mediaPlayerGetRecordingBufferSize(): $result');
+  Future<String?> mediaPlayerGetRecordingFilePath() async {
+    final result = await _as.mediaPlayerGetRecordingFilePath();
+    _logger.t('mediaPlayerGetRecordingFilePath(): $result');
     return result;
   }
 

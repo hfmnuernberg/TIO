@@ -21,10 +21,9 @@ mixin AudioSystem {
   Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath});
   Future<bool> mediaPlayerStart({required int id});
   Future<bool> mediaPlayerStop({required int id});
-  Future<bool> mediaPlayerStartRecording();
+  Future<bool> mediaPlayerStartRecording({required String filePath});
   Future<bool> mediaPlayerStopRecording();
-  Future<Float64List> mediaPlayerGetRecordingSamples();
-  Future<int> mediaPlayerGetRecordingBufferSize();
+  Future<String?> mediaPlayerGetRecordingFilePath();
   Future<bool> mediaPlayerSetPitchSemitones({required int id, required double pitchSemitones});
   Future<bool> mediaPlayerSetSpeedFactor({required int id, required double speedFactor});
   Future<void> mediaPlayerSetTrim({required int id, required double startFactor, required double endFactor});

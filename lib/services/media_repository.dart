@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 mixin MediaRepository {
   Future<void> init();
 
@@ -10,8 +8,6 @@ mixin MediaRepository {
   Future<void> export(String relativeSourceFilePath, String absoluteTargetFilePath);
 
   Future<void> save(String filename, List<int> bytes);
-
-  Future<String?> saveSamplesToWaveFile(String basename, Float64List samples);
 
   Future<void> delete(String relativeFilePath);
 }

@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:permission_handler_platform_interface/permission_handler_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -23,7 +21,7 @@ void main() {
     PermissionHandlerPlatform.instance = permissionHandlerMock;
     recorderHandlerMock = RecorderHandlerMock();
 
-    recorder = Recorder(context.audioSystem, context.audioSession, context.wakelock);
+    recorder = Recorder(context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
   });
 
   group('Recorder', () {
@@ -48,6 +46,7 @@ void main() {
       recorder = Recorder(
         context.audioSystem,
         context.audioSession,
+        context.inMemoryFileSystem,
         context.wakelock,
         onIsRecordingChange: recorderHandlerMock.onIsRecordingChange,
       );
@@ -81,16 +80,6 @@ void main() {
       await recorder.stop();
 
       expect(recorder.isRecording, isFalse);
-    });
-
-    testWidgets('returns recording samples from audio system', (tester) async {
-      final expectedSamples = Float64List.fromList([0.1, 0.2, 0.3]);
-      context.audioSystemMock.mockMediaPlayerGetRecordingSamples(expectedSamples);
-
-      final result = await recorder.getRecordingSamples();
-
-      expect(result, expectedSamples);
-      context.audioSystemMock.verifyMediaPlayerGetRecordingSamplesCalled();
     });
   });
 }
