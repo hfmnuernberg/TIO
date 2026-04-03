@@ -1,0 +1,10 @@
+[package]
+name = "pitch_shift"
+version = "1.0.1"
+edition = "2021"
+description = "Local fork of pitch_shift with frequency bin mapping fix"
+license = "MIT"
+
+[dependencies]
+realfft = "3.0.1"
+rustfft = "6.0.0"
