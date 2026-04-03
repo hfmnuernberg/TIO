@@ -288,6 +288,12 @@ class Player {
         listener(state.playbackPositionFactor);
       }
 
+      if (state.playing && _playbackPosition < previousPosition) {
+        for (final listener in _onSeekListeners) {
+          listener(_playbackPosition);
+        }
+      }
+
       await _markers.onPlaybackPositionChange(previousPosition: previousPosition, currentPosition: _playbackPosition);
     }
 

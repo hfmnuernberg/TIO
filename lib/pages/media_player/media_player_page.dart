@@ -279,6 +279,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     if (shouldAdvance) await _goToNextMediaPlayerWithLoadedFile();
   }
 
+  bool _isIsland(ProjectBlock block, List<ProjectBlock> blocks) {
+    return blocks.any((b) => b.islandToolID == block.id);
+  }
+
   Future<void> _goToNextMediaPlayerWithLoadedFile() async {
     final project = Provider.of<Project>(context, listen: false);
     final blocks = project.blocks;
@@ -287,7 +291,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     for (int offset = 1; offset < blocks.length; offset++) {
       final index = (currentIndex + offset) % blocks.length;
       final block = blocks[index];
-      if (block is MediaPlayerBlock && block.relativePath != MediaPlayerParams.defaultPath) {
+      if (block is MediaPlayerBlock &&
+          block.relativePath != MediaPlayerParams.defaultPath &&
+          !_isIsland(block, blocks)) {
         await goToTool(context, project, block, replace: true, shouldAutoplay: true);
         return;
       }

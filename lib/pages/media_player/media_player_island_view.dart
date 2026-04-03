@@ -117,7 +117,13 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
 
   void _onPrimarySeek(double _) async {
     if (_primaryPlayer == null) return;
-    await _player.syncPositionWith(_primaryPlayer!);
+    if (!_player.loaded) return;
+
+    final inRange = await _player.syncPositionWith(_primaryPlayer!);
+
+    if (inRange && !_player.isPlaying && _primaryPlayer!.isPlaying) {
+      await _player.start();
+    }
   }
 
   Future<void> _initBinsAndLoadRms() async {
