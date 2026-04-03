@@ -3,7 +3,6 @@ import 'package:mocktail/mocktail.dart';
 class RecorderHandlerMock extends Mock {
   void onIsRecordingChange(bool isRecording);
   void onRecordingLengthChange(Duration recordingLength);
-  void onRecordingLimitReached();
 
   void verifyOnIsRecordingChangeCalledWith(bool isRecording) =>
       verify(() => onIsRecordingChange(isRecording)).called(1);
@@ -12,7 +11,4 @@ class RecorderHandlerMock extends Mock {
   void verifyOnRecordingLengthChangeCalledWith(Duration recordingLength) =>
       verify(() => onRecordingLengthChange(recordingLength)).called(1);
   void verifyOnRecordingLengthChangeNeverCalled() => verifyNever(() => onRecordingLengthChange(any()));
-
-  void verifyOnRecordingLimitReachedCalled() => verify(onRecordingLimitReached).called(1);
-  void verifyOnRecordingLimitReachedNeverCalled() => verifyNever(onRecordingLimitReached);
 }

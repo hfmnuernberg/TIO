@@ -64,7 +64,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.12.0';
 
   @override
-  int get rustContentHash => -372899186;
+  int get rustContentHash => 45670846;
 
   static const kDefaultExternalLibraryLoaderConfig = ExternalLibraryLoaderConfig(
     stem: 'rust_lib_tiomusic',
@@ -93,9 +93,9 @@ abstract class RustLibApi extends BaseApi {
 
   Future<void> crateApiFfiMediaPlayerDestroyInstance({required int id});
 
-  Future<BigInt> crateApiFfiMediaPlayerGetRecordingBufferSize();
+  Future<int> crateApiFfiMediaPlayerGetRecordingBufferSize();
 
-  Future<Float64List> crateApiFfiMediaPlayerGetRecordingSamples();
+  Future<String?> crateApiFfiMediaPlayerGetRecordingFilePath();
 
   Future<Float32List> crateApiFfiMediaPlayerGetRms({required int id, required int nBins});
 
@@ -125,7 +125,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<bool> crateApiFfiMediaPlayerStart({required int id});
 
-  Future<bool> crateApiFfiMediaPlayerStartRecording();
+  Future<bool> crateApiFfiMediaPlayerStartRecording({required String filePath});
 
   Future<bool> crateApiFfiMediaPlayerStop({required int id});
 
@@ -351,14 +351,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "media_player_destroy_instance", argNames: ["id"]);
 
   @override
-  Future<BigInt> crateApiFfiMediaPlayerGetRecordingBufferSize() {
+  Future<int> crateApiFfiMediaPlayerGetRecordingBufferSize() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10, port: port_);
         },
-        codec: SseCodec(decodeSuccessData: sse_decode_usize, decodeErrorData: null),
+        codec: SseCodec(decodeSuccessData: sse_decode_CastedPrimitive_usize, decodeErrorData: null),
         constMeta: kCrateApiFfiMediaPlayerGetRecordingBufferSizeConstMeta,
         argValues: [],
         apiImpl: this,
@@ -370,23 +370,23 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "media_player_get_recording_buffer_size", argNames: []);
 
   @override
-  Future<Float64List> crateApiFfiMediaPlayerGetRecordingSamples() {
+  Future<String?> crateApiFfiMediaPlayerGetRecordingFilePath() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11, port: port_);
         },
-        codec: SseCodec(decodeSuccessData: sse_decode_list_prim_f_64_strict, decodeErrorData: null),
-        constMeta: kCrateApiFfiMediaPlayerGetRecordingSamplesConstMeta,
+        codec: SseCodec(decodeSuccessData: sse_decode_opt_String, decodeErrorData: null),
+        constMeta: kCrateApiFfiMediaPlayerGetRecordingFilePathConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kCrateApiFfiMediaPlayerGetRecordingSamplesConstMeta =>
-      const TaskConstMeta(debugName: "media_player_get_recording_samples", argNames: []);
+  TaskConstMeta get kCrateApiFfiMediaPlayerGetRecordingFilePathConstMeta =>
+      const TaskConstMeta(debugName: "media_player_get_recording_file_path", argNames: []);
 
   @override
   Future<Float32List> crateApiFfiMediaPlayerGetRms({required int id, required int nBins}) {
@@ -634,23 +634,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "media_player_start", argNames: ["id"]);
 
   @override
-  Future<bool> crateApiFfiMediaPlayerStartRecording() {
+  Future<bool> crateApiFfiMediaPlayerStartRecording({required String filePath}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(filePath, serializer);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiFfiMediaPlayerStartRecordingConstMeta,
-        argValues: [],
+        argValues: [filePath],
         apiImpl: this,
       ),
     );
   }
 
   TaskConstMeta get kCrateApiFfiMediaPlayerStartRecordingConstMeta =>
-      const TaskConstMeta(debugName: "media_player_start_recording", argNames: []);
+      const TaskConstMeta(debugName: "media_player_start_recording", argNames: ["filePath"]);
 
   @override
   Future<bool> crateApiFfiMediaPlayerStop({required int id}) {
@@ -1137,12 +1138,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  double dco_decode_f_64(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as double;
-  }
-
-  @protected
   int dco_decode_i_32(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
@@ -1170,12 +1165,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   Float32List dco_decode_list_prim_f_32_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Float32List;
-  }
-
-  @protected
-  Float64List dco_decode_list_prim_f_64_strict(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as Float64List;
   }
 
   @protected
@@ -1210,6 +1199,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       polyBeats: dco_decode_list_beat_type_poly(arr[2]),
       beatLen: dco_decode_f_32(arr[3]),
     );
+  }
+
+  @protected
+  String? dco_decode_opt_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_String(raw);
   }
 
   @protected
@@ -1339,12 +1334,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  double sse_decode_f_64(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getFloat64();
-  }
-
-  @protected
   int sse_decode_i_32(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getInt32();
@@ -1394,13 +1383,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  Float64List sse_decode_list_prim_f_64_strict(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var len_ = sse_decode_i_32(deserializer);
-    return deserializer.buffer.getFloat64List(len_);
-  }
-
-  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var len_ = sse_decode_i_32(deserializer);
@@ -1434,6 +1416,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_polyBeats = sse_decode_list_beat_type_poly(deserializer);
     var var_beatLen = sse_decode_f_32(deserializer);
     return MetroBar(id: var_id, beats: var_beats, polyBeats: var_polyBeats, beatLen: var_beatLen);
+  }
+
+  @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_String(deserializer));
+    } else {
+      return null;
+    }
   }
 
   @protected
@@ -1564,12 +1557,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_f_64(double self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putFloat64(self);
-  }
-
-  @protected
   void sse_encode_i_32(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putInt32(self);
@@ -1610,13 +1597,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_prim_f_64_strict(Float64List self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    serializer.buffer.putFloat64List(self);
-  }
-
-  @protected
   void sse_encode_list_prim_u_8_strict(Uint8List self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
@@ -1641,6 +1621,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_list_beat_type(self.beats, serializer);
     sse_encode_list_beat_type_poly(self.polyBeats, serializer);
     sse_encode_f_32(self.beatLen, serializer);
+  }
+
+  @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_String(self, serializer);
+    }
   }
 
   @protected

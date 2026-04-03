@@ -1,6 +1,9 @@
 use std::{
+    fs::File,
+    io::BufWriter,
     sync::{
         Mutex,
+        atomic::{AtomicUsize, Ordering},
         mpsc::{Receiver, Sender, channel},
     },
     thread::{self, JoinHandle},
@@ -8,26 +11,29 @@ use std::{
 };
 
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+use hound::{SampleFormat, WavSpec, WavWriter};
 use lazy_static::__Deref;
 
 use crate::{
     api::audio::global::GLOBAL_AUDIO_LOCK,
     api::util::{
-        constants::AUDIO_STREAM_CREATE_TIMEOUT_SECONDS,
+        constants::{AUDIO_STREAM_CREATE_TIMEOUT_SECONDS, INPUT_SAMPLE_RATE},
         util_functions::get_platform_default_cpal_input_config,
     },
 };
 
 static THREAD: Mutex<Option<JoinHandle<()>>> = Mutex::new(None);
 static THREAD_SENDER: Mutex<Option<Sender<CommandRecorder>>> = Mutex::new(None);
-static RECORDING_BUFFER: Mutex<Vec<f32>> = Mutex::new(vec![]);
+static RECORDING_WRITER: Mutex<Option<WavWriter<BufWriter<File>>>> = Mutex::new(None);
+static RECORDING_FILE_PATH: Mutex<Option<String>> = Mutex::new(None);
+static RECORDING_SAMPLE_COUNT: AtomicUsize = AtomicUsize::new(0);
 
 enum CommandRecorder {
     Stop,
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn recorder_create_stream() -> bool {
+pub fn recorder_create_stream(file_path: String) -> bool {
     recorder_trigger_destroy_stream();
 
     let host = cpal::default_host();
@@ -42,12 +48,34 @@ pub fn recorder_create_stream() -> bool {
     }
     let config = config.expect("Could not get default input config");
 
-    let (tx, rx): (Sender<CommandRecorder>, Receiver<CommandRecorder>) = channel();
-
-    RECORDING_BUFFER
+    let sample_rate = *INPUT_SAMPLE_RATE
         .lock()
-        .expect("Could not lock RECORDING_BUFFER to empty")
-        .clear();
+        .expect("Could not lock INPUT_SAMPLE_RATE") as u32;
+
+    let spec = WavSpec {
+        channels: 1,
+        sample_rate,
+        bits_per_sample: 32,
+        sample_format: SampleFormat::Float,
+    };
+
+    let writer = match WavWriter::create(&file_path, spec) {
+        Ok(w) => w,
+        Err(e) => {
+            log::info!("Could not create WAV writer: {}", e);
+            return false;
+        }
+    };
+
+    *RECORDING_WRITER
+        .lock()
+        .expect("Could not lock RECORDING_WRITER") = Some(writer);
+    *RECORDING_FILE_PATH
+        .lock()
+        .expect("Could not lock RECORDING_FILE_PATH") = Some(file_path);
+    RECORDING_SAMPLE_COUNT.store(0, Ordering::Relaxed);
+
+    let (tx, rx): (Sender<CommandRecorder>, Receiver<CommandRecorder>) = channel();
 
     let join_handle = thread::spawn(move || {
         let stream_in = device
@@ -74,12 +102,18 @@ pub fn recorder_create_stream() -> bool {
 }
 
 fn on_audio_callback(data: &[f32], _: &cpal::InputCallbackInfo) {
-    let mut recording_buffer = RECORDING_BUFFER
+    let mut writer_guard = RECORDING_WRITER
         .lock()
-        .expect("Could not lock mutex to RECORDING_BUFFER");
+        .expect("Could not lock mutex to RECORDING_WRITER");
 
-    for sample in data {
-        recording_buffer.push(*sample)
+    if let Some(ref mut writer) = *writer_guard {
+        for &sample in data {
+            if writer.write_sample(sample).is_err() {
+                log::info!("Failed to write sample to WAV file");
+                return;
+            }
+        }
+        RECORDING_SAMPLE_COUNT.fetch_add(data.len(), Ordering::Relaxed);
     }
 }
 
@@ -89,6 +123,16 @@ fn handle_command(command: CommandRecorder) {
             let _guard = GLOBAL_AUDIO_LOCK
                 .lock()
                 .expect("Could not lock global audio lock");
+
+            if let Some(writer) = RECORDING_WRITER
+                .lock()
+                .expect("Could not lock RECORDING_WRITER to finalize")
+                .take()
+                && let Err(e) = writer.finalize()
+            {
+                log::info!("Failed to finalize WAV file: {}", e);
+            }
+
             *THREAD_SENDER
                 .lock()
                 .expect("Could not lock mutex to THREAD_SENDER to clear") = None;
@@ -96,30 +140,6 @@ fn handle_command(command: CommandRecorder) {
                 .lock()
                 .expect("Could not lock mutex to THREAD to clear") = None;
         }
-    }
-}
-
-fn normalize_recording_buffer(buffer: &mut [f32]) {
-    let max_sample_option = buffer.iter().max_by(|a, b| {
-        a.abs()
-            .partial_cmp(&b.abs())
-            .expect("Could not compare samples")
-    });
-
-    if max_sample_option.is_none() {
-        return;
-    }
-
-    let max_sample = *max_sample_option.expect("Could not get max sample");
-
-    if max_sample < 0.0001 {
-        return;
-    }
-
-    let factor = (1.0 / max_sample).clamp(0.0, 50.0);
-
-    for sample in buffer.iter_mut() {
-        *sample *= factor;
     }
 }
 
@@ -149,24 +169,14 @@ pub fn recorder_trigger_destroy_stream() -> bool {
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn recorder_get_buffer_sample_count() -> usize {
-    RECORDING_BUFFER
-        .lock()
-        .expect("Could not lock mutex to get RECORDING_BUFFER length")
-        .len()
+pub fn recorder_get_sample_count() -> usize {
+    RECORDING_SAMPLE_COUNT.load(Ordering::Relaxed)
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn recorder_get_buffer_samples() -> Vec<f64> {
-    let mut rec_buffer_cloned = RECORDING_BUFFER
+pub fn recorder_get_recording_file_path() -> Option<String> {
+    RECORDING_FILE_PATH
         .lock()
-        .expect("Could not lock mutex to get RECORDING_BUFFER")
-        .clone();
-
-    normalize_recording_buffer(&mut rec_buffer_cloned);
-
-    rec_buffer_cloned
-        .iter()
-        .map(|sample| *sample as f64)
-        .collect()
+        .expect("Could not lock RECORDING_FILE_PATH")
+        .clone()
 }

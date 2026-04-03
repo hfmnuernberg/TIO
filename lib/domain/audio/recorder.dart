@@ -1,34 +1,27 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
+import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/wakelock.dart';
 import 'package:tiomusic/util/log.dart';
 
 typedef OnIsRecordingChange = void Function(bool isRecording);
 typedef OnRecordingLengthChange = void Function(Duration recordingLength);
-typedef OnRecordingLimitReached = void Function();
 
 enum RecorderStartResult { success, micPermissionDenied, alreadyRecording, error }
 
 class Recorder {
   static final logger = createPrefixLogger('AudioRecorder');
 
-  /// Max buffer size in samples before auto-stopping.
-  /// Peak memory at stop is ~N × 16 bytes (original f32 + clone f32 + f64 conversion).
-  /// e.g., 10M samples → ~160 MB peak, ~3.5 min at 48 kHz.
-  static final maxBufferSamples = Platform.isIOS ? 30000000 : 20000000;
-
   final AudioSystem _as;
   final AudioSession _audioSession;
+  final FileSystem _fileSystem;
   final Wakelock _wakelock;
 
   final OnIsRecordingChange _onIsRecordingChange;
   final OnRecordingLengthChange _onRecordingLengthChange;
-  final OnRecordingLimitReached _onRecordingLimitReached;
 
   bool _isRecording = false;
   bool get isRecording => _isRecording;
@@ -43,13 +36,12 @@ class Recorder {
   Recorder(
     this._as,
     this._audioSession,
+    this._fileSystem,
     this._wakelock, {
     OnIsRecordingChange? onIsRecordingChange,
     OnRecordingLengthChange? onRecordingLengthChange,
-    OnRecordingLimitReached? onRecordingLimitReached,
   }) : _onIsRecordingChange = onIsRecordingChange ?? ((_) {}),
-       _onRecordingLengthChange = onRecordingLengthChange ?? ((_) {}),
-       _onRecordingLimitReached = onRecordingLimitReached ?? (() {});
+       _onRecordingLengthChange = onRecordingLengthChange ?? ((_) {});
 
   Future<RecorderStartResult> start() async {
     if (_isRecording) return RecorderStartResult.alreadyRecording;
@@ -61,7 +53,9 @@ class Recorder {
     }
 
     await _audioSession.prepareRecording();
-    final success = await _as.mediaPlayerStartRecording();
+
+    final filePath = _generateTempFilePath();
+    final success = await _as.mediaPlayerStartRecording(filePath: filePath);
     if (!success) {
       logger.e('Unable to start Audio Recorder.');
       return RecorderStartResult.error;
@@ -79,7 +73,6 @@ class Recorder {
     _recordingTimer ??= Timer.periodic(const Duration(seconds: 1), (_) {
       _recordingLength += const Duration(seconds: 1);
       _onRecordingLengthChange(_recordingLength);
-      _checkBufferSize();
     });
 
     return RecorderStartResult.success;
@@ -107,15 +100,8 @@ class Recorder {
     return success;
   }
 
-  Future<void> _checkBufferSize() async {
-    final bufferSize = await _as.mediaPlayerGetRecordingBufferSize();
+  Future<String?> getRecordingFilePath() async => _as.mediaPlayerGetRecordingFilePath();
 
-    if (bufferSize >= maxBufferSamples) {
-      logger.w('Recording buffer limit reached ($bufferSize samples). Auto-stopping.');
-      await stop();
-      _onRecordingLimitReached();
-    }
-  }
-
-  Future<Float64List> getRecordingSamples() async => _as.mediaPlayerGetRecordingSamples();
+  String _generateTempFilePath() =>
+      '${_fileSystem.tmpFolderPath}/recording_${DateTime.now().millisecondsSinceEpoch}.wav';
 }

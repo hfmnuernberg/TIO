@@ -122,10 +122,10 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     _recorder = Recorder(
       context.read<AudioSystem>(),
       context.read<AudioSession>(),
+      context.read<FileSystem>(),
       context.read<Wakelock>(),
       onIsRecordingChange: (_) => _handleIsRecordingChange(),
       onRecordingLengthChange: _handleRecordingLengthChange,
-      onRecordingLimitReached: _handleRecordingLimitReached,
     );
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
@@ -454,21 +454,66 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
   Future<void> _stopRecording() async {
     final success = await _recorder.stop();
-    if (success && mounted) {
-      setState(() => _recordingLength = Duration.zero);
+    if (!success || !mounted) return;
 
-      var projectTitle = widget.isQuickTool ? context.l10n.toolQuickTool : _project!.title;
-      var newName = '$projectTitle-${_mediaPlayerBlock.title}';
+    setState(() => _recordingLength = Duration.zero);
 
-      final samples = await _recorder.getRecordingSamples();
-      final newRelativePath = await _mediaRepo.saveSamplesToWaveFile(newName, samples);
+    final recordingFilePath = await _recorder.getRecordingFilePath();
+    if (recordingFilePath == null) {
+      _logger.e('Unable to get recording file path.');
+      return;
+    }
 
-      if (newRelativePath == null) {
-        _logger.e('Unable to save recording.');
-        return;
-      }
+    if (!mounted) return;
+    final projectTitle = widget.isQuickTool ? context.l10n.toolQuickTool : _project!.title;
+    final newName = '$projectTitle-${_mediaPlayerBlock.title}';
+    final newRelativePath = await _mediaRepo.import(recordingFilePath, newName);
 
-      if (!mounted) return;
+    if (newRelativePath == null) {
+      _logger.e('Unable to save recording.');
+      return;
+    }
+
+    if (!mounted) return;
+
+    _fileReferences.inc(newRelativePath);
+    if (_mediaPlayerBlock.relativePath.isNotEmpty) {
+      _fileReferences.dec(_mediaPlayerBlock.relativePath, context.read<ProjectLibrary>());
+    }
+    _mediaPlayerBlock.relativePath = newRelativePath;
+
+    if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    setState(() => _isLoading = true);
+
+    final loaded = await _player.loadAudioFile(_fs.toAbsoluteFilePath(newRelativePath));
+    if (!loaded) {
+      if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
+    } else {
+      _rmsValues = await _player.getRmsValues(_numOfBins);
+      _baseRmsValues = _rmsValues;
+      _player.markers.binCount = _rmsValues.length;
+      _addShareOptionToMenu();
+      _mediaPlayerBlock.markerPositions.clear();
+      _player.markers.positions = [];
+      if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+    }
+    setState(() => _isLoading = false);
+
+    if (mounted) _mediaPlayerTutorial.maybeShowWaveformTutorial(context, playerLoaded: _player.loaded);
+  }
+
+  Future _askForKeepRecordingOnExit() async {
+    _recorder.stop().then((success) async {
+      if (!success || !mounted) return;
+
+      final recordingFilePath = await _recorder.getRecordingFilePath();
+      if (recordingFilePath == null || !mounted) return;
+
+      final projectTitle = widget.isQuickTool ? context.l10n.toolQuickTool : _project!.title;
+      final newName = '$projectTitle-${_mediaPlayerBlock.title}';
+      final newRelativePath = await _mediaRepo.import(recordingFilePath, newName);
+
+      if (newRelativePath == null || !mounted) return;
 
       _fileReferences.inc(newRelativePath);
       if (_mediaPlayerBlock.relativePath.isNotEmpty) {
@@ -476,53 +521,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       }
       _mediaPlayerBlock.relativePath = newRelativePath;
 
-      if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-      setState(() => _isLoading = true);
-
-      final fileExtension = _fs.toExtension(_mediaPlayerBlock.relativePath);
-      if (mounted && fileExtension != null && !TIOMusicParams.audioFormats.contains(fileExtension)) {
-        await showFormatNotSupportedDialog(context, fileExtension);
-      }
-
-      final success = await _player.loadAudioFile(_fs.toAbsoluteFilePath(newRelativePath));
-      if (!success) {
-        if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
-      } else {
-        _rmsValues = await _player.getRmsValues(_numOfBins);
-        _baseRmsValues = _rmsValues;
-        _player.markers.binCount = _rmsValues.length;
-        _addShareOptionToMenu();
-        _mediaPlayerBlock.markerPositions.clear();
-        _player.markers.positions = [];
-        if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-      }
-      setState(() => _isLoading = false);
-
-      if (mounted) _mediaPlayerTutorial.maybeShowWaveformTutorial(context, playerLoaded: _player.loaded);
-    }
-  }
-
-  Future _askForKeepRecordingOnExit() async {
-    _recorder.stop().then((success) async {
-      if (success && mounted) {
-        final projectTitle = widget.isQuickTool ? context.l10n.toolQuickTool : _project!.title;
-        final newName = '$projectTitle-${_mediaPlayerBlock.title}';
-
-        final samples = await _recorder.getRecordingSamples();
-        final newRelativePath = await _mediaRepo.saveSamplesToWaveFile(newName, samples);
-
-        if (newRelativePath == null) return;
-
-        if (!mounted) return;
-
-        _fileReferences.inc(newRelativePath);
-        if (_mediaPlayerBlock.relativePath.isNotEmpty) {
-          _fileReferences.dec(_mediaPlayerBlock.relativePath, context.read<ProjectLibrary>());
-        }
-        _mediaPlayerBlock.relativePath = newRelativePath;
-
-        await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-      }
+      await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     });
   }
 
@@ -539,11 +538,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   void _handleRecordingLengthChange(Duration recordingLength) {
     if (!mounted) return;
     setState(() => _recordingLength = recordingLength);
-  }
-
-  Future<void> _handleRecordingLimitReached() async {
-    await _stopRecording();
-    if (mounted) await showRecordingLimitReachedDialog(context);
   }
 
   Widget _switchMainButton(Key key) {

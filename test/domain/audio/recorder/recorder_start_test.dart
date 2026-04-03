@@ -21,7 +21,7 @@ void main() {
     PermissionHandlerPlatform.instance = permissionHandlerMock;
     recorderHandlerMock = RecorderHandlerMock();
 
-    recorder = Recorder(context.audioSystem, context.audioSession, context.wakelock);
+    recorder = Recorder(context.audioSystem, context.audioSession, context.inMemoryFileSystem, context.wakelock);
   });
 
   group('Recorder', () {
@@ -39,6 +39,14 @@ void main() {
       await recorder.start();
 
       context.audioSystemMock.verifyMediaPlayerStartRecordingCalled();
+
+      await recorder.stop();
+    });
+
+    testWidgets('passes temp file path to audio system when started', (tester) async {
+      await recorder.start();
+
+      context.audioSystemMock.verifyMediaPlayerStartRecordingCalledWith(RegExp(r'recording_\d+\.wav$'));
 
       await recorder.stop();
     });
@@ -64,6 +72,7 @@ void main() {
       recorder = Recorder(
         context.audioSystem,
         context.audioSession,
+        context.inMemoryFileSystem,
         context.wakelock,
         onIsRecordingChange: recorderHandlerMock.onIsRecordingChange,
       );
@@ -88,6 +97,7 @@ void main() {
       recorder = Recorder(
         context.audioSystem,
         context.audioSession,
+        context.inMemoryFileSystem,
         context.wakelock,
         onRecordingLengthChange: recorderHandlerMock.onRecordingLengthChange,
       );

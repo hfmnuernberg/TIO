@@ -35,8 +35,7 @@ class AudioSystemMock extends Mock
     mockMediaPlayerStop();
     mockMediaPlayerStartRecording();
     mockMediaPlayerStopRecording();
-    mockMediaPlayerGetRecordingSamples(Float64List(1));
-    mockMediaPlayerGetRecordingBufferSize();
+    mockMediaPlayerGetRecordingFilePath();
     mockMediaPlayerSetPitchSemitones();
     mockMediaPlayerSetSpeedFactor();
     mockMediaPlayerSetTrim();

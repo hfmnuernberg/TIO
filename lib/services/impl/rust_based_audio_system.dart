@@ -46,16 +46,14 @@ class RustBasedAudioSystem implements AudioSystem {
   Future<bool> mediaPlayerStop({required int id}) async => rust.mediaPlayerStop(id: id);
 
   @override
-  Future<bool> mediaPlayerStartRecording() async => rust.mediaPlayerStartRecording();
+  Future<bool> mediaPlayerStartRecording({required String filePath}) async =>
+      rust.mediaPlayerStartRecording(filePath: filePath);
 
   @override
   Future<bool> mediaPlayerStopRecording() async => rust.mediaPlayerStopRecording();
 
   @override
-  Future<Float64List> mediaPlayerGetRecordingSamples() async => rust.mediaPlayerGetRecordingSamples();
-
-  @override
-  Future<int> mediaPlayerGetRecordingBufferSize() async => (await rust.mediaPlayerGetRecordingBufferSize()).toInt();
+  Future<String?> mediaPlayerGetRecordingFilePath() async => rust.mediaPlayerGetRecordingFilePath();
 
   @override
   Future<bool> mediaPlayerSetPitchSemitones({required int id, required double pitchSemitones}) async =>

@@ -36,15 +36,14 @@ Future<bool> mediaPlayerStart({required int id}) => RustLib.instance.api.crateAp
 
 Future<bool> mediaPlayerStop({required int id}) => RustLib.instance.api.crateApiFfiMediaPlayerStop(id: id);
 
-Future<bool> mediaPlayerStartRecording() => RustLib.instance.api.crateApiFfiMediaPlayerStartRecording();
+Future<bool> mediaPlayerStartRecording({required String filePath}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerStartRecording(filePath: filePath);
 
 Future<bool> mediaPlayerStopRecording() => RustLib.instance.api.crateApiFfiMediaPlayerStopRecording();
 
-Future<Float64List> mediaPlayerGetRecordingSamples() =>
-    RustLib.instance.api.crateApiFfiMediaPlayerGetRecordingSamples();
+Future<String?> mediaPlayerGetRecordingFilePath() => RustLib.instance.api.crateApiFfiMediaPlayerGetRecordingFilePath();
 
-Future<BigInt> mediaPlayerGetRecordingBufferSize() =>
-    RustLib.instance.api.crateApiFfiMediaPlayerGetRecordingBufferSize();
+Future<int> mediaPlayerGetRecordingBufferSize() => RustLib.instance.api.crateApiFfiMediaPlayerGetRecordingBufferSize();
 
 Future<bool> mediaPlayerSetPitchSemitones({required int id, required double pitchSemitones}) =>
     RustLib.instance.api.crateApiFfiMediaPlayerSetPitchSemitones(id: id, pitchSemitones: pitchSemitones);
