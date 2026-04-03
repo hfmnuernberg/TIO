@@ -18,7 +18,7 @@ pub static INPUT_SAMPLE_RATE: Mutex<usize> = Mutex::new(SAMPLE_RATE);
 pub const PITCH_SHIFT_BUFFER_SIZE: usize = 64;
 pub const MEDIA_PLAYER_PLAYBACK_MAX_BUFFERING: usize = 2048 * 2 + PITCH_SHIFT_BUFFER_SIZE;
 pub const MEDIA_PLAYER_PLAYBACK_MIN_BUFFERING: usize = 1024;
-pub const PITCH_SHIFT_OVERSAMPLING: usize = 4;
+pub const PITCH_SHIFT_OVERSAMPLING: usize = 8;
 pub const PITCH_SHIFT_WINDOW_DUR_MILLIS: usize = 70;
 
 // tuner
