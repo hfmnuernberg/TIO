@@ -37,12 +37,12 @@ void main() {
       await tester.ensureVisible(find.byTooltip('Repeat media player'));
       await tester.tapAndSettle(find.byTooltip('Repeat media player'));
 
-      mockPlayerState(context);
+      mockPlayerState(context, playbackPositionFactor: 0.99);
       await tester.ensureVisible(find.byTooltip('Play'));
       await tester.tap(find.byTooltip('Play'));
       await tester.pump(const Duration(milliseconds: 150));
 
-      mockPlayerState(context, playing: false, playbackPositionFactor: 1);
+      mockPlayerState(context, playing: false);
       await tester.pump(const Duration(milliseconds: 150));
       await tester.pumpAndSettle();
 

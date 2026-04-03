@@ -15,6 +15,7 @@ const int playbackSamplingIntervalInMs = 120;
 
 typedef OnPlaybackPositionChange = void Function(double playbackPosition);
 typedef OnIsPlayingChange = void Function(bool isPlaying);
+typedef OnTrackCompleted = void Function();
 
 class Player {
   static final logger = createPrefixLogger('AudioPlayer');
@@ -31,6 +32,7 @@ class Player {
   final List<OnPlaybackPositionChange> _onPlaybackPositionChangeListeners = [];
   final List<OnIsPlayingChange> _onIsPlayingChangeListeners = [];
   final List<OnPlaybackPositionChange> _onSeekListeners = [];
+  final List<OnTrackCompleted> _onTrackCompletedListeners = [];
 
   Markers get markers => _markers;
 
@@ -73,6 +75,9 @@ class Player {
 
   void addOnSeekListener(OnPlaybackPositionChange listener) => _onSeekListeners.add(listener);
   void removeOnSeekListener(OnPlaybackPositionChange listener) => _onSeekListeners.remove(listener);
+
+  void addOnTrackCompletedListener(OnTrackCompleted listener) => _onTrackCompletedListeners.add(listener);
+  void removeOnTrackCompletedListener(OnTrackCompleted listener) => _onTrackCompletedListeners.remove(listener);
 
   Future<void> start() async {
     if (_isPlaying) return;
@@ -281,8 +286,10 @@ class Player {
     final state = await _as.mediaPlayerGetState(id: id);
     if (state == null) return;
 
+    final wasPlaying = _isPlaying;
+    final previousPosition = _playbackPosition;
+
     if (state.playbackPositionFactor != _playbackPosition) {
-      final previousPosition = _playbackPosition;
       _playbackPosition = state.playbackPositionFactor;
       for (final listener in _onPlaybackPositionChangeListeners) {
         listener(state.playbackPositionFactor);
@@ -303,5 +310,28 @@ class Player {
         listener(state.playing);
       }
     }
+
+    if (_didTrackComplete(wasPlaying: wasPlaying, previousPosition: previousPosition)) {
+      for (final listener in _onTrackCompletedListeners) {
+        listener();
+      }
+    }
+  }
+
+  bool _didTrackComplete({required bool wasPlaying, required double previousPosition}) {
+    if (!wasPlaying || _isPlaying) return false;
+
+    final epsilon = _trackCompletionEpsilon;
+    final wasNearEnd = previousPosition >= _endPosition - epsilon;
+    final trimMidpoint = (_startPosition + _endPosition) / 2;
+    final resetToStart = _playbackPosition <= _startPosition + epsilon && previousPosition >= trimMidpoint;
+    return wasNearEnd || resetToStart;
+  }
+
+  double get _trackCompletionEpsilon {
+    final totalMs = _fileDuration.inMilliseconds;
+    if (totalMs <= 0) return 0.01;
+    final tickFraction = playbackSamplingIntervalInMs / totalMs;
+    return max(0.01, tickFraction * 3.0);
   }
 }
