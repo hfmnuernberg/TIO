@@ -17,7 +17,7 @@ use crate::{
     api::audio::{audio_buffer::AudioBufferReader, global::GLOBAL_AUDIO_LOCK},
     api::modules::metronome_rhythm::BeatSound,
     api::util::{
-        constants::{AUDIO_STREAM_CREATE_TIMEOUT_SECONDS, OUTPUT_SAMPLE_RATE, SAMPLE_RATE_IN_KHZ},
+        constants::{AUDIO_STREAM_CREATE_TIMEOUT_SECONDS, OUTPUT_SAMPLE_RATE},
         util_functions::{
             get_platform_default_cpal_output_config, quarters_to_samples, samples_to_quarters,
         },
@@ -177,7 +177,8 @@ fn on_audio_callback(data: &mut [f32], _: &cpal::OutputCallbackInfo) {
                 beat_index: next_event.beat_index,
                 is_poly: next_event.is_poly,
                 bar_index: next_event.bar_index,
-                milliseconds_before_start: (samples_before_start as f32 / SAMPLE_RATE_IN_KHZ)
+                milliseconds_before_start: (samples_before_start as f32
+                    / (sample_rate as f32 / 1000.0))
                     .round() as i32,
                 is_random_mute,
                 is_secondary: next_event.is_secondary,
