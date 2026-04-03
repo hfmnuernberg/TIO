@@ -197,6 +197,9 @@ pub fn media_player_create_stream(id: u32) -> bool {
                         .push(*sample)
                         .expect("Could not push samples to ringbuffer");
                 }
+            } else {
+                drop(players);
+                thread::sleep(Duration::from_millis(1));
             }
         }
     });
