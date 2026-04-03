@@ -124,5 +124,44 @@ void main() {
 
       await player.stop();
     });
+
+    testWidgets('notifies seek listeners on backward position jump while playing', (tester) async {
+      player.addOnSeekListener(playerHandlerMock.onSeek);
+      mockPlayerState(context, playbackPositionFactor: 0.8);
+      await player.start();
+      mockPlayerState(context, playbackPositionFactor: 0.1);
+
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+
+      playerHandlerMock.verifyOnSeekCalledWith(0.1);
+
+      await player.stop();
+    });
+
+    testWidgets('does not notify seek listeners on forward position change', (tester) async {
+      player.addOnSeekListener(playerHandlerMock.onSeek);
+      mockPlayerState(context);
+      await player.start();
+      mockPlayerState(context, playbackPositionFactor: 0.5);
+
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+
+      playerHandlerMock.verifyOnSeekNeverCalled();
+
+      await player.stop();
+    });
+
+    testWidgets('does not notify seek listeners on backward position jump when stopped', (tester) async {
+      player.addOnSeekListener(playerHandlerMock.onSeek);
+      mockPlayerState(context, playbackPositionFactor: 0.8);
+      await player.start();
+      mockPlayerState(context, playing: false, playbackPositionFactor: 0.1);
+
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+
+      playerHandlerMock.verifyOnSeekNeverCalled();
+
+      await player.stop();
+    });
   });
 }

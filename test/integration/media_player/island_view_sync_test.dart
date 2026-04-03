@@ -122,6 +122,24 @@ void main() {
 
         expect(find.byTooltip('Media Player 2: Play'), findsOneWidget);
       });
+
+      testWidgets('island restarts when primary position changes back into range after looping', (tester) async {
+        await prepareMediaPlayerWithLoadedIsland(tester, context, primaryDurationSeconds: 10, islandDurationSeconds: 5);
+        mockPlayerState(context, playbackPositionFactor: 0.7);
+
+        await tester.ensureVisible(find.byTooltip('Play'));
+        await tester.tap(find.byTooltip('Play'));
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.pump(const Duration(milliseconds: 150));
+
+        expect(find.byTooltip('Media Player 2: Play'), findsOneWidget);
+
+        mockPlayerState(context, playbackPositionFactor: 0.1);
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.pump(const Duration(milliseconds: 150));
+
+        expect(find.byTooltip('Media Player 2: Pause'), findsOneWidget);
+      });
     });
 
     group('without loaded audio on island', () {

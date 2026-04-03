@@ -14,4 +14,8 @@ class PlayerHandlerMock extends Mock {
 
   void verifyOnSeekCalledWith(double position) => verify(() => onSeek(position)).called(1);
   void verifyOnSeekNeverCalled() => verifyNever(() => onSeek(any()));
+
+  void onTrackCompleted();
+  void verifyOnTrackCompletedCalled() => verify(onTrackCompleted).called(1);
+  void verifyOnTrackCompletedNeverCalled() => verifyNever(onTrackCompleted);
 }

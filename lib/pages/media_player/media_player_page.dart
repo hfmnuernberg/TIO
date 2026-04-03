@@ -63,8 +63,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   late final MediaPlayerTutorial _mediaPlayerTutorial;
 
   late bool _isLoading = false;
-  late bool _wasPlaying = false;
-  double _previousPosition = 0;
   static const double _endEpsilon = 0.01;
 
   final List<MenuItemButton> _menuItems = List.empty(growable: true);
@@ -119,6 +117,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     );
     _player.addOnIsPlayingChangeListener((_) => _updateState());
     _player.addOnPlaybackPositionChangeListener((_) => _updateState());
+    _player.addOnTrackCompletedListener(_onTrackCompleted);
 
     _recorder = Recorder(
       context.read<AudioSystem>(),
@@ -222,61 +221,23 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     return math.max(_endEpsilon, tickFraction * 3.0);
   }
 
-  bool _didFinishAndStopped({
-    required bool wasPlaying,
-    required bool isPlaying,
-    required double currentPosition,
-    required double previousPosition,
-    required double start,
-    required double end,
-  }) {
-    final bool fell = wasPlaying && !isPlaying;
-    final epsilon = _effectiveEndEpsilon();
-    final bool atEndNow = currentPosition >= (end - epsilon);
-    final bool wasAtEnd = previousPosition >= (end - epsilon);
-    final resetToStartAfterFinish = wasAtEnd && (currentPosition <= start + epsilon);
-    final bool finished = atEndNow || wasAtEnd || resetToStartAfterFinish;
-    return fell && finished;
-  }
-
-  void _updatePlaybackMemories({required bool isPlaying, required double position}) {
-    _wasPlaying = isPlaying;
-    _previousPosition = position;
+  void _onTrackCompleted() {
+    if (!mounted) return;
+    final isTopRoute = ModalRoute.of(context)?.isCurrent ?? true;
+    if (!isTopRoute || widget.isQuickTool) return;
+    if (!(_project?.mediaPlayerRepeatAll ?? false)) return;
+    _goToNextMediaPlayerWithLoadedFile();
   }
 
   Future<void> _updateState() async {
     if (!mounted) return;
-
-    final bool isPlaying = _player.isPlaying;
-    final double currentPosition = _player.playbackPosition;
-    final double start = _mediaPlayerBlock.rangeStart;
-    final double end = _mediaPlayerBlock.rangeEnd;
-
     setState(() {
-      _playbackPosition = currentPosition;
+      _playbackPosition = _player.playbackPosition;
     });
+  }
 
-    if (!mounted) return;
-
-    final bool isTopRoute = ModalRoute.of(context)?.isCurrent ?? true;
-
-    final bool shouldAdvance =
-        isTopRoute &&
-        !widget.isQuickTool &&
-        (_project?.mediaPlayerRepeatAll ?? false) &&
-        _player.loaded &&
-        _didFinishAndStopped(
-          wasPlaying: _wasPlaying,
-          isPlaying: isPlaying,
-          currentPosition: currentPosition,
-          previousPosition: _previousPosition,
-          start: start,
-          end: end,
-        );
-
-    _updatePlaybackMemories(isPlaying: isPlaying, position: currentPosition);
-
-    if (shouldAdvance) await _goToNextMediaPlayerWithLoadedFile();
+  bool _isIsland(ProjectBlock block, List<ProjectBlock> blocks) {
+    return blocks.any((b) => b.islandToolID == block.id);
   }
 
   Future<void> _goToNextMediaPlayerWithLoadedFile() async {
@@ -287,7 +248,9 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     for (int offset = 1; offset < blocks.length; offset++) {
       final index = (currentIndex + offset) % blocks.length;
       final block = blocks[index];
-      if (block is MediaPlayerBlock && block.relativePath != MediaPlayerParams.defaultPath) {
+      if (block is MediaPlayerBlock &&
+          block.relativePath != MediaPlayerParams.defaultPath &&
+          !_isIsland(block, blocks)) {
         await goToTool(context, project, block, replace: true, shouldAutoplay: true);
         return;
       }
