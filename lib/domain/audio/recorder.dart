@@ -18,12 +18,9 @@ class Recorder {
   static final logger = createPrefixLogger('AudioRecorder');
 
   /// Max buffer size in samples before auto-stopping.
-  /// Peak memory at stop is ~16× sample count bytes (original + clone + f64 conversion).
-  /// iOS: 20M samples → ~320 MB peak, ~7 min at 48 kHz.
-  /// Android: 10M samples → ~160 MB peak, ~3.5 min at 48 kHz.
-  static final maxBufferSamples = Platform.isIOS ? 20000000 : 10000000;
-
-  static const warningThreshold = 0.8;
+  /// Peak memory at stop is ~N × 16 bytes (original f32 + clone f32 + f64 conversion).
+  /// e.g., 10M samples → ~160 MB peak, ~3.5 min at 48 kHz.
+  static final maxBufferSamples = Platform.isIOS ? 30000000 : 20000000;
 
   final AudioSystem _as;
   final AudioSession _audioSession;
@@ -40,7 +37,6 @@ class Recorder {
   Duration get recordingLength => _recordingLength;
 
   Timer? _recordingTimer;
-  bool _warningFired = false;
 
   AudioSessionInterruptionListenerHandle? _interruptionHandle;
 
@@ -73,7 +69,6 @@ class Recorder {
 
     _isRecording = true;
     _recordingLength = Duration.zero;
-    _warningFired = false;
     _onIsRecordingChange(true);
     _onRecordingLengthChange(_recordingLength);
 
@@ -119,9 +114,6 @@ class Recorder {
       logger.w('Recording buffer limit reached ($bufferSize samples). Auto-stopping.');
       await stop();
       _onRecordingLimitReached();
-    } else if (!_warningFired && bufferSize >= (maxBufferSamples * warningThreshold).toInt()) {
-      _warningFired = true;
-      logger.w('Recording buffer at ${(100 * bufferSize / maxBufferSamples).round()}% capacity.');
     }
   }
 
