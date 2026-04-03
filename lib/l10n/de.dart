@@ -133,6 +133,9 @@ class German extends AppLocalizations with GermanFlashCards {
   String get mediaPlayerPlay => 'Play';
   String get mediaPlayerPlayPause => 'Play / Pause';
   String get mediaPlayerRecording => 'Aufnahme läuft...';
+  String get mediaPlayerRecordingLimitReachedDescription =>
+      'Die maximale Aufnahmelänge von 10 Minuten wurde erreicht. Deine Aufnahme wurde gespeichert.';
+  String get mediaPlayerRecordingLimitReachedTitle => 'Aufnahmelimit erreicht';
   String get mediaPlayerRemoveMarker => 'Ausgewählten Marker entfernen';
   String get mediaPlayerRepeatAll => 'Alle Media Player wiederholen';
   String get mediaPlayerRepeatOff => 'Keinen Media Player wiederholen';
