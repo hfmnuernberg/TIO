@@ -125,6 +125,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       context.read<Wakelock>(),
       onIsRecordingChange: (_) => _handleIsRecordingChange(),
       onRecordingLengthChange: _handleRecordingLengthChange,
+      onRecordingLimitReached: _handleRecordingLimitReached,
     );
 
     _mediaPlayerBlock = Provider.of<ProjectBlock>(context, listen: false) as MediaPlayerBlock;
@@ -538,6 +539,11 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   void _handleRecordingLengthChange(Duration recordingLength) {
     if (!mounted) return;
     setState(() => _recordingLength = recordingLength);
+  }
+
+  Future<void> _handleRecordingLimitReached() async {
+    await _stopRecording();
+    if (mounted) await showRecordingLimitReachedDialog(context);
   }
 
   Widget _switchMainButton(Key key) {

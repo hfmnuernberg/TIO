@@ -133,6 +133,9 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get mediaPlayerPlay => 'Play';
   String get mediaPlayerPlayPause => 'Play / Pause';
   String get mediaPlayerRecording => 'Recording...';
+  String get mediaPlayerRecordingLimitReachedDescription =>
+      'The maximum recording length of 10 minutes has been reached. Your recording has been saved.';
+  String get mediaPlayerRecordingLimitReachedTitle => 'Recording limit reached';
   String get mediaPlayerRemoveMarker => 'Remove selected marker';
   String get mediaPlayerRepeatAll => 'Repeat all media player';
   String get mediaPlayerRepeatOff => 'Repeat no media player';

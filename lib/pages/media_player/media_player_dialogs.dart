@@ -23,6 +23,15 @@ Future<void> showTooManyFilesSelectedDialog(BuildContext context) => showInfoDia
   content: Text(context.l10n.mediaPlayerTooManyFilesDescription, style: const TextStyle(color: ColorTheme.primary)),
 );
 
+Future<void> showRecordingLimitReachedDialog(BuildContext context) => showInfoDialog(
+  context: context,
+  title: context.l10n.mediaPlayerRecordingLimitReachedTitle,
+  content: Text(
+    context.l10n.mediaPlayerRecordingLimitReachedDescription,
+    style: const TextStyle(color: ColorTheme.primary),
+  ),
+);
+
 Future<void> showMissingMicrophonePermissionDialog(BuildContext context) => showInfoDialog(
   context: context,
   title: context.l10n.mediaPlayerErrorMissingPermission,
