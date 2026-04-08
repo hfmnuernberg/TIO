@@ -505,12 +505,14 @@ fn wire__crate__api__ffi__media_player_load_wav_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_id = <u32>::sse_decode(&mut deserializer);
             let api_wav_file_path = <String>::sse_decode(&mut deserializer);
+            let api_cache_dir = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok(crate::api::ffi::media_player_load_wav(
                         api_id,
                         api_wav_file_path,
+                        api_cache_dir,
                     ))?;
                     Ok(output_ok)
                 })())

@@ -101,7 +101,7 @@ abstract class RustLibApi extends BaseApi {
 
   Future<MediaPlayerState?> crateApiFfiMediaPlayerGetState({required int id});
 
-  Future<bool> crateApiFfiMediaPlayerLoadWav({required int id, required String wavFilePath});
+  Future<bool> crateApiFfiMediaPlayerLoadWav({required int id, required String wavFilePath, required String cacheDir});
 
   Future<bool> crateApiFfiMediaPlayerRenderMidiToWav({
     required String midiPath,
@@ -430,25 +430,26 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "media_player_get_state", argNames: ["id"]);
 
   @override
-  Future<bool> crateApiFfiMediaPlayerLoadWav({required int id, required String wavFilePath}) {
+  Future<bool> crateApiFfiMediaPlayerLoadWav({required int id, required String wavFilePath, required String cacheDir}) {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_u_32(id, serializer);
           sse_encode_String(wavFilePath, serializer);
+          sse_encode_String(cacheDir, serializer);
           pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14, port: port_);
         },
         codec: SseCodec(decodeSuccessData: sse_decode_bool, decodeErrorData: null),
         constMeta: kCrateApiFfiMediaPlayerLoadWavConstMeta,
-        argValues: [id, wavFilePath],
+        argValues: [id, wavFilePath, cacheDir],
         apiImpl: this,
       ),
     );
   }
 
   TaskConstMeta get kCrateApiFfiMediaPlayerLoadWavConstMeta =>
-      const TaskConstMeta(debugName: "media_player_load_wav", argNames: ["id", "wavFilePath"]);
+      const TaskConstMeta(debugName: "media_player_load_wav", argNames: ["id", "wavFilePath", "cacheDir"]);
 
   @override
   Future<bool> crateApiFfiMediaPlayerRenderMidiToWav({

@@ -4,10 +4,11 @@ use cpal::{
     BufferSize, Device,
     traits::{DeviceTrait, HostTrait},
 };
+use hound::{SampleFormat, WavSpec, WavWriter};
 use rubato::{
     Resampler, SincFixedIn, SincInterpolationParameters, SincInterpolationType, WindowFunction,
 };
-use std::{fs::File, path::Path};
+use std::{fs::File, io::BufWriter, path::Path};
 use symphonia::core::{
     audio::{AudioBufferRef, Signal},
     io::MediaSourceStream,
@@ -17,6 +18,8 @@ use symphonia::core::{
 
 use super::constants::{INPUT_SAMPLE_RATE, NUM_CHANNELS, OUTPUT_SAMPLE_RATE};
 use crate::api::ffi::get_sample_rate;
+
+const RESAMPLE_CHUNK_SIZE: usize = 4096;
 
 #[flutter_rust_bridge::frb(ignore)]
 pub fn speed_factor_to_halftones<T: Float>(speed_factor: T) -> T {
@@ -80,6 +83,256 @@ pub fn load_audio_file(file_path: String) -> Result<Vec<f32>> {
     }
 
     Ok(out_samples)
+}
+
+#[flutter_rust_bridge::frb(ignore)]
+pub fn decode_audio_to_wav_file(file_path: String, output_wav_path: String) -> Result<u64> {
+    let default_sample_rate = get_sample_rate() as u32;
+
+    let (reader, mut decoder, sample_rate, num_channels) = open_audio_decoder(&file_path)?;
+    let needs_resample = sample_rate != default_sample_rate;
+
+    let spec = WavSpec {
+        channels: 1,
+        sample_rate: default_sample_rate,
+        bits_per_sample: 32,
+        sample_format: SampleFormat::Float,
+    };
+    let writer = WavWriter::new(BufWriter::new(File::create(&output_wav_path)?), spec)?;
+
+    if needs_resample {
+        decode_with_resample(
+            reader,
+            &mut decoder,
+            writer,
+            sample_rate,
+            default_sample_rate,
+            num_channels,
+        )
+    } else {
+        decode_without_resample(reader, &mut decoder, writer, num_channels)
+    }
+}
+
+fn decode_with_resample(
+    mut reader: Box<dyn symphonia::core::formats::FormatReader>,
+    decoder: &mut Box<dyn symphonia::core::codecs::Decoder>,
+    mut writer: WavWriter<BufWriter<File>>,
+    source_rate: u32,
+    target_rate: u32,
+    num_channels: usize,
+) -> Result<u64> {
+    log::info!("Resampling from {} to {}.", source_rate, target_rate);
+
+    let params = SincInterpolationParameters {
+        sinc_len: 4,
+        f_cutoff: 0.95,
+        interpolation: SincInterpolationType::Cubic,
+        oversampling_factor: 64,
+        window: WindowFunction::BlackmanHarris2,
+    };
+    let resample_ratio = target_rate as f64 / source_rate as f64;
+    let mut resampler =
+        SincFixedIn::<f64>::new(resample_ratio, 1.0, params, RESAMPLE_CHUNK_SIZE, 1)?;
+
+    let mut mono_accumulator: Vec<f64> = Vec::with_capacity(RESAMPLE_CHUNK_SIZE * 2);
+    let mut total_samples: u64 = 0;
+
+    while let Ok(packet) = reader.next_packet() {
+        let decoded = decoder.decode(&packet)?;
+        append_mono_f64(&decoded, num_channels, &mut mono_accumulator);
+
+        while mono_accumulator.len() >= RESAMPLE_CHUNK_SIZE {
+            let chunk: Vec<f64> = mono_accumulator.drain(..RESAMPLE_CHUNK_SIZE).collect();
+            let resampled = resampler.process(&[chunk], None)?;
+            for &sample in &resampled[0] {
+                writer.write_sample(sample as f32)?;
+                total_samples += 1;
+            }
+        }
+    }
+
+    if !mono_accumulator.is_empty() {
+        let resampled = resampler.process_partial(Some(&[mono_accumulator]), None)?;
+        for &sample in &resampled[0] {
+            writer.write_sample(sample as f32)?;
+            total_samples += 1;
+        }
+    }
+
+    writer.finalize()?;
+    log::info!("Resampling done. Total samples: {}", total_samples);
+    Ok(total_samples)
+}
+
+fn decode_without_resample(
+    mut reader: Box<dyn symphonia::core::formats::FormatReader>,
+    decoder: &mut Box<dyn symphonia::core::codecs::Decoder>,
+    mut writer: WavWriter<BufWriter<File>>,
+    num_channels: usize,
+) -> Result<u64> {
+    let mut total_samples: u64 = 0;
+    let mut mono_chunk: Vec<f32> = Vec::with_capacity(RESAMPLE_CHUNK_SIZE);
+
+    while let Ok(packet) = reader.next_packet() {
+        let decoded = decoder.decode(&packet)?;
+        append_mono_f32(&decoded, num_channels, &mut mono_chunk);
+
+        for &sample in &mono_chunk {
+            writer.write_sample(sample)?;
+            total_samples += 1;
+        }
+        mono_chunk.clear();
+    }
+
+    writer.finalize()?;
+    log::info!("Decode done. Total samples: {}", total_samples);
+    Ok(total_samples)
+}
+
+type AudioDecoderResult = (
+    Box<dyn symphonia::core::formats::FormatReader>,
+    Box<dyn symphonia::core::codecs::Decoder>,
+    u32,
+    usize,
+);
+
+fn open_audio_decoder(file_path: &str) -> Result<AudioDecoderResult> {
+    let file = File::open(Path::new(file_path))?;
+    let mss = MediaSourceStream::new(Box::new(file), Default::default());
+
+    let extension = Path::new(file_path)
+        .extension()
+        .ok_or_else(|| anyhow::anyhow!("Could not get file extension."))?
+        .to_str()
+        .ok_or_else(|| anyhow::anyhow!("Could not convert file extension to string."))?;
+
+    let mut hint = Hint::new();
+    let hint = hint.with_extension(extension);
+
+    let probed = symphonia::default::get_probe().format(
+        hint,
+        mss,
+        &Default::default(),
+        &Default::default(),
+    )?;
+    let reader = probed.format;
+    let track = reader
+        .default_track()
+        .ok_or_else(|| anyhow::anyhow!("Could not get default track from audio file."))?;
+
+    let sample_rate = track
+        .codec_params
+        .sample_rate
+        .ok_or_else(|| anyhow::anyhow!("Could not get sample rate from audio file."))?;
+
+    let num_channels = track.codec_params.channels.map(|c| c.count()).unwrap_or(1);
+
+    let decoder =
+        symphonia::default::get_codecs().make(&track.codec_params, &Default::default())?;
+
+    Ok((reader, decoder, sample_rate, num_channels))
+}
+
+fn append_mono_f32(decoded: &AudioBufferRef, num_channels: usize, out: &mut Vec<f32>) {
+    let inv = 1.0 / num_channels as f32;
+    match decoded {
+        AudioBufferRef::F32(buf) => {
+            let frames = buf.frames();
+            for i in 0..frames {
+                let mut sum = 0.0f32;
+                for ch in 0..num_channels.min(buf.spec().channels.count()) {
+                    sum += buf.chan(ch)[i].clamped();
+                }
+                out.push(sum * inv);
+            }
+        }
+        _ => append_mono_f32_generic(decoded, num_channels, out),
+    }
+}
+
+fn append_mono_f32_generic(decoded: &AudioBufferRef, num_channels: usize, out: &mut Vec<f32>) {
+    let inv = 1.0 / num_channels as f32;
+    macro_rules! handle_buffer {
+        ($buf:expr, $convert:expr) => {{
+            let frames = $buf.frames();
+            for i in 0..frames {
+                let mut sum = 0.0f32;
+                for ch in 0..num_channels.min($buf.spec().channels.count()) {
+                    sum += $convert($buf.chan(ch)[i]);
+                }
+                out.push(sum * inv);
+            }
+        }};
+    }
+    match decoded {
+        AudioBufferRef::U8(buf) => {
+            handle_buffer!(buf, |s: u8| { (s.clamped() as f32 - 128.0) / 128.0 })
+        }
+        AudioBufferRef::U16(buf) => {
+            handle_buffer!(buf, |s: u16| { (s.clamped() as f32 - 32768.0) / 32768.0 })
+        }
+        AudioBufferRef::U24(buf) => handle_buffer!(buf, |s: symphonia::core::sample::u24| {
+            (s.clamped().0 as f32 - 8388608.0) / 8388608.0
+        }),
+        AudioBufferRef::U32(buf) => handle_buffer!(buf, |s: u32| {
+            (s.clamped() as f32 - 2147483648.0) / 2147483648.0
+        }),
+        AudioBufferRef::S8(buf) => handle_buffer!(buf, |s: i8| { s.clamped() as f32 / 128.0 }),
+        AudioBufferRef::S16(buf) => {
+            handle_buffer!(buf, |s: i16| { s.clamped() as f32 / 32768.0 })
+        }
+        AudioBufferRef::S24(buf) => handle_buffer!(buf, |s: symphonia::core::sample::i24| {
+            s.clamped().0 as f32 / 8388608.0
+        }),
+        AudioBufferRef::S32(buf) => {
+            handle_buffer!(buf, |s: i32| { s.clamped() as f32 / 2147483648.0 })
+        }
+        AudioBufferRef::F32(buf) => handle_buffer!(buf, |s: f32| { s.clamped() }),
+        AudioBufferRef::F64(buf) => handle_buffer!(buf, |s: f64| { s.clamped() as f32 }),
+    }
+}
+
+fn append_mono_f64(decoded: &AudioBufferRef, num_channels: usize, out: &mut Vec<f64>) {
+    let inv = 1.0 / num_channels as f64;
+    macro_rules! handle_buffer {
+        ($buf:expr, $convert:expr) => {{
+            let frames = $buf.frames();
+            for i in 0..frames {
+                let mut sum = 0.0f64;
+                for ch in 0..num_channels.min($buf.spec().channels.count()) {
+                    sum += $convert($buf.chan(ch)[i]);
+                }
+                out.push(sum * inv);
+            }
+        }};
+    }
+    match decoded {
+        AudioBufferRef::U8(buf) => {
+            handle_buffer!(buf, |s: u8| { (s.clamped() as f64 - 128.0) / 128.0 })
+        }
+        AudioBufferRef::U16(buf) => {
+            handle_buffer!(buf, |s: u16| { (s.clamped() as f64 - 32768.0) / 32768.0 })
+        }
+        AudioBufferRef::U24(buf) => handle_buffer!(buf, |s: symphonia::core::sample::u24| {
+            (s.clamped().0 as f64 - 8388608.0) / 8388608.0
+        }),
+        AudioBufferRef::U32(buf) => handle_buffer!(buf, |s: u32| {
+            (s.clamped() as f64 - 2147483648.0) / 2147483648.0
+        }),
+        AudioBufferRef::S8(buf) => handle_buffer!(buf, |s: i8| { s.clamped() as f64 / 128.0 }),
+        AudioBufferRef::S16(buf) => {
+            handle_buffer!(buf, |s: i16| { s.clamped() as f64 / 32768.0 })
+        }
+        AudioBufferRef::S24(buf) => handle_buffer!(buf, |s: symphonia::core::sample::i24| {
+            s.clamped().0 as f64 / 8388608.0
+        }),
+        AudioBufferRef::S32(buf) => {
+            handle_buffer!(buf, |s: i32| { s.clamped() as f64 / 2147483648.0 })
+        }
+        AudioBufferRef::F32(buf) => handle_buffer!(buf, |s: f32| { s.clamped() as f64 }),
+        AudioBufferRef::F64(buf) => handle_buffer!(buf, |s: f64| { s.clamped() }),
+    }
 }
 
 #[flutter_rust_bridge::frb(ignore)]
