@@ -39,8 +39,8 @@ void main() {
         await prepareAndOpenMediaPlayer(tester, context);
         await tester.scrollToAndTapAndSettle('Markers');
 
-        expect(find.textContaining('00:00:000'), findsNWidgets(2));
-        expect(find.textContaining('00:10:000'), findsOneWidget);
+        expect(find.text('0.000'), findsNWidgets(2));
+        expect(find.text('10.000'), findsOneWidget);
       });
 
       testWidgets('zoom out is not enabled initially', (tester) async {
@@ -70,8 +70,8 @@ void main() {
 
         await tester.tapAndSettle(find.byTooltip('Zoom in'));
 
-        expect(find.textContaining('00:02:500'), findsOneWidget);
-        expect(find.textContaining('00:07:500'), findsOneWidget);
+        expect(find.text('2.500'), findsOneWidget);
+        expect(find.text('7.500'), findsOneWidget);
       });
 
       testWidgets('shows new window times after scrolled left', (tester) async {
@@ -81,8 +81,8 @@ void main() {
 
         await tester.tapAndSettle(find.byTooltip('Scroll left'));
 
-        expect(find.textContaining('00:00:000'), findsNWidgets(2));
-        expect(find.textContaining('00:05:000'), findsOneWidget);
+        expect(find.text('0.000'), findsNWidgets(2));
+        expect(find.text('5.000'), findsOneWidget);
       });
 
       testWidgets('shows new window times after scrolled right', (tester) async {
@@ -92,8 +92,8 @@ void main() {
 
         await tester.tapAndSettle(find.byTooltip('Scroll right'));
 
-        expect(find.textContaining('00:05:000'), findsOneWidget);
-        expect(find.textContaining('00:10:000'), findsOneWidget);
+        expect(find.text('5.000'), findsOneWidget);
+        expect(find.text('10.000'), findsOneWidget);
       });
 
       testWidgets('shows new start and end time after zoomed out', (tester) async {
@@ -103,8 +103,8 @@ void main() {
         await tester.tapAndSettle(find.byTooltip('Zoom in'));
         await tester.tapAndSettle(find.byTooltip('Zoom out'));
 
-        expect(find.textContaining('00:00:000'), findsNWidgets(2));
-        expect(find.textContaining('00:10:000'), findsOneWidget);
+        expect(find.text('0.000'), findsNWidgets(2));
+        expect(find.text('10.000'), findsOneWidget);
       });
 
       testWidgets('zoom in is not enabled when max zoomed in', (tester) async {
@@ -118,8 +118,8 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(tester.getSemantics(find.byTooltip('Zoom in')).flagsCollection.isEnabled, Tristate.isFalse);
-        expect(find.textContaining('00:04:500'), findsOneWidget);
-        expect(find.textContaining('00:05:500'), findsOneWidget);
+        expect(find.text('4.500'), findsOneWidget);
+        expect(find.text('5.500'), findsOneWidget);
       });
     });
   });
