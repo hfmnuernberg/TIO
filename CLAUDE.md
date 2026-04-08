@@ -54,9 +54,10 @@ Studio Fluffy originally developed TIO and left the project in poor shape — no
 
 ## Environment Setup
 
-- **FVM** is not on `$PATH`. The Flutter binary lives at `$HOME/fvm/versions/<version>/bin/flutter` (check `.fvmrc` for the version). Use it directly or prepend to PATH: `export PATH="$HOME/fvm/versions/$(jq -r .flutter .fvmrc)/bin:$PATH"`
+- **FVM** is not on `$PATH`. The Flutter binary lives at `$HOME/fvm/versions/<version>/bin/flutter`. Read the version from `.fvmrc` (key `"flutter"`) and prepend to PATH. From the repo root: `export PATH="$HOME/fvm/versions/$(jq -r .flutter .fvmrc)/bin:$PATH"`. From a worktree where the shell CWD may not be the repo root, pass the absolute path to `.fvmrc`: `export PATH="$HOME/fvm/versions/$(jq -r .flutter <repo-root>/.fvmrc)/bin:$PATH"`. Never hardcode the version — it changes regularly.
 - **Cargo** is not on `$PATH`. Prepend before running Rust commands: `export PATH="$HOME/.cargo/bin:$PATH"`
 - `scripts/app.sh` handles tool lookup internally but may fail in worktrees if the shell can't find `fvm` or `cargo`. When running from a worktree, call Flutter/Cargo directly instead.
+- **`scripts/app.sh generate:rust` in worktrees**: prints a spurious `jq: error: Could not open file .fvmrc` line but still completes successfully — ignore that line.
 
 ## Key Commands
 
@@ -139,6 +140,9 @@ Rust-specific commands (must run from `rust/` directory, or use `scripts/app.sh`
 - **Meaningful tests**: Test actual behavior, not getters. Reduce mocking to a minimum.
 - **Test utilities**: Helpers in `test/utils/` (e.g., `media_player_utils.dart`, `project_utils.dart`, `render_utils.dart`)
 - **Widget lookup in tests**: Always use the accessibility API (`find.bySemanticsLabel(...)` or `find.textContaining(...)`) to locate widgets. Never use `find.byType(...)`, `find.byKey(...)`, or test keys/IDs. New UI elements must have semantic labels sourced from localization. Tests assume English localization is active.
+- **Confirmation dialogs** use the project-wide `showConfirmDialog` helper and render **`Proceed`** / **`Cancel`** buttons (not `Yes`/`No`). In tests, tap `find.bySemanticsLabel('Proceed')` or `'Cancel'`.
+- **Bug-fix tests must fail first**: when fixing a bug, write the regression test before the fix and confirm it fails against the current code. Only then implement the fix and re-run the test to confirm it passes. A test that passes on the first try has not reproduced the bug.
+- **No "optional" tests**: every test listed in a plan is required. Don't mark widget tests, boundary tests, or supporting tests as optional — if it's worth listing, it's worth writing.
 - **Coverage ratcheting**: Thresholds are tightened after improvements — both coverage % and file complexity limits
 
 ## Working with Claude Code
@@ -146,6 +150,7 @@ Rust-specific commands (must run from `rust/` directory, or use `scripts/app.sh`
 - **Never push to remote** — the user pushes manually
 - **Don't commit unless explicitly asked** — the user will say when to commit
 - **Plan before implementing** — present approach for review before writing code. The user actively reviews plans and catches design issues.
+- **Always run `analyze` before handing work back.** After any Dart or Rust change — even a one-line edit — run `scripts/app.sh analyze` (which covers both Dart analyzer and Rust clippy) and fix everything it reports before reporting the work as done. Never hand back code that hasn't been analyzed. The same applies to tests: run the affected tests and confirm they pass before declaring a task complete.
 - **Verification before committing**: `scripts/app.sh format` → `scripts/app.sh analyze` → `scripts/app.sh test` → `scripts/app.sh analyze:files`
 - **German may be used**: The user occasionally gives instructions in German — understand and act on them normally
 - **Iterative workflow**: The user tests changes manually on real devices and reports bugs back for fixing. Multiple rounds of polish are normal.
