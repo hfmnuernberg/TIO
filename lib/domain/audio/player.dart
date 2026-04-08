@@ -24,6 +24,7 @@ class Player {
   final int id;
   final AudioSystem _as;
   final AudioSession _audioSession;
+  final FileSystem _fileSystem;
   final Wakelock _wakelock;
 
   final Markers _markers;
@@ -60,10 +61,10 @@ class Player {
 
   AudioSessionInterruptionListenerHandle? _audioSessionInterruptionListenerHandle;
 
-  Player(this._as, this._audioSession, FileSystem fs, this._wakelock)
+  Player(this._as, this._audioSession, this._fileSystem, this._wakelock)
     : id = _nextId++,
       _markers = Markers(_as),
-      _midiConverter = MidiConverter(_as, fs);
+      _midiConverter = MidiConverter(_as, _fileSystem);
 
   void addOnPlaybackPositionChangeListener(OnPlaybackPositionChange listener) =>
       _onPlaybackPositionChangeListeners.add(listener);
@@ -258,7 +259,7 @@ class Player {
     final wavFilePath = isMidi ? (await _midiConverter.convertToWav(absoluteFilePath)) : absoluteFilePath;
     if (wavFilePath == null) return false;
 
-    final loaded = await _as.mediaPlayerLoadWav(id: id, wavFilePath: wavFilePath);
+    final loaded = await _as.mediaPlayerLoadWav(id: id, wavFilePath: wavFilePath, cacheDir: _fileSystem.tmpFolderPath);
     if (!loaded) return false;
     _loaded = true;
 

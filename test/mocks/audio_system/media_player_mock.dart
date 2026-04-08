@@ -10,15 +10,16 @@ mixin MediaPlayerMock on Mock implements AudioSystem {
     () => mediaPlayerLoadWav(
       id: any(named: 'id'),
       wavFilePath: any(named: 'wavFilePath'),
+      cacheDir: any(named: 'cacheDir'),
     ),
   ).thenAnswer((_) async => result);
   void verifyMediaPlayerLoadWavCalledWith(Pattern wavFilePath) => verify(
     () => mediaPlayerLoadWav(
       id: any(named: 'id'),
       wavFilePath: any(named: 'wavFilePath', that: matches(wavFilePath)),
+      cacheDir: any(named: 'cacheDir'),
     ),
   ).called(1);
-
   void mockMediaPlayerRenderMidiToWav([bool result = true]) => when(
     () => mediaPlayerRenderMidiToWav(
       midiPath: any(named: 'midiPath'),

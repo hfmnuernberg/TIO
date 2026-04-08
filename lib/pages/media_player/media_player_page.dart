@@ -339,10 +339,23 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       return;
     }
 
+    if (index == 0) {
+      await _player.stop();
+      if (!mounted) return;
+      setState(() {
+        _isLoading = true;
+        _rmsValues = Float32List(0);
+        _playbackPosition = 0;
+      });
+    }
+
     final basenameWithTimestamp = '${_fs.toBasename(audioPath)}_${DateTime.now().millisecondsSinceEpoch}';
     final newRelativePath = await _mediaRepo.import(audioPath, basenameWithTimestamp);
 
-    if (newRelativePath == null) return;
+    if (newRelativePath == null) {
+      if (index == 0 && mounted) setState(() => _isLoading = false);
+      return;
+    }
 
     // Wait to prevent the following error:
     // flutter: media player load wav failed: unsupported feature: core (probe): no suitable format reader found
@@ -353,31 +366,28 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     final projectLibrary = context.read<ProjectLibrary>();
 
     if (index == 0) {
-      _fileReferences.dec(_mediaPlayerBlock.relativePath, projectLibrary);
-      _mediaPlayerBlock.relativePath = newRelativePath;
-      _fileReferences.inc(newRelativePath);
+      try {
+        _fileReferences.dec(_mediaPlayerBlock.relativePath, projectLibrary);
+        _mediaPlayerBlock.relativePath = newRelativePath;
+        _fileReferences.inc(newRelativePath);
 
-      await _projectRepo.saveLibrary(projectLibrary);
+        await _projectRepo.saveLibrary(projectLibrary);
 
-      _rmsValues = Float32List(0);
-      _playbackPosition = 0;
-
-      await _player.stop();
-      setState(() => _isLoading = true);
-
-      final success = await _player.loadAudioFile(_fs.toAbsoluteFilePath(newRelativePath));
-      if (!success) {
-        if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
-      } else {
-        _rmsValues = await _player.getRmsValues(_numOfBins);
-        _baseRmsValues = _rmsValues;
-        _player.markers.binCount = _rmsValues.length;
-        _player.markers.startAndEndEpsilon = _effectiveEndEpsilon();
-        _addShareOptionToMenu();
-        _mediaPlayerBlock.markerPositions.clear();
-        if (mounted) await _projectRepo.saveLibrary(projectLibrary);
+        final success = await _player.loadAudioFile(_fs.toAbsoluteFilePath(newRelativePath));
+        if (!success) {
+          if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
+        } else {
+          _rmsValues = await _player.getRmsValues(_numOfBins);
+          _baseRmsValues = _rmsValues;
+          _player.markers.binCount = _rmsValues.length;
+          _player.markers.startAndEndEpsilon = _effectiveEndEpsilon();
+          _addShareOptionToMenu();
+          _mediaPlayerBlock.markerPositions.clear();
+          if (mounted) await _projectRepo.saveLibrary(projectLibrary);
+        }
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
       }
-      setState(() => _isLoading = false);
 
       if (mounted) _mediaPlayerTutorial.maybeShowWaveformTutorial(context, playerLoaded: _player.loaded);
 
@@ -453,74 +463,74 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   Future<void> _stopRecording() async {
-    final success = await _recorder.stop();
-    if (!success || !mounted) return;
-
+    final audioSystem = context.read<AudioSystem>();
+    if (!await _recorder.stop() || !mounted) return;
     setState(() => _recordingLength = Duration.zero);
-
     final recordingFilePath = await _recorder.getRecordingFilePath();
     if (recordingFilePath == null) {
       _logger.e('Unable to get recording file path.');
       return;
     }
-
     if (!mounted) return;
+    setState(() {
+      _isLoading = true;
+      _rmsValues = Float32List(0);
+      _playbackPosition = 0;
+    });
     final projectTitle = widget.isQuickTool ? context.l10n.toolQuickTool : _project!.title;
-    final newName = '$projectTitle-${_mediaPlayerBlock.title}';
-    final newRelativePath = await _mediaRepo.import(recordingFilePath, newName);
-
+    final previousRelativePath = _mediaPlayerBlock.relativePath;
+    final newRelativePath = await _mediaRepo.import(recordingFilePath, '$projectTitle-${_mediaPlayerBlock.title}');
     if (newRelativePath == null) {
       _logger.e('Unable to save recording.');
+      if (mounted) setState(() => _isLoading = false);
       return;
     }
-
     if (!mounted) return;
-
-    _fileReferences.inc(newRelativePath);
-    if (_mediaPlayerBlock.relativePath.isNotEmpty) {
-      _fileReferences.dec(_mediaPlayerBlock.relativePath, context.read<ProjectLibrary>());
-    }
-    _mediaPlayerBlock.relativePath = newRelativePath;
-
-    if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-    setState(() => _isLoading = true);
-
-    final loaded = await _player.loadAudioFile(_fs.toAbsoluteFilePath(newRelativePath));
-    if (!loaded) {
-      if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
-    } else {
-      _rmsValues = await _player.getRmsValues(_numOfBins);
-      _baseRmsValues = _rmsValues;
-      _player.markers.binCount = _rmsValues.length;
-      _addShareOptionToMenu();
-      _mediaPlayerBlock.markerPositions.clear();
-      _player.markers.positions = [];
+    try {
+      _fileReferences.inc(newRelativePath);
+      if (previousRelativePath.isNotEmpty) {
+        _fileReferences.dec(previousRelativePath, context.read<ProjectLibrary>());
+      }
+      _mediaPlayerBlock.relativePath = newRelativePath;
       if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      if (previousRelativePath == newRelativePath) {
+        await audioSystem.mediaPlayerInvalidateWavCache(
+          wavFilePath: _fs.toAbsoluteFilePath(newRelativePath),
+          cacheDir: _fs.tmpFolderPath,
+        );
+      }
+      final loaded = await _player.loadAudioFile(_fs.toAbsoluteFilePath(newRelativePath));
+      if (!loaded) {
+        if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
+      } else {
+        _rmsValues = await _player.getRmsValues(_numOfBins);
+        _baseRmsValues = _rmsValues;
+        _player.markers.binCount = _rmsValues.length;
+        _addShareOptionToMenu();
+        _mediaPlayerBlock.markerPositions.clear();
+        _player.markers.positions = [];
+        if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
-    setState(() => _isLoading = false);
-
     if (mounted) _mediaPlayerTutorial.maybeShowWaveformTutorial(context, playerLoaded: _player.loaded);
   }
 
   Future _askForKeepRecordingOnExit() async {
     _recorder.stop().then((success) async {
       if (!success || !mounted) return;
-
       final recordingFilePath = await _recorder.getRecordingFilePath();
       if (recordingFilePath == null || !mounted) return;
-
       final projectTitle = widget.isQuickTool ? context.l10n.toolQuickTool : _project!.title;
       final newName = '$projectTitle-${_mediaPlayerBlock.title}';
       final newRelativePath = await _mediaRepo.import(recordingFilePath, newName);
-
       if (newRelativePath == null || !mounted) return;
-
       _fileReferences.inc(newRelativePath);
       if (_mediaPlayerBlock.relativePath.isNotEmpty) {
         _fileReferences.dec(_mediaPlayerBlock.relativePath, context.read<ProjectLibrary>());
       }
       _mediaPlayerBlock.relativePath = newRelativePath;
-
       await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
     });
   }
@@ -531,33 +541,25 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   void _handleIsRecordingChange() {
-    if (!mounted) return;
-    setState(() {});
+    if (mounted) setState(() {});
   }
 
   void _handleRecordingLengthChange(Duration recordingLength) {
-    if (!mounted) return;
-    setState(() => _recordingLength = recordingLength);
+    if (mounted) setState(() => _recordingLength = recordingLength);
   }
 
   Widget _switchMainButton(Key key) {
-    if (_recorder.isRecording) {
-      return _recordButton(TIOMusicParams.sizeBigButtons, key: key);
-    } else {
-      return _player.loaded
-          ? _playPauseButton(TIOMusicParams.sizeBigButtons, key: key)
-          : _recordButton(TIOMusicParams.sizeBigButtons, key: key);
-    }
+    if (_recorder.isRecording) return _recordButton(TIOMusicParams.sizeBigButtons, key: key);
+    return _player.loaded
+        ? _playPauseButton(TIOMusicParams.sizeBigButtons, key: key)
+        : _recordButton(TIOMusicParams.sizeBigButtons, key: key);
   }
 
   Widget _switchRightButton() {
-    if (_recorder.isRecording) {
-      return _cancelButton(TIOMusicParams.sizeSmallButtons);
-    } else {
-      return _player.loaded
-          ? _recordButton(TIOMusicParams.sizeSmallButtons)
-          : _playPauseButton(TIOMusicParams.sizeSmallButtons);
-    }
+    if (_recorder.isRecording) return _cancelButton(TIOMusicParams.sizeSmallButtons);
+    return _player.loaded
+        ? _recordButton(TIOMusicParams.sizeSmallButtons)
+        : _playPauseButton(TIOMusicParams.sizeSmallButtons);
   }
 
   Widget _cancelButton(double buttonSize, {Key? key}) {

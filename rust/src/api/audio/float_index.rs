@@ -8,7 +8,7 @@ pub struct FloatIndex {
 
 impl FloatIndex {
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn new(start: f32, end: f32) -> Self {
+    pub fn new(start: f64, end: f64) -> Self {
         let mut index = FloatIndex {
             start: 0.0,
             end: 1.0,
@@ -20,16 +20,16 @@ impl FloatIndex {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn set_start_end(&mut self, start: f32, end: f32) {
-        self.start = start.min(end) as f64;
-        self.end = start.max(end) as f64;
+    pub fn set_start_end(&mut self, start: f64, end: f64) {
+        self.start = start.min(end);
+        self.end = start.max(end);
         self.range = self.end - self.start;
         self.index = self.index.clamp(self.start, self.end);
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn move_index(&mut self, step: f32) -> bool {
-        self.index += step as f64;
+    pub fn move_index(&mut self, step: f64) -> bool {
+        self.index += step;
         if self.index > self.end {
             self.index = self.start + (self.index - self.end);
             return true;
@@ -38,12 +38,12 @@ impl FloatIndex {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn get_index(&self) -> f32 {
-        self.index as f32
+    pub fn get_index(&self) -> f64 {
+        self.index
     }
 
     #[flutter_rust_bridge::frb(ignore)]
-    pub fn set_index(&mut self, index: f32) {
-        self.index = (index as f64).clamp(self.start, self.end);
+    pub fn set_index(&mut self, index: f64) {
+        self.index = index.clamp(self.start, self.end);
     }
 }

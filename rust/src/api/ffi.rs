@@ -13,7 +13,7 @@ use crate::{
         media_player::{
             MediaPlayerState, media_player_compute_rms, media_player_create_stream,
             media_player_destroy, media_player_query_state, media_player_render_mid_to_wav,
-            media_player_set_buffer, media_player_set_loop_value, media_player_set_new_volume,
+            media_player_set_file_source, media_player_set_loop_value, media_player_set_new_volume,
             media_player_set_pitch, media_player_set_pos_factor, media_player_set_speed,
             media_player_set_trim_by_factor, media_player_trigger_destroy_stream,
         },
@@ -40,8 +40,8 @@ use crate::{
     api::util::{
         constants::{INPUT_SAMPLE_RATE, OUTPUT_SAMPLE_RATE},
         util_functions::{
-            get_platform_default_input_sample_rate, get_platform_default_output_sample_rate,
-            load_audio_file,
+            decode_audio_to_wav_file, get_platform_default_input_sample_rate,
+            get_platform_default_output_sample_rate, load_audio_file,
         },
     },
 };
@@ -170,12 +170,31 @@ pub fn piano_set_concert_pitch(new_concert_pitch: f32) -> bool {
 
 // media player
 
-pub fn media_player_load_wav(id: u32, wav_file_path: String) -> bool {
+pub fn media_player_load_wav(id: u32, wav_file_path: String, cache_dir: String) -> bool {
     log::info!("media player load wav (id={}): {}", id, wav_file_path);
     if let Ok(_guard) = GLOBAL_AUDIO_LOCK.lock() {
-        match load_audio_file(wav_file_path) {
-            Ok(buffer) => {
-                media_player_set_buffer(id, buffer);
+        let file_hash = simple_hash(&wav_file_path);
+        let sample_rate = get_sample_rate();
+        let cache_path = format!("{}/{}_{}.pcm32.wav", cache_dir, file_hash, sample_rate);
+
+        if std::path::Path::new(&cache_path).exists() {
+            log::info!("Using cached decoded file: {}", cache_path);
+            match count_wav_samples(&cache_path) {
+                Ok(total_samples) => {
+                    media_player_set_file_source(id, &cache_path, total_samples);
+                    log::info!("media player load wav done (id={})", id);
+                    return true;
+                }
+                Err(e) => {
+                    log::info!("Cached file invalid, re-decoding: {}", e);
+                    let _ = std::fs::remove_file(&cache_path);
+                }
+            }
+        }
+
+        match decode_audio_to_wav_file(wav_file_path, cache_path.clone()) {
+            Ok(total_samples) => {
+                media_player_set_file_source(id, &cache_path, total_samples);
                 log::info!("media player load wav done (id={})", id);
                 true
             }
@@ -187,6 +206,32 @@ pub fn media_player_load_wav(id: u32, wav_file_path: String) -> bool {
     } else {
         false
     }
+}
+
+pub fn media_player_invalidate_wav_cache(wav_file_path: String, cache_dir: String) {
+    log::info!("media player invalidate wav cache: {}", wav_file_path);
+    let file_hash = simple_hash(&wav_file_path);
+    let sample_rate = get_sample_rate();
+    let cache_path = format!("{}/{}_{}.pcm32.wav", cache_dir, file_hash, sample_rate);
+    if std::path::Path::new(&cache_path).exists()
+        && let Err(e) = std::fs::remove_file(&cache_path)
+    {
+        log::info!("Failed to remove cached decoded file {}: {}", cache_path, e);
+    }
+}
+
+fn simple_hash(s: &str) -> u64 {
+    let mut hash: u64 = 5381;
+    for byte in s.bytes() {
+        hash = hash.wrapping_mul(33).wrapping_add(byte as u64);
+    }
+    hash
+}
+
+fn count_wav_samples(wav_path: &str) -> Result<u64, anyhow::Error> {
+    let file = std::fs::File::open(wav_path)?;
+    let reader = ::hound::WavReader::new(file)?;
+    Ok(reader.len() as u64)
 }
 
 pub fn media_player_start(id: u32) -> bool {

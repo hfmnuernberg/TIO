@@ -18,7 +18,8 @@ mixin AudioSystem {
 
   Future<bool> pianoSetConcertPitch({required double newConcertPitch});
 
-  Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath});
+  Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath, required String cacheDir});
+  Future<void> mediaPlayerInvalidateWavCache({required String wavFilePath, required String cacheDir});
   Future<bool> mediaPlayerStart({required int id});
   Future<bool> mediaPlayerStop({required int id});
   Future<bool> mediaPlayerStartRecording({required String filePath});

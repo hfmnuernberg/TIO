@@ -76,6 +76,24 @@ void main() {
       expect(player.playbackPosition, 0.1);
     });
 
+    testWidgets('forwards file system tmp folder as cacheDir on load', (tester) async {
+      context.audioSystemMock.mockMediaPlayerLoadWav();
+
+      await player.loadAudioFile('/abs/test.wav');
+
+      context.audioSystemMock.verifyMediaPlayerLoadWavCalledWithCacheDir(context.inMemoryFileSystem.tmpFolderPath);
+    });
+
+    testWidgets('forwards cacheDir when loading a midi file', (tester) async {
+      final tmpDir = context.inMemoryFileSystem.tmpFolderPath;
+      await context.inMemoryFileSystem.createFolder(tmpDir);
+      await context.inMemoryFileSystem.saveFileAsBytes('$tmpDir/piano_01.sf2', [0, 1, 2, 3]);
+
+      await player.loadAudioFile('/abs/SomeSong.MID');
+
+      context.audioSystemMock.verifyMediaPlayerLoadWavCalledWithCacheDir(tmpDir);
+    });
+
     testWidgets('handles midi files correctly', (tester) async {
       final tmpDir = context.inMemoryFileSystem.tmpFolderPath;
       await context.inMemoryFileSystem.createFolder(tmpDir);

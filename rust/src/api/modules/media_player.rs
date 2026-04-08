@@ -66,7 +66,7 @@ impl Default for PlayerInstance {
     fn default() -> Self {
         Self {
             thread_data: None,
-            source_data: AudioBufferInterpolated::new(vec![]),
+            source_data: AudioBufferInterpolated::new_empty(),
             processing_data: Box::new(AudioProcessingData {
                 pitch_change_semitones: 0.0,
                 speed_change_factor: 1.0,
@@ -333,9 +333,9 @@ fn thread_handle_command(id: u32, _command: ()) {
 }
 
 #[flutter_rust_bridge::frb(ignore)]
-pub fn media_player_set_buffer(id: u32, new_buffer: Vec<f32>) {
+pub fn media_player_set_file_source(id: u32, wav_path: &str, total_samples: u64) {
     with_player(id, |instance| {
-        instance.source_data = AudioBufferInterpolated::new(new_buffer);
+        instance.source_data = AudioBufferInterpolated::new_from_file(wav_path, total_samples);
     });
 }
 

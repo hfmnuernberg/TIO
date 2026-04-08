@@ -76,10 +76,16 @@ class AudioSystemLogDecorator implements AudioSystem {
   }
 
   @override
-  Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath}) async {
-    final result = await _as.mediaPlayerLoadWav(id: id, wavFilePath: wavFilePath);
-    _logger.t('mediaPlayerLoadWav(id: $id, wavFilePath: $wavFilePath): $result');
+  Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath, required String cacheDir}) async {
+    final result = await _as.mediaPlayerLoadWav(id: id, wavFilePath: wavFilePath, cacheDir: cacheDir);
+    _logger.t('mediaPlayerLoadWav(id: $id, wavFilePath: $wavFilePath, cacheDir: $cacheDir): $result');
     return result;
+  }
+
+  @override
+  Future<void> mediaPlayerInvalidateWavCache({required String wavFilePath, required String cacheDir}) async {
+    await _as.mediaPlayerInvalidateWavCache(wavFilePath: wavFilePath, cacheDir: cacheDir);
+    _logger.t('mediaPlayerInvalidateWavCache(wavFilePath: $wavFilePath, cacheDir: $cacheDir)');
   }
 
   @override

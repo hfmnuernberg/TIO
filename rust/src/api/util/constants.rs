@@ -19,6 +19,10 @@ pub const MEDIA_PLAYER_PLAYBACK_MIN_BUFFERING: usize = 1024;
 pub const PITCH_SHIFT_OVERSAMPLING: usize = 8;
 pub const PITCH_SHIFT_WINDOW_DUR_MILLIS: usize = 70;
 
+// streaming audio
+pub const STREAMING_CACHE_SECONDS: usize = 2;
+pub const RMS_STREAMING_CHUNK_SIZE: usize = 65_536;
+
 // tuner
 
 pub const TUNER_RING_BUFFER_SIZE: usize = 2048;
