@@ -463,6 +463,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   Future<void> _stopRecording() async {
+    final audioSystem = context.read<AudioSystem>();
     final success = await _recorder.stop();
     if (!success || !mounted) return;
 
@@ -483,6 +484,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
     final projectTitle = widget.isQuickTool ? context.l10n.toolQuickTool : _project!.title;
     final newName = '$projectTitle-${_mediaPlayerBlock.title}';
+    final previousRelativePath = _mediaPlayerBlock.relativePath;
     final newRelativePath = await _mediaRepo.import(recordingFilePath, newName);
 
     if (newRelativePath == null) {
@@ -501,6 +503,13 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       _mediaPlayerBlock.relativePath = newRelativePath;
 
       if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
+
+      if (previousRelativePath == newRelativePath) {
+        await audioSystem.mediaPlayerInvalidateWavCache(
+          wavFilePath: _fs.toAbsoluteFilePath(newRelativePath),
+          cacheDir: _fs.tmpFolderPath,
+        );
+      }
 
       final loaded = await _player.loadAudioFile(_fs.toAbsoluteFilePath(newRelativePath));
       if (!loaded) {

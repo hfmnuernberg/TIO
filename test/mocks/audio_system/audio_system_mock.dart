@@ -30,6 +30,7 @@ class AudioSystemMock extends Mock
     mockGeneratorNoteOff();
 
     mockMediaPlayerLoadWav();
+    mockMediaPlayerInvalidateWavCache();
     mockMediaPlayerRenderMidiToWav();
     mockMediaPlayerStart();
     mockMediaPlayerStop();

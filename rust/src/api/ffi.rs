@@ -208,6 +208,18 @@ pub fn media_player_load_wav(id: u32, wav_file_path: String, cache_dir: String) 
     }
 }
 
+pub fn media_player_invalidate_wav_cache(wav_file_path: String, cache_dir: String) {
+    log::info!("media player invalidate wav cache: {}", wav_file_path);
+    let file_hash = simple_hash(&wav_file_path);
+    let sample_rate = get_sample_rate();
+    let cache_path = format!("{}/{}_{}.pcm32.wav", cache_dir, file_hash, sample_rate);
+    if std::path::Path::new(&cache_path).exists()
+        && let Err(e) = std::fs::remove_file(&cache_path)
+    {
+        log::info!("Failed to remove cached decoded file {}: {}", cache_path, e);
+    }
+}
+
 fn simple_hash(s: &str) -> u64 {
     let mut hash: u64 = 5381;
     for byte in s.bytes() {

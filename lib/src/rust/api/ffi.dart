@@ -34,6 +34,9 @@ Future<bool> pianoSetConcertPitch({required double newConcertPitch}) =>
 Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath, required String cacheDir}) =>
     RustLib.instance.api.crateApiFfiMediaPlayerLoadWav(id: id, wavFilePath: wavFilePath, cacheDir: cacheDir);
 
+Future<void> mediaPlayerInvalidateWavCache({required String wavFilePath, required String cacheDir}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerInvalidateWavCache(wavFilePath: wavFilePath, cacheDir: cacheDir);
+
 Future<bool> mediaPlayerStart({required int id}) => RustLib.instance.api.crateApiFfiMediaPlayerStart(id: id);
 
 Future<bool> mediaPlayerStop({required int id}) => RustLib.instance.api.crateApiFfiMediaPlayerStop(id: id);

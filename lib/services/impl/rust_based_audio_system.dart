@@ -40,6 +40,10 @@ class RustBasedAudioSystem implements AudioSystem {
       rust.mediaPlayerLoadWav(id: id, wavFilePath: wavFilePath, cacheDir: cacheDir);
 
   @override
+  Future<void> mediaPlayerInvalidateWavCache({required String wavFilePath, required String cacheDir}) async =>
+      rust.mediaPlayerInvalidateWavCache(wavFilePath: wavFilePath, cacheDir: cacheDir);
+
+  @override
   Future<bool> mediaPlayerStart({required int id}) async => rust.mediaPlayerStart(id: id);
 
   @override
