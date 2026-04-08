@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
+import 'package:tiomusic/widgets/media_time_text.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants/media_player_constants.dart';
 

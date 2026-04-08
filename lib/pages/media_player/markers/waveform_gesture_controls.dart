@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tiomusic/l10n/app_localizations_extension.dart';
-import 'package:tiomusic/pages/media_player/markers/media_time_text.dart';
+import 'package:tiomusic/widgets/media_time_text.dart';
 import 'package:tiomusic/pages/media_player/markers/waveform_viewport_controller.dart';
 import 'package:tiomusic/util/color_constants.dart';
 

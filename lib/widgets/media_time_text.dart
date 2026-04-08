@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
+import 'package:tiomusic/util/media_time_format.dart';
 
 class MediaTimeText extends StatelessWidget {
   final Duration duration;
@@ -9,6 +9,6 @@ class MediaTimeText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(context.l10n.formatDurationWithMillis(duration), style: const TextStyle(color: ColorTheme.primary));
+    return Text(formatMediaDuration(duration), style: const TextStyle(color: ColorTheme.primary));
   }
 }
