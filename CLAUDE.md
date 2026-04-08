@@ -150,7 +150,7 @@ Rust-specific commands (must run from `rust/` directory, or use `scripts/app.sh`
 - **Never push to remote** — the user pushes manually
 - **Don't commit unless explicitly asked** — the user will say when to commit
 - **Plan before implementing** — present approach for review before writing code. The user actively reviews plans and catches design issues.
-- **Always run `analyze` before handing work back.** After any Dart or Rust change — even a one-line edit — run `scripts/app.sh analyze` (which covers both Dart analyzer and Rust clippy) and fix everything it reports before reporting the work as done. Never hand back code that hasn't been analyzed. The same applies to tests: run the affected tests and confirm they pass before declaring a task complete.
+- **Always run `analyze` AND `analyze:files` before handing work back.** After any Dart or Rust change — even a one-line edit — run `scripts/app.sh analyze` (Dart analyzer + Rust clippy) **and** `scripts/app.sh analyze:files` (file complexity check enforced by CI) and fix everything they report before reporting the work as done. Never hand back code that hasn't been through both. The same applies to tests: run the affected tests and confirm they pass before declaring a task complete.
 - **Verification before committing**: `scripts/app.sh format` → `scripts/app.sh analyze` → `scripts/app.sh test` → `scripts/app.sh analyze:files`
 - **German may be used**: The user occasionally gives instructions in German — understand and act on them normally
 - **Iterative workflow**: The user tests changes manually on real devices and reports bugs back for fixing. Multiple rounds of polish are normal.
