@@ -20,6 +20,7 @@ use super::constants::{INPUT_SAMPLE_RATE, NUM_CHANNELS, OUTPUT_SAMPLE_RATE};
 use crate::api::ffi::get_sample_rate;
 
 const RESAMPLE_CHUNK_SIZE: usize = 4096;
+const DECODE_WRITER_BUFFER_BYTES: usize = 256 * 1024;
 
 #[flutter_rust_bridge::frb(ignore)]
 pub fn speed_factor_to_halftones<T: Float>(speed_factor: T) -> T {
@@ -98,7 +99,10 @@ pub fn decode_audio_to_wav_file(file_path: String, output_wav_path: String) -> R
         bits_per_sample: 32,
         sample_format: SampleFormat::Float,
     };
-    let writer = WavWriter::new(BufWriter::new(File::create(&output_wav_path)?), spec)?;
+    let writer = WavWriter::new(
+        BufWriter::with_capacity(DECODE_WRITER_BUFFER_BYTES, File::create(&output_wav_path)?),
+        spec,
+    )?;
 
     if needs_resample {
         decode_with_resample(
@@ -136,6 +140,8 @@ fn decode_with_resample(
         SincFixedIn::<f64>::new(resample_ratio, 1.0, params, RESAMPLE_CHUNK_SIZE, 1)?;
 
     let mut mono_accumulator: Vec<f64> = Vec::with_capacity(RESAMPLE_CHUNK_SIZE * 2);
+    let mut chunk_buf: Vec<f64> = Vec::with_capacity(RESAMPLE_CHUNK_SIZE);
+    let mut output_buf = resampler.output_buffer_allocate(true);
     let mut total_samples: u64 = 0;
 
     while let Ok(packet) = reader.next_packet() {
@@ -143,9 +149,11 @@ fn decode_with_resample(
         append_mono_f64(&decoded, num_channels, &mut mono_accumulator);
 
         while mono_accumulator.len() >= RESAMPLE_CHUNK_SIZE {
-            let chunk: Vec<f64> = mono_accumulator.drain(..RESAMPLE_CHUNK_SIZE).collect();
-            let resampled = resampler.process(&[chunk], None)?;
-            for &sample in &resampled[0] {
+            chunk_buf.clear();
+            chunk_buf.extend(mono_accumulator.drain(..RESAMPLE_CHUNK_SIZE));
+            let (_, written) =
+                resampler.process_into_buffer(&[chunk_buf.as_slice()], &mut output_buf, None)?;
+            for &sample in &output_buf[0][..written] {
                 writer.write_sample(sample as f32)?;
                 total_samples += 1;
             }
@@ -153,7 +161,7 @@ fn decode_with_resample(
     }
 
     if !mono_accumulator.is_empty() {
-        let resampled = resampler.process_partial(Some(&[mono_accumulator]), None)?;
+        let resampled = resampler.process_partial(Some(&[mono_accumulator.as_slice()]), None)?;
         for &sample in &resampled[0] {
             writer.write_sample(sample as f32)?;
             total_samples += 1;
