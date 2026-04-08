@@ -1,17 +1,45 @@
 #[allow(unused)]
 use crate::api::modules::media_player::{
     media_player_compute_rms, media_player_destroy, media_player_query_state,
-    media_player_set_buffer, media_player_set_loop_value, media_player_set_new_volume,
+    media_player_set_file_source, media_player_set_loop_value, media_player_set_new_volume,
     media_player_set_pitch, media_player_set_speed, media_player_set_trim_by_factor,
 };
 
+use hound::{SampleFormat, WavSpec, WavWriter};
+use std::io::BufWriter;
+
+#[allow(dead_code)]
+fn write_test_wav(path: &str, samples: &[f32]) {
+    let spec = WavSpec {
+        channels: 1,
+        sample_rate: 44100,
+        bits_per_sample: 32,
+        sample_format: SampleFormat::Float,
+    };
+    let mut writer =
+        WavWriter::new(BufWriter::new(std::fs::File::create(path).unwrap()), spec).unwrap();
+    for &s in samples {
+        writer.write_sample(s).unwrap();
+    }
+    writer.finalize().unwrap();
+}
+
+#[allow(dead_code)]
+fn set_buffer_via_file(id: u32, samples: &[f32]) -> String {
+    let path = format!(
+        "{}/test_media_player_{}.wav",
+        std::env::temp_dir().display(),
+        id
+    );
+    write_test_wav(&path, samples);
+    media_player_set_file_source(id, &path, samples.len() as u64);
+    path
+}
+
 #[test]
 fn two_instances_store_independent_buffers() {
-    let buffer_0 = vec![0.5; 100];
-    let buffer_1 = vec![0.25; 200];
-
-    media_player_set_buffer(0, buffer_0);
-    media_player_set_buffer(1, buffer_1);
+    let path_0 = set_buffer_via_file(0, &vec![0.5; 100]);
+    let path_1 = set_buffer_via_file(1, &vec![0.25; 200]);
 
     let state_0 = media_player_query_state(0).expect("state for id=0");
     let state_1 = media_player_query_state(1).expect("state for id=1");
@@ -23,12 +51,14 @@ fn two_instances_store_independent_buffers() {
 
     media_player_destroy(0);
     media_player_destroy(1);
+    let _ = std::fs::remove_file(path_0);
+    let _ = std::fs::remove_file(path_1);
 }
 
 #[test]
 fn settings_on_one_do_not_affect_other() {
-    media_player_set_buffer(10, vec![1.0; 100]);
-    media_player_set_buffer(11, vec![1.0; 100]);
+    let path_10 = set_buffer_via_file(10, &vec![1.0; 100]);
+    let path_11 = set_buffer_via_file(11, &vec![1.0; 100]);
 
     media_player_set_new_volume(10, 0.5);
     media_player_set_pitch(10, 3.0);
@@ -50,11 +80,13 @@ fn settings_on_one_do_not_affect_other() {
 
     media_player_destroy(10);
     media_player_destroy(11);
+    let _ = std::fs::remove_file(path_10);
+    let _ = std::fs::remove_file(path_11);
 }
 
 #[test]
 fn destroy_removes_instance() {
-    media_player_set_buffer(20, vec![1.0; 100]);
+    let path = set_buffer_via_file(20, &vec![1.0; 100]);
     let state = media_player_query_state(20).expect("state for id=20");
     assert!(state.total_length_seconds > 0.0);
 
@@ -67,12 +99,13 @@ fn destroy_removes_instance() {
     );
 
     media_player_destroy(20);
+    let _ = std::fs::remove_file(path);
 }
 
 #[test]
 fn rms_computation_is_independent() {
-    media_player_set_buffer(30, vec![1.0; 100]);
-    media_player_set_buffer(31, vec![0.0; 100]);
+    let path_30 = set_buffer_via_file(30, &vec![1.0; 100]);
+    let path_31 = set_buffer_via_file(31, &vec![0.0; 100]);
 
     let rms_30 = media_player_compute_rms(30, 10);
     let rms_31 = media_player_compute_rms(31, 10);
@@ -85,4 +118,6 @@ fn rms_computation_is_independent() {
 
     media_player_destroy(30);
     media_player_destroy(31);
+    let _ = std::fs::remove_file(path_30);
+    let _ = std::fs::remove_file(path_31);
 }

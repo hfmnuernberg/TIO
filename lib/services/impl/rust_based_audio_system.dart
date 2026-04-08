@@ -36,8 +36,12 @@ class RustBasedAudioSystem implements AudioSystem {
       rust.pianoSetConcertPitch(newConcertPitch: newConcertPitch);
 
   @override
-  Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath}) async =>
-      rust.mediaPlayerLoadWav(id: id, wavFilePath: wavFilePath);
+  Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath, required String cacheDir}) async =>
+      rust.mediaPlayerLoadWav(id: id, wavFilePath: wavFilePath, cacheDir: cacheDir);
+
+  @override
+  Future<void> mediaPlayerInvalidateWavCache({required String wavFilePath, required String cacheDir}) async =>
+      rust.mediaPlayerInvalidateWavCache(wavFilePath: wavFilePath, cacheDir: cacheDir);
 
   @override
   Future<bool> mediaPlayerStart({required int id}) async => rust.mediaPlayerStart(id: id);

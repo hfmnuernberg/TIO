@@ -9,6 +9,8 @@ import 'modules/metronome.dart';
 import 'modules/metronome_rhythm.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
+// These functions are ignored because they are not marked as `pub`: `count_wav_samples`, `simple_hash`
+
 Future<void> initAudio() => RustLib.instance.api.crateApiFfiInitAudio();
 
 Future<double?> tunerGetFrequency() => RustLib.instance.api.crateApiFfiTunerGetFrequency();
@@ -29,8 +31,11 @@ Future<bool> generatorNoteOff() => RustLib.instance.api.crateApiFfiGeneratorNote
 Future<bool> pianoSetConcertPitch({required double newConcertPitch}) =>
     RustLib.instance.api.crateApiFfiPianoSetConcertPitch(newConcertPitch: newConcertPitch);
 
-Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath}) =>
-    RustLib.instance.api.crateApiFfiMediaPlayerLoadWav(id: id, wavFilePath: wavFilePath);
+Future<bool> mediaPlayerLoadWav({required int id, required String wavFilePath, required String cacheDir}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerLoadWav(id: id, wavFilePath: wavFilePath, cacheDir: cacheDir);
+
+Future<void> mediaPlayerInvalidateWavCache({required String wavFilePath, required String cacheDir}) =>
+    RustLib.instance.api.crateApiFfiMediaPlayerInvalidateWavCache(wavFilePath: wavFilePath, cacheDir: cacheDir);
 
 Future<bool> mediaPlayerStart({required int id}) => RustLib.instance.api.crateApiFfiMediaPlayerStart(id: id);
 
