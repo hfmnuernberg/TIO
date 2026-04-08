@@ -5,7 +5,7 @@ use super::streaming_audio_source::StreamingAudioSource;
 
 #[flutter_rust_bridge::frb(ignore)]
 pub struct AudioBufferInterpolated {
-    buffer_size_f32: f32,
+    buffer_size: f64,
     source: Option<StreamingAudioSource>,
     looping: bool,
     is_playing: bool,
@@ -18,7 +18,7 @@ impl AudioBufferInterpolated {
     #[flutter_rust_bridge::frb(ignore)]
     pub fn new_empty() -> Self {
         Self {
-            buffer_size_f32: 0.0,
+            buffer_size: 0.0,
             source: None,
             looping: false,
             is_playing: false,
@@ -30,23 +30,23 @@ impl AudioBufferInterpolated {
 
     #[flutter_rust_bridge::frb(ignore)]
     pub fn new_from_file(wav_path: &str, total_samples: u64) -> Self {
-        let buffer_size_f32 = total_samples as f32;
+        let buffer_size = total_samples as f64;
         let source = StreamingAudioSource::new(wav_path, total_samples).ok();
 
         Self {
-            buffer_size_f32,
+            buffer_size,
             source,
             looping: false,
             is_playing: false,
             start_factor: 0.0,
             end_factor: 1.0,
-            read_head: FloatIndex::new(0.0, buffer_size_f32),
+            read_head: FloatIndex::new(0.0, buffer_size),
         }
     }
 
     #[flutter_rust_bridge::frb(ignore)]
     pub fn get_samples(&mut self, buffer_to_write_to: &mut [f32], read_speed: f32) {
-        if self.source.is_none() || self.buffer_size_f32 < 2.0 {
+        if self.source.is_none() || self.buffer_size < 2.0 {
             buffer_to_write_to.fill(0.0);
             return;
         }
@@ -58,6 +58,7 @@ impl AudioBufferInterpolated {
 
         self.pre_fill_cache_for_read(read_speed, buffer_to_write_to.len());
 
+        let read_step = read_speed as f64;
         let mut buffer_at_end = false;
         for sample_to_write in buffer_to_write_to.iter_mut() {
             if buffer_at_end {
@@ -65,7 +66,7 @@ impl AudioBufferInterpolated {
                 continue;
             }
 
-            let buffer_just_hit_end = self.read_head.move_index(read_speed);
+            let buffer_just_hit_end = self.read_head.move_index(read_step);
 
             if buffer_just_hit_end && !self.looping {
                 buffer_at_end = true;
@@ -86,13 +87,13 @@ impl AudioBufferInterpolated {
         }
     }
 
-    fn get_interpolated(&mut self, index: f32) -> f32 {
+    fn get_interpolated(&mut self, index: f64) -> f32 {
         let index_prev = index.floor();
         if index_prev < 0.0 {
             return 0.0;
         }
-        let prev_idx = index_prev as usize;
-        let total = self.buffer_size_f32 as usize;
+        let prev_idx = index_prev as u64 as usize;
+        let total = self.buffer_size as u64 as usize;
         if prev_idx >= total {
             return 0.0;
         }
@@ -113,7 +114,8 @@ impl AudioBufferInterpolated {
         };
 
         let next_sample = source.get_sample(next_idx);
-        prev_sample.lerp(next_sample, (index - index_prev).clamp(0.0, 1.0))
+        let frac = (index - index_prev).clamp(0.0, 1.0) as f32;
+        prev_sample.lerp(next_sample, frac)
     }
 
     #[flutter_rust_bridge::frb(ignore)]
@@ -146,16 +148,16 @@ impl AudioBufferInterpolated {
 
     #[flutter_rust_bridge::frb(ignore)]
     pub fn get_playback_position_factor(&self) -> f32 {
-        if self.buffer_size_f32 == 0.0 {
+        if self.buffer_size == 0.0 {
             return 0.0;
         }
-        self.read_head.get_index() / self.buffer_size_f32
+        (self.read_head.get_index() / self.buffer_size) as f32
     }
 
     #[flutter_rust_bridge::frb(ignore)]
     pub fn set_playback_position_factor(&mut self, playback_position_factor: f32) {
         self.read_head
-            .set_index(playback_position_factor * self.buffer_size_f32);
+            .set_index(playback_position_factor as f64 * self.buffer_size);
         if let Some(source) = &mut self.source {
             source.invalidate_cache();
         }
@@ -171,7 +173,7 @@ impl AudioBufferInterpolated {
         if sample_rate == 0 {
             return 0.0;
         }
-        self.buffer_size_f32 / sample_rate as f32
+        (self.buffer_size / sample_rate as f64) as f32
     }
 
     #[flutter_rust_bridge::frb(ignore)]
@@ -179,8 +181,8 @@ impl AudioBufferInterpolated {
         self.start_factor = start_factor.min(end_factor).clamp(0.0, 1.0);
         self.end_factor = start_factor.max(end_factor).clamp(0.0, 1.0);
         self.read_head.set_start_end(
-            self.start_factor * self.buffer_size_f32,
-            self.end_factor * self.buffer_size_f32,
+            self.start_factor as f64 * self.buffer_size,
+            self.end_factor as f64 * self.buffer_size,
         )
     }
 
