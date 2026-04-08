@@ -5,13 +5,14 @@ import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/src/rust/api/modules/metronome_rhythm.dart';
 
 import 'generator_mock.dart';
+import 'media_player_cache_mock.dart';
 import 'media_player_mock.dart';
 import 'metronome_mock.dart';
 import 'piano_mock.dart';
 import 'tuner_mock.dart';
 
 class AudioSystemMock extends Mock
-    with GeneratorMock, MediaPlayerMock, MetronomeMock, PianoMock, TunerMock
+    with GeneratorMock, MediaPlayerMock, MediaPlayerCacheMock, MetronomeMock, PianoMock, TunerMock
     implements AudioSystem {
   AudioSystemMock() {
     registerFallbackValue(BeatSound.Accented);
