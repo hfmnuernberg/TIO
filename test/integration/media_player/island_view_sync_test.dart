@@ -15,6 +15,7 @@ Future<void> prepareMediaPlayerWithLoadedIsland(
   TestContext context, {
   double? primaryDurationSeconds,
   double? islandDurationSeconds,
+  double? primaryInitialPlaybackPositionFactor,
 }) async {
   final audio1 = saveTestAudioFile(context, name: 'audio_file_1');
   final audio2 = saveTestAudioFile(context, name: 'audio_file_2');
@@ -23,7 +24,12 @@ Future<void> prepareMediaPlayerWithLoadedIsland(
   await tester.createMediaPlayerWithAudio('Media Player 2', context, audio2);
 
   if (primaryDurationSeconds != null) {
-    mockPlayerState(context, playing: false, totalLengthSeconds: primaryDurationSeconds);
+    mockPlayerState(
+      context,
+      playing: false,
+      totalLengthSeconds: primaryDurationSeconds,
+      playbackPositionFactor: primaryInitialPlaybackPositionFactor ?? 0,
+    );
   }
   await tester.openMediaPlayerAndLoadAudio('Media Player 1', context, audio1);
 
@@ -121,6 +127,35 @@ void main() {
         await tester.pump(const Duration(milliseconds: 150));
 
         expect(find.byTooltip('Media Player 2: Play'), findsOneWidget);
+      });
+
+      testWidgets('island parks at trim end when primary plays past island range', (tester) async {
+        await prepareMediaPlayerWithLoadedIsland(tester, context, primaryDurationSeconds: 10, islandDurationSeconds: 5);
+        mockPlayerState(context, playbackPositionFactor: 0.7);
+        clearInteractions(context.audioSystemMock);
+
+        await tester.ensureVisible(find.byTooltip('Play'));
+        await tester.tap(find.byTooltip('Play'));
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.pump(const Duration(milliseconds: 150));
+
+        verify(
+          () => context.audioSystemMock.mediaPlayerSetPlaybackPosFactor(id: any(named: 'id'), posFactor: 1),
+        ).called(1);
+      });
+
+      testWidgets('island parks at trim end when project opens with primary already past island range', (tester) async {
+        await prepareMediaPlayerWithLoadedIsland(
+          tester,
+          context,
+          primaryDurationSeconds: 10,
+          islandDurationSeconds: 5,
+          primaryInitialPlaybackPositionFactor: 0.9,
+        );
+
+        verify(
+          () => context.audioSystemMock.mediaPlayerSetPlaybackPosFactor(id: any(named: 'id'), posFactor: 1),
+        ).called(1);
       });
 
       testWidgets('island restarts when primary position changes back into range after looping', (tester) async {
