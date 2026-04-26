@@ -211,11 +211,21 @@ class Player {
         return true;
       } else {
         if (_isPlaying) await stop();
+        await _parkAtTrimEnd();
         return false;
       }
     } else {
       await setPlaybackPosition(mappedPosition.clamp(0.0, 1.0));
       return true;
+    }
+  }
+
+  Future<void> _parkAtTrimEnd() async {
+    if (_playbackPosition == _endPosition) return;
+    await _as.mediaPlayerSetPlaybackPosFactor(id: id, posFactor: _endPosition);
+    _playbackPosition = _endPosition;
+    for (final listener in _onPlaybackPositionChangeListeners) {
+      listener(_playbackPosition);
     }
   }
 
