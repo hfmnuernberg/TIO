@@ -121,5 +121,63 @@ void main() {
 
       await player.stop();
     });
+
+    testWidgets('parks at trim end when track finishes naturally without repeat', (tester) async {
+      mockPlayerState(context, playbackPositionFactor: 0.99);
+      await player.start();
+      clearInteractions(context.audioSystemMock);
+
+      mockPlayerState(context, playing: false);
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+
+      expect(player.playbackPosition, 1);
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(1);
+
+      await player.stop();
+    });
+
+    testWidgets('parks at trim end with custom trim range when finishing naturally', (tester) async {
+      await player.setTrim(0.2, 0.8);
+      mockPlayerState(context, playbackPositionFactor: 0.79);
+      await player.start();
+      clearInteractions(context.audioSystemMock);
+
+      mockPlayerState(context, playing: false, playbackPositionFactor: 0.2);
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+
+      expect(player.playbackPosition, 0.8);
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0.8);
+
+      await player.stop();
+    });
+
+    testWidgets('does not park when looping', (tester) async {
+      await player.setRepeat(true);
+      mockPlayerState(context, playbackPositionFactor: 0.99, looping: true);
+      await player.start();
+      clearInteractions(context.audioSystemMock);
+
+      mockPlayerState(context, looping: true);
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+
+      expect(player.playbackPosition, 0);
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
+
+      await player.stop();
+    });
+
+    testWidgets('does not park when manually stopped mid-track', (tester) async {
+      mockPlayerState(context, playbackPositionFactor: 0.5);
+      await player.start();
+      clearInteractions(context.audioSystemMock);
+
+      mockPlayerState(context, playing: false, playbackPositionFactor: 0.5);
+      await tester.pump(const Duration(milliseconds: playbackSamplingIntervalInMs + 1));
+
+      expect(player.playbackPosition, 0.5);
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
+
+      await player.stop();
+    });
   });
 }

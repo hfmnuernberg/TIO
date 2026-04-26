@@ -142,6 +142,41 @@ void main() {
       expect(player.isPlaying, isTrue);
     });
 
+    testWidgets('seeks to trim start when starting from parked-end position', (tester) async {
+      mockPlayerState(context, playing: false);
+      await player.setPlaybackPosition(1);
+      clearInteractions(context.audioSystemMock);
+
+      await player.start();
+
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionCalledWith(0);
+
+      await player.stop();
+    });
+
+    testWidgets('does not auto-seek when starting from mid-track', (tester) async {
+      mockPlayerState(context, playing: false);
+      await player.setPlaybackPosition(0.4);
+      clearInteractions(context.audioSystemMock);
+
+      await player.start();
+
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
+
+      await player.stop();
+    });
+
+    testWidgets('does not auto-seek when starting from trim start', (tester) async {
+      mockPlayerState(context);
+      clearInteractions(context.audioSystemMock);
+
+      await player.start();
+
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
+
+      await player.stop();
+    });
+
     testWidgets('updates position before notifying isPlaying listeners', (tester) async {
       mockPlayerState(context, playbackPositionFactor: 0.7);
       player.addOnPlaybackPositionChangeListener(playerHandlerMock.onPlaybackPositionChange);
