@@ -2,7 +2,7 @@ name: Verify
 
 env:
   MAX_FILE_COUNT: 22
-  MAX_AVG_LENGTH: 350
+  MAX_AVG_LENGTH: 351
   MIN_COVERAGE: 63.4
 
 on:

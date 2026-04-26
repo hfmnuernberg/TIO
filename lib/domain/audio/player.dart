@@ -9,6 +9,7 @@ import 'package:tiomusic/services/audio_session.dart';
 import 'package:tiomusic/services/audio_system.dart';
 import 'package:tiomusic/services/file_system.dart';
 import 'package:tiomusic/services/wakelock.dart';
+import 'package:tiomusic/src/rust/api/modules/media_player.dart';
 import 'package:tiomusic/util/log.dart';
 
 const int playbackSamplingIntervalInMs = 120;
@@ -82,6 +83,10 @@ class Player {
 
   Future<void> start() async {
     if (_isPlaying) return;
+
+    if (_playbackPosition >= _endPosition - _trackCompletionEpsilon) {
+      await setPlaybackPosition(_startPosition);
+    }
 
     _audioSessionInterruptionListenerHandle ??= await _audioSession.registerInterruptionListener(stop);
 
@@ -314,6 +319,18 @@ class Player {
     final wasPlaying = _isPlaying;
     final previousPosition = _playbackPosition;
 
+    if (_isNaturalCompletion(wasPlaying: wasPlaying, previousPosition: previousPosition, state: state)) {
+      await _parkAtTrimEnd();
+      _isPlaying = false;
+      for (final listener in _onIsPlayingChangeListeners) {
+        listener(false);
+      }
+      for (final listener in _onTrackCompletedListeners) {
+        listener();
+      }
+      return;
+    }
+
     if (state.playbackPositionFactor != _playbackPosition) {
       _playbackPosition = state.playbackPositionFactor;
       for (final listener in _onPlaybackPositionChangeListeners) {
@@ -341,6 +358,18 @@ class Player {
         listener();
       }
     }
+  }
+
+  bool _isNaturalCompletion({
+    required bool wasPlaying,
+    required double previousPosition,
+    required MediaPlayerState state,
+  }) {
+    if (!wasPlaying || state.playing || _repeat) return false;
+    final epsilon = _trackCompletionEpsilon;
+    final wasNearEnd = previousPosition >= _endPosition - epsilon;
+    final nowNearStart = state.playbackPositionFactor <= _startPosition + epsilon;
+    return wasNearEnd && nowNearStart;
   }
 
   bool _didTrackComplete({required bool wasPlaying, required double previousPosition}) {
