@@ -1,51 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tiomusic/models/project.dart';
-import 'package:tiomusic/pages/project_page/project_page.dart';
 
 import '../../utils/action_utils.dart';
-import '../../utils/connection_utils.dart';
+import '../../utils/island_view_test_utils.dart';
 import '../../utils/media_player_utils.dart';
-import '../../utils/render_utils.dart';
 import '../../utils/test_context.dart';
-
-Future<void> prepareMediaPlayerWithLoadedIsland(
-  WidgetTester tester,
-  TestContext context, {
-  double? primaryDurationSeconds,
-  double? islandDurationSeconds,
-  double? primaryInitialPlaybackPositionFactor,
-}) async {
-  final audio1 = saveTestAudioFile(context, name: 'audio_file_1');
-  final audio2 = saveTestAudioFile(context, name: 'audio_file_2');
-  await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-  await tester.createMediaPlayerToolInProject();
-  await tester.createMediaPlayerWithAudio('Media Player 2', context, audio2);
-
-  if (primaryDurationSeconds != null) {
-    mockPlayerState(
-      context,
-      playing: false,
-      totalLengthSeconds: primaryDurationSeconds,
-      playbackPositionFactor: primaryInitialPlaybackPositionFactor ?? 0,
-    );
-  }
-  await tester.openMediaPlayerAndLoadAudio('Media Player 1', context, audio1);
-
-  if (islandDurationSeconds != null) {
-    mockPlayerState(context, playing: false, totalLengthSeconds: islandDurationSeconds);
-  }
-  await tester.connectExistingTool('Media Player 2');
-}
-
-Future<void> prepareMediaPlayerWithUnloadedIsland(WidgetTester tester, TestContext context) async {
-  final audio = saveTestAudioFile(context);
-  await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
-  await tester.createMediaPlayerToolInProject();
-  await tester.openMediaPlayerAndLoadAudio('Media Player 1', context, audio);
-  await tester.connectNewTool('Media Player', 'Media Player 2');
-}
 
 void main() {
   late TestContext context;
@@ -60,13 +21,13 @@ void main() {
   group('MediaPlayer - island view sync', () {
     group('with loaded audio on island', () {
       testWidgets('renders island view with connected media player', (tester) async {
-        await prepareMediaPlayerWithLoadedIsland(tester, context);
+        await tester.prepareMediaPlayerWithLoadedIsland(context);
 
         expect(find.byTooltip('Media Player 2: Play'), findsOneWidget);
       });
 
       testWidgets('island starts when primary player starts', (tester) async {
-        await prepareMediaPlayerWithLoadedIsland(tester, context);
+        await tester.prepareMediaPlayerWithLoadedIsland(context);
         mockPlayerState(context);
 
         await tester.ensureVisible(find.byTooltip('Play'));
@@ -78,7 +39,7 @@ void main() {
       });
 
       testWidgets('island stops when primary player stops', (tester) async {
-        await prepareMediaPlayerWithLoadedIsland(tester, context);
+        await tester.prepareMediaPlayerWithLoadedIsland(context);
         mockPlayerState(context);
 
         await tester.ensureVisible(find.byTooltip('Play'));
@@ -97,8 +58,44 @@ void main() {
         expect(find.byTooltip('Media Player 2: Play'), findsOneWidget);
       });
 
+      testWidgets('island position is not overwritten when primary pauses and resumes', (tester) async {
+        await tester.prepareMediaPlayerWithLoadedIsland(context, primaryDurationSeconds: 10, islandDurationSeconds: 10);
+        mockPlayerState(context);
+
+        await tester.ensureVisible(find.byTooltip('Play'));
+        await tester.tap(find.byTooltip('Play'));
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.pump(const Duration(milliseconds: 150));
+
+        mockPlayerState(context, playbackPositionFactor: 0.4);
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.pump(const Duration(milliseconds: 150));
+
+        mockPlayerState(context, playing: false, playbackPositionFactor: 0.4);
+        await tester.ensureVisible(find.byTooltip('Pause'));
+        await tester.tap(find.byTooltip('Pause'));
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.pump(const Duration(milliseconds: 150));
+
+        clearInteractions(context.audioSystemMock);
+
+        mockPlayerState(context, playbackPositionFactor: 0.4);
+        await tester.ensureVisible(find.byTooltip('Play'));
+        await tester.tap(find.byTooltip('Play'));
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.pump(const Duration(milliseconds: 150));
+
+        verifyNever(
+          () => context.audioSystemMock.mediaPlayerSetPlaybackPosFactor(
+            id: any(named: 'id'),
+            posFactor: any(named: 'posFactor'),
+          ),
+        );
+        expect(find.byTooltip('Media Player 2: Pause'), findsOneWidget);
+      });
+
       testWidgets('island play/pause toggles independently', (tester) async {
-        await prepareMediaPlayerWithLoadedIsland(tester, context);
+        await tester.prepareMediaPlayerWithLoadedIsland(context);
         mockPlayerState(context);
 
         await tester.tap(find.byTooltip('Media Player 2: Play'));
@@ -109,7 +106,7 @@ void main() {
       });
 
       testWidgets('destroys both player instances on navigation back', (tester) async {
-        await prepareMediaPlayerWithLoadedIsland(tester, context);
+        await tester.prepareMediaPlayerWithLoadedIsland(context);
         clearInteractions(context.audioSystemMock);
 
         await tester.tapAndSettle(find.bySemanticsLabel('Back'));
@@ -118,7 +115,7 @@ void main() {
       });
 
       testWidgets('island does not start when primary position is beyond island range', (tester) async {
-        await prepareMediaPlayerWithLoadedIsland(tester, context, primaryDurationSeconds: 10, islandDurationSeconds: 5);
+        await tester.prepareMediaPlayerWithLoadedIsland(context, primaryDurationSeconds: 10, islandDurationSeconds: 5);
         mockPlayerState(context, playbackPositionFactor: 0.7);
 
         await tester.ensureVisible(find.byTooltip('Play'));
@@ -130,7 +127,7 @@ void main() {
       });
 
       testWidgets('island parks at trim end when primary plays past island range', (tester) async {
-        await prepareMediaPlayerWithLoadedIsland(tester, context, primaryDurationSeconds: 10, islandDurationSeconds: 5);
+        await tester.prepareMediaPlayerWithLoadedIsland(context, primaryDurationSeconds: 10, islandDurationSeconds: 5);
         mockPlayerState(context, playbackPositionFactor: 0.7);
         clearInteractions(context.audioSystemMock);
 
@@ -145,8 +142,7 @@ void main() {
       });
 
       testWidgets('island parks at trim end when project opens with primary already past island range', (tester) async {
-        await prepareMediaPlayerWithLoadedIsland(
-          tester,
+        await tester.prepareMediaPlayerWithLoadedIsland(
           context,
           primaryDurationSeconds: 10,
           islandDurationSeconds: 5,
@@ -159,7 +155,7 @@ void main() {
       });
 
       testWidgets('island restarts when primary position changes back into range after looping', (tester) async {
-        await prepareMediaPlayerWithLoadedIsland(tester, context, primaryDurationSeconds: 10, islandDurationSeconds: 5);
+        await tester.prepareMediaPlayerWithLoadedIsland(context, primaryDurationSeconds: 10, islandDurationSeconds: 5);
         mockPlayerState(context, playbackPositionFactor: 0.7);
 
         await tester.ensureVisible(find.byTooltip('Play'));
@@ -179,7 +175,7 @@ void main() {
 
     group('without loaded audio on island', () {
       testWidgets('island does not start when no audio loaded', (tester) async {
-        await prepareMediaPlayerWithUnloadedIsland(tester, context);
+        await tester.prepareMediaPlayerWithUnloadedIsland(context);
 
         mockPlayerState(context);
         await tester.ensureVisible(find.byTooltip('Play'));

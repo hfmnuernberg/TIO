@@ -74,4 +74,81 @@ void main() {
       expect(inRange, isTrue);
     });
   });
+
+  group('Player - canFollow', () {
+    testWidgets('reports in range without modifying position when mapped is within trim end', (tester) async {
+      await loadPlayer(player1, totalLengthSeconds: 10);
+      await loadPlayer(player2, totalLengthSeconds: 10);
+
+      await player2.setPlaybackPosition(0.7);
+      await player1.setPlaybackPosition(0.3);
+      clearInteractions(context.audioSystemMock);
+
+      final canFollow = await player2.canFollow(player1);
+
+      expect(canFollow, isTrue);
+      expect(player2.playbackPosition, 0.7);
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
+    });
+
+    testWidgets('reports out of range and parks at trim end when mapped exceeds end and not repeating', (tester) async {
+      await loadPlayer(player1, totalLengthSeconds: 10);
+      await loadPlayer(player2, totalLengthSeconds: 5);
+      await player2.setRepeat(false);
+
+      await player1.setPlaybackPosition(0.6);
+      final canFollow = await player2.canFollow(player1);
+
+      expect(canFollow, isFalse);
+      expect(player2.playbackPosition, 1.0);
+    });
+
+    testWidgets('reports in range without modifying position when mapped exceeds end and repeating', (tester) async {
+      await loadPlayer(player1, totalLengthSeconds: 20);
+      await loadPlayer(player2, totalLengthSeconds: 5);
+      await player2.setRepeat(true);
+
+      await player2.setPlaybackPosition(0.4);
+      await player1.setPlaybackPosition(0.5);
+      clearInteractions(context.audioSystemMock);
+
+      final canFollow = await player2.canFollow(player1);
+
+      expect(canFollow, isTrue);
+      expect(player2.playbackPosition, 0.4);
+      context.audioSystemMock.verifyMediaPlayerSetPlaybackPositionNeverCalled();
+    });
+
+    testWidgets('reports in range when not loaded', (tester) async {
+      await loadPlayer(player1, totalLengthSeconds: 10);
+
+      await player1.setPlaybackPosition(0.5);
+      final canFollow = await player2.canFollow(player1);
+
+      expect(canFollow, isTrue);
+    });
+
+    testWidgets('reports in range when durations are zero', (tester) async {
+      await loadPlayer(player1, totalLengthSeconds: 0);
+      await loadPlayer(player2, totalLengthSeconds: 0);
+
+      final canFollow = await player2.canFollow(player1);
+
+      expect(canFollow, isTrue);
+    });
+
+    testWidgets('stops playback when playing and out of range without repeat', (tester) async {
+      await loadPlayer(player1, totalLengthSeconds: 10);
+      await loadPlayer(player2, totalLengthSeconds: 5);
+      await player2.setRepeat(false);
+      mockPlayerState(context, playbackPositionFactor: 0.3);
+      await player2.start();
+
+      await player1.setPlaybackPosition(0.6);
+      final canFollow = await player2.canFollow(player1);
+
+      expect(canFollow, isFalse);
+      context.audioSystemMock.verifyMediaPlayerStopCalled();
+    });
+  });
 }
