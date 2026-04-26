@@ -220,6 +220,20 @@ class Player {
     }
   }
 
+  Future<bool> canFollow(Player other) async {
+    if (!_loaded) return true;
+
+    final mappedPosition = _mapPositionFrom(other);
+    if (mappedPosition == null) return true;
+
+    if (mappedPosition > _endPosition && !_repeat) {
+      if (_isPlaying) await stop();
+      await _parkAtTrimEnd();
+      return false;
+    }
+    return true;
+  }
+
   Future<void> _parkAtTrimEnd() async {
     if (_playbackPosition == _endPosition) return;
     await _as.mediaPlayerSetPlaybackPosFactor(id: id, posFactor: _endPosition);

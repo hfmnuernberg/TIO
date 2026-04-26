@@ -97,6 +97,47 @@ void main() {
         expect(find.byTooltip('Media Player 2: Play'), findsOneWidget);
       });
 
+      testWidgets('island position is not overwritten when primary pauses and resumes', (tester) async {
+        await prepareMediaPlayerWithLoadedIsland(
+          tester,
+          context,
+          primaryDurationSeconds: 10,
+          islandDurationSeconds: 10,
+        );
+        mockPlayerState(context);
+
+        await tester.ensureVisible(find.byTooltip('Play'));
+        await tester.tap(find.byTooltip('Play'));
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.pump(const Duration(milliseconds: 150));
+
+        mockPlayerState(context, playbackPositionFactor: 0.4);
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.pump(const Duration(milliseconds: 150));
+
+        mockPlayerState(context, playing: false, playbackPositionFactor: 0.4);
+        await tester.ensureVisible(find.byTooltip('Pause'));
+        await tester.tap(find.byTooltip('Pause'));
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.pump(const Duration(milliseconds: 150));
+
+        clearInteractions(context.audioSystemMock);
+
+        mockPlayerState(context, playbackPositionFactor: 0.4);
+        await tester.ensureVisible(find.byTooltip('Play'));
+        await tester.tap(find.byTooltip('Play'));
+        await tester.pump(const Duration(milliseconds: 150));
+        await tester.pump(const Duration(milliseconds: 150));
+
+        verifyNever(
+          () => context.audioSystemMock.mediaPlayerSetPlaybackPosFactor(
+            id: any(named: 'id'),
+            posFactor: any(named: 'posFactor'),
+          ),
+        );
+        expect(find.byTooltip('Media Player 2: Pause'), findsOneWidget);
+      });
+
       testWidgets('island play/pause toggles independently', (tester) async {
         await prepareMediaPlayerWithLoadedIsland(tester, context);
         mockPlayerState(context);
