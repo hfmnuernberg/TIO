@@ -176,6 +176,7 @@ class _ParentToolState extends State<ParentTool> {
       appBarActions.add(
         MenuAnchor(
           builder: (context, controller, child) => IconButton(
+            tooltip: context.l10n.commonMoreOptions,
             onPressed: () => controller.isOpen ? controller.close() : controller.open(),
             icon: const Icon(Icons.more_vert),
           ),

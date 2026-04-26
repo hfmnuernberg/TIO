@@ -65,8 +65,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   late bool _isLoading = false;
   static const double _endEpsilon = 0.01;
 
-  final List<MenuItemButton> _menuItems = List.empty(growable: true);
-  late MenuItemButton _shareMenuButton;
+  bool _isShareMenuVisible = false;
 
   late MediaPlayerBlock _mediaPlayerBlock;
   Project? _project;
@@ -171,7 +170,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       if (!mounted) return;
       setState(() => _isLoading = false);
 
-      if (_player.loaded) _addShareOptionToMenu();
+      if (_player.loaded) _showShareOptionInMenu();
 
       _mediaPlayerTutorial.maybeShowWaveformTutorial(context, playerLoaded: _player.loaded);
 
@@ -179,16 +178,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
 
       if (mounted && widget.shouldAutoplay && _player.loaded) _autoplayAfterDelay();
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    _shareMenuButton = MenuItemButton(
-      onPressed: _shareFilePressed,
-      child: Text(context.l10n.mediaPlayerShareAudioFile, style: const TextStyle(color: ColorTheme.primary)),
-    );
   }
 
   @override
@@ -204,8 +193,8 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
     super.dispose();
   }
 
-  void _addShareOptionToMenu() {
-    if (!_menuItems.contains(_shareMenuButton)) _menuItems.add(_shareMenuButton);
+  void _showShareOptionInMenu() {
+    if (!_isShareMenuVisible) setState(() => _isShareMenuVisible = true);
   }
 
   Future<void> _autoplayAfterDelay() async {
@@ -381,7 +370,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
           _baseRmsValues = _rmsValues;
           _player.markers.binCount = _rmsValues.length;
           _player.markers.startAndEndEpsilon = _effectiveEndEpsilon();
-          _addShareOptionToMenu();
+          _showShareOptionInMenu();
           _mediaPlayerBlock.markerPositions.clear();
           if (mounted) await _projectRepo.saveLibrary(projectLibrary);
         }
@@ -506,7 +495,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
         _rmsValues = await _player.getRmsValues(_numOfBins);
         _baseRmsValues = _rmsValues;
         _player.markers.binCount = _rmsValues.length;
-        _addShareOptionToMenu();
+        _showShareOptionInMenu();
         _mediaPlayerBlock.markerPositions.clear();
         _player.markers.positions = [];
         if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
@@ -622,7 +611,13 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       isQuickTool: widget.isQuickTool,
       project: widget.isQuickTool ? null : Provider.of<Project>(context, listen: false),
       toolBlock: _mediaPlayerBlock,
-      menuItems: _menuItems,
+      menuItems: [
+        if (_isShareMenuVisible)
+          MenuItemButton(
+            onPressed: _shareFilePressed,
+            child: Text(context.l10n.mediaPlayerShareAudioFile, style: const TextStyle(color: ColorTheme.primary)),
+          ),
+      ],
       deactivateScroll: !_isScrollingEnabled,
       islandToolTutorialKey: islandToolTutorialKey,
       onParentTutorialFinished: () => _mediaPlayerTutorial.show(context, playerLoaded: _player.loaded),

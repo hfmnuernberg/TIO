@@ -55,8 +55,9 @@ Studio Fluffy originally developed TIO and left the project in poor shape — no
 ## Environment Setup
 
 - **FVM** is not on `$PATH`. The Flutter binary lives at `$HOME/fvm/versions/<version>/bin/flutter`. Read the version from `.fvmrc` (key `"flutter"`) and prepend to PATH. From the repo root: `export PATH="$HOME/fvm/versions/$(jq -r .flutter .fvmrc)/bin:$PATH"`. From a worktree where the shell CWD may not be the repo root, pass the absolute path to `.fvmrc`: `export PATH="$HOME/fvm/versions/$(jq -r .flutter <repo-root>/.fvmrc)/bin:$PATH"`. Never hardcode the version — it changes regularly.
+- **Pre-flight check the Flutter SDK before running anything**: confirm `$HOME/fvm/versions/<version>/bin/flutter` is an executable file (not just a symlink target). The `.fvm/flutter_sdk` and `.fvm/versions/<version>` symlinks inside the repo may exist while their target directory is empty or contains only a partial `.git` clone — don't trust symlink existence. If the binary is missing, run `fvm install <version>` from the **main repo** first (the `.fvmrc` lookup needs it). First-time install clones Flutter via `~/fvm/cache.git` and takes several minutes; `scripts/app.sh ...` and `fvm flutter ...` will silently kick off the same clone if the SDK is missing, which looks identical to a hang.
 - **Cargo** is not on `$PATH`. Prepend before running Rust commands: `export PATH="$HOME/.cargo/bin:$PATH"`
-- `scripts/app.sh` handles tool lookup internally but may fail in worktrees if the shell can't find `fvm` or `cargo`. When running from a worktree, call Flutter/Cargo directly instead.
+- `scripts/app.sh` delegates to `fvm flutter` internally. From a worktree, prefer prepending the absolute Flutter path and calling `flutter` / `cargo` directly — this avoids the FVM resolution layer entirely and surfaces SDK-missing errors immediately instead of as a hang.
 - **`scripts/app.sh generate:rust` in worktrees**: prints a spurious `jq: error: Could not open file .fvmrc` line but still completes successfully — ignore that line.
 
 ## Key Commands

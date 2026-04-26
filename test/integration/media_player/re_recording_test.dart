@@ -57,5 +57,49 @@ void main() {
         RegExp(r'Test Project-Media Player 1\.wav$'),
       );
     });
+
+    testWidgets('share audio menu shows only one entry after re-recording', (tester) async {
+      final recordingPath = '${context.inMemoryFileSystem.tmpFolderPath}/recording.wav';
+      final pingBytes = File('assets/test/ping.wav').readAsBytesSync();
+
+      context.audioSystemMock.mockMediaPlayerGetRecordingFilePath(recordingPath);
+
+      await tester.renderScaffold(ProjectPage(goStraightToTool: false, withoutRealProject: false), context.providers);
+      await tester.createMediaPlayerToolInProject();
+      await tester.tapAndSettle(find.bySemanticsLabel('Media Player 1'));
+
+      await context.inMemoryFileSystem.saveFileAsBytes(recordingPath, pingBytes);
+      await tester.ensureVisible(find.byTooltip('Start recording'));
+      await tester.tapAndSettle(find.byTooltip('Start recording'));
+      await tester.ensureVisible(find.byTooltip('Stop recording'));
+      await tester.tapAndSettle(find.byTooltip('Stop recording'));
+
+      await tester.tapAndSettle(find.byTooltip('More options'));
+      expect(find.bySemanticsLabel('Share audio file'), findsOneWidget);
+      await tester.tapAndSettle(find.byTooltip('More options'));
+
+      await tester.simulatePlatformDidChangeDependencies();
+
+      await context.inMemoryFileSystem.saveFileAsBytes(recordingPath, pingBytes);
+      await tester.ensureVisible(find.byTooltip('Start recording'));
+      await tester.tapAndSettle(find.byTooltip('Start recording'));
+      await tester.tapAndSettle(find.bySemanticsLabel('Proceed'));
+      await tester.ensureVisible(find.byTooltip('Stop recording'));
+      await tester.tapAndSettle(find.byTooltip('Stop recording'));
+
+      await tester.tapAndSettle(find.byTooltip('More options'));
+      expect(find.bySemanticsLabel('Share audio file'), findsOneWidget);
+    });
   });
+}
+
+extension on WidgetTester {
+  Future<void> simulatePlatformDidChangeDependencies() async {
+    platformDispatcher.localesTestValue = const [Locale('de', 'DE')];
+    binding.handleLocaleChanged();
+    await pumpAndSettle();
+    platformDispatcher.localesTestValue = const [Locale('en', 'US')];
+    binding.handleLocaleChanged();
+    await pumpAndSettle();
+  }
 }

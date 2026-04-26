@@ -37,6 +37,7 @@ class German extends AppLocalizations with GermanFlashCards {
   String get commonGotIt => 'Verstanden';
   String get commonInput => 'Eingabefeld';
   String get commonMinus => 'Minus-Schaltfläche';
+  String get commonMoreOptions => 'Mehr Optionen';
   String get commonNext => 'Weiter';
   String get commonNo => 'Nein';
   String get commonOctave => 'Oktave';
