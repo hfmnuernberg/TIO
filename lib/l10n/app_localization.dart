@@ -29,6 +29,7 @@ abstract class AppLocalizations implements FlashCardsLocalization {
   String get commonGotIt;
   String get commonInput;
   String get commonMinus;
+  String get commonMoreOptions;
   String get commonNext;
   String get commonNo;
   String get commonOctave;

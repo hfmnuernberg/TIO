@@ -37,6 +37,7 @@ class English extends AppLocalizations with EnglishFlashCards {
   String get commonGotIt => 'Got it';
   String get commonInput => 'Input';
   String get commonMinus => 'Minus button';
+  String get commonMoreOptions => 'More options';
   String get commonNext => 'Next';
   String get commonNo => 'No';
   String get commonOctave => 'Octave';
