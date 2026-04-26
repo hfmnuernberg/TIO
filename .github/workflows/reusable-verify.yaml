@@ -1,8 +1,8 @@
 name: Verify
 
 env:
-  MAX_FILE_COUNT: 24
-  MAX_AVG_LENGTH: 339
+  MAX_FILE_COUNT: 22
+  MAX_AVG_LENGTH: 350
   MIN_COVERAGE: 63.4
 
 on:

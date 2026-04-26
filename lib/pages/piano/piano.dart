@@ -22,6 +22,7 @@ import 'package:tiomusic/util/app_orientation.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/constants/constants.dart';
 import 'package:tiomusic/util/constants/piano_constants.dart';
+import 'package:tiomusic/util/dialogs.dart';
 import 'package:tiomusic/util/l10n/sound_font_extensions.dart';
 import 'package:tiomusic/util/tool_navigation_utils.dart';
 import 'package:tiomusic/util/tutorial/tutorial_util.dart';

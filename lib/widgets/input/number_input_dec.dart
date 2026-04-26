@@ -5,6 +5,7 @@ import 'package:tiomusic/l10n/app_localizations_extension.dart';
 import 'package:tiomusic/util/color_constants.dart';
 import 'package:tiomusic/util/shapes.dart';
 import 'package:tiomusic/widgets/common_buttons.dart';
+import 'package:tiomusic/widgets/input/delete_leading_zeros.dart';
 
 class NumberInputDec extends StatefulWidget {
   final double value;
@@ -192,24 +193,6 @@ class _NumberInputDecState extends State<NumberInputDec> {
         ),
         Text(widget.label, style: const TextStyle(color: ColorTheme.primary)),
       ],
-    );
-  }
-}
-
-class DeleteLeadingZeros extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    String text = newValue.text;
-    if (RegExp(r'^-0\d').firstMatch(text) != null) {
-      text = '-${text.substring(2)}';
-    } else {
-      if (RegExp(r'^0\d').firstMatch(text) != null) {
-        text = text.substring(1);
-      }
-    }
-    return TextEditingValue(
-      text: text,
-      selection: TextSelection.collapsed(offset: text.length),
     );
   }
 }
