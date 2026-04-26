@@ -91,7 +91,7 @@ void main() {
       await player2.syncPositionWith(player1);
 
       context.audioSystemMock.verifyMediaPlayerStopCalled();
-      expect(player2.playbackPosition, 0.3);
+      expect(player2.playbackPosition, 0.8);
     });
 
     testWidgets('does not stop when not looping, not playing, and position exceeds trim end', (tester) async {
@@ -110,7 +110,50 @@ void main() {
       await player2.syncPositionWith(player1);
 
       context.audioSystemMock.verifyMediaPlayerStopNeverCalled();
-      expect(player2.playbackPosition, 0.3);
+      expect(player2.playbackPosition, 0.8);
+    });
+
+    testWidgets('parks at trim end when not looping and position exceeds trim end', (tester) async {
+      await loadPlayer(player1, totalLengthSeconds: 10);
+      await loadPlayer(player2, totalLengthSeconds: 5);
+      await player2.setTrim(0, 0.8);
+      await player2.setRepeat(false);
+
+      await player1.setPlaybackPosition(0.5);
+      await player2.syncPositionWith(player1);
+
+      expect(player2.playbackPosition, 0.8);
+    });
+
+    testWidgets('reseeks correctly after parking when primary moves back into range', (tester) async {
+      await loadPlayer(player1, totalLengthSeconds: 10);
+      await loadPlayer(player2, totalLengthSeconds: 5);
+      await player2.setTrim(0, 0.8);
+      await player2.setRepeat(false);
+
+      await player1.setPlaybackPosition(0.5);
+      await player2.syncPositionWith(player1);
+      expect(player2.playbackPosition, 0.8);
+
+      await player1.setPlaybackPosition(0.2);
+      await player2.syncPositionWith(player1);
+
+      expect(player2.playbackPosition, 0.4);
+    });
+
+    testWidgets('does not fire seek listener when parking at trim end', (tester) async {
+      await loadPlayer(player1, totalLengthSeconds: 10);
+      await loadPlayer(player2, totalLengthSeconds: 5);
+      await player2.setTrim(0, 0.8);
+      await player2.setRepeat(false);
+
+      var seekCount = 0;
+      player2.addOnSeekListener((_) => seekCount++);
+
+      await player1.setPlaybackPosition(0.5);
+      await player2.syncPositionWith(player1);
+
+      expect(seekCount, 0);
     });
 
     testWidgets('wraps position when looping and position exceeds trim end', (tester) async {

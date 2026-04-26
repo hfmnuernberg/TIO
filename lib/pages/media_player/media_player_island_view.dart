@@ -156,6 +156,7 @@ class _MediaPlayerIslandViewState extends State<MediaPlayerIslandView> {
             _rmsValues,
           );
         });
+        if (_primaryPlayer != null) await _player.syncPositionWith(_primaryPlayer!);
       }
     }
 
