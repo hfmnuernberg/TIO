@@ -106,7 +106,7 @@ jobs:
         bundler-cache: true
 
     - name: Decrypt keystore file
-      uses: timheuer/base64-to-file@v1.2.4
+      uses: timheuer/base64-to-file@v2.0.0
       with:
         fileName: release.keystore
         fileDir: ./android/app
