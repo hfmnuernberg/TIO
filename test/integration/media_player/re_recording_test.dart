@@ -54,9 +54,37 @@ void main() {
       await tester.tapAndSettle(find.byTooltip('Stop recording'));
 
       context.audioSystemMock.verifyMediaPlayerInvalidateWavCacheCalledTimesWith(
-        RegExp(r'Test Project-Media Player 1\.wav$'),
-        2,
+        RegExp(r'/Test Project-Media Player 1\.wav$'),
+        1,
       );
+      context.audioSystemMock.verifyMediaPlayerInvalidateWavCacheCalledTimesWith(
+        RegExp(r'/Test Project-Media Player 1_1\.wav$'),
+        1,
+      );
+    });
+
+    testWidgets('quick tool recording does not overwrite an existing media file at the same target path', (
+      tester,
+    ) async {
+      final recordingPath = '${context.inMemoryFileSystem.tmpFolderPath}/recording.wav';
+      final existingBytes = File('assets/test/ping.wav').readAsBytesSync();
+      final recordingBytes = [...existingBytes, 0xAB, 0xCD];
+
+      context.audioSystemMock.mockMediaPlayerGetRecordingFilePath(recordingPath);
+
+      final preexistingFile = '${context.inMemoryFileSystem.appFolderPath}/media/Quick tool-Media Player.wav';
+      await context.inMemoryFileSystem.saveFileAsBytes(preexistingFile, existingBytes);
+
+      await tester.renderScaffold(const ProjectsPage(), context.providers);
+      await tester.createAndOpenQuickTool('Media Player');
+
+      await context.inMemoryFileSystem.saveFileAsBytes(recordingPath, recordingBytes);
+      await tester.ensureVisible(find.byTooltip('Start recording'));
+      await tester.tapAndSettle(find.byTooltip('Start recording'));
+      await tester.ensureVisible(find.byTooltip('Stop recording'));
+      await tester.tapAndSettle(find.byTooltip('Stop recording'));
+
+      expect(await context.inMemoryFileSystem.loadFileAsBytes(preexistingFile), equals(existingBytes));
     });
 
     testWidgets('quick tool recording invalidates cache for the recording path', (tester) async {
