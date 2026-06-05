@@ -5,12 +5,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:permission_handler_platform_interface/permission_handler_platform_interface.dart';
 import 'package:tiomusic/models/project.dart';
 import 'package:tiomusic/pages/project_page/project_page.dart';
+import 'package:tiomusic/pages/projects_page/projects_page.dart';
 
 import '../../mocks/permission_handler_mock.dart';
 import '../../utils/action_utils.dart';
 import '../../utils/media_player_utils.dart';
 import '../../utils/render_utils.dart';
 import '../../utils/test_context.dart';
+import '../tutorials/tutorials_utils.dart';
 
 void main() {
   late TestContext context;
@@ -44,8 +46,6 @@ void main() {
       await tester.ensureVisible(find.byTooltip('Stop recording'));
       await tester.tapAndSettle(find.byTooltip('Stop recording'));
 
-      context.audioSystemMock.verifyMediaPlayerInvalidateWavCacheNeverCalled();
-
       await context.inMemoryFileSystem.saveFileAsBytes(recordingPath, pingBytes);
       await tester.ensureVisible(find.byTooltip('Start recording'));
       await tester.tapAndSettle(find.byTooltip('Start recording'));
@@ -53,9 +53,29 @@ void main() {
       await tester.ensureVisible(find.byTooltip('Stop recording'));
       await tester.tapAndSettle(find.byTooltip('Stop recording'));
 
-      context.audioSystemMock.verifyMediaPlayerInvalidateWavCacheCalledWith(
+      context.audioSystemMock.verifyMediaPlayerInvalidateWavCacheCalledTimesWith(
         RegExp(r'Test Project-Media Player 1\.wav$'),
+        2,
       );
+    });
+
+    testWidgets('quick tool recording invalidates cache for the recording path', (tester) async {
+      final recordingPath = '${context.inMemoryFileSystem.tmpFolderPath}/recording.wav';
+      final pingBytes = File('assets/test/ping.wav').readAsBytesSync();
+
+      context.audioSystemMock.mockMediaPlayerGetRecordingFilePath(recordingPath);
+
+      await tester.renderScaffold(const ProjectsPage(), context.providers);
+
+      await tester.createAndOpenQuickTool('Media Player');
+
+      await context.inMemoryFileSystem.saveFileAsBytes(recordingPath, pingBytes);
+      await tester.ensureVisible(find.byTooltip('Start recording'));
+      await tester.tapAndSettle(find.byTooltip('Start recording'));
+      await tester.ensureVisible(find.byTooltip('Stop recording'));
+      await tester.tapAndSettle(find.byTooltip('Stop recording'));
+
+      context.audioSystemMock.verifyMediaPlayerInvalidateWavCacheCalledWith(RegExp(r'Quick tool-Media Player\.wav$'));
     });
 
     testWidgets('share audio menu shows only one entry after re-recording', (tester) async {

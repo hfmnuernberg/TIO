@@ -49,7 +49,7 @@ ensure_tool() {
   local bin="$1" crate="$2"
   if ! command -v "$bin" >/dev/null 2>&1; then
     echo "→ Installing $crate ..."
-    cargo install "$crate" --force
+    cargo install "$crate" --force --locked
   fi
 }
 
