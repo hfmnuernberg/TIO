@@ -51,7 +51,7 @@ class FileBasedMediaRepository implements MediaRepository {
   String _toFilename(String basename, String extension, [int counter = 0]) =>
       '$basename${counter == 0 ? '' : '_$counter'}.$extension';
 
-  String _toAbsoluteFilePath(String filename) => _fs.toAbsoluteFilePath('$_mediaFolderPath/$filename');
+  String _toAbsoluteFilePath(String filename) => '$_mediaFolderPath/$filename';
 
   String _getNextAvailableFilename(String basename, String extension, [int counter = 0]) {
     final filename = _toFilename(basename, extension, counter);
