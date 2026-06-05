@@ -453,7 +453,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   Future<void> _stopRecording() async {
-    final audioSystem = context.read<AudioSystem>();
     if (!await _recorder.stop() || !mounted) return;
     setState(() => _recordingLength = Duration.zero);
     final recordingFilePath = await _recorder.getRecordingFilePath();
@@ -483,11 +482,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       }
       _mediaPlayerBlock.relativePath = newRelativePath;
       if (mounted) await _projectRepo.saveLibrary(context.read<ProjectLibrary>());
-      await audioSystem.mediaPlayerInvalidateWavCache(
-        wavFilePath: _fs.toAbsoluteFilePath(newRelativePath),
-        cacheDir: _fs.tmpFolderPath,
-      );
-      final loaded = await _player.loadAudioFile(_fs.toAbsoluteFilePath(newRelativePath));
+      final loaded = await _player.reloadAudioFile(_fs.toAbsoluteFilePath(newRelativePath));
       if (!loaded) {
         if (mounted) await showFileOpenFailedDialog(context, fileName: _mediaPlayerBlock.relativePath);
       } else {
@@ -506,7 +501,6 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
   }
 
   Future _askForKeepRecordingOnExit() async {
-    final audioSystem = context.read<AudioSystem>();
     _recorder.stop().then((success) async {
       if (!success || !mounted) return;
       final recordingFilePath = await _recorder.getRecordingFilePath();
@@ -521,10 +515,7 @@ class _MediaPlayerPageState extends State<MediaPlayerPage> {
       }
       _mediaPlayerBlock.relativePath = newRelativePath;
       final projectLibrary = context.read<ProjectLibrary>();
-      await audioSystem.mediaPlayerInvalidateWavCache(
-        wavFilePath: _fs.toAbsoluteFilePath(newRelativePath),
-        cacheDir: _fs.tmpFolderPath,
-      );
+      await _player.reloadAudioFile(_fs.toAbsoluteFilePath(newRelativePath));
       await _projectRepo.saveLibrary(projectLibrary);
     });
   }
