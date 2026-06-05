@@ -299,6 +299,11 @@ class Player {
     return true;
   }
 
+  Future<bool> reloadAudioFile(String absoluteFilePath) async {
+    await _as.mediaPlayerInvalidateWavCache(wavFilePath: absoluteFilePath, cacheDir: _fileSystem.tmpFolderPath);
+    return loadAudioFile(absoluteFilePath);
+  }
+
   Future<void> _setFileDuration() async {
     final state = await _as.mediaPlayerGetState(id: id);
     if (state != null) {
