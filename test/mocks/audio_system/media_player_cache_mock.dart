@@ -25,6 +25,13 @@ mixin MediaPlayerCacheMock on Mock implements AudioSystem {
     ),
   ).called(1);
 
+  void verifyMediaPlayerInvalidateWavCacheCalledTimesWith(Pattern wavFilePath, int times) => verify(
+    () => mediaPlayerInvalidateWavCache(
+      wavFilePath: any(named: 'wavFilePath', that: matches(wavFilePath)),
+      cacheDir: any(named: 'cacheDir'),
+    ),
+  ).called(times);
+
   void verifyMediaPlayerInvalidateWavCacheNeverCalled() => verifyNever(
     () => mediaPlayerInvalidateWavCache(
       wavFilePath: any(named: 'wavFilePath'),
