@@ -94,7 +94,7 @@ jobs:
         bundler-cache: true
 
     - name: Install certs
-      uses: maierj/fastlane-action@v3.1.0
+      uses: maierj/fastlane-action@v3.2.0
       with:
         lane: ${{ inputs.target_env }}_get_certs_and_profiles
         subdirectory: ios
