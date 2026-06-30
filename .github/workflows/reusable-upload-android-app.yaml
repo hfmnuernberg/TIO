@@ -70,7 +70,7 @@ jobs:
         environment: ${{ inputs.target_env }}
 
     - name: Decrypt service-account.json file
-      uses: timheuer/base64-to-file@v1.2.4
+      uses: timheuer/base64-to-file@v2.0.0
       with:
         fileName: service_account.json
         fileDir: ./android
