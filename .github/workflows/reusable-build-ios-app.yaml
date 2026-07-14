@@ -87,7 +87,7 @@ jobs:
       run: scripts/app.sh generate:json
 
     - name: Setup ruby
-      uses: ruby/setup-ruby@v1.316.0
+      uses: ruby/setup-ruby@v1.318.0
       with:
         ruby-version: 3.3
         working-directory: ios
