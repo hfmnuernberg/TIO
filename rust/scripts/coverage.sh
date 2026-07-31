@@ -6,25 +6,23 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 RUST_DIR="$(cd -- "$SCRIPT_DIR/.." && pwd)"
 cd "$RUST_DIR"
 
-# `#[flutter_rust_bridge::frb(...)]` is an attribute proc macro. It rebuilds every token group of the
-# item it annotates (see convert_frb_attr_to_encoded_form in flutter_rust_bridge_macros), which gives
-# the function body a synthetic span. Coverage instrumentation needs real source spans, so annotated
-# functions are dropped from the coverage map entirely - they do not even show up as uncovered.
-# Measuring on a throwaway copy with those attributes stripped keeps the committed sources untouched
-# while still reporting the truth. The attributes are no-ops for compilation.
-# The copy lives outside the repo so it cannot be picked up by repo-wide checks (analyze:files scans
-# *.sh and would otherwise count the copied scripts), while build artifacts stay under rust/target so
-# CI caching still applies.
-COVERAGE_SRC="${TMPDIR:-/tmp}/tio-rust-coverage-src"
+INSTRUMENTABLE_SRC="${TMPDIR:-/tmp}/tio-rust-coverage-src"
 export CARGO_TARGET_DIR="$RUST_DIR/target/coverage"
 
+INSTRUMENT_DEPENDENCIES_TOO="--no-rustc-wrapper"
+FRB_ATTRIBUTE='^[[:space:]]*#\[(flutter_rust_bridge::)?frb\(.*\)\][[:space:]]*$'
 IGNORE_REGEX='(frb_generated\.rs|src/api/test/|src/api/ffi\.rs|build\.rs)'
+LCOV_FILE="$RUST_DIR/coverage/lcov.info"
 
-# BSD awk (macOS) does not support \s, so match POSIX character classes instead
-CHANNEL="$(awk -F\" '/^[[:space:]]*rust-version[[:space:]]*=/ {print $2; exit}' Cargo.toml)"
-if [ -z "$CHANNEL" ]; then
-  CHANNEL="$(awk -F\" '/^[[:space:]]*channel[[:space:]]*=/ {print $2; exit}' "$RUST_DIR/../rust-toolchain.toml")"
-fi
+read_toolchain_channel() {
+  local channel
+  channel="$(awk -F\" '/^[[:space:]]*rust-version[[:space:]]*=/ {print $2; exit}' Cargo.toml)"
+  [ -n "$channel" ] || channel="$(awk -F\" '/^[[:space:]]*channel[[:space:]]*=/ {print $2; exit}' \
+    "$RUST_DIR/../rust-toolchain.toml")"
+  echo "$channel"
+}
+
+CHANNEL="$(read_toolchain_channel)"
 
 print_header() {
   echo "──────────────────────────────────────────────────────────────────────────────"
@@ -40,21 +38,28 @@ ensure_llvm_cov() {
   fi
 }
 
-prepare_source_copy() {
-  rm -rf "$COVERAGE_SRC"
-  mkdir -p "$COVERAGE_SRC"
-  rsync -a --exclude '/target' --exclude '/coverage' "$RUST_DIR/" "$COVERAGE_SRC/"
-  find "$COVERAGE_SRC/src" -name '*.rs' -exec \
-    sed -i.bak -E '/^[[:space:]]*#\[(flutter_rust_bridge::)?frb\(.*\)\][[:space:]]*$/d' {} +
-  find "$COVERAGE_SRC/src" -name '*.rs.bak' -delete
+copy_sources_without_frb_attributes() {
+  rm -rf "$INSTRUMENTABLE_SRC"
+  mkdir -p "$INSTRUMENTABLE_SRC"
+  rsync -a --exclude '/target' --exclude '/coverage' "$RUST_DIR/" "$INSTRUMENTABLE_SRC/"
+  find "$INSTRUMENTABLE_SRC/src" -name '*.rs' -exec sed -i.bak -E "/$FRB_ATTRIBUTE/d" {} +
+  find "$INSTRUMENTABLE_SRC/src" -name '*.rs.bak' -delete
+  silence_lints_in_copy
+}
 
-  # Stripping the attributes can leave imports unused, and CI builds with RUSTFLAGS=-D warnings.
-  # Linting the real sources is clippy's job; this copy only has to compile and run.
-  printf '#![allow(warnings)]\n%s\n' "$(cat "$COVERAGE_SRC/src/lib.rs")" > "$COVERAGE_SRC/src/lib.rs"
+silence_lints_in_copy() {
+  local lib="$INSTRUMENTABLE_SRC/src/lib.rs"
+  printf '#![allow(warnings)]\n%s\n' "$(cat "$lib")" > "$lib"
+}
+
+rewrite_copy_paths_to_committed_sources() {
+  local resolved_copy; resolved_copy="$(cd "$INSTRUMENTABLE_SRC" && pwd -P)"
+  sed -i.bak -e "s|$resolved_copy|$RUST_DIR|g" -e "s|$INSTRUMENTABLE_SRC|$RUST_DIR|g" "$LCOV_FILE"
+  rm -f "$LCOV_FILE.bak"
 }
 
 assert_measured() {
-  if [ ! -d "$COVERAGE_SRC" ]; then
+  if [ ! -d "$INSTRUMENTABLE_SRC" ]; then
     echo "❌  No coverage data. Run 'scripts/app.sh rust coverage:measure' first." >&2
     exit 2
   fi
@@ -62,7 +67,7 @@ assert_measured() {
 
 report() {
   assert_measured
-  ( cd "$COVERAGE_SRC" && cargo +"$CHANNEL" llvm-cov report --ignore-filename-regex "$IGNORE_REGEX" "$@" )
+  ( cd "$INSTRUMENTABLE_SRC" && cargo +"$CHANNEL" llvm-cov report --ignore-filename-regex "$IGNORE_REGEX" "$@" )
 }
 
 case "${1:-help}" in
@@ -74,14 +79,13 @@ case "${1:-help}" in
 
   coverage:measure)
     ensure_llvm_cov
-    prepare_source_copy
-    print_header "cargo +$CHANNEL llvm-cov --no-report --workspace (on instrumentable source copy)"
-    ( cd "$COVERAGE_SRC" && cargo +"$CHANNEL" llvm-cov --no-report --workspace )
+    copy_sources_without_frb_attributes
+    print_header "cargo +$CHANNEL llvm-cov --no-report $INSTRUMENT_DEPENDENCIES_TOO --workspace"
+    ( cd "$INSTRUMENTABLE_SRC" &&
+      cargo +"$CHANNEL" llvm-cov --no-report "$INSTRUMENT_DEPENDENCIES_TOO" --workspace )
     mkdir -p coverage
-    report --lcov --output-path "$RUST_DIR/coverage/lcov.info"
-    # Point the report back at the committed sources instead of the throwaway copy
-    sed -i.bak "s|$COVERAGE_SRC|$RUST_DIR|g" "$RUST_DIR/coverage/lcov.info"
-    rm -f "$RUST_DIR/coverage/lcov.info.bak"
+    report --lcov --output-path "$LCOV_FILE"
+    rewrite_copy_paths_to_committed_sources
     ;;
 
   coverage:print)
