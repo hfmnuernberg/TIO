@@ -47,6 +47,10 @@ prepare_source_copy() {
   find "$COVERAGE_SRC/src" -name '*.rs' -exec \
     sed -i.bak -E '/^[[:space:]]*#\[(flutter_rust_bridge::)?frb\(.*\)\][[:space:]]*$/d' {} +
   find "$COVERAGE_SRC/src" -name '*.rs.bak' -delete
+
+  # Stripping the attributes can leave imports unused, and CI builds with RUSTFLAGS=-D warnings.
+  # Linting the real sources is clippy's job; this copy only has to compile and run.
+  printf '#![allow(warnings)]\n%s\n' "$(cat "$COVERAGE_SRC/src/lib.rs")" > "$COVERAGE_SRC/src/lib.rs"
 }
 
 assert_measured() {
