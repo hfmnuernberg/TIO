@@ -90,6 +90,10 @@ Rust-specific commands (must run from `rust/` directory, or use `scripts/app.sh`
 | Rust lint | `scripts/app.sh rust clippy` |
 | Rust format | `scripts/app.sh rust format` |
 | Rust build | `scripts/app.sh rust build` |
+| Rust test coverage | `scripts/app.sh rust coverage:measure` |
+| Print Rust coverage | `scripts/app.sh rust coverage:print` |
+| Validate Rust coverage | `scripts/app.sh rust coverage:validate <min-percentage>` |
+| Rust coverage HTML report | `scripts/app.sh rust coverage` |
 
 ## Architecture Patterns
 
@@ -129,7 +133,7 @@ Rust-specific commands (must run from `rust/` directory, or use `scripts/app.sh`
 - **Logging**: `createPrefixLogger('ClassName')` from `util/log.dart`
 - **Generated files**: `.g.dart` (JSON), `lib/src/rust/` (FFI) — never edit manually
 - **PR titles**: Conventional commits with JIRA ticket: `<type>[(<scope>)]: TIO-###: <description>`
-- **Coverage threshold**: enforced in CI, ratcheted up as coverage improves — read the current minimum from `MIN_COVERAGE` in `.github/workflows/reusable-verify.yaml`
+- **Coverage threshold**: enforced in CI, ratcheted up as coverage improves — read the current minimum from `MIN_COVERAGE` (Dart) and `MIN_RUST_COVERAGE` (Rust) in `.github/workflows/reusable-verify.yaml`
 - **L10n**: Use simple getters for translations, not parameterized functions. Group keys semantically by tool/feature.
 
 ## Testing Conventions
@@ -167,7 +171,8 @@ Rust-specific commands (must run from `rust/` directory, or use `scripts/app.sh`
 4. File complexity check (caps the count and average length of overlong files)
 5. TODO/FIXME analysis
 6. Tests with coverage (random order, minimum coverage enforced)
-7. PR title validation (conventional commits + JIRA ticket)
+7. Rust tests with coverage (minimum coverage enforced)
+8. PR title validation (conventional commits + JIRA ticket)
 
 All ratcheted limits live as `env` values in `.github/workflows/reusable-verify.yaml` — read them from there rather than from this file, and pass the same values when running the checks locally.
 
@@ -188,6 +193,7 @@ All ratcheted limits live as `env` values in `.github/workflows/reusable-verify.
 - **iOS signing**: Uses Fastlane Match with a private Git repo (`TIO-fastlane`). Profiles are referenced by name, so regenerating certs via `match nuke` + `match appstore` doesn't require project file changes.
 - **Rust `log::info!` not visible in `flutter run`**: FRB routes Rust `log` output to platform loggers (NSLog on iOS, logcat on Android), not to the terminal. Use `eprintln!` for temporary diagnostics visible in `flutter run` output.
 - **Cargokit ignores `rust-toolchain.toml` and always builds with the `stable` toolchain** (`rust_builder/cargokit/build_tool/lib/src/builder.dart`: `_buildOptions?.toolchain.name ?? 'stable'`). The pinned version only applies to `scripts/app.sh rust *`. So the `rust-version` (MSRV) in `rust/Cargo.toml` must be satisfied by whatever the local `stable` toolchain resolves to — otherwise the iOS build fails with `rustc <version> is not supported by the following packages`. After raising the Rust version, run `rustup update stable` and `scripts/app.sh install:rust:targets`.
+- **`frb(ignore)` hides code from coverage, so Rust coverage runs on a stripped copy**: `#[flutter_rust_bridge::frb(...)]` is an attribute proc macro that rebuilds every token group of the item it annotates (`convert_frb_attr_to_encoded_form` in `flutter_rust_bridge_macros`), giving the function body a synthetic span. Coverage instrumentation needs real source spans, so annotated functions are dropped from the coverage map entirely — they don't even appear as uncovered. Measured naively, well-tested files vanish from the report while untested cpal code counts in full, which understates the total badly. `rust/scripts/coverage.sh` therefore rsyncs the crate to a temp dir outside the repo, deletes the `frb` attribute lines there, and measures that copy — the committed sources are never touched. The attributes are no-ops for compilation, but they are **not** optional: deleting them for real makes FRB codegen fail with `Will generate duplicated class names`.
 - **Pre-existing `build.rs` clippy warning**: `cargo clippy -- -D warnings` fails on `build.rs` due to an unused `name` variable. This is pre-existing — don't investigate or fix it.
 - **Local `pitch_shift` fork**: The `pitch_shift` crate is a local fork at `rust/pitch_shift/`, referenced via `path = "pitch_shift"` in `Cargo.toml`. It contains fixes for frequency bin mapping and phase accumulation over the upstream v1.0.0.
 - **`OUTPUT_SAMPLE_RATE` is dynamic**: Set once at app init from the device default (typically 48000 on iOS, 44100 fallback on Android). It is not a compile-time constant.

@@ -94,6 +94,7 @@ Quality
   clippy                            - Lints Rust code
   analyze | lint                    - Alias for clippy
   test                              - Runs the Rust tests for the crate(s)
+  coverage[:measure|:print|:validate <threshold>|:generate|:open]  - Measures and validates test coverage
   build                             - Compiles the Rust code and build the default dev profile (no --release)
   clean                             - Runs Rust’s clean for the crate(s). It deletes the rust/target/ build artifacts (including incremental build cache). It doesn’t touch Cargo.lock, Flutter/Pods/android caches, or anything outside rust/.
   refresh                           - clean → update → format → lint → build → test
@@ -174,6 +175,10 @@ case "${1:-help}" in
     [[ -z "$CH" ]] && CH="$(resolved_channel "")"
     print_header "cargo +$CH test --workspace"
     cargo_plus "$CH" test --workspace
+    ;;
+
+  coverage*)
+    exec bash "$SCRIPT_DIR/coverage.sh" "$@"
     ;;
 
   build)
