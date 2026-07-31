@@ -155,6 +155,31 @@ impl AudioBufferInterpolated {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
+    pub fn get_playback_position_factor_behind_by(&self, source_samples_ahead: f64) -> f32 {
+        if self.buffer_size == 0.0 {
+            return 0.0;
+        }
+        (self.index_behind_read_head(source_samples_ahead) / self.buffer_size) as f32
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub fn rewind_read_head_by(&mut self, source_samples: f64) {
+        let index = self.index_behind_read_head(source_samples);
+        self.read_head.set_index(index);
+        if let Some(source) = &mut self.source {
+            source.invalidate_cache();
+        }
+    }
+
+    fn index_behind_read_head(&self, source_samples: f64) -> f64 {
+        if self.looping {
+            self.read_head.get_wrapped_index_behind_by(source_samples)
+        } else {
+            self.read_head.get_index_behind_by(source_samples)
+        }
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
     pub fn set_playback_position_factor(&mut self, playback_position_factor: f32) {
         self.read_head
             .set_index(playback_position_factor as f64 * self.buffer_size);

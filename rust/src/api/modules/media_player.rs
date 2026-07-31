@@ -8,6 +8,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::io::Cursor;
 use std::mem::MaybeUninit;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::mpsc::{Receiver, Sender, channel};
 use std::sync::{Arc, Mutex};
 use std::thread::{self, JoinHandle};
@@ -15,6 +16,7 @@ use std::time::Duration;
 
 use crate::api::audio::audio_buffer_interpolated::AudioBufferInterpolated;
 use crate::api::audio::global::GLOBAL_AUDIO_LOCK;
+use crate::api::audio::output_buffer_tracker::OutputBufferTracker;
 use crate::api::util::constants::{
     AUDIO_STREAM_CREATE_TIMEOUT_SECONDS, MEDIA_PLAYER_PLAYBACK_MAX_BUFFERING,
     MEDIA_PLAYER_PLAYBACK_MIN_BUFFERING, NUM_CHANNELS, OUTPUT_SAMPLE_RATE, PITCH_SHIFT_BUFFER_SIZE,
@@ -34,6 +36,7 @@ struct ThreadData {
     _pitch_shift_thread: JoinHandle<()>,
     stop_sender: Sender<()>,
     stop_sender_ps: Sender<()>,
+    generation: u64,
 }
 
 struct AudioProcessingData {
@@ -60,6 +63,7 @@ struct PlayerInstance {
     processing_data: Box<AudioProcessingData>,
     ring_consumer: Arc<Mutex<Option<RingConsumerType>>>,
     volume: Arc<Mutex<f32>>,
+    output_tracker: Arc<OutputBufferTracker>,
 }
 
 impl Default for PlayerInstance {
@@ -76,6 +80,7 @@ impl Default for PlayerInstance {
             }),
             ring_consumer: Arc::new(Mutex::new(None)),
             volume: Arc::new(Mutex::new(1.0)),
+            output_tracker: Arc::new(OutputBufferTracker::new()),
         }
     }
 }
@@ -83,6 +88,8 @@ impl Default for PlayerInstance {
 lazy_static! {
     static ref PLAYERS: Mutex<HashMap<u32, PlayerInstance>> = Mutex::new(HashMap::new());
 }
+
+static STREAM_GENERATION: AtomicU64 = AtomicU64::new(0);
 
 // FUNCTIONS
 
@@ -139,8 +146,13 @@ pub fn media_player_create_stream(id: u32) -> bool {
     let ring_consumer = Arc::clone(&instance.ring_consumer);
     *ring_consumer.lock().expect("Could not lock ring_consumer") = Some(consumer);
 
+    instance.output_tracker.reset();
+
     let callback_volume = Arc::clone(&instance.volume);
     let callback_ring_consumer = Arc::clone(&instance.ring_consumer);
+    let callback_output_tracker = Arc::clone(&instance.output_tracker);
+
+    let generation = STREAM_GENERATION.fetch_add(1, Ordering::Relaxed) + 1;
 
     let (channel_sender, channel_receiver): (Sender<()>, Receiver<()>) = channel();
     let callback_id = id;
@@ -148,7 +160,12 @@ pub fn media_player_create_stream(id: u32) -> bool {
         match device.build_output_stream(
             &config,
             move |samples_out: &mut [f32], _: &cpal::OutputCallbackInfo| {
-                on_audio_callback(samples_out, &callback_volume, &callback_ring_consumer);
+                on_audio_callback(
+                    samples_out,
+                    &callback_volume,
+                    &callback_ring_consumer,
+                    &callback_output_tracker,
+                );
             },
             move |_| log::info!("something went wrong with the audio stream"),
             Some(Duration::from_secs(AUDIO_STREAM_CREATE_TIMEOUT_SECONDS)),
@@ -156,8 +173,8 @@ pub fn media_player_create_stream(id: u32) -> bool {
             Ok(stream_out) => {
                 stream_out.play().expect("Could not play stream");
 
-                while let Ok(command) = channel_receiver.recv() {
-                    thread_handle_command(callback_id, command);
+                while channel_receiver.recv().is_ok() {
+                    thread_handle_command(callback_id, generation);
                 }
             }
             Err(e) => log::info!("failed to build audio stream: {}", e),
@@ -192,6 +209,10 @@ pub fn media_player_create_stream(id: u32) -> bool {
 
                 pitch_shift(&mut instance.processing_data);
 
+                instance
+                    .output_tracker
+                    .record_produced(instance.processing_data.buffer_after_pitch_shift.len());
+
                 for sample in instance.processing_data.buffer_after_pitch_shift.iter() {
                     producer
                         .push(*sample)
@@ -209,6 +230,7 @@ pub fn media_player_create_stream(id: u32) -> bool {
         _pitch_shift_thread: pitch_shift_thread,
         stop_sender: channel_sender,
         stop_sender_ps: channel_sender_ps,
+        generation,
     });
 
     true
@@ -261,6 +283,7 @@ fn on_audio_callback(
     samples_out: &mut [f32],
     volume: &Arc<Mutex<f32>>,
     ring_consumer: &Arc<Mutex<Option<RingConsumerType>>>,
+    output_tracker: &Arc<OutputBufferTracker>,
 ) {
     let vol = *volume
         .lock()
@@ -276,9 +299,11 @@ fn on_audio_callback(
             return;
         }
 
+        let mut samples_played = 0;
         for i in 0..samples_out.len() / NUM_CHANNELS {
             match consumer.pop() {
                 Some(sample) => {
+                    samples_played += 1;
                     for channel in 0..NUM_CHANNELS {
                         let index_out = i * NUM_CHANNELS + channel;
                         samples_out[index_out] = sample * vol;
@@ -290,13 +315,17 @@ fn on_audio_callback(
                 }
             }
         }
+        output_tracker.record_consumed(samples_played);
     }
 }
 
-fn pitch_shift(audio_processing_data: &mut AudioProcessingData) {
-    if (audio_processing_data.speed_change_factor - 1.0).abs() < f32::EPSILON
+fn is_pitch_shift_bypassed(audio_processing_data: &AudioProcessingData) -> bool {
+    (audio_processing_data.speed_change_factor - 1.0).abs() < f32::EPSILON
         && audio_processing_data.pitch_change_semitones.abs() < f32::EPSILON
-    {
+}
+
+fn pitch_shift(audio_processing_data: &mut AudioProcessingData) {
+    if is_pitch_shift_bypassed(audio_processing_data) {
         for (i, sample) in audio_processing_data
             .buffer_after_speed_change
             .iter()
@@ -317,19 +346,61 @@ fn pitch_shift(audio_processing_data: &mut AudioProcessingData) {
     }
 }
 
-fn thread_handle_command(id: u32, _command: ()) {
+fn thread_handle_command(id: u32, generation: u64) {
     let _guard = GLOBAL_AUDIO_LOCK
         .lock()
         .expect("Could not lock global audio lock");
     let mut players = PLAYERS.lock().expect("Could not lock PLAYERS");
     if let Some(instance) = players.get_mut(&id) {
+        if !is_current_stream(instance, generation) {
+            return;
+        }
         instance.thread_data = None;
         *instance
             .ring_consumer
             .lock()
             .expect("Could not lock ring_consumer to clear") = None;
+        rewind_read_head_to_last_audible_sample(instance);
         instance.source_data.set_playing(false);
+        instance.output_tracker.reset();
     }
+}
+
+fn is_current_stream(instance: &PlayerInstance, generation: u64) -> bool {
+    instance
+        .thread_data
+        .as_ref()
+        .is_some_and(|thread_data| thread_data.generation == generation)
+}
+
+fn rewind_read_head_to_last_audible_sample(instance: &mut PlayerInstance) {
+    if has_parked_read_head_at_track_end(instance) {
+        return;
+    }
+    let unplayed_samples = playback_lead_in_source_samples(instance);
+    instance.source_data.rewind_read_head_by(unplayed_samples);
+}
+
+fn has_parked_read_head_at_track_end(instance: &PlayerInstance) -> bool {
+    !instance.source_data.get_is_playing()
+}
+
+fn playback_lead_in_source_samples(instance: &PlayerInstance) -> f64 {
+    let buffered_samples = instance.output_tracker.buffered_samples() as f64;
+    let shifter_samples = pitch_shift_latency_samples(&instance.processing_data) as f64;
+    (buffered_samples + shifter_samples) * instance.processing_data.speed_change_factor as f64
+}
+
+fn pitch_shift_latency_samples(audio_processing_data: &AudioProcessingData) -> usize {
+    if is_pitch_shift_bypassed(audio_processing_data) {
+        return 0;
+    }
+    audio_processing_data
+        .pitch_shifter
+        .as_ref()
+        .map_or(0, |shifter| {
+            shifter.latency_samples(PITCH_SHIFT_OVERSAMPLING)
+        })
 }
 
 #[flutter_rust_bridge::frb(ignore)]
@@ -345,6 +416,7 @@ pub fn media_player_set_pos_factor(id: u32, pos_factor: f32) -> bool {
         instance
             .source_data
             .set_playback_position_factor(pos_factor);
+        instance.output_tracker.discard_buffered();
         true
     })
 }
@@ -412,7 +484,9 @@ pub fn media_player_query_state(id: u32) -> Option<MediaPlayerState> {
         .expect("Could not lock mutex to get sample rate");
 
     with_player(id, |instance| {
-        let playback_position_factor = instance.source_data.get_playback_position_factor();
+        let playback_position_factor = instance
+            .source_data
+            .get_playback_position_factor_behind_by(playback_lead_in_source_samples(instance));
         let total_length_seconds = instance.source_data.get_length_seconds(sample_rate as u32);
         let (trim_start_factor, trim_end_factor) = instance.source_data.get_trim();
 
