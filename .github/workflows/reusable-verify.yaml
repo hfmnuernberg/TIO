@@ -4,7 +4,7 @@ env:
   MAX_FILE_COUNT: 22
   MAX_AVG_LENGTH: 351
   MIN_COVERAGE: 64.7
-  MIN_RUST_COVERAGE: 29.3
+  MIN_RUST_COVERAGE: 33.1
 
 on:
   workflow_dispatch:
