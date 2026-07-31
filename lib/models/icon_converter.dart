@@ -6,6 +6,7 @@ class IconSerialiser implements JsonConverter<Widget, int> {
   const IconSerialiser();
 
   @override
+  // ignore: non_const_argument_for_const_parameter // code point is read from the persisted project library
   Widget fromJson(int codePoint) => Icon(IconData(codePoint));
 
   @override

@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 0.0.1+1
 
 environment:
-  sdk: 3.11.1
+  sdk: 3.12.2
 
 dependencies:
   archive: 4.0.9
@@ -31,7 +31,7 @@ dependencies:
   intl: 0.20.2
   json_annotation: 4.12.0
   logger: 2.7.0
-  meta: 1.17.0
+  meta: 1.18.0
   package_info_plus: 9.0.0
   path: 1.9.1
   path_provider: 2.1.6
@@ -67,6 +67,10 @@ dev_dependencies:
   test_cov_console: 0.2.2
 
 flutter:
+  config:
+    # TODO: Remove when the iOS plugins are migrated to Swift Package Manager
+    enable-swift-package-manager: false
+
   uses-material-design: true
 
   assets:

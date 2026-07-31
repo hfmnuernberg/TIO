@@ -25,6 +25,7 @@ class EditableToolList extends StatelessWidget {
       child: ReorderableListView.builder(
         padding: const EdgeInsets.fromLTRB(0, TIOMusicParams.smallSpaceAboveList + 2, 0, 120),
         itemCount: project.blocks.length,
+        // ignore: deprecated_member_use // TODO: migrate to onReorderItem, which adjusts newIndex itself
         onReorder: onReorder,
         buildDefaultDragHandles: false,
         itemBuilder: (context, index) {
