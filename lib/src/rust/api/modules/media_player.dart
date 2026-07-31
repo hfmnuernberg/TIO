@@ -6,7 +6,7 @@
 import '../../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `on_audio_callback`, `pitch_shift`, `thread_handle_command`, `with_player`
+// These functions are ignored because they are not marked as `pub`: `has_parked_read_head_at_track_end`, `is_current_stream`, `is_pitch_shift_bypassed`, `on_audio_callback`, `pitch_shift_latency_samples`, `pitch_shift`, `playback_lead_in_source_samples`, `rewind_read_head_to_last_audible_sample`, `thread_handle_command`, `with_player`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `AudioProcessingData`, `Ev`, `PLAYERS`, `PlayerInstance`, `ThreadData`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `deref`, `initialize`
 // These functions are ignored (category: IgnoreBecauseExplicitAttribute): `media_player_compute_rms`, `media_player_create_stream`, `media_player_destroy`, `media_player_query_state`, `media_player_render_mid_to_wav`, `media_player_set_file_source`, `media_player_set_loop_value`, `media_player_set_new_volume`, `media_player_set_pitch`, `media_player_set_pos_factor`, `media_player_set_speed`, `media_player_set_trim_by_factor`, `media_player_trigger_destroy_stream`

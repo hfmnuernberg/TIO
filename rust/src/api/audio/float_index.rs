@@ -43,6 +43,19 @@ impl FloatIndex {
     }
 
     #[flutter_rust_bridge::frb(ignore)]
+    pub fn get_index_behind_by(&self, step: f64) -> f64 {
+        (self.index - step).max(self.start)
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
+    pub fn get_wrapped_index_behind_by(&self, step: f64) -> f64 {
+        if self.range <= 0.0 {
+            return self.start;
+        }
+        self.start + (self.index - self.start - step).rem_euclid(self.range)
+    }
+
+    #[flutter_rust_bridge::frb(ignore)]
     pub fn set_index(&mut self, index: f64) {
         self.index = index.clamp(self.start, self.end);
     }

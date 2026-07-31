@@ -88,6 +88,10 @@ impl PitchShifter {
         }
     }
 
+    pub fn latency_samples(&self, over_sampling: usize) -> usize {
+        self.frame_size - self.frame_size / over_sampling
+    }
+
     pub fn shift_pitch(
         &mut self,
         over_sampling: usize,
