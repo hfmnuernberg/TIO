@@ -24,7 +24,7 @@ part 'project_block.g.dart';
 // This is the parent class of all blocks
 
 @JsonSerializable(createFactory: false)
-abstract class ProjectBlock extends ChangeNotifier with EquatableMixin {
+abstract class ProjectBlock extends ChangeNotifier with Equatable {
   String get kind;
 
   String get title;
