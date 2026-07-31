@@ -165,6 +165,33 @@ app lint
 app test
 ```
 
+#### 11b. Update the `stable` toolchain (required for the iOS build)
+
+Cargokit, which builds the Rust library for iOS and Android from within the Flutter build, does **not** read
+[rust-toolchain.toml](../rust-toolchain.toml). It always builds with the toolchain named `stable`
+(see `_toolchain` in `rust_builder/cargokit/build_tool/lib/src/builder.dart`). The pinned version is only used by the
+`scripts/app.sh rust *` commands.
+
+That means the `rust-version` (MSRV) in [rust/Cargo.toml](../rust/Cargo.toml) has to be satisfied by whatever the local
+`stable` toolchain currently resolves to. If `stable` is older than the MSRV, the iOS build fails with:
+
+```
+Error (Xcode): rustc 1.94.1 is not supported by the following packages:
+```
+
+After raising the Rust version, update `stable` and re-add the targets to the newly pinned toolchain:
+
+```shell
+rustup update stable
+scripts/app.sh install:rust:targets
+```
+
+Then verify with a local iOS build before pushing:
+
+```shell
+flutter build ios --release --flavor prd --dart-define=ENVIRONMENT=prd --target lib/main.dart --no-codesign
+```
+
 #### 12. Check CI configuration
 
 - If you have a GitHub Action or other CI, check the Rust version used there.
