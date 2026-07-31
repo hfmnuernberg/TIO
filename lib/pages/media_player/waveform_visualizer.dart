@@ -20,20 +20,17 @@ class WaveformVisualizer extends CustomPainter {
     this._rangeStartPos,
     this._rangeEndPos,
     this._rmsValues, {
-    double viewStart = 0.0,
-    double viewEnd = 1.0,
-  }) : _viewStart = viewStart,
-       _viewEnd = viewEnd;
+    this._viewStart = 0.0,
+    this._viewEnd = 1.0,
+  });
 
   WaveformVisualizer.setTrim(
     this._rangeStartPos,
     this._rangeEndPos,
     this._rmsValues, {
-    double viewStart = 0.0,
-    double viewEnd = 1.0,
-  }) : _playbackPosition = null,
-       _viewStart = viewStart,
-       _viewEnd = viewEnd;
+    this._viewStart = 0.0,
+    this._viewEnd = 1.0,
+  }) : _playbackPosition = null;
 
   @override
   void paint(Canvas canvas, Size size) {

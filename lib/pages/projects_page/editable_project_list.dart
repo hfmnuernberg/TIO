@@ -27,6 +27,7 @@ class EditableProjectList extends StatelessWidget {
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(0, 4, 0, 12),
         itemCount: projectLibrary.projects.length,
+        // ignore: deprecated_member_use // TODO: migrate to onReorderItem, which adjusts newIndex itself
         onReorder: onReorder,
         itemBuilder: (context, index) {
           final project = projectLibrary.projects[index];
