@@ -5,9 +5,9 @@ import 'package:json_annotation/json_annotation.dart';
 class IconSerialiser implements JsonConverter<Widget, int> {
   const IconSerialiser();
 
+  // Blocks derive their icon from their kind, so the serialised code point is never read back.
   @override
-  // ignore: non_const_argument_for_const_parameter // code point is read from the persisted project library
-  Widget fromJson(int codePoint) => Icon(IconData(codePoint));
+  Widget fromJson(int codePoint) => throw UnsupportedError('Block icons are not deserialised');
 
   @override
   int toJson(Widget widget) => (widget as Icon).icon!.codePoint;

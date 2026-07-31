@@ -152,7 +152,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
 
     final mutableList = projectLibrary.projects.toList();
     final project = mutableList.removeAt(oldIndex);
-    mutableList.insert(newIndex > oldIndex ? newIndex - 1 : newIndex, project);
+    mutableList.insert(newIndex, project);
     projectLibrary.projects = mutableList;
 
     await _projectRepo.saveLibrary(projectLibrary);
