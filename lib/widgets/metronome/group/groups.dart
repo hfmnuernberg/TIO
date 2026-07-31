@@ -99,8 +99,7 @@ class _GroupsState extends State<Groups> with RouteAware {
                   ),
                   onReorderStart: (_) => setState(() => isReordering = true),
                   onReorderEnd: (_) => setState(() => isReordering = false),
-                  // ignore: deprecated_member_use // TODO: migrate to onReorderItem, which adjusts newIndex itself
-                  onReorder: widget.onReorder,
+                  onReorderItem: widget.onReorder,
                 ),
                 const SizedBox(width: 4),
                 CircleAvatar(
