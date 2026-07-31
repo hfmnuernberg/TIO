@@ -71,7 +71,7 @@ All commands via `scripts/app.sh` from repo root:
 | Run tests | `scripts/app.sh test` |
 | Run specific test | `scripts/app.sh test <path> <name>` |
 | Test with coverage | `scripts/app.sh coverage:measure:random` |
-| Validate coverage | `scripts/app.sh coverage:validate 62.7` |
+| Validate coverage | `scripts/app.sh coverage:validate <min-percentage>` |
 | Format code | `scripts/app.sh format` |
 | Lint/analyze | `scripts/app.sh analyze` |
 | Generate all code | `scripts/app.sh generate` |
@@ -129,7 +129,7 @@ Rust-specific commands (must run from `rust/` directory, or use `scripts/app.sh`
 - **Logging**: `createPrefixLogger('ClassName')` from `util/log.dart`
 - **Generated files**: `.g.dart` (JSON), `lib/src/rust/` (FFI) — never edit manually
 - **PR titles**: Conventional commits with JIRA ticket: `<type>[(<scope>)]: TIO-###: <description>`
-- **Coverage threshold**: 62.7% minimum (ratcheted up as coverage improves)
+- **Coverage threshold**: enforced in CI, ratcheted up as coverage improves — read the current minimum from `MIN_COVERAGE` in `.github/workflows/reusable-verify.yaml`
 - **L10n**: Use simple getters for translations, not parameterized functions. Group keys semantically by tool/feature.
 
 ## Testing Conventions
@@ -144,7 +144,7 @@ Rust-specific commands (must run from `rust/` directory, or use `scripts/app.sh`
 - **Confirmation dialogs** use the project-wide `showConfirmDialog` helper and render **`Proceed`** / **`Cancel`** buttons (not `Yes`/`No`). In tests, tap `find.bySemanticsLabel('Proceed')` or `'Cancel'`.
 - **Bug-fix tests must fail first**: when fixing a bug, write the regression test before the fix and confirm it fails against the current code. Only then implement the fix and re-run the test to confirm it passes. A test that passes on the first try has not reproduced the bug.
 - **No "optional" tests**: every test listed in a plan is required. Don't mark widget tests, boundary tests, or supporting tests as optional — if it's worth listing, it's worth writing.
-- **Coverage ratcheting**: Thresholds are tightened after improvements — both coverage % and file complexity limits
+- **Coverage ratcheting**: Thresholds are tightened after improvements — both coverage % and file complexity limits. Never loosen one to make a change pass; refactor instead.
 
 ## Working with Claude Code
 
@@ -164,10 +164,12 @@ Rust-specific commands (must run from `rust/` directory, or use `scripts/app.sh`
 1. YAML lint
 2. Static analysis (Dart + Rust clippy)
 3. Format check
-4. File complexity check (max 23 files exceeding limit, max 342 avg lines)
+4. File complexity check (caps the count and average length of overlong files)
 5. TODO/FIXME analysis
-6. Tests with coverage (random order, >= 62.7%)
+6. Tests with coverage (random order, minimum coverage enforced)
 7. PR title validation (conventional commits + JIRA ticket)
+
+All ratcheted limits live as `env` values in `.github/workflows/reusable-verify.yaml` — read them from there rather than from this file, and pass the same values when running the checks locally.
 
 ## Important Notes
 
