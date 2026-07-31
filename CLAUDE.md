@@ -148,8 +148,10 @@ Rust-specific commands (must run from `rust/` directory, or use `scripts/app.sh`
 
 ## Working with Claude Code
 
-- **Never push to remote** — the user pushes manually
-- **Don't commit unless explicitly asked** — the user will say when to commit
+- **Always work on a branch** — never commit directly to `main`. Branch names follow `TIO-###_kebab-case-description`.
+- **Committing and pushing is allowed, but pushing needs the user's explicit go-ahead each time.** Commit freely on the step branch; ask before `git push`. Opening PRs with `gh` is fine once pushed.
+- **Never merge** — the user merges every PR. Do not use `gh pr merge` or cut releases.
+- **Commit and PR messages must not mention Claude, AI, or assistants** — no co-author trailers, no session links. Mimic the existing history: `<type>[(<scope>)]: TIO-###: <description>`.
 - **Plan before implementing** — present approach for review before writing code. The user actively reviews plans and catches design issues.
 - **Always run `analyze` AND `analyze:files` before handing work back.** After any Dart or Rust change — even a one-line edit — run `scripts/app.sh analyze` (Dart analyzer + Rust clippy) **and** `scripts/app.sh analyze:files` (file complexity check enforced by CI) and fix everything they report before reporting the work as done. Never hand back code that hasn't been through both. The same applies to tests: run the affected tests and confirm they pass before declaring a task complete.
 - **Verification before committing**: `scripts/app.sh format` → `scripts/app.sh analyze` → `scripts/app.sh test` → `scripts/app.sh analyze:files`
