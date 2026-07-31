@@ -67,10 +67,6 @@ dev_dependencies:
   test_cov_console: 0.2.2
 
 flutter:
-  config:
-    # TODO: Remove when the iOS plugins are migrated to Swift Package Manager
-    enable-swift-package-manager: false
-
   uses-material-design: true
 
   assets:
