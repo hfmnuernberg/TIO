@@ -63,7 +63,7 @@ jobs:
       id: setup_ndk
       uses: nttld/setup-ndk@v1.6.0
       with:
-        ndk-version: r27d
+        ndk-version: r28c
 
     - name: Install ALSA dev libraries
       run: sudo apt-get update && sudo apt-get install -y libasound2-dev
