@@ -17,7 +17,7 @@ dependencies:
   collection: 1.19.1
   equatable: 2.1.0
   ffi: 2.2.0
-  file_picker: 10.3.6  # TODO: Newer version opens wrong picker on Android
+  file_picker: 11.0.3
   flutter:
     sdk: flutter
   flutter_localizations:
@@ -26,27 +26,27 @@ dependencies:
   flutter_svg: 2.3.0
   frontend_server_client: 4.0.0
   image_picker: 1.2.3
-  image_picker_android: 0.8.13+14  # TODO: Delete when image_picker fixed limit for images on Android
+  image_picker_android: 0.8.13+14  # TODO: Delete when image_picker fixed limit; newer version needs AGP 9
   image_picker_platform_interface: 2.11.1  # TODO: Delete when image_picker fixed limit for images on Android
   intl: 0.20.2  # Pinned to this version by flutter_localizations from the Flutter SDK
   json_annotation: 4.12.0
   logger: 2.7.0
   meta: 1.18.0  # Pinned to this version by flutter_test from the Flutter SDK
-  package_info_plus: 9.0.0  # TODO: Newer version needs win32 ^6, blocked by pinned file_picker
+  package_info_plus: 9.0.0  # TODO: Newer version needs win32 ^6, blocked by file_picker
   path: 1.9.1
   path_provider: 2.1.6
   permission_handler: 12.0.3
   provider: 6.1.5+1
   rust_lib_tiomusic:
     path: rust_builder
-  share_plus: 12.0.1  # TODO: Newer version needs win32 ^6, blocked by pinned file_picker
+  share_plus: 12.0.1  # TODO: Newer version needs win32 ^6, blocked by file_picker
   tonic: 0.2.5
   tutorial_coach_mark: 1.3.3
   url_launcher: 6.3.2
   url_launcher_ios: 6.4.1
   uuid: 4.6.0
   volume_controller: 3.6.0
-  wakelock_plus: 1.5.1  # TODO: Newer version needs win32 ^6, blocked by pinned file_picker
+  wakelock_plus: 1.5.1  # TODO: Newer version needs win32 ^6, blocked by file_picker
   wav: 1.5.0
 
 dev_dependencies:

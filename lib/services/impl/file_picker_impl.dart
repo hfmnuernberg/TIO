@@ -13,11 +13,11 @@ class FilePickerImpl implements tio.FilePicker {
 
   @override
   Future<String?> pickArchive() async =>
-      (await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['zip']))?.files.single.path;
+      (await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['zip']))?.files.single.path;
 
   @override
   Future<List<String?>?> pickAudioFromFileSystem({required bool isMultipleAllowed}) async =>
-      (await FilePicker.platform.pickFiles(
+      (await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: TIOMusicParams.audioFormats,
         allowMultiple: isMultipleAllowed,
@@ -26,7 +26,7 @@ class FilePickerImpl implements tio.FilePicker {
   @override
   Future<List<String?>?> pickAudioFromMediaLibrary({required bool isMultipleAllowed}) async {
     if (Platform.isIOS) return _pickAudioFromIosMediaLibrary(isMultipleAllowed: isMultipleAllowed);
-    return (await FilePicker.platform.pickFiles(type: FileType.audio, allowMultiple: isMultipleAllowed))?.paths;
+    return (await FilePicker.pickFiles(type: FileType.audio, allowMultiple: isMultipleAllowed))?.paths;
   }
 
   Future<List<String?>?> _pickAudioFromIosMediaLibrary({required bool isMultipleAllowed}) async {
@@ -46,7 +46,7 @@ class FilePickerImpl implements tio.FilePicker {
 
   @override
   Future<String?> pickTextFile() async =>
-      (await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['txt']))?.files.single.path;
+      (await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['txt']))?.files.single.path;
 
   @override
   Future<bool> shareFile(String absoluteFilePath) async =>
