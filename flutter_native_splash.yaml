@@ -136,5 +136,4 @@ flutter_native_splash:
   # with the info_plist_files parameter.  Remove only the # characters in the three lines below,
   # do not remove any spaces:
   info_plist_files:
-    - 'ios/Runner/Info-dev.plist'
-    - 'ios/Runner/Info-prd.plist'
+    - 'ios/Runner/Info.plist'
