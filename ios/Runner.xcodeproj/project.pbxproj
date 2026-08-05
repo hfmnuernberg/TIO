@@ -422,6 +422,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = "TIO Music";
 				APP_NAME = "TIO-Music";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -431,7 +432,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "Runner/Info-prd.plist";
+				INFOPLIST_FILE = "Runner/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App uses microphone for the tuner and media-player recordings";
@@ -516,6 +517,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = "[DEV] TIO Music";
 				APP_NAME = "[DEV] TIO-Music";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -525,7 +527,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "Runner/Info-dev.plist";
+				INFOPLIST_FILE = "Runner/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App uses microphone for the tuner and media-player recordings";
@@ -610,6 +612,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = "[DEV] TIO Music";
 				APP_NAME = "[DEV] TIO-Music";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -619,7 +622,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "Runner/Info-dev.plist";
+				INFOPLIST_FILE = "Runner/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App uses microphone for the tuner and media-player recordings";
@@ -701,6 +704,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = "[DEV] TIO Music";
 				APP_NAME = "[DEV] TIO-Music";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -710,7 +714,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "Runner/Info-dev.plist";
+				INFOPLIST_FILE = "Runner/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App uses microphone for the tuner and media-player recordings";
@@ -855,6 +859,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = "TIO Music";
 				APP_NAME = "TIO-Music";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -864,7 +869,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "Runner/Info-prd.plist";
+				INFOPLIST_FILE = "Runner/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App uses microphone for the tuner and media-player recordings";
@@ -889,6 +894,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
+				APP_DISPLAY_NAME = "TIO Music";
 				APP_NAME = "TIO-Music";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -899,7 +905,7 @@
 				DEVELOPMENT_TEAM = Y8827VPNZ5;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = Y8827VPNZ5;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = "Runner/Info-prd.plist";
+				INFOPLIST_FILE = "Runner/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "TIO-Music";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.music";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "App uses microphone for the tuner and media-player recordings";
