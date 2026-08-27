@@ -45,7 +45,7 @@ dependencies:
   url_launcher: 6.3.2
   url_launcher_ios: 6.4.1
   uuid: 4.6.0
-  volume_controller: 3.6.0
+  volume_controller: 3.6.1
   wakelock_plus: 1.5.2  # TODO: Newer version needs win32 ^6, blocked by file_picker
   wav: 1.5.0
 
