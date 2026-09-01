@@ -43,7 +43,7 @@ dependencies:
   tonic: 0.2.5
   tutorial_coach_mark: 1.3.3
   url_launcher: 6.3.2
-  url_launcher_ios: 6.4.1
+  url_launcher_ios: 6.4.2
   uuid: 4.6.0
   volume_controller: 3.6.0
   wakelock_plus: 1.5.2  # TODO: Newer version needs win32 ^6, blocked by file_picker
