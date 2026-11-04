@@ -4,6 +4,7 @@
 // ignore_for_file: invalid_use_of_internal_member, unused_import, unnecessary_import
 
 import '../../frb_generated.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `has_parked_read_head_at_track_end`, `is_current_stream`, `is_pitch_shift_bypassed`, `on_audio_callback`, `pitch_shift_latency_samples`, `pitch_shift`, `playback_lead_in_source_samples`, `rewind_read_head_to_last_audible_sample`, `thread_handle_command`, `with_player`

@@ -99,9 +99,10 @@ class _TipOfTheDayState extends State<TipOfTheDay> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                  onPressed: () => Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (_) => const FlashCardsPage()))
-                      .then((_) => loadBookmarkedCardIds()),
+                  onPressed: () =>
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (_) => const FlashCardsPage()))
+                          .then((_) => loadBookmarkedCardIds()),
                   child: Text(l10n.tipOfTheDayViewMore, style: const TextStyle(color: ColorTheme.primary)),
                 ),
                 TextButton.icon(
