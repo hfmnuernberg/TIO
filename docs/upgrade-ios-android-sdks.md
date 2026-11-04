@@ -24,7 +24,7 @@
    - `platform :ios, 'XX.0'` in the [Podfile](../ios/Podfile)
    - `MinimumOSVersion` in Flutter’s engine info [plist](../ios/Flutter/AppFrameworkInfo.plist)
    - `IPHONEOS_DEPLOYMENT_TARGET` in the different `ios/**/*.pbxproj` files
-4. Update the specific Xcode version in the GitHub Action [build job for iOS](../.github/workflows/reusable-build-ios-app.yaml), e.g. `xcode-version: 16.2.0` (latest version)
+4. Update the specific Xcode version in the GitHub Action [build job for iOS](../.github/workflows/reusable-build-ios-app.yaml), e.g. `xcode-version: 27.1` (latest version). Xcode 27 is only available on the `xcode-27` runner image, so set `runs-on` accordingly
 5. If necessary also update the iOS Simulator version in the GitHub Action [build job for iOS](../.github/workflows/reusable-build-ios-app.yaml), e.g. `iOS 18.2 Simulator` (latest version)
 6. Keep the Xcode version an SDK version, not a deployment target. It is unrelated to step 3.
 7. Completely rebuild the app
