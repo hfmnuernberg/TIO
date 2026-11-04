@@ -1,7 +1,7 @@
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use enum_map::EnumMap;
 use lazy_static::__Deref;
-use rand::Rng;
+use rand::RngExt;
 
 use std::{
     ops::Neg,
@@ -153,14 +153,14 @@ fn on_audio_callback(data: &mut [f32], _: &cpal::OutputCallbackInfo) {
     let beat_mute_chance = *BEAT_MUTE_CHANCE
         .lock()
         .expect("Could not lock mutex to BEAT_MUTE_CHANCE");
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
 
     let mut beat_event_queue = BEAT_EVENT_HAPPENED
         .lock()
         .expect("Could not lock mutex to BEAT_EVENT_HAPPENED to set true");
 
     for next_event in next_events.iter().chain(next_events_2.iter()) {
-        let is_random_mute = rng.gen_range(0.0..1.0) < beat_mute_chance;
+        let is_random_mute = rng.random_range(0.0..1.0) < beat_mute_chance;
         let samples_before_start =
             quarters_to_samples(next_event.quarters_until_start, sample_rate as f32, bpm);
 
