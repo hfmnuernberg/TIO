@@ -8,7 +8,6 @@ part of 'project_block.dart';
 
 Map<String, dynamic> _$ProjectBlockToJson(ProjectBlock instance) => <String, dynamic>{
   'stringify': instance.stringify,
-  'hashCode': instance.hashCode,
   'hasListeners': instance.hasListeners,
   'kind': instance.kind,
   'title': instance.title,
