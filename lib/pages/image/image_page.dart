@@ -143,9 +143,8 @@ class _ImageToolState extends State<ImageTool> {
       final firstCamera = cameras.first;
 
       if (!mounted) return;
-      String? imagePath = await Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (context) => TakePictureScreen(camera: firstCamera)));
+      String? imagePath = await Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => TakePictureScreen(camera: firstCamera)));
       if (imagePath == null) return;
 
       await handleImage(0, imagePath, useAsThumbnail);

@@ -33,9 +33,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 150));
       await tester.pump(const Duration(milliseconds: 150));
 
-      verify(
-        () => context.audioSystemMock.mediaPlayerSetPlaybackPosFactor(id: any(named: 'id'), posFactor: 1),
-      ).called(greaterThanOrEqualTo(1));
+      verify(() => context.audioSystemMock.mediaPlayerSetPlaybackPosFactor(id: any(named: 'id'), posFactor: 1))
+          .called(greaterThanOrEqualTo(1));
     });
 
     testWidgets('island parks at trim end when primary plays past island range', (tester) async {
@@ -48,9 +47,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 150));
       await tester.pump(const Duration(milliseconds: 150));
 
-      verify(
-        () => context.audioSystemMock.mediaPlayerSetPlaybackPosFactor(id: any(named: 'id'), posFactor: 1),
-      ).called(1);
+      verify(() => context.audioSystemMock.mediaPlayerSetPlaybackPosFactor(id: any(named: 'id'), posFactor: 1))
+          .called(1);
     });
 
     testWidgets('island parks at trim end when project opens with primary already past island range', (tester) async {
@@ -61,9 +59,8 @@ void main() {
         primaryInitialPlaybackPositionFactor: 0.9,
       );
 
-      verify(
-        () => context.audioSystemMock.mediaPlayerSetPlaybackPosFactor(id: any(named: 'id'), posFactor: 1),
-      ).called(1);
+      verify(() => context.audioSystemMock.mediaPlayerSetPlaybackPosFactor(id: any(named: 'id'), posFactor: 1))
+          .called(1);
     });
 
     testWidgets('island restarts when primary position changes back into range after looping', (tester) async {

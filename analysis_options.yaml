@@ -7,6 +7,9 @@ analyzer:
   - lib/src/rust/**
   - lib/**.g.dart
   - lib/bridge_generated.dart/**
+  - build/**
+  - android/**
+  - ios/**
 
 formatter:
   line-length: 120

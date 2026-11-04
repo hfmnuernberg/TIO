@@ -111,7 +111,7 @@ class WaveformVisualizer extends CustomPainter {
     canvas.restore();
   }
 
-  void _drawWaveLine(Canvas canvas, Size size, double x, var midAxisHeight, int i, Paint brush) {
+  void _drawWaveLine(Canvas canvas, Size size, double x, double midAxisHeight, int i, Paint brush) {
     canvas.drawLine(Offset(x, midAxisHeight), Offset(x, midAxisHeight - (_rmsValues[i] * (size.height / 2.2))), brush);
 
     canvas.drawLine(Offset(x, midAxisHeight), Offset(x, midAxisHeight + (_rmsValues[i] * (size.height / 2.2))), brush);

@@ -71,9 +71,8 @@ void main() {
     });
 
     testWidgets('does not show dialog when selection is cancelled', (tester) async {
-      when(
-        () => context.filePickerMock.pickAudioFromMediaLibrary(isMultipleAllowed: any(named: 'isMultipleAllowed')),
-      ).thenAnswer((_) async => null);
+      when(() => context.filePickerMock.pickAudioFromMediaLibrary(isMultipleAllowed: any(named: 'isMultipleAllowed')))
+          .thenAnswer((_) async => null);
 
       await renderAndOpenMediaPlayer(tester);
       await tester.scrollToAndTapAndSettle('Open files');

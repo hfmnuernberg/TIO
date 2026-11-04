@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: 3.12.2
+  sdk: 3.13.7
 
 dependencies:
   accessibility_tools: 2.8.0
@@ -18,7 +18,7 @@ dependencies:
   widgetbook_annotation: 3.11.0
 
 dev_dependencies:
-  build_runner: 2.15.1  # TODO: Newer version needs analyzer ^13, blocked by dependency_validator
+  build_runner: 2.15.1  # TODO: Newer version needs build ^5, blocked by widgetbook_generator
   flutter_lints: 6.0.0
   flutter_test:
     sdk: flutter
