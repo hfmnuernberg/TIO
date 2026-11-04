@@ -2,17 +2,16 @@ import Flutter
 import UIKit
 
 @main
-@objc class AppDelegate: FlutterAppDelegate {
+@objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
   private let mediaLibraryPicker = MediaLibraryPicker()
 
-  override func application(
-    _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  ) -> Bool {
-    GeneratedPluginRegistrant.register(with: self)
+  func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
+    GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
 
-    let registrar = self.registrar(forPlugin: "MediaLibraryPicker")!
-    let channel = FlutterMethodChannel(name: "tio/media_library_picker", binaryMessenger: registrar.messenger())
+    let channel = FlutterMethodChannel(
+      name: "tio/media_library_picker",
+      binaryMessenger: engineBridge.applicationRegistrar.messenger()
+    )
     channel.setMethodCallHandler { [weak self] (call, result) in
       guard call.method == "pickAudio" else {
         result(FlutterMethodNotImplemented)
@@ -22,7 +21,5 @@ import UIKit
       let allowMultiple = args?["allowMultiple"] as? Bool ?? false
       self?.mediaLibraryPicker.pick(allowMultiple: allowMultiple, result: result)
     }
-
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
