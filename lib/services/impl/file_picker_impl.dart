@@ -13,20 +13,32 @@ class FilePickerImpl implements tio.FilePicker {
 
   @override
   Future<String?> pickArchive() async =>
-      (await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['zip']))?.files.single.path;
+      (await FilePicker.pickFile(type: FileType.custom, allowedExtensions: ['zip']))?.path;
 
   @override
-  Future<List<String?>?> pickAudioFromFileSystem({required bool isMultipleAllowed}) async =>
-      (await FilePicker.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: TIOMusicParams.audioFormats,
-        allowMultiple: isMultipleAllowed,
-      ))?.paths;
+  Future<List<String?>?> pickAudioFromFileSystem({required bool isMultipleAllowed}) => _pickFiles(
+    type: FileType.custom,
+    allowedExtensions: TIOMusicParams.audioFormats,
+    isMultipleAllowed: isMultipleAllowed,
+  );
 
   @override
   Future<List<String?>?> pickAudioFromMediaLibrary({required bool isMultipleAllowed}) async {
     if (Platform.isIOS) return _pickAudioFromIosMediaLibrary(isMultipleAllowed: isMultipleAllowed);
-    return (await FilePicker.pickFiles(type: FileType.audio, allowMultiple: isMultipleAllowed))?.paths;
+    return _pickFiles(type: FileType.audio, isMultipleAllowed: isMultipleAllowed);
+  }
+
+  Future<List<String?>?> _pickFiles({
+    required FileType type,
+    List<String>? allowedExtensions,
+    required bool isMultipleAllowed,
+  }) async {
+    if (!isMultipleAllowed) {
+      final file = await FilePicker.pickFile(type: type, allowedExtensions: allowedExtensions);
+      return file == null ? null : [file.path];
+    }
+    final files = await FilePicker.pickFiles(type: type, allowedExtensions: allowedExtensions);
+    return files.isEmpty ? null : files.map((file) => file.path).toList();
   }
 
   Future<List<String?>?> _pickAudioFromIosMediaLibrary({required bool isMultipleAllowed}) async {
@@ -46,7 +58,7 @@ class FilePickerImpl implements tio.FilePicker {
 
   @override
   Future<String?> pickTextFile() async =>
-      (await FilePicker.pickFiles(type: FileType.custom, allowedExtensions: ['txt']))?.files.single.path;
+      (await FilePicker.pickFile(type: FileType.custom, allowedExtensions: ['txt']))?.path;
 
   @override
   Future<bool> shareFile(String absoluteFilePath) async =>
