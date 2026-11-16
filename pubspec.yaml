@@ -23,7 +23,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_rust_bridge: 2.13.0
-  flutter_svg: 2.3.2
+  flutter_svg: 2.4.0
   frontend_server_client: 4.2.0
   image_picker: 1.2.4
   image_picker_android: 0.8.13+25  # TODO: Delete when image_picker fixed limit for images on Android
